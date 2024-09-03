@@ -33,7 +33,7 @@ from ansys.api.dbu.v0.designs_pb2 import OpenRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.geometry.core.connection.backend import BackendType
+from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
@@ -285,7 +285,7 @@ class Modeler:
     @protect_grpc
     def open_file(
         self,
-        file_path: str,
+        file_path: str | Path,
         upload_to_server: bool = True,
         import_options: ImportOptions = ImportOptions(),
     ) -> "Design":
@@ -301,7 +301,7 @@ class Modeler:
 
         Parameters
         ----------
-        file_path : str
+        file_path : str, ~pathlib.Path
             Path of the file to open. The extension of the file must be included.
         upload_to_server : bool
             True if the service is running on a remote machine. If service is running on the local
@@ -314,6 +314,9 @@ class Modeler:
         Design
             Newly imported design.
         """
+        # Use str format of Path object here
+        file_path = str(file_path) if isinstance(file_path, Path) else file_path
+
         # Format-specific logic - upload the whole containing folder for assemblies
         if upload_to_server:
             if any(
@@ -343,7 +346,11 @@ class Modeler:
 
     @protect_grpc
     def run_discovery_script_file(
-        self, file_path: str, script_args: dict[str, str] | None = None, import_design=False
+        self,
+        file_path: str | Path,
+        script_args: dict[str, str] | None = None,
+        import_design: bool = False,
+        api_version: int | str | ApiVersions = None,
     ) -> tuple[dict[str, str], Optional["Design"]]:
         """Run a Discovery script file.
 
@@ -374,7 +381,7 @@ class Modeler:
 
         Parameters
         ----------
-        file_path : str
+        file_path : str | ~pathlib.Path
             Path of the file. The extension of the file must be included.
         script_args : dict[str, str], optional.
             Arguments to pass to the script. By default, ``None``.
@@ -384,6 +391,20 @@ class Modeler:
             up-to-date design data. When this is set to ``False`` (default) and the
             script modifies the current design, the design may be out-of-sync. By default,
             ``False``.
+        api_version : int | str | ApiVersions, optional
+            The scripting API version to use. For example, version 23.2 can be passed as
+            an integer 232, a string "232" or using the
+            ``ansys.geometry.core.connection.backend.ApiVersions`` enum class.
+            By default, ``None``. When specified, the service will attempt to run the script with
+            the specified API version. If the API version is not supported, the service will raise
+            an error. If you are using Discovery or SpaceClaim, the product will determine the API
+            version to use, so there is no need to specify this parameter.
+
+        Notes
+        -----
+            The Ansys Geometry Service only supports scripts that are of the
+            same version as the running service. Any ``api_version`` input will
+            be ignored.
 
         Returns
         -------
@@ -398,11 +419,29 @@ class Modeler:
             If the Discovery script fails to run. Otherwise, assume that the script
             ran successfully.
         """
+        # Use str format of Path object here
+        file_path = str(file_path) if isinstance(file_path, Path) else file_path
+
+        # Check if API version is specified... if so, validate it
+        if api_version is not None:
+            if self.client.backend_type == BackendType.WINDOWS_SERVICE:
+                self.client.log.warning(
+                    "The Ansys Geometry Service only supports "
+                    "scripts that are of its same API version."
+                )
+                self.client.log.warning("Ignoring specified API version.")
+                api_version = None
+            else:  # pragma: no cover
+                # Testing is only performed on Windows Service...
+                # but this method has been tested independently
+                api_version = ApiVersions.parse_input(api_version)
+
         serv_path = self._upload_file(file_path)
         ga_stub = DbuApplicationStub(self._grpc_client.channel)
         request = RunScriptFileRequest(
             script_path=serv_path,
             script_args=script_args,
+            api_version=api_version.value if api_version is not None else None,
         )
 
         self.client.log.debug(f"Running Discovery script file at {file_path}...")

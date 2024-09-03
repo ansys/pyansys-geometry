@@ -83,7 +83,10 @@ BACKEND_PORT_VARIABLE = "API_PORT"
 """The backend's port number environment variable for local start."""
 
 BACKEND_LOGS_FOLDER_VARIABLE = "ANS_DSCO_REMOTE_LOGS_FOLDER"
-"""The backend's logs folder path to be used."""
+"""The backend's logs folder path to be used.
+
+Only applicable to the Ansys Geometry Service.
+"""
 
 BACKEND_API_VERSION_VARIABLE = "API_VERSION"
 """The backend's api version environment variable for local start.
@@ -269,6 +272,19 @@ def prepare_and_start_backend(
     else:
         product_version = get_latest_ansys_installation()[0]
         _check_minimal_versions(product_version)
+
+    if server_logs_folder is not None:
+        # Verify that the user has write permissions to the folder and that it exists.
+        try:
+            # Make sure the folder exists...
+            Path(server_logs_folder).mkdir(parents=True, exist_ok=True)
+            # Create a file to test write permissions...
+            Path(server_logs_folder, ".verify").touch(exist_ok=True)
+        except PermissionError:
+            raise RuntimeError(
+                "User does not have write permissions to the logs folder "
+                f"{Path(server_logs_folder).resolve()}"
+            )
 
     args = []
     env_copy = _get_common_env(
