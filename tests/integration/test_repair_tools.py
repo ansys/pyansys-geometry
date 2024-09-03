@@ -21,8 +21,6 @@
 # SOFTWARE.
 """ "Testing of repair tools."""
 
-import pytest
-
 from ansys.geometry.core.modeler import Modeler
 
 from .conftest import FILES_DIR, skip_if_linux
