@@ -133,6 +133,8 @@ class Component:
     template : Component, default: None
         Template to create this component from. This creates an
         instance component that shares a master with the template component.
+    instance_name: str, default: None
+        User defined optional name for the component instance.
     preexisting_id : str, default: None
         ID of a component pre-existing on the server side to use to create the component
         on the client-side data model. If an ID is specified, a new component is not
