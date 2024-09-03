@@ -193,7 +193,7 @@ class Component:
                 # Remove this method call once we know Service sends correct ObjectPath id
                 self._id = new_component.component.id
                 self._name = new_component.component.name
-                self._intance_name = instance_name
+                self._instance_name = new_component.component.instance_name
             else:
                 self._name = name
                 self._id = None
