@@ -24,9 +24,8 @@
 from enum import Enum, unique
 from typing import Union
 
-__API_VERSIONS_ERR_MSG = "API version must be an integer, string or an ApiVersions enum."
+_API_VERSIONS_ERR_MSG = "API version must be an integer, string or an ApiVersions enum."
 """Error message for invalid API versions."""
-
 
 @unique
 class BackendType(Enum):
@@ -63,14 +62,15 @@ class ApiVersions(Enum):
         ApiVersions
             The version as an ApiVersions enum.
         """
+
         if isinstance(version, ApiVersions):
             return version
         elif isinstance(version, str):
             if version.isnumeric():
                 return ApiVersions(int(version))
             else:
-                raise ValueError(__API_VERSIONS_ERR_MSG)
+                raise ValueError(_API_VERSIONS_ERR_MSG)
         elif isinstance(version, int):
             return ApiVersions(version)
         else:
-            raise ValueError(__API_VERSIONS_ERR_MSG)
+            raise ValueError(_API_VERSIONS_ERR_MSG)
