@@ -424,13 +424,14 @@ class Modeler:
 
         # Check if API version is specified... if so, validate it
         if api_version is not None:
-            api_version = ApiVersions.parse_input(api_version)
-
-            if api_version.value < 232 and self.client.backend_type == BackendType.WINDOWS_SERVICE:
-                raise ValueError(
-                    "The Ansys Geometry Service only supports "
-                    "scripts that are at least of version V232."
+            if self.client.backend_type == BackendType.WINDOWS_SERVICE:
+                self.client.log.warning(
+                    "The Ansys Geometry Service only supports scripts that are of its same API version."
                 )
+                self.client.log.warning("Ignoring specified API version.")
+                api_version = None
+            else:
+                api_version = ApiVersions.parse_input(api_version)
 
         serv_path = self._upload_file(file_path)
         ga_stub = DbuApplicationStub(self._grpc_client.channel)
