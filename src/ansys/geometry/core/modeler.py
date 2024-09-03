@@ -430,7 +430,9 @@ class Modeler:
                 )
                 self.client.log.warning("Ignoring specified API version.")
                 api_version = None
-            else:
+            else: # pragma: no cover
+                # Testing is only performed on Windows Service... 
+                # but this method has been tested independently
                 api_version = ApiVersions.parse_input(api_version)
 
         serv_path = self._upload_file(file_path)
