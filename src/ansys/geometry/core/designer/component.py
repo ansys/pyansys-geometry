@@ -177,7 +177,6 @@ class Component:
             self._id = preexisting_id
             self._intance_name = instance_name
         else:
-            print("no preexisting_id")
             if parent_component:
                 template_id = template.id if template else ""
                 new_component = self._component_stub.Create(
