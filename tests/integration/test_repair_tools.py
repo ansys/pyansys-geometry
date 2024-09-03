@@ -91,7 +91,6 @@ def test_find_extra_edge_edges(modeler: Modeler):
     assert len(problem_areas[0].edges) > 0
 
 
-@pytest.mark.skip(reason="This test is failing on the Geometry Service - issue 1335")
 def test_fix_extra_edge(modeler: Modeler):
     """Test to find and fix extra edge problem areas."""
     skip_if_linux(modeler, test_fix_extra_edge.__name__, "repair_tools")  # Skip test on Linux
