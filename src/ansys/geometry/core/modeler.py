@@ -148,7 +148,7 @@ class Modeler:
     @property
     def designs(self) -> dict[str, "Design"]:
         """All designs within the modeler workspace.
-        
+
         Notes
         -----
         This property is read-only. **DO NOT** modify the dictionary.
