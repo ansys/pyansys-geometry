@@ -1942,8 +1942,8 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     assert design1.is_active
 
     # Check the same thing inside the modeler
-    assert not modeler._designs[design2.design_id].is_active
-    assert modeler._designs[design1.design_id].is_active
+    assert not modeler.designs[design2.design_id].is_active
+    assert modeler.designs[design1.design_id].is_active
 
 
 def test_get_active_design(modeler: Modeler):
