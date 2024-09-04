@@ -385,7 +385,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def add_component(
-        self, name: str, template: Optional["Component"] = None, instance_name=None
+        self, name: str, template: Optional["Component"] = None, instance_name: str = None
     ) -> "Component":
         """Add a new component under this component within the design assembly.
 
