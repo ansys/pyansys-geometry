@@ -1461,7 +1461,7 @@ class Component:
         recursive_call: bool = False,
     ) -> str | list[str]:
         """Print the component in a pretty format.
-        
+
         Parameters
         ----------
         consider_comps : bool, default: True
@@ -1478,7 +1478,7 @@ class Component:
             Whether to sort the keys alphabetically.
         recursive_call : bool, default: False
             Whether this is a recursive call. Users should not set this parameter.
-            
+
         Returns
         -------
         str | list[str]
@@ -1489,33 +1489,42 @@ class Component:
         lines.append(f"(comp) {self.name}")
         # Print the bodies
         if consider_bodies:
-           # Check if the bodies should be sorted
+            # Check if the bodies should be sorted
             if sort_keys:
                 body_names = [body.name for body in sorted(self.bodies, key=lambda body: body.name)]
             else:
                 body_names = [body.name for body in self.bodies]
-            
+
             # Add the bodies to the lines (with indentation)
             lines.extend([f"{' ' * indent}(body) {name}" for name in body_names])
 
         # Print the beams
         if consider_beams:
-           # Check if the bodies should be sorted
+            # Check if the bodies should be sorted
             if sort_keys:
                 # TODO: Beams should also have names...
-                beam_names = [beam.id for beam in sorted(self.beams, key=lambda beam: beam.id) if beam.is_alive]
+                # https://github.com/ansys/pyansys-geometry/issues/1319
+                beam_names = [
+                    beam.id
+                    for beam in sorted(self.beams, key=lambda beam: beam.id)
+                    if beam.is_alive
+                ]
             else:
                 beam_names = [beam.id for beam in self.beams if beam.is_alive]
-            
+
             # Add the bodies to the lines (with indentation)
             lines.extend([f"{' ' * indent}(beam) {name}" for name in beam_names])
-        
+
         # Print the nested components
         if consider_comps:
             # Check if the components should be sorted
-            comps = self.components if not sort_keys else sorted(self.components, key=lambda comp: comp.name)
+            comps = (
+                self.components
+                if not sort_keys
+                else sorted(self.components, key=lambda comp: comp.name)
+            )
             comps = [comp for comp in comps if comp.is_alive]
-            
+
             # Add the components to the lines (recursive)
             if depth_level is None or depth_level > 0:
                 for comp in comps:
@@ -1526,7 +1535,7 @@ class Component:
                         depth_level=None if depth_level is None else depth_level - 1,
                         indent=indent,
                         sort_keys=sort_keys,
-                        recursive_call=True
+                        recursive_call=True,
                     )
 
                     # Add indentation to the subcomponent lines
