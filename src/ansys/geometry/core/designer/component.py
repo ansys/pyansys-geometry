@@ -1448,3 +1448,90 @@ class Component:
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Components         : {sum(alive_comps)}")
         return "\n".join(lines)
+
+    @check_input_types
+    def pretty_print(
+        self,
+        consider_comps: bool = True,
+        consider_bodies: bool = True,
+        consider_beams: bool = True,
+        depth_level: int = None,
+        indent: int = 2,
+        sort_keys: bool = False,
+        recursive_call: bool = False,
+    ) -> str | list[str]:
+        """Print the component in a pretty format.
+        
+        Parameters
+        ----------
+        consider_comps : bool, default: True
+            Whether to print the nested components.
+        consider_bodies : bool, default: True
+            Whether to print the bodies.
+        consider_beams : bool, default: True
+            Whether to print the beams.
+        depth_level : int, default: None
+            Depth level to print. If None, it prints all levels.
+        indent : int, default: 4
+            Indentation level.
+        sort_keys : bool, default: False
+            Whether to sort the keys alphabetically.
+        recursive_call : bool, default: False
+            Whether this is a recursive call. Users should not set this parameter.
+            
+        Returns
+        -------
+        str | list[str]
+            Pretty printed component. Users should receive a string, but this method
+            can return a list of strings if it is called recursively.
+        """
+        lines = []
+        lines.append(f"(comp) {self.name}")
+        # Print the bodies
+        if consider_bodies:
+           # Check if the bodies should be sorted
+            if sort_keys:
+                body_names = [body.name for body in sorted(self.bodies, key=lambda body: body.name)]
+            else:
+                body_names = [body.name for body in self.bodies]
+            
+            # Add the bodies to the lines (with indentation)
+            lines.extend([f"{' ' * indent}(body) {name}" for name in body_names])
+
+        # Print the beams
+        if consider_beams:
+           # Check if the bodies should be sorted
+            if sort_keys:
+                # TODO: Beams should also have names...
+                beam_names = [beam.id for beam in sorted(self.beams, key=lambda beam: beam.id) if beam.is_alive]
+            else:
+                beam_names = [beam.id for beam in self.beams if beam.is_alive]
+            
+            # Add the bodies to the lines (with indentation)
+            lines.extend([f"{' ' * indent}(beam) {name}" for name in beam_names])
+        
+        # Print the nested components
+        if consider_comps:
+            # Check if the components should be sorted
+            comps = self.components if not sort_keys else sorted(self.components, key=lambda comp: comp.name)
+            comps = [comp for comp in comps if comp.is_alive]
+            
+            # Add the components to the lines (recursive)
+            if depth_level is None or depth_level > 0:
+                for comp in comps:
+                    subcomp = comp.pretty_print(
+                        consider_comps=consider_comps,
+                        consider_bodies=consider_bodies,
+                        consider_beams=consider_beams,
+                        depth_level=None if depth_level is None else depth_level - 1,
+                        indent=indent,
+                        sort_keys=sort_keys,
+                        recursive_call=True
+                    )
+
+                    # Add indentation to the subcomponent lines
+                    lines.extend([f"{' ' * indent}{line}" for line in subcomp])
+            else:
+                lines.extend([f"{' ' * indent}(comp) {comp.name}" for comp in comps])
+
+        return lines if recursive_call else "\n".join(lines)
