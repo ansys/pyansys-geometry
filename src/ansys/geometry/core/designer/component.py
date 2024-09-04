@@ -1450,17 +1450,17 @@ class Component:
         return "\n".join(lines)
 
     @check_input_types
-    def pretty_print(
+    def tree_print(
         self,
         consider_comps: bool = True,
         consider_bodies: bool = True,
         consider_beams: bool = True,
-        depth_level: int = None,
-        indent: int = 2,
+        depth_level: int | None = None,
+        indent: int = 4,
         sort_keys: bool = False,
-        recursive_call: bool = False,
-    ) -> str | list[str]:
-        """Print the component in a pretty format.
+        return_list: bool = False,
+    ) -> None | list[str]:
+        """Print the component in tree format.
 
         Parameters
         ----------
@@ -1470,21 +1470,25 @@ class Component:
             Whether to print the bodies.
         consider_beams : bool, default: True
             Whether to print the beams.
-        depth_level : int, default: None
+        depth_level : int | None, default: None
             Depth level to print. If None, it prints all levels.
         indent : int, default: 4
-            Indentation level.
+            Indentation level. Minimum is 2 - if less than 2, it is set to 2
+            by default.
         sort_keys : bool, default: False
             Whether to sort the keys alphabetically.
-        recursive_call : bool, default: False
-            Whether this is a recursive call. Users should not set this parameter.
+        return_list : bool, default: False
+            Whether to return a list of strings or print out
+            the tree structure.
 
         Returns
         -------
-        str | list[str]
-            Pretty printed component. Users should receive a string, but this method
-            can return a list of strings if it is called recursively.
+        None | list[str]
+            Tree-style printed component or list of strings representing the component tree.
         """
+        # Indentation should be at least 2
+        indent = max(2, indent)
+
         lines = []
         lines.append(f"(comp) {self.name}")
         # Print the bodies
@@ -1496,7 +1500,7 @@ class Component:
                 body_names = [body.name for body in self.bodies]
 
             # Add the bodies to the lines (with indentation)
-            lines.extend([f"{' ' * indent}(body) {name}" for name in body_names])
+            lines.extend([f"|{'-' * (indent-1)}(body) {name}" for name in body_names])
 
         # Print the beams
         if consider_beams:
@@ -1513,7 +1517,7 @@ class Component:
                 beam_names = [beam.id for beam in self.beams if beam.is_alive]
 
             # Add the bodies to the lines (with indentation)
-            lines.extend([f"{' ' * indent}(beam) {name}" for name in beam_names])
+            lines.extend([f"|{'-' * (indent-1)}(beam) {name}" for name in beam_names])
 
         # Print the nested components
         if consider_comps:
@@ -1527,20 +1531,26 @@ class Component:
 
             # Add the components to the lines (recursive)
             if depth_level is None or depth_level > 0:
-                for comp in comps:
-                    subcomp = comp.pretty_print(
+                n_comps = len(comps)
+                for idx, comp in enumerate(comps):
+                    subcomp = comp.tree_print(
                         consider_comps=consider_comps,
                         consider_bodies=consider_bodies,
                         consider_beams=consider_beams,
                         depth_level=None if depth_level is None else depth_level - 1,
                         indent=indent,
                         sort_keys=sort_keys,
-                        recursive_call=True,
+                        return_list=True,
                     )
 
                     # Add indentation to the subcomponent lines
-                    lines.extend([f"{' ' * indent}{line}" for line in subcomp])
-            else:
-                lines.extend([f"{' ' * indent}(comp) {comp.name}" for comp in comps])
+                    lines.append(f"|{'-' * (indent-1)}(comp) {comp.name}")
 
-        return lines if recursive_call else "\n".join(lines)
+                    # Determine the prefix for the subcomponent lines and add them
+                    prefix = f"{' ' * indent}" if idx == (n_comps - 1) else f":{' ' * (indent-1)}"
+                    lines.extend([f"{prefix}{line}" for line in subcomp[1:]])
+
+            else:
+                lines.extend([f"|{'-' * (indent-1)}(comp) {comp.name}" for comp in comps])
+
+        return lines if return_list else print("\n".join(lines))
