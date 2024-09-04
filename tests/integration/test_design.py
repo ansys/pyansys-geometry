@@ -382,7 +382,7 @@ def test_add_component_with_instance_name(modeler: Modeler):
     nested_component = design.add_component("NestedComponent")
     nested_component2 = design.add_component("NestedComponent2", instance_name="first instance")
 
-    assert nested_component.instance_name is None
+    assert nested_component.instance_name == ""
     assert nested_component2.instance_name == "first instance"
 
 

@@ -173,6 +173,9 @@ class Component:
         self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
+        
+        # Align instance name behavior with the server - empty string if None
+        instance_name = instance_name if instance_name else ""
 
         if preexisting_id:
             self._name = name
@@ -197,7 +200,7 @@ class Component:
             else:
                 self._name = name
                 self._id = None
-                self._instance_name = None
+                self._instance_name = instance_name
 
         # Initialize needed instance variables
         self._components = []
