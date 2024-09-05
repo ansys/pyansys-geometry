@@ -1,6 +1,10 @@
 PyAnsys Geometry documentation |version|
 ========================================
 
+.. figure:: _static/logo/logo.png
+    :align: center
+    :width: 640px
+
 PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
 .. grid:: 1 2 2 2
