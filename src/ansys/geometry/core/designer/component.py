@@ -1455,7 +1455,7 @@ class Component:
         consider_comps: bool = True,
         consider_bodies: bool = True,
         consider_beams: bool = True,
-        depth_level: int | None = None,
+        depth: int | None = None,
         indent: int = 4,
         sort_keys: bool = False,
         return_list: bool = False,
@@ -1471,7 +1471,7 @@ class Component:
             Whether to print the bodies.
         consider_beams : bool, default: True
             Whether to print the beams.
-        depth_level : int | None, default: None
+        depth : int | None, default: None
             Depth level to print. If None, it prints all levels.
         indent : int, default: 4
             Indentation level. Minimum is 2 - if less than 2, it is set to 2
@@ -1492,14 +1492,14 @@ class Component:
 
         def build_parent_tree(comp: Component, parent_tree: str = "") -> str:
             """Private function to build the parent tree of a component."""
-            if parent_tree == "":
-                # Should only happen in the first call
-                parent_tree = comp.name
-
             if comp.parent_component is None:
                 # We reached the top level component... return the parent tree
                 return "Root component (Design)" if not parent_tree else parent_tree
             else:
+                if parent_tree == "":
+                    # Should only happen in the first call
+                    parent_tree = comp.name
+
                 # Add the parent component to the parent tree and continue
                 return build_parent_tree(
                     comp.parent_component, f"{comp.parent_component.name} > {parent_tree}"
@@ -1563,14 +1563,14 @@ class Component:
             comps = [comp for comp in comps if comp.is_alive]
 
             # Add the components to the lines (recursive)
-            if depth_level is None or depth_level > 1:
+            if depth is None or depth > 1:
                 n_comps = len(comps)
                 for idx, comp in enumerate(comps):
                     subcomp = comp.tree_print(
                         consider_comps=consider_comps,
                         consider_bodies=consider_bodies,
                         consider_beams=consider_beams,
-                        depth_level=None if depth_level is None else depth_level - 1,
+                        depth=None if depth is None else depth - 1,
                         indent=indent,
                         sort_keys=sort_keys,
                         return_list=True,
