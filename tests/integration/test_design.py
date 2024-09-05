@@ -371,6 +371,24 @@ def test_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 3
 
 
+def test_add_component_with_instance_name(modeler: Modeler):
+    design = modeler.create_design("DesignHierarchyExample")
+    circle_sketch = Sketch()
+    circle_sketch.circle(Point2D([10, 10], UNITS.mm), Distance(10, UNITS.mm))
+
+    slot_sketch = Sketch()
+    slot_sketch.slot(Point2D([40, 10], UNITS.mm), Distance(20, UNITS.mm), Distance(10, UNITS.mm))
+
+    nested_component = design.add_component("NestedComponent")
+    nested_component2 = design.add_component("NestedComponent2", instance_name="first instance")
+
+    assert nested_component.name == "NestedComponent"
+    assert nested_component.instance_name == ""
+
+    assert nested_component2.name == "NestedComponent2"
+    assert nested_component2.instance_name == "first instance"
+
+
 def test_faces_edges(modeler: Modeler):
     """Test for verifying the correct creation and usage of ``Face`` and
     ``Edge`` objects.
