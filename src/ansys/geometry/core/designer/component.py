@@ -133,6 +133,8 @@ class Component:
     template : Component, default: None
         Template to create this component from. This creates an
         instance component that shares a master with the template component.
+    instance_name: str, default: None
+        User defined optional name for the component instance.
     preexisting_id : str, default: None
         ID of a component pre-existing on the server side to use to create the component
         on the client-side data model. If an ID is specified, a new component is not
@@ -160,6 +162,7 @@ class Component:
         parent_component: Union["Component", None],
         grpc_client: GrpcClient,
         template: Optional["Component"] = None,
+        instance_name: Optional[str] = None,
         preexisting_id: str | None = None,
         master_component: MasterComponent | None = None,
         read_existing_comp: bool = False,
@@ -171,21 +174,33 @@ class Component:
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
+        # Align instance name behavior with the server - empty string if None
+        instance_name = instance_name if instance_name else ""
+
         if preexisting_id:
             self._name = name
             self._id = preexisting_id
+            self._instance_name = instance_name
         else:
             if parent_component:
                 template_id = template.id if template else ""
                 new_component = self._component_stub.Create(
-                    CreateRequest(name=name, parent=parent_component.id, template=template_id)
+                    CreateRequest(
+                        name=name,
+                        parent=parent_component.id,
+                        template=template_id,
+                        instance_name=instance_name,
+                    )
                 )
+
                 # Remove this method call once we know Service sends correct ObjectPath id
                 self._id = new_component.component.id
                 self._name = new_component.component.name
+                self._instance_name = new_component.component.instance_name
             else:
                 self._name = name
                 self._id = None
+                self._instance_name = instance_name
 
         # Initialize needed instance variables
         self._components = []
@@ -230,6 +245,11 @@ class Component:
     def name(self) -> str:
         """Name of the component."""
         return self._name
+
+    @property
+    def instance_name(self) -> str:
+        """Name of the component instance."""
+        return self._instance_name
 
     @property
     def components(self) -> list["Component"]:
@@ -367,7 +387,9 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
-    def add_component(self, name: str, template: Optional["Component"] = None) -> "Component":
+    def add_component(
+        self, name: str, template: Optional["Component"] = None, instance_name: str = None
+    ) -> "Component":
         """Add a new component under this component within the design assembly.
 
         Parameters
@@ -383,10 +405,11 @@ class Component:
         Component
             New component with no children in the design assembly.
         """
-        new_comp = Component(name, self, self._grpc_client, template=template)
+        new_comp = Component(
+            name, self, self._grpc_client, template=template, instance_name=instance_name
+        )
         master = new_comp._master_component
         master_id = new_comp.id.split("/")[-1]
-
         for comp in self._master_component.occurrences:
             if comp.id != self.id:
                 comp.components.append(
@@ -394,7 +417,8 @@ class Component:
                         name,
                         comp,
                         self._grpc_client,
-                        template,
+                        template=template,
+                        instance_name=instance_name,
                         preexisting_id=f"{comp.id}/{master_id}",
                         master_component=master,
                         read_existing_comp=True,
