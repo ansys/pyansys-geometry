@@ -1459,6 +1459,7 @@ class Component:
         indent: int = 4,
         sort_keys: bool = False,
         return_list: bool = False,
+        skip_loc_header: bool = False,
     ) -> None | list[str]:
         """Print the component in tree format.
 
@@ -1480,16 +1481,48 @@ class Component:
         return_list : bool, default: False
             Whether to return a list of strings or print out
             the tree structure.
+        skip_loc_header : bool, default: False
+            Whether to skip the location header. Mostly for internal use.
 
         Returns
         -------
         None | list[str]
             Tree-style printed component or list of strings representing the component tree.
         """
+
+        def build_parent_tree(comp: Component, parent_tree: str = "") -> str:
+            """Private function to build the parent tree of a component."""
+            if parent_tree == "":
+                # Should only happen in the first call
+                parent_tree = comp.name
+
+            if comp.parent_component is None:
+                # We reached the top level component... return the parent tree
+                return "Root component (Design)" if not parent_tree else parent_tree
+            else:
+                # Add the parent component to the parent tree and continue
+                return build_parent_tree(
+                    comp.parent_component, f"{comp.parent_component.name} > {parent_tree}"
+                )
+
         # Indentation should be at least 2
         indent = max(2, indent)
 
-        lines = []
+        # Initialize the lines list
+        lines: list[str] = []
+
+        # Add the location header if requested - and only on the first call
+        # (subsequent calls will have the skip_loc_header set to True)
+        if not skip_loc_header:
+            lines.append(f">>> Tree print view of component {self.name}")
+            lines.append("")
+            lines.append("Location")
+            lines.append(f"{'-' * len(lines[-1])}")
+            lines.append(f"{build_parent_tree(self)}")
+            lines.append("")
+            lines.append("Subtree")
+            lines.append(f"{'-' * len(lines[-1])}")
+
         lines.append(f"(comp) {self.name}")
         # Print the bodies
         if consider_bodies:
@@ -1541,6 +1574,7 @@ class Component:
                         indent=indent,
                         sort_keys=sort_keys,
                         return_list=True,
+                        skip_loc_header=True,
                     )
 
                     # Add indentation to the subcomponent lines
