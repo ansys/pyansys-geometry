@@ -2497,6 +2497,7 @@ def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
 
 def test_component_tree_print(modeler: Modeler):
     """Test for verifying the tree print for ``Component`` objects."""
+
     def check_list_equality(lines, expected_lines):
         return all([line == expected_line for line, expected_line in zip(lines, expected_lines)])
 
@@ -2573,13 +2574,14 @@ def test_component_tree_print(modeler: Modeler):
         ":   |---(comp) Nested_1_Component_2",
         "|---(comp) Component_3",
         "    |---(body) comp_3_circle",
-
     ]
     assert check_list_equality(lines, ref) == True
-    
+
     # Test - request depth 1, and show only components
     ##################################################
-    lines = design.tree_print(return_list=True, depth=1, consider_bodies=False, consider_beams=False)
+    lines = design.tree_print(
+        return_list=True, depth=1, consider_bodies=False, consider_beams=False
+    )
     ref = [
         ">>> Tree print view of component 'TreePrintComponent'",
         "",
@@ -2595,7 +2597,7 @@ def test_component_tree_print(modeler: Modeler):
         "|---(comp) Component_3",
     ]
     assert check_list_equality(lines, ref) == True
-    
+
     # Test - request depth 2, indent 1 (which will default to 2)
     # and sort the components alphabetically
     ############################################################
@@ -2620,7 +2622,7 @@ def test_component_tree_print(modeler: Modeler):
         "  |-(body) comp_3_circle",
     ]
     assert check_list_equality(lines, ref) == True
-    
+
     # Test - request from Nested_1_Component_1
     ##########################################
     lines = nested_1_comp_1.tree_print(return_list=True)
