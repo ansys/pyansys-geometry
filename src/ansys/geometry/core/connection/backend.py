@@ -22,6 +22,7 @@
 """Module providing definitions for the backend types."""
 
 from enum import Enum, unique
+from typing import Union
 
 
 @unique
@@ -44,3 +45,26 @@ class ApiVersions(Enum):
     V_241 = 241
     V_242 = 242
     V_251 = LATEST = 251
+
+    @staticmethod
+    def parse_input(version: Union[int, str, "ApiVersions"]) -> "ApiVersions":
+        """Convert an input to an ApiVersions enum.
+
+        Parameters
+        ----------
+        version : int | str | ApiVersions
+            The version to convert to an ApiVersions enum.
+
+        Returns
+        -------
+        ApiVersions
+            The version as an ApiVersions enum.
+        """
+        if isinstance(version, ApiVersions):
+            return version
+        elif isinstance(version, str) and version.isnumeric():
+            return ApiVersions(int(version))
+        elif isinstance(version, int):
+            return ApiVersions(version)
+        else:
+            raise ValueError("API version must be an integer, string or an ApiVersions enum.")
