@@ -1514,7 +1514,7 @@ class Component:
         # Add the location header if requested - and only on the first call
         # (subsequent calls will have the skip_loc_header set to True)
         if not skip_loc_header:
-            lines.append(f">>> Tree print view of component {self.name}")
+            lines.append(f">>> Tree print view of component '{self.name}'")
             lines.append("")
             lines.append("Location")
             lines.append(f"{'-' * len(lines[-1])}")
