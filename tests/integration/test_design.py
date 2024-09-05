@@ -2575,7 +2575,7 @@ def test_component_tree_print(modeler: Modeler):
         "|---(comp) Component_3",
         "    |---(body) comp_3_circle",
     ]
-    assert check_list_equality(lines, ref) == True
+    assert check_list_equality(lines, ref) is True
 
     # Test - request depth 1, and show only components
     ##################################################
@@ -2596,7 +2596,7 @@ def test_component_tree_print(modeler: Modeler):
         "|---(comp) Component_2",
         "|---(comp) Component_3",
     ]
-    assert check_list_equality(lines, ref) == True
+    assert check_list_equality(lines, ref) is True
 
     # Test - request depth 2, indent 1 (which will default to 2)
     # and sort the components alphabetically
@@ -2621,7 +2621,7 @@ def test_component_tree_print(modeler: Modeler):
         "|-(comp) Component_3",
         "  |-(body) comp_3_circle",
     ]
-    assert check_list_equality(lines, ref) == True
+    assert check_list_equality(lines, ref) is True
 
     # Test - request from Nested_1_Component_1
     ##########################################
