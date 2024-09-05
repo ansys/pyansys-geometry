@@ -1563,7 +1563,7 @@ class Component:
             comps = [comp for comp in comps if comp.is_alive]
 
             # Add the components to the lines (recursive)
-            if depth_level is None or depth_level > 0:
+            if depth_level is None or depth_level > 1:
                 n_comps = len(comps)
                 for idx, comp in enumerate(comps):
                     subcomp = comp.tree_print(
