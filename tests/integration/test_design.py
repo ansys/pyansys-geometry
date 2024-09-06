@@ -2511,3 +2511,155 @@ def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
             angle=Angle(90, unit=UNITS.degrees),
             rotation_origin=Point3D([0, 0, 0]),
         )
+
+
+def test_component_tree_print(modeler: Modeler):
+    """Test for verifying the tree print for ``Component`` objects."""
+    # Skip on Linux
+    skip_if_linux(modeler, test_component_tree_print.__name__, "create_beam")
+
+    def check_list_equality(lines, expected_lines):
+        # By doing "a in b" rather than "a == b", we can check for substrings
+        # which, in the case of beam ids, is necessary since they are unique
+        # and will not be the same in different runs.
+        return all([expected_line in line for line, expected_line in zip(lines, expected_lines)])
+
+    # Create your design on the server side
+    design = modeler.create_design("TreePrintComponent")
+
+    # Create a Sketch object and draw a circle (all client side)
+    sketch = Sketch()
+    sketch.circle(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm))
+    distance = Quantity(30, UNITS.mm)
+    #  The following component hierarchy is made
+    #
+    #           |---> comp_1 ---|---> nested_1_comp_1 ---> nested_1_nested_1_comp_1
+    #           |               |
+    #           |               |---> nested_2_comp_1
+    #           |
+    # DESIGN ---|---> comp_2 -------> nested_1_comp_2
+    #           |
+    #           |
+    #           |---> comp_3
+    #
+    #
+    # Now, only "comp_3", "nested_2_comp_1" and "nested_1_nested_1_comp_1"
+    # will have a body associated.
+    #
+
+    # Create the components
+    comp_1 = design.add_component("Component_1")
+    comp_2 = design.add_component("Component_2")
+    comp_3 = design.add_component("Component_3")
+    nested_1_comp_1 = comp_1.add_component("Nested_1_Component_1")
+    nested_1_nested_1_comp_1 = nested_1_comp_1.add_component("Nested_1_Nested_1_Component_1")
+    nested_2_comp_1 = comp_1.add_component("Nested_2_Component_1")
+    _ = comp_2.add_component("Nested_1_Component_2")
+
+    # Create the bodies
+    _ = comp_3.extrude_sketch(name="comp_3_circle", sketch=sketch, distance=distance)
+    _ = nested_2_comp_1.extrude_sketch(
+        name="nested_2_comp_1_circle", sketch=sketch, distance=distance
+    )
+    _ = nested_1_nested_1_comp_1.extrude_sketch(
+        name="nested_1_nested_1_comp_1_circle", sketch=sketch, distance=distance
+    )
+
+    # Create beams (in design)
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    _ = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+
+    # Test the tree print - by default
+    ##################################
+    lines = design.tree_print(return_list=True)
+    ref = [
+        ">>> Tree print view of component 'TreePrintComponent'",
+        "",
+        "Location",
+        "--------",
+        "Root component (Design)",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) TreePrintComponent",
+        "|---(beam) 0:",
+        "|---(comp) Component_1",
+        ":   |---(comp) Nested_1_Component_1",
+        ":   :   |---(comp) Nested_1_Nested_1_Component_1",
+        ":   :       |---(body) nested_1_nested_1_comp_1_circle",
+        ":   |---(comp) Nested_2_Component_1",
+        ":       |---(body) nested_2_comp_1_circle",
+        "|---(comp) Component_2",
+        ":   |---(comp) Nested_1_Component_2",
+        "|---(comp) Component_3",
+        "    |---(body) comp_3_circle",
+    ]
+    assert check_list_equality(lines, ref) is True
+
+    # Test - request depth 1, and show only components
+    ##################################################
+    lines = design.tree_print(
+        return_list=True, depth=1, consider_bodies=False, consider_beams=False
+    )
+    ref = [
+        ">>> Tree print view of component 'TreePrintComponent'",
+        "",
+        "Location",
+        "--------",
+        "Root component (Design)",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) TreePrintComponent",
+        "|---(comp) Component_1",
+        "|---(comp) Component_2",
+        "|---(comp) Component_3",
+    ]
+    assert check_list_equality(lines, ref) is True
+
+    # Test - request depth 2, indent 1 (which will default to 2)
+    # and sort the components alphabetically
+    ############################################################
+    lines = design.tree_print(return_list=True, depth=2, indent=1, sort_keys=True)
+    ref = [
+        ">>> Tree print view of component 'TreePrintComponent'",
+        "",
+        "Location",
+        "--------",
+        "Root component (Design)",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) TreePrintComponent",
+        "|-(beam) 0:",
+        "|-(comp) Component_1",
+        ": |-(comp) Nested_1_Component_1",
+        ": |-(comp) Nested_2_Component_1",
+        "|-(comp) Component_2",
+        ": |-(comp) Nested_1_Component_2",
+        "|-(comp) Component_3",
+        "  |-(body) comp_3_circle",
+    ]
+    assert check_list_equality(lines, ref) is True
+
+    # Test - request from Nested_1_Component_1
+    ##########################################
+    lines = nested_1_comp_1.tree_print(return_list=True)
+    ref = [
+        ">>> Tree print view of component 'Nested_1_Component_1'",
+        "",
+        "Location",
+        "--------",
+        "TreePrintComponent > Component_1 > Nested_1_Component_1",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) Nested_1_Component_1",
+        "|---(comp) Nested_1_Nested_1_Component_1",
+        "    |---(body) nested_1_nested_1_comp_1_circle",
+    ]
+    assert check_list_equality(lines, ref) is True
