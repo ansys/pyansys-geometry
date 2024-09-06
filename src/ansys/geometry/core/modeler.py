@@ -227,7 +227,7 @@ class Modeler:
 
     def close(self, close_designs: bool = True) -> None:
         """Access the client's close method.
-        
+
         Parameters
         ----------
         close_designs : bool, default: True
@@ -235,7 +235,7 @@ class Modeler:
         """
         # Close all designs (if requested)
         [design.close() for design in self._designs.values() if close_designs]
-                
+
         # Close the client
         self.client.close()
 
@@ -246,7 +246,7 @@ class Modeler:
         -----
         This method is calling the same method as
         :func:`close() <ansys.geometry.core.modeler.Modeler.close>`.
-        
+
         Parameters
         ----------
         close_designs : bool, default: True
