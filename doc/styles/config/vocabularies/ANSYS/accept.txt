@@ -25,4 +25,3 @@ pytest
 SciPy
 subpackage
 launch_modeler_with_.*
-:thispagetitle:
