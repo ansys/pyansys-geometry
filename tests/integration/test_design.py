@@ -2519,7 +2519,10 @@ def test_component_tree_print(modeler: Modeler):
     skip_if_linux(modeler, test_component_tree_print.__name__, "create_beam")
 
     def check_list_equality(lines, expected_lines):
-        return all([line == expected_line for line, expected_line in zip(lines, expected_lines)])
+        # By doing "a in b" rather than "a == b", we can check for substrings
+        # which, in the case of beam ids, is necessary since they are unique
+        # and will not be the same in different runs.
+        return all([expected_line in line for line, expected_line in zip(lines, expected_lines)])
 
     # Create your design on the server side
     design = modeler.create_design("TreePrintComponent")
@@ -2583,7 +2586,7 @@ def test_component_tree_print(modeler: Modeler):
         "Subtree",
         "-------",
         "(comp) TreePrintComponent",
-        "|---(beam) 0:205",
+        "|---(beam) 0:",
         "|---(comp) Component_1",
         ":   |---(comp) Nested_1_Component_1",
         ":   :   |---(comp) Nested_1_Nested_1_Component_1",
@@ -2632,7 +2635,7 @@ def test_component_tree_print(modeler: Modeler):
         "Subtree",
         "-------",
         "(comp) TreePrintComponent",
-        "|-(beam) 0:205",
+        "|-(beam) 0:",
         "|-(comp) Component_1",
         ": |-(comp) Nested_1_Component_1",
         ": |-(comp) Nested_2_Component_1",
