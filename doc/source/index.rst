@@ -1,8 +1,4 @@
-.. vale off
-
 :thispagetitle: PyAnsys Geometry
-
-.. vale on
 
 .. figure:: _static/logo/logo.png
     :align: center
