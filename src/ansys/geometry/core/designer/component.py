@@ -1489,3 +1489,143 @@ class Component:
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Components         : {sum(alive_comps)}")
         return "\n".join(lines)
+
+    @check_input_types
+    def tree_print(
+        self,
+        consider_comps: bool = True,
+        consider_bodies: bool = True,
+        consider_beams: bool = True,
+        depth: int | None = None,
+        indent: int = 4,
+        sort_keys: bool = False,
+        return_list: bool = False,
+        skip_loc_header: bool = False,
+    ) -> None | list[str]:
+        """Print the component in tree format.
+
+        Parameters
+        ----------
+        consider_comps : bool, default: True
+            Whether to print the nested components.
+        consider_bodies : bool, default: True
+            Whether to print the bodies.
+        consider_beams : bool, default: True
+            Whether to print the beams.
+        depth : int | None, default: None
+            Depth level to print. If None, it prints all levels.
+        indent : int, default: 4
+            Indentation level. Minimum is 2 - if less than 2, it is set to 2
+            by default.
+        sort_keys : bool, default: False
+            Whether to sort the keys alphabetically.
+        return_list : bool, default: False
+            Whether to return a list of strings or print out
+            the tree structure.
+        skip_loc_header : bool, default: False
+            Whether to skip the location header. Mostly for internal use.
+
+        Returns
+        -------
+        None | list[str]
+            Tree-style printed component or list of strings representing the component tree.
+        """
+
+        def build_parent_tree(comp: Component, parent_tree: str = "") -> str:
+            """Private function to build the parent tree of a component."""
+            if comp.parent_component is None:
+                # We reached the top level component... return the parent tree
+                return "Root component (Design)" if not parent_tree else parent_tree
+            else:
+                if parent_tree == "":
+                    # Should only happen in the first call
+                    parent_tree = comp.name
+
+                # Add the parent component to the parent tree and continue
+                return build_parent_tree(
+                    comp.parent_component, f"{comp.parent_component.name} > {parent_tree}"
+                )
+
+        # Indentation should be at least 2
+        indent = max(2, indent)
+
+        # Initialize the lines list
+        lines: list[str] = []
+
+        # Add the location header if requested - and only on the first call
+        # (subsequent calls will have the skip_loc_header set to True)
+        if not skip_loc_header:
+            lines.append(f">>> Tree print view of component '{self.name}'")
+            lines.append("")
+            lines.append("Location")
+            lines.append(f"{'-' * len(lines[-1])}")
+            lines.append(f"{build_parent_tree(self)}")
+            lines.append("")
+            lines.append("Subtree")
+            lines.append(f"{'-' * len(lines[-1])}")
+
+        lines.append(f"(comp) {self.name}")
+        # Print the bodies
+        if consider_bodies:
+            # Check if the bodies should be sorted
+            if sort_keys:
+                body_names = [body.name for body in sorted(self.bodies, key=lambda body: body.name)]
+            else:
+                body_names = [body.name for body in self.bodies]
+
+            # Add the bodies to the lines (with indentation)
+            lines.extend([f"|{'-' * (indent-1)}(body) {name}" for name in body_names])
+
+        # Print the beams
+        if consider_beams:
+            # Check if the bodies should be sorted
+            if sort_keys:
+                # TODO: Beams should also have names...
+                # https://github.com/ansys/pyansys-geometry/issues/1319
+                beam_names = [
+                    beam.id
+                    for beam in sorted(self.beams, key=lambda beam: beam.id)
+                    if beam.is_alive
+                ]
+            else:
+                beam_names = [beam.id for beam in self.beams if beam.is_alive]
+
+            # Add the bodies to the lines (with indentation)
+            lines.extend([f"|{'-' * (indent-1)}(beam) {name}" for name in beam_names])
+
+        # Print the nested components
+        if consider_comps:
+            # Check if the components should be sorted
+            comps = (
+                self.components
+                if not sort_keys
+                else sorted(self.components, key=lambda comp: comp.name)
+            )
+            comps = [comp for comp in comps if comp.is_alive]
+
+            # Add the components to the lines (recursive)
+            if depth is None or depth > 1:
+                n_comps = len(comps)
+                for idx, comp in enumerate(comps):
+                    subcomp = comp.tree_print(
+                        consider_comps=consider_comps,
+                        consider_bodies=consider_bodies,
+                        consider_beams=consider_beams,
+                        depth=None if depth is None else depth - 1,
+                        indent=indent,
+                        sort_keys=sort_keys,
+                        return_list=True,
+                        skip_loc_header=True,
+                    )
+
+                    # Add indentation to the subcomponent lines
+                    lines.append(f"|{'-' * (indent-1)}(comp) {comp.name}")
+
+                    # Determine the prefix for the subcomponent lines and add them
+                    prefix = f"{' ' * indent}" if idx == (n_comps - 1) else f":{' ' * (indent-1)}"
+                    lines.extend([f"{prefix}{line}" for line in subcomp[1:]])
+
+            else:
+                lines.extend([f"|{'-' * (indent-1)}(comp) {comp.name}" for comp in comps])
+
+        return lines if return_list else print("\n".join(lines))
