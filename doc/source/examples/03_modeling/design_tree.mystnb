@@ -23,7 +23,7 @@ For the following example, we need to import these modules:
 ```{code-cell} ipython3
 from pint import Quantity
 
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.misc.units import UNITS
@@ -37,7 +37,7 @@ several cylinders extruded. The interesting part is visualizing the correspondin
 
 ```{code-cell} ipython3
 # Create a modeler object
-modeler = Modeler()
+modeler = launch_modeler()
 
 # Create your design on the server side
 design = modeler.create_design("TreePrintComponent")
@@ -171,4 +171,12 @@ method on the component object.
 
 ```{code-cell} ipython3
 nested_1_comp_1.tree_print()
+```
+
+### Closing the modeler
+
+Finally, close the modeler.
+
+```{code-cell} ipython3
+modeler.close()
 ```

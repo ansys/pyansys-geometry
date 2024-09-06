@@ -147,3 +147,9 @@ For an example of how to set up the mesh and boundary conditions in Fluent, see 
 
 The main difference between the Fluent example and this geometry is the coordinate system. The Fluent example
 defines the airfoil in the XY plane, while this geometry defines the airfoil in the XZ plane.
+
+## Close the modeler
+
+```{code-cell} ipython3
+modeler.close()
+```
