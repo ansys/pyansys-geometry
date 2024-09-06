@@ -225,23 +225,34 @@ class Modeler:
             )
         return self._designs[design.design_id]
 
-    def close(self) -> None:
-        """Access the client's close method."""
-        # Close all designs
-        [design.close() for design in self._designs.values()]
+    def close(self, close_designs: bool = True) -> None:
+        """Access the client's close method.
+        
+        Parameters
+        ----------
+        close_designs : bool, default: True
+            Whether to close all designs before closing the client.
+        """
+        # Close all designs (if requested)
+        [design.close() for design in self._designs.values() if close_designs]
                 
         # Close the client
         self.client.close()
 
-    def exit(self) -> None:
+    def exit(self, close_designs: bool = True) -> None:
         """Access the client's close method.
 
         Notes
         -----
         This method is calling the same method as
         :func:`close() <ansys.geometry.core.modeler.Modeler.close>`.
+        
+        Parameters
+        ----------
+        close_designs : bool, default: True
+            Whether to close all designs before closing the client.
         """
-        self.close()
+        self.close(close_designs=close_designs)
 
     def _upload_file(
         self,
