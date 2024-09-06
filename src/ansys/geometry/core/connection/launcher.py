@@ -23,6 +23,7 @@
 
 import logging
 import os
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
@@ -576,6 +577,13 @@ def launch_modeler_with_geometry_service(
             "Please remove it from the arguments."
         )
 
+    # If we are in a Windows environment, we are going to write down the server
+    # logs in the %PUBLIC%/Documents/Ansys/GeometryService folder.
+    if os.name == "nt" and server_logs_folder is None:
+        # Writing to the "Public" folder by default - no write permissions specifically required.
+        server_logs_folder = Path(os.getenv("PUBLIC"), "Documents", "Ansys", "GeometryService")
+        LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
+
     return prepare_and_start_backend(
         BackendType.WINDOWS_SERVICE,
         product_version=product_version,
@@ -594,7 +602,6 @@ def launch_modeler_with_geometry_service(
 
 
 @deprecated_argument(arg="log_level", alternative="server_log_level")
-@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
 def launch_modeler_with_discovery(
     product_version: int = None,
     host: str = "localhost",
@@ -605,10 +612,8 @@ def launch_modeler_with_discovery(
     hidden: bool = False,
     server_log_level: int = 2,
     client_log_level: int = logging.INFO,
-    server_logs_folder: str = None,
     client_log_file: str = None,
     log_level: int = None,  # DEPRECATED
-    logs_folder: str = None,  # DEPRECATED
     **kwargs: dict | None,
 ):
     """Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -660,16 +665,11 @@ def launch_modeler_with_discovery(
     client_log_level : int, optional
         Logging level to apply to the client. By default, INFO level is used.
         Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
-    server_logs_folder : str, optional
-        Sets the backend's logs folder path. If nothing is defined,
-        the backend will use its default path.
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
     log_level : int, optional
         DEPRECATED. Use ``server_log_level`` instead.
-    logs_folder : str, optional
-        DEPRECATED. Use ``server_logs_folder`` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -707,6 +707,13 @@ def launch_modeler_with_discovery(
         timeout=300,
         server_log_level=0)
     """
+    for unused_var in ["server_logs_folder", "logs_folder"]:
+        if unused_var in kwargs:
+            LOG.warning(
+                f"The '{unused_var}' parameter is not used in 'launch_modeler_with_discovery'. "
+                "Please remove it from the arguments."
+            )
+
     return prepare_and_start_backend(
         BackendType.DISCOVERY,
         product_version=product_version,
@@ -719,15 +726,12 @@ def launch_modeler_with_discovery(
         hidden=hidden,
         server_log_level=server_log_level,
         client_log_level=client_log_level,
-        server_logs_folder=server_logs_folder,
         client_log_file=client_log_file,
         log_level=log_level,
-        logs_folder=logs_folder,
     )
 
 
 @deprecated_argument(arg="log_level", alternative="server_log_level")
-@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
 def launch_modeler_with_spaceclaim(
     product_version: int = None,
     host: str = "localhost",
@@ -738,10 +742,8 @@ def launch_modeler_with_spaceclaim(
     hidden: bool = False,
     server_log_level: int = 2,
     client_log_level: int = logging.INFO,
-    server_logs_folder: str = None,
     client_log_file: str = None,
     log_level: int = None,  # DEPRECATED
-    logs_folder: str = None,  # DEPRECATED
     **kwargs: dict | None,
 ):
     """Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -790,16 +792,11 @@ def launch_modeler_with_spaceclaim(
     client_log_level : int, optional
         Logging level to apply to the client. By default, INFO level is used.
         Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
-    server_logs_folder : str, optional
-        Sets the backend's logs folder path. If nothing is defined,
-        the backend will use its default path.
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
     log_level : int, optional
         DEPRECATED. Use ``server_log_level`` instead.
-    logs_folder : str, optional
-        DEPRECATED. Use ``server_logs_folder`` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -837,6 +834,13 @@ def launch_modeler_with_spaceclaim(
         timeout=300,
         server_log_level=0)
     """
+    for unused_var in ["server_logs_folder", "logs_folder"]:
+        if unused_var in kwargs:
+            LOG.warning(
+                f"The '{unused_var}' parameter is not used in 'launch_modeler_with_spaceclaim'. "
+                "Please remove it from the arguments."
+            )
+
     return prepare_and_start_backend(
         BackendType.SPACECLAIM,
         product_version=product_version,
@@ -849,10 +853,8 @@ def launch_modeler_with_spaceclaim(
         hidden=hidden,
         server_log_level=server_log_level,
         client_log_level=client_log_level,
-        server_logs_folder=server_logs_folder,
         client_log_file=client_log_file,
         log_level=log_level,
-        logs_folder=logs_folder,
     )
 
 

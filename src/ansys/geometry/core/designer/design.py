@@ -25,6 +25,11 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
+from beartype import beartype as check_input_types
+from google.protobuf.empty_pb2 import Empty
+import numpy as np
+from pint import Quantity, UndefinedUnitError
+
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
 from ansys.api.dbu.v0.designs_pb2 import InsertRequest, NewRequest, SaveAsRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
@@ -43,11 +48,6 @@ from ansys.api.geometry.v0.models_pb2 import (
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
-from beartype import beartype as check_input_types
-from google.protobuf.empty_pb2 import Empty
-import numpy as np
-from pint import Quantity, UndefinedUnitError
-
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
     grpc_frame_to_frame,
@@ -311,7 +311,7 @@ class Design(Component):
         """
         return (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
 
-    def export_to_scdocx(self, location: Path | str | None = None) -> str:
+    def export_to_scdocx(self, location: Path | str | None = None) -> Path:
         """Export the design to an scdocx file.
 
         Parameters
@@ -322,7 +322,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Define the file location
@@ -334,7 +334,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_parasolid_text(self, location: Path | str | None = None) -> str:
+    def export_to_parasolid_text(self, location: Path | str | None = None) -> Path:
         """Export the design to a Parasolid text file.
 
         Parameters
@@ -345,7 +345,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Determine the extension based on the backend type
@@ -360,7 +360,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_parasolid_bin(self, location: Path | str | None = None) -> str:
+    def export_to_parasolid_bin(self, location: Path | str | None = None) -> Path:
         """Export the design to a Parasolid binary file.
 
         Parameters
@@ -371,7 +371,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Determine the extension based on the backend type
@@ -386,7 +386,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_fmd(self, location: Path | str | None = None) -> str:
+    def export_to_fmd(self, location: Path | str | None = None) -> Path:
         """Export the design to an FMD file.
 
         Parameters
@@ -397,7 +397,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Define the file location
@@ -409,7 +409,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_step(self, location: Path | str | None = None) -> str:
+    def export_to_step(self, location: Path | str | None = None) -> Path:
         """Export the design to a STEP file.
 
         Parameters
@@ -420,7 +420,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Define the file location
@@ -432,7 +432,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_iges(self, location: Path | str = None) -> str:
+    def export_to_iges(self, location: Path | str = None) -> Path:
         """Export the design to an IGES file.
 
         Parameters
@@ -443,7 +443,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Define the file location
@@ -455,7 +455,7 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_pmdb(self, location: Path | str | None = None) -> str:
+    def export_to_pmdb(self, location: Path | str | None = None) -> Path:
         """Export the design to a PMDB file.
 
         Parameters
@@ -466,7 +466,7 @@ class Design(Component):
 
         Returns
         -------
-        str
+        ~pathlib.Path
             The path to the saved file.
         """
         # Define the file location

@@ -40,7 +40,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     Tessellation,
     TrimmedCurve as GRPCTrimmedCurve,
 )
-
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
