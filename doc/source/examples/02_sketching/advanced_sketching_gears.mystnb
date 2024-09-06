@@ -132,6 +132,6 @@ design.plot()
 
 ## Close the modeler
 
-```{code-cell} ipython3	
+```{code-cell} ipython3
 modeler.close()
 ```
