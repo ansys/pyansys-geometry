@@ -132,6 +132,7 @@ class Design(Component):
         self._beam_profiles = {}
         self._design_id = ""
         self._is_active = False
+        self._is_closed = False
         self._modeler = modeler
 
         # Check whether we want to process an existing design or create a new one.
@@ -169,6 +170,16 @@ class Design(Component):
     def is_active(self) -> bool:
         """Whether the design is currently active."""
         return self._is_active
+
+    @property
+    def is_closed(self) -> bool:
+        """Whether the design is closed."""
+        return self._is_closed
+
+    def close(self) -> None:
+        """Close the design."""
+        self._design_stub.Close(EntityIdentifier(id=self._design_id))
+        self._is_closed = True
 
     @protect_grpc
     def _activate(self, called_after_design_creation: bool = False) -> None:
