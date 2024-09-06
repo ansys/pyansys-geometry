@@ -70,7 +70,7 @@ def ensure_design_is_active(method):
         # Verify whether the Design has been closed on the backend
         if design.is_closed:
             raise GeometryRuntimeError(
-                "The design has been closed on the backend." "Cannot perform any operations on it."
+                "The design has been closed on the backend. Cannot perform any operations on it."
             )
 
         # Activate the design if it is not active
