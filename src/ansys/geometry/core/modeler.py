@@ -228,11 +228,7 @@ class Modeler:
     def close(self) -> None:
         """Access the client's close method."""
         # Close all designs
-        for _, design in self._designs.items():
-            try:
-                design.close()
-            except Exception as e:
-                LOG.warning(f"Could not close design: {e}")
+        [design.close() for design in self._designs.values()]
                 
         # Close the client
         self.client.close()
