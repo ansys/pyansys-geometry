@@ -14,7 +14,7 @@ kernelspec:
 
 A user can visualize its model object tree easily by using the ``tree_print()`` method
 available on the ``Design`` and ``Component`` objects. This method prints the tree
-structure of the model object in the terminal.
+structure of the model in the terminal.
 
 ## Perform required imports
 

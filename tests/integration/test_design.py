@@ -2660,5 +2660,6 @@ def test_component_tree_print(modeler: Modeler):
         "-------",
         "(comp) Nested_1_Component_1",
         "|---(comp) Nested_1_Nested_1_Component_1",
-        ":   |---(body) nested_1_nested_1_comp_1_circle",
+        "    |---(body) nested_1_nested_1_comp_1_circle",
     ]
+    assert check_list_equality(lines, ref) is True
