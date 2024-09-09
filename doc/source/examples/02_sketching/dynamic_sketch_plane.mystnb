@@ -35,7 +35,7 @@ Perform the required imports.
 ```{code-cell} ipython3
 from pint import Quantity
 
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
@@ -73,17 +73,25 @@ sketch = Sketch()
 sketch.plot()
 ```
 
+## Instantiate the modeler
+
+Launch a modeling service and connect to it.
+
+```{code-cell} ipython3
+modeler = launch_modeler()
+print(modeler)
+```
+
 ## Extrude multiple bodies
 
-Establish a server connection and use the single sketch profile to extrude the board profile
-at multiple Z-offsets. Create a named selection from the resulting list of layer bodies.
+Use the single sketch profile to extrude the board profile at multiple Z-offsets.
+Create a named selection from the resulting list of layer bodies.
 
 Note that translating the sketch plane prior to extrusion is more effective (10 server calls)
 than creating a design body on the supporting server and then translating the body on the
 server (20 server calls).
 
 ```{code-cell} ipython3
-modeler = Modeler()
 design = modeler.create_design("ExtrudedBoardProfile")
 
 layers = []
@@ -94,4 +102,12 @@ for layer_index in range(10):
 
 board_named_selection = design.create_named_selection("FullBoard", bodies=layers)
 design.plot()
+```
+
+## Close the modeler
+
+Close the modeler to release the resources.
+
+```{code-cell} ipython3
+modeler.close()
 ```

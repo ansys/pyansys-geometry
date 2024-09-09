@@ -25,14 +25,15 @@ the basic elements that define a sketch.
 ```{code-cell} ipython3
 from pint import Quantity
 
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.math import Plane, Point2D, Point3D
 from ansys.geometry.core.misc import UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.plotting import GeometryPlotter
 
 # Start a modeler session
-modeler = Modeler()
+modeler = launch_modeler()
+print(modeler)
 
 # Define the origin point of the plane
 origin = Point3D([1, 1, 1])
@@ -127,4 +128,10 @@ dummy_gear = design.extrude_sketch("SpurGear", sketch, Distance(200, UNITS.mm))
 
 # Plot design
 design.plot()
+```
+
+## Close the modeler
+
+```{code-cell} ipython3
+modeler.close()
 ```
