@@ -1,4 +1,4 @@
-:thispagetitle: PyAnsys Geometry
+.. title:: PyAnsys Geometry
 
 .. figure:: _static/logo/logo.png
     :align: center
