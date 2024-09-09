@@ -928,7 +928,7 @@ def _launch_pim_instance(
 
     # Platform is used mostly for Ansys Lab purposes. If product_version is defined, use it.
     # Higher priority is given to product_version.
-    if product_platform:
+    if product_platform: # pragma: no cover
         if product_version:
             LOG.warning(
                 "The 'product_platform' parameter is not used when 'product_version' is defined."
