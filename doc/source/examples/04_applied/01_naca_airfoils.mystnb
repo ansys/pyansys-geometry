@@ -194,6 +194,12 @@ file = design.export_to_fmd()
 print(f"Design saved to {file}")
 ```
 
+### Close the modeler
+
+```{code-cell} ipython3
+modeler.close()
+```
+
 ## Example of a cambered airfoil: NACA 6412
 
 This code creates a NACA 6412 airfoil, which is cambered. This airfoil has a maximum
@@ -251,4 +257,10 @@ In this case, the design is saved as an SCDOCX file.
 # Save the design
 file = design.export_to_scdocx()
 print(f"Design saved to {file}")
+```
+
+### Close the modeler
+
+```{code-cell} ipython3
+modeler.close()
 ```
