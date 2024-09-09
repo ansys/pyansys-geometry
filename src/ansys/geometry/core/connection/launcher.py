@@ -930,7 +930,9 @@ def _launch_pim_instance(
     # Higher priority is given to product_version.
     if product_platform:
         if product_version:
-            LOG.warning("The 'product_platform' parameter is not used when 'product_version' is defined.")
+            LOG.warning(
+                "The 'product_platform' parameter is not used when 'product_version' is defined."
+            )
         else:
             product_version = product_platform
 
