@@ -40,35 +40,22 @@ from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.sketch import Sketch
 ```
 
-## Load modeling service
+## Launch modeling service
 
-Load the modeling service. While the following code uses a Docker image to interact
-with the modeling service, you can use any suitable method mentioned in the
-preceding examples.
+Launch a modeling service session.
 
 ```{code-cell} ipython3
+from ansys.geometry.core import launch_modeler
 
-list_images = []
-list_containers = []
-available_images = LocalDockerInstance.docker_client().images.list(
-    name=GEOMETRY_SERVICE_DOCKER_IMAGE
-)
-is_image_available_cont = None
-for image in available_images:
-    for geom_image, geom_cont in zip(list_images, list_containers):
-        if geom_image in image.tags:
-            is_image_available = True
-            is_image_available_cont = geom_cont
-            break
-
-docker_instance = LocalDockerInstance(
-    connect_to_existing_service=True,
-    restart_if_existing_service=True,
-    image=is_image_available_cont,
-)
-
-modeler = Modeler(docker_instance=docker_instance)
+# Start a modeler session
+modeler = launch_modeler()
+print(modeler)
 ```
+
+You can also launch your own services and connect to them. For information on
+connecting to an existing service, see the
+[Modeler API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/modeler/Modeler.html)
+documentation.
 
 +++
 
@@ -119,6 +106,7 @@ plot_list.append(sketch)
 ```
 
 ## Create a PyVista cylinder
+
 Use PyVista to create a cylinder.
 
 ```{code-cell} ipython3
@@ -128,6 +116,7 @@ plot_list.append(cyl)
 ```
 
 ## Create a PyVista multiblock
+
 Use PyVista to create a multiblock with a sphere and a cube.
 
 ```{code-cell} ipython3
@@ -245,6 +234,7 @@ print(picked_list)
 ```
 
 ## Close session
+
 When you finish interacting with your modeling service, you should close the active
 server session. This frees resources wherever the service is running.
 
