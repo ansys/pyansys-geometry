@@ -221,7 +221,7 @@ def _launch_with_automatic_detection(**kwargs: dict | None) -> "Modeler":
 
 
 def launch_remote_modeler(
-    platform: str | None = None,
+    platform: str = "windows",
     version: str | None = None,
     client_log_level: int = logging.INFO,
     client_log_file: str | None = None,
