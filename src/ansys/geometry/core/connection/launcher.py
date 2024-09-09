@@ -237,7 +237,7 @@ def launch_remote_modeler(
 
     Parameters
     ----------
-    platform : str
+    platform : str, default: None
         **Specific for Ansys Lab**. The platform option for the Geometry service.
         The default is ``"windows"``.
         This parameter is used to specify the operating system on which the
