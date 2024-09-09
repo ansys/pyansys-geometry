@@ -290,7 +290,7 @@ class GrpcClient:
         deleted. Furthermore, if a local Docker instance
         of the Geometry service was started, it is stopped.
         """
-        if self._closed is True:
+        if self._closed is True: # pragma: no cover
             self.log.debug("Connection is already closed. Ignoring request.")
             return
 
