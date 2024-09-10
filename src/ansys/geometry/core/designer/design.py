@@ -189,7 +189,7 @@ class Design(Component):
         except Exception as err:
             self._grpc_client.log.warning(f"Design {self.name} could not be closed. Error: {err}.")
             self._grpc_client.log.warning("Ignoring response and assuming the design is closed.")
-            
+
         # Consider the design closed (even if the close request failed)
         self._is_closed = True
 
