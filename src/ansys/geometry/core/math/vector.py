@@ -331,7 +331,7 @@ class Vector2D(np.ndarray):
         if _NUMPY_MAJOR_VERSION >= 2:
             # See https://github.com/numpy/numpy/issues/26620 and more specifically
             # https://github.com/numpy/numpy/issues/26620#issuecomment-2150748569
-            return (self[..., 0] * v[..., 1] - self[..., 1] * v[..., 0])
+            return self[..., 0] * v[..., 1] - self[..., 1] * v[..., 0]
         else:
             return np.cross(self, v)
 
