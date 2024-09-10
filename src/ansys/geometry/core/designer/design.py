@@ -178,11 +178,19 @@ class Design(Component):
 
     def close(self) -> None:
         """Close the design."""
+        # Check if the design is already closed
+        if self._is_closed:
+            self._grpc_client.log.warning(f"Design {self.name} is already closed.")
+            return
+
+        # Attempt to close the design
         try:
             self._design_stub.Close(EntityIdentifier(id=self._design_id))
         except Exception as err:
             self._grpc_client.log.warning(f"Design {self.name} could not be closed. Error: {err}.")
             self._grpc_client.log.warning("Ignoring response and assuming the design is closed.")
+            
+        # Consider the design closed (even if the close request failed)
         self._is_closed = True
 
     @protect_grpc
