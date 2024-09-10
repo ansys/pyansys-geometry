@@ -1,4 +1,4 @@
-.. image:: https://github.com/ansys/pyansys-geometry/blob/main/doc/source/_static/logo/logo.png
+.. image:: https://raw.githubusercontent.com/ansys/pyansys-geometry/blob/main/doc/source/_static/logo/logo.png
    :target: https://github.com/ansys/pyansys-geometry
    :alt: PyAnsys Geometry
 
