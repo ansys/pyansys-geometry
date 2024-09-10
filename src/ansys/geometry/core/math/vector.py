@@ -326,7 +326,7 @@ class Vector2D(np.ndarray):
         return all([comp == 0 for comp in self])
 
     @check_input_types
-    def cross(self, v: "Vector2D"):
+    def cross(self, v: "Vector2D") -> np.ndarray:
         """Return the cross product of ``Vector2D`` objects."""
         if _NUMPY_MAJOR_VERSION >= 2:
             # See https://github.com/numpy/numpy/issues/26620 and more specifically
@@ -425,7 +425,7 @@ class Vector2D(np.ndarray):
         """Subtraction operation overload for 2D vectors."""
         return np.subtract(self, other).view(Vector2D)
 
-    def __mod__(self, other: "Vector2D"):
+    def __mod__(self, other: "Vector2D") -> np.ndarray:
         """Overload % operator with cross product."""
         return self.cross(other)
 
