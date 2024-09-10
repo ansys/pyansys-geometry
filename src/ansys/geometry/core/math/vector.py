@@ -332,7 +332,9 @@ class Vector2D(np.ndarray):
             # See https://github.com/numpy/numpy/issues/26620 and more specifically
             # https://github.com/numpy/numpy/issues/26620#issuecomment-2150748569
             return self[..., 0] * v[..., 1] - self[..., 1] * v[..., 0]
-        else:
+        else: # pragma: no cover
+            # Coverage is measured with the latest version of numpy
+            # so this code is not covered
             return np.cross(self, v)
 
     @check_input_types
