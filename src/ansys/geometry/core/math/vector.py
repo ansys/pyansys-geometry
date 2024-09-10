@@ -35,6 +35,9 @@ from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.typing import Real, RealSequence
 
+_NUMPY_MAJOR_VERSION = int(np.__version__[0])
+"""Major version of the numpy library."""
+
 
 class Vector3D(np.ndarray):
     """Provides for managing and creating a 3D vector.
@@ -190,8 +193,11 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def cross(self, v: "Vector3D") -> "Vector3D":
-        """Get the cross product of ``Vector3D`` objects."""
-        return np.cross(self, v).view(Vector3D)
+        """Return the cross product of ``Vector3D`` objects."""
+        if _NUMPY_MAJOR_VERSION >= 2:
+            return (self[..., 0] * v[..., 1] - self[..., 1] * v[..., 0]).view(Vector3D)
+        else:
+            return np.cross(self, v).view(Vector3D)
 
     @check_input_types
     def __eq__(self, other: "Vector3D") -> bool:
@@ -323,9 +329,14 @@ class Vector2D(np.ndarray):
         return all([comp == 0 for comp in self])
 
     @check_input_types
-    def cross(self, v: "Vector2D"):
+    def cross(self, v: "Vector2D") -> "Vector2D":
         """Return the cross product of ``Vector2D`` objects."""
-        return np.cross(self, v)
+        if _NUMPY_MAJOR_VERSION >= 2:
+            # See https://github.com/numpy/numpy/issues/26620 and more specifically
+            # https://github.com/numpy/numpy/issues/26620#issuecomment-2150748569
+            return (self[..., 0] * v[..., 1] - self[..., 1] * v[..., 0]).view(Vector2D)
+        else:
+            return np.cross(self, v).view(Vector2D)
 
     @check_input_types
     def is_perpendicular_to(self, other_vector: "Vector2D") -> bool:
