@@ -194,10 +194,7 @@ class Vector3D(np.ndarray):
     @check_input_types
     def cross(self, v: "Vector3D") -> "Vector3D":
         """Return the cross product of ``Vector3D`` objects."""
-        if _NUMPY_MAJOR_VERSION >= 2:
-            return (self[..., 0] * v[..., 1] - self[..., 1] * v[..., 0]).view(Vector3D)
-        else:
-            return np.cross(self, v).view(Vector3D)
+        return np.cross(self, v).view(Vector3D)
 
     @check_input_types
     def __eq__(self, other: "Vector3D") -> bool:
@@ -329,14 +326,14 @@ class Vector2D(np.ndarray):
         return all([comp == 0 for comp in self])
 
     @check_input_types
-    def cross(self, v: "Vector2D") -> "Vector2D":
+    def cross(self, v: "Vector2D"):
         """Return the cross product of ``Vector2D`` objects."""
         if _NUMPY_MAJOR_VERSION >= 2:
             # See https://github.com/numpy/numpy/issues/26620 and more specifically
             # https://github.com/numpy/numpy/issues/26620#issuecomment-2150748569
-            return (self[..., 0] * v[..., 1] - self[..., 1] * v[..., 0]).view(Vector2D)
+            return (self[..., 0] * v[..., 1] - self[..., 1] * v[..., 0])
         else:
-            return np.cross(self, v).view(Vector2D)
+            return np.cross(self, v)
 
     @check_input_types
     def is_perpendicular_to(self, other_vector: "Vector2D") -> bool:
@@ -426,7 +423,7 @@ class Vector2D(np.ndarray):
         """Subtraction operation overload for 2D vectors."""
         return np.subtract(self, other).view(Vector2D)
 
-    def __mod__(self, other: "Vector2D") -> "Vector2D":
+    def __mod__(self, other: "Vector2D"):
         """Overload % operator with cross product."""
         return self.cross(other)
 
