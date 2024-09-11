@@ -35,6 +35,9 @@ from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.typing import Real, RealSequence
 
+_NUMPY_MAJOR_VERSION = int(np.__version__[0])
+"""Major version of the numpy library."""
+
 
 class Vector3D(np.ndarray):
     """Provides for managing and creating a 3D vector.
@@ -190,7 +193,7 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def cross(self, v: "Vector3D") -> "Vector3D":
-        """Get the cross product of ``Vector3D`` objects."""
+        """Return the cross product of ``Vector3D`` objects."""
         return np.cross(self, v).view(Vector3D)
 
     @check_input_types
@@ -323,9 +326,16 @@ class Vector2D(np.ndarray):
         return all([comp == 0 for comp in self])
 
     @check_input_types
-    def cross(self, v: "Vector2D"):
+    def cross(self, v: "Vector2D") -> Real:
         """Return the cross product of ``Vector2D`` objects."""
-        return np.cross(self, v)
+        if _NUMPY_MAJOR_VERSION >= 2:
+            # See https://github.com/numpy/numpy/issues/26620 and more specifically
+            # https://github.com/numpy/numpy/issues/26620#issuecomment-2150748569
+            return self[..., 0] * v[..., 1] - self[..., 1] * v[..., 0]
+        else:  # pragma: no cover
+            # Coverage is measured with the latest version of numpy
+            # so this code is not covered
+            return np.cross(self, v)
 
     @check_input_types
     def is_perpendicular_to(self, other_vector: "Vector2D") -> bool:
@@ -415,7 +425,7 @@ class Vector2D(np.ndarray):
         """Subtraction operation overload for 2D vectors."""
         return np.subtract(self, other).view(Vector2D)
 
-    def __mod__(self, other: "Vector2D") -> "Vector2D":
+    def __mod__(self, other: "Vector2D") -> Real:
         """Overload % operator with cross product."""
         return self.cross(other)
 
