@@ -9,6 +9,45 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.7.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.2>`_ - 2024-09-11
+=====================================================================================
+
+Added
+^^^^^
+
+- allow for platform input when using Ansys Lab `#1416 <https://github.com/ansys/pyansys-geometry/pull/1416>`_
+- ensure GrpcClient class closure upon deletion `#1417 <https://github.com/ansys/pyansys-geometry/pull/1417>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump sphinx-autodoc-typehints from 2.3.0 to 2.4.0 in the docs-deps group `#1411 <https://github.com/ansys/pyansys-geometry/pull/1411>`_
+- bump numpy from 2.1.0 to 2.1.1 `#1412 <https://github.com/ansys/pyansys-geometry/pull/1412>`_
+- bump ansys-tools-visualization-interface from 0.4.1 to 0.4.3 `#1413 <https://github.com/ansys/pyansys-geometry/pull/1413>`_
+
+
+Documentation
+^^^^^^^^^^^^^
+
+- remove title from landing page `#1408 <https://github.com/ansys/pyansys-geometry/pull/1408>`_
+- adapt examples to use launch_modeler instead of Modeler obj connection `#1410 <https://github.com/ansys/pyansys-geometry/pull/1410>`_
+
+
+Fixed
+^^^^^
+
+- handle properly ``np.cross()`` - 2d ops deprecated in Numpy 2.X `#1419 <https://github.com/ansys/pyansys-geometry/pull/1419>`_
+- change logo link so that it renders properly on PyPI `#1420 <https://github.com/ansys/pyansys-geometry/pull/1420>`_
+- wrong path on logo image `#1421 <https://github.com/ansys/pyansys-geometry/pull/1421>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- update CHANGELOG for v0.7.1 `#1407 <https://github.com/ansys/pyansys-geometry/pull/1407>`_
+- pre-commit automatic update `#1418 <https://github.com/ansys/pyansys-geometry/pull/1418>`_
+
 `0.7.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.1>`_ - 2024-09-06
 =====================================================================================
 
