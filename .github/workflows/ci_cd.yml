@@ -493,6 +493,10 @@ jobs:
           $env:PREVIOUS_PATCH_VERSION_NUMBER=$env:VERSION.substring($env:VERSION.Length - 1)
           $env:PREVIOUS_PATCH_VERSION_NUMBER=[int]$env:PREVIOUS_PATCH_VERSION_NUMBER - 1
           $env:PREVIOUS_VERSION=$env:PREVIOUS_VERSION + $env:PREVIOUS_PATCH_VERSION_NUMBER
+          # Fetch the LFS files from the previous version
+          git lfs fetch origin --include="$env:PREVIOUS_VERSION/*"
+          git lfs checkout $env:PREVIOUS_VERSION
+          # Copy the binaries from the previous version
           cp ./$env:PREVIOUS_VERSION/windows-binaries.zip windows-binaries.zip
           cp ./$env:PREVIOUS_VERSION/linux-binaries.zip linux-binaries.zip
 
