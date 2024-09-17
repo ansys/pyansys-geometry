@@ -169,6 +169,10 @@ html_theme_options = {
     "ansys_sphinx_theme_autoapi": {
         "project": project,
     },
+    "cheatsheet": {
+        "file": "cheatsheet/cheat_sheet.qmd",
+        "title": "PyAnsys Geometry cheat sheet",
+    },
 }
 # Sphinx extensions
 extensions = [
@@ -440,3 +444,17 @@ def setup(app: sphinx.application.Sphinx):
         # Run at the end of the build process
         logger.info("Connecting build-finished hook for converting notebooks to scripts...")
         app.connect("build-finished", convert_notebooks_to_scripts)
+
+
+def replace_version_in_qmd(file_path, version):
+    """Update the version in cheatsheet."""
+    with open(file_path, "r") as file:
+        content = file.read()
+
+    content = content.replace("version: main", f"version: {version}")
+
+    with open(file_path, "w") as file:
+        file.write(content)
+
+
+replace_version_in_qmd(Path(__file__).parent / "cheatsheet" / "cheat_sheet.qmd", version)

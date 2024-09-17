@@ -1,0 +1,44 @@
+---
+title: PyAnsys Geometry cheat sheet
+format: cheat_sheet-pdf
+version: main
+footer: PyAnsys Geometry
+footerlinks:
+  - urls: 'https://geometry.docs.pyansys.com/version/stable/'
+    text: Documentation
+  - urls: 'https://geometry.docs.pyansys.com/version/stable/getting_started/index.html'
+    text: Getting started
+  - urls: 'https://geometry.docs.pyansys.com/version/stable/examples.html'
+    text: Examples
+  - urls: 'https://geometry.docs.pyansys.com/version/stable/api/index.html'
+    text: API reference
+  - urls: 'https://geometry.docs.pyansys.com/version/stable/getting_started/faq.html'
+    text: FAQ
+  - urls: 'https://github.com/ansys/pyansys-geometry/discussions'
+    text: Discussions
+  - urls: 'https://github.com/ansys/pyansys-geometry/issues'
+    text: 'Issues'
+execute:
+    output: false
+
+latex-clean: true
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .qmd
+      format_name: quarto
+      format_version: '1.0'
+      jupytext_version: 1.16.1
+  kernelspec:
+    display_name: Python 3 (ipykernel)
+    language: python
+    name: python3
+---
+
+# Verify your installation
+
+## Check your PyAnsys Geometry version
+```{python}
+from ansys.geometry.core import __version__
+print(f"PyAnsys Geometry version: {__version__}")
+```
