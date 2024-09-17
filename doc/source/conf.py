@@ -430,6 +430,7 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
         else:
             logger.info(f"Converted {count} notebooks to scripts")
 
+
 def replace_version_in_qmd(file_path, search, replace):
     """Update the version in cheatsheet."""
     with open(file_path, "r") as file:
@@ -441,17 +442,20 @@ def replace_version_in_qmd(file_path, search, replace):
     with open(file_path, "w") as file:
         file.write(content)
 
+
 def update_qmd_mod(app: sphinx.application.Sphinx):
     """Update the version in cheatsheet."""
     cheathseet_path = Path(__file__).parent / "cheatsheet" / "cheat_sheet.qmd"
     logger.info(f"Changing {cheathseet_path}")
     replace_version_in_qmd(cheathseet_path, "main", version)
 
+
 def revert_qmd_mod(app: sphinx.application.Sphinx, exception):
     """Revert the version in cheatsheet that was modified."""
     cheathseet_path = Path(__file__).parent / "cheatsheet" / "cheat_sheet.qmd"
     logger.info(f"Reverting {cheathseet_path}")
     replace_version_in_qmd(cheathseet_path, version, "main")
+
 
 def setup(app: sphinx.application.Sphinx):
     """Run different hook functions during the documentation build.
@@ -462,14 +466,14 @@ def setup(app: sphinx.application.Sphinx):
         Sphinx instance containing all the configuration for the documentation build.
     """
     logger.info("Configuring Sphinx hooks...")
-    
-    # At the beginning of the build process - udpate the version in cheatsheet
+
+    # At the beginning of the build process - update the version in cheatsheet
     app.connect("builder-inited", update_qmd_mod)
-    
+
     if BUILD_EXAMPLES:
         # Run at the end of the build process
         logger.info("Connecting build-finished hook for converting notebooks to scripts...")
         app.connect("build-finished", convert_notebooks_to_scripts)
-    
+
     # Reverting the version in cheatsheet
     app.connect("build-finished", revert_qmd_mod)
