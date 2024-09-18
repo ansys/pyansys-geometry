@@ -33,7 +33,7 @@ Perform the required imports.
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.math import Plane, Point3D, Point2D, UnitVector3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
@@ -71,7 +71,8 @@ resulting list of bodies. In only three server calls, the design extrudes
 the four segments with the desired thickness.
 
 ```{code-cell} ipython3
-modeler = Modeler()
+modeler = launch_modeler()
+
 design = modeler.create_design("ExtrudedPlate")
 
 body = design.extrude_sketch(f"PlateLayer", sketch, Quantity(2, UNITS.m))
@@ -125,4 +126,12 @@ a sketch around the global coordinate system. For more information, see the
 ```{code-cell} ipython3
 longer_body.translate(UnitVector3D([1, 0, 0]), Quantity(4, UNITS.m))
 design.plot()
+```
+
+## Close the modeler
+
+Close the modeler to free up resources and release the connection.
+
+```{code-cell} ipython3
+modeler.close()
 ```

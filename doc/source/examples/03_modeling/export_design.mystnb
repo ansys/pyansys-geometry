@@ -23,12 +23,12 @@ The code creates a simple design for demonstration purposes. The design consists
 a set of rectangular pads with a circular hole in the center.
 
 ```{code-cell} ipython3
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.math import UNITVECTOR3D_X, UNITVECTOR3D_Y, Point2D
 from ansys.geometry.core.sketch import Sketch
 
-# Instantiate the modeler - this connects to the service
-modeler = Modeler()
+# Instantiate the modeler
+modeler = launch_modeler()
 
 # Create a design
 design = modeler.create_design("ExportDesignExample")
@@ -161,4 +161,13 @@ file_location = design.export_to_pmdb(download_dir)
 # Print the file location
 print(f"Design exported to {file_location}")
 print(f"Does the file exist? {Path(file_location).exists()}")
+```
+
+### Close the modeler
+
+Close the modeler after exporting the design.
+
+```{code-cell} ipython3
+# Close the modeler
+modeler.close()
 ```

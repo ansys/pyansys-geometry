@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Module providing a wrapped abstraction of the gRPC stubs."""
 
+import atexit
 import logging
 from pathlib import Path
 import time
@@ -198,6 +199,10 @@ class GrpcClient:
             LOG.warning("The backend version is only available after 24.1 version.")
             self._backend_version = semver.Version(24, 1, 0)
 
+        # Register the close method to be called at exit - irrespectively of
+        # the user calling it or not...
+        atexit.register(self.close)
+
     @property
     def backend_type(self) -> BackendType:
         """Backend type.
@@ -285,6 +290,10 @@ class GrpcClient:
         deleted. Furthermore, if a local Docker instance
         of the Geometry service was started, it is stopped.
         """
+        if self._closed is True:  # pragma: no cover
+            self.log.debug("Connection is already closed. Ignoring request.")
+            return
+
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover
         elif self._docker_instance:
