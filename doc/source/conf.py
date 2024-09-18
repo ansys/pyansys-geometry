@@ -431,15 +431,15 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
             logger.info(f"Converted {count} notebooks to scripts")
 
 
-def replace_version_in_qmd(file_path, search, replace):
+def replace_version_in_qmd(file_path: Path, search, replace):
     """Update the version in cheatsheet."""
-    with open(file_path, "r") as file:
+    with file_path.open("r") as file:
         content = file.read()
 
     logger.info(f"replace_version_in_qmd: replacing {search} with {replace}")
     content = content.replace(f"version: {search}", f"version: {replace}")
 
-    with open(file_path, "w") as file:
+    with file_path.open("w") as file:
         file.write(content)
 
 
