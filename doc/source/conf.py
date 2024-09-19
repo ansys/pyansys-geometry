@@ -160,12 +160,12 @@ html_theme_options = {
             "icon": "fa fa-file-pdf fa-fw",
         },
     ],
-    "use_meilisearch": {
-        "api_key": os.getenv("MEILISEARCH_PUBLIC_API_KEY", ""),
-        "index_uids": {
-            f"pyansys-geometry-v{get_version_match(__version__).replace('.', '-')}": "PyAnsys-Geometry",  # noqa: E501
-        },
-    },
+    # "use_meilisearch": {
+    #     "api_key": os.getenv("MEILISEARCH_PUBLIC_API_KEY", ""),
+    #     "index_uids": {
+    #         f"pyansys-geometry-v{get_version_match(__version__).replace('.', '-')}": "PyAnsys-Geometry",  # noqa: E501
+    #     },
+    # },
     "ansys_sphinx_theme_autoapi": {
         "project": project,
     },
@@ -173,6 +173,9 @@ html_theme_options = {
         "file": "cheatsheet/cheat_sheet.qmd",
         "title": "PyAnsys Geometry cheat sheet",
     },
+    "static_search": {
+        "threshold": 5,
+    }
 }
 # Sphinx extensions
 extensions = [
