@@ -175,7 +175,7 @@ html_theme_options = {
     },
     "static_search": {
         "threshold": 5,
-    }
+    },
 }
 # Sphinx extensions
 extensions = [
