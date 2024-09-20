@@ -170,11 +170,11 @@ html_theme_options = {
         "project": project,
     },
     "cheatsheet": {
-        "file": "cheatsheet/cheat_sheet.qmd",
+        "file": "cheat_sheet.qmd",
         "title": "PyAnsys Geometry cheat sheet",
     },
     "static_search": {
-        "threshold": 5,
+        "threshold": .5,
     },
 }
 # Sphinx extensions
@@ -448,14 +448,14 @@ def replace_version_in_qmd(file_path: Path, search, replace):
 
 def update_qmd_mod(app: sphinx.application.Sphinx):
     """Update the version in cheatsheet."""
-    cheathseet_path = Path(__file__).parent / "cheatsheet" / "cheat_sheet.qmd"
+    cheathseet_path = Path(__file__).parent / "cheat_sheet.qmd"
     logger.info(f"Changing {cheathseet_path}")
     replace_version_in_qmd(cheathseet_path, "main", version)
 
 
 def revert_qmd_mod(app: sphinx.application.Sphinx, exception):
     """Revert the version in cheatsheet that was modified."""
-    cheathseet_path = Path(__file__).parent / "cheatsheet" / "cheat_sheet.qmd"
+    cheathseet_path = Path(__file__).parent / "cheat_sheet.qmd"
     logger.info(f"Reverting {cheathseet_path}")
     replace_version_in_qmd(cheathseet_path, version, "main")
 
