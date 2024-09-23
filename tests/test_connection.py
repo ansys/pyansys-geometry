@@ -26,6 +26,7 @@ import numpy as np
 from pint import Quantity
 import pytest
 
+from ansys.geometry.core.connection.backend import ApiVersions
 from ansys.geometry.core.connection.client import GrpcClient, wait_until_healthy
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
@@ -313,3 +314,49 @@ def test_frame_message_conversion():
     assert grpc_frame_message.dir_y.x == pytest.approx(0.7071067811865475, rel=1e-7, abs=1e-8)
     assert grpc_frame_message.dir_y.y == pytest.approx(-0.7071067811865475, rel=1e-7, abs=1e-8)
     assert grpc_frame_message.dir_y.z == 0.0
+
+
+def test_api_versions_reader():
+    """Checks that the API versions are read correctly for various kinds of input."""
+    # Read from a string
+    assert ApiVersions.parse_input("21") == ApiVersions.V_21
+    assert ApiVersions.parse_input("22") == ApiVersions.V_22
+    assert ApiVersions.parse_input("231") == ApiVersions.V_231
+    assert ApiVersions.parse_input("232") == ApiVersions.V_232
+
+    # Read from an integer
+    assert ApiVersions.parse_input(21) == ApiVersions.V_21
+    assert ApiVersions.parse_input(22) == ApiVersions.V_22
+    assert ApiVersions.parse_input(231) == ApiVersions.V_231
+    assert ApiVersions.parse_input(232) == ApiVersions.V_232
+
+    # Read from an enum
+    assert ApiVersions.parse_input(ApiVersions.V_21) == ApiVersions.V_21
+    assert ApiVersions.parse_input(ApiVersions.V_22) == ApiVersions.V_22
+    assert ApiVersions.parse_input(ApiVersions.V_231) == ApiVersions.V_231
+    assert ApiVersions.parse_input(ApiVersions.V_232) == ApiVersions.V_232
+    assert ApiVersions.parse_input(ApiVersions.LATEST) == ApiVersions.LATEST
+
+    # Read from an invalid input
+    with pytest.raises(
+        ValueError, match="API version must be an integer, string or an ApiVersions enum."
+    ):  # Invalid argument
+        ApiVersions.parse_input(None)
+
+    with pytest.raises(
+        ValueError, match="API version must be an integer, string or an ApiVersions enum."
+    ):  # Invalid string type
+        ApiVersions.parse_input("a")
+
+    with pytest.raises(
+        ValueError, match="API version must be an integer, string or an ApiVersions enum."
+    ):  # Invalid float type
+        ApiVersions.parse_input(1.0)
+
+    with pytest.raises(
+        ValueError, match="API version must be an integer, string or an ApiVersions enum."
+    ):  # Invalid input type
+        ApiVersions.parse_input([231])
+
+    with pytest.raises(ValueError, match="0 is not a valid ApiVersions"):  # Invalid version number
+        ApiVersions.parse_input(0)

@@ -21,13 +21,12 @@
 # SOFTWARE.
 """Module providing a wrapped abstraction of the gRPC stubs."""
 
+import atexit
 import logging
 from pathlib import Path
 import time
 from typing import Optional
 
-from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
-from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from beartype import beartype as check_input_types
 from google.protobuf.empty_pb2 import Empty
 import grpc
@@ -35,6 +34,8 @@ from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
 import semver
 
+from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
+from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
@@ -198,6 +199,10 @@ class GrpcClient:
             LOG.warning("The backend version is only available after 24.1 version.")
             self._backend_version = semver.Version(24, 1, 0)
 
+        # Register the close method to be called at exit - irrespectively of
+        # the user calling it or not...
+        atexit.register(self.close)
+
     @property
     def backend_type(self) -> BackendType:
         """Backend type.
@@ -285,6 +290,10 @@ class GrpcClient:
         deleted. Furthermore, if a local Docker instance
         of the Geometry service was started, it is stopped.
         """
+        if self._closed is True:  # pragma: no cover
+            self.log.debug("Connection is already closed. Ignoring request.")
+            return
+
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover
         elif self._docker_instance:

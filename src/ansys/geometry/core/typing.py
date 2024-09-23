@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Provides typing of values for PyAnsys Geometry."""
 
-from typing import Sequence
+from collections.abc import Sequence
 
 import numpy as np
 

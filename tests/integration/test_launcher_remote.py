@@ -24,8 +24,6 @@
 import os
 from unittest.mock import create_autospec
 
-import ansys.platform.instancemanagement as pypim
-import ansys.tools.path.path as atpp
 from grpc import insecure_channel
 import pytest
 
@@ -33,6 +31,8 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.launcher import launch_modeler
+import ansys.platform.instancemanagement as pypim
+import ansys.tools.path.path as atpp
 
 
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):
@@ -80,7 +80,9 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
     # Assert: PyAnsys Geometry went through the PyPIM workflow
     assert mock_is_configured.called
     assert mock_connect.called
-    mock_client.create_instance.assert_called_with(product_name="geometry", product_version=None)
+    mock_client.create_instance.assert_called_with(
+        product_name="geometry", product_version="windows"
+    )
     assert mock_instance.wait_for_ready.called
     mock_instance.build_grpc_channel.assert_called_with(
         options=[

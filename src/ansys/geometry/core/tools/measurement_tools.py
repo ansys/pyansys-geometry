@@ -28,7 +28,6 @@ from ansys.api.geometry.v0.measuretools_pb2 import (
     MinDistanceBetweenObjectsResponse,
 )
 from ansys.api.geometry.v0.measuretools_pb2_grpc import MeasureToolsStub
-
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.checks import min_backend_version

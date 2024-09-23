@@ -23,6 +23,7 @@
 
 import logging
 import os
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
@@ -220,6 +221,7 @@ def _launch_with_automatic_detection(**kwargs: dict | None) -> "Modeler":
 
 
 def launch_remote_modeler(
+    platform: str = "windows",
     version: str | None = None,
     client_log_level: int = logging.INFO,
     client_log_file: str | None = None,
@@ -235,6 +237,15 @@ def launch_remote_modeler(
 
     Parameters
     ----------
+    platform : str, default: None
+        **Specific for Ansys Lab**. The platform option for the Geometry service.
+        The default is ``"windows"``.
+        This parameter is used to specify the operating system on which the
+        Geometry service will run. The possible values are:
+
+        * ``"windows"``: The Geometry service runs on a Windows machine.
+        * ``"linux"``: The Geometry service runs on a Linux machine.
+
     version : str, default: None
         Version of the Geometry service to run in the three-digit format.
         For example, "232". If you do not specify the version, the server
@@ -256,6 +267,7 @@ def launch_remote_modeler(
     return _launch_pim_instance(
         is_pim_light=False,
         product_name="geometry",
+        product_platform=platform,
         product_version=version,
         backend_type=None,
         client_log_level=client_log_level,
@@ -576,6 +588,13 @@ def launch_modeler_with_geometry_service(
             "Please remove it from the arguments."
         )
 
+    # If we are in a Windows environment, we are going to write down the server
+    # logs in the %PUBLIC%/Documents/Ansys/GeometryService folder.
+    if os.name == "nt" and server_logs_folder is None:
+        # Writing to the "Public" folder by default - no write permissions specifically required.
+        server_logs_folder = Path(os.getenv("PUBLIC"), "Documents", "Ansys", "GeometryService")
+        LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
+
     return prepare_and_start_backend(
         BackendType.WINDOWS_SERVICE,
         product_version=product_version,
@@ -594,7 +613,6 @@ def launch_modeler_with_geometry_service(
 
 
 @deprecated_argument(arg="log_level", alternative="server_log_level")
-@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
 def launch_modeler_with_discovery(
     product_version: int = None,
     host: str = "localhost",
@@ -605,10 +623,8 @@ def launch_modeler_with_discovery(
     hidden: bool = False,
     server_log_level: int = 2,
     client_log_level: int = logging.INFO,
-    server_logs_folder: str = None,
     client_log_file: str = None,
     log_level: int = None,  # DEPRECATED
-    logs_folder: str = None,  # DEPRECATED
     **kwargs: dict | None,
 ):
     """Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -660,16 +676,11 @@ def launch_modeler_with_discovery(
     client_log_level : int, optional
         Logging level to apply to the client. By default, INFO level is used.
         Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
-    server_logs_folder : str, optional
-        Sets the backend's logs folder path. If nothing is defined,
-        the backend will use its default path.
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
     log_level : int, optional
         DEPRECATED. Use ``server_log_level`` instead.
-    logs_folder : str, optional
-        DEPRECATED. Use ``server_logs_folder`` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -707,6 +718,13 @@ def launch_modeler_with_discovery(
         timeout=300,
         server_log_level=0)
     """
+    for unused_var in ["server_logs_folder", "logs_folder"]:
+        if unused_var in kwargs:
+            LOG.warning(
+                f"The '{unused_var}' parameter is not used in 'launch_modeler_with_discovery'. "
+                "Please remove it from the arguments."
+            )
+
     return prepare_and_start_backend(
         BackendType.DISCOVERY,
         product_version=product_version,
@@ -719,15 +737,12 @@ def launch_modeler_with_discovery(
         hidden=hidden,
         server_log_level=server_log_level,
         client_log_level=client_log_level,
-        server_logs_folder=server_logs_folder,
         client_log_file=client_log_file,
         log_level=log_level,
-        logs_folder=logs_folder,
     )
 
 
 @deprecated_argument(arg="log_level", alternative="server_log_level")
-@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
 def launch_modeler_with_spaceclaim(
     product_version: int = None,
     host: str = "localhost",
@@ -738,10 +753,8 @@ def launch_modeler_with_spaceclaim(
     hidden: bool = False,
     server_log_level: int = 2,
     client_log_level: int = logging.INFO,
-    server_logs_folder: str = None,
     client_log_file: str = None,
     log_level: int = None,  # DEPRECATED
-    logs_folder: str = None,  # DEPRECATED
     **kwargs: dict | None,
 ):
     """Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -790,16 +803,11 @@ def launch_modeler_with_spaceclaim(
     client_log_level : int, optional
         Logging level to apply to the client. By default, INFO level is used.
         Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
-    server_logs_folder : str, optional
-        Sets the backend's logs folder path. If nothing is defined,
-        the backend will use its default path.
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
     log_level : int, optional
         DEPRECATED. Use ``server_log_level`` instead.
-    logs_folder : str, optional
-        DEPRECATED. Use ``server_logs_folder`` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -837,6 +845,13 @@ def launch_modeler_with_spaceclaim(
         timeout=300,
         server_log_level=0)
     """
+    for unused_var in ["server_logs_folder", "logs_folder"]:
+        if unused_var in kwargs:
+            LOG.warning(
+                f"The '{unused_var}' parameter is not used in 'launch_modeler_with_spaceclaim'. "
+                "Please remove it from the arguments."
+            )
+
     return prepare_and_start_backend(
         BackendType.SPACECLAIM,
         product_version=product_version,
@@ -849,16 +864,15 @@ def launch_modeler_with_spaceclaim(
         hidden=hidden,
         server_log_level=server_log_level,
         client_log_level=client_log_level,
-        server_logs_folder=server_logs_folder,
         client_log_file=client_log_file,
         log_level=log_level,
-        logs_folder=logs_folder,
     )
 
 
 def _launch_pim_instance(
     is_pim_light: bool,
     product_name: str,
+    product_platform: str | None = None,
     product_version: str | None = None,
     backend_type: BackendType | None = None,
     client_log_level: int = logging.INFO,
@@ -879,6 +893,14 @@ def _launch_pim_instance(
         running on a local machine.
     product_name : str
         Name of the service to run.
+    product_platform : str, default: None
+        Platform on which the service will run. **Specific for Ansys Lab**.
+        This parameter is used to specify the operating system on which the
+        Geometry service will run. The possible values are:
+
+        * ``"windows"``: The Geometry service runs on a Windows machine.
+        * ``"linux"``: The Geometry service runs on a Linux machine.
+
     product_version : str, default: None
         Version of the service to run.
     backend_type : BackendType, default: None
@@ -903,6 +925,16 @@ def _launch_pim_instance(
         raise ModuleNotFoundError(
             "The package 'ansys-platform-instancemanagement' is required to use this function."
         )
+
+    # Platform is used mostly for Ansys Lab purposes. If product_version is defined, use it.
+    # Higher priority is given to product_version.
+    if product_platform:  # pragma: no cover
+        if product_version:
+            LOG.warning(
+                "The 'product_platform' parameter is not used when 'product_version' is defined."
+            )
+        else:
+            product_version = product_platform
 
     # If PIM Light is being used and PyPIM configuration is not defined... use defaults.
     if is_pim_light and not os.environ.get("ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG", None):

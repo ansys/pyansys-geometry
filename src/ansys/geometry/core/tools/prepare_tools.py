@@ -23,6 +23,9 @@
 
 from typing import TYPE_CHECKING
 
+from beartype import beartype as check_input_types
+from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
+
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
 from ansys.api.geometry.v0.preparetools_pb2 import (
@@ -31,9 +34,6 @@ from ansys.api.geometry.v0.preparetools_pb2 import (
     ShareTopologyRequest,
 )
 from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
-from beartype import beartype as check_input_types
-from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
-
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
