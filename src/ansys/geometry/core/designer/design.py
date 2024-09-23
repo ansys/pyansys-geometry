@@ -79,7 +79,7 @@ from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.modeler import Modeler
-from ansys.geometry.core.parameters import driving_dimensions
+from ansys.geometry.core.parameters.driving_dimensions import DrivingDimension as DrivingDimension
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -118,7 +118,7 @@ class Design(Component):
     _materials: list[Material]
     _named_selections: dict[str, NamedSelection]
     _beam_profiles: dict[str, BeamProfile]
-    _driving_dimensions: list[driving_dimensions.DrivingDimension]
+    _driving_dimensions: list[DrivingDimension]
 
     @protect_grpc
     @check_input_types
@@ -132,7 +132,7 @@ class Design(Component):
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
         self._parts_stub = PartsStub(self._grpc_client.channel)
-        self._paremeters_stub = DrivingDimensionsStub(self._grpc_client.channel)
+        self._parameters_stub = DrivingDimensionsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -175,7 +175,7 @@ class Design(Component):
         return list(self._beam_profiles.values())
 
     @property
-    def driving_dimensions(self) -> list[driving_dimensions.DrivingDimension]:
+    def driving_dimensions(self) -> list[DrivingDimension]:
         """List of driving dimensions available for the design."""
         return self.get_all_driving_dimensions()
 
@@ -680,25 +680,19 @@ class Design(Component):
         List[DrivingDimension]
             List of driving dimensions for the design.
         """
-        response = self._paremeters_stub.GetAll(GetAllRequest())
-        print(response)
+        response = self._parameters_stub.GetAll(GetAllRequest())
         return [
-            driving_dimensions.DrivingDimension._from_proto(dimension)
-            for dimension in response.driving_dimensions
+            DrivingDimension._from_proto(dimension) for dimension in response.driving_dimensions
         ]
 
     @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
-    def set_driving_dimensions(
-        self, driving_dimension: driving_dimensions.DrivingDimension
-    ) -> bool:
-        """Set driving dimensions for a body.
+    def set_driving_dimensions(self, dimension: DrivingDimension) -> bool:
+        """Update a driving dimension of the design.
 
         Parameters
         ----------
-        body : Body
-            Body to set driving dimensions.
         dimensions : List[DrivingDimension]
             List of driving dimensions to set.
 
@@ -707,9 +701,9 @@ class Design(Component):
         bool
             True if driving dimensions were set successfully.
         """
-        request = UpdateRequest(driving_dimension=driving_dimension._to_proto())
-        response = self._driving_dimensions_stub.Update(request)
-        return response.success
+        request = UpdateRequest(driving_dimension=DrivingDimension._to_proto(dimension))
+        dimension = self._parameters_stub.Update(request)
+        return dimension
 
     @protect_grpc
     @check_input_types

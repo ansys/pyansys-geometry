@@ -24,17 +24,10 @@
 from enum import Enum, unique
 
 from ansys.api.dbu.v0.dbumodels_pb2 import DrivingDimension as DrivingDimensionProto
-from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateRequest
-from ansys.api.dbu.v0.drivingdimensions_pb2_grpc import DrivingDimensionsStub
-from beartype import beartype as check_input_types
-
-from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.checks import min_backend_version
 
 
 @unique
-class DrivingDimensionType(Enum):
+class ParameterType(Enum):
     """Provides values for driving dimension types supported."""
 
     DIMENSIONTYPE_UNKNOWN = 0
@@ -50,11 +43,11 @@ class DrivingDimensionType(Enum):
     DIMENSIONTYPE_UNITLESS = 10
 
 
-class DrivingDimension:
-    """Represents a driving dimension."""
+class Parameter:
+    """Represents a parameter."""
 
-    def __init__(self, id, name, dimension_type: DrivingDimensionType, dimension_value):
-        """Initialize Driving Dimension class."""
+    def __init__(self, id, name, dimension_type: ParameterType, dimension_value):
+        """Initialize Parameter class."""
         self.id = id
         self._name = name
         self.dimension_type = dimension_type
@@ -66,7 +59,7 @@ class DrivingDimension:
         return cls(
             id=proto.id,
             name=proto.name,
-            dimension_type=DrivingDimensionType(proto.dimension_type),
+            dimension_type=ParameterType(proto.dimension_type),
             dimension_value=proto.dimension_value,
         )
 
@@ -98,35 +91,3 @@ class DrivingDimension:
             dimension_type=self.dimension_type.value,
             dimension_value=self.dimension_value,
         )
-
-
-class DrivingDimensions:
-    """Represents Driving Dimensions."""
-
-    def __init__(self, grpc_client: GrpcClient):
-        """Initialize Driving Dimensions class."""
-        self._grpc_client = grpc_client
-        self._driving_dimensions_stub = DrivingDimensionsStub(self._grpc_client.channel)
-        self.id = None
-
-    @protect_grpc
-    @check_input_types
-    @min_backend_version(25, 1, 0)
-    def set_driving_dimensions(self, driving_dimension: DrivingDimension) -> bool:
-        """Set driving dimensions for a body.
-
-        Parameters
-        ----------
-        body : Body
-            Body to set driving dimensions.
-        dimensions : List[DrivingDimension]
-            List of driving dimensions to set.
-
-        Returns
-        -------
-        bool
-            True if driving dimensions were set successfully.
-        """
-        request = UpdateRequest(driving_dimension=driving_dimension._to_proto())
-        response = self._driving_dimensions_stub.Update(request)
-        return response.success
