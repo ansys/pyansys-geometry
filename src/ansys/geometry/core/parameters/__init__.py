@@ -21,4 +21,4 @@
 # SOFTWARE.
 """PyAnsys Geometry parameters subpackage."""
 
-from ansys.geometry.core.parameters.driving_dimensions import DrivingDimension
+from ansys.geometry.core.parameters.parameters import Parameter, ParameterType

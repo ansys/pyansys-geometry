@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides get and set methods for driving dimensions."""
+"""Provides get and set methods for parameters."""
 
 from enum import Enum, unique
 
@@ -28,7 +28,7 @@ from ansys.api.dbu.v0.dbumodels_pb2 import DrivingDimension as DrivingDimensionP
 
 @unique
 class ParameterType(Enum):
-    """Provides values for driving dimension types supported."""
+    """Provides values for parameter types supported."""
 
     DIMENSIONTYPE_UNKNOWN = 0
     DIMENSIONTYPE_LINEAR = 1
@@ -65,22 +65,22 @@ class Parameter:
 
     @property
     def name(self):
-        """Set the name of the driving dimension."""
+        """Set the name of the parameter."""
         return self._name
 
     @name.setter
     def name(self, value):
-        """Set the name of the driving dimension."""
+        """Set the name of the parameter."""
         self._name = value
 
     @property
     def dimension_value(self):
-        """Get the value of the driving dimension."""
+        """Get the value of the parameter."""
         return self._dimension_value
 
     @dimension_value.setter
     def dimension_value(self, value):
-        """Set the value of the driving dimension."""
+        """Set the value of the parameter."""
         self._dimension_value = value
 
     def _to_proto(self):
