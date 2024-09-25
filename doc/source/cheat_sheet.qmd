@@ -18,8 +18,8 @@ footerlinks:
     text: Discussions
   - urls: 'https://github.com/ansys/pyansys-geometry/issues'
     text: 'Issues'
-execute:
-    output: false
+# execute:
+#     output: false
 
 latex-clean: true
 jupyter:
