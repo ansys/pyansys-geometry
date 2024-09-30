@@ -322,7 +322,7 @@ def prepare_and_start_backend(
             env_copy[BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY] = BACKEND_SPACECLAIM_HIDDEN_ENVVAR_VALUE
         else:
             LOG.warning(
-                f"Environment variable {BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY} already exists. "
+                f"Environment variable '{BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY}' already exists. "
                 f"Using value '{env_copy[BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY]}'."
             )
 
