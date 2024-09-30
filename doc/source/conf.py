@@ -249,7 +249,12 @@ source_suffix = {
 master_doc = "index"
 
 # Configuration for Sphinx autoapi
-suppress_warnings = ["autoapi.python_import_resolution", "design.grid", "config.cache"]
+suppress_warnings = [
+    "autoapi.python_import_resolution",
+    "design.grid",
+    "config.cache",
+    "design.fa-build",
+]
 
 # Examples gallery customization
 nbsphinx_execute = "always"
@@ -315,7 +320,6 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # change the preamble of latex with customized title page
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
-sd_fontawesome_latex = True
 
 linkcheck_exclude_documents = ["index", "getting_started/local/index"]
 linkcheck_ignore = [
