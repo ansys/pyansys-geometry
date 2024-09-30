@@ -311,21 +311,6 @@ jobs:
             Write-Error "PDF has not been generated properly"
           }
 
-      - name: Verify the docs have been generated properly
-        run: |
-          # Check if the HTML files have been generated
-          if (Test-Path -Path "doc\_build\html\index.html") {
-            Write-Host "Docs have been generated successfully"
-          } else {
-            Write-Error "Docs have not been generated properly"
-          }
-          # Check if the PDF files have been generated
-          if (Test-Path -Path "doc\_build\latex\ansys-geometry-core.pdf") {
-            Write-Host "PDF has been generated successfully"
-          } else {
-            Write-Error "PDF has not been generated properly"
-          }
-
       - name: Stop the Geometry service
         if: always()
         run: |
