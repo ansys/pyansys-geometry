@@ -256,7 +256,12 @@ source_suffix = {
 master_doc = "index"
 
 # Configuration for Sphinx autoapi
-suppress_warnings = ["autoapi.python_import_resolution", "design.grid", "config.cache"]
+suppress_warnings = [
+    "autoapi.python_import_resolution",
+    "design.grid",
+    "config.cache",
+    "design.fa-build",
+]
 
 # Examples gallery customization
 nbsphinx_execute = "always"
