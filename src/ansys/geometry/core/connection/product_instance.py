@@ -323,7 +323,7 @@ def prepare_and_start_backend(
         else:
             LOG.warning(
                 f"Environment variable {BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY} already exists. "
-                f"Using value {env_copy[BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY]}."
+                f"Using value '{env_copy[BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY]}'."
             )
 
     elif backend_type == BackendType.WINDOWS_SERVICE:
