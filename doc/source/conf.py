@@ -160,14 +160,12 @@ html_theme_options = {
             "icon": "fa fa-file-pdf fa-fw",
         },
     ],
-    "use_meilisearch": {
-        "api_key": os.getenv("MEILISEARCH_PUBLIC_API_KEY", ""),
-        "index_uids": {
-            f"pyansys-geometry-v{get_version_match(__version__).replace('.', '-')}": "PyAnsys-Geometry",  # noqa: E501
-        },
-    },
     "ansys_sphinx_theme_autoapi": {
         "project": project,
+    },
+    "static_search": {
+        "threshold": 0.5,
+        "min_chars_for_search": 2,
     },
 }
 # Sphinx extensions
