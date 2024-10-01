@@ -166,6 +166,7 @@ html_theme_options = {
     "static_search": {
         "threshold": 0.5,
         "min_chars_for_search": 2,
+        "ignoreLocation": True,
     },
 }
 # Sphinx extensions
