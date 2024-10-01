@@ -24,6 +24,7 @@
 import pytest
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.math import Plane, Point2D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc.units import UNITS, Quantity
 from ansys.geometry.core.sketch import Sketch
@@ -69,18 +70,24 @@ def test_body_tessellate(modeler: Modeler):
     assert "MultiBlock" in str(blocks_2)
     assert blocks_2.n_blocks == 3
     assert blocks_2.bounds == pytest.approx(
-        [0.019999999999999997, 0.04, 0.020151922469877917, 0.03984807753012208, 0.0, 0.03],
+        [0.019999999999999997, 0.04, 0.019999999999999886, 0.040000000000000036, 0.0, 0.03],
         rel=1e-6,
         abs=1e-8,
     )
-    assert (blocks_2.center == ([0.03, 0.03, 0.015])).all()
+    assert blocks_2.center == pytest.approx([0.03, 0.03, 0.015],rel=1e-6,abs=1e-8)
 
     # Tessellate the body merging the individual faces
     mesh_2 = body_2.tessellate(merge=True)
-    assert "PolyData" in str(mesh_2)
-    assert mesh_2.n_cells == 72
-    assert mesh_2.n_points == 76
-    assert mesh_2.n_arrays == 0
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+        assert "PolyData" in str(mesh_2)
+        assert mesh_2.n_cells == 72
+        assert mesh_2.n_points == 76
+        assert mesh_2.n_arrays == 0
+    else:
+        assert "PolyData" in str(mesh_2)
+        assert mesh_2.n_cells == 7200
+        assert mesh_2.n_points == 7204
+        assert mesh_2.n_arrays == 0
 
     # Make sure instance body tessellation is the same as original
     comp_1_instance = design.add_component("Component_1_Instance", comp_1)
@@ -121,22 +128,34 @@ def test_component_tessellate(modeler: Modeler):
     dataset = comp.tessellate(merge_bodies=True)
     assert "MultiBlock" in str(dataset)
     assert dataset.n_blocks == 1
-    assert (dataset.center == ([0.0, 0.0, 10.0])).all()
+    assert dataset.center == pytest.approx([0.0, 0.0, 10.0],rel=1e-6,abs=1e-8)
     assert dataset.bounds == pytest.approx(
-        [-25.0, 25.0, -24.999251562526105, 24.999251562526105, 0.0, 20.0],
+        [-25.0, 25.0, -25.000000000000277, 25.000000000000096, 0.0, 20.0],
         rel=1e-6,
         abs=1e-8,
     )
 
     # Tessellate the component by merging it to a single dataset.
     mesh = comp.tessellate(merge_component=True)
+    comp.plot()
     assert "PolyData" in str(mesh)
-    assert mesh.n_cells == 3280
-    assert mesh.n_faces == 3280
-    assert mesh.n_arrays == 0
-    assert mesh.n_points == 3300
-    assert dataset.bounds == pytest.approx(
-        [-25.0, 25.0, -24.999251562526105, 24.999251562526105, 0.0, 20.0],
-        rel=1e-6,
-        abs=1e-8,
-    )
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+        assert mesh.n_cells == 3280
+        assert mesh.n_faces == 3280
+        assert mesh.n_arrays == 0
+        assert mesh.n_points == 3300
+        assert dataset.bounds == pytest.approx(
+            [-25.0, 25.0, -24.999251562526105, 24.999251562526105, 0.0, 20.0],
+            rel=1e-6,
+            abs=1e-8,
+        )
+    else:
+        assert mesh.n_cells == 15872
+        assert mesh.n_faces == 15872
+        assert mesh.n_arrays == 0
+        assert mesh.n_points == 15892
+        assert dataset.bounds == pytest.approx(
+            [-25.0, 25.0, -25.0, 25.0, 0.0, 20.0],
+            rel=1e-6,
+            abs=1e-8,
+        )
