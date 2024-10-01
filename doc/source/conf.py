@@ -174,7 +174,7 @@ html_theme_options = {
         "title": "PyAnsys Geometry cheat sheet",
     },
     "static_search": {
-       "threshold": 0.5,
+        "threshold": 0.5,
     },
 }
 # Sphinx extensions
