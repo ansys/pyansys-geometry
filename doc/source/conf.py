@@ -164,8 +164,9 @@ html_theme_options = {
         "project": project,
     },
     "cheatsheet": {
-        "file": "cheat_sheet.qmd",
+        "file": "cheatsheet/cheat_sheet.qmd",
         "title": "PyAnsys Geometry cheat sheet",
+        "version": __version__,
     },
     "static_search": {
         "threshold": 0.5,
@@ -434,32 +435,6 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
             logger.info(f"Converted {count} notebooks to scripts")
 
 
-def replace_version_in_qmd(file_path: Path, search, replace):
-    """Update the version in cheatsheet."""
-    with file_path.open("r") as file:
-        content = file.read()
-
-    logger.info(f"replace_version_in_qmd: replacing {search} with {replace}")
-    content = content.replace(f"version: {search}", f"version: {replace}")
-
-    with file_path.open("w") as file:
-        file.write(content)
-
-
-def update_qmd_mod(app: sphinx.application.Sphinx):
-    """Update the version in cheatsheet."""
-    cheathseet_path = Path(__file__).parent / "cheat_sheet.qmd"
-    logger.info(f"Changing {cheathseet_path}")
-    replace_version_in_qmd(cheathseet_path, "main", version)
-
-
-def revert_qmd_mod(app: sphinx.application.Sphinx, exception):
-    """Revert the version in cheatsheet that was modified."""
-    cheathseet_path = Path(__file__).parent / "cheat_sheet.qmd"
-    logger.info(f"Reverting {cheathseet_path}")
-    replace_version_in_qmd(cheathseet_path, version, "main")
-
-
 def setup(app: sphinx.application.Sphinx):
     """Run different hook functions during the documentation build.
 
@@ -470,13 +445,7 @@ def setup(app: sphinx.application.Sphinx):
     """
     logger.info("Configuring Sphinx hooks...")
 
-    # At the beginning of the build process - update the version in cheatsheet
-    app.connect("builder-inited", update_qmd_mod)
-
     if BUILD_EXAMPLES:
         # Run at the end of the build process
         logger.info("Connecting build-finished hook for converting notebooks to scripts...")
         app.connect("build-finished", convert_notebooks_to_scripts)
-
-    # Reverting the version in cheatsheet
-    app.connect("build-finished", revert_qmd_mod)

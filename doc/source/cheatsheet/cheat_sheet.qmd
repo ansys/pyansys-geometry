@@ -1,7 +1,8 @@
 ---
 title: PyAnsys Geometry cheat sheet
 format: cheat_sheet-pdf
-version: main
+params:
+  version: main
 footer: PyAnsys Geometry
 footerlinks:
   - urls: 'https://geometry.docs.pyansys.com/version/stable/'
