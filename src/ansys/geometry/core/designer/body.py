@@ -768,13 +768,7 @@ class MasterBody(IBody):
             # Assigning default value first
             self._color = Color.DEFAULT.value
 
-            # TODO: Remove this check when the Linux service backend supports color setting
-            # https://github.com/ansys/pyansys-geometry/issues/1383
-            if self._grpc_client.backend_type == BackendType.LINUX_SERVICE:
-                self._grpc_client.log.warning(
-                    "Colors are not supported in the Linux backend. Default value assigned..."
-                )
-            elif self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
+            if self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
                 # Server does not support color retrieval before version 25.1.0
                 self._grpc_client.log.warning(
                     "Server does not support color retrieval. Default value assigned..."
@@ -989,15 +983,6 @@ class MasterBody(IBody):
     def set_color(self, color: str | tuple[float, float, float]) -> None:
         """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
-
-        # TODO: Remove this check when the Linux service backend supports color setting
-        # https://github.com/ansys/pyansys-geometry/issues/1383
-        if self._grpc_client.backend_type == BackendType.LINUX_SERVICE:
-            self._grpc_client.log.warning(
-                "Setting color is not supported in the Linux service backend."
-            )
-            self._grpc_client.log.warning("Ignoring request...")
-            return
 
         try:
             if isinstance(color, tuple):
