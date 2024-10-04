@@ -82,7 +82,7 @@ def test_body_tessellate(modeler: Modeler):
             abs=1e-8,
         )
 
-    assert blocks_2.center == pytest.approx([0.03, 0.03, 0.015],rel=1e-6,abs=1e-8)
+    assert blocks_2.center == pytest.approx([0.03, 0.03, 0.015], rel=1e-6, abs=1e-8)
 
     # Tessellate the body merging the individual faces
     mesh_2 = body_2.tessellate(merge=True)
@@ -136,7 +136,7 @@ def test_component_tessellate(modeler: Modeler):
     dataset = comp.tessellate(merge_bodies=True)
     assert "MultiBlock" in str(dataset)
     assert dataset.n_blocks == 1
-    assert dataset.center == pytest.approx([0.0, 0.0, 10.0],rel=1e-6,abs=1e-8)
+    assert dataset.center == pytest.approx([0.0, 0.0, 10.0], rel=1e-6, abs=1e-8)
     if modeler.client.backend_type != BackendType.LINUX_SERVICE:
         assert dataset.bounds == pytest.approx(
             [-25.0, 25.0, -24.999251562526105, 24.999251562526105, 0.0, 20.0],
