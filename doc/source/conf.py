@@ -160,14 +160,13 @@ html_theme_options = {
             "icon": "fa fa-file-pdf fa-fw",
         },
     ],
-    "use_meilisearch": {
-        "api_key": os.getenv("MEILISEARCH_PUBLIC_API_KEY", ""),
-        "index_uids": {
-            f"pyansys-geometry-v{get_version_match(__version__).replace('.', '-')}": "PyAnsys-Geometry",  # noqa: E501
-        },
-    },
     "ansys_sphinx_theme_autoapi": {
         "project": project,
+    },
+    "static_search": {
+        "threshold": 0.5,
+        "min_chars_for_search": 2,
+        "ignoreLocation": True,
     },
 }
 # Sphinx extensions
@@ -249,7 +248,12 @@ source_suffix = {
 master_doc = "index"
 
 # Configuration for Sphinx autoapi
-suppress_warnings = ["autoapi.python_import_resolution", "design.grid", "config.cache"]
+suppress_warnings = [
+    "autoapi.python_import_resolution",
+    "design.grid",
+    "config.cache",
+    "design.fa-build",
+]
 
 # Examples gallery customization
 nbsphinx_execute = "always"
@@ -316,7 +320,6 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # change the preamble of latex with customized title page
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
-sd_fontawesome_latex = True
 
 linkcheck_exclude_documents = ["index", "getting_started/local/index"]
 linkcheck_ignore = [
