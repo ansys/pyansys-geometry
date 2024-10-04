@@ -43,3 +43,35 @@ jupyter:
 from ansys.geometry.core import __version__
 print(f"PyAnsys Geometry version: {__version__}")
 ```
+
+# Modeling
+
+## Launch a modeling session
+
+```{python}
+from ansys.geometry.core import launch_modeler
+modeler = launch_modeler()
+print(modeler)
+```
+
+By default, it will detect which modeling service
+is available on your system and launch it. If you
+have multiple modeling services installed, you can
+specify which one to use by passing the `mode` argument.
+
+```{python}
+#| eval: false
+modeler = launch_modeler(mode='spaceclaim')
+modeler = launch_modeler(mode='discovery')
+modeler = launch_modeler(mode='geometry_service')
+```
+
+## Connect to an existing modeler
+
+```{python}
+#| output: false
+from ansys.geometry.core import Modeler
+
+modeler = Modeler()
+print(modeler)
+```
