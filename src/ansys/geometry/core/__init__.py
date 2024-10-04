@@ -50,10 +50,9 @@ from ansys.geometry.core.modeler import Modeler
 
 # Global config constants
 # ------------------------------------------------------------------------------
-
-USE_TRAME: bool = False
-"""Global constant for checking whether to use `trame <https://kitware.github.io/trame/>`_
-for visualization."""
+USE_SERVICE_COLORS: bool = False
+"""Global constant for checking whether to use service colors for plotting
+purposes. If set to False, the default colors will be used (speed gain)."""
 
 DISABLE_MULTIPLE_DESIGN_CHECK: bool = False
 """Global constant for disabling the ``ensure_design_is_active`` check.
