@@ -46,6 +46,7 @@ These examples demonstrate service-based modeling operations.
     examples/03_modeling/revolving.mystnb
     examples/03_modeling/export_design.mystnb
     examples/03_modeling/design_tree.mystnb
+    examples/03_modeling/service_colors.mystnb
 
 Applied examples
 ----------------

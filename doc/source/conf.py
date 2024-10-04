@@ -160,14 +160,13 @@ html_theme_options = {
             "icon": "fa fa-file-pdf fa-fw",
         },
     ],
-    "use_meilisearch": {
-        "api_key": os.getenv("MEILISEARCH_PUBLIC_API_KEY", ""),
-        "index_uids": {
-            f"pyansys-geometry-v{get_version_match(__version__).replace('.', '-')}": "PyAnsys-Geometry",  # noqa: E501
-        },
-    },
     "ansys_sphinx_theme_autoapi": {
         "project": project,
+    },
+    "static_search": {
+        "threshold": 0.5,
+        "min_chars_for_search": 2,
+        "ignoreLocation": True,
     },
 }
 # Sphinx extensions
@@ -280,6 +279,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/revolving": "_static/thumbnails/revolving.png",
     "examples/03_modeling/export_design": "_static/thumbnails/export_design.png",
     "examples/03_modeling/design_tree": "_static/thumbnails/design_tree.png",
+    "examples/03_modeling/service_colors": "_static/thumbnails/service_colors.png",
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
 }
