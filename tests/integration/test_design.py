@@ -2038,7 +2038,6 @@ def test_set_fill_style(modeler: Modeler):
 
 def test_set_body_color(modeler: Modeler):
     """Test the getting and setting of body color."""
-    skip_if_linux(modeler, test_set_body_color.__name__, "set_color")  # Skip test on Linux
 
     design = modeler.create_design("RVE2")
     unit = DEFAULT_UNITS.LENGTH

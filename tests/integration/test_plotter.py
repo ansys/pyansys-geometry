@@ -664,6 +664,7 @@ def test_visualization_polydata():
     assert box.visualization_polydata.n_open_edges == 4
 
 
+@skip_no_xserver
 def test_plot_design_point(modeler: Modeler, verify_image_cache):
     """Test the plotting of DesignPoint objects."""
     design = modeler.create_design("Multiplot")
@@ -690,7 +691,8 @@ def test_plot_design_point(modeler: Modeler, verify_image_cache):
     )
 
 
-def test_plot_revolve_sketch_normal(modeler: Modeler):
+@skip_no_xserver
+def test_plot_revolve_sketch_normal(modeler: Modeler, verify_image_cache):
     """Test plotting of a sketch revolved around an axis."""
     # Initialize the donut sketch design
     design = modeler.create_design("quarter-donut")
@@ -725,7 +727,8 @@ def test_plot_revolve_sketch_normal(modeler: Modeler):
     )
 
 
-def test_plot_revolve_sketch_negative_angle(modeler: Modeler):
+@skip_no_xserver
+def test_plot_revolve_sketch_negative_angle(modeler: Modeler, verify_image_cache):
     """Test plotting of a sketch revolved around an axis with a negative
     angle.
     """
@@ -762,7 +765,10 @@ def test_plot_revolve_sketch_negative_angle(modeler: Modeler):
     )
 
 
-def test_plot_server_colors_on_design(modeler: Modeler, use_service_colors: None):
+@skip_no_xserver
+def test_plot_server_colors_on_design(
+    modeler: Modeler, use_service_colors: None, verify_image_cache
+):
     """Test plotting of a design with server colors."""
     # The following design is created:
     #
@@ -797,7 +803,10 @@ def test_plot_server_colors_on_design(modeler: Modeler, use_service_colors: None
     design.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_server_colors_on_design.png"))
 
 
-def test_plot_server_color_on_single_body(modeler: Modeler, use_service_colors: None):
+@skip_no_xserver
+def test_plot_server_color_on_single_body(
+    modeler: Modeler, use_service_colors: None, verify_image_cache
+):
     """Test plotting of a single body with server colors."""
     design = modeler.create_design("ServerColorsBody")
 
@@ -810,7 +819,10 @@ def test_plot_server_color_on_single_body(modeler: Modeler, use_service_colors: 
     body.plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_server_color_on_single_body.png"))
 
 
-def test_plot_server_colors_on_design_using_input(modeler: Modeler, use_service_colors: None):
+@skip_no_xserver
+def test_plot_server_colors_on_design_using_input(
+    modeler: Modeler, use_service_colors: None, verify_image_cache
+):
     """Test plotting of a design with server colors (via argument)."""
     # The following design is created:
     #
@@ -848,7 +860,8 @@ def test_plot_server_colors_on_design_using_input(modeler: Modeler, use_service_
     )
 
 
-def test_plot_server_color_on_single_body_using_input(modeler: Modeler):
+@skip_no_xserver
+def test_plot_server_color_on_single_body_using_input(modeler: Modeler, verify_image_cache):
     """Test plotting of a single body with server colors (via argument)."""
     design = modeler.create_design("ServerColorsBodyUsingInput")
 
