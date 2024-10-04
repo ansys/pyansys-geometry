@@ -132,7 +132,7 @@ def modeler(docker_instance):
     yield modeler
 
     # Cleanup on exit
-    modeler.close()
+    modeler.exit()
     assert modeler.client.is_closed
 
 
@@ -149,3 +149,16 @@ def clean_plot_result_images():
     # Clean up the directory
     for file in results_dir.iterdir():
         file.unlink()
+
+
+@pytest.fixture
+def use_service_colors():
+    # Perform the state change
+    import ansys.geometry.core as pyansys_geometry
+
+    pyansys_geometry.USE_SERVICE_COLORS = True
+
+    yield  # This allows the test to run
+
+    # Code here runs after the test, reverting the state
+    pyansys_geometry.USE_SERVICE_COLORS = False

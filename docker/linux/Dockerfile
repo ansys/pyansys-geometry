@@ -22,7 +22,7 @@ RUN unzip -qq linux-binaries.zip -d . && \
     rm -rf DockerLinux
 
 # Let the dynamic link loader where to search for shared libraries
-ENV LD_LIBRARY_PATH="/app:/app/CI_Linux/bin"
+ENV LD_LIBRARY_PATH="/app:/app/CADIntegration/bin"
 
 # Define env variables
 ENV ANS_DSCO_REMOTE_PORT=50051
@@ -31,7 +31,7 @@ ENV ANS_DSCO_REMOTE_LOGS_CONFIG="linux"
 ENV LOG_LEVEL=2
 ENV ENABLE_TRACE=0
 ENV ANSYSLMD_LICENSE_FILE=""
-ENV ANSYS_CI_INSTALL=/app/CI_Linux
+ENV ANSYS_CI_INSTALL=/app/CADIntegration
 ENV P_SCHEMA=/app/Schema/
 
 # Add container labels

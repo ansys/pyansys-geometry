@@ -25,7 +25,7 @@ import re
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.connection.backend import BackendType
+from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.sketch import Sketch
@@ -44,6 +44,32 @@ def test_python_simple_script(modeler: Modeler):
     assert len(result) == 2
     assert pattern_db.match(result["design_body"])
     assert pattern_doc.match(result["design"])
+
+
+def test_python_simple_script_ignore_api_version(
+    modeler: Modeler, caplog: pytest.LogCaptureFixture
+):
+    # Skip on Linux
+    skip_if_linux(
+        modeler, test_python_simple_script_ignore_api_version.__name__, "run_discovery_script_file"
+    )
+
+    result = modeler.run_discovery_script_file(
+        DSCOSCRIPTS_FILES_DIR / "simple_script.py",
+        api_version=ApiVersions.LATEST,
+    )
+    pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
+    pattern_doc = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.Document", re.IGNORECASE)
+    assert len(result) == 2
+    assert pattern_db.match(result["design_body"])
+    assert pattern_doc.match(result["design"])
+
+    # Check the logger to see the warning
+    assert (
+        "The Ansys Geometry Service only supports scripts that are of its same API version."
+        in caplog.messages[0]
+    )
+    assert "Ignoring specified API version." in caplog.messages[1]
 
 
 def test_python_failing_script(modeler: Modeler):

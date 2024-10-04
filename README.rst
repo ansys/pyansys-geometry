@@ -1,5 +1,9 @@
-PyAnsys Geometry
-================
+.. image:: https://raw.githubusercontent.com/ansys/pyansys-geometry/main/doc/source/_static/logo/logo.png
+   :target: https://github.com/ansys/pyansys-geometry
+   :alt: PyAnsys Geometry
+
+|
+
 |pyansys| |python| |MIT| |ruff|
 |codecov| |GH-CI| |pre-commit|
 |pypi| |pypi-downloads| |conda| |conda-downloads|

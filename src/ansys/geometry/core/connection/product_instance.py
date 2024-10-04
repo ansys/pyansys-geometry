@@ -83,7 +83,10 @@ BACKEND_PORT_VARIABLE = "API_PORT"
 """The backend's port number environment variable for local start."""
 
 BACKEND_LOGS_FOLDER_VARIABLE = "ANS_DSCO_REMOTE_LOGS_FOLDER"
-"""The backend's logs folder path to be used."""
+"""The backend's logs folder path to be used.
+
+Only applicable to the Ansys Geometry Service.
+"""
 
 BACKEND_API_VERSION_VARIABLE = "API_VERSION"
 """The backend's api version environment variable for local start.
@@ -270,6 +273,19 @@ def prepare_and_start_backend(
         product_version = get_latest_ansys_installation()[0]
         _check_minimal_versions(product_version)
 
+    if server_logs_folder is not None:
+        # Verify that the user has write permissions to the folder and that it exists.
+        try:
+            # Make sure the folder exists...
+            Path(server_logs_folder).mkdir(parents=True, exist_ok=True)
+            # Create a file to test write permissions...
+            Path(server_logs_folder, ".verify").touch(exist_ok=True)
+        except PermissionError:
+            raise RuntimeError(
+                "User does not have write permissions to the logs folder "
+                f"{Path(server_logs_folder).resolve()}"
+            )
+
     args = []
     env_copy = _get_common_env(
         host=host,
@@ -302,7 +318,13 @@ def prepare_and_start_backend(
             + _manifest_path_provider(product_version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
-        env_copy[BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY] = BACKEND_SPACECLAIM_HIDDEN_ENVVAR_VALUE
+        if BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY not in env_copy:
+            env_copy[BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY] = BACKEND_SPACECLAIM_HIDDEN_ENVVAR_VALUE
+        else:
+            LOG.warning(
+                f"Environment variable '{BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY}' already exists. "
+                f"Using value '{env_copy[BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY]}'."
+            )
 
     elif backend_type == BackendType.WINDOWS_SERVICE:
         latest_version = get_latest_ansys_installation()[0]

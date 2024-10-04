@@ -58,6 +58,7 @@ from ansys.geometry.core.math import (
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
 from ansys.geometry.core.shapes import Circle, Ellipse, Interval, ParamUV
 from ansys.geometry.core.sketch import Sketch
+from ansys.tools.visualization_interface.utils.color import Color
 
 from .conftest import FILES_DIR, skip_if_linux
 
@@ -369,6 +370,24 @@ def test_named_selections(modeler: Modeler):
     # Try deleting a named selection by name
     design.delete_named_selection("OnlyCircle")
     assert len(design.named_selections) == 3
+
+
+def test_add_component_with_instance_name(modeler: Modeler):
+    design = modeler.create_design("DesignHierarchyExample")
+    circle_sketch = Sketch()
+    circle_sketch.circle(Point2D([10, 10], UNITS.mm), Distance(10, UNITS.mm))
+
+    slot_sketch = Sketch()
+    slot_sketch.slot(Point2D([40, 10], UNITS.mm), Distance(20, UNITS.mm), Distance(10, UNITS.mm))
+
+    nested_component = design.add_component("NestedComponent")
+    nested_component2 = design.add_component("NestedComponent2", instance_name="first instance")
+
+    assert nested_component.name == "NestedComponent"
+    assert nested_component.instance_name == ""
+
+    assert nested_component2.name == "NestedComponent2"
+    assert nested_component2.instance_name == "first instance"
 
 
 def test_faces_edges(modeler: Modeler):
@@ -739,6 +758,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "Exists               : False" in body_1_str
     assert "Surface body         : False" in body_1_str
     assert "Parent component     : Component_3" in body_1_str
+    assert "Color                : None" in body_1_str
 
 
 def test_shared_topology(modeler: Modeler):
@@ -1249,6 +1269,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : None" in surf_repr
     assert "Surface offset       : None" in surf_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
 
     # Let's assign a thickness to both bodies
     design.add_midsurface_thickness(
@@ -1281,6 +1302,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 10 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.TOP" in surf_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
 
     # Let's try reassigning values directly to slot_body - this shouldn't do anything
     slot_body.add_midsurface_thickness(Quantity(10, UNITS.mm))
@@ -1292,6 +1314,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Exists               : True" in body_repr
     assert "Parent component     : MidSurfaceProperties" in body_repr
     assert "Surface body         : False" in body_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
     assert slot_body.surface_thickness is None
     assert slot_body.surface_offset is None
 
@@ -1310,6 +1333,7 @@ def test_midsurface_properties(modeler: Modeler):
         assert "Surface body         : True" in surf_repr
         assert "Surface thickness    : 30 millimeter" in surf_repr
         assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
+        assert f"Color                : {Color.DEFAULT.value}" in surf_repr
     except GeometryExitedError:
         pass
 
@@ -1327,6 +1351,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 30 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
 
 
 def test_design_points(modeler: Modeler):
@@ -1942,8 +1967,8 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     assert design1.is_active
 
     # Check the same thing inside the modeler
-    assert not modeler._designs[design2.design_id].is_active
-    assert modeler._designs[design1.design_id].is_active
+    assert not modeler.designs[design2.design_id].is_active
+    assert modeler.designs[design1.design_id].is_active
 
 
 def test_get_active_design(modeler: Modeler):
@@ -2013,7 +2038,6 @@ def test_set_fill_style(modeler: Modeler):
 
 def test_set_body_color(modeler: Modeler):
     """Test the getting and setting of body color."""
-    skip_if_linux(modeler, test_set_body_color.__name__, "set_color")  # Skip test on Linux
 
     design = modeler.create_design("RVE2")
     unit = DEFAULT_UNITS.LENGTH
@@ -2028,7 +2052,7 @@ def test_set_body_color(modeler: Modeler):
     box = design.extrude_sketch("Block", box_plane, 1 * unit)
 
     # Default body color is if it is not set on server side.
-    assert box.color == "#000000"
+    assert box.color == Color.DEFAULT.value
 
     # Set the color of the body using hex code.
     box.color = "#0000ff"
@@ -2493,3 +2517,155 @@ def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
             angle=Angle(90, unit=UNITS.degrees),
             rotation_origin=Point3D([0, 0, 0]),
         )
+
+
+def test_component_tree_print(modeler: Modeler):
+    """Test for verifying the tree print for ``Component`` objects."""
+    # Skip on Linux
+    skip_if_linux(modeler, test_component_tree_print.__name__, "create_beam")
+
+    def check_list_equality(lines, expected_lines):
+        # By doing "a in b" rather than "a == b", we can check for substrings
+        # which, in the case of beam ids, is necessary since they are unique
+        # and will not be the same in different runs.
+        return all([expected_line in line for line, expected_line in zip(lines, expected_lines)])
+
+    # Create your design on the server side
+    design = modeler.create_design("TreePrintComponent")
+
+    # Create a Sketch object and draw a circle (all client side)
+    sketch = Sketch()
+    sketch.circle(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm))
+    distance = Quantity(30, UNITS.mm)
+    #  The following component hierarchy is made
+    #
+    #           |---> comp_1 ---|---> nested_1_comp_1 ---> nested_1_nested_1_comp_1
+    #           |               |
+    #           |               |---> nested_2_comp_1
+    #           |
+    # DESIGN ---|---> comp_2 -------> nested_1_comp_2
+    #           |
+    #           |
+    #           |---> comp_3
+    #
+    #
+    # Now, only "comp_3", "nested_2_comp_1" and "nested_1_nested_1_comp_1"
+    # will have a body associated.
+    #
+
+    # Create the components
+    comp_1 = design.add_component("Component_1")
+    comp_2 = design.add_component("Component_2")
+    comp_3 = design.add_component("Component_3")
+    nested_1_comp_1 = comp_1.add_component("Nested_1_Component_1")
+    nested_1_nested_1_comp_1 = nested_1_comp_1.add_component("Nested_1_Nested_1_Component_1")
+    nested_2_comp_1 = comp_1.add_component("Nested_2_Component_1")
+    _ = comp_2.add_component("Nested_1_Component_2")
+
+    # Create the bodies
+    _ = comp_3.extrude_sketch(name="comp_3_circle", sketch=sketch, distance=distance)
+    _ = nested_2_comp_1.extrude_sketch(
+        name="nested_2_comp_1_circle", sketch=sketch, distance=distance
+    )
+    _ = nested_1_nested_1_comp_1.extrude_sketch(
+        name="nested_1_nested_1_comp_1_circle", sketch=sketch, distance=distance
+    )
+
+    # Create beams (in design)
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    _ = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+
+    # Test the tree print - by default
+    ##################################
+    lines = design.tree_print(return_list=True)
+    ref = [
+        ">>> Tree print view of component 'TreePrintComponent'",
+        "",
+        "Location",
+        "--------",
+        "Root component (Design)",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) TreePrintComponent",
+        "|---(beam) 0:",
+        "|---(comp) Component_1",
+        ":   |---(comp) Nested_1_Component_1",
+        ":   :   |---(comp) Nested_1_Nested_1_Component_1",
+        ":   :       |---(body) nested_1_nested_1_comp_1_circle",
+        ":   |---(comp) Nested_2_Component_1",
+        ":       |---(body) nested_2_comp_1_circle",
+        "|---(comp) Component_2",
+        ":   |---(comp) Nested_1_Component_2",
+        "|---(comp) Component_3",
+        "    |---(body) comp_3_circle",
+    ]
+    assert check_list_equality(lines, ref) is True
+
+    # Test - request depth 1, and show only components
+    ##################################################
+    lines = design.tree_print(
+        return_list=True, depth=1, consider_bodies=False, consider_beams=False
+    )
+    ref = [
+        ">>> Tree print view of component 'TreePrintComponent'",
+        "",
+        "Location",
+        "--------",
+        "Root component (Design)",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) TreePrintComponent",
+        "|---(comp) Component_1",
+        "|---(comp) Component_2",
+        "|---(comp) Component_3",
+    ]
+    assert check_list_equality(lines, ref) is True
+
+    # Test - request depth 2, indent 1 (which will default to 2)
+    # and sort the components alphabetically
+    ############################################################
+    lines = design.tree_print(return_list=True, depth=2, indent=1, sort_keys=True)
+    ref = [
+        ">>> Tree print view of component 'TreePrintComponent'",
+        "",
+        "Location",
+        "--------",
+        "Root component (Design)",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) TreePrintComponent",
+        "|-(beam) 0:",
+        "|-(comp) Component_1",
+        ": |-(comp) Nested_1_Component_1",
+        ": |-(comp) Nested_2_Component_1",
+        "|-(comp) Component_2",
+        ": |-(comp) Nested_1_Component_2",
+        "|-(comp) Component_3",
+        "  |-(body) comp_3_circle",
+    ]
+    assert check_list_equality(lines, ref) is True
+
+    # Test - request from Nested_1_Component_1
+    ##########################################
+    lines = nested_1_comp_1.tree_print(return_list=True)
+    ref = [
+        ">>> Tree print view of component 'Nested_1_Component_1'",
+        "",
+        "Location",
+        "--------",
+        "TreePrintComponent > Component_1 > Nested_1_Component_1",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) Nested_1_Component_1",
+        "|---(comp) Nested_1_Nested_1_Component_1",
+        "    |---(body) nested_1_nested_1_comp_1_circle",
+    ]
+    assert check_list_equality(lines, ref) is True

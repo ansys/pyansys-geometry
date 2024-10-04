@@ -9,6 +9,96 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.7.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.2>`_ - 2024-09-11
+=====================================================================================
+
+Added
+^^^^^
+
+- allow for platform input when using Ansys Lab `#1416 <https://github.com/ansys/pyansys-geometry/pull/1416>`_
+- ensure GrpcClient class closure upon deletion `#1417 <https://github.com/ansys/pyansys-geometry/pull/1417>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump sphinx-autodoc-typehints from 2.3.0 to 2.4.0 in the docs-deps group `#1411 <https://github.com/ansys/pyansys-geometry/pull/1411>`_
+- bump numpy from 2.1.0 to 2.1.1 `#1412 <https://github.com/ansys/pyansys-geometry/pull/1412>`_
+- bump ansys-tools-visualization-interface from 0.4.1 to 0.4.3 `#1413 <https://github.com/ansys/pyansys-geometry/pull/1413>`_
+
+
+Documentation
+^^^^^^^^^^^^^
+
+- remove title from landing page `#1408 <https://github.com/ansys/pyansys-geometry/pull/1408>`_
+- adapt examples to use launch_modeler instead of Modeler obj connection `#1410 <https://github.com/ansys/pyansys-geometry/pull/1410>`_
+
+
+Fixed
+^^^^^
+
+- handle properly ``np.cross()`` - 2d ops deprecated in Numpy 2.X `#1419 <https://github.com/ansys/pyansys-geometry/pull/1419>`_
+- change logo link so that it renders properly on PyPI `#1420 <https://github.com/ansys/pyansys-geometry/pull/1420>`_
+- wrong path on logo image `#1421 <https://github.com/ansys/pyansys-geometry/pull/1421>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- update CHANGELOG for v0.7.1 `#1407 <https://github.com/ansys/pyansys-geometry/pull/1407>`_
+- pre-commit automatic update `#1418 <https://github.com/ansys/pyansys-geometry/pull/1418>`_
+
+`0.7.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.1>`_ - 2024-09-06
+=====================================================================================
+
+Added
+^^^^^
+
+- get and set body color `#1357 <https://github.com/ansys/pyansys-geometry/pull/1357>`_
+- add ``modeler.exit()`` method `#1375 <https://github.com/ansys/pyansys-geometry/pull/1375>`_
+- setting instance name during component creation `#1382 <https://github.com/ansys/pyansys-geometry/pull/1382>`_
+- accept pathlib.Path as input in missing methods `#1385 <https://github.com/ansys/pyansys-geometry/pull/1385>`_
+- default logs folder on Geometry Service started by Python at PUBLIC (Windows) `#1386 <https://github.com/ansys/pyansys-geometry/pull/1386>`_
+- allowing users to specify API version when running script against SpaceClaim or Discovery `#1395 <https://github.com/ansys/pyansys-geometry/pull/1395>`_
+- expose ``modeler.designs`` attribute `#1401 <https://github.com/ansys/pyansys-geometry/pull/1401>`_
+- pretty print components `#1403 <https://github.com/ansys/pyansys-geometry/pull/1403>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump the grpc-deps group with 2 updates `#1363 <https://github.com/ansys/pyansys-geometry/pull/1363>`_, `#1369 <https://github.com/ansys/pyansys-geometry/pull/1369>`_
+- bump the docs-deps group with 2 updates `#1364 <https://github.com/ansys/pyansys-geometry/pull/1364>`_, `#1392 <https://github.com/ansys/pyansys-geometry/pull/1392>`_
+- bump numpy from 2.0.1 to 2.1.0 `#1365 <https://github.com/ansys/pyansys-geometry/pull/1365>`_
+- bump ansys-sphinx-theme[autoapi] from 1.0.5 to 1.0.7 in the docs-deps group `#1370 <https://github.com/ansys/pyansys-geometry/pull/1370>`_
+- bump ansys-api-geometry from 0.4.7 to 0.4.8 `#1371 <https://github.com/ansys/pyansys-geometry/pull/1371>`_
+- bump scipy from 1.14.0 to 1.14.1 `#1372 <https://github.com/ansys/pyansys-geometry/pull/1372>`_
+- bump the grpc-deps group with 3 updates `#1391 <https://github.com/ansys/pyansys-geometry/pull/1391>`_
+- bump ansys-tools-visualization-interface from 0.4.0 to 0.4.1 `#1393 <https://github.com/ansys/pyansys-geometry/pull/1393>`_
+- bump ansys-sphinx-theme[autoapi] from 1.0.7 to 1.0.8 in the docs-deps group `#1397 <https://github.com/ansys/pyansys-geometry/pull/1397>`_
+
+
+Documentation
+^^^^^^^^^^^^^
+
+- add project logo `#1405 <https://github.com/ansys/pyansys-geometry/pull/1405>`_
+
+
+Fixed
+^^^^^
+
+- remove ``server_logs_folder`` argument for Discovery and SpaceClaim `#1387 <https://github.com/ansys/pyansys-geometry/pull/1387>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- update CHANGELOG for v0.7.0 `#1360 <https://github.com/ansys/pyansys-geometry/pull/1360>`_
+- bump dev branch to v0.8.dev0 `#1361 <https://github.com/ansys/pyansys-geometry/pull/1361>`_
+- solving various warnings `#1368 <https://github.com/ansys/pyansys-geometry/pull/1368>`_
+- pre-commit automatic update `#1373 <https://github.com/ansys/pyansys-geometry/pull/1373>`_, `#1394 <https://github.com/ansys/pyansys-geometry/pull/1394>`_
+- upload coverage artifacts properly with upload-artifact@v4.4.0 `#1406 <https://github.com/ansys/pyansys-geometry/pull/1406>`_
+
 `0.7.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.0>`_ - 2024-08-13
 =====================================================================================
 

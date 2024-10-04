@@ -21,7 +21,7 @@ function with a closed sketch profile and the ``sweep_chain()`` function for an 
 # Imports
 import numpy as np
 
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.math import (
   Plane,
   Point2D,
@@ -34,9 +34,12 @@ from ansys.geometry.core.shapes import Circle, Ellipse, Interval
 from ansys.geometry.core.sketch import Sketch
 ```
 
+## Initialize the modeler
+
 ```{code-cell} ipython3
 # Initialize the modeler for this example notebook
-m = Modeler()
+m = launch_modeler()
+print(m)
 ```
 
 ## Example: Creating a donut
@@ -174,4 +177,11 @@ result of this operation is stored in the variable ``body``.
 body = design_chain.sweep_chain("bowlsweep", path, profile)
 
 design_chain.plot()
+```
+
+## Closing the modeler
+
+```{code-cell} ipython3
+# Close the modeler
+m.close()
 ```
