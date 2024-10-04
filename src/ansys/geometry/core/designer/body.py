@@ -54,7 +54,6 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ProjectCurvesRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
