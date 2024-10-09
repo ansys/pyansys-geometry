@@ -210,6 +210,7 @@ jobs:
   promote-windows:
     needs: [windows-tests, linux-tests]
     runs-on: [self-hosted, Windows, pygeometry]
+    name: Promote Windows container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
     env:
       WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:windows-latest-unstable
@@ -234,6 +235,7 @@ jobs:
   promote-linux:
     needs: [windows-tests, linux-tests]
     runs-on: ubuntu-latest
+    name: Promote Linux container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
     env:
       LINUX_UNSTABLE: ghcr.io/ansys/geometry:linux-latest-unstable
