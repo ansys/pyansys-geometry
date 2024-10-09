@@ -165,6 +165,7 @@ html_theme_options = {
     },
     "cheatsheet": {
         "file": "cheatsheet/cheat_sheet.qmd",
+        "pages": ["index", "getting_started/index", "user_guide/index"],
         "title": "PyAnsys Geometry cheat sheet",
         "version": __version__,
     },
