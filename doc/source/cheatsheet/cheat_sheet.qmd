@@ -44,6 +44,49 @@ from ansys.geometry.core import __version__
 print(f"PyAnsys Geometry version: {__version__}")
 ```
 
+# Sketching
+
+There are two ways of creating 2D sketches in PyAnsys Geometry.
+
+```{python}
+from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.math import Point2D
+```
+
+## Functional-style sketching
+
+```{python}
+#| output: false
+sketch = Sketch()
+
+(
+  sketch
+    .segment_to_point(Point2D([3, 3]), "Segment2")
+    .segment_to_point(Point2D([3, 2]), "Segment3")
+    .segment_to_point(Point2D([0, 0]), "Segment4")
+)
+```
+
+You can visualize the sketch by calling the `plot` method.
+
+```{python}
+#| output: false
+sketch.plot()
+```
+
+## Object-oriented sketching
+
+```{python}
+#| output: false
+sketch = Sketch()
+
+sketch.triangle(
+    Point2D([-10, 10]),
+    Point2D([5, 6]),
+    Point2D([-10, -10]),
+)
+```
+
 # Modeling
 
 ## Launch a modeling session
@@ -71,7 +114,55 @@ modeler = launch_modeler(mode='geometry_service')
 ```{python}
 #| output: false
 from ansys.geometry.core import Modeler
-
 modeler = Modeler()
 print(modeler)
+```
+
+## Create a design
+
+```{python}
+design = modeler.create_design("MyDesign")
+print(design)
+```
+
+## Create a body by extruding a sketch
+
+```{python}
+body = design.extrude_sketch("MyBody", sketch, 2)
+print(body)
+```
+
+## Plot the design
+
+```{python}
+#| output: false
+design.plot()
+```
+
+## Export the design to a file
+
+```{python}
+scdocx_path = design.export_to_scdocx()
+pmdb_path = design.export_to_pmdb()
+para_txt_path = design.export_to_parasolid_text()
+para_bin_path = design.export_to_parasolid_bin()
+fmd_path = design.export_to_fmd()
+step_path = design.export_to_step()
+iges_path = design.export_to_iges()
+```
+
+# Extra: Product scripting
+
+Ansys SpaceClaim and Ansys Discovery support product scripting, and
+so does the Ansys Geometry service. If you have a product script you
+want to run, you can use the `run_discovery_script_file` method available
+on the `Modeler` object. The ``script_args`` parameter is optional and they
+will be made available to the script inside a dictionary called ``argsDict``.
+
+```{python}
+#| eval: false
+result = modeler.run_discovery_script_file(
+  file_path="path/to/script.py",
+  script_args={"arg1": "value1", "arg2": "value2"},
+)
 ```
