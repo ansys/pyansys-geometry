@@ -9,6 +9,66 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.7.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.3>`_ - 2024-10-09
+=====================================================================================
+
+Added
+^^^^^
+
+- use service colors in plotter (upon request) `#1376 <https://github.com/ansys/pyansys-geometry/pull/1376>`_
+- capability to close designs (also on ``modeler.exit()``) `#1409 <https://github.com/ansys/pyansys-geometry/pull/1409>`_
+- prioritize user-defined SPACECLAIM_MODE env var `#1440 <https://github.com/ansys/pyansys-geometry/pull/1440>`_
+- verifying Linux service also accepts colors `#1451 <https://github.com/ansys/pyansys-geometry/pull/1451>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump protobuf from 5.28.0 to 5.28.1 in the grpc-deps group `#1424 <https://github.com/ansys/pyansys-geometry/pull/1424>`_
+- bump the docs-deps group with 2 updates `#1425 <https://github.com/ansys/pyansys-geometry/pull/1425>`_, `#1436 <https://github.com/ansys/pyansys-geometry/pull/1436>`_
+- bump ansys-tools-visualization-interface from 0.4.3 to 0.4.4 `#1426 <https://github.com/ansys/pyansys-geometry/pull/1426>`_
+- bump pytest from 8.3.2 to 8.3.3 `#1427 <https://github.com/ansys/pyansys-geometry/pull/1427>`_
+- bump panel from 1.4.5 to 1.5.0 `#1428 <https://github.com/ansys/pyansys-geometry/pull/1428>`_
+- bump protobuf from 5.28.1 to 5.28.2 in the grpc-deps group `#1435 <https://github.com/ansys/pyansys-geometry/pull/1435>`_
+- bump the grpc-deps group with 3 updates `#1442 <https://github.com/ansys/pyansys-geometry/pull/1442>`_
+- bump beartype from 0.18.5 to 0.19.0 `#1443 <https://github.com/ansys/pyansys-geometry/pull/1443>`_
+- bump panel from 1.5.0 to 1.5.1 `#1444 <https://github.com/ansys/pyansys-geometry/pull/1444>`_
+- bump ansys-sphinx-theme[autoapi] from 1.1.1 to 1.1.2 in the docs-deps group `#1456 <https://github.com/ansys/pyansys-geometry/pull/1456>`_
+- bump ansys-api-geometry from 0.4.8 to 0.4.9 `#1457 <https://github.com/ansys/pyansys-geometry/pull/1457>`_
+- bump numpy from 2.1.1 to 2.1.2 `#1458 <https://github.com/ansys/pyansys-geometry/pull/1458>`_
+- bump panel from 1.5.1 to 1.5.2 `#1459 <https://github.com/ansys/pyansys-geometry/pull/1459>`_
+- bump ansys-api-geometry from 0.4.9 to 0.4.10 `#1461 <https://github.com/ansys/pyansys-geometry/pull/1461>`_
+- bump ansys-tools-visualization-interface from 0.4.4 to 0.4.5 `#1462 <https://github.com/ansys/pyansys-geometry/pull/1462>`_
+- update protobuf from 5.27.2 to 5.27.5 `#1464 <https://github.com/ansys/pyansys-geometry/pull/1464>`_
+- bump sphinx-autodoc-typehints from 2.4.4 to 2.5.0 in the docs-deps group `#1465 <https://github.com/ansys/pyansys-geometry/pull/1465>`_
+
+
+Documentation
+^^^^^^^^^^^^^
+
+- adding cheat sheet on documentation `#1433 <https://github.com/ansys/pyansys-geometry/pull/1433>`_
+- add captions in examples toctrees `#1434 <https://github.com/ansys/pyansys-geometry/pull/1434>`_
+
+
+Fixed
+^^^^^
+
+- ci/cd issues on documentation build `#1441 <https://github.com/ansys/pyansys-geometry/pull/1441>`_
+- adapt tessellate tests to new core service `#1449 <https://github.com/ansys/pyansys-geometry/pull/1449>`_
+- rename folders on Linux docker image according to new version `#1450 <https://github.com/ansys/pyansys-geometry/pull/1450>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- update CHANGELOG for v0.7.2 `#1422 <https://github.com/ansys/pyansys-geometry/pull/1422>`_
+- checkout LFS files from previous version to ensure upload `#1423 <https://github.com/ansys/pyansys-geometry/pull/1423>`_
+- pre-commit automatic update `#1431 <https://github.com/ansys/pyansys-geometry/pull/1431>`_, `#1437 <https://github.com/ansys/pyansys-geometry/pull/1437>`_, `#1445 <https://github.com/ansys/pyansys-geometry/pull/1445>`_, `#1460 <https://github.com/ansys/pyansys-geometry/pull/1460>`_
+- update to ansys actions v8 and docs theme (static search) `#1446 <https://github.com/ansys/pyansys-geometry/pull/1446>`_
+- pyvista/setup-headless-display started failing `#1447 <https://github.com/ansys/pyansys-geometry/pull/1447>`_
+- check method implemented in Ansys actions `#1448 <https://github.com/ansys/pyansys-geometry/pull/1448>`_
+- unstable image promotion and dependabot daily updates `#1463 <https://github.com/ansys/pyansys-geometry/pull/1463>`_
+
 `0.7.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.2>`_ - 2024-09-11
 =====================================================================================
 
