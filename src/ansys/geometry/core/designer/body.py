@@ -81,6 +81,7 @@ from ansys.geometry.core.misc.checks import (
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
+from ansys.tools.visualization_interface.utils.color import Color
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
@@ -546,6 +547,7 @@ class IBody(ABC):
         merge: bool = False,
         screenshot: str | None = None,
         use_trame: bool | None = None,
+        use_service_colors: bool | None = None,
         **plotting_options: dict | None,
     ) -> None:
         """Plot the body.
@@ -560,8 +562,12 @@ class IBody(ABC):
             Path for saving a screenshot of the image that is being represented.
         use_trame : bool, default: None
             Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
-            The default is ``None``, in which case the ``USE_TRAME`` global setting
-            is used.
+            The default is ``None``, in which case the
+            ``ansys.tools.visualization_interface.USE_TRAME`` global setting is used.
+        use_service_colors : bool, default: None
+            Whether to use the colors assigned to the body in the service. The default
+            is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
+            global setting is used.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
@@ -757,24 +763,21 @@ class MasterBody(IBody):
     @property
     def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
-        if self._color is None:
+        if self._color is None and self.is_alive:
+            # Assigning default value first
+            self._color = Color.DEFAULT.value
+
             if self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
                 # Server does not support color retrieval before version 25.1.0
                 self._grpc_client.log.warning(
-                    "Server does not support color retrieval. Assigning default."
+                    "Server does not support color retrieval. Default value assigned..."
                 )
-                self._color = "#000000"  # Default color
             else:
                 # Fetch color from the server if it's not cached
                 color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
-
                 if color_response.color:
                     self._color = mcolors.to_hex(color_response.color)
-                else:  # pragma: no cover
-                    self._grpc_client.log.warning(
-                        f"Color could not be retrieved for body {self._id}. Assigning default."
-                    )
-                    self._color = "#000000"  # Default color
+
         return self._color
 
     @color.setter
@@ -1125,6 +1128,7 @@ class MasterBody(IBody):
         merge: bool = False,
         screenshot: str | None = None,
         use_trame: bool | None = None,
+        use_service_colors: bool | None = None,
         **plotting_options: dict | None,
     ) -> None:
         raise NotImplementedError(
@@ -1509,17 +1513,27 @@ class Body(IBody):
         merge: bool = False,
         screenshot: str | None = None,
         use_trame: bool | None = None,
+        use_service_colors: bool | None = None,
         **plotting_options: dict | None,
     ) -> None:
         # lazy import here to improve initial module load time
+        import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
         from ansys.tools.visualization_interface.types.mesh_object_plot import (
             MeshObjectPlot,
         )
 
-        meshobject = MeshObjectPlot(self, self.tessellate(merge=merge))
-        pl = GeometryPlotter(use_trame=use_trame)
-        pl.plot(meshobject, **plotting_options)
+        use_service_colors = (
+            use_service_colors
+            if use_service_colors is not None
+            else pyansys_geometry.USE_SERVICE_COLORS
+        )
+
+        mesh_object = (
+            self if use_service_colors else MeshObjectPlot(self, self.tessellate(merge=merge))
+        )
+        pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
+        pl.plot(mesh_object, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
@@ -1596,6 +1610,7 @@ class Body(IBody):
         if self.is_surface:
             lines.append(f"  Surface thickness    : {self.surface_thickness}")
             lines.append(f"  Surface offset       : {self.surface_offset}")
+        lines.append(f"  Color                : {self.color}")
 
         nl = "\n"
         return f"{nl}{nl.join(lines)}{nl}"
