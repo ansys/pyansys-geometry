@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       promote:
-        description: 'Promote the latest build to stable'
+        description: 'Promote the latest build to stable (if tests pass)'
         required: false
         default: false
         type: boolean
