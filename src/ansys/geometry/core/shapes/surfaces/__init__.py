@@ -28,3 +28,4 @@ from ansys.geometry.core.shapes.surfaces.sphere import Sphere, SphereEvaluation
 from ansys.geometry.core.shapes.surfaces.surface import Surface
 from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.shapes.surfaces.torus import Torus
+from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
