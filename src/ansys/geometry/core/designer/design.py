@@ -33,6 +33,8 @@ from pint import Quantity, UndefinedUnitError
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
 from ansys.api.dbu.v0.designs_pb2 import InsertRequest, NewRequest, SaveAsRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
+from ansys.api.dbu.v0.drivingdimensions_pb2 import GetAllRequest, UpdateRequest
+from ansys.api.dbu.v0.drivingdimensions_pb2_grpc import DrivingDimensionsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
@@ -74,6 +76,7 @@ from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.parameters import Parameter
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -112,6 +115,7 @@ class Design(Component):
     _materials: list[Material]
     _named_selections: dict[str, NamedSelection]
     _beam_profiles: dict[str, BeamProfile]
+    _driving_dimensions: list[Parameter]
 
     @protect_grpc
     @check_input_types
@@ -125,6 +129,7 @@ class Design(Component):
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
         self._parts_stub = PartsStub(self._grpc_client.channel)
+        self._parameters_stub = DrivingDimensionsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -134,6 +139,7 @@ class Design(Component):
         self._is_active = False
         self._is_closed = False
         self._modeler = modeler
+        self._parameters = []
 
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
@@ -165,6 +171,11 @@ class Design(Component):
     def beam_profiles(self) -> list[BeamProfile]:
         """List of beam profile available for the design."""
         return list(self._beam_profiles.values())
+
+    @property
+    def parameters(self) -> list[Parameter]:
+        """List of parameters available for the design."""
+        return self.get_all_parameters()
 
     @property
     def is_active(self) -> bool:
@@ -678,6 +689,39 @@ class Design(Component):
         )
 
         return self._beam_profiles[profile.name]
+
+    @protect_grpc
+    @min_backend_version(25, 1, 0)
+    def get_all_parameters(self):
+        """Get parameters for the design.
+
+        Returns
+        -------
+        List[DrivingDimension]
+            List of parameters for the design.
+        """
+        response = self._parameters_stub.GetAll(GetAllRequest())
+        return [Parameter._from_proto(dimension) for dimension in response.driving_dimensions]
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
+    def set_parameters(self, dimension: Parameter) -> bool:
+        """Update a parameter of the design.
+
+        Parameters
+        ----------
+        dimensions : List[DrivingDimension]
+            List of parameters to set.
+
+        Returns
+        -------
+        bool
+            True if parameters were set successfully.
+        """
+        request = UpdateRequest(driving_dimension=Parameter._to_proto(dimension))
+        dimension = self._parameters_stub.Update(request)
+        return dimension
 
     @protect_grpc
     @check_input_types
