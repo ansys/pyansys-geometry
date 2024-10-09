@@ -163,6 +163,12 @@ html_theme_options = {
     "ansys_sphinx_theme_autoapi": {
         "project": project,
     },
+    "cheatsheet": {
+        "file": "cheatsheet/cheat_sheet.qmd",
+        "pages": ["index", "getting_started/index", "user_guide/index"],
+        "title": "PyAnsys Geometry cheat sheet",
+        "version": __version__,
+    },
     "static_search": {
         "threshold": 0.5,
         "min_chars_for_search": 2,
@@ -440,6 +446,7 @@ def setup(app: sphinx.application.Sphinx):
         Sphinx instance containing all the configuration for the documentation build.
     """
     logger.info("Configuring Sphinx hooks...")
+
     if BUILD_EXAMPLES:
         # Run at the end of the build process
         logger.info("Connecting build-finished hook for converting notebooks to scripts...")
