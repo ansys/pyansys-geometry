@@ -1,0 +1,107 @@
+
+
+
+
+
+
+The ``component.py`` module
+===========================
+
+.. py:module:: ansys.geometry.core.designer.component
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: component
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.component.Component`
+            - Provides for creating and managing a component.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.component.SharedTopologyType`
+            - Shared topologies available.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.component.ExtrusionDirection`
+            - Enum for extrusion direction definition.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Component</api/ansys/geometry/core/designer/component/Component>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> SharedTopologyType</api/ansys/geometry/core/designer/component/SharedTopologyType>
+    <span class="nf nf-cod-symbol_enum"></span> ExtrusionDirection</api/ansys/geometry/core/designer/component/ExtrusionDirection>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for managing components.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
