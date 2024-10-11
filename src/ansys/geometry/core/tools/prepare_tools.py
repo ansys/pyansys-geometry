@@ -168,7 +168,7 @@ class PrepareTools:
             return []
 
     @protect_grpc
-    @min_backend_version(25, 1, 0)
+    @min_backend_version(24, 2, 0)
     def share_topology(
         self, bodies: list["Body"], tol: Real = 0.0, preserve_instances: bool = False
     ) -> bool:
