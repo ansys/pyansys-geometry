@@ -23,7 +23,6 @@
 
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
@@ -41,7 +40,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_edge,
     get_design_from_face,
 )
-from ansys.geometry.core.misc.checks import min_backend_version
+from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -65,7 +64,6 @@ class PrepareTools:
         self._prepare_stub = PrepareToolsStub(self._grpc_client.channel)
 
     @protect_grpc
-    @check_input_types
     @min_backend_version(25, 1, 0)
     def extract_volume_from_faces(
         self, sealing_faces: list["Face"], inside_faces: list["Face"]
@@ -87,9 +85,15 @@ class PrepareTools:
         list[Body]
             List of created bodies.
         """
+        from ansys.geometry.core.designer.face import Face
+
         if not sealing_faces or not inside_faces:
             self._grpc_client.log.info("No sealing faces or inside faces provided...")
             return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(sealing_faces, Face)
+        check_type_all_elements_in_iterable(inside_faces, Face)
 
         parent_design = get_design_from_face(sealing_faces[0])
 
@@ -110,7 +114,6 @@ class PrepareTools:
             return []
 
     @protect_grpc
-    @check_input_types
     @min_backend_version(25, 1, 0)
     def extract_volume_from_edge_loops(
         self, sealing_edges: list["Edge"], inside_faces: list["Face"]
@@ -132,9 +135,16 @@ class PrepareTools:
         list[Body]
             List of created bodies.
         """
-        if not sealing_edges:
-            self._grpc_client.log.info("No sealing edges provided...")
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
+        if not sealing_edges or not inside_faces:
+            self._grpc_client.log.info("No sealing edges or inside faces provided...")
             return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(sealing_edges, Edge)
+        check_type_all_elements_in_iterable(inside_faces, Face)
 
         parent_design = get_design_from_edge(sealing_edges[0])
 
@@ -155,7 +165,6 @@ class PrepareTools:
             return []
 
     @protect_grpc
-    @check_input_types
     @min_backend_version(25, 1, 0)
     def share_topology(
         self, bodies: list["Body"], tol: Real = 0.0, preserve_instances: bool = False
@@ -176,8 +185,13 @@ class PrepareTools:
         bool
             ``True`` if successful, ``False`` if failed.
         """
+        from ansys.geometry.core.designer.body import Body
+
         if not bodies:
             return False
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
 
         share_topo_response = self._prepare_stub.ShareTopology(
             ShareTopologyRequest(
