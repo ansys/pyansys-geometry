@@ -9,6 +9,30 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.7.4 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.4>`_ - 2024-10-11
+=====================================================================================
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump sphinx from 8.0.2 to 8.1.0 in the docs-deps group `#1470 <https://github.com/ansys/pyansys-geometry/pull/1470>`_
+- bump ansys-api-geometry from 0.4.10 to 0.4.11 `#1473 <https://github.com/ansys/pyansys-geometry/pull/1473>`_
+- bump ansys-sphinx-theme to v1.1.3 `#1475 <https://github.com/ansys/pyansys-geometry/pull/1475>`_
+
+
+Fixed
+^^^^^
+
+- solving intersphinx warnings on paths `#1469 <https://github.com/ansys/pyansys-geometry/pull/1469>`_
+- ``check_input_types`` not working with forward refs `#1471 <https://github.com/ansys/pyansys-geometry/pull/1471>`_
+- ``share_topology`` is available on 24R2 `#1472 <https://github.com/ansys/pyansys-geometry/pull/1472>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- update CHANGELOG for v0.7.3 `#1466 <https://github.com/ansys/pyansys-geometry/pull/1466>`_
+
 `0.7.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.3>`_ - 2024-10-09
 =====================================================================================
 
