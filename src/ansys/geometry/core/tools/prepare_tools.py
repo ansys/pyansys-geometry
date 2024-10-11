@@ -116,7 +116,7 @@ class PrepareTools:
     @protect_grpc
     @min_backend_version(25, 1, 0)
     def extract_volume_from_edge_loops(
-        self, sealing_edges: list["Edge"], inside_faces: list["Face"]
+        self, sealing_edges: list["Edge"], inside_faces: list["Face"] = None
     ) -> list["Body"]:
         """Extract a volume from input edge loops.
 
@@ -127,8 +127,8 @@ class PrepareTools:
         ----------
         sealing_edges : list[Edge]
             List of faces that seal the volume.
-        inside_faces : list[Face]
-            List of faces that define the interior of the solid (Not always necessary).
+        inside_faces : list[Face], optional
+            List of faces that define the interior of the solid (not always necessary).
 
         Returns
         -------
@@ -138,9 +138,12 @@ class PrepareTools:
         from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
 
-        if not sealing_edges or not inside_faces:
-            self._grpc_client.log.info("No sealing edges or inside faces provided...")
+        if not sealing_edges:
+            self._grpc_client.log.info("No sealing edges provided...")
             return []
+
+        # Assign default values to inside_faces
+        inside_faces = [] if inside_faces is None else inside_faces
 
         # Verify inputs
         check_type_all_elements_in_iterable(sealing_edges, Edge)
