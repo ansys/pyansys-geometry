@@ -593,6 +593,8 @@ def surface_to_grpc_surface(surface: Surface) -> tuple[GRPCSurface, GRPCSurfaceT
     -------
     GRPCSurface
         Return ``Surface`` as a ``ansys.api.geometry.Surface`` message.
+    GRPCSurfaceType
+        Return the grpc surface type of ``Surface``.
     """
     grpc_surface = None
     surface_type = None

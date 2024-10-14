@@ -901,7 +901,7 @@ class Component:
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    @min_backend_version(24, 2, 0)
+    @min_backend_version(25, 1, 0)
     def create_body_from_surface(self, name: str, trimmed_surface: TrimmedSurface) -> Body:
         """Create a surface body from a trimmed surface.
 
