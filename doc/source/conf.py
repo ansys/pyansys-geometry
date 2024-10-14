@@ -171,7 +171,7 @@ html_theme_options = {
     },
     "static_search": {
         "threshold": 0.5,
-        "min_chars_for_search": 2,
+        "minMatchCharLength": 2,
         "ignoreLocation": True,
     },
 }
@@ -192,14 +192,14 @@ extensions = [
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3.11", None),
     "numpy": ("https://numpy.org/doc/stable", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
-    "pyvista": ("https://docs.pyvista.org/version/stable", None),
-    "grpc": ("https://grpc.github.io/grpc/python/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy", None),
+    "pyvista": ("https://docs.pyvista.org", None),
+    "grpc": ("https://grpc.github.io/grpc/python", None),
     "pint": ("https://pint.readthedocs.io/en/stable", None),
-    "beartype": ("https://beartype.readthedocs.io/en/stable/", None),
-    "docker": ("https://docker-py.readthedocs.io/en/stable/", None),
+    "beartype": ("https://beartype.readthedocs.io/en/stable", None),
+    "docker": ("https://docker-py.readthedocs.io/en/stable", None),
     "pypim": ("https://pypim.docs.pyansys.com/version/stable", None),
-    "semver": ("https://python-semver.readthedocs.io/en/latest/", None),
+    "semver": ("https://python-semver.readthedocs.io/en/latest", None),
 }
 
 # Conditional intersphinx mapping
