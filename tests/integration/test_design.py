@@ -68,6 +68,7 @@ from ansys.geometry.core.shapes import (
 )
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.sketch import Sketch
+from ansys.tools.visualization_interface.utils.color import Color
 
 from .conftest import FILES_DIR, skip_if_linux
 
@@ -767,6 +768,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "Exists               : False" in body_1_str
     assert "Surface body         : False" in body_1_str
     assert "Parent component     : Component_3" in body_1_str
+    assert "Color                : None" in body_1_str
 
 
 def test_shared_topology(modeler: Modeler):
@@ -1277,6 +1279,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : None" in surf_repr
     assert "Surface offset       : None" in surf_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
 
     # Let's assign a thickness to both bodies
     design.add_midsurface_thickness(
@@ -1309,6 +1312,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 10 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.TOP" in surf_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
 
     # Let's try reassigning values directly to slot_body - this shouldn't do anything
     slot_body.add_midsurface_thickness(Quantity(10, UNITS.mm))
@@ -1320,6 +1324,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Exists               : True" in body_repr
     assert "Parent component     : MidSurfaceProperties" in body_repr
     assert "Surface body         : False" in body_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
     assert slot_body.surface_thickness is None
     assert slot_body.surface_offset is None
 
@@ -1338,6 +1343,7 @@ def test_midsurface_properties(modeler: Modeler):
         assert "Surface body         : True" in surf_repr
         assert "Surface thickness    : 30 millimeter" in surf_repr
         assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
+        assert f"Color                : {Color.DEFAULT.value}" in surf_repr
     except GeometryExitedError:
         pass
 
@@ -1355,6 +1361,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 30 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
+    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
 
 
 def test_design_points(modeler: Modeler):
@@ -2041,7 +2048,6 @@ def test_set_fill_style(modeler: Modeler):
 
 def test_set_body_color(modeler: Modeler):
     """Test the getting and setting of body color."""
-    skip_if_linux(modeler, test_set_body_color.__name__, "set_color")  # Skip test on Linux
 
     design = modeler.create_design("RVE2")
     unit = DEFAULT_UNITS.LENGTH
@@ -2056,7 +2062,7 @@ def test_set_body_color(modeler: Modeler):
     box = design.extrude_sketch("Block", box_plane, 1 * unit)
 
     # Default body color is if it is not set on server side.
-    assert box.color == "#000000"
+    assert box.color == Color.DEFAULT.value
 
     # Set the color of the body using hex code.
     box.color = "#0000ff"
