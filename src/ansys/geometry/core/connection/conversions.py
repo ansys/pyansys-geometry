@@ -636,7 +636,7 @@ def surface_to_grpc_surface(surface: Surface) -> tuple[GRPCSurface, GRPCSurfaceT
 
 
 def trimmed_surface_to_grpc_trimmed_surface(
-    trimmed_surface: "TrimmedSurface",
+    trimmed_surface: TrimmedSurface,
 ) -> GRPCTrimmedSurface:
     """Convert a ``TrimmedSurface`` to a trimmed surface gRPC message.
 
