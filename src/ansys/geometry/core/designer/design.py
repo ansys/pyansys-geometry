@@ -33,7 +33,7 @@ from pint import Quantity, UndefinedUnitError
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
 from ansys.api.dbu.v0.designs_pb2 import InsertRequest, NewRequest, SaveAsRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
-from ansys.api.dbu.v0.drivingdimensions_pb2 import GetAllRequest, UpdateRequest
+from ansys.api.dbu.v0.drivingdimensions_pb2 import GetAllRequest, UpdateRequest, UpdateStatus
 from ansys.api.dbu.v0.drivingdimensions_pb2_grpc import DrivingDimensionsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
@@ -706,22 +706,22 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
-    def set_parameters(self, dimension: Parameter) -> bool:
+    def set_parameter(self, dimension: Parameter) -> UpdateStatus:
         """Update a parameter of the design.
 
         Parameters
         ----------
-        dimensions : List[DrivingDimension]
-            List of parameters to set.
+        dimension : Parameter
+            Parameters to set.
 
         Returns
         -------
-        bool
-            True if parameters were set successfully.
+        UpdateStatus
+            Status of the update operation.
         """
         request = UpdateRequest(driving_dimension=Parameter._to_proto(dimension))
-        dimension = self._parameters_stub.Update(request)
-        return dimension
+        response = self._parameters_stub.UpdateParameter(request)
+        return response.status
 
     @protect_grpc
     @check_input_types
