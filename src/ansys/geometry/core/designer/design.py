@@ -706,7 +706,7 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
-    def set_parameter(self, dimension: Parameter) -> UpdateStatus:
+    def set_parameter(self, dimension: Parameter) -> dict:
         """Update a parameter of the design.
 
         Parameters
@@ -716,12 +716,19 @@ class Design(Component):
 
         Returns
         -------
-        UpdateStatus
-            Status of the update operation.
+        dict
+            Dictionary containing the status of the update operation and a message.
         """
         request = UpdateRequest(driving_dimension=Parameter._to_proto(dimension))
         response = self._parameters_stub.UpdateParameter(request)
-        return response.status
+        status = response.status
+        status_messages = {
+            UpdateStatus.SUCCESS: "Update status: SUCCESS",
+            UpdateStatus.FAILURE: "Update status: FAILURE",
+            UpdateStatus.CONSTRAINED_PARAMETERS: "Update status: CONSTRAINED_PARAMETERS",
+        }
+        message = status_messages.get(status, f"Unknown status: {status}")
+        return status, message
 
     @protect_grpc
     @check_input_types

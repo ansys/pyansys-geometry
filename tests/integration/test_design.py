@@ -30,6 +30,7 @@ import pytest
 import pyvista as pv
 from pyvista.plotting.utilities.regression import compare_images as pv_compare_images
 
+from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
 from ansys.geometry.core.designer import (
@@ -2669,3 +2670,26 @@ def test_component_tree_print(modeler: Modeler):
         "    |---(body) nested_1_nested_1_comp_1_circle",
     ]
     assert check_list_equality(lines, ref) is True
+
+
+def test_design_parameters(modeler: Modeler):
+    """Test the design parameters functionality."""
+
+    design = modeler.open_file(FILES_DIR / "dvParameterTableTest.dsco")
+    test_parameters = design.get_all_parameters()
+
+    assert len(test_parameters) == 2
+    assert test_parameters[0].name == "p1"
+    assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
+
+    test_parameters[1].dimension_value = 0.0006
+    status, message = design.set_parameter(test_parameters[1])
+    assert status == UpdateStatus.SUCCESS
+
+    test_parameters[0].dimension_value = 0.0006
+    status, message = design.set_parameter(test_parameters[0])
+    assert status == UpdateStatus.CONSTRAINED_PARAMETERS
+
+    test_parameters[1].dimension_value = -0.06
+    status, message = design.set_parameter(test_parameters[1])
+    assert status == UpdateStatus.FAILURE
