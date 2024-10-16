@@ -30,7 +30,6 @@ import pytest
 import pyvista as pv
 from pyvista.plotting.utilities.regression import compare_images as pv_compare_images
 
-from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
 from ansys.geometry.core.designer import (
@@ -57,6 +56,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
+from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import Circle, Ellipse, Interval, ParamUV
 from ansys.geometry.core.sketch import Sketch
 from ansys.tools.visualization_interface.utils.color import Color
@@ -2678,18 +2678,27 @@ def test_design_parameters(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "dvParameterTableTest.dsco")
     test_parameters = design.get_all_parameters()
 
+    # Verify the initial parameters
     assert len(test_parameters) == 2
     assert test_parameters[0].name == "p1"
     assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
+    assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
+    assert test_parameters[1].name == "p2"
+    assert abs(test_parameters[1].dimension_value - 0.0002552758322160813) < 1e-8
+    assert test_parameters[1].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    # Update the second parameter and verify the status
     test_parameters[1].dimension_value = 0.0006
-    status, message = design.set_parameter(test_parameters[1])
-    assert status == UpdateStatus.SUCCESS
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.SUCCESS
 
+    # Attempt to update the first parameter and expect a constrained status
     test_parameters[0].dimension_value = 0.0006
-    status, message = design.set_parameter(test_parameters[0])
-    assert status == UpdateStatus.CONSTRAINED_PARAMETERS
+    status = design.set_parameter(test_parameters[0])
+    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
 
+    # Set an invalid value for the second parameter and expect a failure status
     test_parameters[1].dimension_value = -0.06
-    status, message = design.set_parameter(test_parameters[1])
-    assert status == UpdateStatus.FAILURE
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.FAILURE

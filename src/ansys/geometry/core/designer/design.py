@@ -76,7 +76,7 @@ from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.modeler import Modeler
-from ansys.geometry.core.parameters import Parameter
+from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -706,29 +706,34 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
-    def set_parameter(self, dimension: Parameter) -> dict:
+    def set_parameter(self, dimension: Parameter) -> ParameterUpdateStatus:
         """Update a parameter of the design.
 
         Parameters
         ----------
         dimension : Parameter
-            Parameters to set.
+            Parameter to set.
 
         Returns
         -------
-        dict
-            Dictionary containing the status of the update operation and a message.
+        ParameterUpdateStatus
+            Enum containing the status of the update operation.
         """
         request = UpdateRequest(driving_dimension=Parameter._to_proto(dimension))
         response = self._parameters_stub.UpdateParameter(request)
         status = response.status
-        status_messages = {
-            UpdateStatus.SUCCESS: "Update status: SUCCESS",
-            UpdateStatus.FAILURE: "Update status: FAILURE",
-            UpdateStatus.CONSTRAINED_PARAMETERS: "Update status: CONSTRAINED_PARAMETERS",
+
+        status_mapping = {
+            UpdateStatus.SUCCESS: ParameterUpdateStatus.SUCCESS,
+            UpdateStatus.FAILURE: ParameterUpdateStatus.FAILURE,
+            UpdateStatus.CONSTRAINED_PARAMETERS: ParameterUpdateStatus.CONSTRAINED_PARAMETERS,
         }
-        message = status_messages.get(status, f"Unknown status: {status}")
-        return status, message
+
+        # Update the design in place. This method is expensive,
+        # consider finding a more efficient approach.
+        self._update_design_inplace()
+
+        return status_mapping.get(status, ParameterUpdateStatus.UNKNOWN)
 
     @protect_grpc
     @check_input_types

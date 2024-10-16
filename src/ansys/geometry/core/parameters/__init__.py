@@ -21,4 +21,4 @@
 # SOFTWARE.
 """PyAnsys Geometry parameters subpackage."""
 
-from ansys.geometry.core.parameters.parameters import Parameter, ParameterType
+from ansys.geometry.core.parameters.parameter import Parameter, ParameterType

@@ -43,6 +43,16 @@ class ParameterType(Enum):
     DIMENSIONTYPE_UNITLESS = 10
 
 
+@unique
+class ParameterUpdateStatus(Enum):
+    """Provides values for parameter update status message."""
+
+    SUCCESS = 0
+    FAILURE = 1
+    CONSTRAINED_PARAMETERS = 2
+    UNKNOWN = 3
+
+
 class Parameter:
     """Represents a parameter."""
 
