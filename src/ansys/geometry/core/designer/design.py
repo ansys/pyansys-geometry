@@ -115,7 +115,6 @@ class Design(Component):
     _materials: list[Material]
     _named_selections: dict[str, NamedSelection]
     _beam_profiles: dict[str, BeamProfile]
-    _driving_dimensions: list[Parameter]
 
     @protect_grpc
     @check_input_types
@@ -139,7 +138,6 @@ class Design(Component):
         self._is_active = False
         self._is_closed = False
         self._modeler = modeler
-        self._parameters = []
 
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
@@ -175,7 +173,7 @@ class Design(Component):
     @property
     def parameters(self) -> list[Parameter]:
         """List of parameters available for the design."""
-        return self._parameters
+        return self.get_all_parameters()
 
     @property
     def is_active(self) -> bool:
