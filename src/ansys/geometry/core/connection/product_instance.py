@@ -329,7 +329,9 @@ def prepare_and_start_backend(
     elif backend_type == BackendType.WINDOWS_SERVICE:
         args.append(
             Path(
-                installations[product_version], WINDOWS_GEOMETRY_SERVICE_FOLDER, GEOMETRY_SERVICE_EXE
+                installations[product_version],
+                WINDOWS_GEOMETRY_SERVICE_FOLDER,
+                GEOMETRY_SERVICE_EXE,
             )
         )
     else:
