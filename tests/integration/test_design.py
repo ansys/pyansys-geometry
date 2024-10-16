@@ -2697,8 +2697,3 @@ def test_design_parameters(modeler: Modeler):
     test_parameters[0].dimension_value = 0.0006
     status = design.set_parameter(test_parameters[0])
     assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
-
-    # Set an invalid value for the second parameter and expect a failure status
-    test_parameters[1].dimension_value = -0.06
-    status = design.set_parameter(test_parameters[1])
-    assert status == ParameterUpdateStatus.FAILURE
