@@ -33,7 +33,7 @@ from pint import Quantity, UndefinedUnitError
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
 from ansys.api.dbu.v0.designs_pb2 import InsertRequest, NewRequest, SaveAsRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
-from ansys.api.dbu.v0.drivingdimensions_pb2 import GetAllRequest, UpdateRequest, UpdateStatus
+from ansys.api.dbu.v0.drivingdimensions_pb2 import GetAllRequest, UpdateRequest
 from ansys.api.dbu.v0.drivingdimensions_pb2_grpc import DrivingDimensionsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
@@ -175,7 +175,7 @@ class Design(Component):
     @property
     def parameters(self) -> list[Parameter]:
         """List of parameters available for the design."""
-        return self.get_all_parameters()
+        return self._parameters
 
     @property
     def is_active(self) -> bool:
@@ -692,12 +692,12 @@ class Design(Component):
 
     @protect_grpc
     @min_backend_version(25, 1, 0)
-    def get_all_parameters(self):
+    def get_all_parameters(self) -> list[Parameter]:
         """Get parameters for the design.
 
         Returns
         -------
-        List[DrivingDimension]
+        list[Parameter]
             List of parameters for the design.
         """
         response = self._parameters_stub.GetAll(GetAllRequest())
@@ -717,23 +717,17 @@ class Design(Component):
         Returns
         -------
         ParameterUpdateStatus
-            Enum containing the status of the update operation.
+            Status of the update operation.
         """
         request = UpdateRequest(driving_dimension=Parameter._to_proto(dimension))
         response = self._parameters_stub.UpdateParameter(request)
         status = response.status
 
-        status_mapping = {
-            UpdateStatus.SUCCESS: ParameterUpdateStatus.SUCCESS,
-            UpdateStatus.FAILURE: ParameterUpdateStatus.FAILURE,
-            UpdateStatus.CONSTRAINED_PARAMETERS: ParameterUpdateStatus.CONSTRAINED_PARAMETERS,
-        }
-
         # Update the design in place. This method is expensive,
         # consider finding a more efficient approach.
         self._update_design_inplace()
 
-        return status_mapping.get(status, ParameterUpdateStatus.UNKNOWN)
+        return ParameterUpdateStatus._from_update_status(status)
 
     @protect_grpc
     @check_input_types

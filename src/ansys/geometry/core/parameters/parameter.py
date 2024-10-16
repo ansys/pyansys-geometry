@@ -23,7 +23,8 @@
 
 from enum import Enum, unique
 
-from ansys.api.dbu.v0.dbumodels_pb2 import DrivingDimension as DrivingDimensionProto
+from ansys.api.dbu.v0.dbumodels_pb2 import DrivingDimension as ParameterProto
+from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus
 
 
 @unique
@@ -52,12 +53,35 @@ class ParameterUpdateStatus(Enum):
     CONSTRAINED_PARAMETERS = 2
     UNKNOWN = 3
 
+    @staticmethod
+    def _from_update_status(status):
+        """Convert UpdateStatus to ParameterUpdateStatus."""
+        status_mapping = {
+            UpdateStatus.SUCCESS: ParameterUpdateStatus.SUCCESS,
+            UpdateStatus.FAILURE: ParameterUpdateStatus.FAILURE,
+            UpdateStatus.CONSTRAINED_PARAMETERS: ParameterUpdateStatus.CONSTRAINED_PARAMETERS,
+        }
+        return status_mapping.get(status, ParameterUpdateStatus.UNKNOWN)
+
 
 class Parameter:
     """Represents a parameter."""
 
     def __init__(self, id, name, dimension_type: ParameterType, dimension_value):
-        """Initialize Parameter class."""
+        """
+        Initialize Parameter class.
+
+        Parameters
+        ----------
+        id : int
+            The unique identifier for the parameter.
+        name : str
+            The name of the parameter.
+        dimension_type : ParameterType
+            The type of the parameter.
+        dimension_value : float
+            The value of the parameter.
+        """
         self.id = id
         self._name = name
         self.dimension_type = dimension_type
@@ -65,7 +89,7 @@ class Parameter:
 
     @classmethod
     def _from_proto(cls, proto):
-        """Create a DrivingDimension instance from a proto object."""
+        """Create a Parameter instance from a proto object."""
         return cls(
             id=proto.id,
             name=proto.name,
@@ -74,17 +98,17 @@ class Parameter:
         )
 
     @property
-    def name(self):
-        """Set the name of the parameter."""
+    def name(self) -> str:
+        """Get the name of the parameter."""
         return self._name
 
     @name.setter
-    def name(self, value):
+    def name(self, value: str):
         """Set the name of the parameter."""
         self._name = value
 
     @property
-    def dimension_value(self):
+    def dimension_value(self) -> float:
         """Get the value of the parameter."""
         return self._dimension_value
 
@@ -94,8 +118,8 @@ class Parameter:
         self._dimension_value = value
 
     def _to_proto(self):
-        """Convert a DrivingDimension instance to a proto object."""
-        return DrivingDimensionProto(
+        """Convert a Parameter instance to a proto object."""
+        return ParameterProto(
             id=self.id,
             name=self.name,
             dimension_type=self.dimension_type.value,
