@@ -7,15 +7,15 @@ from pathlib import Path
 import time
 
 from ansys_sphinx_theme import (
+    ALL_NODES,
+    PARAGRAPHS,
+    TITLE,
     ansys_favicon,
     ansys_logo_white,
     ansys_logo_white_cropped,
     get_version_match,
     latex,
     watermark,
-    ALL_NODES,
-    TITLE,
-    PARAGRAPHS,
 )
 import requests
 import sphinx
