@@ -153,19 +153,19 @@ You can also test the correct build process of a new example by performing the f
 
     pip install myst-nb
 
-3. Run the following command to build a single example (i.e. substitute
+3. Run the following command to build a single example (that is, substitute
    ``<PATH_TO_MY_EXAMPLE_FILE>`` with the path to your example file)::
 
     mystnb-docutils-html --nb-read-as-md=1 <PATH_TO_MY_EXAMPLE_FILE> output.html
 
 4. Check the output file ``output.html`` to ensure that the example is correctly built.
-   Rendered output will not have the documentation styling but users should have the
+   Rendered output does not have documentation styling but users should have the
    ability to see its proper execution.
 
 .. note::
 
-  Plots will not be rendered in the output file, but the code and markdown cells should
-  be correctly rendered. In case of failure during execution you will also see the error
+  Plots are not be rendered in the output file, but the code and markdown cells should
+  be correctly rendered. In case of failure during execution users can also see the error
   message in the output file.
 
 Run tests
