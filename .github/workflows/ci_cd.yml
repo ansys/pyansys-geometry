@@ -94,6 +94,18 @@ jobs:
           - should-release: false
             os: macos-latest
     steps:
+      - name: If Python 3.13 - define PIP extra index
+        if: matrix.python-version == '3.13'
+        run: |
+          if [ ${{ runner.os }} == 'Linux' ]; then
+            echo "PIP_EXTRA_INDEX_URL=https://wheels.vtk.org" | tee -a $GITHUB_ENV
+            echo "PIP_PRE=1" | tee -a $GITHUB_ENV
+          else
+            echo "PIP_EXTRA_INDEX_URL=https://wheels.vtk.org" | Out-File -FilePath $env:GITHUB_ENV -Append
+            echo "PIP_PRE=1" | Out-File -FilePath $env:GITHUB_ENV -Append
+          fi
+          # Allow prereleases
+
       - name: Build wheelhouse and perform smoke test
         uses: ansys/actions/build-wheelhouse@v8
         with:
