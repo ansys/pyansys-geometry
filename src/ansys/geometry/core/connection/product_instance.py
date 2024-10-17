@@ -327,10 +327,11 @@ def prepare_and_start_backend(
             )
 
     elif backend_type == BackendType.WINDOWS_SERVICE:
-        latest_version = get_latest_ansys_installation()[0]
         args.append(
             Path(
-                installations[latest_version], WINDOWS_GEOMETRY_SERVICE_FOLDER, GEOMETRY_SERVICE_EXE
+                installations[product_version],
+                WINDOWS_GEOMETRY_SERVICE_FOLDER,
+                GEOMETRY_SERVICE_EXE,
             )
         )
     else:
