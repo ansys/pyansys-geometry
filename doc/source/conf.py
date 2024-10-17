@@ -176,6 +176,11 @@ html_theme_options = {
         "ignoreLocation": True,
     },
 }
+
+# Determine whether to skip cheat sheet build or not
+if os.environ.get("SKIP_BUILD_CHEAT_SHEET"):
+    html_theme_options.pop("cheatsheet")
+
 # Sphinx extensions
 extensions = [
     "sphinx.ext.intersphinx",
