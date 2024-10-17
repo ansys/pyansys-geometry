@@ -26,12 +26,21 @@ import logging
 from pathlib import Path
 import time
 from typing import Optional
+import warnings
+
+# TODO: Remove this context and filter once the protobuf UserWarning issue is downgraded to INFO
+# https://github.com/grpc/grpc/issues/37609
+with warnings.catch_warnings():
+    warnings.filterwarnings(
+        "ignore", "Protobuf gencode version", UserWarning, "google.protobuf.runtime_version"
+    )
+
+    from google.protobuf.empty_pb2 import Empty
+    import grpc
+    from grpc._channel import _InactiveRpcError
+    from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 from beartype import beartype as check_input_types
-from google.protobuf.empty_pb2 import Empty
-import grpc
-from grpc._channel import _InactiveRpcError
-from grpc_health.v1 import health_pb2, health_pb2_grpc
 import semver
 
 from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
