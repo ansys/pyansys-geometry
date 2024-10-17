@@ -130,7 +130,7 @@ Adding examples
 ---------------
 
 Users can collaborate with examples to this documentation by adding new examples. A reference
-commit of the changes that adding an example requieres is shown here:
+commit of the changes that adding an example requires is shown here:
 
 https://github.com/ansys/pyansys-geometry/pull/1454/commits/7fcf02f86f05e0e5ce1c1071c3c5fcd274ec481c
 
@@ -162,7 +162,7 @@ You can also test the correct build process of a new example by performing the f
    Rendered output will not have the documentation styling but users should have the
    ability to see its proper execution.
 
-.. note:: 
+.. note::
 
   Plots will not be rendered in the output file, but the code and markdown cells should
   be correctly rendered. In case of failure during execution you will also see the error
