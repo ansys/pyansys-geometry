@@ -24,7 +24,7 @@ Perform the required imports.
 ```{code-cell} ipython3
 import ansys.geometry.core as pyansys_geometry
 
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.math import Point2D, UNITVECTOR3D_X, UNITVECTOR3D_Y
 from ansys.geometry.core.sketch import Sketch
 ```
@@ -44,7 +44,7 @@ sketch.box(Point2D([0, 0]), 10, 10)
 Establish a server connection and initiate a design on the server.
 
 ```{code-cell} ipython3
-modeler = Modeler()
+modeler = launch_modeler()
 design = modeler.create_design("ServiceColors")
 ```
 
