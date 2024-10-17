@@ -13,6 +13,9 @@ from ansys_sphinx_theme import (
     get_version_match,
     latex,
     watermark,
+    ALL_NODES,
+    TITLE,
+    PARAGRAPHS,
 )
 import requests
 import sphinx
@@ -261,6 +264,11 @@ suppress_warnings = [
     "config.cache",
     "design.fa-build",
 ]
+
+index_patterns = {
+    "api/": ALL_NODES,
+    "examples/": TITLE + PARAGRAPHS,
+}
 
 # Examples gallery customization
 nbsphinx_execute = "always"
