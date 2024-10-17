@@ -126,6 +126,48 @@ You can clean the documentation build by running this command::
   # On Windows
   ./make.bat clean
 
+Adding examples
+---------------
+
+Users can collaborate with examples to this documentation by adding new examples. A reference
+commit of the changes that adding an example requieres is shown here:
+
+https://github.com/ansys/pyansys-geometry/pull/1454/commits/7fcf02f86f05e0e5ce1c1071c3c5fcd274ec481c
+
+To add a new example, follow these steps:
+
+1. Create a new notebook in the ``doc/source/examples`` directory, under the appropriate
+   folder for your example.
+2. Take as reference an existing example to see how the notebook should be structured.
+3. Add the new notebook to the ``doc/source/examples.rst`` file.
+4. Store a thumbnail image of the example in the ``doc/source/_static/thumbnails`` directory.
+5. Link the thumbnail image to your example file in ``doc/source/conf.py`` as shown in the reference commit.
+
+You can also test the correct build process of a new example by performing the following steps:
+
+1. Run the following command to install the documentation dependencies::
+
+    pip install -e .[doc]
+
+2. Install ``myst-nb`` by running this command::
+
+    pip install myst-nb
+
+3. Run the following command to build a single example (i.e. substitute
+   ``<PATH_TO_MY_EXAMPLE_FILE>`` with the path to your example file)::
+
+    mystnb-docutils-html --nb-read-as-md=1 <PATH_TO_MY_EXAMPLE_FILE> output.html
+
+4. Check the output file ``output.html`` to ensure that the example is correctly built.
+   Rendered output will not have the documentation styling but users should have the
+   ability to see its proper execution.
+
+.. note:: 
+
+  Plots will not be rendered in the output file, but the code and markdown cells should
+  be correctly rendered. In case of failure during execution you will also see the error
+  message in the output file.
+
 Run tests
 ---------
 
