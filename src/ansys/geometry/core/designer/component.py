@@ -36,6 +36,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     CreateSphereBodyRequest,
+    CreateSurfaceBodyRequest,
     CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
     TranslateRequest,
@@ -57,6 +58,7 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     trimmed_curve_to_grpc_trimmed_curve,
+    trimmed_surface_to_grpc_trimmed_surface,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
@@ -76,6 +78,7 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
+from ansys.geometry.core.shapes.surfaces import TrimmedSurface
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -892,6 +895,46 @@ class Component:
         response = self._bodies_stub.CreateBodyFromFace(request)
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(25, 1, 0)
+    def create_body_from_surface(self, name: str, trimmed_surface: TrimmedSurface) -> Body:
+        """Create a surface body from a trimmed surface.
+
+        Notes
+        -----
+        It is possible to create a closed solid body (as opposed to an open surface body) with a
+        Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new surface body.
+        trimmed_surface : TrimmedSurface
+            Geometry for the new surface body.
+
+        Returns
+        -------
+        Body
+            Surface body.
+        """
+        surface = trimmed_surface_to_grpc_trimmed_surface(trimmed_surface)
+        request = CreateSurfaceBodyRequest(
+            name=name,
+            parent=self.id,
+            trimmed_surface=surface,
+        )
+
+        self._grpc_client.log.debug(
+            f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
+        )
+        response = self._bodies_stub.CreateSurfaceBody(request)
+
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
