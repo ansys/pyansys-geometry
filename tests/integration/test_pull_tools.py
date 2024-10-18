@@ -19,15 +19,32 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""PyAnsys Geometry tools subpackage."""
+""" "Testing of repair tools."""
 
-from ansys.geometry.core.tools.measurement_tools import MeasurementTools
-from ansys.geometry.core.tools.prepare_tools import PrepareTools
-from ansys.geometry.core.tools.problem_areas import (
-    DuplicateFaceProblemAreas,
-    ExtraEdgeProblemAreas,
-    InexactEdgeProblemAreas,
-)
-from ansys.geometry.core.tools.pull_tools import PullTools
-from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
-from ansys.geometry.core.tools.repair_tools import RepairTools
+from pint import Quantity
+import pytest
+
+from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.sketch.sketch import Sketch
+
+
+def test_chamfer(modeler: Modeler):
+    """Test chamfer on edge and face."""
+    design = modeler.create_design("chamfer")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+    assert len(body.edges) == 12
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    modeler.pull_tools.chamfer(body.edges[0], 0.1)
+    assert len(body.faces) == 7
+    assert len(body.edges) == 15
+    assert body.volume.m == pytest.approx(Quantity(0.995, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    modeler.pull_tools.chamfer(body.faces[-1], 0.5)
+    assert len(body.faces) == 7
+    assert len(body.edges) == 15
+    assert body.volume.m == pytest.approx(Quantity(0.875, UNITS.m**3).m, rel=1e-6, abs=1e-8)
