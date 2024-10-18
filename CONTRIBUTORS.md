@@ -27,5 +27,5 @@
 * [Revathy Venugopal](https://github.com/Revathyvenugopal162)
 * [Riccardo Manno](https://github.com/rmanno91)
 * [Sebastien Morais](https://github.com/SMoraisAnsys)
-* [Sebastien Morais](https://github.com/smereu)
+* [Stefano Mereu](https://github.com/smereu)
 * [Umut Soysal](https://github.com/umutsoysal)
