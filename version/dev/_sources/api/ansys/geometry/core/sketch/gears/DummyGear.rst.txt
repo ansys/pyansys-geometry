@@ -1,0 +1,102 @@
+
+
+:class:`DummyGear`
+==================
+
+.. py:class:: ansys.geometry.core.sketch.gears.DummyGear(origin: ansys.geometry.core.math.point.Point2D, outer_radius: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, inner_radius: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, n_teeth: int)
+
+   Bases: :py:obj:`Gear`
+
+
+   
+   Provides the dummy class for sketching gears.
+
+
+   :Parameters:
+
+       **origin** : :obj:`Point2D`
+           Origin of the gear.
+
+       **outer_radius** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Outer radius of the gear.
+
+       **inner_radius** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Inner radius of the gear.
+
+       **n_teeth** : :class:`python:int`
+           Number of teeth of the gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: DummyGear
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~outer_radius`
+            - 
+          * - :py:attr:`~inner_radius`
+            - 
+          * - :py:attr:`~repeat_angle`
+            - 
+          * - :py:attr:`~tooth_angle`
+            - 
+          * - :py:attr:`~gap_angle`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.gears import DummyGear
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: outer_radius
+
+.. py:attribute:: inner_radius
+
+.. py:attribute:: repeat_angle
+
+.. py:attribute:: tooth_angle
+
+.. py:attribute:: gap_angle
+
+
+
+

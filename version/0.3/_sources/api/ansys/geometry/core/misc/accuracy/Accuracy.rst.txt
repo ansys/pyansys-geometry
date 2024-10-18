@@ -1,0 +1,411 @@
+
+
+
+
+Accuracy
+========
+
+.. py:class:: Accuracy
+   :canonical: ansys.geometry.core.misc.accuracy.Accuracy
+
+
+
+
+Provides decimal precision evaluations for actions such as equivalency.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Accuracy
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~length_is_equal`
+            - Check if the comparison length is equal to the reference length.
+          * - :py:attr:`~length_is_greater_than_or_equal`
+            - Check if the comparison length is greater than the reference length.
+          * - :py:attr:`~length_is_less_than_or_equal`
+            - Check if the comparison length is less than or equal to the reference length.
+          * - :py:attr:`~length_is_zero`
+            - Check if the length is within the length accuracy of exact zero.
+          * - :py:attr:`~length_is_negative`
+            - Check if the length is below a negative length accuracy.
+          * - :py:attr:`~length_is_positive`
+            - Check if the length is above a positive length accuracy.
+          * - :py:attr:`~angle_is_zero`
+            - Check if the length is within the angle accuracy of exact zero.
+          * - :py:attr:`~angle_is_negative`
+            - Check if the angle is below a negative angle accuracy.
+          * - :py:attr:`~angle_is_positive`
+            - Check if the angle is above a positive angle accuracy.
+          * - :py:attr:`~is_within_tolerance`
+            - Check if two values (a and b) are inside a relative and absolute tolerance.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.accuracy import Accuracy
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: length_is_equal(reference_length: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Check if the comparison length is equal to the reference length.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the comparison length is equal to the reference length
+           within the length accuracy, ``False`` otherwise.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: length_is_greater_than_or_equal(reference_length: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Check if the comparison length is greater than the reference length.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the comparison length is greater than the reference length within
+           the length accuracy, ``False`` otherwise.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: length_is_less_than_or_equal(reference_length: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Check if the comparison length is less than or equal to the reference length.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the comparison length is less than or equal to the reference length
+           within the length accuracy, ``False`` otherwise.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: length_is_zero() -> bool
+
+   
+   Check if the length is within the length accuracy of exact zero.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the length is within the length accuracy of exact zero,
+           ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: length_is_negative() -> bool
+
+   
+   Check if the length is below a negative length accuracy.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the length is below a negative length accuracy,
+            ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: length_is_positive() -> bool
+
+   
+   Check if the length is above a positive length accuracy.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the length is above a positive length accuracy,
+            ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: angle_is_zero() -> bool
+
+   
+   Check if the length is within the angle accuracy of exact zero.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the length is within the angle accuracy of exact zero,
+            ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: angle_is_negative() -> bool
+
+   
+   Check if the angle is below a negative angle accuracy.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the angle is below a negative angle accuracy,
+            ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: angle_is_positive() -> bool
+
+   
+   Check if the angle is above a positive angle accuracy.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the angle is above a positive angle accuracy,
+            ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: is_within_tolerance(b: ansys.geometry.core.typing.Real, relative_tolerance: ansys.geometry.core.typing.Real, absolute_tolerance: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Check if two values (a and b) are inside a relative and absolute tolerance.
+
+
+   :Parameters:
+
+       **a** : :obj:`Real`
+           First value.
+
+       **b** : :obj:`Real`
+           Second value.
+
+       **relative_tolerance** : :obj:`Real`
+           Relative tolerance accepted.
+
+       **absolute_tolerance** : :obj:`Real`
+           Absolute tolerance accepted.
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the values are inside the accepted tolerances,
+           ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
