@@ -42,6 +42,7 @@ from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
+from ansys.geometry.core.tools.pull_tools import PullTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.typing import Real
 
@@ -128,6 +129,7 @@ class Modeler:
             self._repair_tools = RepairTools(self._grpc_client)
             self._prepare_tools = PrepareTools(self._grpc_client)
             self._measurement_tools = MeasurementTools(self._grpc_client)
+        self._pull_tools = PullTools(self._grpc_client)
 
         # Maintaining references to all designs within the modeler workspace
         self._designs: dict[str, "Design"] = {}
@@ -497,3 +499,9 @@ class Modeler:
     def measurement_tools(self) -> MeasurementTools:
         """Access to measurement tools."""
         return self._measurement_tools
+
+    @property
+    @min_backend_version(25, 1, 0)
+    def pull_tools(self) -> PullTools:
+        """Access to pull tools."""
+        return self._pull_tools

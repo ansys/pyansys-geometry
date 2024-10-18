@@ -1208,6 +1208,9 @@ class Body(IBody):
 
         return wrapper
 
+    def _reset_tessellation_cache(self):  # noqa: N805
+        self._template._tessellation = None
+
     @property
     def id(self) -> str:  # noqa: D102
         return self._id
