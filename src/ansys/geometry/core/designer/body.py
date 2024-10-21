@@ -1122,7 +1122,7 @@ class MasterBody(IBody):
 
         if merge:
             ugrid = comp.combine()
-            return pv.PolyData(ugrid.points, faces=ugrid.cells)
+            return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
         else:
             return comp
 
