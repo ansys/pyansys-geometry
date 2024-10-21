@@ -1209,6 +1209,7 @@ class Body(IBody):
         return wrapper
 
     def _reset_tessellation_cache(self):  # noqa: N805
+        """Reset the cached tessellation for a body."""
         self._template._tessellation = None
 
     @property

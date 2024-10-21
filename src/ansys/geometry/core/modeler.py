@@ -501,7 +501,6 @@ class Modeler:
         return self._measurement_tools
 
     @property
-    @min_backend_version(25, 1, 0)
     def pull_tools(self) -> PullTools:
         """Access to pull tools."""
         return self._pull_tools
