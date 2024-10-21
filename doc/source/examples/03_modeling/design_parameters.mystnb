@@ -1,0 +1,130 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.16.4
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
+# Modeling: Using Design Parameters
+
+You can read and update parameters that are part of the design.
+In this example, we have a simple design with two associated parameters.
+
++++
+
+## Perform required imports
+
+```{code-cell} ipython3
+import os
+from ansys.geometry.core.modeler import *
+from ansys.geometry.core.parameters import *
+```
+
+The file for this example is in the integration tests folder, so let's get its path.
+
+```{code-cell} ipython3
+current_path = os.getcwd()
+file_path = os.path.join(current_path, os.pardir,  os.pardir, os.pardir, os.pardir, "tests/integration/files/blockwithparameters.dsco")
+# Normalize the path to remove any redundant separators
+file_path = os.path.normpath(file_path)
+```
+
+## Import a design with parameters
+
++++
+
+Importing the model using open_file method of the modeler.
+
+```{code-cell} ipython3
+modeler = Modeler(host="localhost", port= 50051)
+design = modeler.open_file(file_path)
+design.plot()
+```
+
+## Read existing parameters of the design
+
+You can get all the parameters of the design as a list of parameters. In this example there is two parameters. So we can see the two items in the list.
+
+```{code-cell} ipython3
+my_parameters = design.get_all_parameters()
+print(len(my_parameters))
+```
+
+A parameter object has a name, value, and unit.
+
+```{code-cell} ipython3
+print(my_parameters[0].name)
+print(my_parameters[0].dimension_value)
+print(my_parameters[0].dimension_type)
+
+print(my_parameters[1].name)
+print(my_parameters[1].dimension_value)
+print(my_parameters[1].dimension_type)
+```
+
+Parameter values are returned in the default unit for each dimension type. Since default length unit is meter and default area unit is meter square, the value is returned in metersquare.
+
++++
+
+## Edit a parameter value
+
+You can edit the parameters name or value by simply setting these fields. Let set the second parameters (p2 value to 350 mm. )
+
+```{code-cell} ipython3
+parameter1 = my_parameters[1]
+parameter1.dimension_value = 0.000340
+response = design.set_parameter(parameter1)
+print(response)
+print(my_parameters[0].dimension_value)
+print(my_parameters[1].dimension_value)
+```
+
+After a successful parameter update the design in the backend might have been updated. Therefore you need to refresh the design on the client.
+
+```{code-cell} ipython3
+design = modeler.read_existing_design()
+design.plot()
+```
+
+The setParameter method returns a status message: "Success" if the parameter is updated, or "FAILURE" if the update fails. If parameter p2 depends on p1, updating p1 may also change p2. In such cases, the method returns "CONSTRAINED_PARAMETERS," indicating other parameters were also updated.
+
+```{code-cell} ipython3
+parameter1 = my_parameters[0]
+parameter1.dimension_value = 0.000250
+response = design.set_parameter(parameter1)
+print(response)
+```
+
+Therefore user can query the parameters once again to get updated list.
+
+```{code-cell} ipython3
+my_parameters = design.get_all_parameters()
+print(my_parameters[0].dimension_value)
+print(my_parameters[1].dimension_value)
+```
+
+## Close the modeler
+
+Close the modeler to free up resources and release the connection.
+
+```{code-cell} ipython3
+modeler.close()
+```
+
+```{code-cell} ipython3
+
+```
+
+```{code-cell} ipython3
+
+```
+
+```{code-cell} ipython3
+
+```
