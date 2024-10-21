@@ -382,7 +382,7 @@ def tess_to_pd(tess: Tessellation) -> "PolyData":
     import numpy as np
     import pyvista as pv
 
-    return pv.PolyData(np.array(tess.vertices).reshape(-1, 3), tess.faces)
+    return pv.PolyData(var_inp=np.array(tess.vertices).reshape(-1, 3), faces=tess.faces)
 
 
 def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:

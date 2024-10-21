@@ -875,3 +875,31 @@ def test_plot_server_color_on_single_body_using_input(modeler: Modeler, verify_i
         screenshot=Path(IMAGE_RESULTS_DIR, "plot_server_color_on_single_body_using_input.png"),
         use_service_colors=True,
     )
+
+
+@skip_no_xserver
+def test_plot_design_multi_colors(modeler: Modeler, verify_image_cache):
+    """Test plotting of design with/without multi_colors."""
+    design = modeler.create_design("DesignMultiColors")
+    # Create a sketch of a box
+    sketch_box = Sketch().box(
+        Point2D([0, 0], unit=UNITS.m), width=30 * UNITS.m, height=40 * UNITS.m
+    )
+
+    # Create a sketch of a circle (overlapping the box slightly)
+    sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=3 * UNITS.m)
+
+    # Extrude both sketches to get a prism and a cylinder
+    design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
+    design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+    # Design plotting
+    design.plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_design_multi_colors.png"),
+        multi_colors=True,
+    )
+
+    design.plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_design_multi_colors_single_color.png"),
+        multi_colors=False,
+    )
