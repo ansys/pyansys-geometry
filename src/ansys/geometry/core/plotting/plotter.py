@@ -254,8 +254,8 @@ class GeometryPlotter(PlotterInterface):
         body_plot = MeshObjectPlot(custom_object=body, mesh=dataset)
         self._backend.pv_interface.plot(body_plot, **plotting_options)
 
-        # Edges should ONLY be plotted if the user wants to see them or if picking is enabled
-        if plotting_options.get("show_edges", False) or self._backend._allow_picking:
+        # Edges should ONLY be plotted individually if picking is enabled
+        if self._backend._allow_picking:
             self.add_body_edges(body_plot)
 
     def add_component(
