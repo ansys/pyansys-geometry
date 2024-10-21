@@ -241,7 +241,11 @@ class GeometryPlotter(PlotterInterface):
         # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
         # so if multi_colors is True and merge is True (returns PolyData) then
         # we need to set the color manually
-        elif merge and "multi_colors" in plotting_options and "color" not in plotting_options:
+        elif (
+            merge
+            and plotting_options.get("multi_colors", False)
+            and "color" not in plotting_options
+        ):
             plotting_options["color"] = next(POLYDATA_COLOR_CYCLER)["color"]
 
         # Use the default PyAnsys Geometry add_mesh arguments

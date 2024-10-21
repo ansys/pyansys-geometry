@@ -1472,7 +1472,7 @@ class Component:
 
         # At component level, if ``multi_colors`` or ``use_service_colors`` are defined
         # we should not merge the component.
-        if "multi_colors" in plotting_options or use_service_colors:
+        if plotting_options.get("multi_colors", False) or use_service_colors:
             plotting_options["merge_component"] = False
             self._grpc_client.log.info(
                 "Ignoring 'merge_component=True' (default behavior) as "
