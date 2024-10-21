@@ -1477,8 +1477,7 @@ class Component:
         # If picking is enabled, we should not merge the component
         if allow_picking:
             self._grpc_client.log.info(
-                "Ignoring 'merge_component=True' (default behavior) as "
-                "'allow_picking=True'."
+                "Ignoring 'merge_component=True' (default behavior) as " "'allow_picking=True'."
             )
             merge_component = False
 
