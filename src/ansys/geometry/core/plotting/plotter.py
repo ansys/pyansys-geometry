@@ -437,7 +437,7 @@ class GeometryPlotter(PlotterInterface):
         plotting_object: Any = None,
         screenshot: str | None = None,
         **plotting_options,
-    ) -> None:
+    ) -> None | list[Any]:
         """Show the plotter.
 
         Parameters
@@ -452,4 +452,17 @@ class GeometryPlotter(PlotterInterface):
         """
         if plotting_object is not None:
             self.plot(plotting_object, **plotting_options)
-        self._backend.show(screenshot=screenshot, **plotting_options)
+        picked_objs = self._backend.show(screenshot=screenshot, **plotting_options)
+        
+        # Return the picked objects if picking is enabled... but as the actual PyAnsys
+        # Geometry objects (or PyVista objects if not)
+        if picked_objs:
+            lib_objects = []
+            for element in picked_objs:
+                if isinstance(element, MeshObjectPlot):
+                    lib_objects.append(element.custom_object)
+                elif isinstance(element, EdgePlot):
+                    lib_objects.append(element.edge_object)
+                else: # Either a PyAnsys Geometry object or a PyVista object
+                    lib_objects.append(element)                
+            return lib_objects
