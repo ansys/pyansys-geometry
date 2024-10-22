@@ -23,7 +23,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.11",
+    "ansys-api-geometry==0.4.12",
     "ansys-tools-path>=0.3,<1",
     "ansys-tools-visualization-interface>=0.2.6,<1",
     "beartype>=0.11.0,<0.20",
