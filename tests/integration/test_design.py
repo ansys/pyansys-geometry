@@ -59,10 +59,15 @@ from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Dist
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
+    Cone,
+    Cylinder,
     Ellipse,
     Interval,
     ParamUV,
+    Sphere,
+    Torus,
 )
+from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.sketch import Sketch
 from ansys.tools.visualization_interface.utils.color import Color
 
@@ -2675,6 +2680,65 @@ def test_component_tree_print(modeler: Modeler):
         "    |---(body) nested_1_nested_1_comp_1_circle",
     ]
     assert check_list_equality(lines, ref) is True
+
+
+def test_surface_body_creation(modeler: Modeler):
+    """Test surface body creation from trimmed surfaces."""
+    design = modeler.create_design("Design1")
+
+    # half sphere
+    surface = Sphere([0, 0, 0], 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi / 2)))
+    body = design.create_body_from_surface("sphere", trimmed_surface)
+    assert len(design.bodies) == 1
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(np.pi * 2)
+
+    # cylinder
+    surface = Cylinder([0, 0, 0], 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, 1)))
+    body = design.create_body_from_surface("cylinder", trimmed_surface)
+
+    assert len(design.bodies) == 2
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(np.pi * 2)
+
+    # cone
+    surface = Cone([0, 0, 0], 1, np.pi / 4)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(surface.apex.z.m, 0)))
+    body = design.create_body_from_surface("cone", trimmed_surface)
+
+    assert len(design.bodies) == 3
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(4.44288293816)
+
+    # half torus
+    surface = Torus([0, 0, 0], 2, 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi), Interval(0, np.pi * 2)))
+    body = design.create_body_from_surface("torus", trimmed_surface)
+
+    assert len(design.bodies) == 4
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(39.4784176044)
+
+    # SOLID BODIES
+
+    # sphere
+    surface = Sphere([0, 0, 0], 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(-np.pi / 2, np.pi / 2)))
+    body = design.create_body_from_surface("sphere_solid", trimmed_surface)
+    assert len(design.bodies) == 5
+    assert not body.is_surface
+    assert body.faces[0].area.m == pytest.approx(np.pi * 4)
+
+    # torus
+    surface = Torus([0, 0, 0], 2, 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi * 2)))
+    body = design.create_body_from_surface("torus_solid", trimmed_surface)
+
+    assert len(design.bodies) == 6
+    assert not body.is_surface
+    assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
 
 
 def test_design_parameters(modeler: Modeler):
