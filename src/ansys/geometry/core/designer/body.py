@@ -1203,7 +1203,7 @@ class Body(IBody):
 
         @wraps(func)
         def wrapper(self: "Body", *args, **kwargs):
-            self._template._tessellation = None
+            self._reset_tessellation_cache()
             return func(self, *args, **kwargs)
 
         return wrapper

@@ -52,7 +52,7 @@ class PullTools:
 
     @protect_grpc
     @min_backend_version(25, 1, 0)
-    def chamfer(self, edge_or_face: Union["Edge", "Face"], distance: Real):
+    def chamfer(self, edge_or_face: Union["Edge", "Face"], distance: Real) -> bool:
         """Create a chamfer on an edge, or adjust the chamfer of a face.
 
         Parameters
@@ -61,8 +61,14 @@ class PullTools:
             Edge or face to act on.
         distance : Real
             Chamfer distance.
+
+        Returns
+        -------
+        bool
+            Success of chamfer command.
         """
         edge_or_face.body._reset_tessellation_cache()
 
-        self._commands_stub.Chamfer(ChamferRequest(id=edge_or_face.id, distance=distance))
-        # return all created stuff?
+        result = self._commands_stub.Chamfer(ChamferRequest(id=edge_or_face.id, distance=distance))
+
+        return result.success
