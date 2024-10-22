@@ -544,7 +544,7 @@ class IBody(ABC):
     @abstractmethod
     def plot(
         self,
-        merge: bool = False,
+        merge: bool = True,
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
@@ -554,10 +554,11 @@ class IBody(ABC):
 
         Parameters
         ----------
-        merge : bool, default: False
-            Whether to merge the body into a single mesh. When ``False`` (default),
-            the number of triangles are preserved and only the topology is merged.
-            When ``True``, the individual faces of the tessellation are merged.
+        merge : bool, default: True
+            Whether to merge the body into a single mesh. Performance improved when ``True``.
+            When ``True`` (default), the individual faces of the tessellation are merged.
+            When ``False``, the number of triangles are preserved and only the topology
+            is merged.
         screenshot : str, default: None
             Path for saving a screenshot of the image that is being represented.
         use_trame : bool, default: None
@@ -1118,14 +1119,16 @@ class MasterBody(IBody):
 
         pdata = [tess_to_pd(tess).transform(transform) for tess in self._tessellation]
         comp = pv.MultiBlock(pdata)
+
         if merge:
             ugrid = comp.combine()
-            return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
-        return comp
+            return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
+        else:
+            return comp
 
     def plot(  # noqa: D102
         self,
-        merge: bool = False,
+        merge: bool = True,
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
@@ -1514,7 +1517,7 @@ class Body(IBody):
 
     def plot(  # noqa: D102
         self,
-        merge: bool = False,
+        merge: bool = True,
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
@@ -1532,6 +1535,9 @@ class Body(IBody):
             if use_service_colors is not None
             else pyansys_geometry.USE_SERVICE_COLORS
         )
+
+        # Add to plotting options as well... to be used by the plotter if necessary
+        plotting_options["merge_bodies"] = merge
 
         mesh_object = (
             self if use_service_colors else MeshObjectPlot(self, self.tessellate(merge=merge))
