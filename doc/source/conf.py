@@ -9,6 +9,7 @@ import time
 from ansys_sphinx_theme import (
     ALL_NODES,
     PARAGRAPHS,
+    TITLES,
     ansys_favicon,
     ansys_logo_white,
     ansys_logo_white_cropped,
@@ -271,7 +272,7 @@ suppress_warnings = [
 
 index_patterns = {
     "api/": ALL_NODES,
-    "examples/": TITLE + PARAGRAPHS,
+    "examples/": TITLES + PARAGRAPHS,
 }
 
 # Examples gallery customization
