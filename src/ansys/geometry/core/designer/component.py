@@ -36,6 +36,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     CreateSphereBodyRequest,
+    CreateSurfaceBodyRequest,
     CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
     TranslateRequest,
@@ -57,6 +58,7 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     trimmed_curve_to_grpc_trimmed_curve,
+    trimmed_surface_to_grpc_trimmed_surface,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
@@ -76,6 +78,7 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
+from ansys.geometry.core.shapes.surfaces import TrimmedSurface
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -895,6 +898,46 @@ class Component:
         self._master_component.part.bodies.append(tb)
         return Body(response.id, response.name, self, tb)
 
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(25, 1, 0)
+    def create_body_from_surface(self, name: str, trimmed_surface: TrimmedSurface) -> Body:
+        """Create a surface body from a trimmed surface.
+
+        Notes
+        -----
+        It is possible to create a closed solid body (as opposed to an open surface body) with a
+        Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new surface body.
+        trimmed_surface : TrimmedSurface
+            Geometry for the new surface body.
+
+        Returns
+        -------
+        Body
+            Surface body.
+        """
+        surface = trimmed_surface_to_grpc_trimmed_surface(trimmed_surface)
+        request = CreateSurfaceBodyRequest(
+            name=name,
+            parent=self.id,
+            trimmed_surface=surface,
+        )
+
+        self._grpc_client.log.debug(
+            f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
+        )
+        response = self._bodies_stub.CreateSurfaceBody(request)
+
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
+        self._master_component.part.bodies.append(tb)
+        return Body(response.id, response.name, self, tb)
+
     @check_input_types
     @ensure_design_is_active
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
@@ -1307,85 +1350,47 @@ class Component:
         # Kill itself
         self._is_alive = False
 
-    def tessellate(
-        self, merge_component: bool = False, merge_bodies: bool = False
-    ) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(self, _recursive_call: bool = False) -> Union["PolyData", list["MultiBlock"]]:
         """Tessellate the component.
 
         Parameters
         ----------
-        merge_component : bool, default: False
-            Whether to merge this component into a single dataset. When ``True``,
-            all the individual bodies are effectively combined into a single
-            dataset without any hierarchy.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively
-            merged into a single dataset without separating faces.
+        _recursive_call: bool, default: False
+            Internal flag to indicate if this method is being called recursively.
+            Not to be used by the user.
 
         Returns
         -------
-        ~pyvista.PolyData, ~pyvista.MultiBlock
-            Merged :class:`pyvista.PolyData` if ``merge_component=True`` or a
-            composite dataset.
+        ~pyvista.PolyData, list[~pyvista.MultiBlock]
+            Tessellated component as a single PolyData object.
+            If the method is called recursively, a list of MultiBlock objects is returned.
 
-        Examples
-        --------
-        Create two stacked bodies and return the tessellation as two merged bodies:
-
-        >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core import Modeler
-        >>> from ansys.geometry.core.math import Point2D, Point3D, Plane
-        >>> from ansys.geometry.core.misc import UNITS
-        >>> modeler = Modeler("10.54.0.72", "50051")
-        >>> sketch_1 = Sketch()
-        >>> box = sketch_1.box(
-        >>>    Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
-        >>> sketch_1.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
-        >>> design = modeler.create_design("MyDesign")
-        >>> comp = design.add_component("MyComponent")
-        >>> distance = Quantity(10, UNITS.m)
-        >>> body = comp.extrude_sketch("Body", sketch=sketch_1, distance=distance)
-        >>> sketch_2 = Sketch(Plane([0, 0, 10]))
-        >>> box = sketch_2.box(
-        >>>    Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
-        >>> circle = sketch_2.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
-        >>> body = comp.extrude_sketch("Body", sketch=sketch_2, distance=distance)
-        >>> dataset = comp.tessellate(merge_bodies=True)
-        >>> dataset
-        MultiBlock (0x7ff6bcb511e0)
-          N Blocks:     2
-          X Bounds:     -25.000, 25.000
-          Y Bounds:     -24.991, 24.991
-          Z Bounds:     0.000, 20.000
         """
         import pyvista as pv
 
         # Tessellate the bodies in this component
-        datasets = [body.tessellate(merge_bodies) for body in self.bodies]
-
-        blocks_list = [pv.MultiBlock(datasets)]
+        datasets: list["MultiBlock"] = [body.tessellate(merge=False) for body in self.bodies]
 
         # Now, go recursively inside its subcomponents (with no arguments) and
         # merge the PolyData obtained into our blocks
         for comp in self._components:
             if not comp.is_alive:
                 continue
-            blocks_list.append(comp.tessellate(merge_bodies=merge_bodies))
+            datasets.extend(comp.tessellate(_recursive_call=True))
 
-        # Transform the list of MultiBlock objects into a single MultiBlock
-        blocks = pv.MultiBlock(blocks_list)
-
-        if merge_component:
-            ugrid = blocks.combine()
-            # Convert to polydata as it's slightly faster than extract surface
-            return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
-        return blocks
+        # Convert to polydata as it's slightly faster than extract surface
+        # plus this method is only for visualizing the component as a whole (no
+        # need to keep the hierarchy)
+        if _recursive_call:
+            return datasets
+        else:
+            ugrid = pv.MultiBlock(datasets).combine()
+            return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
 
     def plot(
         self,
-        merge_component: bool = False,
-        merge_bodies: bool = False,
+        merge_component: bool = True,
+        merge_bodies: bool = True,
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
@@ -1395,14 +1400,15 @@ class Component:
 
         Parameters
         ----------
-        merge_component : bool, default: False
-            Whether to merge the component into a single dataset. When ``True``,
-            all the individual bodies are effectively merged into a single
-            dataset without any hierarchy.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively merged
-            into a single dataset without separating faces.
+        merge_component : bool, default: True
+            Whether to merge the component into a single dataset. By default, ``True``.
+            Performance improved. When ``True``, all the faces of the component are effectively
+            merged into a single dataset. If ``False``, the individual bodies are kept separate.
+        merge_bodies : bool, default: True
+            Whether to merge each body into a single dataset. By default, ``True``.
+            Performance improved. When ``True``, all the faces of each individual body are
+            effectively merged into a single dataset. If ``False``, the individual faces are kept
+            separate.
         screenshot : str, default: None
             Path for saving a screenshot of the image being represented.
         use_trame : bool, default: None
@@ -1453,7 +1459,6 @@ class Component:
         """
         import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
-        from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
         use_service_colors = (
             use_service_colors
@@ -1461,16 +1466,21 @@ class Component:
             else pyansys_geometry.USE_SERVICE_COLORS
         )
 
-        mesh_object = (
-            self
-            if use_service_colors
-            else MeshObjectPlot(
-                custom_object=self,
-                mesh=self.tessellate(merge_component=merge_component, merge_bodies=merge_bodies),
+        # Add merge_component and merge_bodies to the plotting options
+        plotting_options["merge_component"] = merge_component
+        plotting_options["merge_bodies"] = merge_bodies
+
+        # At component level, if ``multi_colors`` or ``use_service_colors`` are defined
+        # we should not merge the component.
+        if plotting_options.get("multi_colors", False) or use_service_colors:
+            plotting_options["merge_component"] = False
+            self._grpc_client.log.info(
+                "Ignoring 'merge_component=True' (default behavior) as "
+                "'multi_colors' or 'use_service_colors' are defined."
             )
-        )
+
         pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
-        pl.plot(mesh_object, **plotting_options)
+        pl.plot(self, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 
     def __repr__(self) -> str:

@@ -49,7 +49,7 @@ all = [
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
     "ansys-tools-path==0.6.0",
-    "ansys-tools-visualization-interface==0.4.5",
+    "ansys-tools-visualization-interface==0.4.6",
     "beartype==0.19.0",
     "docker==7.1.0",
     "grpcio==1.67.0",
@@ -77,7 +77,7 @@ tests-minimal = [
 doc = [
     "ansys-sphinx-theme[autoapi] @ git+https://github.com/ansys/ansys-sphinx-theme.git@fix/indexing-docs-components",
     "ansys-tools-path==0.6.0",
-    "ansys-tools-visualization-interface==0.4.5",
+    "ansys-tools-visualization-interface==0.4.6",
     "beartype==0.19.0",
     "docker==7.1.0",
     "grpcio==1.67.0",
@@ -103,7 +103,7 @@ doc = [
     "sphinx-autodoc-typehints==2.5.0",
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
-    "trame-vtk==2.8.10",
+    "trame-vtk==2.8.11",
     "vtk==9.3.1",
 ]
 
