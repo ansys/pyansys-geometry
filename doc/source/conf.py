@@ -135,6 +135,7 @@ html_context = {
     "doc_path": "doc/source",
 }
 html_theme_options = {
+    "header_links_before_dropdown": 7,
     "logo": "pyansys",
     "switcher": {
         "json_url": f"https://{cname}/versions.json",
@@ -175,6 +176,11 @@ html_theme_options = {
         "ignoreLocation": True,
     },
 }
+
+# Determine whether to skip cheat sheet build or not
+if os.environ.get("SKIP_BUILD_CHEAT_SHEET"):
+    html_theme_options.pop("cheatsheet")
+
 # Sphinx extensions
 extensions = [
     "sphinx.ext.intersphinx",
@@ -286,6 +292,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/export_design": "_static/thumbnails/export_design.png",
     "examples/03_modeling/design_tree": "_static/thumbnails/design_tree.png",
     "examples/03_modeling/service_colors": "_static/thumbnails/service_colors.png",
+    "examples/03_modeling/surface_bodies": "_static/thumbnails/quarter_sphere.png",
     "examples/03_modeling/design_parameters": "_static/thumbnails/block_with_parameters.png",
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
@@ -328,7 +335,7 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
-linkcheck_exclude_documents = ["index", "getting_started/local/index"]
+linkcheck_exclude_documents = ["index", "getting_started/local/index", "changelog"]
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries",
     r"https://download.ansys.com/",

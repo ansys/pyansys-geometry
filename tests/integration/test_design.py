@@ -57,7 +57,12 @@ from ansys.geometry.core.math import (
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
-from ansys.geometry.core.shapes import Circle, Ellipse, Interval, ParamUV
+from ansys.geometry.core.shapes import (
+    Circle,
+    Ellipse,
+    Interval,
+    ParamUV,
+)
 from ansys.geometry.core.sketch import Sketch
 from ansys.tools.visualization_interface.utils.color import Color
 

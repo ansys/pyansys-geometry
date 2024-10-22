@@ -176,7 +176,7 @@ the ``plot()`` method.
 
 In the following cell we will create a new design and plot a prism and a cylinder in different colors.
 
-```python
+```{code-cell} ipython
 design = modeler.create_design("MultiColors")
 
 # Create a sketch of a box
@@ -192,8 +192,6 @@ design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
 # Design plotting
 design.plot(multi_colors=True)
 ```
-
-![](../../_static/assets/multicolors.png)
 
 ## Clip objects
 
