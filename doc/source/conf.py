@@ -9,7 +9,6 @@ import time
 from ansys_sphinx_theme import (
     ALL_NODES,
     PARAGRAPHS,
-    TITLES,
     ansys_favicon,
     ansys_logo_white,
     ansys_logo_white_cropped,
