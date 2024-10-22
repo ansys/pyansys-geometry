@@ -118,14 +118,3 @@ Close the modeler to free up resources and release the connection.
 modeler.close()
 ```
 
-```{code-cell} ipython3
-
-```
-
-```{code-cell} ipython3
-
-```
-
-```{code-cell} ipython3
-
-```
