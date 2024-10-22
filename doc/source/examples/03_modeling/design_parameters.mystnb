@@ -28,17 +28,36 @@ from ansys.geometry.core.modeler import *
 from ansys.geometry.core.parameters import *
 ```
 
-The file for this example is in the integration tests folder, so let's get its path.
+The file for this example is in the integration tests folder, so let's download it.
+
++++
+
+## Download the example file
+
++++
+
+For this example, download the file from the pyansys-geometry repository.
 
 ```{code-cell} ipython3
+import requests
+
+def download_file(url, filename):
+    """Download a file from a URL and save it to a local file."""
+    response = requests.get(url)
+    response.raise_for_status()  # Check if the request was successful
+    with open(filename, 'wb') as file:
+        file.write(response.content)
+
+# URL of the file to download
+url = "https://github.com/ansys/pyansys-geometry/blob/main/tests/integration/files/blockswithparameters.dsco"
+
+# Local path where the file will be saved
+file_name = "blockswithparameters.dsco"
 current_path = os.getcwd()
-file_path = os.path.join(current_path, os.pardir,  os.pardir, os.pardir, os.pardir, "tests/integration/files/blockswithparameters.dsco")
-# Normalize the path to remove any redundant separators
-file_path = os.path.normpath(file_path)
-```
-
-```{code-cell} ipython3
-
+file_path = os.path.join(current_path, file_name)
+# Download the file
+download_file(url, file_path)
+print("File is downloaded to " + file_path)
 ```
 
 ## Import a design with parameters
@@ -49,7 +68,7 @@ Importing the model using ``open_file`` method of the modeler.
 
 ```{code-cell} ipython3
 # Create a modeler object
-modeler = Modeler()
+modeler = launch_modeler()
 design = modeler.open_file(file_path)
 design.plot()
 ```
@@ -124,4 +143,3 @@ Close the modeler to free up resources and release the connection.
 ```{code-cell} ipython3
 modeler.close()
 ```
-
