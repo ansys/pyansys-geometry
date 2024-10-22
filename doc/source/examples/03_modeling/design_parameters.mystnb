@@ -39,7 +39,7 @@ file_path = os.path.normpath(file_path)
 
 +++
 
-Importing the model using open_file method of the modeler.
+Importing the model using ``open_file`` method of the modeler.
 
 ```{code-cell} ipython3
 modeler = Modeler(host="localhost", port= 50051)
