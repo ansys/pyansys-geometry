@@ -2675,7 +2675,7 @@ def test_component_tree_print(modeler: Modeler):
 def test_design_parameters(modeler: Modeler):
     """Test the design parameters functionality."""
 
-    design = modeler.open_file(FILES_DIR / "blockwithparameters.dsco")
+    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
     test_parameters = design.get_all_parameters()
 
     # Verify the initial parameters

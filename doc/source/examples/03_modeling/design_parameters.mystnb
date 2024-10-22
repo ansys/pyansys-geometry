@@ -22,6 +22,8 @@ In this example, we have a simple design with two associated parameters.
 
 ```{code-cell} ipython3
 import os
+import requests
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.modeler import *
 from ansys.geometry.core.parameters import *
 ```
@@ -30,9 +32,13 @@ The file for this example is in the integration tests folder, so let's get its p
 
 ```{code-cell} ipython3
 current_path = os.getcwd()
-file_path = os.path.join(current_path, os.pardir,  os.pardir, os.pardir, os.pardir, "tests/integration/files/blockwithparameters.dsco")
+file_path = os.path.join(current_path, os.pardir,  os.pardir, os.pardir, os.pardir, "tests/integration/files/blockswithparameters.dsco")
 # Normalize the path to remove any redundant separators
 file_path = os.path.normpath(file_path)
+```
+
+```{code-cell} ipython3
+
 ```
 
 ## Import a design with parameters
@@ -42,7 +48,8 @@ file_path = os.path.normpath(file_path)
 Importing the model using open_file method of the modeler.
 
 ```{code-cell} ipython3
-modeler = Modeler(host="localhost", port= 50051)
+# Create a modeler object
+modeler = Modeler()
 design = modeler.open_file(file_path)
 design.plot()
 ```
@@ -78,7 +85,7 @@ You can edit the parameters name or value by simply setting these fields. Let se
 
 ```{code-cell} ipython3
 parameter1 = my_parameters[1]
-parameter1.dimension_value = 0.000340
+parameter1.dimension_value = 0.000440
 response = design.set_parameter(parameter1)
 print(response)
 print(my_parameters[0].dimension_value)
@@ -115,16 +122,4 @@ Close the modeler to free up resources and release the connection.
 
 ```{code-cell} ipython3
 modeler.close()
-```
-
-```{code-cell} ipython3
-
-```
-
-```{code-cell} ipython3
-
-```
-
-```{code-cell} ipython3
-
 ```
