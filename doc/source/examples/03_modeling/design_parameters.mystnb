@@ -45,7 +45,7 @@ file_path = os.path.normpath(file_path)
 
 +++
 
-Importing the model using open_file method of the modeler.
+Importing the model using ``open_file`` method of the modeler.
 
 ```{code-cell} ipython3
 # Create a modeler object
@@ -81,7 +81,8 @@ Parameter values are returned in the default unit for each dimension type. Since
 
 ## Edit a parameter value
 
-You can edit the parameters name or value by simply setting these fields. Let set the second parameters (p2 value to 350 mm. )
+You can edit the parameters name or value by simply setting these fields. Let's
+set the second parameter (p2 value to 350 mm. )
 
 ```{code-cell} ipython3
 parameter1 = my_parameters[1]
@@ -123,3 +124,4 @@ Close the modeler to free up resources and release the connection.
 ```{code-cell} ipython3
 modeler.close()
 ```
+
