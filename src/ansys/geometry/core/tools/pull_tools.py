@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Provides tools for pulling geometry."""
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, List, Union
 
 from ansys.api.geometry.v0.commands_pb2 import ChamferRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
@@ -52,13 +52,15 @@ class PullTools:
 
     @protect_grpc
     @min_backend_version(25, 1, 0)
-    def chamfer(self, edge_or_face: Union["Edge", "Face"], distance: Real) -> bool:
+    def chamfer(
+        self, selection: Union["Edge", List["Edge"], "Face", List["Face"]], distance: Real
+    ) -> bool:
         """Create a chamfer on an edge, or adjust the chamfer of a face.
 
         Parameters
         ----------
-        edge_or_face : Edge | Face
-            Edge or face to act on.
+        edges_or_faces : Edge | List[Edge] | Face | List[Face]
+            Edge(s) or face(s) to act on.
         distance : Real
             Chamfer distance.
 
@@ -67,8 +69,13 @@ class PullTools:
         bool
             Success of chamfer command.
         """
-        edge_or_face.body._reset_tessellation_cache()
+        selection = selection if isinstance(selection, list) else [selection]
 
-        result = self._commands_stub.Chamfer(ChamferRequest(id=edge_or_face.id, distance=distance))
+        for ef in selection:
+            ef.body._reset_tessellation_cache()
+
+        result = self._commands_stub.Chamfer(
+            ChamferRequest(ids=[ef.id for ef in selection], distance=distance)
+        )
 
         return result.success

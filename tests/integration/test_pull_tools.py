@@ -48,3 +48,16 @@ def test_chamfer(modeler: Modeler):
     assert len(body.faces) == 7
     assert len(body.edges) == 15
     assert body.volume.m == pytest.approx(Quantity(0.875, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # multiple edges
+    body2 = design.extrude_sketch("box2", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body2.faces) == 6
+    assert len(body2.edges) == 12
+    assert body2.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    modeler.pull_tools.chamfer(body2.edges, 0.1)
+    assert len(body2.faces) == 26
+    assert len(body2.edges) == 48
+    assert body2.volume.m == pytest.approx(
+        Quantity(0.945333333333333333, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
