@@ -50,9 +50,9 @@ design = modeler.create_design("ServiceColors")
 
 ## Extrude the box sketch to create the matrix style design
 
-Given our initial sketch, we will extrude it to create a matrix style design.
-We will create a 2x3 matrix of bodies. Each body will be separated by 30 units
-in the X direction and 30 units in the Y direction. We will have a total of 6 bodies.
+Given the initial sketch, you can extrude it to create a matrix style design.
+In this example, you can create a 2x3 matrix of bodies. Each body is separated by 30 units
+in the X direction and 30 units in the Y direction. You have a total of 6 bodies.
 
 ```{code-cell} ipython3
 translate = [[0, 30, 60], [0, 30, 60]]
@@ -70,10 +70,9 @@ design.plot()
 
 ## Assign colors to the bodies
 
-Given our previous design, we will assign a color to each body. We will assign
-a different color to each one of them. We could have done this assignment while
-creating the bodies, but we will do it now for the sake of encapsulating the
-color assignment logic.
+Given the previous design, you can assign a color to each body. You could have done
+this assignment while creating the bodies, but for the sake of encapsulating the
+color assignment logic, it is done in its own code cell.
 
 ```{code-cell} ipython3
 
@@ -87,8 +86,8 @@ for c_idx, comp in enumerate(design.components):
 
 ## Plotting the design with colors
 
-By default, the plot method will **not** use the colors assigned to the bodies.
-To plot the design with the assigned colors, we need to specifically request it.
+By default, the plot method does **not** use the colors assigned to the bodies.
+To plot the design with the assigned colors, you need to specifically request it.
 
 Users have two options for plotting with the assigned colors:
 
@@ -99,21 +98,21 @@ It is important to note that the usage of colors when plotting might slow down t
 plotting process, as it requires additional information to be sent from the server
 to the client and processed in the client side.
 
-If we just request the plot without setting the global parameter, the plot will
+If you just request the plot without setting the global parameter, the plot will
 be displayed without the colors, as shown below.
 
 ```{code-cell} ipython3
 design.plot()
 ```
 
-As stated previously, if we pass the parameter ``use_service_colors=True`` to the plot
-method, the plot will be displayed with the assigned colors.
+As stated previously, if you pass the parameter ``use_service_colors=True`` to the plot
+method, the plot is displayed with the assigned colors.
 
 ```{code-cell} ipython3
 design.plot(use_service_colors=True)
 ```
 
-However, if we set the global parameter to ``True``, the plot will be displayed
+However, if you set the global parameter to ``True``, the plot is displayed
 with the assigned colors without the need to pass the parameter to the plot method.
 
 ```{code-cell} ipython3
@@ -138,7 +137,7 @@ If the user wants to plot specific bodies with the assigned colors, the user can
 follow the same approach as before. The user can pass the parameter ``use_service_colors=True``
 to the plot method or set the global parameter ``USE_SERVICE_COLORS`` to ``True``.
 
-In the following examples, we will just demonstrate how to do this using the
+In the following examples, you are shown how to do this using the
 ``use_service_colors=True`` parameter.
 
 Let's plot the first body of the first component with the assigned colors.
