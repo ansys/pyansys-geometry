@@ -164,4 +164,7 @@ docker/*-binaries.zip
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# Ignore scripts folder
+scripts
+
 # End of https://www.toptal.com/developers/gitignore/api/python
