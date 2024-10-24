@@ -2738,3 +2738,12 @@ def test_surface_body_creation(modeler: Modeler):
     assert len(design.bodies) == 6
     assert not body.is_surface
     assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
+
+
+def test_extrude_sketch_with_cut_request(modeler: Modeler):
+    """Test the cut argument when performing a sketch extrusion (this will mimic a cut operation).
+
+    Behind the scenes, a subtraction operation is performed on the bodies. After extruding the
+    sketch, the resulting body should be a cut body.
+    """
+    pass
