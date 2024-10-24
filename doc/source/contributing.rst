@@ -143,6 +143,7 @@ To add a new example, follow these steps:
 4. Store a thumbnail image of the example in the ``doc/source/_static/thumbnails`` directory.
 5. Link the thumbnail image to your example file in ``doc/source/conf.py`` as shown in the reference commit.
 
+You can edit and test your .mystnb file using Jupyter Notebook before committing the changes to ensure it works as expected.
 You can also test the correct build process of a new example by performing the following steps:
 
 1. Run the following command to install the documentation dependencies::
