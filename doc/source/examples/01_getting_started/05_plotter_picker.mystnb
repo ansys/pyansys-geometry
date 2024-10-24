@@ -168,31 +168,6 @@ plotter = GeometryPlotter(use_trame=True)
 plotter.show(plot_list)
 ```
 
-## Render in different colors
-
-You can render the objects in different colors automatically using PyVista's default
-color cycler. In order to do this, activate the ``multi_colors=True`` option when calling
-the ``plot()`` method.
-
-In the following cell we will create a new design and plot a prism and a cylinder in different colors.
-
-```{code-cell} ipython
-design = modeler.create_design("MultiColors")
-
-# Create a sketch of a box
-sketch_box = Sketch().box(Point2D([0, 0], unit=UNITS.m), width=30 * UNITS.m, height=40 * UNITS.m)
-
-# Create a sketch of a circle (overlapping the box slightly)
-sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=3 * UNITS.m)
-
-# Extrude both sketches to get a prism and a cylinder
-design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
-design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
-
-# Design plotting
-design.plot(multi_colors=True)
-```
-
 ## Clip objects
 
 You can clip any object represented in the plotter by defining a ``Plane`` object that
@@ -230,6 +205,40 @@ plotter = GeometryPlotter(allow_picking=True)
 picked_list = plotter.show(plot_list)
 print(picked_list)
 ```
+
+It is also possible to enable picking directly for a specific ``design`` or ``component``
+object alone. In the following cell, picking is enabled for the ``design`` object.
+
+```{code-cell} ipython3
+picked_list = design.plot(allow_picking=True)
+print(picked_list)
+```
+
+## Render in different colors
+
+You can render the objects in different colors automatically using PyVista's default
+color cycler. In order to do this, activate the ``multi_colors=True`` option when calling
+the ``plot()`` method.
+
+In the following cell we will create a new design and plot a prism and a cylinder in different colors.
+
+```{code-cell} ipython
+design = modeler.create_design("MultiColors")
+
+# Create a sketch of a box
+sketch_box = Sketch().box(Point2D([0, 0], unit=UNITS.m), width=30 * UNITS.m, height=40 * UNITS.m)
+
+# Create a sketch of a circle (overlapping the box slightly)
+sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=3 * UNITS.m)
+
+# Extrude both sketches to get a prism and a cylinder
+design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
+design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+# Design plotting
+design.plot(multi_colors=True)
+```
+
 
 ## Close session
 
