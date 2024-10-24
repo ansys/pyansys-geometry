@@ -174,6 +174,10 @@ class Measurement(PhysicalQuantity):
         # Store the value
         self._value = self._base_units_magnitude(value)
 
+    def __repr__(self):
+        """Representation of the ``Measurement`` class."""
+        return f"{self.value}"
+
     @property
     def value(self) -> Quantity:
         """Value of the measurement."""
