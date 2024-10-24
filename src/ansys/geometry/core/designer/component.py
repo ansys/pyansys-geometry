@@ -80,7 +80,6 @@ from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
 from ansys.geometry.core.sketch.sketch import Sketch
-from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -530,7 +529,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
-        
+
         created_body = Body(response.id, response.name, self, tb)
         if not cut:
             return created_body
@@ -544,10 +543,10 @@ class Component:
                 # Check for collision
                 if existing_body.get_collision(created_body) != CollisionType.NONE:
                     existing_body.subtract(created_body, keep_other=True)
-            
+
             # Finally, delete the created body
             self.delete_body(created_body)
-            
+
             # And obviously return None... since no body is created
             return None
 
