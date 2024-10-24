@@ -1,0 +1,107 @@
+PyGeometry
+==========
+
+PyGeometry is a Python client library for the Ansys Geometry service.
+
+.. grid:: 2
+
+   .. grid-item-card::
+            :img-top: _static/assets/index_getting_started.png
+
+            Getting started
+            ^^^^^^^^^^^^^^^
+
+            New to *PyGeometry*? Check out the getting started
+            guide.
+
+            +++
+
+            .. button-link:: getting_started/index.html
+               :color: secondary
+               :expand:
+               :outline:
+               :click-parent:
+
+                  Getting started
+
+   .. grid-item-card::
+            :img-top: _static/assets/index_user_guide.png
+
+            User Guide
+            ^^^^^^^^^^
+
+            The user guide provides in-depth information on the
+            key concepts of *PyGeometry*.
+
+            +++
+            .. button-link:: user_guide/index.html
+               :color: secondary
+               :expand:
+               :outline:
+               :click-parent:
+
+                  User guide
+.. grid:: 2
+
+   .. grid-item-card::
+            :img-top: _static/assets/index_api.png
+
+            API
+            ^^^
+
+            The reference guide contains a detailed description of *PyGeometry*'s API.
+
+            +++
+            .. button-link:: autoapi/index.html
+               :color: secondary
+               :expand:
+               :outline:
+               :click-parent:
+
+                  API
+
+   .. grid-item-card::
+            :img-top: _static/assets/index_contribute.png
+
+            Contribute
+            ^^^^^^^^^^
+
+            Read our specific contribution guide before collaborating to the codebase
+            or helping us in documentation.
+
+            +++
+            .. button-link:: contributing.html
+               :color: secondary
+               :expand:
+               :outline:
+               :click-parent:
+
+                  Contribute
+
+.. grid::
+
+   .. grid-item-card::
+            :img-top: _static/assets/index_examples.png
+
+            Examples
+            ^^^^^^^^
+            The examples demonstrate the behavior and usage of PyGeometry.
+
+            +++
+            .. button-link:: examples.html
+               :color: secondary
+               :expand:
+               :outline:
+               :click-parent:
+
+                  Examples
+
+.. toctree::
+   :hidden:
+   :maxdepth: 3
+
+   getting_started/index
+   user_guide/index
+   autoapi/index
+   examples
+   contributing

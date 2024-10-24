@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``plotter_helper.py`` module
+================================
+
+.. py:module:: ansys.geometry.core.plotting.plotter_helper
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: plotter_helper
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~PlotterHelper`
+            - Provides for simplifying the selection of trame in ``plot()`` functions.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 PlotterHelper<PlotterHelper>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides a wrapper to aid in plotting.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

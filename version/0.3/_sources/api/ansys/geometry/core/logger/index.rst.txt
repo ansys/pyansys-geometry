@@ -1,0 +1,456 @@
+
+
+
+
+
+The ``logger.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.logger
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: logger
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~PyGeometryCustomAdapter`
+            - Keeps the reference to the Geometry service instance name dynamic.
+
+
+          * - :py:attr:`~PyGeometryPercentStyle`
+            - Provides a common messaging style for the ``PyGeometryFormatter`` class.
+
+
+          * - :py:attr:`~PyGeometryFormatter`
+            - Provides a ``Formatter`` class for overwriting default format styles.
+
+
+          * - :py:attr:`~InstanceFilter`
+            - Ensures that the ``instance_name`` record always exists.
+
+
+          * - :py:attr:`~Logger`
+            - Provides the logger used for each PyAnsys Geometry session.
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~addfile_handler`
+            - Add a file handler to the input.
+
+
+          * - :py:attr:`~add_stdout_handler`
+            - Add a standout handler to the logger.
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~string_to_loglevel`
+            - 
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~LOG_LEVEL`
+            - 
+
+
+          * - :py:attr:`~FILE_NAME`
+            - 
+
+
+          * - :py:attr:`~DEBUG`
+            - 
+
+
+          * - :py:attr:`~INFO`
+            - 
+
+
+          * - :py:attr:`~WARN`
+            - 
+
+
+          * - :py:attr:`~ERROR`
+            - 
+
+
+          * - :py:attr:`~CRITICAL`
+            - 
+
+
+          * - :py:attr:`~STDOUT_MSG_FORMAT`
+            - 
+
+
+          * - :py:attr:`~FILE_MSG_FORMAT`
+            - 
+
+
+          * - :py:attr:`~DEFAULT_STDOUT_HEADER`
+            - 
+
+
+          * - :py:attr:`~DEFAULT_FILE_HEADER`
+            - 
+
+
+          * - :py:attr:`~NEW_SESSION_HEADER`
+            - 
+
+
+          * - :py:attr:`~LOG`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 PyGeometryCustomAdapter<PyGeometryCustomAdapter>
+    🝆 PyGeometryPercentStyle<PyGeometryPercentStyle>
+    🝆 PyGeometryFormatter<PyGeometryFormatter>
+    🝆 InstanceFilter<InstanceFilter>
+    🝆 Logger<Logger>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides a general framework for logging in PyAnsys Geometry.
+
+This module is built on the `Logging facility for
+Python <https://docs.python.org/3/library/logging.html>`_.
+It is not intended to replace the standard Python logging library but rather provide
+a way to interact between its ``logging`` class and PyAnsys Geometry.
+
+The loggers used in this module include the name of the instance, which
+is intended to be unique. This name is printed in all active
+outputs and is used to track the different Geometry service instances.
+
+
+Logger usage
+------------
+
+Global logger
+~~~~~~~~~~~~~
+There is a global logger named ``PyAnsys_Geometry_global`` that is created when
+``ansys.geometry.core.__init__`` is called.  If you want to use this global
+logger, you must call it at the top of your module:
+
+.. code:: python
+
+   from ansys.geometry.core import LOG
+
+You can rename this logger to avoid conflicts with other loggers (if any):
+
+.. code:: python
+
+   from ansys.geometry.core import LOG as logger
+
+
+The default logging level of ``LOG`` is ``ERROR``.
+You can change this level and output lower-level messages with
+this code:
+
+.. code:: python
+
+   LOG.logger.setLevel("DEBUG")
+   LOG.file_handler.setLevel("DEBUG")  # If present.
+   LOG.stdout_handler.setLevel("DEBUG")  # If present.
+
+
+Alternatively, you can ensure that all the handlers are set to the input log
+level with this code:
+
+.. code:: python
+
+   LOG.setLevel("DEBUG")
+
+This logger does not log to a file by default. If you want, you can
+add a file handler with this code:
+
+.. code:: python
+
+   import os
+
+   file_path = os.path.join(os.getcwd(), "pyansys-geometry.log")
+   LOG.log_to_file(file_path)
+
+This also sets the logger to be redirected to this file. If you want
+to change the characteristics of this global logger from the beginning
+of the execution, you must edit the ``__init__`` file in the directory
+``ansys.geometry.core``.
+
+To log using this logger, call the desired method as a normal logger with:
+
+.. code:: pycon
+
+    >>> import logging
+    >>> from ansys.geometry.core.logging import Logger
+    >>> LOG = Logger(level=logging.DEBUG, to_file=False, to_stdout=True)
+    >>> LOG.debug("This is LOG debug message.")
+
+    DEBUG -  -  <ipython-input-24-80df150fe31f> - <module> - This is LOG debug message.
+
+
+Instance logger
+~~~~~~~~~~~~~~~
+Every time an instance of the :class:`Modeler <ansys.geometry.core.modeler.Modeler>`
+class is created, a logger is created and stored in ``LOG._instances``. This field is a
+dictionary where the key is the name of the created logger.
+
+These instance loggers inherit the ``PyAnsys_Geometry_global`` output handlers and
+logging level unless otherwise specified. The way this logger works is very
+similar to the global logger. If you want to add a file handler, you can use
+the :meth:`log_to_file() <PyGeometryCustomAdapter.log_to_file>` method. If you want
+to change the log level, you can use the :meth:`~logging.Logger.setLevel` method.
+
+Here is an example of how you can use this logger:
+
+.. code:: pycon
+
+    >>> from ansys.geometry.core import Modeler
+    >>> modeler = Modeler()
+    >>> modeler._log.info("This is a useful message")
+
+    INFO - GRPC_127.0.0.1:50056 -  <...> - <module> - This is a useful message
+
+
+Other loggers
+~~~~~~~~~~~~~
+You can create your own loggers using a Python ``logging`` library as
+you would do in any other script. There would be no conflicts between
+these loggers.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+
+
+.. py:function:: addfile_handler(logger, filename=FILE_NAME, level=LOG_LEVEL, write_headers=False)
+
+   
+   Add a file handler to the input.
+
+
+   :Parameters:
+
+       **logger** : :obj:`logging.Logger`
+           Logger to add the file handler to.
+
+       **filename** : :class:`python:str`, default: "pyansys-geometry.log"
+           Name of the output file.
+
+       **level** : :class:`python:int`, default: 10
+           Level of logging. The default is ``10``, in which case the
+           ``logging.DEBUG`` level is used.
+
+       **write_headers** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to write the headers to the file.
+
+   :Returns:
+
+       :obj:`Logger`
+           :class:`Logger` or :class:`logging.Logger` object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False)
+
+   
+   Add a standout handler to the logger.
+
+
+   :Parameters:
+
+       **logger** : :obj:`logging.Logger`
+           Logger to add the file handler to.
+
+       **level** : :class:`python:int`, default: 10
+           Level of logging. The default is ``10``, in which case the
+           ``logging.DEBUG`` level is used.
+
+       **write_headers** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to write headers to the file.
+
+   :Returns:
+
+       :obj:`Logger`
+           :class:`Logger` or :class:`logging.Logger` object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: LOG_LEVEL
+
+   
+
+.. py:data:: FILE_NAME
+   :value: 'pyansys-geometry.log'
+
+   
+
+.. py:data:: DEBUG
+
+   
+
+.. py:data:: INFO
+
+   
+
+.. py:data:: WARN
+
+   
+
+.. py:data:: ERROR
+
+   
+
+.. py:data:: CRITICAL
+
+   
+
+.. py:data:: STDOUT_MSG_FORMAT
+   :value: '%(levelname)s - %(instance_name)s -  %(module)s - %(funcName)s - %(message)s'
+
+   
+
+.. py:data:: FILE_MSG_FORMAT
+
+   
+
+.. py:data:: DEFAULT_STDOUT_HEADER
+   :value: Multiline-String
+
+    .. raw:: html
+
+        <details><summary>Show Value</summary>
+
+    .. code-block:: python
+
+        """
+        LEVEL - INSTANCE NAME - MODULE - FUNCTION - MESSAGE
+        """
+
+    .. raw:: html
+
+        </details>
+
+   
+
+.. py:data:: DEFAULT_FILE_HEADER
+
+   
+
+.. py:data:: NEW_SESSION_HEADER
+
+   
+
+.. py:data:: LOG
+
+   
+
+.. py:data:: string_to_loglevel
+
+   
+
+
+
