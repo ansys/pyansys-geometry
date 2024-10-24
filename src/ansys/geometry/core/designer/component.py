@@ -62,7 +62,7 @@ from ansys.geometry.core.connection.conversions import (
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
-from ansys.geometry.core.designer.body import Body, MasterBody
+from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
@@ -80,6 +80,7 @@ from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
 from ansys.geometry.core.sketch.sketch import Sketch
+from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -318,6 +319,20 @@ class Component:
             )
             self.components.append(new)
 
+    def get_all_bodies(self) -> list[Body]:
+        """Get all bodies in the component hierarchy.
+
+        Returns
+        -------
+        list[Body]
+            List of all bodies in the component hierarchy.
+        """
+        bodies = []
+        for comp in self.components:
+            bodies.extend(comp.get_all_bodies())
+        bodies.extend(self.bodies)
+        return bodies
+
     def get_world_transform(self) -> Matrix44:
         """Get the full transformation matrix of the component in world space.
 
@@ -462,7 +477,8 @@ class Component:
         sketch: Sketch,
         distance: Quantity | Distance | Real,
         direction: ExtrusionDirection | str = ExtrusionDirection.POSITIVE,
-    ) -> Body:
+        cut: bool = False,
+    ) -> Body | None:
         """Create a solid body by extruding the sketch profile a distance.
 
         Notes
@@ -481,11 +497,16 @@ class Component:
             Direction for extruding the solid body.
             The default is to extrude in the positive normal direction of the sketch.
             Options are "+" and "-" as a string, or the enum values.
+        cut : bool, default: False
+            Whether to cut the extrusion from the existing component.
+            By default, the extrusion is added to the existing component.
 
         Returns
         -------
         Body
             Extruded body from the given sketch.
+        None
+            If the cut parameter is True, the function will return None.
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
@@ -509,7 +530,26 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        
+        created_body = Body(response.id, response.name, self, tb)
+        if not cut:
+            return created_body
+        else:
+            # If cut is True, subtract the created body from all existing bodies
+            # in the component...
+            for existing_body in self.get_all_bodies():
+                # Skip the created body
+                if existing_body.id == created_body.id:
+                    continue
+                # Check for collision
+                if existing_body.get_collision(created_body) != CollisionType.NONE:
+                    existing_body.subtract(created_body, keep_other=True)
+            
+            # Finally, delete the created body
+            self.delete_body(created_body)
+            
+            # And obviously return None... since no body is created
+            return None
 
     @min_backend_version(24, 2, 0)
     @protect_grpc
