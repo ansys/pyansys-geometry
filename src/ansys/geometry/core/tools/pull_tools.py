@@ -23,7 +23,7 @@
 
 from typing import TYPE_CHECKING, List, Union
 
-from ansys.api.geometry.v0.commands_pb2 import ChamferRequest
+from ansys.api.geometry.v0.commands_pb2 import ChamferRequest, FilletRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
@@ -76,6 +76,36 @@ class PullTools:
 
         result = self._commands_stub.Chamfer(
             ChamferRequest(ids=[ef.id for ef in selection], distance=distance)
+        )
+
+        return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 1, 0)
+    def fillet(
+        self, selection: Union["Edge", List["Edge"], "Face", List["Face"]], radius: Real
+    ) -> bool:
+        """Create a fillet on an edge or adjust the fillet of a face.
+
+        Parameters
+        ----------
+        edges_or_faces : Edge | List[Edge] | Face | List[Face]
+            Edge(s) or face(s) to act on.
+        radius : Real
+            Fillet radius.
+
+        Returns
+        -------
+        bool
+            Success of fillet command.
+        """
+        selection = selection if isinstance(selection, list) else [selection]
+
+        for ef in selection:
+            ef.body._reset_tessellation_cache()
+
+        result = self._commands_stub.Fillet(
+            FilletRequest(ids=[ef.id for ef in selection], radius=radius)
         )
 
         return result.success
