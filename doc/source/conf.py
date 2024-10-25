@@ -293,6 +293,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/design_tree": "_static/thumbnails/design_tree.png",
     "examples/03_modeling/service_colors": "_static/thumbnails/service_colors.png",
     "examples/03_modeling/surface_bodies": "_static/thumbnails/quarter_sphere.png",
+    "examples/03_modeling/chamfer": "_static/thumbnails/chamfer.png",
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
 }
