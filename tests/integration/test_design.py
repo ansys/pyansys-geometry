@@ -2739,9 +2739,10 @@ def test_surface_body_creation(modeler: Modeler):
     assert not body.is_surface
     assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
 
+
 def test_cached_bodies(modeler: Modeler):
     """Test verifying that bodies are cached correctly.
-    
+
     Whenever a new body is created, modified etc. we should make sure that the cache is updated.
     """
     design = modeler.create_design("ModelingDemo")
@@ -2757,26 +2758,29 @@ def test_cached_bodies(modeler: Modeler):
     sketch_cylinder = Sketch(plane)
     sketch_cylinder.circle(Point2D([20, 20]), 5 * UNITS.m)
 
+    design.extrude_sketch(name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m))
     design.extrude_sketch(
-        name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m)
-    )
-    design.extrude_sketch(
-        name="CylinderBody", sketch=sketch_cylinder, distance=Distance(60, unit=UNITS.m),
+        name="CylinderBody",
+        sketch=sketch_cylinder,
+        distance=Distance(60, unit=UNITS.m),
     )
 
     my_bodies = design.bodies
     my_bodies_2 = design.bodies
-    
-    # We should make sure that the object memeory addresses are the same
+
+    # We should make sure that the object memory addresses are the same
     for body1, body2 in zip(my_bodies, my_bodies_2):
-        assert body1 is body2 # We are comparing the memory addresses
+        assert body1 is body2  # We are comparing the memory addresses
         assert id(body1) == id(body2)
-    
+
     design.extrude_sketch(
-        name="CylinderBody2", sketch=sketch_cylinder, distance=Distance(20, unit=UNITS.m), direction="-"
+        name="CylinderBody2",
+        sketch=sketch_cylinder,
+        distance=Distance(20, unit=UNITS.m),
+        direction="-",
     )
     my_bodies_3 = design.bodies
-    
+
     for body1, body3 in zip(my_bodies, my_bodies_3):
         assert body1 is not body3
         assert id(body1) != id(body3)

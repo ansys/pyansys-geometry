@@ -242,8 +242,8 @@ class Component:
 
     def __clear_cached_bodies(self) -> None:
         """Clear the cached bodies."""
-        if 'bodies' in self.__dict__:
-            del self.__dict__['bodies']
+        if "bodies" in self.__dict__:
+            del self.__dict__["bodies"]
 
     @property
     def id(self) -> str:
