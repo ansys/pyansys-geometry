@@ -505,7 +505,7 @@ class Component:
         Body
             Extruded body from the given sketch.
         None
-            If the cut parameter is True, the function will return None.
+            If the cut parameter is ``True``, the function returns ``None``.
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)

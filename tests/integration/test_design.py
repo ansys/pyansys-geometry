@@ -2741,7 +2741,9 @@ def test_surface_body_creation(modeler: Modeler):
 
 
 def test_extrude_sketch_with_cut_request(modeler: Modeler):
-    """Test the cut argument when performing a sketch extrusion (this will mimic a cut operation).
+    """Test the cut argument when performing a sketch extrusion.
+    
+     This method mimics a cut operation.
 
     Behind the scenes, a subtraction operation is performed on the bodies. After extruding the
     sketch, the resulting body should be a cut body.
