@@ -51,7 +51,7 @@ dynamic resizing of bodies.
 
 To use the ``scale()`` function, you call it on an instance of a geometry body, passing a
 single argument: the scale value. This value is a real number (``Real``) that determines
-the factor by which the body's size will be changed.
+the factor by which the body's size is changed.
 
 ```python
 body.scale(value)
@@ -302,7 +302,7 @@ design.plot()
 
 #### Mirror the triangular body
 
-We will first make a copy of the triangular body, then using ``mirror()``, we will mirror the
+First, make a copy of the triangular body. Then, using ``mirror()``, you can mirror the
 copied body over the ZY plane.
 
 ```{code-cell} ipython3
