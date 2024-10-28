@@ -67,7 +67,7 @@ class PullTools:
         Returns
         -------
         bool
-            Success of chamfer command.
+            ``True`` when successful, ``False`` when failed.
         """
         selection = selection if isinstance(selection, list) else [selection]
 
