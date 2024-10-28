@@ -24,11 +24,10 @@ perform cut operations on the extruded body to achieve similar results.
 Perform the required imports.
 
 ```{code-cell} ipython3
-import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core import launch_modeler
-from ansys.geometry.core.math import Plane, Point3D, Point2D, UnitVector3D
+from ansys.geometry.core.math import Plane, Point3D, Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 ```
@@ -64,9 +63,8 @@ sketching circles at the four corners of the plate. First create a reference ske
 for all the circles. This sketch is translated to the four corners of the plate.
 
 ```{code-cell} ipython3
-sketch = Sketch()
-
-sketch.circle(Point2D([0, 0], unit=UNITS.m), Quantity(0.5, UNITS.m))
+sketch_hole = Sketch()
+sketch_hole.circle(Point2D([0, 0], unit=UNITS.m), Quantity(0.5, UNITS.m))
 
 hole_centers = [
     Plane(Point3D([3, 4, 0], unit=UNITS.m)),
@@ -82,8 +80,13 @@ Perform cut operations on the extruded body to create holes at the four corners 
 
 ```{code-cell} ipython3
 for center in hole_centers:
-    sketch.plane = center
-    design.extrude_sketch(sketch, Quantity(2, UNITS.m), cut=True)
+    sketch_hole.plane = center
+    design.extrude_sketch(
+        name= f"H_{center.origin.x}_{center.origin.y}",
+        sketch=sketch_hole,
+        distance=Quantity(2, UNITS.m),
+        cut=True,
+    )
 
 design.plot()
 ```
