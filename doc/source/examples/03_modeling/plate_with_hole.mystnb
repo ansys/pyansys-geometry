@@ -16,7 +16,7 @@ kernelspec:
 You can create multiple bodies from a single sketch by extruding the same sketch in different planes.
 
 The sketch is designed as an effective *functional-style* API with all operations receiving 2D configurations.
-For more information, see the :ref:`Sketch <ref_sketch>` subpackage.
+For more information, see the [Sketch](../../user_guide/shapes.rst) user guide.
 
 In this example, a box is located in the center of the plate, with the default origin of a sketch plane
 (origin at ``(0, 0, 0)``). Four holes of equal radius are sketched at the corners of the plate.
