@@ -60,7 +60,7 @@ class PullTools:
         Parameters
         ----------
         edges_or_faces : Edge | List[Edge] | Face | List[Face]
-            Edge(s) or face(s) to act on.
+            One or more edges or faces to act on.
         distance : Real
             Chamfer distance.
 
