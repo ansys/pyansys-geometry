@@ -240,7 +240,7 @@ class Component:
 
         self._master_component.occurrences.append(self)
 
-    def __clear_cached_bodies(self) -> None:
+    def _clear_cached_bodies(self) -> None:
         """Clear the cached bodies."""
         if "bodies" in self.__dict__:
             del self.__dict__["bodies"]
@@ -515,7 +515,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
-        self.__clear_cached_bodies()
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -565,7 +565,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingProfile(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
-        self.__clear_cached_bodies()
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -613,7 +613,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingChain(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
-        self.__clear_cached_bodies()
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -729,7 +729,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
-        self.__clear_cached_bodies()
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -763,7 +763,7 @@ class Component:
         response = self._bodies_stub.CreateSphereBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
-        self.__clear_cached_bodies()
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -830,7 +830,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBodyFromLoftProfiles(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
-        self.__clear_cached_bodies()
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -868,7 +868,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
-        self.__clear_cached_bodies()
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -909,7 +909,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
-        self.__clear_cached_bodies()
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -950,7 +950,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
         self._master_component.part.bodies.append(tb)
-        self.__clear_cached_bodies()
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @check_input_types
