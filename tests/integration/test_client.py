@@ -83,7 +83,7 @@ def test_client_get_service_logs(client: GrpcClient):
     assert logs_file_dump == filepath
     assert logs_file_dump.exists()
     assert logs_file_dump.read_text() == logs
-    
+
     # Let's do the same directly from a Modeler object
     modeler = Modeler(channel=client.channel)
     logs_modeler = modeler.get_service_logs()
