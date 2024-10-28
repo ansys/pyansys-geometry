@@ -22,6 +22,7 @@
 """Provides for managing components."""
 
 from enum import Enum, unique
+from functools import cached_property
 from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
@@ -239,6 +240,11 @@ class Component:
 
         self._master_component.occurrences.append(self)
 
+    def _clear_cached_bodies(self) -> None:
+        """Clear the cached bodies."""
+        if "bodies" in self.__dict__:
+            del self.__dict__["bodies"]
+
     @property
     def id(self) -> str:
         """ID of the component."""
@@ -259,7 +265,7 @@ class Component:
         """List of ``Component`` objects inside of the component."""
         return self._components
 
-    @property
+    @cached_property
     def bodies(self) -> list[Body]:
         """List of ``Body`` objects inside of the component."""
         bodies = []
@@ -529,6 +535,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
 
         created_body = Body(response.id, response.name, self, tb)
         if not cut:
@@ -597,6 +604,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingProfile(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -644,6 +652,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingChain(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -759,6 +768,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -792,6 +802,7 @@ class Component:
         response = self._bodies_stub.CreateSphereBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -858,6 +869,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBodyFromLoftProfiles(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -895,6 +907,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -935,6 +948,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -975,6 +989,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @check_input_types
@@ -1175,6 +1190,7 @@ class Component:
             # on the client side
             body_requested._is_alive = False
             self._grpc_client.log.debug(f"Body {body_requested.id} has been deleted.")
+            self._clear_cached_bodies()
         else:
             self._grpc_client.log.warning(
                 f"Body {id} is not found in this component (or subcomponents)."
