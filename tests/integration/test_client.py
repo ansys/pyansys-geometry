@@ -77,10 +77,10 @@ def test_client_get_service_logs(client: GrpcClient):
     assert logs
 
     # Let's request them again on file dump
-    filepath = Path(__file__).parent / "logs" / "test_client_get_service_logs.txt"
-    logs_file_dump = client.get_service_logs(dump_to_file=True, filename=filepath)
+    logs_folder = Path(__file__).parent / "logs"
+    logs_file_dump = client.get_service_logs(dump_to_file=True, logs_folder=logs_folder)
 
-    assert logs_file_dump == filepath
+    assert logs_file_dump == logs_folder
     assert logs_file_dump.exists()
     assert logs_file_dump.read_text() == logs
 

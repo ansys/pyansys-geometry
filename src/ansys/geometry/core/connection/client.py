@@ -43,7 +43,12 @@ with warnings.catch_warnings():
 from beartype import beartype as check_input_types
 import semver
 
-from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
+from ansys.api.dbu.v0.admin_pb2 import (
+    BackendType as GRPCBackendType,
+    LogsRequest,
+    LogsTarget,
+    PeriodType,
+)
 from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
@@ -328,39 +333,69 @@ class GrpcClient:
         """Get the target name of the connection."""
         return self._target
 
+    @check_input_types
     def get_service_logs(
-        self, dump_to_file: bool = False, filename: str | Path = "service_logs.log"
-    ) -> str | Path:
+        self,
+        all_logs: bool = False,
+        dump_to_file: bool = False,
+        logs_folder: str | Path | None = None,
+    ) -> str | dict[str, str] | Path:
         """Get the service logs.
 
         Parameters
         ----------
+        all_logs : bool, default: False
+            Flag indicating whether all logs should be retrieved. By default,
+            only the current logs are retrieved.
         dump_to_file : bool, default: False
             Flag indicating whether the logs should be dumped to a file.
             By default, the logs are not dumped to a file.
-        filename : str or Path, default: "service_logs.log"
-            Name of the file where the logs should be dumped.
+        logs_folder : str,  Path or None, default: None
+            Name of the folder where the logs should be dumped. This parameter
+            is only used if the ``dump_to_file`` parameter is set to ``True``.
 
         Returns
         -------
         str
             Service logs as a string. This is returned if the ``dump_to_file`` parameter
             is set to ``False``.
+        dict[str, str]
+            Dictionary containing the logs. The keys are the logs names,
+            and the values are the logs as strings. This is returned if the ``all_logs``
+            parameter is set to ``True`` and the ``dump_to_file`` parameter
+            is set to ``False``.
         Path
-            Path to the file where the logs were dumped. This is returned if the
-            ``dump_to_file`` parameter is set to ``True``.
+            Path to the folder containing the logs (if the ``all_logs``
+            parameter is set to ``True``) or the path to the log file (if only
+            the current logs are retrieved). The ``dump_to_file`` parameter
+            must be set to ``True``.
         """
-        logs_generator = self._admin_stub.GetLogs(Empty())
-        content = ""
+        request = LogsRequest(
+            target=LogsTarget.CLIENT,
+            period_type=PeriodType.CURRENT if not all_logs else PeriodType.ALL,
+            null_path=None,
+            null_period=None,
+        )
+        logs_generator = self._admin_stub.GetLogs(request)
+        logs = {}
 
         for chunk in logs_generator:
-            content += chunk.log_chunk.decode()
+            if chunk.relative_path not in logs:
+                logs[chunk.relative_path] = ""
+            logs[chunk.relative_path] += chunk.log_chunk.decode()
 
+        # Let's handle the various scenarios...
         if not dump_to_file:
-            return content
+            return logs if all_logs else logs.values()[0]
         else:
-            file = Path(filename) if not isinstance(filename, Path) else filename
-            with file.open("w") as f:
-                f.write(content)
+            if logs_folder is None:
+                logs_folder = Path.cwd()
+            elif isinstance(logs_folder, str):
+                logs_folder = Path(logs_folder)
 
-            return file
+            logs_folder.mkdir(parents=True, exist_ok=True)
+            for log_name, log_content in logs.items():
+                with (logs_folder / f"{log_name}.log").open("w") as f:
+                    f.write(log_content)
+
+            return logs_folder / f"{logs.keys()[0]}.log" if len(logs) == 1 else logs_folder

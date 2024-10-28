@@ -499,25 +499,41 @@ class Modeler:
         return self._measurement_tools
 
     def get_service_logs(
-        self, dump_to_file: bool = False, filename: str | Path = "service_logs.log"
-    ) -> str | Path:
-        """Get the service logs. This method delegates the call to the client.
+        self,
+        all_logs: bool = False,
+        dump_to_file: bool = False,
+        logs_folder: str | Path | None = None,
+    ) -> str | dict[str, str] | Path:
+        """Get the service logs.
 
         Parameters
         ----------
+        all_logs : bool, default: False
+            Flag indicating whether all logs should be retrieved. By default,
+            only the current logs are retrieved.
         dump_to_file : bool, default: False
             Flag indicating whether the logs should be dumped to a file.
             By default, the logs are not dumped to a file.
-        filename : str or Path, default: "service_logs.log"
-            Name of the file where the logs should be dumped.
+        logs_folder : str,  Path or None, default: None
+            Name of the folder where the logs should be dumped. This parameter
+            is only used if the ``dump_to_file`` parameter is set to ``True``.
 
         Returns
         -------
         str
             Service logs as a string. This is returned if the ``dump_to_file`` parameter
             is set to ``False``.
+        dict[str, str]
+            Dictionary containing the logs. The keys are the logs names,
+            and the values are the logs as strings. This is returned if the ``all_logs``
+            parameter is set to ``True`` and the ``dump_to_file`` parameter
+            is set to ``False``.
         Path
-            Path to the file where the logs were dumped. This is returned if the
-            ``dump_to_file`` parameter is set to ``True``.
+            Path to the folder containing the logs (if the ``all_logs``
+            parameter is set to ``True``) or the path to the log file (if only
+            the current logs are retrieved). The ``dump_to_file`` parameter
+            must be set to ``True``.
         """
-        return self.client.get_service_logs(dump_to_file=dump_to_file, filename=filename)
+        return self.client.get_service_logs(
+            all_logs=all_logs, dump_to_file=dump_to_file, logs_folder=logs_folder
+        )
