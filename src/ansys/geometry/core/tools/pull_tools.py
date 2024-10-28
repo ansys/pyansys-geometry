@@ -46,7 +46,7 @@ class PullTools:
 
     @protect_grpc
     def __init__(self, grpc_client: GrpcClient):
-        """Initialize pull tools class."""
+        """Initialize an instance of the ``PullTools`` class."""
         self._grpc_client = grpc_client
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
