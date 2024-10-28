@@ -2789,9 +2789,74 @@ def test_cached_bodies(modeler: Modeler):
 def test_extrude_sketch_with_cut_request(modeler: Modeler):
     """Test the cut argument when performing a sketch extrusion.
 
-     This method mimics a cut operation.
+    This method mimics a cut operation.
 
     Behind the scenes, a subtraction operation is performed on the bodies. After extruding the
     sketch, the resulting body should be a cut body.
     """
-    pass
+    # Define a sketch
+    origin = Point3D([0, 0, 10])
+    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+
+    # Create a sketch
+    sketch_box = Sketch(plane)
+    sketch_box.box(Point2D([20, 20]), 30 * UNITS.m, 30 * UNITS.m)
+
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([20, 20]), 5 * UNITS.m)
+
+    # Create a design
+    design = modeler.create_design("ExtrudeSketchWithCut")
+
+    box_body = design.extrude_sketch(
+        name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m)
+    )
+    volume_box = box_body.volume
+
+    design.extrude_sketch(
+        name="CylinderBody", sketch=sketch_cylinder, distance=Distance(60, unit=UNITS.m), cut=True
+    )
+
+    # Verify there is only one body
+    assert len(design.bodies) == 1
+
+    # Verify the volume of the resulting body is less than the volume of the box
+    assert design.bodies[0].volume < volume_box
+
+
+def test_extrude_sketch_with_cut_request_no_collision(modeler: Modeler):
+    """Test the cut argument when performing a sketch extrusion (with no collision).
+
+    This method mimics an unsuccessful cut operation.
+
+    The sketch extrusion should not result in a cut body since there is no collision between the
+    original body and the extruded body.
+    """
+    # Define a sketch
+    origin = Point3D([0, 0, 10])
+    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+
+    # Create a sketch
+    sketch_box = Sketch(plane)
+    sketch_box.box(Point2D([20, 20]), 30 * UNITS.m, 30 * UNITS.m)
+
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([100, 100]), 5 * UNITS.m)
+
+    # Create a design
+    design = modeler.create_design("ExtrudeSketchWithCutNoCollision")
+
+    box_body = design.extrude_sketch(
+        name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m)
+    )
+    volume_box = box_body.volume
+
+    design.extrude_sketch(
+        name="CylinderBody", sketch=sketch_cylinder, distance=Distance(60, unit=UNITS.m), cut=True
+    )
+
+    # Verify there is only one body... the cut operation should delete it
+    assert len(design.bodies) == 1
+
+    # Verify the volume of the resulting body is exactly the same
+    assert design.bodies[0].volume == volume_box
