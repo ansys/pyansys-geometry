@@ -22,7 +22,8 @@
 """Provides for managing components."""
 
 from enum import Enum, unique
-from typing import TYPE_CHECKING, Optional, Union
+from functools import cached_property
+from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
 from beartype import beartype as check_input_types
@@ -239,6 +240,11 @@ class Component:
 
         self._master_component.occurrences.append(self)
 
+    def _clear_cached_bodies(self) -> None:
+        """Clear the cached bodies."""
+        if "bodies" in self.__dict__:
+            del self.__dict__["bodies"]
+
     @property
     def id(self) -> str:
         """ID of the component."""
@@ -259,7 +265,7 @@ class Component:
         """List of ``Component`` objects inside of the component."""
         return self._components
 
-    @property
+    @cached_property
     def bodies(self) -> list[Body]:
         """List of ``Body`` objects inside of the component."""
         bodies = []
@@ -509,6 +515,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -558,6 +565,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingProfile(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -605,6 +613,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingChain(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -720,6 +729,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -753,6 +763,7 @@ class Component:
         response = self._bodies_stub.CreateSphereBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -819,6 +830,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBodyFromLoftProfiles(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -856,6 +868,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -896,6 +909,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -936,6 +950,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @check_input_types
@@ -1136,6 +1151,7 @@ class Component:
             # on the client side
             body_requested._is_alive = False
             self._grpc_client.log.debug(f"Body {body_requested.id} has been deleted.")
+            self._clear_cached_bodies()
         else:
             self._grpc_client.log.warning(
                 f"Body {id} is not found in this component (or subcomponents)."
@@ -1394,8 +1410,9 @@ class Component:
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
+        allow_picking: bool | None = None,
         **plotting_options: dict | None,
-    ) -> None:
+    ) -> None | list[Any]:
         """Plot the component.
 
         Parameters
@@ -1419,8 +1436,16 @@ class Component:
             Whether to use the colors assigned to the body in the service. The default
             is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
             global setting is used.
+        allow_picking : bool, default: None
+            Whether to enable picking. The default is ``None``, in which case the
+            picker is not enabled.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
+
+        Returns
+        -------
+        None | list[Any]
+            If ``allow_picking=True``, a list of picked objects is returned. Otherwise, ``None``.
 
         Examples
         --------
@@ -1465,6 +1490,16 @@ class Component:
             if use_service_colors is not None
             else pyansys_geometry.USE_SERVICE_COLORS
         )
+        # If picking is enabled, we should not merge the component
+        if allow_picking:
+            # This blocks the user from selecting the component itself
+            # but honestly, who would want to select the component itself since
+            # you already have a reference to it? It is the object you are plotting!
+            self._grpc_client.log.info(
+                "Ignoring 'merge_component=True' (default behavior) as "
+                "'allow_picking=True' has been requested."
+            )
+            merge_component = False
 
         # Add merge_component and merge_bodies to the plotting options
         plotting_options["merge_component"] = merge_component
@@ -1479,9 +1514,13 @@ class Component:
                 "'multi_colors' or 'use_service_colors' are defined."
             )
 
-        pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
+        pl = GeometryPlotter(
+            use_trame=use_trame,
+            use_service_colors=use_service_colors,
+            allow_picking=allow_picking,
+        )
         pl.plot(self, **plotting_options)
-        pl.show(screenshot=screenshot, **plotting_options)
+        return pl.show(screenshot=screenshot, **plotting_options)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""
