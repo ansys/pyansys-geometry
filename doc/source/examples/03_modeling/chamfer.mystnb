@@ -12,7 +12,7 @@ kernelspec:
 ---
 
 # Modeling: Chamfer edges and faces
-A chamfer is an angled cut on an edge. Chamfers can be created through the `Modeler.pull_tools` module.
+A chamfer is an angled cut on an edge. Chamfers can be created using the ``Modeler.pull_tools`` module.
 
 +++
 
