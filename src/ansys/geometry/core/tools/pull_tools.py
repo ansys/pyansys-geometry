@@ -36,7 +36,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class PullTools:
-    """Pull tools for PyAnsys Geometry.
+    """Provides pull tools for PyAnsys Geometry.
 
     Parameters
     ----------
