@@ -46,7 +46,7 @@ body.plot()
 ```
 
 ## Chamfer faces
-The chamfer of a face can also be modified. Create a chamfer on a single edge, then modify the chamfer distance value by providing the newly created face that represents the chamfer.
+The chamfer of a face can also be modified. Create a chamfer on a single edge and then modify the chamfer distance value by providing the newly created face that represents the chamfer.
 
 ```{code-cell} ipython3
 body = design.extrude_sketch("box", Sketch().box(Point2D([0,0]), 1, 1), 1)
