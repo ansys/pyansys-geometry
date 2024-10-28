@@ -497,3 +497,27 @@ class Modeler:
     def measurement_tools(self) -> MeasurementTools:
         """Access to measurement tools."""
         return self._measurement_tools
+
+    def get_service_logs(
+        self, dump_to_file: bool = False, filename: str | Path = "service_logs.log"
+    ) -> str | Path:
+        """Get the service logs. This method delegates the call to the client.
+
+        Parameters
+        ----------
+        dump_to_file : bool, default: False
+            Flag indicating whether the logs should be dumped to a file.
+            By default, the logs are not dumped to a file.
+        filename : str or Path, default: "service_logs.log"
+            Name of the file where the logs should be dumped.
+
+        Returns
+        -------
+        str
+            Service logs as a string. This is returned if the ``dump_to_file`` parameter
+            is set to ``False``.
+        Path
+            Path to the file where the logs were dumped. This is returned if the
+            ``dump_to_file`` parameter is set to ``True``.
+        """
+        return self.client.get_service_logs(dump_to_file=dump_to_file, filename=filename)

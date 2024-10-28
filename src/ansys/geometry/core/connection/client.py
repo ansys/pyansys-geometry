@@ -327,3 +327,40 @@ class GrpcClient:
     def get_name(self) -> str:
         """Get the target name of the connection."""
         return self._target
+
+    def get_service_logs(
+        self, dump_to_file: bool = False, filename: str | Path = "service_logs.log"
+    ) -> str | Path:
+        """Get the service logs.
+
+        Parameters
+        ----------
+        dump_to_file : bool, default: False
+            Flag indicating whether the logs should be dumped to a file.
+            By default, the logs are not dumped to a file.
+        filename : str or Path, default: "service_logs.log"
+            Name of the file where the logs should be dumped.
+
+        Returns
+        -------
+        str
+            Service logs as a string. This is returned if the ``dump_to_file`` parameter
+            is set to ``False``.
+        Path
+            Path to the file where the logs were dumped. This is returned if the
+            ``dump_to_file`` parameter is set to ``True``.
+        """
+        logs_generator = self._admin_stub.GetLogs(Empty())
+        content = ""
+
+        for chunk in logs_generator:
+            content += chunk.log_chunk.decode()
+
+        if not dump_to_file:
+            return content
+        else:
+            file = Path(filename) if not isinstance(filename, Path) else filename
+            with file.open("w") as f:
+                f.write(content)
+
+            return file
