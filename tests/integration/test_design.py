@@ -1991,7 +1991,6 @@ def test_get_active_design(modeler: Modeler):
 
 def test_get_collision(modeler: Modeler):
     """Test the collision state between two bodies."""
-    skip_if_linux(modeler, test_get_collision.__name__, "get_collision")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
     body1 = design.bodies[0]
     body2 = design.bodies[1]
