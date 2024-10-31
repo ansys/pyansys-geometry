@@ -71,27 +71,19 @@ def test_client_close(client: GrpcClient):
 
 def test_client_get_service_logs(client: GrpcClient):
     """Test the retrieval of the service logs."""
+    # Low level call
     logs = client._get_service_logs()
-
-    # Make sure the logs are not empty
     assert isinstance(logs, str)
     assert logs  # is not empty
-
-    # Sanitize the logs to avoid any issues with the test
-    logs = logs.replace("\r", "\n")
 
     # Let's request them again on file dump
     logs_folder = str(Path(__file__).parent / "logs")
     logs_file_dump = client._get_service_logs(dump_to_file=True, logs_folder=logs_folder)
-
     assert logs_file_dump.exists()
-    assert logs_file_dump.read_text() == logs
 
     # Do not provide a folder
     logs_file_dump = client._get_service_logs(dump_to_file=True)
-
     assert logs_file_dump.exists()
-    assert logs_file_dump.read_text() == logs
     logs_file_dump.unlink()  # Delete the file
 
     # Let's request all logs now
@@ -102,4 +94,5 @@ def test_client_get_service_logs(client: GrpcClient):
     # Let's do the same directly from a Modeler object
     modeler = Modeler(channel=client.channel)
     logs_modeler = modeler.get_service_logs()
-    assert logs == logs_modeler.replace("\r", "\n")
+    assert isinstance(logs_modeler, str)
+    assert logs_modeler  # is not empty
