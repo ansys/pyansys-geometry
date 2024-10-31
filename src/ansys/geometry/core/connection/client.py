@@ -28,6 +28,8 @@ import time
 from typing import Optional
 import warnings
 
+from ansys.geometry.core.errors import protect_grpc
+
 # TODO: Remove this context and filter once the protobuf UserWarning issue is downgraded to INFO
 # https://github.com/grpc/grpc/issues/37609
 with warnings.catch_warnings():
@@ -334,7 +336,8 @@ class GrpcClient:
         return self._target
 
     @check_input_types
-    def get_service_logs(
+    @protect_grpc
+    def _get_service_logs(
         self,
         all_logs: bool = False,
         dump_to_file: bool = False,
@@ -377,16 +380,16 @@ class GrpcClient:
             null_period=None,
         )
         logs_generator = self._admin_stub.GetLogs(request)
-        logs = {}
+        logs: dict[str, str] = {}
 
         for chunk in logs_generator:
-            if chunk.relative_path not in logs:
-                logs[chunk.relative_path] = ""
-            logs[chunk.relative_path] += chunk.log_chunk.decode()
+            if chunk.log_name not in logs:
+                logs[chunk.log_name] = ""
+            logs[chunk.log_name] += chunk.log_chunk.decode()
 
         # Let's handle the various scenarios...
         if not dump_to_file:
-            return logs if all_logs else logs.values()[0]
+            return logs if all_logs else next(iter(logs.values()))
         else:
             if logs_folder is None:
                 logs_folder = Path.cwd()
@@ -395,7 +398,7 @@ class GrpcClient:
 
             logs_folder.mkdir(parents=True, exist_ok=True)
             for log_name, log_content in logs.items():
-                with (logs_folder / f"{log_name}.log").open("w") as f:
+                with (logs_folder / log_name).open("w") as f:
                     f.write(log_content)
 
-            return logs_folder / f"{logs.keys()[0]}.log" if len(logs) == 1 else logs_folder
+            return (logs_folder / log_name) if len(logs) == 1 else logs_folder

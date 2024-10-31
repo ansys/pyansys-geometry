@@ -71,20 +71,35 @@ def test_client_close(client: GrpcClient):
 
 def test_client_get_service_logs(client: GrpcClient):
     """Test the retrieval of the service logs."""
-    logs = client.get_service_logs()
+    logs = client._get_service_logs()
 
     # Make sure the logs are not empty
-    assert logs
+    assert isinstance(logs, str)
+    assert logs  # is not empty
+
+    # Sanitize the logs to avoid any issues with the test
+    logs = logs.replace("\r", "\n")
 
     # Let's request them again on file dump
-    logs_folder = Path(__file__).parent / "logs"
-    logs_file_dump = client.get_service_logs(dump_to_file=True, logs_folder=logs_folder)
+    logs_folder = str(Path(__file__).parent / "logs")
+    logs_file_dump = client._get_service_logs(dump_to_file=True, logs_folder=logs_folder)
 
-    assert logs_file_dump == logs_folder
     assert logs_file_dump.exists()
     assert logs_file_dump.read_text() == logs
+
+    # Do not provide a folder
+    logs_file_dump = client._get_service_logs(dump_to_file=True)
+
+    assert logs_file_dump.exists()
+    assert logs_file_dump.read_text() == logs
+    logs_file_dump.unlink()  # Delete the file
+
+    # Let's request all logs now
+    logs_all = client._get_service_logs(all_logs=True)
+    assert isinstance(logs_all, dict)
+    assert logs_all  # is not empty
 
     # Let's do the same directly from a Modeler object
     modeler = Modeler(channel=client.channel)
     logs_modeler = modeler.get_service_logs()
-    assert logs == logs_modeler
+    assert logs == logs_modeler.replace("\r", "\n")

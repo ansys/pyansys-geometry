@@ -498,6 +498,7 @@ class Modeler:
         """Access to measurement tools."""
         return self._measurement_tools
 
+    @min_backend_version(25, 1, 0)
     def get_service_logs(
         self,
         all_logs: bool = False,
@@ -534,6 +535,6 @@ class Modeler:
             the current logs are retrieved). The ``dump_to_file`` parameter
             must be set to ``True``.
         """
-        return self.client.get_service_logs(
+        return self.client._get_service_logs(
             all_logs=all_logs, dump_to_file=dump_to_file, logs_folder=logs_folder
         )
