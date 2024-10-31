@@ -56,7 +56,17 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
-from ansys.geometry.core.shapes import Circle, Ellipse, Interval, ParamUV
+from ansys.geometry.core.shapes import (
+    Circle,
+    Cone,
+    Cylinder,
+    Ellipse,
+    Interval,
+    ParamUV,
+    Sphere,
+    Torus,
+)
+from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.sketch import Sketch
 from ansys.tools.visualization_interface.utils.color import Color
 
@@ -1981,7 +1991,6 @@ def test_get_active_design(modeler: Modeler):
 
 def test_get_collision(modeler: Modeler):
     """Test the collision state between two bodies."""
-    skip_if_linux(modeler, test_get_collision.__name__, "get_collision")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
     body1 = design.bodies[0]
     body2 = design.bodies[1]
@@ -2669,3 +2678,184 @@ def test_component_tree_print(modeler: Modeler):
         "    |---(body) nested_1_nested_1_comp_1_circle",
     ]
     assert check_list_equality(lines, ref) is True
+
+
+def test_surface_body_creation(modeler: Modeler):
+    """Test surface body creation from trimmed surfaces."""
+    design = modeler.create_design("Design1")
+
+    # half sphere
+    surface = Sphere([0, 0, 0], 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi / 2)))
+    body = design.create_body_from_surface("sphere", trimmed_surface)
+    assert len(design.bodies) == 1
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(np.pi * 2)
+
+    # cylinder
+    surface = Cylinder([0, 0, 0], 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, 1)))
+    body = design.create_body_from_surface("cylinder", trimmed_surface)
+
+    assert len(design.bodies) == 2
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(np.pi * 2)
+
+    # cone
+    surface = Cone([0, 0, 0], 1, np.pi / 4)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(surface.apex.z.m, 0)))
+    body = design.create_body_from_surface("cone", trimmed_surface)
+
+    assert len(design.bodies) == 3
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(4.44288293816)
+
+    # half torus
+    surface = Torus([0, 0, 0], 2, 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi), Interval(0, np.pi * 2)))
+    body = design.create_body_from_surface("torus", trimmed_surface)
+
+    assert len(design.bodies) == 4
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(39.4784176044)
+
+    # SOLID BODIES
+
+    # sphere
+    surface = Sphere([0, 0, 0], 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(-np.pi / 2, np.pi / 2)))
+    body = design.create_body_from_surface("sphere_solid", trimmed_surface)
+    assert len(design.bodies) == 5
+    assert not body.is_surface
+    assert body.faces[0].area.m == pytest.approx(np.pi * 4)
+
+    # torus
+    surface = Torus([0, 0, 0], 2, 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi * 2)))
+    body = design.create_body_from_surface("torus_solid", trimmed_surface)
+
+    assert len(design.bodies) == 6
+    assert not body.is_surface
+    assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
+
+
+def test_cached_bodies(modeler: Modeler):
+    """Test verifying that bodies are cached correctly.
+
+    Whenever a new body is created, modified etc. we should make sure that the cache is updated.
+    """
+    design = modeler.create_design("ModelingDemo")
+
+    # Define a sketch
+    origin = Point3D([0, 0, 10])
+    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+
+    # Create a sketch
+    sketch_box = Sketch(plane)
+    sketch_box.box(Point2D([20, 20]), 30 * UNITS.m, 30 * UNITS.m)
+
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([20, 20]), 5 * UNITS.m)
+
+    design.extrude_sketch(name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m))
+    design.extrude_sketch(
+        name="CylinderBody",
+        sketch=sketch_cylinder,
+        distance=Distance(60, unit=UNITS.m),
+    )
+
+    my_bodies = design.bodies
+    my_bodies_2 = design.bodies
+
+    # We should make sure that the object memory addresses are the same
+    for body1, body2 in zip(my_bodies, my_bodies_2):
+        assert body1 is body2  # We are comparing the memory addresses
+        assert id(body1) == id(body2)
+
+    design.extrude_sketch(
+        name="CylinderBody2",
+        sketch=sketch_cylinder,
+        distance=Distance(20, unit=UNITS.m),
+        direction="-",
+    )
+    my_bodies_3 = design.bodies
+
+    for body1, body3 in zip(my_bodies, my_bodies_3):
+        assert body1 is not body3
+        assert id(body1) != id(body3)
+
+
+def test_extrude_sketch_with_cut_request(modeler: Modeler):
+    """Test the cut argument when performing a sketch extrusion.
+
+    This method mimics a cut operation.
+
+    Behind the scenes, a subtraction operation is performed on the bodies. After extruding the
+    sketch, the resulting body should be a cut body.
+    """
+    # Define a sketch
+    origin = Point3D([0, 0, 10])
+    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+
+    # Create a sketch
+    sketch_box = Sketch(plane)
+    sketch_box.box(Point2D([20, 20]), 30 * UNITS.m, 30 * UNITS.m)
+
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([20, 20]), 5 * UNITS.m)
+
+    # Create a design
+    design = modeler.create_design("ExtrudeSketchWithCut")
+
+    box_body = design.extrude_sketch(
+        name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m)
+    )
+    volume_box = box_body.volume
+
+    design.extrude_sketch(
+        name="CylinderBody", sketch=sketch_cylinder, distance=Distance(60, unit=UNITS.m), cut=True
+    )
+
+    # Verify there is only one body
+    assert len(design.bodies) == 1
+
+    # Verify the volume of the resulting body is less than the volume of the box
+    assert design.bodies[0].volume < volume_box
+
+
+def test_extrude_sketch_with_cut_request_no_collision(modeler: Modeler):
+    """Test the cut argument when performing a sketch extrusion (with no collision).
+
+    This method mimics an unsuccessful cut operation.
+
+    The sketch extrusion should not result in a cut body since there is no collision between the
+    original body and the extruded body.
+    """
+    # Define a sketch
+    origin = Point3D([0, 0, 10])
+    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+
+    # Create a sketch
+    sketch_box = Sketch(plane)
+    sketch_box.box(Point2D([20, 20]), 30 * UNITS.m, 30 * UNITS.m)
+
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([100, 100]), 5 * UNITS.m)
+
+    # Create a design
+    design = modeler.create_design("ExtrudeSketchWithCutNoCollision")
+
+    box_body = design.extrude_sketch(
+        name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m)
+    )
+    volume_box = box_body.volume
+
+    design.extrude_sketch(
+        name="CylinderBody", sketch=sketch_cylinder, distance=Distance(60, unit=UNITS.m), cut=True
+    )
+
+    # Verify there is only one body... the cut operation should delete it
+    assert len(design.bodies) == 1
+
+    # Verify the volume of the resulting body is exactly the same
+    assert design.bodies[0].volume == volume_box

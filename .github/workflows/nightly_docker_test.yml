@@ -1,6 +1,12 @@
 name: Nightly Server test - Latest build
 on:
   workflow_dispatch:
+    inputs:
+      promote:
+        description: 'Promote the latest build to stable (if tests pass)'
+        required: false
+        default: false
+        type: boolean
   schedule: # UTC at 0300
     - cron: "0 3 * * *"
   # Trigger workflow when file is modified
@@ -200,3 +206,53 @@ jobs:
                 }
               ]
             }
+
+  promote-windows:
+    needs: [windows-tests, linux-tests]
+    runs-on: windows-latest
+    name: Promote Windows container
+    if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
+    env:
+      WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:windows-latest-unstable
+      WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:windows-latest
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Windows latest unstable container
+        run: docker pull ${{ env.WINDOWS_UNSTABLE }}
+
+      - name: Tag container as latest (stable) for Github Container registry
+        run: docker tag ${{ env.WINDOWS_UNSTABLE }} ${{ env.WINDOWS_STABLE_GHCR }}
+
+      - name: Publish latest stable container in ghcr.io
+        run: docker push ${{ env.WINDOWS_STABLE_GHCR }}
+
+  promote-linux:
+    needs: [windows-tests, linux-tests]
+    runs-on: ubuntu-latest
+    name: Promote Linux container
+    if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
+    env:
+      LINUX_UNSTABLE: ghcr.io/ansys/geometry:linux-latest-unstable
+      LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:linux-latest
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Linux latest unstable container
+        run: docker pull ${{ env.LINUX_UNSTABLE }}
+
+      - name: Tag container as latest (stable) for Github Container registry
+        run: docker tag ${{ env.LINUX_UNSTABLE }} ${{ env.LINUX_STABLE_GHCR }}
+
+      - name: Publish latest stable container in ghcr.io
+        run: docker push ${{ env.LINUX_STABLE_GHCR }}
