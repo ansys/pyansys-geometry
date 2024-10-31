@@ -18,7 +18,7 @@ structure of the model in the terminal.
 
 ## Perform required imports
 
-For the following example, we need to import these modules:
+For the following example, you need to import these modules:
 
 ```{code-cell} ipython3
 from pint import Quantity
@@ -60,7 +60,7 @@ distance = 30 * UNITS.m
 #
 #
 # Now, only "comp_3", "nested_2_comp_1" and "nested_1_nested_1_comp_1"
-# will have a body associated.
+# has a body associated.
 #
 
 # Create the components
@@ -106,7 +106,7 @@ design.tree_print()
 ### Controlling the depth of the tree
 
 The ``tree_print()`` method accepts an optional argument ``depth`` to control the depth of the
-tree to be printed. The default value is ``None``, which means the entire tree will be printed.
+tree to be printed. The default value is ``None``, which means the entire tree is printed.
 
 ```{code-cell} ipython3
 design.tree_print(depth=1)

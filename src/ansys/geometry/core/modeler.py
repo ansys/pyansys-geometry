@@ -497,3 +497,44 @@ class Modeler:
     def measurement_tools(self) -> MeasurementTools:
         """Access to measurement tools."""
         return self._measurement_tools
+
+    @min_backend_version(25, 1, 0)
+    def get_service_logs(
+        self,
+        all_logs: bool = False,
+        dump_to_file: bool = False,
+        logs_folder: str | Path | None = None,
+    ) -> str | dict[str, str] | Path:
+        """Get the service logs.
+
+        Parameters
+        ----------
+        all_logs : bool, default: False
+            Flag indicating whether all logs should be retrieved. By default,
+            only the current logs are retrieved.
+        dump_to_file : bool, default: False
+            Flag indicating whether the logs should be dumped to a file.
+            By default, the logs are not dumped to a file.
+        logs_folder : str,  Path or None, default: None
+            Name of the folder where the logs should be dumped. This parameter
+            is only used if the ``dump_to_file`` parameter is set to ``True``.
+
+        Returns
+        -------
+        str
+            Service logs as a string. This is returned if the ``dump_to_file`` parameter
+            is set to ``False``.
+        dict[str, str]
+            Dictionary containing the logs. The keys are the logs names,
+            and the values are the logs as strings. This is returned if the ``all_logs``
+            parameter is set to ``True`` and the ``dump_to_file`` parameter
+            is set to ``False``.
+        Path
+            Path to the folder containing the logs (if the ``all_logs``
+            parameter is set to ``True``) or the path to the log file (if only
+            the current logs are retrieved). The ``dump_to_file`` parameter
+            must be set to ``True``.
+        """
+        return self.client._get_service_logs(
+            all_logs=all_logs, dump_to_file=dump_to_file, logs_folder=logs_folder
+        )

@@ -135,6 +135,7 @@ html_context = {
     "doc_path": "doc/source",
 }
 html_theme_options = {
+    "header_links_before_dropdown": 7,
     "logo": "pyansys",
     "switcher": {
         "json_url": f"https://{cname}/versions.json",
@@ -171,10 +172,15 @@ html_theme_options = {
     },
     "static_search": {
         "threshold": 0.5,
-        "min_chars_for_search": 2,
+        "minMatchCharLength": 2,
         "ignoreLocation": True,
     },
 }
+
+# Determine whether to skip cheat sheet build or not
+if os.environ.get("SKIP_BUILD_CHEAT_SHEET"):
+    html_theme_options.pop("cheatsheet")
+
 # Sphinx extensions
 extensions = [
     "sphinx.ext.intersphinx",
@@ -277,6 +283,7 @@ nbsphinx_thumbnails = {
     "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
     "examples/03_modeling/add_design_material": "_static/thumbnails/add_design_material.png",
     "examples/03_modeling/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
+    "examples/03_modeling/cut_operation_on_extrude": "_static/thumbnails/cut_operation_on_extrude.png",  # noqa: E501
     "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
     "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
     "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",
@@ -286,6 +293,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/export_design": "_static/thumbnails/export_design.png",
     "examples/03_modeling/design_tree": "_static/thumbnails/design_tree.png",
     "examples/03_modeling/service_colors": "_static/thumbnails/service_colors.png",
+    "examples/03_modeling/surface_bodies": "_static/thumbnails/quarter_sphere.png",
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
 }
@@ -327,7 +335,7 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
-linkcheck_exclude_documents = ["index", "getting_started/local/index"]
+linkcheck_exclude_documents = ["index", "getting_started/local/index", "changelog"]
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries",
     r"https://download.ansys.com/",

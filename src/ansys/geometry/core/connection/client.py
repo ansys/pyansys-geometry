@@ -26,15 +26,31 @@ import logging
 from pathlib import Path
 import time
 from typing import Optional
+import warnings
+
+from ansys.geometry.core.errors import protect_grpc
+
+# TODO: Remove this context and filter once the protobuf UserWarning issue is downgraded to INFO
+# https://github.com/grpc/grpc/issues/37609
+with warnings.catch_warnings():
+    warnings.filterwarnings(
+        "ignore", "Protobuf gencode version", UserWarning, "google.protobuf.runtime_version"
+    )
+
+    from google.protobuf.empty_pb2 import Empty
+    import grpc
+    from grpc._channel import _InactiveRpcError
+    from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 from beartype import beartype as check_input_types
-from google.protobuf.empty_pb2 import Empty
-import grpc
-from grpc._channel import _InactiveRpcError
-from grpc_health.v1 import health_pb2, health_pb2_grpc
 import semver
 
-from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
+from ansys.api.dbu.v0.admin_pb2 import (
+    BackendType as GRPCBackendType,
+    LogsRequest,
+    LogsTarget,
+    PeriodType,
+)
 from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
@@ -318,3 +334,71 @@ class GrpcClient:
     def get_name(self) -> str:
         """Get the target name of the connection."""
         return self._target
+
+    @check_input_types
+    @protect_grpc
+    def _get_service_logs(
+        self,
+        all_logs: bool = False,
+        dump_to_file: bool = False,
+        logs_folder: str | Path | None = None,
+    ) -> str | dict[str, str] | Path:
+        """Get the service logs.
+
+        Parameters
+        ----------
+        all_logs : bool, default: False
+            Flag indicating whether all logs should be retrieved. By default,
+            only the current logs are retrieved.
+        dump_to_file : bool, default: False
+            Flag indicating whether the logs should be dumped to a file.
+            By default, the logs are not dumped to a file.
+        logs_folder : str,  Path or None, default: None
+            Name of the folder where the logs should be dumped. This parameter
+            is only used if the ``dump_to_file`` parameter is set to ``True``.
+
+        Returns
+        -------
+        str
+            Service logs as a string. This is returned if the ``dump_to_file`` parameter
+            is set to ``False``.
+        dict[str, str]
+            Dictionary containing the logs. The keys are the logs names,
+            and the values are the logs as strings. This is returned if the ``all_logs``
+            parameter is set to ``True`` and the ``dump_to_file`` parameter
+            is set to ``False``.
+        Path
+            Path to the folder containing the logs (if the ``all_logs``
+            parameter is set to ``True``) or the path to the log file (if only
+            the current logs are retrieved). The ``dump_to_file`` parameter
+            must be set to ``True``.
+        """
+        request = LogsRequest(
+            target=LogsTarget.CLIENT,
+            period_type=PeriodType.CURRENT if not all_logs else PeriodType.ALL,
+            null_path=None,
+            null_period=None,
+        )
+        logs_generator = self._admin_stub.GetLogs(request)
+        logs: dict[str, str] = {}
+
+        for chunk in logs_generator:
+            if chunk.log_name not in logs:
+                logs[chunk.log_name] = ""
+            logs[chunk.log_name] += chunk.log_chunk.decode()
+
+        # Let's handle the various scenarios...
+        if not dump_to_file:
+            return logs if all_logs else next(iter(logs.values()))
+        else:
+            if logs_folder is None:
+                logs_folder = Path.cwd()
+            elif isinstance(logs_folder, str):
+                logs_folder = Path(logs_folder)
+
+            logs_folder.mkdir(parents=True, exist_ok=True)
+            for log_name, log_content in logs.items():
+                with (logs_folder / log_name).open("w") as f:
+                    f.write(log_content)
+
+            return (logs_folder / log_name) if len(logs) == 1 else logs_folder
