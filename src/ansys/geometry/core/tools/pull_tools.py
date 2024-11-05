@@ -23,7 +23,8 @@
 
 from typing import TYPE_CHECKING, List, Union
 
-from ansys.api.geometry.v0.commands_pb2 import ChamferRequest, FilletRequest
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.api.geometry.v0.commands_pb2 import ChamferRequest, FilletRequest, FullFilletRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
@@ -106,6 +107,30 @@ class PullTools:
 
         result = self._commands_stub.Fillet(
             FilletRequest(ids=[ef.id for ef in selection], radius=radius)
+        )
+
+        return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 1, 0)
+    def full_fillet(self, faces: List["Face"]) -> bool:
+        """Create a full fillet betweens a collection of faces.
+
+        Parameters
+        ----------
+        faces : List[Face]
+            Faces to act on.
+
+        Returns
+        -------
+        bool
+            Success of fillet command.
+        """
+        for face in faces:
+            face.body._reset_tessellation_cache()
+
+        result = self._commands_stub.FullFillet(
+            FullFilletRequest(faces=[EntityIdentifier(id=face.id) for face in faces])
         )
 
         return result.success
