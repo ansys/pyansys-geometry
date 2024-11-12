@@ -107,9 +107,10 @@ class ExtrusionDirection(Enum):
     @classmethod
     def from_string(cls, string: str, use_default_if_error: bool = False) -> "ExtrusionDirection":
         """Convert a string to an ``ExtrusionDirection`` enum."""
-        if string == "+":
+        lcase_string = string.lower()
+        if lcase_string in ("+", "p", "pos", "positive"):
             return cls.POSITIVE
-        elif string == "-":
+        elif lcase_string in ("-", "n", "neg", "negative"):
             return cls.NEGATIVE
         elif use_default_if_error:
             from ansys.geometry.core.logger import LOG
