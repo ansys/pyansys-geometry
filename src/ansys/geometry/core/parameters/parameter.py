@@ -80,7 +80,7 @@ class Parameter:
         dimension_type : ParameterType
             The type of the parameter.
         dimension_value : float
-            The value of the parameter.
+            Value of the parameter.
         """
         self.id = id
         self._name = name
