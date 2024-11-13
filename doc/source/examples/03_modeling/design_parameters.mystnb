@@ -75,7 +75,7 @@ design.plot()
 
 ## Read existing parameters of the design
 
-You can get all the parameters of the design as a list of parameters. In this example there is two parameters. So we can see the two items in the list.
+You can get all the parameters of the design as a list of parameters. Because this example has two parameters, you see the two items in the list.
 
 ```{code-cell} ipython3
 my_parameters = design.get_all_parameters()
