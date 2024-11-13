@@ -46,7 +46,7 @@ class ParameterType(Enum):
 
 @unique
 class ParameterUpdateStatus(Enum):
-    """Provides values for parameter update status message."""
+    """Provides values for the status messages associated with parameter updates."""
 
     SUCCESS = 0
     FAILURE = 1
