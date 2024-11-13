@@ -36,7 +36,7 @@ The file for this example is in the integration tests folder, so let's download 
 
 +++
 
-Download the file for this example from the integration tests folder in the PyAnsys Geometry repository. 
+Download the file for this example from the integration tests folder in the PyAnsys Geometry repository.
 
 ```{code-cell} ipython3
 import requests
