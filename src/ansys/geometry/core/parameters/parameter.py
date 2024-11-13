@@ -74,7 +74,7 @@ class Parameter:
         Parameters
         ----------
         id : int
-            The unique identifier for the parameter.
+            Unique ID for the parameter.
         name : str
             The name of the parameter.
         dimension_type : ParameterType
