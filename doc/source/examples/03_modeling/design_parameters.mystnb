@@ -119,7 +119,7 @@ design = modeler.read_existing_design()
 design.plot()
 ```
 
-The setParameter method returns a status message: "Success" if the parameter is updated, or "FAILURE" if the update fails. If parameter p2 depends on p1, updating p1 may also change p2. In such cases, the method returns "CONSTRAINED_PARAMETERS," indicating other parameters were also updated.
+The ``set_parameter()`` method returns a ``Success`` status message if the parameter is updated or a "FAILURE" status message if the update fails. If the ``p2`` parameter depends on the ``p1`` parameter, updating the ``p1`` parameter might also change the ``p2`` parameter. In such cases, the method returns ``CONSTRAINED_PARAMETERS``, which indicates other parameters were also updated.
 
 ```{code-cell} ipython3
 parameter1 = my_parameters[0]
