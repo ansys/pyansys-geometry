@@ -78,7 +78,7 @@ class Parameter:
         name : str
             Name of the parameter.
         dimension_type : ParameterType
-            The type of the parameter.
+            Type of the parameter.
         dimension_value : float
             Value of the parameter.
         """
