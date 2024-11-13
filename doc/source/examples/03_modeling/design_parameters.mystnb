@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# Modeling: Using Design Parameters
+# Modeling: Using design parameters
 
 You can read and update parameters that are part of the design.
 In this example, we have a simple design with two associated parameters.
