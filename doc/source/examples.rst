@@ -38,6 +38,7 @@ These examples demonstrate service-based modeling operations.
 
     examples/03_modeling/add_design_material.mystnb
     examples/03_modeling/plate_with_hole.mystnb
+    examples/03_modeling/cut_operation_on_extrude.mystnb
     examples/03_modeling/tessellation_usage.mystnb
     examples/03_modeling/design_organization.mystnb
     examples/03_modeling/boolean_operations.mystnb
@@ -47,6 +48,7 @@ These examples demonstrate service-based modeling operations.
     examples/03_modeling/export_design.mystnb
     examples/03_modeling/design_tree.mystnb
     examples/03_modeling/service_colors.mystnb
+    examples/03_modeling/surface_bodies.mystnb
 
 Applied examples
 ----------------

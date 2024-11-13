@@ -22,7 +22,8 @@
 """Provides for managing components."""
 
 from enum import Enum, unique
-from typing import TYPE_CHECKING, Optional, Union
+from functools import cached_property
+from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
 from beartype import beartype as check_input_types
@@ -36,6 +37,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     CreateSphereBodyRequest,
+    CreateSurfaceBodyRequest,
     CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
     TranslateRequest,
@@ -57,10 +59,11 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     trimmed_curve_to_grpc_trimmed_curve,
+    trimmed_surface_to_grpc_trimmed_surface,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
-from ansys.geometry.core.designer.body import Body, MasterBody
+from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
@@ -76,6 +79,7 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
+from ansys.geometry.core.shapes.surfaces import TrimmedSurface
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -103,9 +107,10 @@ class ExtrusionDirection(Enum):
     @classmethod
     def from_string(cls, string: str, use_default_if_error: bool = False) -> "ExtrusionDirection":
         """Convert a string to an ``ExtrusionDirection`` enum."""
-        if string == "+":
+        lcase_string = string.lower()
+        if lcase_string in ("+", "p", "pos", "positive"):
             return cls.POSITIVE
-        elif string == "-":
+        elif lcase_string in ("-", "n", "neg", "negative"):
             return cls.NEGATIVE
         elif use_default_if_error:
             from ansys.geometry.core.logger import LOG
@@ -236,6 +241,11 @@ class Component:
 
         self._master_component.occurrences.append(self)
 
+    def _clear_cached_bodies(self) -> None:
+        """Clear the cached bodies."""
+        if "bodies" in self.__dict__:
+            del self.__dict__["bodies"]
+
     @property
     def id(self) -> str:
         """ID of the component."""
@@ -256,7 +266,7 @@ class Component:
         """List of ``Component`` objects inside of the component."""
         return self._components
 
-    @property
+    @cached_property
     def bodies(self) -> list[Body]:
         """List of ``Body`` objects inside of the component."""
         bodies = []
@@ -314,6 +324,20 @@ class Component:
                 master_component=template_comp._master_component,
             )
             self.components.append(new)
+
+    def get_all_bodies(self) -> list[Body]:
+        """Get all bodies in the component hierarchy.
+
+        Returns
+        -------
+        list[Body]
+            List of all bodies in the component hierarchy.
+        """
+        bodies = []
+        for comp in self.components:
+            bodies.extend(comp.get_all_bodies())
+        bodies.extend(self.bodies)
+        return bodies
 
     def get_world_transform(self) -> Matrix44:
         """Get the full transformation matrix of the component in world space.
@@ -459,7 +483,8 @@ class Component:
         sketch: Sketch,
         distance: Quantity | Distance | Real,
         direction: ExtrusionDirection | str = ExtrusionDirection.POSITIVE,
-    ) -> Body:
+        cut: bool = False,
+    ) -> Body | None:
         """Create a solid body by extruding the sketch profile a distance.
 
         Notes
@@ -478,11 +503,16 @@ class Component:
             Direction for extruding the solid body.
             The default is to extrude in the positive normal direction of the sketch.
             Options are "+" and "-" as a string, or the enum values.
+        cut : bool, default: False
+            Whether to cut the extrusion from the existing component.
+            By default, the extrusion is added to the existing component.
 
         Returns
         -------
         Body
             Extruded body from the given sketch.
+        None
+            If the cut parameter is ``True``, the function returns ``None``.
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
@@ -506,7 +536,27 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        self._clear_cached_bodies()
+
+        created_body = Body(response.id, response.name, self, tb)
+        if not cut:
+            return created_body
+        else:
+            # If cut is True, subtract the created body from all existing bodies
+            # in the component...
+            for existing_body in self.get_all_bodies():
+                # Skip the created body
+                if existing_body.id == created_body.id:
+                    continue
+                # Check for collision
+                if existing_body.get_collision(created_body) != CollisionType.NONE:
+                    existing_body.subtract(created_body, keep_other=True)
+
+            # Finally, delete the created body
+            self.delete_body(created_body)
+
+            # And obviously return None... since no body is created
+            return None
 
     @min_backend_version(24, 2, 0)
     @protect_grpc
@@ -555,6 +605,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingProfile(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -602,6 +653,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingChain(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -717,6 +769,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -750,6 +803,7 @@ class Component:
         response = self._bodies_stub.CreateSphereBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -816,6 +870,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBodyFromLoftProfiles(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -853,6 +908,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -893,6 +949,48 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(25, 1, 0)
+    def create_body_from_surface(self, name: str, trimmed_surface: TrimmedSurface) -> Body:
+        """Create a surface body from a trimmed surface.
+
+        Notes
+        -----
+        It is possible to create a closed solid body (as opposed to an open surface body) with a
+        Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new surface body.
+        trimmed_surface : TrimmedSurface
+            Geometry for the new surface body.
+
+        Returns
+        -------
+        Body
+            Surface body.
+        """
+        surface = trimmed_surface_to_grpc_trimmed_surface(trimmed_surface)
+        request = CreateSurfaceBodyRequest(
+            name=name,
+            parent=self.id,
+            trimmed_surface=surface,
+        )
+
+        self._grpc_client.log.debug(
+            f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
+        )
+        response = self._bodies_stub.CreateSurfaceBody(request)
+
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
+        self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @check_input_types
@@ -1093,6 +1191,7 @@ class Component:
             # on the client side
             body_requested._is_alive = False
             self._grpc_client.log.debug(f"Body {body_requested.id} has been deleted.")
+            self._clear_cached_bodies()
         else:
             self._grpc_client.log.warning(
                 f"Body {id} is not found in this component (or subcomponents)."
@@ -1307,102 +1406,66 @@ class Component:
         # Kill itself
         self._is_alive = False
 
-    def tessellate(
-        self, merge_component: bool = False, merge_bodies: bool = False
-    ) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(self, _recursive_call: bool = False) -> Union["PolyData", list["MultiBlock"]]:
         """Tessellate the component.
 
         Parameters
         ----------
-        merge_component : bool, default: False
-            Whether to merge this component into a single dataset. When ``True``,
-            all the individual bodies are effectively combined into a single
-            dataset without any hierarchy.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively
-            merged into a single dataset without separating faces.
+        _recursive_call: bool, default: False
+            Internal flag to indicate if this method is being called recursively.
+            Not to be used by the user.
 
         Returns
         -------
-        ~pyvista.PolyData, ~pyvista.MultiBlock
-            Merged :class:`pyvista.PolyData` if ``merge_component=True`` or a
-            composite dataset.
+        ~pyvista.PolyData, list[~pyvista.MultiBlock]
+            Tessellated component as a single PolyData object.
+            If the method is called recursively, a list of MultiBlock objects is returned.
 
-        Examples
-        --------
-        Create two stacked bodies and return the tessellation as two merged bodies:
-
-        >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core import Modeler
-        >>> from ansys.geometry.core.math import Point2D, Point3D, Plane
-        >>> from ansys.geometry.core.misc import UNITS
-        >>> modeler = Modeler("10.54.0.72", "50051")
-        >>> sketch_1 = Sketch()
-        >>> box = sketch_1.box(
-        >>>    Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
-        >>> sketch_1.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
-        >>> design = modeler.create_design("MyDesign")
-        >>> comp = design.add_component("MyComponent")
-        >>> distance = Quantity(10, UNITS.m)
-        >>> body = comp.extrude_sketch("Body", sketch=sketch_1, distance=distance)
-        >>> sketch_2 = Sketch(Plane([0, 0, 10]))
-        >>> box = sketch_2.box(
-        >>>    Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
-        >>> circle = sketch_2.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
-        >>> body = comp.extrude_sketch("Body", sketch=sketch_2, distance=distance)
-        >>> dataset = comp.tessellate(merge_bodies=True)
-        >>> dataset
-        MultiBlock (0x7ff6bcb511e0)
-          N Blocks:     2
-          X Bounds:     -25.000, 25.000
-          Y Bounds:     -24.991, 24.991
-          Z Bounds:     0.000, 20.000
         """
         import pyvista as pv
 
         # Tessellate the bodies in this component
-        datasets = [body.tessellate(merge_bodies) for body in self.bodies]
-
-        blocks_list = [pv.MultiBlock(datasets)]
+        datasets: list["MultiBlock"] = [body.tessellate(merge=False) for body in self.bodies]
 
         # Now, go recursively inside its subcomponents (with no arguments) and
         # merge the PolyData obtained into our blocks
         for comp in self._components:
             if not comp.is_alive:
                 continue
-            blocks_list.append(comp.tessellate(merge_bodies=merge_bodies))
+            datasets.extend(comp.tessellate(_recursive_call=True))
 
-        # Transform the list of MultiBlock objects into a single MultiBlock
-        blocks = pv.MultiBlock(blocks_list)
-
-        if merge_component:
-            ugrid = blocks.combine()
-            # Convert to polydata as it's slightly faster than extract surface
-            return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
-        return blocks
+        # Convert to polydata as it's slightly faster than extract surface
+        # plus this method is only for visualizing the component as a whole (no
+        # need to keep the hierarchy)
+        if _recursive_call:
+            return datasets
+        else:
+            ugrid = pv.MultiBlock(datasets).combine()
+            return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
 
     def plot(
         self,
-        merge_component: bool = False,
-        merge_bodies: bool = False,
+        merge_component: bool = True,
+        merge_bodies: bool = True,
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
+        allow_picking: bool | None = None,
         **plotting_options: dict | None,
-    ) -> None:
+    ) -> None | list[Any]:
         """Plot the component.
 
         Parameters
         ----------
-        merge_component : bool, default: False
-            Whether to merge the component into a single dataset. When ``True``,
-            all the individual bodies are effectively merged into a single
-            dataset without any hierarchy.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively merged
-            into a single dataset without separating faces.
+        merge_component : bool, default: True
+            Whether to merge the component into a single dataset. By default, ``True``.
+            Performance improved. When ``True``, all the faces of the component are effectively
+            merged into a single dataset. If ``False``, the individual bodies are kept separate.
+        merge_bodies : bool, default: True
+            Whether to merge each body into a single dataset. By default, ``True``.
+            Performance improved. When ``True``, all the faces of each individual body are
+            effectively merged into a single dataset. If ``False``, the individual faces are kept
+            separate.
         screenshot : str, default: None
             Path for saving a screenshot of the image being represented.
         use_trame : bool, default: None
@@ -1413,8 +1476,16 @@ class Component:
             Whether to use the colors assigned to the body in the service. The default
             is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
             global setting is used.
+        allow_picking : bool, default: None
+            Whether to enable picking. The default is ``None``, in which case the
+            picker is not enabled.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
+
+        Returns
+        -------
+        None | list[Any]
+            If ``allow_picking=True``, a list of picked objects is returned. Otherwise, ``None``.
 
         Examples
         --------
@@ -1453,25 +1524,43 @@ class Component:
         """
         import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
-        from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
         use_service_colors = (
             use_service_colors
             if use_service_colors is not None
             else pyansys_geometry.USE_SERVICE_COLORS
         )
-
-        mesh_object = (
-            self
-            if use_service_colors
-            else MeshObjectPlot(
-                custom_object=self,
-                mesh=self.tessellate(merge_component=merge_component, merge_bodies=merge_bodies),
+        # If picking is enabled, we should not merge the component
+        if allow_picking:
+            # This blocks the user from selecting the component itself
+            # but honestly, who would want to select the component itself since
+            # you already have a reference to it? It is the object you are plotting!
+            self._grpc_client.log.info(
+                "Ignoring 'merge_component=True' (default behavior) as "
+                "'allow_picking=True' has been requested."
             )
+            merge_component = False
+
+        # Add merge_component and merge_bodies to the plotting options
+        plotting_options["merge_component"] = merge_component
+        plotting_options["merge_bodies"] = merge_bodies
+
+        # At component level, if ``multi_colors`` or ``use_service_colors`` are defined
+        # we should not merge the component.
+        if plotting_options.get("multi_colors", False) or use_service_colors:
+            plotting_options["merge_component"] = False
+            self._grpc_client.log.info(
+                "Ignoring 'merge_component=True' (default behavior) as "
+                "'multi_colors' or 'use_service_colors' are defined."
+            )
+
+        pl = GeometryPlotter(
+            use_trame=use_trame,
+            use_service_colors=use_service_colors,
+            allow_picking=allow_picking,
         )
-        pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
-        pl.plot(mesh_object, **plotting_options)
-        pl.show(screenshot=screenshot, **plotting_options)
+        pl.plot(self, **plotting_options)
+        return pl.show(screenshot=screenshot, **plotting_options)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""

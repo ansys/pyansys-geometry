@@ -21,6 +21,8 @@
 # SOFTWARE.
 """Test basic client connection."""
 
+from pathlib import Path
+
 from grpc import insecure_channel
 import pytest
 
@@ -65,3 +67,32 @@ def test_client_close(client: GrpcClient):
     assert not client.healthy
     assert "Closed" in str(client)
     assert client.target() == ""
+
+
+def test_client_get_service_logs(client: GrpcClient):
+    """Test the retrieval of the service logs."""
+    # Low level call
+    logs = client._get_service_logs()
+    assert isinstance(logs, str)
+    assert logs  # is not empty
+
+    # Let's request them again on file dump
+    logs_folder = str(Path(__file__).parent / "logs")
+    logs_file_dump = client._get_service_logs(dump_to_file=True, logs_folder=logs_folder)
+    assert logs_file_dump.exists()
+
+    # Do not provide a folder
+    logs_file_dump = client._get_service_logs(dump_to_file=True)
+    assert logs_file_dump.exists()
+    logs_file_dump.unlink()  # Delete the file
+
+    # Let's request all logs now
+    logs_all = client._get_service_logs(all_logs=True)
+    assert isinstance(logs_all, dict)
+    assert logs_all  # is not empty
+
+    # Let's do the same directly from a Modeler object
+    modeler = Modeler(channel=client.channel)
+    logs_modeler = modeler.get_service_logs()
+    assert isinstance(logs_modeler, str)
+    assert logs_modeler  # is not empty
