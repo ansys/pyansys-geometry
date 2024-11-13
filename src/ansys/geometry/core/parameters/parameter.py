@@ -69,7 +69,7 @@ class Parameter:
 
     def __init__(self, id, name, dimension_type: ParameterType, dimension_value):
         """
-        Initialize Parameter class.
+        Initialize an instance of the ``Parameter`` class.
 
         Parameters
         ----------
