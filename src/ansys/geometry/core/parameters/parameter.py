@@ -76,7 +76,7 @@ class Parameter:
         id : int
             Unique ID for the parameter.
         name : str
-            The name of the parameter.
+            Name of the parameter.
         dimension_type : ParameterType
             The type of the parameter.
         dimension_value : float
