@@ -451,7 +451,7 @@ jobs:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on:
       group: ansys-network
-      labels: [self-hosted, Windows, signtool]
+      labels: [self-hosted, Windows, pygeometry]
     env:
       REUSE_LAST_ARTIFACTS: ${{ vars.REUSE_LAST_ARTIFACTS == 1 }}
 
