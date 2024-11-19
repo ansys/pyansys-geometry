@@ -9,6 +9,46 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.7.6 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.6>`_ - 2024-11-19
+=====================================================================================
+
+Added
+^^^^^
+
+- allow for some additional extrusion direction names `#1534 <https://github.com/ansys/pyansys-geometry/pull/1534>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump ansys-sphinx-theme[autoapi] from 1.1.7 to 1.2.0 in the docs-deps group `#1520 <https://github.com/ansys/pyansys-geometry/pull/1520>`_
+- bump ansys-tools-visualization-interface from 0.4.7 to 0.5.0 `#1521 <https://github.com/ansys/pyansys-geometry/pull/1521>`_
+- bump numpy from 2.1.2 to 2.1.3 `#1522 <https://github.com/ansys/pyansys-geometry/pull/1522>`_
+- bump ansys-api-geometry from 0.4.13 to 0.4.14 `#1525 <https://github.com/ansys/pyansys-geometry/pull/1525>`_
+- bump ansys-api-geometry from 0.4.14 to 0.4.15 `#1529 <https://github.com/ansys/pyansys-geometry/pull/1529>`_
+- bump pint from 0.24.3 to 0.24.4 `#1530 <https://github.com/ansys/pyansys-geometry/pull/1530>`_
+- bump trame-vtk from 2.8.11 to 2.8.12 `#1531 <https://github.com/ansys/pyansys-geometry/pull/1531>`_
+- bump ansys-sphinx-theme[autoapi] from 1.2.0 to 1.2.1 in the docs-deps group `#1535 <https://github.com/ansys/pyansys-geometry/pull/1535>`_
+- bump panel from 1.5.3 to 1.5.4 `#1536 <https://github.com/ansys/pyansys-geometry/pull/1536>`_
+- bump ansys-tools-path from 0.6.0 to 0.7.0 `#1537 <https://github.com/ansys/pyansys-geometry/pull/1537>`_
+- bump ansys-api-geometry from 0.4.15 to 0.4.16 `#1538 <https://github.com/ansys/pyansys-geometry/pull/1538>`_
+- limit upper version on grpcio & grpcio-health-checking to 1.68 `#1544 <https://github.com/ansys/pyansys-geometry/pull/1544>`_
+
+
+Documentation
+^^^^^^^^^^^^^
+
+- typo with the docstrings `#1524 <https://github.com/ansys/pyansys-geometry/pull/1524>`_
+- change max header links before more dropdown `#1527 <https://github.com/ansys/pyansys-geometry/pull/1527>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- update CHANGELOG for v0.7.5 `#1519 <https://github.com/ansys/pyansys-geometry/pull/1519>`_
+- pre-commit automatic update `#1523 <https://github.com/ansys/pyansys-geometry/pull/1523>`_, `#1532 <https://github.com/ansys/pyansys-geometry/pull/1532>`_, `#1543 <https://github.com/ansys/pyansys-geometry/pull/1543>`_
+- bump codecov/codecov-action from 4 to 5 in the actions group `#1541 <https://github.com/ansys/pyansys-geometry/pull/1541>`_
+
 `0.7.5 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.5>`_ - 2024-10-31
 =====================================================================================
 
