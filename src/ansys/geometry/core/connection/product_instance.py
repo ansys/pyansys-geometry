@@ -283,7 +283,7 @@ def prepare_and_start_backend(
             product_version = -product_version
     else:
         product_version = get_latest_ansys_installation()[0]
-    
+
     # Verify that the minimum version is installed.
     _check_minimal_versions(product_version)
 
