@@ -51,7 +51,7 @@ class PullTools:
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
     @protect_grpc
-    @min_backend_version(25, 1, 0)
+    @min_backend_version(25, 2, 0)
     def chamfer(
         self, selection: Union["Edge", List["Edge"], "Face", List["Face"]], distance: Real
     ) -> bool:
