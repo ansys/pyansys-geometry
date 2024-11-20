@@ -135,7 +135,7 @@ html_context = {
     "doc_path": "doc/source",
 }
 html_theme_options = {
-    "header_links_before_dropdown": 7,
+    "header_links_before_dropdown": 4,
     "logo": "pyansys",
     "switcher": {
         "json_url": f"https://{cname}/versions.json",
