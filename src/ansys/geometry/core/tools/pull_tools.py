@@ -59,7 +59,7 @@ class PullTools:
 
         Parameters
         ----------
-        edges_or_faces : Edge | List[Edge] | Face | List[Face]
+        edges_or_faces : Edge | list[Edge] | Face | list[Face]
             One or more edges or faces to act on.
         distance : Real
             Chamfer distance.
@@ -69,13 +69,13 @@ class PullTools:
         bool
             ``True`` when successful, ``False`` when failed.
         """
-        selection = selection if isinstance(selection, list) else [selection]
+        selection: list[Edge | Face] = selection if isinstance(selection, list) else [selection]
 
         for ef in selection:
             ef.body._reset_tessellation_cache()
 
         result = self._commands_stub.Chamfer(
-            ChamferRequest(ids=[ef.id for ef in selection], distance=distance)
+            ChamferRequest(ids=[ef._grpc_id for ef in selection], distance=distance)
         )
 
         return result.success

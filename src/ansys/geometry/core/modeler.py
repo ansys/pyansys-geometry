@@ -60,7 +60,7 @@ class Modeler:
     ----------
     host : str,  default: DEFAULT_HOST
         Host where the server is running.
-    port : Union[str, int], default: DEFAULT_PORT
+    port : str | int, default: DEFAULT_PORT
         Port number where the server is running.
     channel : ~grpc.Channel, default: None
         gRPC channel for server communication.
