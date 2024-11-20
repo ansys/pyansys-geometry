@@ -248,7 +248,7 @@ def launch_remote_modeler(
 
     version : str, default: None
         Version of the Geometry service to run in the three-digit format.
-        For example, "232". If you do not specify the version, the server
+        For example, "241". If you do not specify the version, the server
         chooses the version.
     client_log_level : int, default: logging.INFO
         Log level for the client. The default is ``logging.INFO``.
@@ -367,7 +367,7 @@ def launch_modeler_with_discovery_and_pimlight(
     ----------
     version : str, default: None
         Version of Discovery to run in the three-digit format.
-        For example, "232". If you do not specify the version, the server
+        For example, "241". If you do not specify the version, the server
         chooses the version.
     client_log_level : int, default: logging.INFO
         Log level for the client. The default is ``logging.INFO``.
@@ -410,7 +410,7 @@ def launch_modeler_with_geometry_service_and_pimlight(
     ----------
     version : str, default: None
         Version of the Geometry service to run in the three-digit format.
-        For example, "232". If you do not specify the version, the server
+        For example, "241". If you do not specify the version, the server
         chooses the version.
     client_log_level : int, default: logging.INFO
         Log level for the client. The default is ``logging.INFO``.
@@ -453,7 +453,7 @@ def launch_modeler_with_spaceclaim_and_pimlight(
     ----------
     version : str, default: None
         Version of SpaceClaim to run in the three-digit format.
-        For example, "232". If you do not specify the version, the server
+        For example, "241". If you do not specify the version, the server
         chooses the version.
     client_log_level : int, default: logging.INFO
         Log level for the client. The default is ``logging.INFO``.
@@ -505,7 +505,7 @@ def launch_modeler_with_geometry_service(
     Parameters
     ----------
     product_version: int, optional
-        The product version to be started. Goes from v23.2.1 to
+        The product version to be started. Goes from v24.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
@@ -513,6 +513,7 @@ def launch_modeler_with_geometry_service(
         **Ansys products versions and their corresponding int values:**
 
         * ``241`` : Ansys 24R1
+        * ``242`` : Ansys 24R2
     host: str, optional
         IP address at which the Geometry service will be deployed. By default,
         its value will be ``localhost``.
@@ -555,7 +556,7 @@ def launch_modeler_with_geometry_service(
         If the specified endpoint is already in use, a connection
         error will be raised.
     SystemError
-        If there is not an Ansys product 23.2 version or later installed
+        If there is not an Ansys product 24.1 version or later installed
         a SystemError will be raised.
 
     Returns
@@ -629,10 +630,6 @@ def launch_modeler_with_discovery(
 ):
     """Start Ansys Discovery locally using the ``ProductInstance`` class.
 
-    .. note::
-
-       Support for Ansys Discovery is restricted to Ansys 24.1 onward.
-
     When calling this method, a standalone Discovery session is started.
     By default, if an endpoint is specified (by defining `host` and `port` parameters)
     but the endpoint is not available, the startup will fail. Otherwise, it will try to
@@ -641,7 +638,7 @@ def launch_modeler_with_discovery(
     Parameters
     ----------
     product_version: int, optional
-        The product version to be started. Goes from v23.2.1 to
+        The product version to be started. Goes from v24.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
@@ -649,6 +646,7 @@ def launch_modeler_with_discovery(
         **Ansys products versions and their corresponding int values:**
 
         * ``241`` : Ansys 24R1
+        * ``242`` : Ansys 24R2
     host: str, optional
         IP address at which the Discovery session will be deployed. By default,
         its value will be ``localhost``.
@@ -690,7 +688,7 @@ def launch_modeler_with_discovery(
     ConnectionError
         If the specified endpoint is already in use, a connection error will be raised.
     SystemError:
-        If there is not an Ansys product 23.2 version or later installed
+        If there is not an Ansys product 24.1 version or later installed
         or if a specific product's version is requested but not installed locally then
         a SystemError will be raised.
 
@@ -707,11 +705,11 @@ def launch_modeler_with_discovery(
     >>> from ansys.geometry.core import launch_modeler_with_discovery
     >>> modeler = launch_modeler_with_discovery()
 
-    Starting an Ansys Discovery V 23.2 session, on address ``10.171.22.44``, port ``5001``,
+    Starting an Ansys Discovery V 24.1 session, on address ``10.171.22.44``, port ``5001``,
     with chatty logs, using API v231 and a ``300`` seconds timeout:
 
     >>> from ansys.geometry.core import launch_modeler_with_discovery
-    >>> modeler = launch_modeler_with_discovery(product_version = 232,
+    >>> modeler = launch_modeler_with_discovery(product_version = 241,
         host="10.171.22.44",
         port=5001,
         api_version= 231,
@@ -767,15 +765,15 @@ def launch_modeler_with_spaceclaim(
     Parameters
     ----------
     product_version: int, optional
-        The product version to be started. Goes from v23.2.1 to
+        The product version to be started. Goes from v24.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
 
         **Ansys products versions and their corresponding int values:**
 
-        * ``232`` : Ansys 23R2 SP1
         * ``241`` : Ansys 24R1
+        * ``242`` : Ansys 24R2
     host: str, optional
         IP address at which the SpaceClaim session will be deployed. By default,
         its value will be ``localhost``.
@@ -817,7 +815,7 @@ def launch_modeler_with_spaceclaim(
     ConnectionError
         If the specified endpoint is already in use, a connection error will be raised.
     SystemError
-        If there is not an Ansys product 23.2 version or later installed
+        If there is not an Ansys product 24.1 version or later installed
         or if a specific product's version is requested but not installed locally then
         a SystemError will be raised.
 
@@ -834,11 +832,11 @@ def launch_modeler_with_spaceclaim(
     >>> from ansys.geometry.core import launch_modeler_with_spaceclaim
     >>> modeler = launch_modeler_with_spaceclaim()
 
-    Starting an Ansys SpaceClaim V 23.2 session, on address ``10.171.22.44``, port ``5001``,
+    Starting an Ansys SpaceClaim V 24.1 session, on address ``10.171.22.44``, port ``5001``,
     with chatty logs, using API v231 and a ``300`` seconds timeout:
 
     >>> from ansys.geometry.core import launch_modeler_with_spaceclaim
-    >>> modeler = launch_modeler_with_spaceclaim(product_version = 232,
+    >>> modeler = launch_modeler_with_spaceclaim(product_version = 241,
         host="10.171.22.44",
         port=5001,
         api_version= 231,

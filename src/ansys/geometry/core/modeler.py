@@ -400,7 +400,7 @@ class Modeler:
             bodies in the design.
 
         The implied API version of the script should match the API version of the running
-        Geometry Service. DMS API versions 23.2.1 and later are supported. DMS is a
+        Geometry Service. DMS API versions 24.1 and later are supported. DMS is a
         Windows-based modeling service that has been containerized to ease distribution,
         execution, and remotability operations.
 
@@ -417,8 +417,8 @@ class Modeler:
             script modifies the current design, the design may be out-of-sync. By default,
             ``False``.
         api_version : int | str | ApiVersions, optional
-            The scripting API version to use. For example, version 23.2 can be passed as
-            an integer 232, a string "232" or using the
+            The scripting API version to use. For example, version 24.1 can be passed as
+            an integer 241, a string "241" or using the
             ``ansys.geometry.core.connection.backend.ApiVersions`` enum class.
             By default, ``None``. When specified, the service will attempt to run the script with
             the specified API version. If the API version is not supported, the service will raise
