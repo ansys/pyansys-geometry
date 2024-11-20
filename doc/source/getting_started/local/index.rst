@@ -3,7 +3,7 @@
 Launch a local session
 ======================
 
-If Ansys 2023 R2 or later and PyAnsys Geometry are installed, you can create a local backend session using
+If Ansys 2024 R1 or later and PyAnsys Geometry are installed, you can create a local backend session using
 Discovery, SpaceClaim, or the Geometry service. Once the backend is running, PyAnsys Geometry can manage the connection.
 
 To launch and establish a connection to the service, open Python and use the following commands for
