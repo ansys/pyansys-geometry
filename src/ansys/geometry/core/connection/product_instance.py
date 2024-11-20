@@ -268,10 +268,24 @@ def prepare_and_start_backend(
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
     if product_version is not None:
-        _check_version_is_available(product_version, installations)
+        try:
+            _check_version_is_available(product_version, installations)
+        except SystemError as serr:
+            # The user requested a version as a Student version...
+            # Let's negate it and try again... if this works, we override the
+            # product_version variable.
+            try:
+                _check_version_is_available(-product_version, installations)
+            except SystemError:
+                # The student version is not installed either... raise the original error.
+                raise serr
+
+            product_version = -product_version
     else:
         product_version = get_latest_ansys_installation()[0]
-        _check_minimal_versions(product_version)
+    
+    # Verify that the minimum version is installed.
+    _check_minimal_versions(product_version)
 
     if server_logs_folder is not None:
         # Verify that the user has write permissions to the folder and that it exists.
