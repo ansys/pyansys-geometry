@@ -75,7 +75,7 @@ tests-minimal = [
     "pytest-xvfb==3.0.0",
 ]
 doc = [
-    "ansys-sphinx-theme[autoapi]==1.2.1",
+    "ansys-sphinx-theme[autoapi]==1.2.2",
     "ansys-tools-path==0.7.0",
     "ansys-tools-visualization-interface==0.5.0",
     "beartype==0.19.0",
