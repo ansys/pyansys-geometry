@@ -56,6 +56,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
+from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
     Cone,
@@ -2737,6 +2738,33 @@ def test_surface_body_creation(modeler: Modeler):
     assert len(design.bodies) == 6
     assert not body.is_surface
     assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
+
+
+def test_design_parameters(modeler: Modeler):
+    """Test the design parameter's functionality."""
+
+    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
+    test_parameters = design.get_all_parameters()
+
+    # Verify the initial parameters
+    assert len(test_parameters) == 2
+    assert test_parameters[0].name == "p1"
+    assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
+    assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    assert test_parameters[1].name == "p2"
+    assert abs(test_parameters[1].dimension_value - 0.0002552758322160813) < 1e-8
+    assert test_parameters[1].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    # Update the second parameter and verify the status
+    test_parameters[1].dimension_value = 0.0006
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.SUCCESS
+
+    # Attempt to update the first parameter and expect a constrained status
+    test_parameters[0].dimension_value = 0.0006
+    status = design.set_parameter(test_parameters[0])
+    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
 
 
 def test_cached_bodies(modeler: Modeler):
