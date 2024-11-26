@@ -33,12 +33,12 @@ awp_root = {}
 for env_key, env_val in os.environ.items():
     if env_key.startswith("AWP_ROOT"):
         # There is an Ansys installation... Check that the version is at
-        # least 2023R2. Environment variables are in the form
-        # AWP_ROOT232=/path/to/2023R2
+        # least 2024R1. Environment variables are in the form
+        # AWP_ROOT241=/path/to/2024R1
         #
         # Get the version number
         version = env_key.split("AWP_ROOT")[1]
-        if version < "232":
+        if version < "241":
             # This version is too old, so we will ignore it
             continue
         else:
@@ -48,7 +48,7 @@ for env_key, env_val in os.environ.items():
 if len(awp_root) == 0:
     # There are no Ansys installations
     print("XXXXXXX No Ansys compatible installations found.. exiting process. XXXXXXX")
-    print("XXXXXXX Please install Ansys 2023R2 or newer.                      XXXXXXX")
+    print("XXXXXXX Please install Ansys 2024R1 or newer.                      XXXXXXX")
     exit(0)
 
 # Request the user to select the version of Ansys to use

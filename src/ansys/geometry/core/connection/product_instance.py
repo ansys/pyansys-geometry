@@ -192,7 +192,7 @@ def prepare_and_start_backend(
     Parameters
     ----------
     product_version: ``int``, optional
-        The product version to be started. Goes from v23.2.1 to
+        The product version to be started. Goes from v24.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
@@ -242,7 +242,7 @@ def prepare_and_start_backend(
     ConnectionError
         If the specified endpoint is already in use, a connection error will be raised.
     SystemError
-        If there is not an Ansys product 23.2 version or later installed
+        If there is not an Ansys product 24.1 version or later installed
         or if a specific product's version is requested but not installed locally then
         a SystemError will be raised.
 
@@ -268,10 +268,24 @@ def prepare_and_start_backend(
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
     if product_version is not None:
-        _check_version_is_available(product_version, installations)
+        try:
+            _check_version_is_available(product_version, installations)
+        except SystemError as serr:
+            # The user requested a version as a Student version...
+            # Let's negate it and try again... if this works, we override the
+            # product_version variable.
+            try:
+                _check_version_is_available(-product_version, installations)
+            except SystemError:
+                # The student version is not installed either... raise the original error.
+                raise serr
+
+            product_version = -product_version
     else:
         product_version = get_latest_ansys_installation()[0]
-        _check_minimal_versions(product_version)
+
+    # Verify that the minimum version is installed.
+    _check_minimal_versions(product_version)
 
     if server_logs_folder is not None:
         # Verify that the user has write permissions to the folder and that it exists.
@@ -480,12 +494,12 @@ def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Po
 def _check_minimal_versions(latest_installed_version: int) -> None:
     """Check client is compatible with Ansys Products.
 
-    Check that at least V232 is installed.
+    Check that at least V241 is installed.
     """
-    if abs(latest_installed_version) < 232:
+    if abs(latest_installed_version) < 241:
         msg = (
-            "PyAnsys Geometry is compatible with Ansys Products from version 23.2.1. "
-            + "Please install Ansys products 23.2.1 or later."
+            "PyAnsys Geometry is compatible with Ansys Products from version 24.1.0. "
+            + "Please install Ansys products 24.1.0 or later."
         )
         raise SystemError(msg)
 
