@@ -37,9 +37,9 @@ class ParamUV:
     Parameters
     ----------
     u : Real
-        U parameter
+        U parameter.
     v : Real
-        V parameter
+        V parameter.
 
     Notes
     -----
@@ -55,12 +55,12 @@ class ParamUV:
 
     @property
     def u(self) -> Real:
-        """u-parameter."""
+        """U parameter."""
         return self._u
 
     @property
     def v(self) -> Real:
-        """v-parameter."""
+        """V parameter."""
         return self._v
 
     @check_input_types
