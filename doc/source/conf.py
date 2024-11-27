@@ -236,10 +236,15 @@ numpydoc_validation_checks = {
     "RT02",  # The first line of the Returns section should contain only the
     # type, unless multiple values are being returned"
 }
-numpydoc_validation_exclude = [
-    "\.__cause__$",
-    "\.__context__$",
-]
+
+# Ignoring numpydoc validation on built-in methods from Python
+numpydoc_validation_exclude = {
+    "add_note",
+    "isEnabledFor",
+    "validate",
+    "__cause__",
+    "__context__",
+}
 
 # static path
 html_static_path = ["_static"]
