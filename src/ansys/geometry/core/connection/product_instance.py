@@ -464,10 +464,6 @@ def _manifest_path_provider(
 def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Popen:
     """Start the program.
 
-    Notes
-    -----
-    The path is the first item of the ``args`` array argument.
-
     Parameters
     ----------
     args : list[str]
@@ -480,6 +476,10 @@ def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Po
     -------
     subprocess.Popen
         The subprocess object.
+
+    Notes
+    -----
+    The path is the first item of the ``args`` array argument.
     """
     # private method and controlled input by library - excluding bandit check.
     return subprocess.Popen(  # nosec B603

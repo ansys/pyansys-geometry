@@ -115,15 +115,15 @@ class LocalDockerInstance:
     def docker_client() -> "DockerClient":
         """Get the initialized ``__DOCKER_CLIENT__`` object.
 
-        Notes
-        -----
-        The ``LocalDockerInstance`` class performs a lazy initialization of the
-        ``__DOCKER_CLIENT__`` class variable.
-
         Returns
         -------
         ~docker.client.DockerClient
             Initialized Docker client.
+
+        Notes
+        -----
+        The ``LocalDockerInstance`` class performs a lazy initialization of the
+        ``__DOCKER_CLIENT__`` class variable.
         """
         if not LocalDockerInstance.__DOCKER_CLIENT__:
             LocalDockerInstance.__DOCKER_CLIENT__ = DockerClient.from_env()
@@ -327,10 +327,6 @@ class LocalDockerInstance:
 def get_geometry_container_type(instance: LocalDockerInstance) -> GeometryContainers | None:
     """Provide back the ``GeometryContainers`` value.
 
-    Notes
-    -----
-    This method returns the first hit on the available tags.
-
     Parameters
     ----------
     instance : LocalDockerInstance
@@ -341,6 +337,10 @@ def get_geometry_container_type(instance: LocalDockerInstance) -> GeometryContai
     GeometryContainers or None
         The GeometryContainer value corresponding to the previous image or None
         if not match.
+
+    Notes
+    -----
+    This method returns the first hit on the available tags.
     """
     for tag in instance.container.image.tags:
         for geom_services in GeometryContainers:

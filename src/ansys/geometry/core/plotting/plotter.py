@@ -300,11 +300,6 @@ class GeometryPlotter(PlotterInterface):
     ) -> None:
         """Add a component on a per body basis.
 
-        Notes
-        -----
-        This will allow to make use of the service colors. At the same time, it will be
-        slower than the add_component method.
-
         Parameters
         ----------
         component : Component
@@ -312,6 +307,11 @@ class GeometryPlotter(PlotterInterface):
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+        Notes
+        -----
+        This will allow to make use of the service colors. At the same time, it will be
+        slower than the add_component method.
         """
         # Recursively add the bodies and components
         for body in component.bodies:

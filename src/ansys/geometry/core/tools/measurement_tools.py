@@ -59,15 +59,15 @@ class Gap:
     def _from_distance_response(cls, response: MinDistanceBetweenObjectsResponse) -> "Gap":
         """Construct ``Gap`` object from distance response.
 
-        Notes
-        -----
-        This method is used internally to construct a ``Gap`` object from a
-        gRPC response.
-
         Parameters
         ----------
         response : MinDistanceBetweenObjectsResponse
             Response from the gRPC server.
+
+        Notes
+        -----
+        This method is used internally to construct a ``Gap`` object from a
+        gRPC response.
         """
         distance = Distance(response.gap.distance, unit=DEFAULT_UNITS.LENGTH)
         return cls(distance)

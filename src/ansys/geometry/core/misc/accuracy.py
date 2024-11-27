@@ -57,15 +57,15 @@ class Accuracy:
     def length_is_equal(comparison_length: Real, reference_length: Real) -> bool:
         """Check if the comparison length is equal to the reference length.
 
-        Notes
-        -----
-        The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
-
         Returns
         -------
         bool
             ``True`` if the comparison length is equal to the reference length
             within the length accuracy, ``False`` otherwise.
+
+        Notes
+        -----
+        The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
         """
         return Accuracy.is_within_tolerance(
             comparison_length, reference_length, LENGTH_ACCURACY, LENGTH_ACCURACY
@@ -92,15 +92,15 @@ class Accuracy:
     def length_is_greater_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
         """Check if the length is greater than the reference length.
 
-        Notes
-        -----
-        The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
-
         Returns
         -------
         bool
             ``True`` if the comparison length is greater than the reference length within
             the length accuracy, ``False`` otherwise.
+
+        Notes
+        -----
+        The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
         """
         return bool(
             comparison_length > reference_length
@@ -111,15 +111,15 @@ class Accuracy:
     def length_is_less_than_or_equal(comparison_length: Real, reference_length: Real) -> bool:
         """Check if the length is less than or equal to the reference length.
 
-        Notes
-        -----
-        The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
-
         Returns
         -------
         bool
             ``True`` if the comparison length is less than or equal to the reference length
             within the length accuracy, ``False`` otherwise.
+
+        Notes
+        -----
+        The check is done up to the constant value specified for ``LENGTH_ACCURACY``.
         """
         return bool(
             comparison_length < reference_length
