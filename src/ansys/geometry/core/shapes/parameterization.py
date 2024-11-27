@@ -43,7 +43,7 @@ class ParamUV:
 
     Notes
     -----
-    Likened to a 2D point in UV space Used as an argument in parametric
+    Likened to a 2D point in UV space. Used as an argument in parametric
     surface evaluations. This matches the service implementation for the
     Geometry service.
     """
