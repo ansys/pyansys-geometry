@@ -237,6 +237,11 @@ def prepare_and_start_backend(
     logs_folder : str, optional
         DEPRECATED. Use ``server_logs_folder`` instead.
 
+    Returns
+    -------
+    Modeler
+        Instance of the Geometry service.
+
     Raises
     ------
     ConnectionError
@@ -245,11 +250,6 @@ def prepare_and_start_backend(
         If there is not an Ansys product 24.1 version or later installed
         or if a specific product's version is requested but not installed locally then
         a SystemError will be raised.
-
-    Returns
-    -------
-    Modeler
-        Instance of the Geometry service.
     """
     from ansys.geometry.core.modeler import Modeler
 

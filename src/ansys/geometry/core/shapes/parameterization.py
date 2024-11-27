@@ -37,9 +37,9 @@ class ParamUV:
     Parameters
     ----------
     u : Real
-        u-parameter.
+        U parameter
     v : Real
-        v-parameter.
+        V parameter
 
     Notes
     -----
