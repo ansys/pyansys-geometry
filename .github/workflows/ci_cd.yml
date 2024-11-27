@@ -135,7 +135,7 @@ jobs:
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
-        uses: pyvista/setup-headless-display-action@v2
+        uses: pyvista/setup-headless-display-action@v3
         with:
           pyvista: false
 
@@ -254,7 +254,7 @@ jobs:
       PYVISTA_OFF_SCREEN: true
     steps:
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@v2
+        uses: pyvista/setup-headless-display-action@v3
         with:
           pyvista: false
 
