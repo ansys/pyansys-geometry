@@ -20,6 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 
 dependencies = [
@@ -66,7 +67,7 @@ tests = [
     "scipy==1.14.1",
     "semver==3.0.2",
     "six==1.16.0",
-    "vtk==9.3.1",
+    "vtk==9.4.0",
 ]
 tests-minimal = [
     "pytest==8.3.3",
@@ -104,7 +105,7 @@ doc = [
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
     "trame-vtk==2.8.12",
-    "vtk==9.3.1",
+    "vtk==9.4.0",
 ]
 
 [project.urls]
