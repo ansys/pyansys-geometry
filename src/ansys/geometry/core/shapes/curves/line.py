@@ -226,14 +226,14 @@ class LineEvaluation(CurveEvaluation):
     def tangent(self) -> UnitVector3D:
         """Tangent of the evaluation.
 
-        Notes
-        -----
-        This is always equal to the direction of the line.
-
         Returns
         -------
         UnitVector3D
             Tangent unit vector to the line at this evaluation.
+
+        Notes
+        -----
+        This is always equal to the direction of the line.
         """
         return self.line.direction
 

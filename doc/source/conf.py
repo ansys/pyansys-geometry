@@ -84,12 +84,6 @@ def get_wheelhouse_assets_dictionary():
 def intersphinx_pyansys_geometry(switcher_version: str):
     """Auxiliary method to build the intersphinx mapping for PyAnsys Geometry.
 
-    Notes
-    -----
-    If the objects.inv file is not found whenever it is a release, the method
-    will default to the "dev" version. If the objects.inv file is not found
-    for the "dev" version, the method will return an empty string.
-
     Parameters
     ----------
     switcher_version : str
@@ -99,6 +93,12 @@ def intersphinx_pyansys_geometry(switcher_version: str):
     -------
     str
         The intersphinx mapping for PyAnsys Geometry.
+
+    Notes
+    -----
+    If the objects.inv file is not found whenever it is a release, the method
+    will default to the "dev" version. If the objects.inv file is not found
+    for the "dev" version, the method will return an empty string.
     """
     prefix = "https://geometry.docs.pyansys.com/version"
 
@@ -230,11 +230,20 @@ numpydoc_validation_checks = {
     "GL10",  # reST directives {directives} must be followed by two colons
     "SS01",  # No summary found
     "SS02",  # Summary does not start with a capital letter
-    # "SS03", # Summary does not end with a period
+    "SS03",  # Summary does not end with a period
     "SS04",  # Summary contains heading whitespaces
     # "SS05", # Summary must start with infinitive verb, not third person
     "RT02",  # The first line of the Returns section should contain only the
     # type, unless multiple values are being returned"
+}
+
+# Ignoring numpydoc validation on built-in methods from Python
+numpydoc_validation_exclude = {
+    "add_note",
+    "isEnabledFor",
+    "validate",
+    "__cause__",
+    "__context__",
 }
 
 # static path

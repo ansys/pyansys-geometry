@@ -117,11 +117,6 @@ def __traverse_all_bodies(comp: Union["Design", "Component"]) -> list["Body"]:
 
     This is a private method. Do not use it directly.
 
-    Notes
-    -----
-    This method is a recursive helper function to traverse all bodies in a
-    design and all its subcomponents.
-
     Parameters
     ----------
     design : Design
@@ -131,6 +126,11 @@ def __traverse_all_bodies(comp: Union["Design", "Component"]) -> list["Body"]:
     -------
     list[Body]
         List of all bodies in the design or component.
+
+    Notes
+    -----
+    This method is a recursive helper function to traverse all bodies in a
+    design and all its subcomponents.
     """
     bodies = []
     bodies.extend(comp.bodies)
@@ -143,10 +143,6 @@ def __traverse_all_bodies(comp: Union["Design", "Component"]) -> list["Body"]:
 def get_bodies_from_ids(design: "Design", body_ids: list[str]) -> list["Body"]:
     """Find the ``Body`` objects inside a ``Design`` from its ids.
 
-    Notes
-    -----
-    This method takes a design and body ids, and gets their corresponding ``Body`` object.
-
     Parameters
     ----------
     design : Design
@@ -158,16 +154,16 @@ def get_bodies_from_ids(design: "Design", body_ids: list[str]) -> list["Body"]:
     -------
     list[Body]
         List of Body objects.
+
+    Notes
+    -----
+    This method takes a design and body ids, and gets their corresponding ``Body`` object.
     """
     return [body for body in __traverse_all_bodies(design) if body.id in body_ids]
 
 
 def get_faces_from_ids(design: "Design", face_ids: list[str]) -> list["Face"]:
     """Find the ``Face`` objects inside a ``Design`` from its ids.
-
-    Notes
-    -----
-    This method takes a design and face ids, and gets their corresponding ``Face`` object.
 
     Parameters
     ----------
@@ -180,6 +176,10 @@ def get_faces_from_ids(design: "Design", face_ids: list[str]) -> list["Face"]:
     -------
     list[Face]
         List of Face objects.
+
+    Notes
+    -----
+    This method takes a design and face ids, and gets their corresponding ``Face`` object.
     """
     return [
         face for body in __traverse_all_bodies(design) for face in body.faces if face.id in face_ids
@@ -188,10 +188,6 @@ def get_faces_from_ids(design: "Design", face_ids: list[str]) -> list["Face"]:
 
 def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     """Find the ``Edge`` objects inside a ``Design`` from its ids.
-
-    Notes
-    -----
-    This method takes a design and edge ids, and gets their corresponding ``Edge`` objects.
 
     Parameters
     ----------
@@ -204,6 +200,10 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     -------
     list[Edge]
         List of Edge objects.
+
+    Notes
+    -----
+    This method takes a design and edge ids, and gets their corresponding ``Edge`` objects.
     """
     return [
         edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids
