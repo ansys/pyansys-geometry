@@ -73,8 +73,15 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
     channel : ~grpc.Channel
         Channel that must be established and healthy.
     timeout : float
-        Timeout in seconds. An attempt is made every 100 milliseconds
-        until the timeout is exceeded.
+        Timeout in seconds. Attempts are made with the following backoff strategy:
+
+        * Starts with 0.1 seconds.
+        * If the attempt fails, double the timeout.
+        * This is repeated until the next timeoff exceeds the
+          value for the remaining time. In that case, a final attempt
+          is made with the remaining time.
+        * If the total elapsed time exceeds the value for the ``timeout`` parameter,
+          a ``TimeoutError`` is raised.
 
     Raises
     ------
