@@ -13,13 +13,13 @@ env:
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
-  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest
+  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:core-windows-latest
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
   RESET_IMAGE_CACHE: 4
   IS_WORKFLOW_RUNNING: True
-  ARTIFACTORY_VERSION: v251
+  ARTIFACTORY_VERSION: v252
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -118,9 +118,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - docker-image: "windows-latest"
+          - docker-image: "core-windows-latest"
             experimental: false
-          - docker-image: "windows-latest-unstable"
+          - docker-image: "core-windows-latest-unstable"
             experimental: true
 
     steps:
@@ -226,7 +226,7 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
-        if: matrix.docker-image == 'windows-latest'
+        if: matrix.docker-image == 'core-windows-latest'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -331,9 +331,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - docker-image: "linux-latest"
+          - docker-image: "core-linux-latest"
             experimental: false
-          - docker-image: "linux-latest-unstable"
+          - docker-image: "core-linux-latest-unstable"
             experimental: true
 
     steps:
@@ -403,7 +403,7 @@ jobs:
     needs: [smoke-tests]
     runs-on: ubuntu-latest
     env:
-      ANSRV_GEO_IMAGE_MINREQS: 'ghcr.io/ansys/geometry:linux-latest'
+      ANSRV_GEO_IMAGE_MINREQS: 'ghcr.io/ansys/geometry:core-linux-latest'
     strategy:
       fail-fast: false
       matrix:
@@ -481,8 +481,8 @@ jobs:
       - name: Download binaries (if conditions met)
         if: env.REUSE_LAST_ARTIFACTS == 'false'
         run: |
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerWindows.zip --output windows-binaries.zip
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerLinux.zip --output linux-binaries.zip
+          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerCoreWindows.zip --output windows-binaries.zip
+          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerCoreLinux.zip --output linux-binaries.zip
 
       - name: Reuse last binaries (if conditions met)
         if: env.REUSE_LAST_ARTIFACTS == 'true'
@@ -555,7 +555,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f windows/Dockerfile -t ghcr.io/ansys/geometry:windows-latest-tmp .
+          docker build -f windows/Dockerfile -t ghcr.io/ansys/geometry:core-windows-latest-tmp .
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-2'
@@ -564,7 +564,7 @@ jobs:
 
       - name: Launch Geometry service
         run: |
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:windows-latest-tmp
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:core-windows-latest-tmp
 
       - name: Validate connection using PyAnsys Geometry
         run: |
@@ -618,7 +618,7 @@ jobs:
       - name: Delete the Docker images (and untagged ones)
         if: always()
         run: |
-          docker image rm ghcr.io/ansys/geometry:windows-latest-tmp
+          docker image rm ghcr.io/ansys/geometry:core-windows-latest-tmp
           docker system prune -f
 
 # =================================================================================================
@@ -647,11 +647,11 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f linux/Dockerfile -t ghcr.io/ansys/geometry:linux-latest-tmp .
+          docker build -f linux/Dockerfile -t ghcr.io/ansys/geometry:core-linux-latest-tmp .
 
       - name: Launch Geometry service
         run: |
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:linux-latest-tmp
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:core-linux-latest-tmp
 
       - name: Validate connection using PyAnsys Geometry
         run: |

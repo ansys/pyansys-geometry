@@ -22,8 +22,8 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.13'
-  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest-unstable
-  ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/ansys/geometry:linux-latest-unstable
+  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:core-windows-latest-unstable
+  ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/ansys/geometry:core-linux-latest-unstable
   ANSRV_GEO_PORT: 710
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo_nightly
@@ -213,8 +213,8 @@ jobs:
     name: Promote Windows container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
     env:
-      WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:windows-latest-unstable
-      WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:windows-latest
+      WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:core-windows-latest-unstable
+      WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:core-windows-latest
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v3
@@ -238,8 +238,8 @@ jobs:
     name: Promote Linux container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
     env:
-      LINUX_UNSTABLE: ghcr.io/ansys/geometry:linux-latest-unstable
-      LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:linux-latest
+      LINUX_UNSTABLE: ghcr.io/ansys/geometry:core-linux-latest-unstable
+      LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:core-linux-latest
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v3

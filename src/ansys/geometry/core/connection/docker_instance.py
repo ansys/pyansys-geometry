@@ -62,14 +62,24 @@ def _docker_python_available(func):
 class GeometryContainers(Enum):
     """Provides an enum holding the available Geometry services."""
 
-    WINDOWS_LATEST = 0, "windows", "windows-latest"
-    LINUX_LATEST = 1, "linux", "linux-latest"
-    WINDOWS_LATEST_UNSTABLE = 2, "windows", "windows-latest-unstable"
-    LINUX_LATEST_UNSTABLE = 3, "linux", "linux-latest-unstable"
-    WINDOWS_24_1 = 4, "windows", "windows-24.1"
-    LINUX_24_1 = 5, "linux", "linux-24.1"
-    WINDOWS_24_2 = 6, "windows", "windows-24.2"
-    LINUX_24_2 = 7, "linux", "linux-24.2"
+    CORE_WINDOWS_LATEST = 0, "windows", "core-windows-latest"
+    CORE_LINUX_LATEST = 1, "linux", "core-linux-latest"
+    CORE_WINDOWS_LATEST_UNSTABLE = 2, "windows", "core-windows-latest-unstable"
+    CORE_LINUX_LATEST_UNSTABLE = 3, "linux", "core-linux-latest-unstable"
+    # TO BE REMOVED at some point... - START
+    WINDOWS_LATEST = 4, "windows", "windows-latest"
+    LINUX_LATEST = 5, "linux", "linux-latest"
+    WINDOWS_LATEST_UNSTABLE = 6, "windows", "windows-latest-unstable"
+    LINUX_LATEST_UNSTABLE = 7, "linux", "linux-latest-unstable"
+    # TO BE REMOVED at some point... - END
+    WINDOWS_24_1 = 8, "windows", "windows-24.1"
+    LINUX_24_1 = 9, "linux", "linux-24.1"
+    WINDOWS_24_2 = 10, "windows", "windows-24.2"
+    LINUX_24_2 = 11, "linux", "linux-24.2"
+    WINDOWS_25_1 = 12, "windows", "windows-25.1"
+    LINUX_25_1 = 13, "linux", "linux-25.1"
+    WINDOWS_25_2 = 14, "windows", "core-windows-25.2"
+    LINUX_25_2 = 15, "linux", "core-linux-25.2"
 
 
 class LocalDockerInstance:

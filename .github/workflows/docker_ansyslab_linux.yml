@@ -12,7 +12,7 @@ permissions:
   packages: read
 
 env:
-  LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:linux-latest
+  LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:core-linux-latest
   LINUX_STABLE_FUJI: azwepsifujiaksacr.azurecr.io/ansys/discovery/geometry:linux-latest
 
 jobs:

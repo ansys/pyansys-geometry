@@ -85,7 +85,7 @@ container for the Geometry service and install this image.
 
    .. code:: bash
 
-      docker pull ghcr.io/ansys/geometry:windows-latest
+      docker pull ghcr.io/ansys/geometry:core-windows-latest
 
 .. _ref_windows_docker_fromscratch:
 
@@ -173,7 +173,7 @@ To build your image, follow these instructions:
 
    .. code:: bash
 
-      docker build -t ghcr.io/ansys/geometry:windows-latest -f windows/Dockerfile .
+      docker build -t ghcr.io/ansys/geometry:core-windows-latest -f windows/Dockerfile .
 
 #. Check that the image has been created successfully. You should see output similar
    to this:

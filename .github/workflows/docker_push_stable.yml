@@ -8,8 +8,8 @@ on:
         default: 'all'
         type: choice
         options:
-          - windows-latest
-          - linux-latest
+          - core-windows-latest
+          - core-linux-latest
           - all
 
       ansyslab:
@@ -24,16 +24,16 @@ permissions:
   packages: write
 
 env:
-  WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:windows-latest-unstable
-  WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:windows-latest
-  LINUX_UNSTABLE: ghcr.io/ansys/geometry:linux-latest-unstable
-  LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:linux-latest
+  WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:core-windows-latest-unstable
+  WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:core-windows-latest
+  LINUX_UNSTABLE: ghcr.io/ansys/geometry:core-linux-latest-unstable
+  LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:core-linux-latest
 
 jobs:
   windows:
     name: Publish Windows latest image
     runs-on: windows-latest
-    if:  inputs.images == 'all' || inputs.images == 'windows-latest'
+    if:  inputs.images == 'all' || inputs.images == 'core-windows-latest'
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v3
@@ -61,7 +61,7 @@ jobs:
   linux:
     name: Publish Linux latest image
     runs-on: ubuntu-latest
-    if:  inputs.images == 'all' || inputs.images == 'linux-latest'
+    if:  inputs.images == 'all' || inputs.images == 'core-linux-latest'
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@v3

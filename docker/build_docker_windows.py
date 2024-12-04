@@ -143,7 +143,7 @@ if shutil.which("docker") is None:
 # Build the docker image
 print(">>> Building docker image. This might take some time...")
 out = subprocess.run(
-    ["docker", "build", "-t", "ghcr.io/ansys/geometry:windows-latest", "."],
+    ["docker", "build", "-t", "ghcr.io/ansys/geometry:core-windows-latest", "."],
     cwd=TMP_DIR,
     capture_output=True,
 )
