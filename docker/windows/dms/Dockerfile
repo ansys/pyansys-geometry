@@ -16,12 +16,12 @@ RUN VC_redist.x64.exe /install /quiet /norestart
 WORKDIR /app
 
 # Add the binary files from the latest release
-COPY windows-binaries.zip .
+COPY windows-dms-binaries.zip .
 RUN mkdir tmp_folder && \
-    tar -xf windows-binaries.zip -C tmp_folder && \
+    tar -xf windows-dms-binaries.zip -C tmp_folder && \
     xcopy tmp_folder\DockerWindows\bin\x64\Release_Headless\net472\* . /e /i /h && \
     xcopy tmp_folder\DockerWindows\* . && \
-    del windows-binaries.zip && \
+    del windows-dms-binaries.zip && \
     rmdir /s /q tmp_folder
 
 # Defining environment variables
