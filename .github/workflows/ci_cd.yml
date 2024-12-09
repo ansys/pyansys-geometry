@@ -563,7 +563,7 @@ jobs:
         include:
           - mode: "dms"
             zip-file: "windows-dms-binaries.zip"
-          - docker-image: "coreservice"
+          - mode: "coreservice"
             zip-file: "windows-core-binaries.zip"
     steps:
       - name: Checkout repository
