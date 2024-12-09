@@ -242,7 +242,7 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          if ( ${{ env.SKIP_UNSTABLE }} -match 'false')
+          if ( "${{ env.SKIP_UNSTABLE }}" -match 'false')
           {
             docker stop ${{ env.GEO_CONT_NAME }}
             docker logs ${{ env.GEO_CONT_NAME }}
