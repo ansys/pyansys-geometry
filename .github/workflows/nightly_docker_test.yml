@@ -147,7 +147,10 @@ jobs:
   windows-core-tests:
     name: Nightly unstable testing - Windows Core Service
     if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
-    runs-on: [self-hosted, Windows, pygeometry]
+    # runs-on: [self-hosted, Windows, pygeometry]
+    runs-on: # TODO: Waiting for ansys-network runner to be updated
+      group: pyansys-self-hosted
+      labels: [self-hosted, Windows, pygeometry]
     env:
       PYVISTA_OFF_SCREEN: true
     steps:

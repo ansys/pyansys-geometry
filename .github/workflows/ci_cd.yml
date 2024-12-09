@@ -109,7 +109,10 @@ jobs:
   testing-windows:
     name: Testing and coverage (Windows)
     needs: [smoke-tests]
-    runs-on: [self-hosted, Windows, pygeometry]
+    # runs-on: [self-hosted, Windows, pygeometry]
+    runs-on: # TODO: Waiting for ansys-network runner to be updated
+      group: pyansys-self-hosted
+      labels:  [self-hosted, Windows, pygeometry]
     continue-on-error: ${{ matrix.experimental }}
     env:
       SKIP_UNSTABLE: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY == 1 && matrix.experimental }}
@@ -549,7 +552,10 @@ jobs:
 
   build-windows-container:
     name: Building Geometry Service - Windows
-    runs-on: [self-hosted, Windows, pygeometry]
+    # runs-on: [self-hosted, Windows, pygeometry]
+    runs-on: # TODO: Waiting for ansys-network runner to be updated
+      group: pyansys-self-hosted
+      labels:  [self-hosted, Windows, pygeometry]
     needs: [fetch-release-artifacts]
     strategy:
       fail-fast: false

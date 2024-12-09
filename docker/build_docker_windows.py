@@ -153,7 +153,9 @@ if backend_selection == 1:
             env_var,
         )
     else:
-        print("XXXXXXX No AWP_ROOT environment variable found in Dockerfile.. exiting process. XXXXXXX")
+        print(
+            "XXXXXXX No AWP_ROOT environment variable found in Dockerfile.. exiting process. XXXXXXX"  # noqa: E501
+        )
         exit(0)
 
 # Check if Docker is installed on the system
