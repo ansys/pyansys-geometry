@@ -5,7 +5,7 @@ on:
       promote:
         description: 'Promote the latest build to stable (if tests pass)'
         required: false
-        default: false
+        default: true
         type: boolean
   schedule: # UTC at 0300
     - cron: "0 3 * * *"
