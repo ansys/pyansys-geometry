@@ -58,7 +58,7 @@ tests = [
     "numpy==2.1.3",
     "Pint==0.24.4",
     "protobuf==5.28.3",
-    "pytest==8.3.3",
+    "pytest==8.3.4",
     "pytest-cov==6.0.0",
     "pytest-pyvista==0.1.9",
     "pytest-xvfb==3.0.0",
@@ -70,7 +70,7 @@ tests = [
     "vtk==9.4.0",
 ]
 tests-minimal = [
-    "pytest==8.3.3",
+    "pytest==8.3.4",
     "pytest-cov==6.0.0",
     "pytest-pyvista==0.1.9",
     "pytest-xvfb==3.0.0",
