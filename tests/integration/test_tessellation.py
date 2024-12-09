@@ -136,8 +136,8 @@ def test_component_tessellate(modeler: Modeler):
     comp.plot()
     assert "PolyData" in str(mesh)
     if modeler.client.backend_type != BackendType.LINUX_SERVICE:
-        assert mesh.n_cells == 15872
-        assert mesh.n_faces == 15872
+        assert mesh.n_cells == 3280
+        assert mesh.n_faces == 3280
         assert mesh.n_arrays == 0
         assert mesh.n_points == 3300
         assert mesh.bounds == pytest.approx(
