@@ -47,4 +47,4 @@ LABEL org.opencontainers.image.vendor="ANSYS Inc."
 EXPOSE 50051
 
 # Define the entrypoint for the Geometry service
-ENTRYPOINT dotnet C:\app\Presentation.ApiServerLinux.dll
+ENTRYPOINT ["dotnet", "C:\app\Presentation.ApiServerLinux.dll"]
