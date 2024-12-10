@@ -28,9 +28,6 @@ from .conftest import FILES_DIR, skip_if_linux
 
 def test_volume_extract_from_faces(modeler: Modeler):
     """Test a volume is created from the provided faces."""
-    skip_if_linux(
-        modeler, test_volume_extract_from_faces.__name__, "prepare_tools"
-    )  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "hollowCylinder.scdocx")
 
     body = design.bodies[0]
@@ -43,9 +40,6 @@ def test_volume_extract_from_faces(modeler: Modeler):
 
 def test_volume_extract_from_edge_loops(modeler: Modeler):
     """Test a volume is created from the provided edges."""
-    skip_if_linux(
-        modeler, test_volume_extract_from_edge_loops.__name__, "prepare_tools"
-    )  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "hollowCylinder.scdocx")
 
     body = design.bodies[0]
@@ -59,7 +53,6 @@ def test_volume_extract_from_edge_loops(modeler: Modeler):
 
 def test_share_topology(modeler: Modeler):
     """Test share topology operation is between two bodies."""
-    skip_if_linux(modeler, test_share_topology.__name__, "prepare_tools")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
 
     assert modeler.prepare_tools.share_topology(design.bodies)
