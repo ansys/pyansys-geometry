@@ -124,7 +124,7 @@ class Modeler:
             LOG.warning("Linux backend does not support measurement tools.")
         else:
             self._measurement_tools = MeasurementTools(self._grpc_client)
-        
+
         # Enabling tools for all: repair and prepare tools
         self._repair_tools = RepairTools(self._grpc_client)
         self._prepare_tools = PrepareTools(self._grpc_client)
