@@ -18,7 +18,7 @@ If you lack an internet connection on your installation machine, you should inst
 by downloading the wheelhouse archive.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,
-Linux, and MacOS from Python 3.10 to 3.12. You can install this on an isolated system with a fresh Python
+Linux, and MacOS from Python 3.10 to 3.13. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
 For example, on Linux with Python 3.10, unzip the wheelhouse archive and install it with:
@@ -69,7 +69,7 @@ Windows container
    Only users with access to https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
 
 * `Latest Geometry service binaries for Windows containers <https://github.com/ansys/pyansys-geometry-binaries>`_
-* `Latest Geometry service Dockerfile for Windows containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-dockerfile.zip>`_
+* `Latest Geometry service Dockerfile for Windows containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-dms-dockerfile.zip>`_
 
 .. Linux container
 .. ^^^^^^^^^^^^^^^

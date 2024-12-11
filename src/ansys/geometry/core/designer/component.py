@@ -362,11 +362,6 @@ class Component:
     ):
         """Apply a translation and/or rotation to the placement matrix.
 
-        Notes
-        -----
-        To reset a component's placement to an identity matrix, see
-        :func:`reset_placement()` or call :func:`modify_placement()` with no arguments.
-
         Parameters
         ----------
         translation : Vector3D, default: None
@@ -377,6 +372,11 @@ class Component:
             Direction of the axis to rotate the component about.
         rotation_angle : ~pint.Quantity | Angle | Real, default: 0
             Angle to rotate the component around the axis.
+
+        Notes
+        -----
+        To reset a component's placement to an identity matrix, see
+        :func:`reset_placement()` or call :func:`modify_placement()` with no arguments.
         """
         t = (
             Direction(x=translation.x, y=translation.y, z=translation.z)
@@ -487,10 +487,6 @@ class Component:
     ) -> Body | None:
         """Create a solid body by extruding the sketch profile a distance.
 
-        Notes
-        -----
-        The newly created body is placed under this component within the design assembly.
-
         Parameters
         ----------
         name : str
@@ -513,6 +509,10 @@ class Component:
             Extruded body from the given sketch.
         None
             If the cut parameter is ``True``, the function returns ``None``.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
@@ -570,10 +570,6 @@ class Component:
     ) -> Body:
         """Create a body by sweeping a planar profile along a path.
 
-        Notes
-        -----
-        The newly created body is placed under this component within the design assembly.
-
         Parameters
         ----------
         name : str
@@ -587,6 +583,10 @@ class Component:
         -------
         Body
             Created body from the given sketch.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
         """
         # Convert each ``TrimmedCurve`` in path to equivalent gRPC type
         path_grpc = []
@@ -620,10 +620,6 @@ class Component:
     ) -> Body:
         """Create a body by sweeping a chain of curves along a path.
 
-        Notes
-        -----
-        The newly created body is placed under this component within the design assembly.
-
         Parameters
         ----------
         name : str
@@ -637,6 +633,10 @@ class Component:
         -------
         Body
             Created body from the given sketch.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
         """
         # Convert each ``TrimmedCurve`` in path and chain to equivalent gRPC types
         path_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in path]
@@ -723,12 +723,6 @@ class Component:
 
         There are no modifications against the body containing the source face.
 
-        Notes
-        -----
-        The source face can be anywhere within the design component hierarchy.
-        Therefore, there is no validation requiring that the face is placed under the
-        target component where the body is to be created.
-
         Parameters
         ----------
         name : str
@@ -746,6 +740,12 @@ class Component:
         -------
         Body
             Extruded solid body.
+
+        Notes
+        -----
+        The source face can be anywhere within the design component hierarchy.
+        Therefore, there is no validation requiring that the face is placed under the
+        target component where the body is to be created.
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
@@ -917,12 +917,6 @@ class Component:
     def create_surface_from_face(self, name: str, face: Face) -> Body:
         """Create a surface body based on a face.
 
-        Notes
-        -----
-        The source face can be anywhere within the design component hierarchy.
-        Therefore, there is no validation requiring that the face is placed under the
-        target component where the body is to be created.
-
         Parameters
         ----------
         name : str
@@ -934,6 +928,12 @@ class Component:
         -------
         Body
             Surface body.
+
+        Notes
+        -----
+        The source face can be anywhere within the design component hierarchy.
+        Therefore, there is no validation requiring that the face is placed under the
+        target component where the body is to be created.
         """
         # Take the face source directly. No need to verify the source of the face.
         request = CreateBodyFromFaceRequest(
@@ -959,11 +959,6 @@ class Component:
     def create_body_from_surface(self, name: str, trimmed_surface: TrimmedSurface) -> Body:
         """Create a surface body from a trimmed surface.
 
-        Notes
-        -----
-        It is possible to create a closed solid body (as opposed to an open surface body) with a
-        Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
-
         Parameters
         ----------
         name : str
@@ -975,6 +970,11 @@ class Component:
         -------
         Body
             Surface body.
+
+        Notes
+        -----
+        It is possible to create a closed solid body (as opposed to an open surface body) with a
+        Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
         """
         surface = trimmed_surface_to_grpc_trimmed_surface(trimmed_surface)
         request = CreateSurfaceBodyRequest(
@@ -1023,11 +1023,6 @@ class Component:
     ) -> None:
         """Translate the bodies in a specified direction by a distance.
 
-        Notes
-        -----
-        If the body does not belong to this component (or its children), it
-        is not translated.
-
         Parameters
         ----------
         bodies: list[Body]
@@ -1040,6 +1035,11 @@ class Component:
         Returns
         -------
         None
+
+        Notes
+        -----
+        If the body does not belong to this component (or its children), it
+        is not translated.
         """
         body_ids_found = []
 
@@ -1075,17 +1075,17 @@ class Component:
     ) -> list[Beam]:
         """Create beams under the component.
 
-        Notes
-        -----
-        The newly created beams synchronize to a design within a supporting
-        Geometry service instance.
-
         Parameters
         ----------
         segments : list[tuple[Point3D, Point3D]]
             list of start and end pairs, each specifying a single line segment.
         profile : BeamProfile
             Beam profile to use to create the beams.
+
+        Notes
+        -----
+        The newly created beams synchronize to a design within a supporting
+        Geometry service instance.
         """
         request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
 
@@ -1134,15 +1134,15 @@ class Component:
     def delete_component(self, component: Union["Component", str]) -> None:
         """Delete a component (itself or its children).
 
-        Notes
-        -----
-        If the component is not this component (or its children), it
-        is not deleted.
-
         Parameters
         ----------
         component : Component | str
             ID of the component or instance to delete.
+
+        Notes
+        -----
+        If the component is not this component (or its children), it
+        is not deleted.
         """
         id = component if isinstance(component, str) else component.id
         component_requested = self.search_component(id)
@@ -1169,15 +1169,15 @@ class Component:
     def delete_body(self, body: Body | str) -> None:
         """Delete a body belonging to this component (or its children).
 
-        Notes
-        -----
-        If the body does not belong to this component (or its children), it
-        is not deleted.
-
         Parameters
         ----------
         body : Body | str
             ID of the body or instance to delete.
+
+        Notes
+        -----
+        If the body does not belong to this component (or its children), it
+        is not deleted.
         """
         id = body if isinstance(body, str) else body.id
         body_requested = self.search_body(id)
@@ -1257,16 +1257,16 @@ class Component:
     def delete_beam(self, beam: Beam | str) -> None:
         """Delete an existing beam belonging to this component's scope.
 
+        Parameters
+        ----------
+        beam : Beam | str
+            ID of the beam or instance to delete.
+
         Notes
         -----
         If the beam belongs to this component's children, it is deleted.
         If the beam does not belong to this component (or its children), it
         is not deleted.
-
-        Parameters
-        ----------
-        beam : Beam | str
-            ID of the beam or instance to delete.
         """
         id = beam if isinstance(beam, str) else beam.id
         beam_requested = self.search_beam(id)
@@ -1323,11 +1323,6 @@ class Component:
     def search_body(self, id: str) -> Body | None:
         """Search bodies in the component's scope.
 
-        Notes
-        -----
-        This method searches for bodies in the component and nested components
-        recursively.
-
         Parameters
         ----------
         id : str
@@ -1337,6 +1332,11 @@ class Component:
         -------
         Body | None
             Body with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for bodies in the component and nested components
+        recursively.
         """
         # Search in component's bodies
         for body in self.bodies:
@@ -1357,11 +1357,6 @@ class Component:
     def search_beam(self, id: str) -> Beam | None:
         """Search beams in the component's scope.
 
-        Notes
-        -----
-        This method searches for beams in the component and nested components
-        recursively.
-
         Parameters
         ----------
         id : str
@@ -1371,6 +1366,11 @@ class Component:
         -------
         Beam | None
             Beam with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for beams in the component and nested components
+        recursively.
         """
         # Search in component's beams
         for beam in self.beams:

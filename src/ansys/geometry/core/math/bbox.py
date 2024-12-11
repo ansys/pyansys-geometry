@@ -108,15 +108,15 @@ class BoundingBox2D:
     def add_point(self, point: Point2D) -> None:
         """Extend the ranges of the bounding box to include a point.
 
-        Notes
-        -----
-        This method is only applicable if the point components are outside
-        the current bounds.
-
         Parameters
         ----------
         point : Point2D
             Point to include within the bounds.
+
+        Notes
+        -----
+        This method is only applicable if the point components are outside
+        the current bounds.
         """
         self.add_point_components(
             point.x.m_as(DEFAULT_UNITS.LENGTH), point.y.m_as(DEFAULT_UNITS.LENGTH)
@@ -126,17 +126,17 @@ class BoundingBox2D:
     def add_point_components(self, x: Real, y: Real) -> None:
         """Extend the ranges of the bounding box to include the X and Y values.
 
-        Notes
-        -----
-        This method is only applicable if the point components are outside
-        the current bounds.
-
         Parameters
         ----------
         x : Real
             Point X component to include within the bounds.
         y : Real
             Point Y component to include within the bounds.
+
+        Notes
+        -----
+        This method is only applicable if the point components are outside
+        the current bounds.
         """
         self._x_min = x if x < self._x_min else self._x_min
         self._x_max = x if x > self._x_max else self._x_max

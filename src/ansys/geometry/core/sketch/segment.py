@@ -166,14 +166,14 @@ class SketchSegment(SketchEdge, Line):
     def plane_change(self, plane: "Plane") -> None:
         """Redefine the plane containing ``SketchSegment`` objects.
 
-        Notes
-        -----
-        This implies that their 3D definition might suffer changes.
-
         Parameters
         ----------
         plane : Plane
             Desired new plane that is to contain the sketched segment.
+
+        Notes
+        -----
+        This implies that their 3D definition might suffer changes.
         """
         # Reinitialize the line definition for the given plane
         self._init_primitive_line_from_plane(plane)

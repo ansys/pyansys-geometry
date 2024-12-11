@@ -550,6 +550,11 @@ def launch_modeler_with_geometry_service(
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
 
+    Returns
+    -------
+    Modeler
+        Instance of the Geometry service.
+
     Raises
     ------
     ConnectionError
@@ -558,11 +563,6 @@ def launch_modeler_with_geometry_service(
     SystemError
         If there is not an Ansys product 24.1 version or later installed
         a SystemError will be raised.
-
-    Returns
-    -------
-    Modeler
-        Instance of the Geometry service.
 
     Examples
     --------
@@ -683,6 +683,11 @@ def launch_modeler_with_discovery(
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
 
+    Returns
+    -------
+    Modeler
+        Instance of the Geometry service.
+
     Raises
     ------
     ConnectionError
@@ -691,11 +696,6 @@ def launch_modeler_with_discovery(
         If there is not an Ansys product 24.1 version or later installed
         or if a specific product's version is requested but not installed locally then
         a SystemError will be raised.
-
-    Returns
-    -------
-    Modeler
-        Instance of the Geometry service.
 
     Examples
     --------
@@ -810,6 +810,11 @@ def launch_modeler_with_spaceclaim(
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
 
+    Returns
+    -------
+    Modeler
+        Instance of the Geometry service.
+
     Raises
     ------
     ConnectionError
@@ -818,11 +823,6 @@ def launch_modeler_with_spaceclaim(
         If there is not an Ansys product 24.1 version or later installed
         or if a specific product's version is requested but not installed locally then
         a SystemError will be raised.
-
-    Returns
-    -------
-    Modeler
-        Instance of the Geometry service.
 
     Examples
     --------

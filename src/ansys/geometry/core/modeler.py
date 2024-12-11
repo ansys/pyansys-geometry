@@ -244,15 +244,15 @@ class Modeler:
     def exit(self, close_designs: bool = True) -> None:
         """Access the client's close method.
 
-        Notes
-        -----
-        This method is calling the same method as
-        :func:`close() <ansys.geometry.core.modeler.Modeler.close>`.
-
         Parameters
         ----------
         close_designs : bool, default: True
             Whether to close all designs before closing the client.
+
+        Notes
+        -----
+        This method is calling the same method as
+        :func:`close() <ansys.geometry.core.modeler.Modeler.close>`.
         """
         self.close(close_designs=close_designs)
 
@@ -263,11 +263,6 @@ class Modeler:
         import_options: ImportOptions = ImportOptions(),
     ) -> str:
         """Upload a file from the client to the server.
-
-        Notes
-        -----
-        This method creates a file on the server that has the same name and extension
-        as the file on the client.
 
         Parameters
         ----------
@@ -282,6 +277,11 @@ class Modeler:
         -------
         file_path : str
             Full path of the file uploaded to the server.
+
+        Notes
+        -----
+        This method creates a file on the server that has the same name and extension
+        as the file on the client.
         """
         from pathlib import Path
 
@@ -427,12 +427,6 @@ class Modeler:
             an error. If you are using Discovery or SpaceClaim, the product will determine the API
             version to use, so there is no need to specify this parameter.
 
-        Notes
-        -----
-            The Ansys Geometry Service only supports scripts that are of the
-            same version as the running service. Any ``api_version`` input will
-            be ignored.
-
         Returns
         -------
         dict[str, str]
@@ -445,6 +439,12 @@ class Modeler:
         GeometryRuntimeError
             If the Discovery script fails to run. Otherwise, assume that the script
             ran successfully.
+
+        Notes
+        -----
+            The Ansys Geometry Service only supports scripts that are of the
+            same version as the running service. Any ``api_version`` input will
+            be ignored.
         """
         # Use str format of Path object here
         file_path = str(file_path) if isinstance(file_path, Path) else file_path

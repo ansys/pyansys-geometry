@@ -141,12 +141,6 @@ class Vector3D(np.ndarray):
     def transform(self, matrix: "Matrix44") -> "Vector3D":
         """Transform the 3D vector3D with a transformation matrix.
 
-        Notes
-        -----
-        Transform the ``Vector3D`` object by applying the specified 4x4
-        transformation matrix and return a new ``Vector3D`` object representing the
-        transformed vector.
-
         Parameters
         ----------
         matrix : Matrix44
@@ -157,6 +151,12 @@ class Vector3D(np.ndarray):
         Vector3D
             A new 3D vector that is the transformed copy of the original 3D vector after applying
             the transformation matrix.
+
+        Notes
+        -----
+        Transform the ``Vector3D`` object by applying the specified 4x4
+        transformation matrix and return a new ``Vector3D`` object representing the
+        transformed vector.
         """
         vector_4x1 = np.append(self, 1)
         result_4x1 = matrix * vector_4x1
@@ -253,15 +253,15 @@ class Vector3D(np.ndarray):
             :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
             class representing the second point.
 
-        Notes
-        -----
-        The resulting 3D vector is always expressed in ``Point3D``
-        base units.
-
         Returns
         -------
         Vector3D
             3D vector from ``point_a`` to ``point_b``.
+
+        Notes
+        -----
+        The resulting 3D vector is always expressed in ``Point3D``
+        base units.
         """
         return Vector3D(point_b - point_a)
 
@@ -447,15 +447,15 @@ class Vector2D(np.ndarray):
             :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
             class representing the second point.
 
-        Notes
-        -----
-        The resulting 2D vector is always expressed in ``Point2D``
-        base units.
-
         Returns
         -------
         Vector2D
             2D vector from ``point_a`` to ``point_b``.
+
+        Notes
+        -----
+        The resulting 2D vector is always expressed in ``Point2D``
+        base units.
         """
         return Vector2D(point_b - point_a)
 
