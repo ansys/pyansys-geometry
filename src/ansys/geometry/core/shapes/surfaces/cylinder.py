@@ -111,13 +111,6 @@ class Cylinder(Surface):
     def surface_area(self, height: Quantity | Distance | Real) -> Quantity:
         """Get the surface area of the cylinder.
 
-        Notes
-        -----
-           By nature, a cylinder is infinite. If you want to get the surface area,
-           you must bound it by a height. Normally a cylinder surface is not closed
-           (does not have "caps" on the ends). This method assumes that the cylinder
-           is closed for the purpose of getting the surface area.
-
         Parameters
         ----------
         height : ~pint.Quantity | Distance | Real
@@ -127,6 +120,13 @@ class Cylinder(Surface):
         -------
         ~pint.Quantity
             Surface area of the temporarily bounded cylinder.
+
+        Notes
+        -----
+        By nature, a cylinder is infinite. If you want to get the surface area,
+        you must bound it by a height. Normally a cylinder surface is not closed
+        (does not have "caps" on the ends). This method assumes that the cylinder
+        is closed for the purpose of getting the surface area.
         """
         height = height if isinstance(height, Distance) else Distance(height)
         if height.value <= 0:
@@ -137,13 +137,6 @@ class Cylinder(Surface):
     def volume(self, height: Quantity | Distance | Real) -> Quantity:
         """Get the volume of the cylinder.
 
-        Notes
-        -----
-           By nature, a cylinder is infinite. If you want to get the surface area,
-           you must bound it by a height. Normally a cylinder surface is not closed
-           (does not have "caps" on the ends). This method assumes that the cylinder
-           is closed for the purpose of getting the surface area.
-
         Parameters
         ----------
         height : ~pint.Quantity | Distance | Real
@@ -153,6 +146,13 @@ class Cylinder(Surface):
         -------
         ~pint.Quantity
             Volume of the temporarily bounded cylinder.
+
+        Notes
+        -----
+        By nature, a cylinder is infinite. If you want to get the surface area,
+        you must bound it by a height. Normally a cylinder surface is not closed
+        (does not have "caps" on the ends). This method assumes that the cylinder
+        is closed for the purpose of getting the surface area.
         """
         height = height if isinstance(height, Distance) else Distance(height)
         if height.value <= 0:

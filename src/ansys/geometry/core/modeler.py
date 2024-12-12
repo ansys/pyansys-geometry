@@ -242,15 +242,15 @@ class Modeler:
     def exit(self, close_designs: bool = True) -> None:
         """Access the client's close method.
 
-        Notes
-        -----
-        This method is calling the same method as
-        :func:`close() <ansys.geometry.core.modeler.Modeler.close>`.
-
         Parameters
         ----------
         close_designs : bool, default: True
             Whether to close all designs before closing the client.
+
+        Notes
+        -----
+        This method is calling the same method as
+        :func:`close() <ansys.geometry.core.modeler.Modeler.close>`.
         """
         self.close(close_designs=close_designs)
 
@@ -261,11 +261,6 @@ class Modeler:
         import_options: ImportOptions = ImportOptions(),
     ) -> str:
         """Upload a file from the client to the server.
-
-        Notes
-        -----
-        This method creates a file on the server that has the same name and extension
-        as the file on the client.
 
         Parameters
         ----------
@@ -280,6 +275,11 @@ class Modeler:
         -------
         file_path : str
             Full path of the file uploaded to the server.
+
+        Notes
+        -----
+        This method creates a file on the server that has the same name and extension
+        as the file on the client.
         """
         from pathlib import Path
 
@@ -400,7 +400,7 @@ class Modeler:
             bodies in the design.
 
         The implied API version of the script should match the API version of the running
-        Geometry Service. DMS API versions 23.2.1 and later are supported. DMS is a
+        Geometry Service. DMS API versions 24.1 and later are supported. DMS is a
         Windows-based modeling service that has been containerized to ease distribution,
         execution, and remotability operations.
 
@@ -417,19 +417,13 @@ class Modeler:
             script modifies the current design, the design may be out-of-sync. By default,
             ``False``.
         api_version : int | str | ApiVersions, optional
-            The scripting API version to use. For example, version 23.2 can be passed as
-            an integer 232, a string "232" or using the
+            The scripting API version to use. For example, version 24.1 can be passed as
+            an integer 241, a string "241" or using the
             ``ansys.geometry.core.connection.backend.ApiVersions`` enum class.
             By default, ``None``. When specified, the service will attempt to run the script with
             the specified API version. If the API version is not supported, the service will raise
             an error. If you are using Discovery or SpaceClaim, the product will determine the API
             version to use, so there is no need to specify this parameter.
-
-        Notes
-        -----
-            The Ansys Geometry Service only supports scripts that are of the
-            same version as the running service. Any ``api_version`` input will
-            be ignored.
 
         Returns
         -------
@@ -443,6 +437,12 @@ class Modeler:
         GeometryRuntimeError
             If the Discovery script fails to run. Otherwise, assume that the script
             ran successfully.
+
+        Notes
+        -----
+            The Ansys Geometry Service only supports scripts that are of the
+            same version as the running service. Any ``api_version`` input will
+            be ignored.
         """
         # Use str format of Path object here
         file_path = str(file_path) if isinstance(file_path, Path) else file_path

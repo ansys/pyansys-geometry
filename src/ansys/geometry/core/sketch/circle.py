@@ -126,14 +126,14 @@ class SketchCircle(SketchFace, Circle):
     def plane_change(self, plane: Plane) -> None:
         """Redefine the plane containing the ``SketchCircle`` objects.
 
-        Notes
-        -----
-        This implies that their 3D definition might suffer changes.
-
         Parameters
         ----------
         plane : Plane
             Desired new plane that is to contain the sketched circle.
+
+        Notes
+        -----
+        This implies that their 3D definition might suffer changes.
         """
         # Reinitialize the circle definition for the given plane
         self._init_primitive_circle_from_plane(plane)
