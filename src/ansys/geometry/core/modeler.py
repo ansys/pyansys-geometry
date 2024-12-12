@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING, Optional
 
 from grpc import Channel
 
-from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
+from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest, RunScriptType
 from ansys.api.dbu.v0.dbuapplication_pb2_grpc import DbuApplicationStub
 from ansys.api.dbu.v0.designs_pb2 import OpenRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
@@ -376,6 +376,7 @@ class Modeler:
         script_args: dict[str, str] | None = None,
         import_design: bool = False,
         api_version: int | str | ApiVersions = None,
+        enable_debug_features: bool = False,
     ) -> tuple[dict[str, str], Optional["Design"]]:
         """Run a Discovery script file.
 
@@ -424,6 +425,9 @@ class Modeler:
             the specified API version. If the API version is not supported, the service will raise
             an error. If you are using Discovery or SpaceClaim, the product will determine the API
             version to use, so there is no need to specify this parameter.
+        enable_debug_features : bool, default: False
+            Whether to enable debug features for the script. By default, debug features are
+            disabled. Debug features are only available starting on 2025R1.
 
         Returns
         -------
@@ -468,6 +472,13 @@ class Modeler:
             script_args=script_args,
             api_version=api_version.value if api_version is not None else None,
         )
+
+        # Enable debug features if requested
+        if enable_debug_features:
+            if self.client.backend_version > (25, 1, 0):
+                request.script_type = RunScriptType.DEBUG
+            else:  # pragma: no cover
+                self.client.log.warning("Debug features are only available starting on 2025R1.")
 
         self.client.log.debug(f"Running Discovery script file at {file_path}...")
         response = ga_stub.RunScriptFile(request)
