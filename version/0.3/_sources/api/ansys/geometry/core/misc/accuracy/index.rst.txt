@@ -1,0 +1,146 @@
+
+
+
+
+
+The ``accuracy.py`` module
+==========================
+
+.. py:module:: ansys.geometry.core.misc.accuracy
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: accuracy
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Accuracy`
+            - Provides decimal precision evaluations for actions such as equivalency.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~LENGTH_ACCURACY`
+            - Constant for decimal accuracy in length comparisons.
+
+
+          * - :py:attr:`~ANGLE_ACCURACY`
+            - Constant for decimal accuracy in angle comparisons.
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Accuracy<Accuracy>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for evaluating decimal precision.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: LENGTH_ACCURACY
+   :value: 1e-08
+
+   
+   Constant for decimal accuracy in length comparisons.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: ANGLE_ACCURACY
+   :value: 1e-06
+
+   
+   Constant for decimal accuracy in angle comparisons.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
