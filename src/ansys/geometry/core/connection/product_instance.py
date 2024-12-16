@@ -263,8 +263,11 @@ def prepare_and_start_backend(
     """
     from ansys.geometry.core.modeler import Modeler
 
-    if os.name != "nt":  # pragma: no cover
-        raise RuntimeError("Method 'prepare_and_start_backend' is only available on Windows.")
+    if os.name != "nt" and backend_type != BackendType.LINUX_SERVICE:  # pragma: no cover
+        raise RuntimeError(
+            "Method 'prepare_and_start_backend' is only available on Windows."
+            "A Linux version is only available for the Core Geometry Service."
+        )
 
     # Deprecation behavior... To be removed in release 0.7
     if log_level is not None:  # pragma: no cover
@@ -360,15 +363,53 @@ def prepare_and_start_backend(
         )
     # This should be modified to Windows Core Service in the future
     elif backend_type == BackendType.LINUX_SERVICE:
-        env_copy["ANS_DSCO_REMOTE_IP"] = host
-        env_copy["ANS_DSCO_REMOTE_PORT"] = str(port)
-        args.append(
-            Path(
-                installations[product_version],
-                CORE_WINDOWS_GEOMETRY_SERVICE_FOLDER,
-                CORE_GEOMETRY_SERVICE_EXE,
-            )
+        # Modify the PATH variable to include the path to the Ansys Geometry Core Service
+        root_service_folder = Path(
+            installations[product_version], CORE_WINDOWS_GEOMETRY_SERVICE_FOLDER
         )
+        native_folder = root_service_folder / "Native"
+        cad_integration_folder = root_service_folder / "CADIntegration"
+        schema_folder = root_service_folder / "Schema"
+        env_copy["PATH"] = (
+            env_copy["PATH"]
+            + ";"
+            + root_service_folder.as_posix()
+            + ";"
+            + native_folder.as_posix()
+            + ";"
+            + cad_integration_folder.as_posix()
+        )
+
+        # Set the environment variables for the Ansys Geometry Core Service launch
+        # TEMPORARY: should be variable "host", but not working
+        env_copy["ANS_DSCO_REMOTE_IP"] = "127.0.0.1"
+        env_copy["ANS_DSCO_REMOTE_PORT"] = str(port)
+        env_copy["ANS_DSCO_REMOTE_LOGS_CONFIG"] = "linux"
+        env_copy["P_SCHEMA"] = schema_folder.as_posix()
+        env_copy["ANSYS_CI_INSTALL"] = cad_integration_folder.as_posix()
+
+        # TEMPORARY: Set the licensing service
+        env_copy["ANSYSCL252_DIR"] = (root_service_folder / "licensingclient").as_posix()
+
+        if os.name == "nt":
+            # For Windows, we need to use the exe file to launch the Core Geometry Service
+            args.append(
+                Path(
+                    installations[product_version],
+                    CORE_WINDOWS_GEOMETRY_SERVICE_FOLDER,
+                    CORE_GEOMETRY_SERVICE_EXE,
+                )
+            )
+        else:
+            # For Linux, we need to use the dotnet command to launch the Core Geometry Service
+            args.append("dotnet")
+            args.append(
+                Path(
+                    installations[product_version],
+                    CORE_WINDOWS_GEOMETRY_SERVICE_FOLDER,
+                    CORE_GEOMETRY_SERVICE_EXE.replace(".exe", ".dll"),
+                )
+            )
     else:
         raise RuntimeError(
             f"Cannot connect to backend {backend_type.name} using ``prepare_and_start_backend()``"
