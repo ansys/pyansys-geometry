@@ -401,6 +401,20 @@ def prepare_and_start_backend(
                 )
             )
         else:
+            # Verify dotnet is installed
+            import shutil
+
+            if not shutil.which("dotnet"):
+                raise RuntimeError(
+                    "Cannot find 'dotnet' command. Please install 'dotnet' to use the Ansys Geometry Core Service."
+                )
+
+            # At least dotnet 8.0 is required
+            if subprocess.check_output(["dotnet", "--version"]).decode("utf-8").split(".")[0] < "8":
+                raise RuntimeError(
+                    "Ansys Geometry Core Service requires at least dotnet 8.0. Please install a compatible version."
+                )
+
             # For Linux, we need to use the dotnet command to launch the Core Geometry Service
             args.append("dotnet")
             args.append(
