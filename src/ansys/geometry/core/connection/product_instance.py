@@ -41,7 +41,10 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryService"
-"""Default Geometry Service's folder name into the unified installer."""
+"""Default Geometry Service's folder name into the unified installer (DMS)."""
+
+CORE_WINDOWS_GEOMETRY_SERVICE_FOLDER = "CoreGeometryService"
+"""Default Geometry Service's folder name into the unified installer (Core Service)."""
 
 DISCOVERY_FOLDER = "Discovery"
 """Default Discovery's folder name into the unified installer."""
@@ -62,7 +65,10 @@ To be used only for local start of Ansys Discovery or Ansys SpaceClaim.
 """
 
 GEOMETRY_SERVICE_EXE = "Presentation.ApiServerDMS.exe"
-"""The Windows Geometry Service's filename."""
+"""The Windows Geometry Service's filename (DMS)."""
+
+CORE_GEOMETRY_SERVICE_EXE = "Presentation.ApiServerLinux.dll"
+"""The Windows Geometry Service's filename (Core Service)."""
 
 DISCOVERY_EXE = "Discovery.exe"
 """The Ansys Discovery's filename."""
@@ -179,6 +185,7 @@ def prepare_and_start_backend(
     client_log_level: int = logging.INFO,
     server_logs_folder: str = None,
     client_log_file: str = None,
+    specific_minimum_version: int = None,
     log_level: int = None,  # DEPRECATED
     logs_folder: str = None,  # DEPRECATED
 ) -> "Modeler":
@@ -232,6 +239,9 @@ def prepare_and_start_backend(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
+    specific_minimum_version : int, optional
+        Sets a specific minimum version to be checked. If this is not defined,
+        the minimum version will be set to 24.1.0.
     log_level : int, optional
         DEPRECATED. Use ``server_log_level`` instead.
     logs_folder : str, optional
@@ -285,7 +295,7 @@ def prepare_and_start_backend(
         product_version = get_latest_ansys_installation()[0]
 
     # Verify that the minimum version is installed.
-    _check_minimal_versions(product_version)
+    _check_minimal_versions(product_version, specific_minimum_version)
 
     if server_logs_folder is not None:
         # Verify that the user has write permissions to the folder and that it exists.
@@ -346,6 +356,18 @@ def prepare_and_start_backend(
                 installations[product_version],
                 WINDOWS_GEOMETRY_SERVICE_FOLDER,
                 GEOMETRY_SERVICE_EXE,
+            )
+        )
+    # This should be modified to Windows Core Service in the future
+    elif backend_type == BackendType.LINUX_SERVICE:
+        args.append("dotnet")
+        env_copy["ANS_DSCO_REMOTE_IP"] = host
+        env_copy["ANS_DSCO_REMOTE_PORT"] = str(port)
+        args.append(
+            Path(
+                installations[product_version],
+                CORE_WINDOWS_GEOMETRY_SERVICE_FOLDER,
+                CORE_GEOMETRY_SERVICE_EXE,
             )
         )
     else:
@@ -491,15 +513,21 @@ def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Po
     )
 
 
-def _check_minimal_versions(latest_installed_version: int) -> None:
+def _check_minimal_versions(
+    latest_installed_version: int, specific_minimum_version: int | None
+) -> None:
     """Check client is compatible with Ansys Products.
 
-    Check that at least V241 is installed.
+    Check that at least V241 is installed. Or, if a specific version is requested,
+    check that it is installed.
     """
-    if abs(latest_installed_version) < 241:
+    min_ver = specific_minimum_version or 241
+    if abs(latest_installed_version) < min_ver:
+        # Split the version into its components.
+        major, minor = divmod(min_ver, 10)
         msg = (
-            "PyAnsys Geometry is compatible with Ansys Products from version 24.1.0. "
-            + "Please install Ansys products 24.1.0 or later."
+            f"PyAnsys Geometry is compatible with Ansys Products from version {major}.{minor}.0. "
+            + f"Please install Ansys products {major}.{minor}.0 or later."
         )
         raise SystemError(msg)
 
