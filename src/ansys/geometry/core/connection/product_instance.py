@@ -67,7 +67,7 @@ To be used only for local start of Ansys Discovery or Ansys SpaceClaim.
 GEOMETRY_SERVICE_EXE = "Presentation.ApiServerDMS.exe"
 """The Windows Geometry Service's filename (DMS)."""
 
-CORE_GEOMETRY_SERVICE_EXE = "Presentation.ApiServerLinux.dll"
+CORE_GEOMETRY_SERVICE_EXE = "Presentation.ApiServerLinux.exe"
 """The Windows Geometry Service's filename (Core Service)."""
 
 DISCOVERY_EXE = "Discovery.exe"
@@ -360,7 +360,6 @@ def prepare_and_start_backend(
         )
     # This should be modified to Windows Core Service in the future
     elif backend_type == BackendType.LINUX_SERVICE:
-        args.append("dotnet")
         env_copy["ANS_DSCO_REMOTE_IP"] = host
         env_copy["ANS_DSCO_REMOTE_PORT"] = str(port)
         args.append(
