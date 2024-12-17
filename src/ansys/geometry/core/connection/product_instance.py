@@ -43,7 +43,7 @@ if TYPE_CHECKING:  # pragma: no cover
 WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryService"
 """Default Geometry Service's folder name into the unified installer (DMS)."""
 
-CORE_WINDOWS_GEOMETRY_SERVICE_FOLDER = "CoreGeometryService"
+CORE_GEOMETRY_SERVICE_FOLDER = "CoreGeometryService"
 """Default Geometry Service's folder name into the unified installer (Core Service)."""
 
 DISCOVERY_FOLDER = "Discovery"
@@ -363,10 +363,8 @@ def prepare_and_start_backend(
         )
     # This should be modified to Windows Core Service in the future
     elif backend_type == BackendType.LINUX_SERVICE:
-        # Modify the PATH variable to include the path to the Ansys Geometry Core Service
-        root_service_folder = Path(
-            installations[product_version], CORE_WINDOWS_GEOMETRY_SERVICE_FOLDER
-        )
+        # Define several Ansys Geometry Core Service folders needed
+        root_service_folder = Path(installations[product_version], CORE_GEOMETRY_SERVICE_FOLDER)
         native_folder = root_service_folder / "Native"
         cad_integration_folder = root_service_folder / "CADIntegration"
         schema_folder = root_service_folder / "Schema"
@@ -395,7 +393,7 @@ def prepare_and_start_backend(
             args.append(
                 Path(
                     installations[product_version],
-                    CORE_WINDOWS_GEOMETRY_SERVICE_FOLDER,
+                    CORE_GEOMETRY_SERVICE_FOLDER,
                     CORE_GEOMETRY_SERVICE_EXE,
                 )
             )
@@ -429,7 +427,7 @@ def prepare_and_start_backend(
             args.append(
                 Path(
                     installations[product_version],
-                    CORE_WINDOWS_GEOMETRY_SERVICE_FOLDER,
+                    CORE_GEOMETRY_SERVICE_FOLDER,
                     CORE_GEOMETRY_SERVICE_EXE.replace(".exe", ".dll"),
                 )
             )
