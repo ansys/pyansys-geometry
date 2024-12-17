@@ -372,15 +372,15 @@ def prepare_and_start_backend(
         schema_folder = root_service_folder / "Schema"
 
         # Set the environment variables for the Ansys Geometry Core Service launch
-        # TEMPORARY: should be variable "host", but not working
-        env_copy["ANS_DSCO_REMOTE_IP"] = "127.0.0.1"
+        # ANS_DSCO_REMOTE_IP should be variable "host" directly, but not working...
+        env_copy["ANS_DSCO_REMOTE_IP"] = "127.0.0.1" if host == "localhost" else host
         env_copy["ANS_DSCO_REMOTE_PORT"] = str(port)
         env_copy["ANS_DSCO_REMOTE_LOGS_CONFIG"] = "linux"
         env_copy["P_SCHEMA"] = schema_folder.as_posix()
         env_copy["ANSYS_CI_INSTALL"] = cad_integration_folder.as_posix()
-
-        # TEMPORARY: Set the licensing service
-        env_copy["ANSYSCL252_DIR"] = (root_service_folder / "licensingclient").as_posix()
+        env_copy[f"ANSYSCL{product_version}_DIR"] = (
+            root_service_folder / "licensingclient"
+        ).as_posix()
 
         if os.name == "nt":
             # Modify the PATH variable to include the path to the Ansys Geometry Core Service

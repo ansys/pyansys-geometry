@@ -199,12 +199,9 @@ def _launch_with_automatic_detection(**kwargs: dict | None) -> "Modeler":
         LOG.info("Starting Geometry Core service locally.")
         return launch_modeler_with_core_service(**kwargs)
     except Exception:
-        LOG.warning(
-            "The Geometry Core service could not be started locally."
-            " Trying to start Geometry DMS service locally."
-            if os.name == "nt"
-            else ""
-        )
+        wrn_msg = "The Geometry Core service could not be started locally."
+        wrn_msg += " Trying to start the Geometry DMS service locally." if os.name == "nt" else ""
+        LOG.warning(wrn_msg)
 
     # If we are on a Windows machine, we can try to start the Geometry service locally,
     # through various methods: Geometry service, SpaceClaim, Discovery.
