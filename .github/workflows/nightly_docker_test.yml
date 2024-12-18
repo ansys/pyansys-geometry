@@ -58,6 +58,13 @@ jobs:
             service: "core_linux"
             service-name: "Linux Core Service"
     steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Check ${{ matrix.service-name }} manifest
         id: services
         run: |
