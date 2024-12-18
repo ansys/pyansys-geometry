@@ -69,7 +69,13 @@ jobs:
         id: services
         run: |
           docker manifest inspect ghcr.io/ansys/geometry:${{ matrix.container-stable }} > ${{ matrix.container-stable }}.json
-          docker manifest inspect ghcr.io/ansys/geometry:${{ matrix.container-unstable }} > ${{ matrix.container-unstable }}.json || "" > ${{ matrix.container-unstable }}.json
+          docker manifest inspect ghcr.io/ansys/geometry:${{ matrix.container-unstable }} > ${{ matrix.container-unstable }}.json || true
+
+          # Verify that the unstable manifest exists - otherwise create an empty file
+          if [ ! -f ${{ matrix.container-unstable }}.json ]; then
+            touch ${{ matrix.container-unstable }}.json
+          fi
+
 
           # Check if the manifests are the same (and if so, create an output that will skip the next job)
           if diff ${{ matrix.container-stable }}.json ${{ matrix.container-unstable }}.json; then
