@@ -98,6 +98,10 @@ jobs:
     env:
       PYVISTA_OFF_SCREEN: true
     steps:
+      - name: Check output
+        run: |
+          echo "skip_dms value is: ${{ needs.manifests.outputs.skip_dms }}"
+
       - uses: actions/checkout@v4
 
       - name: Set up Python
@@ -207,6 +211,10 @@ jobs:
     env:
       PYVISTA_OFF_SCREEN: true
     steps:
+      - name: Check output
+        run: |
+          echo "skip_core_windows value is: ${{ needs.manifests.outputs.skip_core_windows }}"
+
       - uses: actions/checkout@v4
 
       - name: Set up Python
@@ -317,6 +325,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check output
+        run: |
+          echo "skip_core_linux value is: ${{ needs.manifests.outputs.skip_core_linux }}"
+
       - name: Login in Github Container registry
         uses: docker/login-action@v3
         with:
