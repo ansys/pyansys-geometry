@@ -168,7 +168,6 @@ jobs:
     env:
       SKIP_UNSTABLE: false
       PYVISTA_OFF_SCREEN: true
-      ANSRV_GEO_HOST: 'localhost'
     strategy:
       fail-fast: false
       matrix:
@@ -343,7 +342,6 @@ jobs:
       labels: [Windows, pygeometry]
     env:
       PYVISTA_OFF_SCREEN: true
-      ANSRV_GEO_HOST: 'localhost'
     steps:
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@v3
@@ -411,7 +409,6 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     env:
       SKIP_UNSTABLE: false
-      ANSRV_GEO_HOST: 'localhost'
     strategy:
       fail-fast: false
       matrix:
@@ -511,7 +508,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ANSRV_GEO_IMAGE_MINREQS: 'ghcr.io/ansys/geometry:core-linux-latest'
-      ANSRV_GEO_HOST: 'localhost'
     strategy:
       fail-fast: false
       matrix:
