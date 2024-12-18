@@ -127,12 +127,12 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "summary": "Nightly Tests for Windows DMS failing",
+              "summary": "Unstable build tests for Windows DMS failing",
               "themeColor": "f44336",
-              "title": "PyAnsys Geometry Nightly Tests - Windows DMS failing",
+              "title": "PyAnsys Geometry unstable build tests - Windows DMS failing",
               "sections": [
                 {
-                  "activityTitle": "Windows DMS nightly tests are failing",
+                  "activityTitle": "Windows DMS unstable build tests are failing",
                   "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
                   "facts": [
                     {
@@ -235,12 +235,12 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "summary": "Nightly Tests for Windows Core Service failing",
+              "summary": "Unstable build tests for Windows Core Service failing",
               "themeColor": "f44336",
-              "title": "PyAnsys Geometry Nightly Tests - Windows Core Service failing",
+              "title": "PyAnsys Geometry unstable build tests - Windows Core Service failing",
               "sections": [
                 {
-                  "activityTitle": "Windows Core Service nightly tests are failing",
+                  "activityTitle": "Windows Core Service unstable build tests are failing",
                   "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
                   "facts": [
                     {
@@ -300,12 +300,12 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "summary": "Nightly Tests for Linux failing",
+              "summary": "Unstable build tests for Linux Core Service failing",
               "themeColor": "f44336",
-              "title": "PyAnsys Geometry Nightly Tests - Linux failing",
+              "title": "PyAnsys Geometry unstable build tests - Linux Core Service failing",
               "sections": [
                 {
-                  "activityTitle": "Linux nightly tests are failing",
+                  "activityTitle": "Linux Core Service unstable build tests are failing",
                   "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
                   "facts": [
                     {
