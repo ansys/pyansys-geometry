@@ -197,19 +197,14 @@ jobs:
           }
 
           $A = $env:SKIP_UNSTABLE_CONTAINERS_TEMPORARILY -eq 1
-          $C = $ImagesAreEqual -eq 1
-          $B = ${{ matrix.experimental }}
+          $B = $ImagesAreEqual -eq 1
 
           # Calculate the logical expression
-          $Result = (($A -or $B) -and $C).ToString().ToLower()
+          $Result = ($A -or $B).ToString().ToLower()
 
           # Export it as an environment variable with true/false value
           Write-Output "SKIP_UNSTABLE=$Result" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-      - name: Print SKIP_UNSTABLE
-        if: matrix.experimental
-        run: |
-          Write-Output "SKIP_UNSTABLE is $env:SKIP_UNSTABLE"
+          Write-Output "SKIP_UNSTABLE will be: $Result"
 
       - uses: actions/checkout@v4
         if: env.SKIP_UNSTABLE == 'false'
@@ -437,19 +432,14 @@ jobs:
           fi
 
           A=$([[ "$SKIP_UNSTABLE_CONTAINERS_TEMPORARILY" == "1" ]] && echo true || echo false)
-          C=$([[ "$ImagesAreEqual" == "1" ]] && echo true || echo false)
-          B=${{ matrix.experimental }}
+          B=$([[ "$ImagesAreEqual" == "1" ]] && echo true || echo false)
 
           # Calculate the logical expression
-          Result=$([[ "$A" == true || "$B" == true ]] && [[ "$C" == true ]] && echo true || echo false)
+          Result=$([[ "$A" == true || "$B" == true ]] && echo true || echo false)
 
           # Export it as an environment variable with true/false value
           echo "SKIP_UNSTABLE=$Result" >> $GITHUB_ENV
-
-      - name: Print SKIP_UNSTABLE
-        if: matrix.experimental
-        run: |
-          echo "SKIP_UNSTABLE is $SKIP_UNSTABLE"
+          echo "SKIP_UNSTABLE will be: $Result"
 
       - name: Login in Github Container registry
         if: env.SKIP_UNSTABLE == 'false'
