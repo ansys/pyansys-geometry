@@ -183,7 +183,7 @@ jobs:
 
     steps:
       - name: Calculate SKIP_UNSTABLE
-        if: matrix.experimental == 'true'
+        if: matrix.experimental
         run: |
           # Choose the manifests output to consider (for DMS or Core service)
           # based on the matrix value
@@ -207,7 +207,7 @@ jobs:
           Write-Output "SKIP_UNSTABLE=$Result" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Print SKIP_UNSTABLE
-        if: matrix.experimental == 'true'
+        if: matrix.experimental
         run: |
           Write-Output "SKIP_UNSTABLE is $env:SKIP_UNSTABLE"
 
@@ -425,7 +425,7 @@ jobs:
 
     steps:
       - name: Calculate SKIP_UNSTABLE
-        if: matrix.experimental == 'true'
+        if: matrix.experimental
         run: |
           # Choose the manifests output to consider (for Core service)
           # based on the matrix value
@@ -447,7 +447,7 @@ jobs:
           echo "SKIP_UNSTABLE=$Result" >> $GITHUB_ENV
 
       - name: Print SKIP_UNSTABLE
-        if: matrix.experimental == 'true'
+        if: matrix.experimental
         run: |
           echo "SKIP_UNSTABLE is $SKIP_UNSTABLE"
 
