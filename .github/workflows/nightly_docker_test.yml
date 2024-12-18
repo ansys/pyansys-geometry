@@ -35,13 +35,65 @@ concurrency:
 
 jobs:
 
+  manifests:
+    name: Check Docker manifests
+    runs-on: ubuntu-latest
+    outputs:
+      skip_dms: ${{ steps.services.outputs.skip_dms }}
+      skip_core_windows: ${{ steps.services.outputs.skip_core_windows }}
+      skip_core_linux: ${{ steps.services.outputs.skip_core_linux }}
+    strategy:
+      matrix:
+        include:
+          - container-stable: "windows-latest"
+            container-unstable: "windows-latest-unstable"
+            service: "dms"
+            service-name: "Windows DMS"
+          - container-stable: "core-windows-latest"
+            container-unstable: "core-windows-latest-unstable"
+            service: "core_windows"
+            service-name: "Windows Core Service"
+          - container-stable: "core-linux-latest"
+            container-unstable: "core-linux-latest-unstable"
+            service: "core_linux"
+            service-name: "Linux Core Service"
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check ${{ matrix.service-name }} manifest
+        id: services
+        run: |
+          docker manifest inspect ghcr.io/ansys/geometry:${{ matrix.container-stable }} > ${{ matrix.container-stable }}.json
+          docker manifest inspect ghcr.io/ansys/geometry:${{ matrix.container-unstable }} > ${{ matrix.container-unstable }}.json || true
+
+          # Verify that the unstable manifest exists - otherwise create an empty file
+          if [ ! -f ${{ matrix.container-unstable }}.json ]; then
+            touch ${{ matrix.container-unstable }}.json
+          fi
+
+
+          # Check if the manifests are the same (and if so, create an output that will skip the next job)
+          if diff ${{ matrix.container-stable }}.json ${{ matrix.container-unstable }}.json; then
+            echo "${{ matrix.service-name }} container manifests are the same... skipping"
+            echo "skip_${{ matrix.service }}=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "${{ matrix.service-name }} container manifests are different"
+            echo "skip_${{ matrix.service }}=0" >> "$GITHUB_OUTPUT"
+          fi
+
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # =================================================================================================
 
   windows-dms-tests:
     name: Windows DMS
-    if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
+    needs: manifests
+    if: needs.manifests.outputs.skip_dms == 0
     runs-on: [self-hosted, Windows, pygeometry]
     env:
       PYVISTA_OFF_SCREEN: true
@@ -146,7 +198,8 @@ jobs:
 
   windows-core-tests:
     name: Windows Core Service
-    if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
+    needs: manifests
+    if: needs.manifests.outputs.skip_core_windows == 0
     # runs-on: [self-hosted, Windows, pygeometry]
     runs-on: # TODO: Waiting for ansys-network runner to be updated
       group: pyansys-self-hosted
@@ -259,7 +312,8 @@ jobs:
 
   linux-tests:
     name: Linux Core Service
-    if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
+    needs: manifests
+    if: needs.manifests.outputs.skip_core_linux == 0
     runs-on: ubuntu-latest
 
     steps:
