@@ -1,4 +1,4 @@
-name: Nightly Server test - Latest build
+name: Unstable build tests and promotion
 on:
   workflow_dispatch:
     inputs:
@@ -40,7 +40,7 @@ jobs:
 # =================================================================================================
 
   windows-dms-tests:
-    name: Nightly unstable testing - Windows DMS
+    name: Testing unstable Windows DMS
     if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
     runs-on: [self-hosted, Windows, pygeometry]
     env:
@@ -145,7 +145,7 @@ jobs:
             }
 
   windows-core-tests:
-    name: Nightly unstable testing - Windows Core Service
+    name: Testing unstable Windows Core Service
     if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
     # runs-on: [self-hosted, Windows, pygeometry]
     runs-on: # TODO: Waiting for ansys-network runner to be updated
@@ -258,7 +258,7 @@ jobs:
 # =================================================================================================
 
   linux-tests:
-    name: Nightly unstable testing - Linux
+    name: Testing unstable Linux Core Service
     if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
     runs-on: ubuntu-latest
 
@@ -320,7 +320,7 @@ jobs:
   promote-windows-dms:
     needs: windows-dms-tests
     runs-on: windows-latest
-    name: Promote Windows container
+    name: Promote Windows DMS container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
     env:
       WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:windows-latest-unstable
@@ -345,7 +345,7 @@ jobs:
   promote-windows-core:
     needs: windows-core-tests
     runs-on: windows-latest
-    name: Promote Windows container
+    name: Promote Windows Core Service container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
     env:
       WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:core-windows-latest-unstable
@@ -370,7 +370,7 @@ jobs:
   promote-linux:
     needs: linux-tests
     runs-on: ubuntu-latest
-    name: Promote Linux container
+    name: Promote Linux Core Service container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
     env:
       LINUX_UNSTABLE: ghcr.io/ansys/geometry:core-linux-latest-unstable
