@@ -318,7 +318,7 @@ jobs:
             }
 
   promote-windows-dms:
-    needs: [windows-dms-tests, windows-core-tests, linux-tests]
+    needs: windows-dms-tests
     runs-on: windows-latest
     name: Promote Windows container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
@@ -343,7 +343,7 @@ jobs:
         run: docker push ${{ env.WINDOWS_STABLE_GHCR }}
 
   promote-windows-core:
-    needs: [windows-dms-tests, windows-core-tests, linux-tests]
+    needs: windows-core-tests
     runs-on: windows-latest
     name: Promote Windows container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
@@ -368,7 +368,7 @@ jobs:
         run: docker push ${{ env.WINDOWS_STABLE_GHCR }}
 
   promote-linux:
-    needs: [windows-dms-tests, windows-core-tests, linux-tests]
+    needs: linux-tests
     runs-on: ubuntu-latest
     name: Promote Linux container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
