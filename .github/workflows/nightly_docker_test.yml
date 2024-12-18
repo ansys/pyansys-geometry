@@ -40,7 +40,7 @@ jobs:
 # =================================================================================================
 
   windows-dms-tests:
-    name: Testing unstable Windows DMS
+    name: Windows DMS
     if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
     runs-on: [self-hosted, Windows, pygeometry]
     env:
@@ -145,7 +145,7 @@ jobs:
             }
 
   windows-core-tests:
-    name: Testing unstable Windows Core Service
+    name: Windows Core Service
     if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
     # runs-on: [self-hosted, Windows, pygeometry]
     runs-on: # TODO: Waiting for ansys-network runner to be updated
@@ -258,7 +258,7 @@ jobs:
 # =================================================================================================
 
   linux-tests:
-    name: Testing unstable Linux Core Service
+    name: Linux Core Service
     if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
     runs-on: ubuntu-latest
 
