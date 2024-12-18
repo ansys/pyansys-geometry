@@ -1,4 +1,4 @@
-name: Nightly Server test - Latest build
+name: Unstable build tests and promotion
 on:
   workflow_dispatch:
     inputs:
@@ -40,7 +40,7 @@ jobs:
 # =================================================================================================
 
   windows-dms-tests:
-    name: Nightly unstable testing - Windows DMS
+    name: Windows DMS
     if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
     runs-on: [self-hosted, Windows, pygeometry]
     env:
@@ -127,12 +127,12 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "summary": "Nightly Tests for Windows DMS failing",
+              "summary": "Unstable build tests for Windows DMS failing",
               "themeColor": "f44336",
-              "title": "PyAnsys Geometry Nightly Tests - Windows DMS failing",
+              "title": "PyAnsys Geometry unstable build tests - Windows DMS failing",
               "sections": [
                 {
-                  "activityTitle": "Windows DMS nightly tests are failing",
+                  "activityTitle": "Windows DMS unstable build tests are failing",
                   "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
                   "facts": [
                     {
@@ -145,7 +145,7 @@ jobs:
             }
 
   windows-core-tests:
-    name: Nightly unstable testing - Windows Core Service
+    name: Windows Core Service
     if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
     # runs-on: [self-hosted, Windows, pygeometry]
     runs-on: # TODO: Waiting for ansys-network runner to be updated
@@ -235,12 +235,12 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "summary": "Nightly Tests for Windows Core Service failing",
+              "summary": "Unstable build tests for Windows Core Service failing",
               "themeColor": "f44336",
-              "title": "PyAnsys Geometry Nightly Tests - Windows Core Service failing",
+              "title": "PyAnsys Geometry unstable build tests - Windows Core Service failing",
               "sections": [
                 {
-                  "activityTitle": "Windows Core Service nightly tests are failing",
+                  "activityTitle": "Windows Core Service unstable build tests are failing",
                   "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
                   "facts": [
                     {
@@ -258,7 +258,7 @@ jobs:
 # =================================================================================================
 
   linux-tests:
-    name: Nightly unstable testing - Linux
+    name: Linux Core Service
     if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
     runs-on: ubuntu-latest
 
@@ -300,12 +300,12 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "summary": "Nightly Tests for Linux failing",
+              "summary": "Unstable build tests for Linux Core Service failing",
               "themeColor": "f44336",
-              "title": "PyAnsys Geometry Nightly Tests - Linux failing",
+              "title": "PyAnsys Geometry unstable build tests - Linux Core Service failing",
               "sections": [
                 {
-                  "activityTitle": "Linux nightly tests are failing",
+                  "activityTitle": "Linux Core Service unstable build tests are failing",
                   "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
                   "facts": [
                     {
@@ -318,9 +318,9 @@ jobs:
             }
 
   promote-windows-dms:
-    needs: [windows-dms-tests, windows-core-tests, linux-tests]
+    needs: windows-dms-tests
     runs-on: windows-latest
-    name: Promote Windows container
+    name: Promote Windows DMS container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
     env:
       WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:windows-latest-unstable
@@ -343,9 +343,9 @@ jobs:
         run: docker push ${{ env.WINDOWS_STABLE_GHCR }}
 
   promote-windows-core:
-    needs: [windows-dms-tests, windows-core-tests, linux-tests]
+    needs: windows-core-tests
     runs-on: windows-latest
-    name: Promote Windows container
+    name: Promote Windows Core Service container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
     env:
       WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:core-windows-latest-unstable
@@ -368,9 +368,9 @@ jobs:
         run: docker push ${{ env.WINDOWS_STABLE_GHCR }}
 
   promote-linux:
-    needs: [windows-dms-tests, windows-core-tests, linux-tests]
+    needs: linux-tests
     runs-on: ubuntu-latest
-    name: Promote Linux container
+    name: Promote Linux Core Service container
     if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
     env:
       LINUX_UNSTABLE: ghcr.io/ansys/geometry:core-linux-latest-unstable
