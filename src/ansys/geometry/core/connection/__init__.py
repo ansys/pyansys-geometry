@@ -50,6 +50,7 @@ from ansys.geometry.core.connection.docker_instance import (
 from ansys.geometry.core.connection.launcher import (
     launch_docker_modeler,
     launch_modeler,
+    launch_modeler_with_core_service,
     launch_modeler_with_discovery,
     launch_modeler_with_discovery_and_pimlight,
     launch_modeler_with_geometry_service,
