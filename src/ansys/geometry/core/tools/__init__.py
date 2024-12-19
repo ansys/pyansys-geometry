@@ -28,5 +28,6 @@ from ansys.geometry.core.tools.problem_areas import (
     ExtraEdgeProblemAreas,
     InexactEdgeProblemAreas,
 )
+from ansys.geometry.core.tools.pull_tools import PullTools
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.tools.repair_tools import RepairTools
