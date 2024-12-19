@@ -127,3 +127,19 @@ def test_dscript_simple_script(modeler: Modeler):
     assert len(result) == 2
     assert pattern_db.match(result["design_body"])
     assert pattern_doc.match(result["design"])
+
+
+# Discovery (.dscript)
+def test_dscript_simple_script_debug_mode(modeler: Modeler):
+    # Skip on Linux
+    skip_if_linux(modeler, test_dscript_simple_script.__name__, "run_discovery_script_file")
+
+    result = modeler.run_discovery_script_file(
+        DSCOSCRIPTS_FILES_DIR / "simple_script.dscript", enable_debug_features=True
+    )
+    assert len(result) == 2
+    pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
+    pattern_doc = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.Document", re.IGNORECASE)
+    assert len(result) == 2
+    assert pattern_db.match(result["design_body"])
+    assert pattern_doc.match(result["design"])
