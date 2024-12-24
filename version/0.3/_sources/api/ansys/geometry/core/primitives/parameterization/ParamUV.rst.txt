@@ -1,0 +1,297 @@
+
+
+
+
+ParamUV
+=======
+
+.. py:class:: ParamUV(u: ansys.geometry.core.typing.Real, v: ansys.geometry.core.typing.Real)
+   :canonical: ansys.geometry.core.primitives.parameterization.ParamUV
+
+
+
+
+Parameter class containing 2 parameters: (u, v).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: ParamUV
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~u`
+            - u-parameter.
+          * - :py:attr:`~v`
+            - v-parameter.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__add__`
+            - Add the u and v components of the other ParamUV to this ParamUV.
+          * - :py:attr:`~__sub__`
+            - Subtract the u and v components of the other ParamUV from this ParamUV.
+          * - :py:attr:`~__mul__`
+            - Multiplies the u and v components of this ParamUV by the other ParamUV.
+          * - :py:attr:`~__truediv__`
+            - Divides the u and v components of this ParamUV by the other ParamUV.
+          * - :py:attr:`~__repr__`
+            - Represent the ``ParamUV`` as a string.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.parameterization import ParamUV
+
+
+Property detail
+---------------
+.. py:property:: u
+   :canonical: ansys.geometry.core.primitives.parameterization.ParamUV.u
+   :type: Real
+
+
+   
+   u-parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: v
+   :canonical: ansys.geometry.core.primitives.parameterization.ParamUV.v
+   :type: Real
+
+
+   
+   v-parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __add__(other: ParamUV) -> ParamUV
+
+   
+   Add the u and v components of the other ParamUV to this ParamUV.
+
+
+   :Parameters:
+
+       **other** : :obj:`ParamUV`
+           The parameters to add these parameters.
+
+   :Returns:
+
+       :obj:`ParamUV`
+           The sum of the parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __sub__(other: ParamUV) -> ParamUV
+
+   
+   Subtract the u and v components of the other ParamUV from this ParamUV.
+
+
+   :Parameters:
+
+       **other** : :obj:`ParamUV`
+           The parameters to subtract from these parameters.
+
+   :Returns:
+
+       :obj:`ParamUV`
+           The difference of the parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __mul__(other: ParamUV) -> ParamUV
+
+   
+   Multiplies the u and v components of this ParamUV by the other ParamUV.
+
+
+   :Parameters:
+
+       **other** : :obj:`ParamUV`
+           The parameters to multiply by these parameters.
+
+   :Returns:
+
+       :obj:`ParamUV`
+           The product of the parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __truediv__(other: ParamUV) -> ParamUV
+
+   
+   Divides the u and v components of this ParamUV by the other ParamUV.
+
+
+   :Parameters:
+
+       **other** : :obj:`ParamUV`
+           The parameters to divide these parameters by.
+
+   :Returns:
+
+       :obj:`ParamUV`
+           The quotient of the parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the ``ParamUV`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
