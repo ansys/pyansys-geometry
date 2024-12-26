@@ -207,7 +207,6 @@ class Trapezoid(SketchFace):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
-
         return pv.Quadrilateral(
             np.array(
                 [
