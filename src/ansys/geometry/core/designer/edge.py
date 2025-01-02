@@ -101,6 +101,11 @@ class Edge:
         return EntityIdentifier(id=self._id)
 
     @property
+    def body(self) -> "Body":
+        """Body of the edge."""
+        return self._body
+
+    @property
     def is_reversed(self) -> bool:
         """Flag indicating if the edge is reversed."""
         return self._is_reversed
