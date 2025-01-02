@@ -499,7 +499,7 @@ class Logger:
             Logger class.
         """
         name = self.logger.name + "." + suffix
-        self._instances[name] = self._make_child_logger(self, name, level)
+        self._instances[name] = self._make_child_logger(name, level)
         return self._instances[name]
 
     def add_instance_logger(
