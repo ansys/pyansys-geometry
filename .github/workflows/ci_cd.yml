@@ -1,12 +1,9 @@
 name: GitHub CI
 on:
   pull_request:
-  workflow_dispatch:
   push:
-    tags:
-      - "*"
     branches:
-      - main
+      - blitz
 
 env:
   MAIN_PYTHON_VERSION: '3.12'
@@ -26,20 +23,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
-  update-changelog:
-    name: "Update CHANGELOG (on release)"
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - uses: ansys/actions/doc-deploy-changelog@v8
-        with:
-          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
-          bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
-          bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
 
   vulnerabilities:
     name: Vulnerabilities
@@ -70,27 +53,6 @@ jobs:
         uses: ansys/actions/doc-style@v8
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
-
-  smoke-tests:
-    name: Build and Smoke tests
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.10', '3.11', '3.12', '3.13']
-        should-release:
-          - ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags') }}
-        exclude:
-          - should-release: false
-            os: macos-latest
-    steps:
-      - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@v8
-        with:
-          library-name: ${{ env.PACKAGE_NAME }}
-          operating-system: ${{ matrix.os }}
-          python-version: ${{ matrix.python-version }}
 
   docker-style:
     name: Docker Style Check
@@ -159,11 +121,11 @@ jobs:
 
   testing-windows:
     name: Testing and coverage (Windows)
-    needs: [smoke-tests, manifests]
+    needs: [manifests]
     # runs-on: [self-hosted, Windows, pygeometry]
     runs-on: # TODO: Waiting for ansys-network runner to be updated
       group: pyansys-self-hosted
-      labels:  [self-hosted, Windows, pygeometry]
+      labels:  [self-hosted, Windows, pygeometry-blitz]
     continue-on-error: ${{ matrix.experimental }}
     env:
       SKIP_UNSTABLE: false
@@ -333,70 +295,9 @@ jobs:
               docker rm $dockerContainers
           }
 
-  docs:
-    name: Documentation
-    needs: [docs-style]
-    # Doc build performed on self-hosted runners outside the Ansys network only
-    runs-on:
-      group: pyansys-self-hosted
-      labels: [Windows, pygeometry]
-    env:
-      PYVISTA_OFF_SCREEN: true
-    steps:
-      - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@v3
-        with:
-          pyvista: false
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download Geometry service container (if needed)
-        run: docker pull ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
-
-      - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-2'
-        run:
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-      - name: Stop any running containers
-        run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
-
-      - name: Start Geometry service and verify start
-        run: docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
-
-      - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@v8
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          add-pdf-html-docs-as-assets: true
-          needs-quarto: true
-
-      - name: Stop the Geometry service
+      - name: Clean all Docker dangling images
         if: always()
-        run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
-
-      - name: Stop any remaining containers
-        if: always()
-        run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
-
+        run: docker image prune -f
 
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -404,7 +305,7 @@ jobs:
 
   testing-linux:
     name: Testing and coverage (Linux)
-    needs: [smoke-tests, manifests]
+    needs: [manifests]
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
     env:
@@ -502,57 +403,8 @@ jobs:
             docker rm ${{ env.GEO_CONT_NAME }}
           fi
 
-  testing-min-reqs:
-    name: Testing with minimum requirements
-    needs: [smoke-tests]
-    runs-on: ubuntu-latest
-    env:
-      ANSRV_GEO_IMAGE_MINREQS: 'ghcr.io/ansys/geometry:core-linux-latest'
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ['3.10', '3.11', '3.12', '3.13']
-    steps:
-      - name: Login in Github Container registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Pull and launch geometry service
-        run: |
-          docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install minimum requirements
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .[all,tests-minimal]
-          pip install pytest
-
-      - name: Run pytest
-        run: |
-          pytest -v
-
-      - name: Stop the Geometry service
-        if: always()
-        run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
-
   package:
     name: Package library
-    needs: [testing-windows, testing-linux, testing-min-reqs, docs]
     runs-on: ubuntu-latest
     steps:
       - name: Build library source and wheel artifacts
@@ -560,314 +412,3 @@ jobs:
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-
-# =================================================================================================
-# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-# =================================================================================================
-
-  fetch-release-artifacts:
-    name: Fetch release artifacts
-    needs: [testing-windows, testing-linux, docs]
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    runs-on:
-      group: ansys-network
-      labels: [self-hosted, Windows, pygeometry]
-    env:
-      REUSE_LAST_ARTIFACTS: ${{ vars.REUSE_LAST_ARTIFACTS == 1 }}
-
-    steps:
-      - name: Check out repository pyansys-geometry-binaries
-        uses: actions/checkout@v4
-        with:
-          repository: 'ansys/pyansys-geometry-binaries'
-          token: ${{ secrets.BINARIES_TOKEN }}
-
-      - name: Download binaries (if conditions met)
-        if: env.REUSE_LAST_ARTIFACTS == 'false'
-        run: |
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerWindows.zip --output windows-dms-binaries.zip
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerCoreWindows.zip --output windows-core-binaries.zip
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerCoreLinux.zip --output linux-core-binaries.zip
-
-      - name: Reuse last binaries (if conditions met)
-        if: env.REUSE_LAST_ARTIFACTS == 'true'
-        env:
-          VERSION_WITH_PREFIX: ${{ github.ref_name }}
-        run: |
-          # We are on a Windows machine. We need to copy the binaries from the previous tag,
-          # based on the current tag. We will also remove the trailing "v" from the tag. This will give
-          # us the folder from where we need to copy the binaries.
-          $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
-          $env:PREVIOUS_VERSION=$env:VERSION.substring(0, $env:VERSION.Length - 1)
-          $env:PREVIOUS_PATCH_VERSION_NUMBER=$env:VERSION.substring($env:VERSION.Length - 1)
-          $env:PREVIOUS_PATCH_VERSION_NUMBER=[int]$env:PREVIOUS_PATCH_VERSION_NUMBER - 1
-          $env:PREVIOUS_VERSION=$env:PREVIOUS_VERSION + $env:PREVIOUS_PATCH_VERSION_NUMBER
-          # Fetch the LFS files from the previous version
-          git lfs fetch origin --include="$env:PREVIOUS_VERSION/*"
-          git lfs checkout $env:PREVIOUS_VERSION
-          # Copy the binaries from the previous version
-          cp ./$env:PREVIOUS_VERSION/windows-dms-binaries.zip windows-dms-binaries.zip
-          cp ./$env:PREVIOUS_VERSION/windows-core-binaries.zip windows-core-binaries.zip
-          cp ./$env:PREVIOUS_VERSION/linux-core-binaries.zip linux-core-binaries.zip
-
-      - name: Upload DMS Windows binaries as workflow artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-dms-binaries.zip
-          path: windows-dms-binaries.zip
-          retention-days: 1
-
-      - name: Upload Linux Core service binaries as workflow artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-core-binaries.zip
-          path: linux-core-binaries.zip
-          retention-days: 1
-
-      - name: Upload Windows Core service binaries as workflow artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-core-binaries.zip
-          path: windows-core-binaries.zip
-          retention-days: 1
-
-      - name: Publish the binaries to private repo
-        env:
-          VERSION_WITH_PREFIX: ${{ github.ref_name }}
-        run: |
-          $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
-          mkdir $env:VERSION -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force .\$env:VERSION\*
-          mv windows-dms-binaries.zip .\$env:VERSION\
-          mv windows-core-binaries.zip .\$env:VERSION\
-          mv linux-core-binaries.zip .\$env:VERSION\
-          git config user.email ${{ secrets.BINARIES_EMAIL }}
-          git config user.name ${{ secrets.BINARIES_USERNAME }}
-          git add *
-          git commit -m "adding binaries for ${{ github.ref_name }}"
-          git push origin main
-
-  build-windows-container:
-    name: Building Geometry Service - Windows
-    # runs-on: [self-hosted, Windows, pygeometry]
-    runs-on: # TODO: Waiting for ansys-network runner to be updated
-      group: pyansys-self-hosted
-      labels:  [self-hosted, Windows, pygeometry]
-    needs: [fetch-release-artifacts]
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - mode: "dms"
-            zip-file: "windows-dms-binaries.zip"
-          - mode: "coreservice"
-            zip-file: "windows-core-binaries.zip"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-
-      - name: Download Windows binaries for ${{ matrix.mode }}
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ matrix.zip-file }}
-          path: docker/${{ matrix.zip-file }}
-
-      - name: Build Docker image
-        working-directory: docker
-        run: |
-          docker build -f windows/${{ matrix.mode }}/Dockerfile -t ghcr.io/ansys/geometry:windows-tmp .
-
-      - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-2'
-        run:
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-      - name: Launch Geometry service
-        run: |
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:windows-tmp
-
-      - name: Validate connection using PyAnsys Geometry
-        run: |
-          python -m venv .venv
-          .\.venv\Scripts\Activate.ps1
-          python -m pip install --upgrade pip
-          pip install -e .[tests]
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
-
-      - name: Restore images cache
-        uses: actions/cache@v4
-        with:
-          path: .\tests\integration\image_cache
-          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
-          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-
-      - name: Testing
-        run: |
-          .\.venv\Scripts\Activate.ps1
-          pytest -v --use-existing-service=yes
-
-      - name: "Compressing Windows Dockerfile"
-        uses: vimtor/action-zip@v1.2
-        with:
-          files: docker/windows/${{ matrix.mode }}/Dockerfile
-          dest: windows-${{ matrix.mode }}-dockerfile.zip
-
-      - name: Upload Windows Dockerfile
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-${{ matrix.mode }}-dockerfile.zip
-          path: windows-${{ matrix.mode }}-dockerfile.zip
-          retention-days: 7
-
-      - name: Stop the Geometry service
-        if: always()
-        run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
-
-      - name: Stop any remaining containers
-        if: always()
-        run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
-
-      - name: Delete the Docker images (and untagged ones)
-        if: always()
-        run: |
-          docker image rm ghcr.io/ansys/geometry:windows-tmp
-          docker system prune -f
-
-# =================================================================================================
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# =================================================================================================
-
-  build-linux-container:
-    name: Building Geometry Service - Linux
-    runs-on: ubuntu-latest
-    needs: [fetch-release-artifacts]
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-
-      - name: Download Linux binaries
-        uses: actions/download-artifact@v4
-        with:
-          name: linux-core-binaries.zip
-          path: docker/linux-core-binaries.zip
-
-      - name: Build Docker image
-        working-directory: docker
-        run: |
-          docker build -f linux/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
-
-      - name: Launch Geometry service
-        run: |
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:linux-tmp
-
-      - name: Validate connection using PyAnsys Geometry
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .[tests]
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
-
-      - name: Restore images cache
-        uses: actions/cache@v4
-        with:
-          path: .\tests\integration\image_cache
-          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
-          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-
-      - name: Run pytest
-        uses: ansys/actions/tests-pytest@v8
-        env:
-          ALLOW_PLOTTING: true
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          pytest-extra-args: "--use-existing-service=yes"
-          checkout: false
-          requires-xvfb: true
-
-      - name: "Compressing Linux Dockerfile"
-        uses: vimtor/action-zip@v1.2
-        with:
-          files: docker/linux/coreservice/Dockerfile
-          dest: linux-core-dockerfile.zip
-
-      - name: Upload Linux Dockerfile
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-core-dockerfile.zip
-          path: linux-core-dockerfile.zip
-          retention-days: 7
-
-      - name: Stop the Geometry service
-        if: always()
-        run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
-
-  release:
-    name: Release project
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    needs: [package, build-windows-container, build-linux-container, update-changelog]
-    runs-on: ubuntu-latest
-    # Specifying a GitHub environment is optional, but strongly encouraged
-    environment: release
-    permissions:
-      id-token: write
-      contents: write
-    steps:
-      - name: Release to the public PyPI repository
-        uses: ansys/actions/release-pypi-public@v8
-        with:
-          library-name: ${{ env.PACKAGE_NAME }}
-          use-trusted-publisher: true
-
-      - name: Release to GitHub
-        uses: ansys/actions/release-github@v8
-        with:
-          library-name: ${{ env.PACKAGE_NAME }}
-          additional-artifacts: windows-dms-dockerfile.zip windows-core-dockerfile.zip linux-core-dockerfile.zip
-
-  upload_dev_docs:
-    name: Upload dev documentation
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    needs: [package]
-    steps:
-      - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@v8
-        with:
-          cname: ${{ env.DOCUMENTATION_CNAME }}
-          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
-          bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
-          bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
-
-  upload_docs_release:
-    name: Upload release documentation
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    runs-on: ubuntu-latest
-    needs: [release]
-    steps:
-      - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@v8
-        with:
-          cname: ${{ env.DOCUMENTATION_CNAME }}
-          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
-          bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
-          bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
