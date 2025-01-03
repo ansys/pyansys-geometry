@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``trapezoid.py`` module
+===========================
+
+.. py:module:: ansys.geometry.core.sketch.trapezoid
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: trapezoid
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Trapezoid`
+            - Provides for modeling a 2D trapezoid.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Trapezoid<Trapezoid>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a trapezoid.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
