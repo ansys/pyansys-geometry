@@ -204,9 +204,9 @@ def test_find_small_face_faces(modeler: Modeler):
     """Test to read geometry, find it's small face problem area and return
     connected faces.
     """
-    skip_if_linux(modeler, 
-                  test_find_small_face_faces.__name__, 
-                  "repair_tools")  # Skip test on Linux
+    skip_if_linux(
+        modeler, test_find_small_face_faces.__name__, "repair_tools"
+    )  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     assert len(problem_areas[0].faces) > 0
