@@ -178,50 +178,48 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     # assert the two cars are the same, excepted for the ID, which should be different
     _checker_method(design, design2, True)
 
-    # Test HOOPS formats (Windows only)
-    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
-        # IGES
-        #
-        # TODO: Something has gone wrong with IGES
-        # https://github.com/ansys/pyansys-geometry/issues/801
+    # IGES
+    #
+    # TODO: Something has gone wrong with IGES
+    # https://github.com/ansys/pyansys-geometry/issues/801
 
-        # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
-        # design.download(file, DesignFileFormat.IGES)
-        # design2 = modeler.open_file(file)
-        # design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.igs")
-        # _checker_method(design2, design3, False)
+    # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
+    # design.download(file, DesignFileFormat.IGES)
+    # design2 = modeler.open_file(file)
+    # design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.igs")
+    # _checker_method(design2, design3, False)
 
-        # STEP
-        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
-        design.download(file, DesignFileFormat.STEP)
-        design2 = modeler.open_file(file)
-        design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.stp"))
-        _checker_method(design2, design3, False)
+    # STEP
+    file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
+    design.download(file, DesignFileFormat.STEP)
+    design2 = modeler.open_file(file)
+    design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.stp"))
+    _checker_method(design2, design3, False)
 
-        # Catia
-        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "catia_car/car.CATProduct"))
-        _checker_method(design, design2, False)
+    # Catia
+    design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "catia_car/car.CATProduct"))
+    _checker_method(design, design2, False)
 
-        # Rhino
-        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "box.3dm"))
-        assert len(design2.components) == 1
-        assert len(design2.components[0].bodies) == 1
+    # Rhino
+    design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "box.3dm"))
+    assert len(design2.components) == 1
+    assert len(design2.components[0].bodies) == 1
 
-        # Stride
-        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "sample_box.project"))
-        assert len(design2.bodies) == 1
+    # Stride
+    design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "sample_box.project"))
+    assert len(design2.bodies) == 1
 
-        # SolidWorks
-        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "partColor.SLDPRT"))
-        assert len(design2.components[0].bodies) == 1
+    # SolidWorks
+    design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "partColor.SLDPRT"))
+    assert len(design2.components[0].bodies) == 1
 
-        # .par
-        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "Tank_Bottom.par"))
-        assert len(design2.bodies) == 1
+    # .par
+    design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "Tank_Bottom.par"))
+    assert len(design2.bodies) == 1
 
-        # .prt
-        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "disk1.prt"))
-        assert len(design2.bodies) == 1
+    # .prt
+    design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "disk1.prt"))
+    assert len(design2.bodies) == 1
 
 
 def test_design_insert(modeler: Modeler):
