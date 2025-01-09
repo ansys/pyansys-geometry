@@ -25,7 +25,7 @@ import pytest
 
 from ansys.geometry.core.modeler import Modeler
 
-from .conftest import FILES_DIR
+from .conftest import FILES_DIR, skip_if_linux
 
 
 def test_find_split_edges(modeler: Modeler):

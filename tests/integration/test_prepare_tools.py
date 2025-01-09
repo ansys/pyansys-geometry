@@ -23,7 +23,7 @@
 
 from ansys.geometry.core.modeler import Modeler
 
-from .conftest import FILES_DIR
+from .conftest import FILES_DIR, skip_if_linux
 
 
 def test_volume_extract_from_faces(modeler: Modeler):
