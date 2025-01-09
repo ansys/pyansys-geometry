@@ -186,6 +186,7 @@ def test_fix_duplicate_face(modeler: Modeler):
 
 def test_find_small_faces(modeler: Modeler):
     """Test to read geometry and find it's small face problem areas."""
+    skip_if_linux(modeler, test_find_small_faces.__name__, "repair_tools")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     assert len(problem_areas) == 4
@@ -193,6 +194,7 @@ def test_find_small_faces(modeler: Modeler):
 
 def test_find_small_face_id(modeler: Modeler):
     """Test whether problem area has the id."""
+    skip_if_linux(modeler, test_find_small_face_id.__name__, "repair_tools")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     assert problem_areas[0].id != "0"
@@ -202,6 +204,9 @@ def test_find_small_face_faces(modeler: Modeler):
     """Test to read geometry, find it's small face problem area and return
     connected faces.
     """
+    skip_if_linux(
+        modeler, test_find_small_face_faces.__name__, "repair_tools"
+    )  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     assert len(problem_areas[0].faces) > 0
@@ -209,6 +214,7 @@ def test_find_small_face_faces(modeler: Modeler):
 
 def test_fix_small_face(modeler: Modeler):
     """Test to read geometry and find and fix it's small face problem areas."""
+    skip_if_linux(modeler, test_fix_small_face.__name__, "repair_tools")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     assert problem_areas[0].fix().success is True

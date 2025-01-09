@@ -53,6 +53,7 @@ def test_volume_extract_from_edge_loops(modeler: Modeler):
 
 def test_share_topology(modeler: Modeler):
     """Test share topology operation is between two bodies."""
+    skip_if_linux(modeler, test_share_topology.__name__, "prepare_tools")  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
 
     assert modeler.prepare_tools.share_topology(design.bodies)
