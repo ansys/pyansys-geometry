@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -68,18 +68,14 @@ class GeometryContainers(Enum):
     CORE_LINUX_LATEST_UNSTABLE = 3, "linux", "core-linux-latest-unstable"
     # TO BE REMOVED at some point... - START
     WINDOWS_LATEST = 4, "windows", "windows-latest"
-    LINUX_LATEST = 5, "linux", "linux-latest"
-    WINDOWS_LATEST_UNSTABLE = 6, "windows", "windows-latest-unstable"
-    LINUX_LATEST_UNSTABLE = 7, "linux", "linux-latest-unstable"
+    WINDOWS_LATEST_UNSTABLE = 5, "windows", "windows-latest-unstable"
     # TO BE REMOVED at some point... - END
-    WINDOWS_24_1 = 8, "windows", "windows-24.1"
-    LINUX_24_1 = 9, "linux", "linux-24.1"
-    WINDOWS_24_2 = 10, "windows", "windows-24.2"
-    LINUX_24_2 = 11, "linux", "linux-24.2"
-    WINDOWS_25_1 = 12, "windows", "windows-25.1"
-    LINUX_25_1 = 13, "linux", "linux-25.1"
-    WINDOWS_25_2 = 14, "windows", "core-windows-25.2"
-    LINUX_25_2 = 15, "linux", "core-linux-25.2"
+    WINDOWS_24_1 = 6, "windows", "windows-24.1"
+    WINDOWS_24_2 = 7, "windows", "windows-24.2"
+    WINDOWS_25_1 = 8, "windows", "windows-25.1"
+    WINDOWS_25_2 = 9, "windows", "windows-25.2"
+    CORE_WINDOWS_25_2 = 10, "windows", "core-windows-25.2"
+    CORE_LINUX_25_2 = 11, "linux", "core-linux-25.2"
 
 
 class LocalDockerInstance:
