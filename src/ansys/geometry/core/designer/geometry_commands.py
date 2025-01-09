@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -35,18 +35,18 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.face import Face
 
 
-class PullTools:
-    """Provides pull tools for PyAnsys Geometry.
+class GeometryCommands:
+    """Provides geometry commands for PyAnsys Geometry.
 
     Parameters
     ----------
     grpc_client : GrpcClient
-        gRPC client to use for the measurement tools.
+        gRPC client to use for the geometry commands.
     """
 
     @protect_grpc
     def __init__(self, grpc_client: GrpcClient):
-        """Initialize an instance of the ``PullTools`` class."""
+        """Initialize an instance of the ``GeometryCommands`` class."""
         self._grpc_client = grpc_client
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -28,6 +28,5 @@ from ansys.geometry.core.tools.problem_areas import (
     ExtraEdgeProblemAreas,
     InexactEdgeProblemAreas,
 )
-from ansys.geometry.core.tools.pull_tools import PullTools
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.tools.repair_tools import RepairTools

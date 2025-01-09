@@ -12,7 +12,7 @@ kernelspec:
 ---
 
 # Modeling: Chamfer edges and faces
-A chamfer is an angled cut on an edge. Chamfers can be created using the ``Modeler.pull_tools`` module.
+A chamfer is an angled cut on an edge. Chamfers can be created using the ``Modeler.geometry_commands`` module.
 
 +++
 
@@ -40,7 +40,7 @@ body.plot()
 Create a uniform chamfer on all edges of the block.
 
 ```{code-cell} ipython3
-modeler.pull_tools.chamfer(body.edges, distance=0.1)
+modeler.geometry_commands.chamfer(body.edges, distance=0.1)
 
 body.plot()
 ```
@@ -51,13 +51,13 @@ The chamfer of a face can also be modified. Create a chamfer on a single edge an
 ```{code-cell} ipython3
 body = design.extrude_sketch("box", Sketch().box(Point2D([0,0]), 1, 1), 1)
 
-modeler.pull_tools.chamfer(body.edges[0], distance=0.1)
+modeler.geometry_commands.chamfer(body.edges[0], distance=0.1)
 
 body.plot()
 ```
 
 ```{code-cell} ipython3
-modeler.pull_tools.chamfer(body.faces[-1], distance=0.3)
+modeler.geometry_commands.chamfer(body.faces[-1], distance=0.3)
 
 body.plot()
 ```

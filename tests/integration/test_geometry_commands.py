@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-""" "Testing of repair tools."""
+"""Testing of geometry commands."""
 
 from pint import Quantity
 import pytest
@@ -31,7 +31,7 @@ from ansys.geometry.core.sketch.sketch import Sketch
 
 
 def test_chamfer(modeler: Modeler):
-    """Test chamfer on edge and face."""
+    """Test chamfer on edges and faces."""
     design = modeler.create_design("chamfer")
 
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
@@ -39,12 +39,12 @@ def test_chamfer(modeler: Modeler):
     assert len(body.edges) == 12
     assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
-    modeler.pull_tools.chamfer(body.edges[0], 0.1)
+    modeler.geometry_commands.chamfer(body.edges[0], 0.1)
     assert len(body.faces) == 7
     assert len(body.edges) == 15
     assert body.volume.m == pytest.approx(Quantity(0.995, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
-    modeler.pull_tools.chamfer(body.faces[-1], 0.5)
+    modeler.geometry_commands.chamfer(body.faces[-1], 0.5)
     assert len(body.faces) == 7
     assert len(body.edges) == 15
     assert body.volume.m == pytest.approx(Quantity(0.875, UNITS.m**3).m, rel=1e-6, abs=1e-8)
@@ -55,7 +55,7 @@ def test_chamfer(modeler: Modeler):
     assert len(body2.edges) == 12
     assert body2.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
-    modeler.pull_tools.chamfer(body2.edges, 0.1)
+    modeler.geometry_commands.chamfer(body2.edges, 0.1)
     assert len(body2.faces) == 26
     assert len(body2.edges) == 48
     assert body2.volume.m == pytest.approx(
