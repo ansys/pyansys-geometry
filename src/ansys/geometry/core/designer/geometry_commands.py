@@ -59,7 +59,7 @@ class GeometryCommands:
 
         Parameters
         ----------
-        edges_or_faces : Edge | list[Edge] | Face | list[Face]
+        selection : Edge | list[Edge] | Face | list[Face]
             One or more edges or faces to act on.
         distance : Real
             Chamfer distance.

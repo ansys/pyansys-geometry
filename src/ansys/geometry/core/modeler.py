@@ -36,7 +36,6 @@ from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
-from ansys.geometry.core.designer.geometry_commands import GeometryCommands
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
@@ -50,6 +49,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer.design import Design
+    from ansys.geometry.core.designer.geometry_commands import GeometryCommands
     from ansys.platform.instancemanagement import Instance
 
 
@@ -104,6 +104,8 @@ class Modeler:
         backend_type: BackendType | None = None,
     ):
         """Initialize the ``Modeler`` class."""
+        from ansys.geometry.core.designer.geometry_commands import GeometryCommands
+
         self._grpc_client = GrpcClient(
             host=host,
             port=port,
@@ -501,7 +503,7 @@ class Modeler:
         return self._measurement_tools
 
     @property
-    def geometry_commands(self) -> GeometryCommands:
+    def geometry_commands(self) -> "GeometryCommands":
         """Access to geometry commands."""
         return self._geometry_commands
 
