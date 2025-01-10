@@ -23,7 +23,7 @@
 
 from typing import TYPE_CHECKING, List, Union
 
-from ansys.api.geometry.v0.commands_pb2 import ChamferRequest
+from ansys.api.geometry.v0.commands_pb2 import ChamferRequest, FilletRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
@@ -55,7 +55,7 @@ class GeometryCommands:
     def chamfer(
         self, selection: Union["Edge", List["Edge"], "Face", List["Face"]], distance: Real
     ) -> bool:
-        """Create a chamfer on an edge, or adjust the chamfer of a face.
+        """Create a chamfer on an edge or adjust the chamfer of a face.
 
         Parameters
         ----------
@@ -76,6 +76,36 @@ class GeometryCommands:
 
         result = self._commands_stub.Chamfer(
             ChamferRequest(ids=[ef._grpc_id for ef in selection], distance=distance)
+        )
+
+        return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def fillet(
+        self, selection: Union["Edge", List["Edge"], "Face", List["Face"]], radius: Real
+    ) -> bool:
+        """Create a fillet on an edge or adjust the fillet of a face.
+
+        Parameters
+        ----------
+        selection : Edge | list[Edge] | Face | list[Face]
+            One or more edges or faces to act on.
+        radius : Real
+            Fillet radius.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        selection: list[Edge | Face] = selection if isinstance(selection, list) else [selection]
+
+        for ef in selection:
+            ef.body._reset_tessellation_cache()
+
+        result = self._commands_stub.Fillet(
+            FilletRequest(ids=[ef.id for ef in selection], radius=radius)
         )
 
         return result.success
