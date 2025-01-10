@@ -132,6 +132,7 @@ class Modeler:
         self._repair_tools = RepairTools(self._grpc_client)
         self._prepare_tools = PrepareTools(self._grpc_client)
         self._geometry_commands = GeometryCommands(self._grpc_client)
+
         # Maintaining references to all designs within the modeler workspace
         self._designs: dict[str, "Design"] = {}
 
