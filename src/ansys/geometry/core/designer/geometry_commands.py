@@ -105,7 +105,7 @@ class GeometryCommands:
             ef.body._reset_tessellation_cache()
 
         result = self._commands_stub.Fillet(
-            FilletRequest(ids=[ef.id for ef in selection], radius=radius)
+            FilletRequest(ids=[ef._grpc_id for ef in selection], radius=radius)
         )
 
         return result.success
