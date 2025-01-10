@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -173,6 +173,10 @@ class Measurement(PhysicalQuantity):
 
         # Store the value
         self._value = self._base_units_magnitude(value)
+
+    def __repr__(self):
+        """Representation of the ``Measurement`` class."""
+        return f"{self.value}"
 
     @property
     def value(self) -> Quantity:

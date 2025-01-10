@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -48,14 +48,6 @@ def get_two_circle_intersections(
     r1 : Real
         Radius of the second circle.
 
-    Notes
-    -----
-    This function is based on the following StackOverflow post:
-    https://stackoverflow.com/questions/55816902/finding-the-intersection-of-two-circles
-
-    That post is based on the following implementation:
-    https://paulbourke.net/geometry/circlesphere/
-
     Returns
     -------
     tuple[tuple[Real, Real], tuple[Real, Real]] | None
@@ -63,6 +55,14 @@ def get_two_circle_intersections(
         The points are returned as ``((x3, y3), (x4, y4))``, where ``(x3, y3)`` and ``(x4, y4)``
         are the intersection points of the two circles. If the circles do not
         intersect, then ``None`` is returned.
+
+    Notes
+    -----
+    This function is based on the following StackOverflow post:
+    https://stackoverflow.com/questions/55816902/finding-the-intersection-of-two-circles
+
+    That post is based on the following implementation:
+    https://paulbourke.net/geometry/circlesphere/
     """
     # circle 1: (x0, y0), radius r0
     # circle 2: (x1, y1), radius r1

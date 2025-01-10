@@ -41,7 +41,7 @@ def get_wheelhouse_assets_dictionary():
     """Auxiliary method to build the wheelhouse assets dictionary."""
     assets_context_os = ["Linux", "Windows", "MacOS"]
     assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
-    assets_context_python_versions = ["3.10", "3.11", "3.12"]
+    assets_context_python_versions = ["3.10", "3.11", "3.12", "3.13"]
     if get_version_match(__version__) == "dev":
         # Try to retrieve the content three times before failing
         content = None
@@ -84,12 +84,6 @@ def get_wheelhouse_assets_dictionary():
 def intersphinx_pyansys_geometry(switcher_version: str):
     """Auxiliary method to build the intersphinx mapping for PyAnsys Geometry.
 
-    Notes
-    -----
-    If the objects.inv file is not found whenever it is a release, the method
-    will default to the "dev" version. If the objects.inv file is not found
-    for the "dev" version, the method will return an empty string.
-
     Parameters
     ----------
     switcher_version : str
@@ -99,6 +93,12 @@ def intersphinx_pyansys_geometry(switcher_version: str):
     -------
     str
         The intersphinx mapping for PyAnsys Geometry.
+
+    Notes
+    -----
+    If the objects.inv file is not found whenever it is a release, the method
+    will default to the "dev" version. If the objects.inv file is not found
+    for the "dev" version, the method will return an empty string.
     """
     prefix = "https://geometry.docs.pyansys.com/version"
 
@@ -135,7 +135,7 @@ html_context = {
     "doc_path": "doc/source",
 }
 html_theme_options = {
-    "header_links_before_dropdown": 7,
+    "header_links_before_dropdown": 4,
     "logo": "pyansys",
     "switcher": {
         "json_url": f"https://{cname}/versions.json",
@@ -196,7 +196,7 @@ extensions = [
 
 # Intersphinx mapping
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3.11", None),
+    "python": ("https://docs.python.org/3.13", None),
     "numpy": ("https://numpy.org/doc/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy", None),
     "pyvista": ("https://docs.pyvista.org", None),
@@ -230,11 +230,20 @@ numpydoc_validation_checks = {
     "GL10",  # reST directives {directives} must be followed by two colons
     "SS01",  # No summary found
     "SS02",  # Summary does not start with a capital letter
-    # "SS03", # Summary does not end with a period
+    "SS03",  # Summary does not end with a period
     "SS04",  # Summary contains heading whitespaces
     # "SS05", # Summary must start with infinitive verb, not third person
     "RT02",  # The first line of the Returns section should contain only the
     # type, unless multiple values are being returned"
+}
+
+# Ignoring numpydoc validation on built-in methods from Python
+numpydoc_validation_exclude = {
+    "add_note",
+    "isEnabledFor",
+    "validate",
+    "__cause__",
+    "__context__",
 }
 
 # static path
@@ -283,6 +292,7 @@ nbsphinx_thumbnails = {
     "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
     "examples/03_modeling/add_design_material": "_static/thumbnails/add_design_material.png",
     "examples/03_modeling/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
+    "examples/03_modeling/cut_operation_on_extrude": "_static/thumbnails/cut_operation_on_extrude.png",  # noqa: E501
     "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
     "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
     "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",

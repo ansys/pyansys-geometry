@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -22,7 +22,8 @@
 """Provides for managing components."""
 
 from enum import Enum, unique
-from typing import TYPE_CHECKING, Optional, Union
+from functools import cached_property
+from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
 from beartype import beartype as check_input_types
@@ -62,7 +63,7 @@ from ansys.geometry.core.connection.conversions import (
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
-from ansys.geometry.core.designer.body import Body, MasterBody
+from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
@@ -106,9 +107,10 @@ class ExtrusionDirection(Enum):
     @classmethod
     def from_string(cls, string: str, use_default_if_error: bool = False) -> "ExtrusionDirection":
         """Convert a string to an ``ExtrusionDirection`` enum."""
-        if string == "+":
+        lcase_string = string.lower()
+        if lcase_string in ("+", "p", "pos", "positive"):
             return cls.POSITIVE
-        elif string == "-":
+        elif lcase_string in ("-", "n", "neg", "negative"):
             return cls.NEGATIVE
         elif use_default_if_error:
             from ansys.geometry.core.logger import LOG
@@ -239,6 +241,11 @@ class Component:
 
         self._master_component.occurrences.append(self)
 
+    def _clear_cached_bodies(self) -> None:
+        """Clear the cached bodies."""
+        if "bodies" in self.__dict__:
+            del self.__dict__["bodies"]
+
     @property
     def id(self) -> str:
         """ID of the component."""
@@ -259,7 +266,7 @@ class Component:
         """List of ``Component`` objects inside of the component."""
         return self._components
 
-    @property
+    @cached_property
     def bodies(self) -> list[Body]:
         """List of ``Body`` objects inside of the component."""
         bodies = []
@@ -318,6 +325,20 @@ class Component:
             )
             self.components.append(new)
 
+    def get_all_bodies(self) -> list[Body]:
+        """Get all bodies in the component hierarchy.
+
+        Returns
+        -------
+        list[Body]
+            List of all bodies in the component hierarchy.
+        """
+        bodies = []
+        for comp in self.components:
+            bodies.extend(comp.get_all_bodies())
+        bodies.extend(self.bodies)
+        return bodies
+
     def get_world_transform(self) -> Matrix44:
         """Get the full transformation matrix of the component in world space.
 
@@ -341,11 +362,6 @@ class Component:
     ):
         """Apply a translation and/or rotation to the placement matrix.
 
-        Notes
-        -----
-        To reset a component's placement to an identity matrix, see
-        :func:`reset_placement()` or call :func:`modify_placement()` with no arguments.
-
         Parameters
         ----------
         translation : Vector3D, default: None
@@ -356,6 +372,11 @@ class Component:
             Direction of the axis to rotate the component about.
         rotation_angle : ~pint.Quantity | Angle | Real, default: 0
             Angle to rotate the component around the axis.
+
+        Notes
+        -----
+        To reset a component's placement to an identity matrix, see
+        :func:`reset_placement()` or call :func:`modify_placement()` with no arguments.
         """
         t = (
             Direction(x=translation.x, y=translation.y, z=translation.z)
@@ -462,12 +483,9 @@ class Component:
         sketch: Sketch,
         distance: Quantity | Distance | Real,
         direction: ExtrusionDirection | str = ExtrusionDirection.POSITIVE,
-    ) -> Body:
+        cut: bool = False,
+    ) -> Body | None:
         """Create a solid body by extruding the sketch profile a distance.
-
-        Notes
-        -----
-        The newly created body is placed under this component within the design assembly.
 
         Parameters
         ----------
@@ -481,11 +499,20 @@ class Component:
             Direction for extruding the solid body.
             The default is to extrude in the positive normal direction of the sketch.
             Options are "+" and "-" as a string, or the enum values.
+        cut : bool, default: False
+            Whether to cut the extrusion from the existing component.
+            By default, the extrusion is added to the existing component.
 
         Returns
         -------
         Body
             Extruded body from the given sketch.
+        None
+            If the cut parameter is ``True``, the function returns ``None``.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
@@ -509,7 +536,27 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        self._clear_cached_bodies()
+
+        created_body = Body(response.id, response.name, self, tb)
+        if not cut:
+            return created_body
+        else:
+            # If cut is True, subtract the created body from all existing bodies
+            # in the component...
+            for existing_body in self.get_all_bodies():
+                # Skip the created body
+                if existing_body.id == created_body.id:
+                    continue
+                # Check for collision
+                if existing_body.get_collision(created_body) != CollisionType.NONE:
+                    existing_body.subtract(created_body, keep_other=True)
+
+            # Finally, delete the created body
+            self.delete_body(created_body)
+
+            # And obviously return None... since no body is created
+            return None
 
     @min_backend_version(24, 2, 0)
     @protect_grpc
@@ -522,10 +569,6 @@ class Component:
         path: list[TrimmedCurve],
     ) -> Body:
         """Create a body by sweeping a planar profile along a path.
-
-        Notes
-        -----
-        The newly created body is placed under this component within the design assembly.
 
         Parameters
         ----------
@@ -540,6 +583,10 @@ class Component:
         -------
         Body
             Created body from the given sketch.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
         """
         # Convert each ``TrimmedCurve`` in path to equivalent gRPC type
         path_grpc = []
@@ -558,6 +605,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingProfile(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -572,10 +620,6 @@ class Component:
     ) -> Body:
         """Create a body by sweeping a chain of curves along a path.
 
-        Notes
-        -----
-        The newly created body is placed under this component within the design assembly.
-
         Parameters
         ----------
         name : str
@@ -589,6 +633,10 @@ class Component:
         -------
         Body
             Created body from the given sketch.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
         """
         # Convert each ``TrimmedCurve`` in path and chain to equivalent gRPC types
         path_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in path]
@@ -605,6 +653,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingChain(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -674,12 +723,6 @@ class Component:
 
         There are no modifications against the body containing the source face.
 
-        Notes
-        -----
-        The source face can be anywhere within the design component hierarchy.
-        Therefore, there is no validation requiring that the face is placed under the
-        target component where the body is to be created.
-
         Parameters
         ----------
         name : str
@@ -697,6 +740,12 @@ class Component:
         -------
         Body
             Extruded solid body.
+
+        Notes
+        -----
+        The source face can be anywhere within the design component hierarchy.
+        Therefore, there is no validation requiring that the face is placed under the
+        target component where the body is to be created.
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
@@ -720,6 +769,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -753,6 +803,7 @@ class Component:
         response = self._bodies_stub.CreateSphereBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -819,6 +870,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBodyFromLoftProfiles(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -856,6 +908,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -863,12 +916,6 @@ class Component:
     @ensure_design_is_active
     def create_surface_from_face(self, name: str, face: Face) -> Body:
         """Create a surface body based on a face.
-
-        Notes
-        -----
-        The source face can be anywhere within the design component hierarchy.
-        Therefore, there is no validation requiring that the face is placed under the
-        target component where the body is to be created.
 
         Parameters
         ----------
@@ -881,6 +928,12 @@ class Component:
         -------
         Body
             Surface body.
+
+        Notes
+        -----
+        The source face can be anywhere within the design component hierarchy.
+        Therefore, there is no validation requiring that the face is placed under the
+        target component where the body is to be created.
         """
         # Take the face source directly. No need to verify the source of the face.
         request = CreateBodyFromFaceRequest(
@@ -896,6 +949,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -904,11 +958,6 @@ class Component:
     @min_backend_version(25, 1, 0)
     def create_body_from_surface(self, name: str, trimmed_surface: TrimmedSurface) -> Body:
         """Create a surface body from a trimmed surface.
-
-        Notes
-        -----
-        It is possible to create a closed solid body (as opposed to an open surface body) with a
-        Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
 
         Parameters
         ----------
@@ -921,6 +970,11 @@ class Component:
         -------
         Body
             Surface body.
+
+        Notes
+        -----
+        It is possible to create a closed solid body (as opposed to an open surface body) with a
+        Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
         """
         surface = trimmed_surface_to_grpc_trimmed_surface(trimmed_surface)
         request = CreateSurfaceBodyRequest(
@@ -936,6 +990,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @check_input_types
@@ -968,11 +1023,6 @@ class Component:
     ) -> None:
         """Translate the bodies in a specified direction by a distance.
 
-        Notes
-        -----
-        If the body does not belong to this component (or its children), it
-        is not translated.
-
         Parameters
         ----------
         bodies: list[Body]
@@ -985,6 +1035,11 @@ class Component:
         Returns
         -------
         None
+
+        Notes
+        -----
+        If the body does not belong to this component (or its children), it
+        is not translated.
         """
         body_ids_found = []
 
@@ -1020,17 +1075,17 @@ class Component:
     ) -> list[Beam]:
         """Create beams under the component.
 
-        Notes
-        -----
-        The newly created beams synchronize to a design within a supporting
-        Geometry service instance.
-
         Parameters
         ----------
         segments : list[tuple[Point3D, Point3D]]
             list of start and end pairs, each specifying a single line segment.
         profile : BeamProfile
             Beam profile to use to create the beams.
+
+        Notes
+        -----
+        The newly created beams synchronize to a design within a supporting
+        Geometry service instance.
         """
         request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
 
@@ -1079,15 +1134,15 @@ class Component:
     def delete_component(self, component: Union["Component", str]) -> None:
         """Delete a component (itself or its children).
 
-        Notes
-        -----
-        If the component is not this component (or its children), it
-        is not deleted.
-
         Parameters
         ----------
         component : Component | str
             ID of the component or instance to delete.
+
+        Notes
+        -----
+        If the component is not this component (or its children), it
+        is not deleted.
         """
         id = component if isinstance(component, str) else component.id
         component_requested = self.search_component(id)
@@ -1114,15 +1169,15 @@ class Component:
     def delete_body(self, body: Body | str) -> None:
         """Delete a body belonging to this component (or its children).
 
-        Notes
-        -----
-        If the body does not belong to this component (or its children), it
-        is not deleted.
-
         Parameters
         ----------
         body : Body | str
             ID of the body or instance to delete.
+
+        Notes
+        -----
+        If the body does not belong to this component (or its children), it
+        is not deleted.
         """
         id = body if isinstance(body, str) else body.id
         body_requested = self.search_body(id)
@@ -1136,6 +1191,7 @@ class Component:
             # on the client side
             body_requested._is_alive = False
             self._grpc_client.log.debug(f"Body {body_requested.id} has been deleted.")
+            self._clear_cached_bodies()
         else:
             self._grpc_client.log.warning(
                 f"Body {id} is not found in this component (or subcomponents)."
@@ -1201,16 +1257,16 @@ class Component:
     def delete_beam(self, beam: Beam | str) -> None:
         """Delete an existing beam belonging to this component's scope.
 
+        Parameters
+        ----------
+        beam : Beam | str
+            ID of the beam or instance to delete.
+
         Notes
         -----
         If the beam belongs to this component's children, it is deleted.
         If the beam does not belong to this component (or its children), it
         is not deleted.
-
-        Parameters
-        ----------
-        beam : Beam | str
-            ID of the beam or instance to delete.
         """
         id = beam if isinstance(beam, str) else beam.id
         beam_requested = self.search_beam(id)
@@ -1267,11 +1323,6 @@ class Component:
     def search_body(self, id: str) -> Body | None:
         """Search bodies in the component's scope.
 
-        Notes
-        -----
-        This method searches for bodies in the component and nested components
-        recursively.
-
         Parameters
         ----------
         id : str
@@ -1281,6 +1332,11 @@ class Component:
         -------
         Body | None
             Body with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for bodies in the component and nested components
+        recursively.
         """
         # Search in component's bodies
         for body in self.bodies:
@@ -1301,11 +1357,6 @@ class Component:
     def search_beam(self, id: str) -> Beam | None:
         """Search beams in the component's scope.
 
-        Notes
-        -----
-        This method searches for beams in the component and nested components
-        recursively.
-
         Parameters
         ----------
         id : str
@@ -1315,6 +1366,11 @@ class Component:
         -------
         Beam | None
             Beam with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for beams in the component and nested components
+        recursively.
         """
         # Search in component's beams
         for beam in self.beams:
@@ -1394,8 +1450,9 @@ class Component:
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
+        allow_picking: bool | None = None,
         **plotting_options: dict | None,
-    ) -> None:
+    ) -> None | list[Any]:
         """Plot the component.
 
         Parameters
@@ -1419,8 +1476,16 @@ class Component:
             Whether to use the colors assigned to the body in the service. The default
             is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
             global setting is used.
+        allow_picking : bool, default: None
+            Whether to enable picking. The default is ``None``, in which case the
+            picker is not enabled.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
+
+        Returns
+        -------
+        None | list[Any]
+            If ``allow_picking=True``, a list of picked objects is returned. Otherwise, ``None``.
 
         Examples
         --------
@@ -1465,6 +1530,16 @@ class Component:
             if use_service_colors is not None
             else pyansys_geometry.USE_SERVICE_COLORS
         )
+        # If picking is enabled, we should not merge the component
+        if allow_picking:
+            # This blocks the user from selecting the component itself
+            # but honestly, who would want to select the component itself since
+            # you already have a reference to it? It is the object you are plotting!
+            self._grpc_client.log.info(
+                "Ignoring 'merge_component=True' (default behavior) as "
+                "'allow_picking=True' has been requested."
+            )
+            merge_component = False
 
         # Add merge_component and merge_bodies to the plotting options
         plotting_options["merge_component"] = merge_component
@@ -1479,9 +1554,13 @@ class Component:
                 "'multi_colors' or 'use_service_colors' are defined."
             )
 
-        pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
+        pl = GeometryPlotter(
+            use_trame=use_trame,
+            use_service_colors=use_service_colors,
+            allow_picking=allow_picking,
+        )
         pl.plot(self, **plotting_options)
-        pl.show(screenshot=screenshot, **plotting_options)
+        return pl.show(screenshot=screenshot, **plotting_options)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""

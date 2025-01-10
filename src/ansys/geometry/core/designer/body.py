@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -310,16 +310,16 @@ class IBody(ABC):
             Whether to project only one curve of the entire sketch. When
             ``True``, only one curve is projected.
 
+        Returns
+        -------
+        list[Face]
+            All faces from the project curves operation.
+
         Notes
         -----
         The ``only_one_curve`` parameter allows you to optimize the server call because
         projecting curves is an expensive operation. This reduces the workload on the
         server side.
-
-        Returns
-        -------
-        list[Face]
-            All faces from the project curves operation.
         """
         return
 
@@ -350,16 +350,16 @@ class IBody(ABC):
             Whether to project only one curve of the entire sketch. When
             ``True``, only one curve is projected.
 
+        Returns
+        -------
+        list[Face]
+            All imprinted faces from the operation.
+
         Notes
         -----
         The ``only_one_curve`` parameter allows you to optimize the server call because
         projecting curves is an expensive operation. This reduces the workload on the
         server side.
-
-        Returns
-        -------
-        list[Face]
-            All imprinted faces from the operation.
         """
         return
 
@@ -408,15 +408,15 @@ class IBody(ABC):
     def scale(self, value: Real) -> None:
         """Scale the geometry body by the given value.
 
-        Notes
-        -----
-        The calling object is directly modified when this method is called.
-        Thus, it is important to make copies if needed.
-
         Parameters
         ----------
         value: Real
             Value to scale the body by.
+
+        Notes
+        -----
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
         """
         return
 
@@ -424,15 +424,15 @@ class IBody(ABC):
     def map(self, frame: Frame) -> None:
         """Map the geometry body to the new specified frame.
 
-        Notes
-        -----
-        The calling object is directly modified when this method is called.
-        Thus, it is important to make copies if needed.
-
         Parameters
         ----------
         frame: Frame
             Structure defining the orientation of the body.
+
+        Notes
+        -----
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
         """
         return
 
@@ -440,15 +440,15 @@ class IBody(ABC):
     def mirror(self, plane: Plane) -> None:
         """Mirror the geometry body across the specified plane.
 
-        Notes
-        -----
-        The calling object is directly modified when this method is called.
-        Thus, it is important to make copies if needed.
-
         Parameters
         ----------
         plane: Plane
             Represents the mirror.
+
+        Notes
+        -----
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
         """
         return
 
@@ -601,13 +601,6 @@ class IBody(ABC):
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Intersect two (or more) bodies.
 
-        Notes
-        -----
-        The ``self`` parameter is directly modified with the result, and
-        the ``other`` parameter is consumed. Thus, it is important to make
-        copies if needed. If the ``keep_other`` parameter is set to ``True``,
-        the intersected body is retained.
-
         Parameters
         ----------
         other : Body
@@ -619,19 +612,19 @@ class IBody(ABC):
         ------
         ValueError
             If the bodies do not intersect.
-        """
-        return
-
-    @protect_grpc
-    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
-        """Subtract two (or more) bodies.
 
         Notes
         -----
         The ``self`` parameter is directly modified with the result, and
         the ``other`` parameter is consumed. Thus, it is important to make
         copies if needed. If the ``keep_other`` parameter is set to ``True``,
-        the subtracted body is retained.
+        the intersected body is retained.
+        """
+        return
+
+    @protect_grpc
+    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
+        """Subtract two (or more) bodies.
 
         Parameters
         ----------
@@ -644,6 +637,13 @@ class IBody(ABC):
         ------
         ValueError
             If the subtraction results in an empty (complete) subtraction.
+
+        Notes
+        -----
+        The ``self`` parameter is directly modified with the result, and
+        the ``other`` parameter is consumed. Thus, it is important to make
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the subtracted body is retained.
         """
         return
 
@@ -651,19 +651,19 @@ class IBody(ABC):
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Unite two (or more) bodies.
 
-        Notes
-        -----
-        The ``self`` parameter is directly modified with the result, and
-        the ``other`` parameter is consumed. Thus, it is important to make
-        copies if needed. If the ``keep_other`` parameter is set to ``True``,
-        the united body is retained.
-
         Parameters
         ----------
         other : Body
             Body to unite with the ``self`` parameter.
         keep_other : bool, default: False
             Whether to retain the united body or not.
+
+        Notes
+        -----
+        The ``self`` parameter is directly modified with the result, and
+        the ``other`` parameter is consumed. Thus, it is important to make
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the united body is retained.
         """
         return
 
@@ -1097,6 +1097,7 @@ class MasterBody(IBody):
             response.master_id, copy_name, self._grpc_client, is_surface=self.is_surface
         )
         parent._master_component.part.bodies.append(tb)
+        parent._clear_cached_bodies()
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
         return Body(body_id, response.name, parent, tb)
 

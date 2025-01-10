@@ -9,6 +9,105 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.7.6 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.6>`_ - 2024-11-19
+=====================================================================================
+
+Added
+^^^^^
+
+- allow for some additional extrusion direction names `#1534 <https://github.com/ansys/pyansys-geometry/pull/1534>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump ansys-sphinx-theme[autoapi] from 1.1.7 to 1.2.0 in the docs-deps group `#1520 <https://github.com/ansys/pyansys-geometry/pull/1520>`_
+- bump ansys-tools-visualization-interface from 0.4.7 to 0.5.0 `#1521 <https://github.com/ansys/pyansys-geometry/pull/1521>`_
+- bump numpy from 2.1.2 to 2.1.3 `#1522 <https://github.com/ansys/pyansys-geometry/pull/1522>`_
+- bump ansys-api-geometry from 0.4.13 to 0.4.14 `#1525 <https://github.com/ansys/pyansys-geometry/pull/1525>`_
+- bump ansys-api-geometry from 0.4.14 to 0.4.15 `#1529 <https://github.com/ansys/pyansys-geometry/pull/1529>`_
+- bump pint from 0.24.3 to 0.24.4 `#1530 <https://github.com/ansys/pyansys-geometry/pull/1530>`_
+- bump trame-vtk from 2.8.11 to 2.8.12 `#1531 <https://github.com/ansys/pyansys-geometry/pull/1531>`_
+- bump ansys-sphinx-theme[autoapi] from 1.2.0 to 1.2.1 in the docs-deps group `#1535 <https://github.com/ansys/pyansys-geometry/pull/1535>`_
+- bump panel from 1.5.3 to 1.5.4 `#1536 <https://github.com/ansys/pyansys-geometry/pull/1536>`_
+- bump ansys-tools-path from 0.6.0 to 0.7.0 `#1537 <https://github.com/ansys/pyansys-geometry/pull/1537>`_
+- bump ansys-api-geometry from 0.4.15 to 0.4.16 `#1538 <https://github.com/ansys/pyansys-geometry/pull/1538>`_
+- limit upper version on grpcio & grpcio-health-checking to 1.68 `#1544 <https://github.com/ansys/pyansys-geometry/pull/1544>`_
+
+
+Documentation
+^^^^^^^^^^^^^
+
+- typo with the docstrings `#1524 <https://github.com/ansys/pyansys-geometry/pull/1524>`_
+- change max header links before more dropdown `#1527 <https://github.com/ansys/pyansys-geometry/pull/1527>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- update CHANGELOG for v0.7.5 `#1519 <https://github.com/ansys/pyansys-geometry/pull/1519>`_
+- pre-commit automatic update `#1523 <https://github.com/ansys/pyansys-geometry/pull/1523>`_, `#1532 <https://github.com/ansys/pyansys-geometry/pull/1532>`_, `#1543 <https://github.com/ansys/pyansys-geometry/pull/1543>`_
+- bump codecov/codecov-action from 4 to 5 in the actions group `#1541 <https://github.com/ansys/pyansys-geometry/pull/1541>`_
+
+`0.7.5 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.5>`_ - 2024-10-31
+=====================================================================================
+
+Added
+^^^^^
+
+- create body from surface `#1454 <https://github.com/ansys/pyansys-geometry/pull/1454>`_
+- performance enhancements to plotter `#1496 <https://github.com/ansys/pyansys-geometry/pull/1496>`_
+- allow picking from easy access methods `#1499 <https://github.com/ansys/pyansys-geometry/pull/1499>`_
+- implement cut operation in extrude sketch `#1510 <https://github.com/ansys/pyansys-geometry/pull/1510>`_
+- caching bodies to avoid unnecessary object creation `#1513 <https://github.com/ansys/pyansys-geometry/pull/1513>`_
+- enable retrieval of service logs (via API) `#1515 <https://github.com/ansys/pyansys-geometry/pull/1515>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump sphinx from 8.1.0 to 8.1.3 in the docs-deps group `#1479 <https://github.com/ansys/pyansys-geometry/pull/1479>`_
+- bump ansys-sphinx-theme[autoapi] from 1.1.4 to 1.1.5 in the docs-deps group `#1482 <https://github.com/ansys/pyansys-geometry/pull/1482>`_
+- bump the grpc-deps group across 1 directory with 3 updates `#1487 <https://github.com/ansys/pyansys-geometry/pull/1487>`_
+- bump ansys-sphinx-theme[autoapi] from 1.1.5 to 1.1.6 in the docs-deps group `#1493 <https://github.com/ansys/pyansys-geometry/pull/1493>`_
+- bump trame-vtk from 2.8.10 to 2.8.11 `#1494 <https://github.com/ansys/pyansys-geometry/pull/1494>`_
+- bump ansys-api-geometry from 0.4.11 to 0.4.12 `#1502 <https://github.com/ansys/pyansys-geometry/pull/1502>`_
+- bump protobuf from 5.28.2 to 5.28.3 in the grpc-deps group `#1505 <https://github.com/ansys/pyansys-geometry/pull/1505>`_
+- bump ansys-sphinx-theme[autoapi] from 1.1.6 to 1.1.7 in the docs-deps group `#1506 <https://github.com/ansys/pyansys-geometry/pull/1506>`_
+- bump ansys-tools-visualization-interface from 0.4.6 to 0.4.7 `#1507 <https://github.com/ansys/pyansys-geometry/pull/1507>`_
+- bump panel from 1.5.2 to 1.5.3 `#1508 <https://github.com/ansys/pyansys-geometry/pull/1508>`_
+- bump ansys-api-geometry from 0.4.12 to 0.4.13 `#1512 <https://github.com/ansys/pyansys-geometry/pull/1512>`_
+- bump the grpc-deps group with 2 updates `#1517 <https://github.com/ansys/pyansys-geometry/pull/1517>`_
+- bump pytest-cov from 5.0.0 to 6.0.0 `#1518 <https://github.com/ansys/pyansys-geometry/pull/1518>`_
+
+
+Documentation
+^^^^^^^^^^^^^
+
+- avoid having a drop down in the top navigation bar `#1485 <https://github.com/ansys/pyansys-geometry/pull/1485>`_
+- provide information on how to build a single example `#1490 <https://github.com/ansys/pyansys-geometry/pull/1490>`_
+- add example file to download in the test `#1501 <https://github.com/ansys/pyansys-geometry/pull/1501>`_
+- revisit examples to make sure they are properly styled `#1509 <https://github.com/ansys/pyansys-geometry/pull/1509>`_
+- align landing page layout with UI/UX requirements `#1511 <https://github.com/ansys/pyansys-geometry/pull/1511>`_
+
+
+Fixed
+^^^^^
+
+- static search options `#1478 <https://github.com/ansys/pyansys-geometry/pull/1478>`_
+- respect product_version when launching geometry service `#1486 <https://github.com/ansys/pyansys-geometry/pull/1486>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- update CHANGELOG for v0.7.4 `#1476 <https://github.com/ansys/pyansys-geometry/pull/1476>`_
+- pre-commit automatic update `#1480 <https://github.com/ansys/pyansys-geometry/pull/1480>`_, `#1516 <https://github.com/ansys/pyansys-geometry/pull/1516>`_
+- avoid linkcheck on changelog (unnecessary) `#1489 <https://github.com/ansys/pyansys-geometry/pull/1489>`_
+- update CONTRIBUTORS `#1492 <https://github.com/ansys/pyansys-geometry/pull/1492>`_
+- allowing new tags for Windows Core Service `#1497 <https://github.com/ansys/pyansys-geometry/pull/1497>`_
+- simplify vulnerabilities check `#1504 <https://github.com/ansys/pyansys-geometry/pull/1504>`_
+
 `0.7.4 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.7.4>`_ - 2024-10-11
 =====================================================================================
 

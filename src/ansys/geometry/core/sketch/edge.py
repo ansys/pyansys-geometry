@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -67,15 +67,15 @@ class SketchEdge:
     def plane_change(self, plane: "Plane") -> None:
         """Redefine the plane containing ``SketchEdge`` objects.
 
+        Parameters
+        ----------
+        plane : Plane
+            Desired new plane that is to contain the sketched edge.
+
         Notes
         -----
         This implies that their 3D definition might suffer changes. By default, this
         metho does nothing. It is required to be implemented in child ``SketchEdge``
         classes.
-
-        Parameters
-        ----------
-        plane : Plane
-            Desired new plane that is to contain the sketched edge.
         """
         pass

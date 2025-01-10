@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides for creating and managing a cylinder."""
+"""Provides for creating and managing a plane."""
 
 from functools import cached_property
 
@@ -73,22 +73,22 @@ class PlaneSurface(Surface):
 
     @property
     def origin(self) -> Point3D:
-        """Origin of the cylinder."""
+        """Origin of the plane."""
         return self._origin
 
     @property
     def dir_x(self) -> UnitVector3D:
-        """X-direction of the cylinder."""
+        """X-direction of the plane."""
         return self._reference
 
     @property
     def dir_y(self) -> UnitVector3D:
-        """Y-direction of the cylinder."""
+        """Y-direction of the plane."""
         return self.dir_z.cross(self.dir_x)
 
     @property
     def dir_z(self) -> UnitVector3D:
-        """Z-direction of the cylinder."""
+        """Z-direction of the plane."""
         return self._axis
 
     @check_input_types
