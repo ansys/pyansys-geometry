@@ -91,7 +91,7 @@ output list is sorted according to the picking order.
 pl = GeometryPlotter(allow_picking=True)
 pl.plot(design.bodies)
 pl.show()
-bodies: List[Body] = GeometryPlotter(allow_picking=True).show(design.bodies)
+bodies: list[Body] = GeometryPlotter(allow_picking=True).show(design.bodies)
 ```
 
 Otherwise, you can select bodies from the design directly.

@@ -43,7 +43,7 @@ import numpy as np
 
 from ansys.geometry.core.math import Point2D
 
-def naca_airfoil_4digits(number: Union[int, str], n_points: int = 200) -> List[Point2D]:
+def naca_airfoil_4digits(number: Union[int, str], n_points: int = 200) -> list[Point2D]:
     """
     Generate a NACA 4-digits airfoil.
 
@@ -58,7 +58,7 @@ def naca_airfoil_4digits(number: Union[int, str], n_points: int = 200) -> List[P
 
     Returns
     -------
-    List[Point2D]
+    list[Point2D]
         List of points that define the airfoil.
     """
     # Check if the number is a string
