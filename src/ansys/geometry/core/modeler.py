@@ -127,12 +127,11 @@ class Modeler:
             LOG.warning("Linux backend does not support measurement tools.")
         else:
             self._measurement_tools = MeasurementTools(self._grpc_client)
-        self._geometry_commands = GeometryCommands(self._grpc_client)
 
-        # Enabling tools for all: repair and prepare tools
+        # Enabling tools/commands for all: repair and prepare tools, geometry commands
         self._repair_tools = RepairTools(self._grpc_client)
         self._prepare_tools = PrepareTools(self._grpc_client)
-
+        self._geometry_commands = GeometryCommands(self._grpc_client)
         # Maintaining references to all designs within the modeler workspace
         self._designs: dict[str, "Design"] = {}
 
