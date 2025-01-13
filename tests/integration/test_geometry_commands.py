@@ -65,7 +65,7 @@ def test_chamfer(modeler: Modeler):
 
 def test_fillet(modeler: Modeler):
     """Test fillet on edge and face."""
-    design = modeler.create_design("chamfer")
+    design = modeler.create_design("fillet")
 
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     assert len(body.faces) == 6

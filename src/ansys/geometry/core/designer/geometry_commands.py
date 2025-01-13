@@ -73,7 +73,13 @@ class GeometryCommands:
         bool
             ``True`` when successful, ``False`` when failed.
         """
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
         selection: list[Edge | Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, (Edge, Face))
+        check_is_float_int(distance, "distance")
 
         for ef in selection:
             ef.body._reset_tessellation_cache()
@@ -103,6 +109,9 @@ class GeometryCommands:
         bool
             ``True`` when successful, ``False`` when failed.
         """
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
         selection: list[Edge | Face] = selection if isinstance(selection, list) else [selection]
 
         check_type_all_elements_in_iterable(selection, (Edge, Face))
