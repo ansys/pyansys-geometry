@@ -23,7 +23,7 @@
 
 from typing import TYPE_CHECKING, List, Union
 
-from ansys.api.geometry.v0.commands_pb2 import ChamferRequest, FilletRequest
+from ansys.api.geometry.v0.commands_pb2 import ChamferRequest, FilletRequest, FullFilletRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
@@ -122,6 +122,34 @@ class GeometryCommands:
 
         result = self._commands_stub.Fillet(
             FilletRequest(ids=[ef._grpc_id for ef in selection], radius=radius)
+        )
+
+        return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def full_fillet(self, faces: List["Face"]) -> bool:
+        """Create a full fillet betweens a collection of faces.
+
+        Parameters
+        ----------
+        faces : List[Face]
+            Faces to round.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        check_type_all_elements_in_iterable(faces, Face)
+
+        for face in faces:
+            face.body._reset_tessellation_cache()
+
+        result = self._commands_stub.FullFillet(
+            FullFilletRequest(faces=[face._grpc_id for face in faces])
         )
 
         return result.success

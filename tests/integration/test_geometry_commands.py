@@ -112,3 +112,20 @@ def test_fillet(modeler: Modeler):
     assert body2.volume.m == pytest.approx(
         Quantity(0.9937293491873294, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_full_fillet(modeler: Modeler):
+    """Test full fillet on faces."""
+    design = modeler.create_design("full_fillet")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+    assert len(body.edges) == 12
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    modeler.geometry_commands.full_fillet(body.faces[0:3])
+    assert len(body.faces) == 6
+    assert len(body.edges) == 12
+    assert body.volume.m == pytest.approx(
+        Quantity(0.8926990816987, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
