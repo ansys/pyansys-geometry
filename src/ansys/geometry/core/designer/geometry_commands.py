@@ -27,7 +27,11 @@ from ansys.api.geometry.v0.commands_pb2 import ChamferRequest, FilletRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.checks import min_backend_version
+from ansys.geometry.core.misc.checks import (
+    check_is_float_int,
+    check_type_all_elements_in_iterable,
+    min_backend_version,
+)
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -100,6 +104,9 @@ class GeometryCommands:
             ``True`` when successful, ``False`` when failed.
         """
         selection: list[Edge | Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, (Edge, Face))
+        check_is_float_int(radius, "radius")
 
         for ef in selection:
             ef.body._reset_tessellation_cache()
