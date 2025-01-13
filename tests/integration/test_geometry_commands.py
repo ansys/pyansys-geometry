@@ -25,6 +25,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode
+from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
@@ -167,3 +168,39 @@ def test_extrude_faces_and_offset_relationships(modeler: Modeler):
         body.faces[1], 0.5, None, ExtrudeType.ADD, OffsetMode.MOVE_FACES_APART, False, False, False
     )
     assert body.volume.m == pytest.approx(Quantity(2, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+
+def test_extrude_faces_up_to(modeler: Modeler):
+    """Test extrude faces up to."""
+    design = modeler.create_design("extrude_faces_up_to")
+    up_to = design.extrude_sketch("up_to", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    up_to.translate(UnitVector3D([0, 0, 1]), 4)
+    assert up_to.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # extrude up to other block's face, force independent or else they would merge into one body
+    bodies = modeler.geometry_commands.extrude_faces_up_to(
+        body.faces[1],
+        up_to.faces[0],
+        Point3D([0, 0, 0]),
+        UnitVector3D([0, 0, 1]),
+        ExtrudeType.FORCE_INDEPENDENT,
+        OffsetMode.IGNORE_RELATIONSHIPS,
+    )
+    assert len(bodies) == 0
+    assert len(design.bodies) == 2
+    assert body.volume.m == pytest.approx(Quantity(4, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    body.parent_component.delete_body(body)
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # extrude up to other block's edge, add so they merge into one body
+    bodies = modeler.geometry_commands.extrude_faces_up_to(
+        body.faces[1], up_to.edges[0], Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), ExtrudeType.ADD
+    )
+    assert len(bodies) == 0
+    assert len(design.bodies) == 1
+    assert body.volume.m == pytest.approx(Quantity(5, UNITS.m**3).m, rel=1e-6, abs=1e-8)

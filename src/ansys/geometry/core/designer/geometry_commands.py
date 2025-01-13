@@ -27,14 +27,18 @@ from typing import TYPE_CHECKING, List, Union
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
     ExtrudeFacesRequest,
+    ExtrudeFacesUpToRequest,
     FilletRequest,
     FullFilletRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.connection.conversions import unit_vector_to_grpc_direction
+from ansys.geometry.core.connection.conversions import (
+    point3d_to_grpc_point,
+    unit_vector_to_grpc_direction,
+)
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import UnitVector3D
+from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc.auxiliary import get_bodies_from_ids, get_design_from_face
 from ansys.geometry.core.misc.checks import (
     check_is_float_int,
@@ -253,9 +257,82 @@ class GeometryCommands:
 
         if result.success:
             bodies_ids = [created_body.id for created_body in result.created_bodies]
-            if len(bodies_ids) >= 0:
-                design._update_design_inplace()
+            design._update_design_inplace()
             return get_bodies_from_ids(design, bodies_ids)
         else:
-            self._grpc_client.log.info("Failed to extrude faces...")
+            self._grpc_client.log.info("Failed to extrude faces.")
+            return []
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def extrude_faces_up_to(
+        self,
+        faces: Union["Face", List["Face"]],
+        up_to_selection: Union["Face", "Edge", "Body"],
+        seed_point: Point3D,
+        direction: UnitVector3D,
+        extrude_type: ExtrudeType = ExtrudeType.ADD,
+        offset_mode: OffsetMode = OffsetMode.MOVE_FACES_TOGETHER,
+        pull_symmetric: bool = False,
+        copy: bool = False,
+        force_do_as_extrude: bool = False,
+    ) -> List["Body"]:
+        """Extrude a selection of faces up to another object.
+
+        Parameters
+        ----------
+        faces : Face | List[Face]
+            Faces to extrude.
+        up_to_selection : Face | Edge | Body
+            The object to pull the faces up to.
+        seed_point : Point3D
+            Origin to define the extrusion.
+        direction : UnitVector3D, default: None
+            Direction of extrusion. If no direction is provided, it will be inferred.
+        extrude_type : ExtrudeType, default: ExtrudeType.ADD
+            Type of extrusion to be performed.
+        offset_mode : OffsetMode, default: OffsetMode.MOVE_FACES_TOGETHER
+            Mode of how to handle offset relationships.
+        pull_symmetric : bool, default: False
+            Pull symmetrically on both sides if ``True``.
+        copy : bool, default: False
+            Copy the face and move it instead of extruding the original face if ``True``.
+        force_do_as_extrude : bool, default: False
+            Forces to do as an extrusion if ``True``, if ``False`` allows extrusion by offset.
+
+        Returns
+        -------
+        List[Body]
+            Bodies created by the extrusion if any.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        faces: list[Face] = faces if isinstance(faces, list) else [faces]
+        check_type_all_elements_in_iterable(faces, Face)
+
+        for face in faces:
+            face.body._reset_tessellation_cache()
+
+        result = self._commands_stub.ExtrudeFacesUpTo(
+            ExtrudeFacesUpToRequest(
+                faces=[face._grpc_id for face in faces],
+                up_to_selection=up_to_selection._grpc_id,
+                seed_point=point3d_to_grpc_point(seed_point),
+                direction=unit_vector_to_grpc_direction(direction),
+                extrude_type=extrude_type.value,
+                pull_symmetric=pull_symmetric,
+                offset_mode=offset_mode.value,
+                copy=copy,
+                force_do_as_extrude=force_do_as_extrude,
+            )
+        )
+
+        design = get_design_from_face(faces[0])
+
+        if result.success:
+            bodies_ids = [created_body.id for created_body in result.created_bodies]
+            design._update_design_inplace()
+            return get_bodies_from_ids(design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to extrude faces.")
             return []
