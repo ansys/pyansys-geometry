@@ -21,12 +21,21 @@
 # SOFTWARE.
 """Provides tools for pulling geometry."""
 
+from enum import Enum, unique
 from typing import TYPE_CHECKING, List, Union
 
-from ansys.api.geometry.v0.commands_pb2 import ChamferRequest, FilletRequest, FullFilletRequest
+from ansys.api.geometry.v0.commands_pb2 import (
+    ChamferRequest,
+    ExtrudeFacesRequest,
+    FilletRequest,
+    FullFilletRequest,
+)
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.conversions import unit_vector_to_grpc_direction
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.math import UnitVector3D
+from ansys.geometry.core.misc.auxiliary import get_bodies_from_ids, get_design_from_face
 from ansys.geometry.core.misc.checks import (
     check_is_float_int,
     check_type_all_elements_in_iterable,
@@ -35,8 +44,31 @@ from ansys.geometry.core.misc.checks import (
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+
+
+@unique
+class ExtrudeType(Enum):
+    """Provides values for extrusion types."""
+
+    NONE = 0
+    ADD = 1
+    CUT = 2
+    FORCE_ADD = 3
+    FORCE_CUT = 4
+    FORCE_INDEPENDENT = 5
+    FORCE_NEW_SURFACE = 6
+
+
+@unique
+class OffsetMode(Enum):
+    """Provides values for offset modes during extrusions."""
+
+    IGNORE_RELATIONSHIPS = 0
+    MOVE_FACES_TOGETHER = 1
+    MOVE_FACES_APART = 2
 
 
 class GeometryCommands:
@@ -57,7 +89,9 @@ class GeometryCommands:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def chamfer(
-        self, selection: Union["Edge", List["Edge"], "Face", List["Face"]], distance: Real
+        self,
+        selection: Union["Edge", List["Edge"], "Face", List["Face"]],
+        distance: Real,
     ) -> bool:
         """Create a chamfer on an edge or adjust the chamfer of a face.
 
@@ -153,3 +187,75 @@ class GeometryCommands:
         )
 
         return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def extrude_faces(
+        self,
+        faces: Union["Face", List["Face"]],
+        distance: Real,
+        direction: UnitVector3D = None,
+        extrude_type: ExtrudeType = ExtrudeType.ADD,
+        offset_mode: OffsetMode = OffsetMode.MOVE_FACES_TOGETHER,
+        pull_symmetric: bool = False,
+        copy: bool = False,
+        force_do_as_extrude: bool = False,
+    ) -> List["Body"]:
+        """Extrude a selection of faces.
+
+        Parameters
+        ----------
+        faces : Face | List[Face]
+            Faces to extrude.
+        distance : Real
+            Distance to extrude.
+        direction : UnitVector3D, default: None
+            Direction of extrusion. If no direction is provided, it will be inferred.
+        extrude_type : ExtrudeType, default: ExtrudeType.ADD
+            Type of extrusion to be performed.
+        offset_mode : OffsetMode, default: OffsetMode.MOVE_FACES_TOGETHER
+            Mode of how to handle offset relationships.
+        pull_symmetric : bool, default: False
+            Pull symmetrically on both sides if ``True``.
+        copy : bool, default: False
+            Copy the face and move it instead of extruding the original face if ``True``.
+        force_do_as_extrude : bool, default: False
+            Forces to do as an extrusion if ``True``, if ``False`` allows extrusion by offset.
+
+        Returns
+        -------
+        List[Body]
+            Bodies created by the extrusion if any.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        faces: list[Face] = faces if isinstance(faces, list) else [faces]
+        check_type_all_elements_in_iterable(faces, Face)
+        check_is_float_int(distance, "distance")
+
+        for face in faces:
+            face.body._reset_tessellation_cache()
+
+        result = self._commands_stub.ExtrudeFaces(
+            ExtrudeFacesRequest(
+                faces=[face._grpc_id for face in faces],
+                distance=distance,
+                direction=None if direction is None else unit_vector_to_grpc_direction(direction),
+                extrude_type=extrude_type.value,
+                pull_symmetric=pull_symmetric,
+                offset_mode=offset_mode.value,
+                copy=copy,
+                force_do_as_extrude=force_do_as_extrude,
+            )
+        )
+
+        design = get_design_from_face(faces[0])
+
+        if result.success:
+            bodies_ids = [created_body.id for created_body in result.created_bodies]
+            if len(bodies_ids) >= 0:
+                design._update_design_inplace()
+            return get_bodies_from_ids(design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to extrude faces...")
+            return []

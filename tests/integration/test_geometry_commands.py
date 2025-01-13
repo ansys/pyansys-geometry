@@ -24,6 +24,7 @@
 from pint import Quantity
 import pytest
 
+from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
@@ -129,3 +130,40 @@ def test_full_fillet(modeler: Modeler):
     assert body.volume.m == pytest.approx(
         Quantity(0.8926990816987, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_extrude_faces_and_offset_relationships(modeler: Modeler):
+    """Test extrude faces and offset relationships."""
+    design = modeler.create_design("extrude_faces")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # extrude out, double volume
+    modeler.geometry_commands.extrude_faces(body.faces[1], 1)
+    assert body.volume.m == pytest.approx(Quantity(2, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # extrude in, cut in half
+    modeler.geometry_commands.extrude_faces(
+        body.faces[1],
+        -1,
+        None,
+        ExtrudeType.FORCE_CUT,
+        OffsetMode.IGNORE_RELATIONSHIPS,
+        False,
+        False,
+        True,
+    )
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # setup offset relationship, faces will move together, volume won't change
+    body.faces[0].setup_offset_relationship(body.faces[1], True)
+    modeler.geometry_commands.extrude_faces(
+        body.faces[1], 1, None, ExtrudeType.ADD, OffsetMode.MOVE_FACES_TOGETHER, False, False, False
+    )
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # move apart, volume should double
+    modeler.geometry_commands.extrude_faces(
+        body.faces[1], 0.5, None, ExtrudeType.ADD, OffsetMode.MOVE_FACES_APART, False, False, False
+    )
+    assert body.volume.m == pytest.approx(Quantity(2, UNITS.m**3).m, rel=1e-6, abs=1e-8)
