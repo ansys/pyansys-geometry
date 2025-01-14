@@ -65,6 +65,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.math import Plane
 
 
 @unique
@@ -842,3 +843,50 @@ class GeometryCommands:
         )
 
         return result.result.success
+        
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def split_body(self, 
+        bodies: List["Body"],
+        plane: Plane,
+        slicers: Union["Edge", List["Edge"], "Face", List["Face"]],
+        faces: List["Face"],
+        extendfaces: bool) -> bool:
+        """Split bodies with a plane, slicers, or faces.
+        
+        Parameters
+        ----------
+        bodies : List[Body]
+            Bodies to split
+        plane : Plane
+            Plane to split with
+        slicers : Edge | list[Edge] | Face | list[Face]
+            Slicers to split with
+        faces : List[Face]
+            Faces to split with
+        extendFaces : bool
+            Extend faces if split with faces
+        
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.body import Body
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+        
+        check_type_all_elements_in_iterable(bodies, Body)
+        check_type_all_elements_in_iterable(slicers, (Edge, Face))
+        check_type_all_elements_in_iterable(faces, Face)
+        
+        for body in bodies:
+            body._reset_tessellation_cache()
+            
+        result = self._commands_stub.Split(bodies=[body._grpc_id for body in bodies],
+                                           plane=plane._grpc,
+                                           slicers=[slicer._grpc_id for slicer in slicers],
+                                           faces=[face._grpc_id for face in faces],
+                                           extendFaces=extendfaces)
+        
+        return result.success
