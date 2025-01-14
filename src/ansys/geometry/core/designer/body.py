@@ -1207,14 +1207,22 @@ class Body(IBody):
 
         @wraps(func)
         def wrapper(self: "Body", *args, **kwargs):
-            self._template._tessellation = None
+            self._reset_tessellation_cache()
             return func(self, *args, **kwargs)
 
         return wrapper
 
+    def _reset_tessellation_cache(self):  # noqa: N805
+        """Reset the cached tessellation for a body."""
+        self._template._tessellation = None
+
     @property
     def id(self) -> str:  # noqa: D102
         return self._id
+
+    @property
+    def _grpc_id(self) -> EntityIdentifier:
+        return EntityIdentifier(id=self._id)
 
     @property
     def name(self) -> str:  # noqa: D102
