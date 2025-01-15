@@ -19,8 +19,8 @@ WORKDIR /app
 COPY windows-dms-binaries.zip .
 RUN mkdir tmp_folder && \
     tar -xf windows-dms-binaries.zip -C tmp_folder && \
-    xcopy tmp_folder\DockerWindows\bin\x64\Release_Headless\net472\* . /e /i /h && \
-    xcopy tmp_folder\DockerWindows\* . && \
+    xcopy tmp_folder\bin\x64\Release_Headless\net472\* . /e /i /h && \
+    xcopy tmp_folder\* . && \
     del windows-dms-binaries.zip && \
     rmdir /s /q tmp_folder
 

@@ -772,7 +772,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f linux/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
+          docker build -f linux/coreservice/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
 
       - name: Launch Geometry service
         run: |
