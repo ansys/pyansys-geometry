@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "ansys-geometry-core"
-version = "0.8.dev0"
+version = "0.8.0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
 requires-python = ">=3.10,<4"
@@ -173,6 +173,7 @@ addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml
 testpaths = ["tests"]
 
 [tool.towncrier]
+package = "ansys.geometry.core"
 directory = "doc/changelog.d"
 filename = "doc/source/changelog.rst"
 template = "doc/changelog.d/changelog_template.jinja"
