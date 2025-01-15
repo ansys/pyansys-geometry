@@ -528,7 +528,7 @@ class InterferenceProblemAreas(ProblemArea):
 
         from ansys.geometry.core.designer.body import Body
 
-        # Verify that all elements in the list are of type Face
+        # Verify that all elements in the list are of type Body
         check_type_all_elements_in_iterable(bodies, Body)
 
         self._bodies = bodies
