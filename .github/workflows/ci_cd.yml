@@ -659,8 +659,10 @@ jobs:
       matrix:
         include:
           - mode: "dms"
+            docker-file: "windows-dms-dockerfile.zip"
             zip-file: "windows-dms-binaries.zip"
           - mode: "coreservice"
+            docker-file: "windows-core-dockerfile.zip"
             zip-file: "windows-core-binaries.zip"
     steps:
       - name: Checkout repository
@@ -720,8 +722,8 @@ jobs:
       - name: Upload Windows Dockerfile
         uses: actions/upload-artifact@v4
         with:
-          name: windows-${{ matrix.mode }}-dockerfile.zip
-          path: windows-${{ matrix.mode }}-dockerfile.zip
+          name: ${{ matrix.docker-file }}
+          path: ${{ matrix.docker-file }}
           retention-days: 7
 
       - name: Stop the Geometry service
@@ -772,7 +774,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f linux/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
+          docker build -f linux/coreservice/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
 
       - name: Launch Geometry service
         run: |
