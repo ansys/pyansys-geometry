@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -499,7 +499,7 @@ class Logger:
             Logger class.
         """
         name = self.logger.name + "." + suffix
-        self._instances[name] = self._make_child_logger(self, name, level)
+        self._instances[name] = self._make_child_logger(name, level)
         return self._instances[name]
 
     def add_instance_logger(

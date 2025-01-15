@@ -50,7 +50,7 @@ These examples demonstrate service-based modeling operations.
     examples/03_modeling/service_colors.mystnb
     examples/03_modeling/surface_bodies.mystnb
     examples/03_modeling/design_parameters.mystnb
-
+    examples/03_modeling/chamfer.mystnb
 
 Applied examples
 ----------------

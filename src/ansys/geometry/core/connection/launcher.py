@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -75,6 +75,7 @@ def launch_modeler(mode: str = None, **kwargs: dict | None) -> "Modeler":
         * For ``"docker"`` mode, see the :func:`launch_docker_modeler` method.
         * For ``"geometry_service"`` mode, see the
           :func:`launch_modeler_with_geometry_service` method.
+        * For ``"core_service"`` mode, see the :func:`launch_modeler_with_core_service` method.
         * For ``"spaceclaim"`` mode, see the :func:`launch_modeler_with_spaceclaim` method.
         * For ``"discovery"`` mode, see the :func:`launch_modeler_with_discovery` method.
 
@@ -108,6 +109,8 @@ def _launch_with_launchmode(mode: str, **kwargs: dict | None) -> "Modeler":
         * ``"docker"``: Launches the ``Modeler`` service locally using Docker.
         * ``"geometry_service"``: Launches the ``Modeler`` service locally using the
           Ansys Geometry Service.
+        * ``"core_service"``: Launches the ``Modeler`` service locally using the
+          Ansys Geometry Core Service.
         * ``"spaceclaim"``: Launches the ``Modeler`` service locally using Ansys SpaceClaim.
         * ``"discovery"``: Launches the ``Modeler`` service locally using Ansys Discovery.
 
@@ -132,6 +135,8 @@ def _launch_with_launchmode(mode: str, **kwargs: dict | None) -> "Modeler":
         return launch_remote_modeler(**kwargs)
     elif mode == "docker":
         return launch_docker_modeler(**kwargs)
+    elif mode == "core_service":
+        return launch_modeler_with_core_service(**kwargs)
     elif mode == "geometry_service":
         return launch_modeler_with_geometry_service(**kwargs)
     elif mode == "spaceclaim":
@@ -167,8 +172,9 @@ def _launch_with_automatic_detection(**kwargs: dict | None) -> "Modeler":
     #
     # 1. Check if PyPIM is configured and if the environment is configured for it.
     # 2. Check if Docker is installed and if the environment is configured for it.
-    # 3. If you are on a Windows machine:
-    #     - check if the Ansys Geometry service is installed.
+    # 3. Check if the Ansys Geometry Core service is installed. (OS agnostic)
+    # 4. If you are on a Windows machine:
+    #     - check if the Ansys Geometry DMS service is installed.
     #     - check if Ansys SpaceClaim is installed.
     #     - check if Ansys Discovery is installed.
 
@@ -189,15 +195,23 @@ def _launch_with_automatic_detection(**kwargs: dict | None) -> "Modeler":
             " Trying to start the Geometry service locally."
         )
 
+    try:
+        LOG.info("Starting Geometry Core service locally.")
+        return launch_modeler_with_core_service(**kwargs)
+    except Exception:
+        wrn_msg = "The Geometry Core service could not be started locally."
+        wrn_msg += " Trying to start the Geometry DMS service locally." if os.name == "nt" else ""
+        LOG.warning(wrn_msg)
+
     # If we are on a Windows machine, we can try to start the Geometry service locally,
     # through various methods: Geometry service, SpaceClaim, Discovery.
     if os.name == "nt":
         try:
-            LOG.info("Starting Geometry service locally.")
+            LOG.info("Starting Geometry DMS service locally.")
             return launch_modeler_with_geometry_service(**kwargs)
         except Exception:
             LOG.warning(
-                "The Geometry service could not be started locally."
+                "The Geometry DMS service could not be started locally."
                 " Trying to start Ansys SpaceClaim locally."
             )
 
@@ -961,4 +975,129 @@ def _launch_pim_instance(
         backend_type=backend_type,
         logging_level=client_log_level,
         logging_file=client_log_file,
+    )
+
+
+def launch_modeler_with_core_service(
+    product_version: int = None,
+    host: str = "localhost",
+    port: int = None,
+    enable_trace: bool = False,
+    timeout: int = 60,
+    server_log_level: int = 2,
+    client_log_level: int = logging.INFO,
+    server_logs_folder: str = None,
+    client_log_file: str = None,
+    **kwargs: dict | None,
+) -> "Modeler":
+    """Start the Geometry Core service locally using the ``ProductInstance`` class.
+
+    When calling this method, a standalone Geometry Core service is started.
+    By default, if an endpoint is specified (by defining `host` and `port` parameters)
+    but the endpoint is not available, the startup will fail. Otherwise, it will try to
+    launch its own service.
+
+    Parameters
+    ----------
+    product_version: int, optional
+        The product version to be started. Goes from v25.2 to
+        the latest. Default is ``None``.
+        If a specific product version is requested but not installed locally,
+        a SystemError will be raised.
+
+        **Ansys products versions and their corresponding int values:**
+
+        * ``252`` : Ansys 25R2
+        * ``261`` : Ansys 26R1
+    host: str, optional
+        IP address at which the service will be deployed. By default,
+        its value will be ``localhost``.
+    port : int, optional
+        Port at which the service will be deployed. By default, its
+        value will be ``None``.
+    enable_trace : bool, optional
+        Boolean enabling the logs trace on the service console window.
+        By default its value is ``False``.
+    timeout : int, optional
+        Timeout for starting the backend startup process. The default is 60.
+    server_log_level : int, optional
+        Backend's log level from 0 to 3:
+            0: Chatterbox
+            1: Debug
+            2: Warning
+            3: Error
+
+        The default is ``2`` (Warning).
+    client_log_level : int, optional
+        Logging level to apply to the client. By default, INFO level is used.
+        Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+    server_logs_folder : str, optional
+        Sets the backend's logs folder path. If nothing is defined,
+        the backend will use its default path.
+    client_log_file : str, optional
+        Sets the client's log file path. If nothing is defined,
+        the client will log to the console.
+    **kwargs : dict, default: None
+        Placeholder to prevent errors when passing additional arguments that
+        are not compatible with this method.
+
+    Returns
+    -------
+    Modeler
+        Instance of the Geometry Core service.
+
+    Raises
+    ------
+    ConnectionError
+        If the specified endpoint is already in use, a connection
+        error will be raised.
+    SystemError
+        If there is not an Ansys product 25.2 version or later installed
+        a SystemError will be raised.
+
+    Examples
+    --------
+    Starting a geometry core service with the default parameters and getting back a ``Modeler``
+    object:
+
+    >>> from ansys.geometry.core import launch_modeler_with_core_service
+    >>> modeler = launch_modeler_with_core_service()
+
+    Starting a geometry service, on address ``10.171.22.44``, port ``5001``, with chatty
+    logs, traces enabled and a ``300`` seconds timeout:
+
+    >>> from ansys.geometry.core import launch_modeler_with_core_service
+    >>> modeler = launch_modeler_with_core_service(host="10.171.22.44",
+        port=5001,
+        enable_trace= True,
+        timeout=300,
+        server_log_level=0)
+    """
+    # if api_version is passed, throw a warning saying that it is not used
+    if "api_version" in kwargs:
+        LOG.warning(
+            "The 'api_version' parameter is not used in 'launch_modeler_with_core_service'. "
+            "Please remove it from the arguments."
+        )
+
+    # If we are in a Windows environment, we are going to write down the server
+    # logs in the %PUBLIC%/Documents/Ansys/GeometryService folder.
+    if os.name == "nt" and server_logs_folder is None:
+        # Writing to the "Public" folder by default - no write permissions specifically required.
+        server_logs_folder = Path(os.getenv("PUBLIC"), "Documents", "Ansys", "GeometryService")
+        LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
+
+    return prepare_and_start_backend(
+        BackendType.LINUX_SERVICE,
+        product_version=product_version,
+        host=host,
+        port=port,
+        enable_trace=enable_trace,
+        api_version=ApiVersions.LATEST,
+        timeout=timeout,
+        server_log_level=server_log_level,
+        client_log_level=client_log_level,
+        server_logs_folder=server_logs_folder,
+        client_log_file=client_log_file,
+        specific_minimum_version=252,
     )

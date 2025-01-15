@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -41,7 +41,10 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryService"
-"""Default Geometry Service's folder name into the unified installer."""
+"""Default Geometry Service's folder name into the unified installer (DMS)."""
+
+CORE_GEOMETRY_SERVICE_FOLDER = "CoreGeometryService"
+"""Default Geometry Service's folder name into the unified installer (Core Service)."""
 
 DISCOVERY_FOLDER = "Discovery"
 """Default Discovery's folder name into the unified installer."""
@@ -62,7 +65,10 @@ To be used only for local start of Ansys Discovery or Ansys SpaceClaim.
 """
 
 GEOMETRY_SERVICE_EXE = "Presentation.ApiServerDMS.exe"
-"""The Windows Geometry Service's filename."""
+"""The Windows Geometry Service's filename (DMS)."""
+
+CORE_GEOMETRY_SERVICE_EXE = "Presentation.ApiServerLinux.exe"
+"""The Windows Geometry Service's filename (Core Service)."""
 
 DISCOVERY_EXE = "Discovery.exe"
 """The Ansys Discovery's filename."""
@@ -179,6 +185,7 @@ def prepare_and_start_backend(
     client_log_level: int = logging.INFO,
     server_logs_folder: str = None,
     client_log_file: str = None,
+    specific_minimum_version: int = None,
     log_level: int = None,  # DEPRECATED
     logs_folder: str = None,  # DEPRECATED
 ) -> "Modeler":
@@ -232,6 +239,9 @@ def prepare_and_start_backend(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
+    specific_minimum_version : int, optional
+        Sets a specific minimum version to be checked. If this is not defined,
+        the minimum version will be set to 24.1.0.
     log_level : int, optional
         DEPRECATED. Use ``server_log_level`` instead.
     logs_folder : str, optional
@@ -253,8 +263,11 @@ def prepare_and_start_backend(
     """
     from ansys.geometry.core.modeler import Modeler
 
-    if os.name != "nt":  # pragma: no cover
-        raise RuntimeError("Method 'prepare_and_start_backend' is only available on Windows.")
+    if os.name != "nt" and backend_type != BackendType.LINUX_SERVICE:  # pragma: no cover
+        raise RuntimeError(
+            "Method 'prepare_and_start_backend' is only available on Windows."
+            "A Linux version is only available for the Core Geometry Service."
+        )
 
     # Deprecation behavior... To be removed in release 0.7
     if log_level is not None:  # pragma: no cover
@@ -285,7 +298,7 @@ def prepare_and_start_backend(
         product_version = get_latest_ansys_installation()[0]
 
     # Verify that the minimum version is installed.
-    _check_minimal_versions(product_version)
+    _check_minimal_versions(product_version, specific_minimum_version)
 
     if server_logs_folder is not None:
         # Verify that the user has write permissions to the folder and that it exists.
@@ -348,6 +361,78 @@ def prepare_and_start_backend(
                 GEOMETRY_SERVICE_EXE,
             )
         )
+    # This should be modified to Windows Core Service in the future
+    elif backend_type == BackendType.LINUX_SERVICE:
+        # Define several Ansys Geometry Core Service folders needed
+        root_service_folder = Path(installations[product_version], CORE_GEOMETRY_SERVICE_FOLDER)
+        native_folder = root_service_folder / "Native"
+        cad_integration_folder = root_service_folder / "CADIntegration"
+        schema_folder = root_service_folder / "Schema"
+
+        # Set the environment variables for the Ansys Geometry Core Service launch
+        # ANS_DSCO_REMOTE_IP should be variable "host" directly, but not working...
+        env_copy["ANS_DSCO_REMOTE_IP"] = "127.0.0.1" if host == "localhost" else host
+        env_copy["ANS_DSCO_REMOTE_PORT"] = str(port)
+        env_copy["ANS_DSCO_REMOTE_LOGS_CONFIG"] = "linux"
+        env_copy["P_SCHEMA"] = schema_folder.as_posix()
+        env_copy["ANSYS_CI_INSTALL"] = cad_integration_folder.as_posix()
+        env_copy[f"ANSYSCL{product_version}_DIR"] = (
+            root_service_folder / "licensingclient"
+        ).as_posix()
+
+        if os.name == "nt":
+            # Modify the PATH variable to include the path to the Ansys Geometry Core Service
+            env_copy["PATH"] = (
+                f"{env_copy['PATH']}"
+                + f";{root_service_folder.as_posix()}"
+                + f";{native_folder.as_posix()}"
+                + f";{cad_integration_folder.as_posix()}"
+            )
+
+            # For Windows, we need to use the exe file to launch the Core Geometry Service
+            args.append(
+                Path(
+                    installations[product_version],
+                    CORE_GEOMETRY_SERVICE_FOLDER,
+                    CORE_GEOMETRY_SERVICE_EXE,
+                )
+            )
+        else:
+            # Verify dotnet is installed
+            import shutil
+
+            if not shutil.which("dotnet"):
+                raise RuntimeError(
+                    "Cannot find 'dotnet' command. "
+                    "Please install 'dotnet' to use the Ansys Geometry Core Service. "
+                    "At least dotnet 8.0 is required."
+                )
+
+            # At least dotnet 8.0 is required
+            # private method and controlled input by library - excluding bandit check.
+            if subprocess.check_output(["dotnet", "--version"]).decode("utf-8").split(".")[0] < "8":  # nosec B607, B603
+                raise RuntimeError(
+                    "Ansys Geometry Core Service requires at least dotnet 8.0. "
+                    "Please install a compatible version."
+                )
+
+            # Modify the LD_LIBRARY_PATH variable to include the Ansys Geometry Core Service
+            env_copy["LD_LIBRARY_PATH"] = (
+                env_copy.get("LD_LIBRARY_PATH", "")
+                + f":{root_service_folder.as_posix()}"
+                + f":{native_folder.as_posix()}"
+                + f":{cad_integration_folder.as_posix()}"
+            )
+
+            # For Linux, we need to use the dotnet command to launch the Core Geometry Service
+            args.append("dotnet")
+            args.append(
+                Path(
+                    installations[product_version],
+                    CORE_GEOMETRY_SERVICE_FOLDER,
+                    CORE_GEOMETRY_SERVICE_EXE.replace(".exe", ".dll"),
+                )
+            )
     else:
         raise RuntimeError(
             f"Cannot connect to backend {backend_type.name} using ``prepare_and_start_backend()``"
@@ -491,15 +576,21 @@ def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Po
     )
 
 
-def _check_minimal_versions(latest_installed_version: int) -> None:
+def _check_minimal_versions(
+    latest_installed_version: int, specific_minimum_version: int | None
+) -> None:
     """Check client is compatible with Ansys Products.
 
-    Check that at least V241 is installed.
+    Check that at least V241 is installed. Or, if a specific version is requested,
+    check that it is installed.
     """
-    if abs(latest_installed_version) < 241:
+    min_ver = specific_minimum_version or 241
+    if abs(latest_installed_version) < min_ver:
+        # Split the version into its components.
+        major, minor = divmod(min_ver, 10)
         msg = (
-            "PyAnsys Geometry is compatible with Ansys Products from version 24.1.0. "
-            + "Please install Ansys products 24.1.0 or later."
+            f"PyAnsys Geometry is compatible with Ansys Products from version {major}.{minor}.0. "
+            + f"Please install Ansys products {major}.{minor}.0 or later."
         )
         raise SystemError(msg)
 
