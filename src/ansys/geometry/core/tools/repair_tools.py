@@ -23,7 +23,6 @@
 
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -40,12 +39,14 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_body,
     get_edges_from_ids,
     get_faces_from_ids,
 )
+from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
@@ -354,7 +355,6 @@ class RepairTools:
             for res in problem_areas_response.result
         ]
 
-    @check_input_types
     @protect_grpc
     def find_interferences(
         self, bodies: list["Body"], cut_smaller_body: bool = False
@@ -379,6 +379,9 @@ class RepairTools:
         """
         if not bodies:
             return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
 
         parent_design = get_design_from_body(bodies[0])
         body_ids = [body.id for body in bodies]
