@@ -211,10 +211,11 @@ def test_rename_object(modeler: Modeler):
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
     selection = [EntityIdentifier(id = body.id)]
-    print(selection)
-
-    modeler.geometry_commands.rename_object(selection, "new_name")
+    result = modeler.geometry_commands.rename_object(selection, "new_name")
+    
+    assert result == True
     assert body.name == "new_name"
 
-    modeler.geometry_commands.rename_object(selection, "new_name2")
+    result = modeler.geometry_commands.rename_object(selection, "new_name2")
+    assert result == True
     assert body.name == "new_name2"
