@@ -24,7 +24,7 @@
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode
+from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode, EntityIdentifier
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNITS
@@ -204,3 +204,17 @@ def test_extrude_faces_up_to(modeler: Modeler):
     assert len(bodies) == 0
     assert len(design.bodies) == 1
     assert body.volume.m == pytest.approx(Quantity(5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+def test_rename_object(modeler: Modeler):
+    """Test renaming objects."""
+    design = modeler.create_design("rename")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    selection = [EntityIdentifier(id = body.id)]
+    print(selection)
+
+    modeler.geometry_commands.rename_object(selection, "new_name")
+    assert body.name == "new_name"
+
+    modeler.geometry_commands.rename_object(selection, "new_name2")
+    assert body.name == "new_name2"

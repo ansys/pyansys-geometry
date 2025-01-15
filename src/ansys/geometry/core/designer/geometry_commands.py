@@ -32,6 +32,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FullFilletRequest,
     RenameObjectRequest
 )
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import (
@@ -337,3 +338,30 @@ class GeometryCommands:
         else:
             self._grpc_client.log.info("Failed to extrude faces.")
             return []
+    
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def rename_object(self, selection: List[EntityIdentifier], name: str) -> bool:
+        """Rename an object.
+        
+        Parameters
+        ----------
+        selection : List[str]
+            Selection of the object to rename.
+        name : str
+            New name for the object.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+
+        result = self._commands_stub.RenameObject(
+            RenameObjectRequest(
+                selection=selection,
+                name=name
+            )
+        )
+
+        return result.success
