@@ -288,7 +288,23 @@ def test_linear_pattern(modeler: Modeler):
     )
     assert len(body.faces) == 31
 
-    # one dimensional
+    # modify linear pattern
+    success = modeler.geometry_commands.modify_linear_pattern(body.faces[-1], 8, 0.11, 8, 0.11)
+    assert success
+    assert body.volume.m == pytest.approx(
+        Quantity(0.497345175426, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(body.faces) == 70
+
+    # try keeping some old values
+    success = modeler.geometry_commands.modify_linear_pattern(body.faces[-1], 4, 0, 4, 0, 1, 1)
+    assert success
+    assert body.volume.m == pytest.approx(
+        Quantity(0.874336293856, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(body.faces) == 22
+
+    # back to creating - one dimensional
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
     body.subtract(cutout)
@@ -298,7 +314,7 @@ def test_linear_pattern(modeler: Modeler):
     assert body.volume.m == pytest.approx(Quantity(0.96073009183, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(body.faces) == 11
 
-    # failed to create pattern
+    # intentional failure to create pattern
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
     body.subtract(cutout)

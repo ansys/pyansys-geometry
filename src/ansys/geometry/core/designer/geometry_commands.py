@@ -33,6 +33,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ExtrudeFacesUpToRequest,
     FilletRequest,
     FullFilletRequest,
+    ModifyLinearPatternRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -492,7 +493,7 @@ class GeometryCommands:
         two_dimensional: bool = False,
         count_y: int = None,
         pitch_y: Real = None,
-    ) -> List["Body"]:
+    ) -> bool:
         """Create a linear pattern. The pattern can be one or two dimensions.
 
         Parameters
@@ -547,6 +548,65 @@ class GeometryCommands:
                 two_dimensional=two_dimensional,
                 count_y=count_y,
                 pitch_y=pitch_y,
+            )
+        )
+
+        return result.result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def modify_linear_pattern(
+        self,
+        selection: Union["Face", List["Face"]],
+        count_x: int = 0,
+        pitch_x: Real = 0.0,
+        count_y: int = 0,
+        pitch_y: Real = 0.0,
+        new_seed_index: int = 0,
+        old_seed_index: int = 0,
+    ) -> bool:
+        """Modify a linear pattern. Leave an argument at 0 for it to remain unchanged.
+
+        Parameters
+        ----------
+        selection : Face | List[Face]
+            Faces that belong to the pattern.
+        count_x : int, default: 0
+            How many times the pattern repeats in the x direction.
+        pitch_x : Real, default: 0.0
+            The spacing between each pattern member in the x direction.
+        count_y : int, default: 0
+            How many times the pattern repeats in the y direction.
+        pitch_y : Real, default: 0.0
+            The spacing between each pattern member in the y direction.
+        new_seed_index : int, default: 0
+            The new seed index of the member.
+        old_seed_index : int, default: 0
+            The old seed index of the member.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        result = self._commands_stub.ModifyLinearPattern(
+            ModifyLinearPatternRequest(
+                selection=[object._grpc_id for object in selection],
+                count_x=count_x,
+                pitch_x=pitch_x,
+                count_y=count_y,
+                pitch_y=pitch_y,
+                new_seed_index=new_seed_index,
+                old_seed_index=old_seed_index,
             )
         )
 
