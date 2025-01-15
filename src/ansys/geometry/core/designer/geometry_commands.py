@@ -412,13 +412,11 @@ class GeometryCommands:
             )
         )
 
-        design = get_design_from_edge(edges[0].body)
+        design = get_design_from_edge(edges[0])
 
         if result.success:
             bodies_ids = [created_body.id for created_body in result.created_bodies]
-            print(bodies_ids)
             design._update_design_inplace()
-            print(f"THIS IS HOW MANY BOIDIES AFTER INPLACE {len(design.bodies)}")
             return get_bodies_from_ids(design, bodies_ids)
         else:
             self._grpc_client.log.info("Failed to extrude edges.")
@@ -472,7 +470,7 @@ class GeometryCommands:
             )
         )
 
-        design = get_design_from_edge(edges[0].body)
+        design = get_design_from_edge(edges[0])
 
         if result.success:
             bodies_ids = [created_body.id for created_body in result.created_bodies]
