@@ -30,6 +30,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ExtrudeFacesUpToRequest,
     FilletRequest,
     FullFilletRequest,
+    RenameObjectRequest
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
