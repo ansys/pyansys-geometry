@@ -29,7 +29,7 @@ ENV LICENSE_SERVER=""
 ENV SERVER_ENDPOINT="0.0.0.0:50051"
 ENV ENABLE_TRACE=0
 ENV LOG_LEVEL=2
-ENV AWP_ROOT251=C:/app/unified
+ENV AWP_ROOT252=C:/app/unified
 
 # Add container labels
 LABEL org.opencontainers.image.authors="ANSYS Inc."
