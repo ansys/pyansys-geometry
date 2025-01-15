@@ -555,7 +555,5 @@ class InterferenceProblemAreas(ProblemArea):
         )
         parent_design._update_design_inplace()
         ##TODO The tool does not return the created or modified objects.
-        message = RepairToolMessage(
-            response.result.success, [], []
-        )
+        message = RepairToolMessage(response.result.success, [], [])
         return message
