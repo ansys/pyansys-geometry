@@ -528,7 +528,7 @@ class InterferenceProblemAreas(ProblemArea):
 
         from ansys.geometry.core.designer.body import Body
 
-        # Verify that all elements in the list are of type Face
+        # Verify that all elements in the list are of type Body
         check_type_all_elements_in_iterable(bodies, Body)
 
         self._bodies = bodies
@@ -545,6 +545,11 @@ class InterferenceProblemAreas(ProblemArea):
         -------
         message: RepairToolMessage
             Message containing created and/or modified bodies.
+
+        Notes
+        -----
+        The current implementation does not properly track changes.
+        The list of created and modified bodies are empty.
         """
         if not self.bodies:
             return RepairToolMessage(False, [], [])
@@ -554,7 +559,8 @@ class InterferenceProblemAreas(ProblemArea):
             FixInterferenceRequest(interference_problem_area_id=self._id_grpc)
         )
         parent_design._update_design_inplace()
-        ##TODO The tool does not return the created or modified objects.
+        ## The tool does not return the created or modified objects.
+        ## https://github.com/ansys/pyansys-geometry/issues/1319
         message = RepairToolMessage(
             response.result.success,
         )
