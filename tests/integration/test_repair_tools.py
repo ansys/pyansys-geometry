@@ -267,3 +267,19 @@ def test_fix_short_edges(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "ShortEdgesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_short_edges(design.bodies, 10)
     assert problem_areas[0].fix().success is True
+
+
+def test_find_interference(modeler: Modeler):
+    """Test to read geometry and find the interference problem areas."""
+    design = modeler.open_file(FILES_DIR / "SimpleInterference.scdocx")
+    problem_areas = modeler.repair_tools.find_interferences(design.bodies, False)
+    assert len(problem_areas) == 1
+    assert len(problem_areas[0].bodies) == 2
+
+
+def test_fix_interference(modeler: Modeler):
+    """Test to read geometry and fix ind the interference problem areas."""
+    design = modeler.open_file(FILES_DIR / "SimpleInterference.scdocx")
+    problem_areas = modeler.repair_tools.find_interferences(design.bodies, False)
+    result = problem_areas[0].fix()
+    assert result.success is True

@@ -30,6 +30,7 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixDuplicateFacesRequest,
     FixExtraEdgesRequest,
     FixInexactEdgesRequest,
+    FixInterferenceRequest,
     FixMissingFacesRequest,
     FixShortEdgesRequest,
     FixSmallFacesRequest,
@@ -504,5 +505,57 @@ class StitchFaceProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
+        )
+        return message
+
+
+class InterferenceProblemAreas(ProblemArea):
+    """Represents an interference problem area with a unique identifier and associated bodies.
+
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the problem area.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    bodies : list[Body]
+        List of bodies in the problem area.
+    """
+
+    def __init__(self, id: str, grpc_client: GrpcClient, bodies: list["Body"]):
+        """Initialize a new instance of the interference problem area class."""
+        super().__init__(id, grpc_client)
+
+        from ansys.geometry.core.designer.body import Body
+
+        # Verify that all elements in the list are of type Face
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        self._bodies = bodies
+
+    @property
+    def bodies(self) -> list["Body"]:
+        """The list of the ids of the bodies connected to this problem area."""
+        return self._bodies
+
+    def fix(self) -> RepairToolMessage:
+        """Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        if not self.bodies:
+            return RepairToolMessage(False, [], [])
+
+        parent_design = get_design_from_body(self.bodies[0])
+        response = self._repair_stub.FixInterference(
+            FixInterferenceRequest(interference_problem_area_id=self._id_grpc)
+        )
+        parent_design._update_design_inplace()
+        ##TODO The tool does not return the created or modified objects.
+        message = RepairToolMessage(
+            response.result.success,
         )
         return message

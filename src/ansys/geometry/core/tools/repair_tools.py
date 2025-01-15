@@ -23,13 +23,15 @@
 
 from typing import TYPE_CHECKING
 
-from google.protobuf.wrappers_pb2 import DoubleValue
+from beartype import beartype as check_input_types
+from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FindDuplicateFacesRequest,
     FindExtraEdgesRequest,
     FindInexactEdgesRequest,
+    FindInterferenceRequest,
     FindMissingFacesRequest,
     FindShortEdgesRequest,
     FindSmallFacesRequest,
@@ -48,6 +50,7 @@ from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
     InexactEdgeProblemAreas,
+    InterferenceProblemAreas,
     MissingFaceProblemAreas,
     ShortEdgeProblemAreas,
     SmallFaceProblemAreas,
@@ -344,6 +347,48 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             StitchFaceProblemAreas(
+                f"{res.id}",
+                self._grpc_client,
+                get_bodies_from_ids(parent_design, res.body_monikers),
+            )
+            for res in problem_areas_response.result
+        ]
+
+    @check_input_types
+    @protect_grpc
+    def find_interferences(
+        self, bodies: list["Body"], cut_smaller_body: bool = False
+    ) -> list[InterferenceProblemAreas]:
+        """Find the interference problem areas.
+
+        This method finds and returns a list of ids of interference problem areas
+        objects.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies that small faces are investigated on.
+
+        cut_smaller_body : bool
+            Whether to cut the smaller body if an intererference is found.
+
+        Returns
+        -------
+        list[InterfenceProblemAreas]
+            List of objects representing interference problem areas.
+        """
+        if not bodies:
+            return []
+
+        parent_design = get_design_from_body(bodies[0])
+        body_ids = [body.id for body in bodies]
+        cut_smaller_body_bool = BoolValue(value=bool(cut_smaller_body))
+        problem_areas_response = self._repair_stub.FindInterference(
+            FindInterferenceRequest(bodies=body_ids, cut_smaller_body=cut_smaller_body_bool)
+        )
+
+        return [
+            InterferenceProblemAreas(
                 f"{res.id}",
                 self._grpc_client,
                 get_bodies_from_ids(parent_design, res.body_monikers),
