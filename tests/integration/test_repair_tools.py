@@ -284,46 +284,49 @@ def test_find_and_fix_extra_edges(modeler: Modeler):
     """Test to read geometry, find and fix extra edges and validate they are removed."""
     design = modeler.open_file(FILES_DIR / "ExtraEdges_NoComponents.scdocx")
     assert len(design.bodies) == 3
-    StartingEdgeCount = 0
+    starting_edge_count = 0
     for body in design.bodies:
-        StartingEdgeCount += len(body.edges)
-    assert StartingEdgeCount == 69
-    ExtraEdges = modeler.repair_tools.find_extra_edges(design.bodies)
-    assert len(ExtraEdges) == 6
-    for edge in ExtraEdges:
+        starting_edge_count += len(body.edges)
+    assert starting_edge_count == 69
+    extra_edges = modeler.repair_tools.find_extra_edges(design.bodies)
+    assert len(extra_edges) == 6
+    for edge in extra_edges:
         edge.fix()
-    FinalEdgeCount = 0
+    final_edge_count = 0
     for body in design.bodies:
-        FinalEdgeCount += len(body.edges)
-    assert FinalEdgeCount == 36
+        final_edge_count += len(body.edges)
+    assert final_edge_count == 36
 
 
 def test_find_and_fix_extra_edges_in_components(modeler: Modeler):
-    """Test to read geometry, find and fix extra edges in components and validate they are removed."""
+    """
+    Test to read geometry, find and fix extra edges in components and validate they are
+    removed.
+    """
     design = modeler.open_file(FILES_DIR / "ExtraEdges.scdocx")
     len(design.components)
-    StartingEdgeCount = 0
+    starting_edge_count = 0
     for components in design.components:
-        StartingEdgeCount += len(components.bodies[0].edges)
-    assert StartingEdgeCount == 69
+        starting_edge_count += len(components.bodies[0].edges)
+    assert starting_edge_count == 69
     for components in design.components:
-        ExtraEdges = modeler.repair_tools.find_extra_edges(components.bodies)
-        for edge in ExtraEdges:
+        extra_edges = modeler.repair_tools.find_extra_edges(components.bodies)
+        for edge in extra_edges:
             edge.fix()
-    FinalEdgeCount = 0
+    final_edge_count = 0
     for components in design.components:
-        FinalEdgeCount += len(components.bodies[0].edges)
-    assert FinalEdgeCount == 36
+        final_edge_count += len(components.bodies[0].edges)
+    assert final_edge_count == 36
 
 
 def test_find_and_fix_inexact_edges(modeler: Modeler):
     """Test to read geometry, find and fix inexact edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "gear.scdocx")
     assert len(design.bodies[0].edges) == 993
-    InexactEdges = modeler.repair_tools.find_inexact_edges(design.bodies)
-    assert len(InexactEdges) == 272
-    for i in InexactEdges:
+    inexact_edges = modeler.repair_tools.find_inexact_edges(design.bodies)
+    assert len(inexact_edges) == 272
+    for i in inexact_edges:
         i.fix()
     assert len(design.bodies[0].edges) == 993
-    InexactEdges = modeler.repair_tools.find_inexact_edges(design.bodies)
-    assert len(InexactEdges) == 0
+    inexact_edges = modeler.repair_tools.find_inexact_edges(design.bodies)
+    assert len(inexact_edges) == 0
