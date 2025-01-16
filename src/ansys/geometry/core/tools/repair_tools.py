@@ -54,6 +54,8 @@ from ansys.geometry.core.tools.problem_areas import (
     SplitEdgeProblemAreas,
     StitchFaceProblemAreas,
 )
+from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -350,3 +352,8 @@ class RepairTools:
             )
             for res in problem_areas_response.result
         ]
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def fix_simplify(self, monikers: list[str]): -> AdjustSimplifyProblemArea
+        return
