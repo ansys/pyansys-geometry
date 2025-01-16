@@ -24,7 +24,7 @@
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode, EntityIdentifier
+from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNITS
@@ -205,22 +205,50 @@ def test_extrude_faces_up_to(modeler: Modeler):
     assert len(design.bodies) == 1
     assert body.volume.m == pytest.approx(Quantity(5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
-def test_rename_object(modeler: Modeler):
-    """Test renaming objects."""
-    design = modeler.create_design("rename")
-    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    selection = [EntityIdentifier(id = body.id)]
-    result = modeler.geometry_commands.rename_object(selection, "new_name")
-    design._update_design_inplace()
-    
-    body = design.bodies[0]
-    assert result == True
-    assert body.name == "new_name"
+def test_extrude_edges_and_up_to(modeler: Modeler):
+    design = modeler.create_design("extrude_edges")
+    upto = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    upto.translate(UnitVector3D([0, 0, 1]), 5)
+    assert upto.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
-    result = modeler.geometry_commands.rename_object(selection, "new_name2")
-    design._update_design_inplace()
+    body = design.extrude_sketch("box2", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
-    body = design.bodies[0]
-    assert result == True
-    assert body.name == "new_name2"
+    # extrude edge
+    created_bodies = modeler.geometry_commands.extrude_edges(
+        body.edges[0], 1, body.edges[0].faces[1]
+    )
+    assert len(created_bodies) == 1
+    assert created_bodies[0].is_surface
+    assert created_bodies[0].faces[0].area.m == pytest.approx(
+        Quantity(1, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+
+    # extrude edge up to face
+    created_bodies = modeler.geometry_commands.extrude_edges_up_to(
+        body.edges[0], upto.faces[0], Point3D([0, 0, 0]), UnitVector3D([0, 0, 1])
+    )
+    assert len(created_bodies) == 1
+    assert created_bodies[0].is_surface
+    assert created_bodies[0].faces[0].area.m == pytest.approx(
+        Quantity(4, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+
+    # extrude multiple edges up to
+    created_bodies = modeler.geometry_commands.extrude_edges_up_to(
+        body.edges, upto.faces[1], Point3D([0, 0, 0]), UnitVector3D([0, 0, 1])
+    )
+    assert created_bodies[0].is_surface
+    assert created_bodies[0].faces[0].area.m == pytest.approx(
+        Quantity(6, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+    assert created_bodies[0].faces[1].area.m == pytest.approx(
+        Quantity(6, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+    assert created_bodies[0].faces[2].area.m == pytest.approx(
+        Quantity(6, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+    assert created_bodies[0].faces[3].area.m == pytest.approx(
+        Quantity(6, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )

@@ -30,9 +30,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ExtrudeFacesUpToRequest,
     FilletRequest,
     FullFilletRequest,
-    RenameObjectRequest
 )
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import (
@@ -338,30 +336,140 @@ class GeometryCommands:
         else:
             self._grpc_client.log.info("Failed to extrude faces.")
             return []
-    
+
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def rename_object(self, selection: List[EntityIdentifier], name: str) -> bool:
-        """Rename an object.
-        
+    def extrude_edges(
+        self,
+        edges: Union["Edge", List["Edge"]],
+        distance: Real,
+        from_face: "Face" = None,
+        from_point: Point3D = None,
+        direction: UnitVector3D = None,
+        extrude_type: ExtrudeType = ExtrudeType.ADD,
+        pull_symmetric: bool = False,
+        copy: bool = False,
+        natural_extension: bool = False,
+    ) -> List["Body"]:
+        """Extrude a selection of edges. Provide either a face or a direction and point.
+
         Parameters
         ----------
-        selection : List[str]
-            Selection of the object to rename.
-        name : str
-            New name for the object.
+        edges : Edge | List[Edge]
+            Edges to extrude.
+        distance : Real
+            Distance to extrude.
+        from_face : Face, default: None
+            Face to pull normal from.
+        from_point : Point3D, default: None
+            Point to pull from. Must be used with ``direction``.
+        direction : UnitVector3D, default: None
+            Direction to pull. Must be used with ``from_point``.
+        extrude_type : ExtrudeType, default: ExtrudeType.ADD
+            Type of extrusion to be performed.
+        pull_symmetric : bool, default: False
+            Pull symmetrically on both sides if ``True``.
+        copy : bool, default: False
+            Copy the edge and move it instead of extruding the original edge if ``True``.
+        natural_extension : bool, default: False
+            Surfaces will extend in a natural or linear shape after exceeding its original range.
 
         Returns
         -------
-        bool
-            ``True`` when successful, ``False`` when failed.
+        List[Body]
+            Bodies created by the extrusion if any.
         """
+        from ansys.geometry.core.designer.edge import Edge
 
-        result = self._commands_stub.RenameObject(
-            RenameObjectRequest(
-                selection=selection,
-                name=name
+        edges: list[Edge] = edges if isinstance(edges, list) else [edges]
+        check_type_all_elements_in_iterable(edges, Edge)
+        check_is_float_int(distance, "distance")
+        if from_face is None and None in (from_point, direction):
+            raise ValueError(
+                "To extrude edges, either a face or a direction and point must be provided."
+            )
+
+        for edge in edges:
+            edge.body._reset_tessellation_cache()
+
+        result = self._commands_stub.ExtrudeEdges(
+            ExtrudeEdgesRequest(
+                edges=[edge._grpc_id for edge in edges],
+                distance=distance,
+                face=from_face._grpc_id,
+                point=None if from_point is None else point3d_to_grpc_point(from_point),
+                direction=None if direction is None else unit_vector_to_grpc_direction(direction),
+                extrude_type=extrude_type.value,
+                pull_symmetric=pull_symmetric,
+                copy=copy,
+                natural_extension=natural_extension,
             )
         )
 
-        return result.success
+        design = get_design_from_edge(edges[0])
+
+        if result.success:
+            bodies_ids = [created_body.id for created_body in result.created_bodies]
+            design._update_design_inplace()
+            return get_bodies_from_ids(design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to extrude edges.")
+            return []
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def extrude_edges_up_to(
+        self,
+        edges: Union["Edge", List["Edge"]],
+        up_to_selection: Union["Face", "Edge", "Body"],
+        seed_point: Point3D,
+        direction: UnitVector3D,
+        extrude_type: ExtrudeType = ExtrudeType.ADD,
+    ) -> List["Body"]:
+        """Extrude a selection of edges up to another object.
+
+        Parameters
+        ----------
+        edges : Edge | List[Edge]
+            Edges to extrude.
+        up_to_selection : Face, default: None
+            The object to pull the faces up to.
+        seed_point : Point3D
+            Origin to define the extrusion.
+        direction : UnitVector3D, default: None
+            Direction of extrusion.
+        extrude_type : ExtrudeType, default: ExtrudeType.ADD
+            Type of extrusion to be performed.
+
+        Returns
+        -------
+        List[Body]
+            Bodies created by the extrusion if any.
+        """
+        from ansys.geometry.core.designer.edge import Edge
+
+        edges: list[Edge] = edges if isinstance(edges, list) else [edges]
+        check_type_all_elements_in_iterable(edges, Edge)
+
+        for edge in edges:
+            edge.body._reset_tessellation_cache()
+
+        result = self._commands_stub.ExtrudeEdgesUpTo(
+            ExtrudeEdgesUpToRequest(
+                edges=[edge._grpc_id for edge in edges],
+                up_to_selection=up_to_selection._grpc_id,
+                seed_point=point3d_to_grpc_point(seed_point),
+                direction=unit_vector_to_grpc_direction(direction),
+                extrude_type=extrude_type.value,
+            )
+        )
+
+        design = get_design_from_edge(edges[0])
+
+        if result.success:
+            bodies_ids = [created_body.id for created_body in result.created_bodies]
+            design._update_design_inplace()
+            return get_bodies_from_ids(design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to extrude edges.")
+            return []
