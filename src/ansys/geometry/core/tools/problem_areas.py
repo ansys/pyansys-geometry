@@ -561,8 +561,6 @@ class InterferenceProblemAreas(ProblemArea):
         parent_design._update_design_inplace()
         ## The tool does not return the created or modified objects.
         ## https://github.com/ansys/pyansys-geometry/issues/1319
-        message = RepairToolMessage(
-            response.result.success,  [], []
-        )
-        
+        message = RepairToolMessage(response.result.success, [], [])
+
         return message
