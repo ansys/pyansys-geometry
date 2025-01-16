@@ -35,6 +35,7 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixSmallFacesRequest,
     FixSplitEdgesRequest,
     FixStitchFacesRequest,
+    FixAdjustSimplifyRequest
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -498,6 +499,49 @@ class StitchFaceProblemAreas(ProblemArea):
         parent_design = get_design_from_body(self.bodies[0])
         response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=self._id_grpc)
+        )
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+        return message
+
+
+class UnsimplifiedFaceProblemAreas(ProblemArea):
+    """Represents a unsimplified face problem area with unique identifier and associated faces."""
+
+    def __init__(self, id: str, grpc_client: GrpcClient, faces: list["Face"]):
+        """Initialize a new instance of the unsimplified face problem area class."""
+        super().__init__(id, grpc_client)
+
+        from ansys.geometry.core.designer.face import Face
+
+        # Verify that all elements in the list are of type Body
+        check_type_all_elements_in_iterable(faces, Face)
+
+        self._faces = faces
+
+    @property
+    def faces(self) -> list["Face"]:
+        """The list of the bodies connected to this problem area."""
+        return self._faces
+    
+    def fix(self) -> RepairToolMessage:
+        """Fix the problem area.
+        
+        Returns
+        -------
+        message: RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        if not self.faces:
+            return RepairToolMessage(False, [], [])
+        
+        parent_design = get_design_from_face(self.faces[0])
+        response = self._repair_stub.FixAdjustSimplify(
+            FixAdjustSimplifyRequest(adjust_simplify_problem_area_id=self._id_grpc)
         )
         parent_design._update_design_inplace()
         message = RepairToolMessage(
