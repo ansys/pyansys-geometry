@@ -39,6 +39,7 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
     get_design_from_edge,
@@ -538,6 +539,7 @@ class InterferenceProblemAreas(ProblemArea):
         """The list of the ids of the bodies connected to this problem area."""
         return self._bodies
 
+    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
