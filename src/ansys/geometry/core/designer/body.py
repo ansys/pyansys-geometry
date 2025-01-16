@@ -1251,6 +1251,10 @@ class Body(IBody):
         return self._id
 
     @property
+    def _grpc_id(self) -> EntityIdentifier:
+        return EntityIdentifier(id=self._id)
+
+    @property
     def name(self) -> str:  # noqa: D102
         return self._template.name
 

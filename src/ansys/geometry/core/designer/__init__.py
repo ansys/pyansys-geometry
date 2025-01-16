@@ -27,5 +27,6 @@ from ansys.geometry.core.designer.design import Design, DesignFileFormat
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
+from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
