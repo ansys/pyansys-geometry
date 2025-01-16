@@ -717,7 +717,7 @@ jobs:
         uses: vimtor/action-zip@v1.2
         with:
           files: docker/windows/${{ matrix.mode }}/Dockerfile
-          dest: windows-${{ matrix.mode }}-dockerfile.zip
+          dest: ${{ matrix.docker-file }}
 
       - name: Upload Windows Dockerfile
         uses: actions/upload-artifact@v4
