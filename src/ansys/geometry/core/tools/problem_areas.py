@@ -562,6 +562,7 @@ class InterferenceProblemAreas(ProblemArea):
         ## The tool does not return the created or modified objects.
         ## https://github.com/ansys/pyansys-geometry/issues/1319
         message = RepairToolMessage(
-            response.result.success,
+            response.result.success,  [], []
         )
+        
         return message
