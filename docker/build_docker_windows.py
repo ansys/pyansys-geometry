@@ -54,7 +54,7 @@ if len(awp_root) == 0:
 # Request the user to select the version of Ansys to use
 print(">>> Select the version of Ansys to use:")
 for i, (env_key, _) in enumerate(awp_root.items()):
-    print(f"{i + 1}: {env_key}")
+    print(f"{i+1}: {env_key}")
 selection = input("Selection [default - last option]: ")
 
 # If no selection is made, use the first version
