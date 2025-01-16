@@ -44,6 +44,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     SetColorRequest,
     SetFillStyleRequest,
     SetNameRequest,
+    SetSuppressedRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -150,6 +151,11 @@ class IBody(ABC):
     @abstractmethod
     def set_fill_style(self, fill_style: FillStyle) -> None:
         """Set the fill style of the body."""
+        return
+
+    @abstractmethod
+    def set_suppressed(self, suppressed: bool) -> None:
+        """Set the body suppression state."""
         return
 
     @abstractmethod
@@ -762,6 +768,15 @@ class MasterBody(IBody):
         self.set_fill_style(value)
 
     @property
+    def is_suppressed(self) -> bool:  # noqa: D102
+        response = self._bodies_stub.IsSuppressed(EntityIdentifier(id=self._id))
+        return response.result
+
+    @is_suppressed.setter
+    def is_suppressed(self, value: bool):  # noqa: D102
+        self.set_suppressed(value)
+
+    @property
     def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
         if self._color is None and self.is_alive:
@@ -976,6 +991,21 @@ class MasterBody(IBody):
             )
         )
         self._fill_style = fill_style
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def set_suppressed(  # noqa: D102
+        self, suppressed: bool
+    ) -> None:
+        """Set the body suppression state."""
+        self._grpc_client.log.debug(f"Setting body {self.id}, as suppressed: {suppressed}.")
+        self._bodies_stub.SetSuppressed(
+            SetSuppressedRequest(
+                bodies=[EntityIdentifier(id=self.id)],
+                is_suppressed=suppressed,
+            )
+        )
 
     @protect_grpc
     @check_input_types
@@ -1237,6 +1267,16 @@ class Body(IBody):
         self._template.fill_style = fill_style
 
     @property
+    def is_suppressed(self) -> bool:  # noqa: D102
+        print("here is body")
+        return self._template.is_suppressed
+
+    @is_suppressed.setter
+    def is_suppressed(self, suppressed: bool):  # noqa: D102
+        print("setter in body")
+        self._template.is_suppressed = suppressed
+
+    @property
     def color(self) -> str:  # noqa: D102
         return self._template.color
 
@@ -1470,6 +1510,10 @@ class Body(IBody):
     @ensure_design_is_active
     def set_fill_style(self, fill_style: FillStyle) -> None:  # noqa: D102
         return self._template.set_fill_style(fill_style)
+
+    @ensure_design_is_active
+    def set_suppressed(self, suppressed: bool) -> None:  # noqa: D102
+        return self._template.set_suppressed(suppressed)
 
     @ensure_design_is_active
     def set_color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
