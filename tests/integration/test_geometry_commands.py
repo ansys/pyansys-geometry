@@ -212,10 +212,15 @@ def test_rename_object(modeler: Modeler):
 
     selection = [EntityIdentifier(id = body.id)]
     result = modeler.geometry_commands.rename_object(selection, "new_name")
+    design._update_design_inplace()
     
+    body = design.bodies[0]
     assert result == True
     assert body.name == "new_name"
 
     result = modeler.geometry_commands.rename_object(selection, "new_name2")
+    design._update_design_inplace()
+
+    body = design.bodies[0]
     assert result == True
     assert body.name == "new_name2"
