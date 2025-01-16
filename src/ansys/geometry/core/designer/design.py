@@ -33,6 +33,8 @@ from pint import Quantity, UndefinedUnitError
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
 from ansys.api.dbu.v0.designs_pb2 import InsertRequest, NewRequest, SaveAsRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
+from ansys.api.dbu.v0.drivingdimensions_pb2 import GetAllRequest, UpdateRequest
+from ansys.api.dbu.v0.drivingdimensions_pb2_grpc import DrivingDimensionsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
@@ -74,6 +76,7 @@ from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -125,6 +128,7 @@ class Design(Component):
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
         self._parts_stub = PartsStub(self._grpc_client.channel)
+        self._parameters_stub = DrivingDimensionsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -165,6 +169,11 @@ class Design(Component):
     def beam_profiles(self) -> list[BeamProfile]:
         """List of beam profile available for the design."""
         return list(self._beam_profiles.values())
+
+    @property
+    def parameters(self) -> list[Parameter]:
+        """List of parameters available for the design."""
+        return self.get_all_parameters()
 
     @property
     def is_active(self) -> bool:
@@ -678,6 +687,45 @@ class Design(Component):
         )
 
         return self._beam_profiles[profile.name]
+
+    @protect_grpc
+    @min_backend_version(25, 1, 0)
+    def get_all_parameters(self) -> list[Parameter]:
+        """Get parameters for the design.
+
+        Returns
+        -------
+        list[Parameter]
+            List of parameters for the design.
+        """
+        response = self._parameters_stub.GetAll(GetAllRequest())
+        return [Parameter._from_proto(dimension) for dimension in response.driving_dimensions]
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 1, 0)
+    def set_parameter(self, dimension: Parameter) -> ParameterUpdateStatus:
+        """Update a parameter of the design.
+
+        Parameters
+        ----------
+        dimension : Parameter
+            Parameter to set.
+
+        Returns
+        -------
+        ParameterUpdateStatus
+            Status of the update operation.
+        """
+        request = UpdateRequest(driving_dimension=Parameter._to_proto(dimension))
+        response = self._parameters_stub.UpdateParameter(request)
+        status = response.status
+
+        # Update the design in place. This method is expensive,
+        # consider finding a more efficient approach.
+        self._update_design_inplace()
+
+        return ParameterUpdateStatus._from_update_status(status)
 
     @protect_grpc
     @check_input_types
