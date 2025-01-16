@@ -48,6 +48,7 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Point3D, UnitVector3D
+from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_edge,
@@ -65,7 +66,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
-    from ansys.geometry.core.math import Plane
+    # from ansys.geometry.core.math.plane import Plane
 
 
 @unique
@@ -882,11 +883,13 @@ class GeometryCommands:
         
         for body in bodies:
             body._reset_tessellation_cache()
-            
-        result = self._commands_stub.Split(bodies=[body._grpc_id for body in bodies],
-                                           plane=plane._grpc,
-                                           slicers=[slicer._grpc_id for slicer in slicers],
-                                           faces=[face._grpc_id for face in faces],
-                                           extendFaces=extendfaces)
+        
+        request = SplitBodyRequest(bodies=[body._grpc_id for body in bodies],
+                                   plane=plane._grpc,
+                                   slicers=[slicer._grpc_id for slicer in slicers],
+                                   faces=[face._grpc_id for face in faces],
+                                   extendFaces=extendfaces)
+        
+        result = self._commands_stub.SplitBody(request)
         
         return result.success
