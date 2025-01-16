@@ -2064,6 +2064,8 @@ def test_body_suppression(modeler: Modeler):
     assert box.is_suppressed is False
     box.set_suppressed(True)
     assert box.is_suppressed is True
+    box.is_suppressed = False
+    assert box.is_suppressed is False
 
 
 def test_set_body_color(modeler: Modeler):
