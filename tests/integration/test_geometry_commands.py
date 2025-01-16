@@ -559,8 +559,13 @@ def test_split_body_by_plane(modeler: Modeler):
     assert len(body.edges) == 12
     assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     
-    origin = Point3D([0, 0, 10])
+    origin = Point3D([0, 0, 0.5])
     plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
     
     success = modeler.geometry_commands.split_body([body], plane, [], [], True)
     assert success is True
+
+    assert len(design.bodies) == 2
+    
+    assert design.bodies[0].volume.m == pytest.approx(Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert design.bodies[1].volume.m == pytest.approx(Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)

@@ -37,12 +37,14 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FilletRequest,
     FullFilletRequest,
     ModifyLinearPatternRequest,
+    SplitBodyRequest,
     PatternRequest,
     RenameObjectRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    plane_to_grpc_plane,
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
@@ -66,7 +68,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
-    # from ansys.geometry.core.math.plane import Plane
 
 
 @unique
@@ -884,12 +885,12 @@ class GeometryCommands:
         for body in bodies:
             body._reset_tessellation_cache()
         
-        request = SplitBodyRequest(bodies=[body._grpc_id for body in bodies],
-                                   plane=plane._grpc,
-                                   slicers=[slicer._grpc_id for slicer in slicers],
-                                   faces=[face._grpc_id for face in faces],
-                                   extendFaces=extendfaces)
-        
-        result = self._commands_stub.SplitBody(request)
+        result = self._commands_stub.SplitBody(
+            SplitBodyRequest(
+                selection=[body._grpc_id for body in bodies],
+                split_by_plane=plane_to_grpc_plane(plane),
+                split_by_slicer=[slicer._grpc_id for slicer in slicers],
+                split_by_faces=[face._grpc_id for face in faces],
+                extend_surfaces=extendfaces))
         
         return result.success
