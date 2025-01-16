@@ -24,8 +24,10 @@ The Ansys Geometry service is available as a standalone service and it is instal
 through the Ansys unified installer or the automated installer. Both are available
 for download from the `Ansys Customer Portal <https://download.ansys.com/>`_.
 
-When using the unified or automated installer, it is necessary to pass in the
-``-geometryservice`` flag to install it.
+When using the automated installer, the Ansys Geometry service is installed by default.
+
+However, when using the unified installer, it is necessary to pass in the ``-geometryservice``
+flag to install it.
 
 Overall, the command to install the Ansys Geometry service with the unified installer is:
 
