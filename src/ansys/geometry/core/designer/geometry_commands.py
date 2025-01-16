@@ -482,6 +482,8 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to extrude edges.")
             return []
 
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
     def rename_object(self, selection: List[EntityIdentifier], name: str) -> bool:
         """Rename an object.
         
