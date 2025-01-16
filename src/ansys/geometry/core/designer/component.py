@@ -1663,7 +1663,7 @@ class Component:
                 body_names = [body.name for body in self.bodies]
 
             # Add the bodies to the lines (with indentation)
-            lines.extend([f"|{'-' * (indent - 1)}(body) {name}" for name in body_names])
+            lines.extend([f"|{'-' * (indent-1)}(body) {name}" for name in body_names])
 
         # Print the beams
         if consider_beams:
@@ -1680,7 +1680,7 @@ class Component:
                 beam_names = [beam.id for beam in self.beams if beam.is_alive]
 
             # Add the bodies to the lines (with indentation)
-            lines.extend([f"|{'-' * (indent - 1)}(beam) {name}" for name in beam_names])
+            lines.extend([f"|{'-' * (indent-1)}(beam) {name}" for name in beam_names])
 
         # Print the nested components
         if consider_comps:
@@ -1708,13 +1708,13 @@ class Component:
                     )
 
                     # Add indentation to the subcomponent lines
-                    lines.append(f"|{'-' * (indent - 1)}(comp) {comp.name}")
+                    lines.append(f"|{'-' * (indent-1)}(comp) {comp.name}")
 
                     # Determine the prefix for the subcomponent lines and add them
-                    prefix = f"{' ' * indent}" if idx == (n_comps - 1) else f":{' ' * (indent - 1)}"
+                    prefix = f"{' ' * indent}" if idx == (n_comps - 1) else f":{' ' * (indent-1)}"
                     lines.extend([f"{prefix}{line}" for line in subcomp[1:]])
 
             else:
-                lines.extend([f"|{'-' * (indent - 1)}(comp) {comp.name}" for comp in comps])
+                lines.extend([f"|{'-' * (indent-1)}(comp) {comp.name}" for comp in comps])
 
         return lines if return_list else print("\n".join(lines))
