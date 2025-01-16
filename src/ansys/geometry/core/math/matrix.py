@@ -26,6 +26,8 @@ from typing import Union
 from beartype import beartype as check_input_types
 import numpy as np
 
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.vector import Vector3D
 from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
 from ansys.geometry.core.typing import Real, RealSequence
 
@@ -129,3 +131,36 @@ class Matrix44(Matrix):
             raise ValueError("Matrix44 should only be a 2D array of shape (4,4).")
 
         return obj
+
+    @staticmethod
+    def create_matrix_from_rotation(direction_x: Vector3D, direction_y: Vector3D) -> "Matrix44":
+        """Matrix44 helper method -- create_matrix_from_rotation."""
+        matrix = Matrix44(
+            [
+                [direction_x.x, direction_x.y, direction_x.z, 0],
+                [direction_y.x, direction_y.y, direction_y.z, 0],
+                [0, 0, 1, 0],
+                [0, 0, 0, 1],
+            ]
+        )
+        return matrix
+
+    @staticmethod
+    def create_matrix_from_translation(origin: Vector3D) -> "Matrix44":
+        """Matrix44 helper method -- create_matrix_from_translation."""
+        matrix = Matrix44(
+            [
+                [1, 0, 0, origin.x],
+                [0, 1, 0, origin.y],
+                [0, 0, 1, origin.z],
+                [0, 0, 0, 1],
+            ]
+        )
+        return matrix
+
+    @staticmethod
+    def create_matrix_from_mapping(frame: Frame) -> "Matrix44":
+        """Matrix44 helper method -- create_matrix_from_mapping."""
+        translation_matrix = Matrix44.create_matrix_from_translation(frame.origin)
+        rotation_matrix = Matrix44.create_matrix_from_rotation(frame.direction_x, frame.direction_y)
+        return translation_matrix * rotation_matrix

@@ -28,6 +28,7 @@ from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
 
+from ansys.geometry.core import math
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.misc.accuracy import Accuracy
@@ -264,6 +265,21 @@ class Vector3D(np.ndarray):
         base units.
         """
         return Vector3D(point_b - point_a)
+
+    @staticmethod
+    def rotate_vector(_this: "Vector3D", vector: "Vector3D", angle: float) -> "Vector3D":
+        """Vector3D helper method -- rotate_vector."""
+        if _this.is_zero:
+            raise Exception("Invalid vector operation.")
+
+        angle_between = vector.get_angle_between(_this)
+        parallel = Vector3D(
+            vector.x * angle_between, vector.y * angle_between, vector.z * angle_between
+        )
+
+        perpendicular1 = vector - parallel
+        perpendicular2 = _this.cross(perpendicular1)
+        return parallel + perpendicular1 * math.cos(angle) + perpendicular2 * math.sin(angle)
 
 
 class Vector2D(np.ndarray):
