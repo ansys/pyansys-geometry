@@ -35,6 +35,8 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FindSmallFacesRequest,
     FindSplitEdgesRequest,
     FindStitchFacesRequest,
+    FixAdjustSimplifyRequest,
+    FindAdjustSimplifyRequest
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -355,5 +357,48 @@ class RepairTools:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def fix_simplify(self, monikers: list[str]): -> AdjustSimplifyProblemArea
-        return
+    def fix_simplify(self, problem_area_id: int):
+        """Simplify faces where possible.
+        
+        Parameters
+        ----------
+        problem_area_id : int
+            The id of the problem area to fix.
+
+        Returns
+        -------
+        bool 
+            ``True`` when successful, ``False`` when failed.
+        """
+
+        result = self._repair_stub.FixAdjustSimplify(
+            FixAdjustSimplifyRequest(
+                id=problem_area_id,
+            )
+        )
+        
+        return result.success
+    
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def find_simplify(self, monikers: list[str]) -> list[int]:
+        """Detect faces in a body that can be simplified.
+
+        Parameters
+        ----------
+        monikers : list[str]
+            List of monikers that represent the bodies.
+        
+        Returns
+        -------
+        list[int]
+            List of problem area ids.
+        """
+
+        result = self._repair_stub.FindAdjustSimplify(
+            FindAdjustSimplifyRequest(
+                selection=monikers,
+            )
+        )
+        
+        return result.ids
