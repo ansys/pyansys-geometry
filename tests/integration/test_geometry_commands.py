@@ -264,12 +264,12 @@ def test_rename_object(modeler: Modeler):
     design._update_design_inplace()
 
     body = design.bodies[0]
-    assert result == True
+    assert result
     assert body.name == "new_name"
 
     result = modeler.geometry_commands.rename_object(selection, "new_name2")
     design._update_design_inplace()
 
     body = design.bodies[0]
-    assert result == True
+    assert result
     assert body.name == "new_name2"
