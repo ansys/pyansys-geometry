@@ -182,8 +182,6 @@ class Face:
         self._is_reversed = is_reversed
         self._shape = None
 
-        self._grpc_client.log.debug("Requesting surface properties from server.")
-
     @property
     def id(self) -> str:
         """Face ID."""

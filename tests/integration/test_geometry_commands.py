@@ -476,9 +476,10 @@ def test_fill_pattern(modeler: Modeler):
     assert len(base.faces) == 33
 
     # update fill pattern
-    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    base = design.extrude_sketch("update_fill", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
     base.subtract(cutout)
+    base.translate(UnitVector3D([1, 0, 0]), 5)
     assert base.volume.m == pytest.approx(
         Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
