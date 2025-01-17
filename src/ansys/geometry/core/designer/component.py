@@ -1005,7 +1005,7 @@ class Component:
         ----------
         name : str
             User-defined label for the new surface body.
-        trimmed_curves : TrimmedCurve
+        trimmed_curves : list[TrimmedCurve]
             Curves to define the plane and body.
 
         Returns
