@@ -53,6 +53,7 @@ from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
+    get_design_from_body,
     get_design_from_edge,
     get_design_from_face,
 )
@@ -892,5 +893,9 @@ class GeometryCommands:
                 split_by_slicer=[slicer._grpc_id for slicer in slicers],
                 split_by_faces=[face._grpc_id for face in faces],
                 extend_surfaces=extendfaces))
+        
+        if (result.success):
+            design = get_design_from_body(bodies[0])
+            design._update_design_inplace()
         
         return result.success

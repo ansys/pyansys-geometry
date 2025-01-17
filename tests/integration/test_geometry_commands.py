@@ -569,3 +569,29 @@ def test_split_body_by_plane(modeler: Modeler):
     
     assert design.bodies[0].volume.m == pytest.approx(Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert design.bodies[1].volume.m == pytest.approx(Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    
+def test_split_body_by_face(modeler: Modeler):
+    "Test split body by face"
+       
+    design = modeler.create_design("split_body_by_face")
+    
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+    assert len(body.edges) == 12
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    
+    body2 = design.extrude_sketch("box2", Sketch().box(Point2D([3, 0]), 1, 1), .5)
+    assert len(body2.faces) == 6
+    assert len(body2.edges) == 12
+    assert body2.volume.m == pytest.approx(Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    
+    face_to_split = body2.faces[1]
+    
+    success = modeler.geometry_commands.split_body([body], None, [face_to_split], [], True)
+    assert success is True
+    
+    assert len(design.bodies) == 3
+    
+    assert design.bodies[0].volume.m == pytest.approx(Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert design.bodies[1].volume.m == pytest.approx(Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert design.bodies[2].volume.m == pytest.approx(Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
