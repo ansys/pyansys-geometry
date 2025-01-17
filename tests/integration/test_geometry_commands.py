@@ -159,13 +159,27 @@ def test_extrude_faces_and_offset_relationships(modeler: Modeler):
     # setup offset relationship, faces will move together, volume won't change
     body.faces[0].setup_offset_relationship(body.faces[1], True)
     modeler.geometry_commands.extrude_faces(
-        body.faces[1], 1, None, ExtrudeType.ADD, OffsetMode.MOVE_FACES_TOGETHER, False, False, False
+        body.faces[1],
+        1,
+        None,
+        ExtrudeType.ADD,
+        OffsetMode.MOVE_FACES_TOGETHER,
+        False,
+        False,
+        False,
     )
     assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
     # move apart, volume should double
     modeler.geometry_commands.extrude_faces(
-        body.faces[1], 0.5, None, ExtrudeType.ADD, OffsetMode.MOVE_FACES_APART, False, False, False
+        body.faces[1],
+        0.5,
+        None,
+        ExtrudeType.ADD,
+        OffsetMode.MOVE_FACES_APART,
+        False,
+        False,
+        False,
     )
     assert body.volume.m == pytest.approx(Quantity(2, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
@@ -199,7 +213,11 @@ def test_extrude_faces_up_to(modeler: Modeler):
 
     # extrude up to other block's edge, add so they merge into one body
     bodies = modeler.geometry_commands.extrude_faces_up_to(
-        body.faces[1], up_to.edges[0], Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), ExtrudeType.ADD
+        body.faces[1],
+        up_to.edges[0],
+        Point3D([0, 0, 0]),
+        UnitVector3D([0, 0, 1]),
+        ExtrudeType.ADD,
     )
     assert len(bodies) == 0
     assert len(design.bodies) == 1
@@ -252,3 +270,82 @@ def test_extrude_edges_and_up_to(modeler: Modeler):
     assert created_bodies[0].faces[3].area.m == pytest.approx(
         Quantity(6, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_linear_pattern(modeler: Modeler):
+    design = modeler.create_design("linear_pattern")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
+    body.subtract(cutout)
+
+    # two dimensional
+    success = modeler.geometry_commands.create_linear_pattern(
+        body.faces[-1], body.edges[2], 5, 0.2, True, 5, 0.2
+    )
+    assert success
+    assert body.volume.m == pytest.approx(
+        Quantity(0.803650459151, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(body.faces) == 31
+
+    # modify linear pattern
+    success = modeler.geometry_commands.modify_linear_pattern(body.faces[-1], 8, 0.11, 8, 0.11)
+    assert success
+    assert body.volume.m == pytest.approx(
+        Quantity(0.497345175426, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(body.faces) == 70
+
+    # try keeping some old values
+    success = modeler.geometry_commands.modify_linear_pattern(body.faces[-1], 4, 0, 4, 0, 1, 1)
+    assert success
+    assert body.volume.m == pytest.approx(
+        Quantity(0.874336293856, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(body.faces) == 22
+
+    # back to creating - one dimensional
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
+    body.subtract(cutout)
+
+    success = modeler.geometry_commands.create_linear_pattern(body.faces[-1], body.edges[2], 5, 0.2)
+    assert success
+    assert body.volume.m == pytest.approx(Quantity(0.96073009183, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(body.faces) == 11
+
+    # intentional failure to create pattern
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
+    body.subtract(cutout)
+
+    success = modeler.geometry_commands.create_linear_pattern(body.faces[-1], body.edges[0], 5, 0.2)
+    assert not success
+    assert body.volume.m == pytest.approx(
+        Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(body.faces) == 7
+
+    # input validation test
+    with pytest.raises(
+        ValueError,
+        match="If the pattern is two dimensional, count_y and pitch_y must be provided.",
+    ):
+        modeler.geometry_commands.create_linear_pattern(body.faces[-1], body.edges[0], 5, 0.2, True)
+    with pytest.raises(
+        ValueError,
+        match="If the pattern is two dimensional, count_y and pitch_y must be provided.",
+    ):
+        modeler.geometry_commands.create_linear_pattern(
+            body.faces[-1], body.edges[0], 5, 0.2, True, 5
+        )
+    with pytest.raises(
+        ValueError,
+        match=(
+            "You provided count_y and pitch_y. Ensure two_dimensional is True if a "
+            "two-dimensional pattern is desired."
+        ),
+    ):
+        modeler.geometry_commands.create_linear_pattern(
+            body.faces[-1], body.edges[0], 5, 0.2, False, 5, 0.2
+        )
