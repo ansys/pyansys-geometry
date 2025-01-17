@@ -474,3 +474,33 @@ def test_fill_pattern(modeler: Modeler):
         Quantity(0.787942495883, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
     assert len(base.faces) == 33
+
+    # update fill pattern
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
+    base.subtract(cutout)
+    assert base.volume.m == pytest.approx(
+        Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 7
+
+    success = modeler.geometry_commands.create_fill_pattern(
+        base.faces[-1],
+        base.edges[2],
+        FillPatternType.GRID,
+        0.01,
+        0.1,
+        0.1,
+    )
+    assert success
+    assert base.volume.m == pytest.approx(
+        Quantity(0.803650459151, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 31
+
+    face = base.faces[3]
+    modeler.geometry_commands.extrude_faces(face, 1, face.normal(0, 0))
+    success = modeler.geometry_commands.update_fill_pattern(base.faces[-1])
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(1.60730091830, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 56

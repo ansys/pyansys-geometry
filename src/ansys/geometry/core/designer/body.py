@@ -1215,6 +1215,17 @@ class Body(IBody):
     def _reset_tessellation_cache(self):  # noqa: N805
         """Reset the cached tessellation for a body."""
         self._template._tessellation = None
+        # if body in the part is different reference than self
+        master_in_part = next(
+            (
+                b
+                for b in self.parent_component._master_component.part.bodies
+                if b.id == self._template.id
+            ),
+            None,
+        )
+        if master_in_part is not None:
+            master_in_part._tessellation = None
 
     @property
     def id(self) -> str:  # noqa: D102

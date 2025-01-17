@@ -36,6 +36,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FilletRequest,
     FullFilletRequest,
     ModifyLinearPatternRequest,
+    PatternRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -770,6 +771,44 @@ class GeometryCommands:
                 row_y_offset=row_y_offset,
                 column_x_offset=column_x_offset,
                 column_y_offset=column_y_offset,
+            )
+        )
+
+        return result.result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def update_fill_pattern(
+        self,
+        selection: Union["Face", List["Face"]],
+    ) -> bool:
+        """Update a fill pattern.
+
+        When the face a fill pattern exists upon changes in size, the
+        fill pattern can be updated to fill the new space.
+
+        Parameters
+        ----------
+        selection : Face | List[Face]
+            Face(s) that are part of a fill pattern.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        result = self._commands_stub.UpdateFillPattern(
+            PatternRequest(
+                selection=[object._grpc_id for object in selection],
             )
         )
 
