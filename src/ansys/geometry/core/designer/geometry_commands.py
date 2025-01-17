@@ -24,18 +24,18 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, List, Union
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
-    ExtrudeFacesRequest,
-    ExtrudeFacesUpToRequest,
     ExtrudeEdgesRequest,
     ExtrudeEdgesUpToRequest,
+    ExtrudeFacesRequest,
+    ExtrudeFacesUpToRequest,
     FilletRequest,
     FullFilletRequest,
-    RenameObjectRequest
+    RenameObjectRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
@@ -44,9 +44,9 @@ from ansys.geometry.core.connection.conversions import (
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc.auxiliary import (
-    get_bodies_from_ids, 
+    get_bodies_from_ids,
     get_design_from_edge,
-    get_design_from_face
+    get_design_from_face,
 )
 from ansys.geometry.core.misc.checks import (
     check_is_float_int,
@@ -486,7 +486,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def rename_object(self, selection: List[EntityIdentifier], name: str) -> bool:
         """Rename an object.
-        
+
         Parameters
         ----------
         selection : List[str]
@@ -499,11 +499,9 @@ class GeometryCommands:
         bool
             ``True`` when successful, ``False`` when failed.
         """
-
         result = self._commands_stub.RenameObject(
             RenameObjectRequest(
-                selection=[EntityIdentifier(id=entity_id) for entity_id in selection],
-                name=name
+                selection=[EntityIdentifier(id=entity_id) for entity_id in selection], name=name
             )
         )
         return result.success
