@@ -508,7 +508,7 @@ class GeometryCommands:
         )
         return result.success
 
-  
+
     def create_linear_pattern(
         self,
         selection: Union["Face", List["Face"]],

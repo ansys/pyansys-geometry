@@ -271,6 +271,7 @@ def test_extrude_edges_and_up_to(modeler: Modeler):
         Quantity(6, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
 
+
 def test_rename_object(modeler: Modeler):
     """Test renaming objects."""
     design = modeler.create_design("rename")
@@ -290,6 +291,7 @@ def test_rename_object(modeler: Modeler):
     body = design.bodies[0]
     assert result
     assert body.name == "new_name2"
+
 
 def test_linear_pattern(modeler: Modeler):
     design = modeler.create_design("linear_pattern")
