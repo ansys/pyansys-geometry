@@ -2046,6 +2046,29 @@ def test_set_fill_style(modeler: Modeler):
     assert box.fill_style == FillStyle.OPAQUE
 
 
+def test_body_suppression(modeler: Modeler):
+    """Test the suppression of a body."""
+
+    design = modeler.create_design("RVE")
+    unit = DEFAULT_UNITS.LENGTH
+
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
+    box = design.extrude_sketch("Matrix", box_plane, 1 * unit)
+
+    assert box.is_suppressed is False
+    box.set_suppressed(True)
+    assert box.is_suppressed is True
+    box.is_suppressed = False
+    assert box.is_suppressed is False
+
+
 def test_set_body_color(modeler: Modeler):
     """Test the getting and setting of body color."""
 
