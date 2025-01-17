@@ -24,7 +24,7 @@
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode
+from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode, EntityIdentifier
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNITS

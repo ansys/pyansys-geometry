@@ -484,7 +484,7 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def rename_object(self, selection: List[str], name: str) -> bool:
+    def rename_object(self, selection: List[EntityIdentifier], name: str) -> bool:
         """Rename an object.
         
         Parameters
