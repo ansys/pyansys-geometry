@@ -139,7 +139,7 @@ class Vector3D(np.ndarray):
         else:
             raise ValueError("The norm of the 3D vector is not valid.")
 
-    def transform(self, matrix: "Matrix44") -> "Vector3D":
+    def transform(self, matrix: "Matrix44") -> "Vector3D":  # noqa
         """Transform the 3D vector3D with a transformation matrix.
 
         Parameters

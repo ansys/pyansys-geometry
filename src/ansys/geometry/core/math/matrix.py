@@ -21,13 +21,15 @@
 # SOFTWARE.
 """Provides matrix primitive representations."""
 
-from typing import Union
+from typing import TYPE_CHECKING, Union
+
+if TYPE_CHECKING:
+    from ansys.geometry.core.math.frame import Frame  # For type hints
+    from ansys.geometry.core.math.vector import Vector3D  # For type hints
 
 from beartype import beartype as check_input_types
 import numpy as np
 
-from ansys.geometry.core.math.frame import Frame
-from ansys.geometry.core.math.vector import Vector3D
 from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
 from ansys.geometry.core.typing import Real, RealSequence
 
@@ -132,10 +134,12 @@ class Matrix44(Matrix):
 
         return obj
 
-    @staticmethod
-    def create_matrix_from_rotation(direction_x: Vector3D, direction_y: Vector3D) -> "Matrix44":
+    @classmethod
+    def create_matrix_from_rotation(
+        cls, direction_x: "Vector3D", direction_y: "Vector3D"
+    ) -> "Matrix44":
         """Matrix44 helper method -- create_matrix_from_rotation."""
-        matrix = Matrix44(
+        matrix = cls(
             [
                 [direction_x.x, direction_x.y, direction_x.z, 0],
                 [direction_y.x, direction_y.y, direction_y.z, 0],
@@ -145,9 +149,11 @@ class Matrix44(Matrix):
         )
         return matrix
 
-    @staticmethod
-    def create_matrix_from_translation(origin: Vector3D) -> "Matrix44":
+    @classmethod
+    def create_matrix_from_translation(cls, origin: "Vector3D") -> "Matrix44":
         """Matrix44 helper method -- create_matrix_from_translation."""
+        from ansys.geometry.core.math.matrix import Matrix44
+
         matrix = Matrix44(
             [
                 [1, 0, 0, origin.x],
@@ -158,9 +164,10 @@ class Matrix44(Matrix):
         )
         return matrix
 
-    @staticmethod
-    def create_matrix_from_mapping(frame: Frame) -> "Matrix44":
+    @classmethod
+    def create_matrix_from_mapping(cls, frame: "Frame") -> "Matrix44":  # noqa
         """Matrix44 helper method -- create_matrix_from_mapping."""
         translation_matrix = Matrix44.create_matrix_from_translation(frame.origin)
         rotation_matrix = Matrix44.create_matrix_from_rotation(frame.direction_x, frame.direction_y)
+
         return translation_matrix * rotation_matrix
