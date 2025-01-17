@@ -995,7 +995,7 @@ class Component:
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
-    @min_backend_version(25, 1, 0)
+    @min_backend_version(25, 2, 0)
     def create_surface_from_trimmed_curves(
         self, name: str, trimmed_curves: list[TrimmedCurve]
     ) -> Body:
