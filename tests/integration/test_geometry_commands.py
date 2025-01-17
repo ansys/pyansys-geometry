@@ -24,7 +24,7 @@
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode, EntityIdentifier
+from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNITS
@@ -253,6 +253,7 @@ def test_extrude_edges_and_up_to(modeler: Modeler):
         Quantity(6, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
 
+
 def test_rename_object(modeler: Modeler):
     """Test renaming objects."""
     design = modeler.create_design("rename")
@@ -261,7 +262,7 @@ def test_rename_object(modeler: Modeler):
     selection = [body.id]
     result = modeler.geometry_commands.rename_object(selection, "new_name")
     design._update_design_inplace()
-    
+
     body = design.bodies[0]
     assert result == True
     assert body.name == "new_name"
