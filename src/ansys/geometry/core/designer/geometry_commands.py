@@ -484,20 +484,25 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def rename_object(self, selection: List[EntityIdentifier], name: str) -> bool:
+    def rename_object(self, selection: List[str], name: str) -> bool:
         """Rename an object.
         
+        Parameters
+        ----------
         selection : List[str]
             Selection of the object to rename.
         name : str
             New name for the object.
+
+        Returns
+        -------
         bool
             ``True`` when successful, ``False`` when failed.
         """
 
         result = self._commands_stub.RenameObject(
             RenameObjectRequest(
-                selection=selection,
+                selection=[EntityIdentifier(id=entity_id) for entity_id in selection],
                 name=name
             )
         )

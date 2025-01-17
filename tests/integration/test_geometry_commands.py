@@ -24,7 +24,7 @@
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode, EntityIdentifier
+from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNITS
@@ -258,7 +258,7 @@ def test_rename_object(modeler: Modeler):
     design = modeler.create_design("rename")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    selection = [EntityIdentifier(id = body.id)]
+    selection = [body.id]
     result = modeler.geometry_commands.rename_object(selection, "new_name")
     design._update_design_inplace()
     
