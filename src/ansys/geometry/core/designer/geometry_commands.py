@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING, List, Union
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
+    CreateLinearPatternRequest,
     ExtrudeEdgesRequest,
     ExtrudeEdgesUpToRequest,
     ExtrudeFacesRequest,
@@ -34,6 +35,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FilletRequest,
     FullFilletRequest,
     RenameObjectRequest,
+    ModifyLinearPatternRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -505,3 +507,126 @@ class GeometryCommands:
             )
         )
         return result.success
+
+  
+    def create_linear_pattern(
+        self,
+        selection: Union["Face", List["Face"]],
+        linear_direction: Union["Edge", "Face"],
+        count_x: int,
+        pitch_x: Real,
+        two_dimensional: bool = False,
+        count_y: int = None,
+        pitch_y: Real = None,
+    ) -> bool:
+        """Create a linear pattern. The pattern can be one or two dimensions.
+
+        Parameters
+        ----------
+        selection : Face | List[Face]
+            Faces to create the pattern out of.
+        linear_direction : Edge | Face
+            Direction of the linear pattern, determined by the direction of an edge or face normal.
+        count_x : int
+            How many times the pattern repeats in the x direction.
+        pitch_x : Real
+            The spacing between each pattern member in the x direction.
+        two_dimensional : bool, default: False
+            If ``True``, create a pattern in the x and y direction.
+        count_y : int, default: None
+            How many times the pattern repeats in the y direction.
+        pitch_y : Real, default: None
+            The spacing between each pattern member in the y direction.
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        if two_dimensional and None in (count_y, pitch_y):
+            raise ValueError(
+                "If the pattern is two dimensional, count_y and pitch_y must be provided."
+            )
+        if not two_dimensional and None not in (count_y, pitch_y):
+            raise ValueError(
+                (
+                    "You provided count_y and pitch_y. Ensure two_dimensional is True if a "
+                    "two-dimensional pattern is desired."
+                )
+            )
+
+        result = self._commands_stub.CreateLinearPattern(
+            CreateLinearPatternRequest(
+                selection=[object._grpc_id for object in selection],
+                linear_direction=linear_direction._grpc_id,
+                count_x=count_x,
+                pitch_x=pitch_x,
+                two_dimensional=two_dimensional,
+                count_y=count_y,
+                pitch_y=pitch_y,
+            )
+        )
+
+        return result.result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def modify_linear_pattern(
+        self,
+        selection: Union["Face", List["Face"]],
+        count_x: int = 0,
+        pitch_x: Real = 0.0,
+        count_y: int = 0,
+        pitch_y: Real = 0.0,
+        new_seed_index: int = 0,
+        old_seed_index: int = 0,
+    ) -> bool:
+        """Modify a linear pattern. Leave an argument at 0 for it to remain unchanged.
+
+        Parameters
+        ----------
+        selection : Face | List[Face]
+            Faces that belong to the pattern.
+        count_x : int, default: 0
+            How many times the pattern repeats in the x direction.
+        pitch_x : Real, default: 0.0
+            The spacing between each pattern member in the x direction.
+        count_y : int, default: 0
+            How many times the pattern repeats in the y direction.
+        pitch_y : Real, default: 0.0
+            The spacing between each pattern member in the y direction.
+        new_seed_index : int, default: 0
+            The new seed index of the member.
+        old_seed_index : int, default: 0
+            The old seed index of the member.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        result = self._commands_stub.ModifyLinearPattern(
+            ModifyLinearPatternRequest(
+                selection=[object._grpc_id for object in selection],
+                count_x=count_x,
+                pitch_x=pitch_x,
+                count_y=count_y,
+                pitch_y=pitch_y,
+                new_seed_index=new_seed_index,
+                old_seed_index=old_seed_index,
+            )
+        )
+
+        return result.result.success
