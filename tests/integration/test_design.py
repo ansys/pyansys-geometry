@@ -62,6 +62,7 @@ from ansys.geometry.core.shapes import (
     Cylinder,
     Ellipse,
     Interval,
+    Line,
     ParamUV,
     Sphere,
     Torus,
@@ -2859,3 +2860,27 @@ def test_extrude_sketch_with_cut_request_no_collision(modeler: Modeler):
 
     # Verify the volume of the resulting body is exactly the same
     assert design.bodies[0].volume == volume_box
+
+
+def test_create_surface_body_from_trimmed_curves(modeler: Modeler):
+    design = modeler.create_design("surface")
+
+    # pill shape
+    circle1 = Circle(Point3D([0, 0, 0]), 1).trim(Interval(0, np.pi))
+    line1 = Line(Point3D([-1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
+    circle2 = Circle(Point3D([0, -1, 0]), 1).trim(Interval(np.pi, np.pi * 2))
+    line2 = Line(Point3D([1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
+
+    body = design.create_surface_from_trimmed_curves("body", [circle1, line1, line2, circle2])
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(
+        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+
+    # create from edges (by getting their trimmed curves)
+    trimmed_curves_from_edges = [edge.shape for edge in body.edges]
+    body = design.create_surface_from_trimmed_curves("body2", trimmed_curves_from_edges)
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(
+        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
