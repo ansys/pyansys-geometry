@@ -880,18 +880,30 @@ class GeometryCommands:
         from ansys.geometry.core.designer.face import Face
         
         check_type_all_elements_in_iterable(bodies, Body)
-        check_type_all_elements_in_iterable(slicers, (Edge, Face))
-        check_type_all_elements_in_iterable(faces, Face)
+        # check_type_all_elements_in_iterable(slicers, (Edge, Face))
+        # check_type_all_elements_in_iterable(faces, Face)
         
         for body in bodies:
             body._reset_tessellation_cache()
         
+        plane_item = None
+        if (plane is not None):
+            plane_item = plane_to_grpc_plane(plane)
+        
+        slicer_items = None
+        if (slicers is not None):
+            slicer_items = [slicer._grpc_id for slicer in slicers]
+            
+        face_items = None
+        if (faces is not None):
+            face_items = [face._grpc_id for face in faces]
+        
         result = self._commands_stub.SplitBody(
             SplitBodyRequest(
                 selection=[body._grpc_id for body in bodies],
-                split_by_plane=plane_to_grpc_plane(plane),
-                split_by_slicer=[slicer._grpc_id for slicer in slicers],
-                split_by_faces=[face._grpc_id for face in faces],
+                split_by_plane=plane_item,
+                split_by_slicer=slicer_items,
+                split_by_faces=face_items,
                 extend_surfaces=extendfaces))
         
         if (result.success):
