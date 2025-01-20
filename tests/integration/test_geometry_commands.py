@@ -36,6 +36,8 @@ from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch.sketch import Sketch
 
+from .conftest import FILES_DIR, skip_if_linux
+
 
 def test_chamfer(modeler: Modeler):
     """Test chamfer on edges and faces."""
@@ -595,6 +597,30 @@ def test_split_body_by_slicer_face(modeler: Modeler):
     assert design.bodies[0].volume.m == pytest.approx(Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert design.bodies[1].volume.m == pytest.approx(Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert design.bodies[2].volume.m == pytest.approx(Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    
+def test_split_body_by_slicer_edge(modeler: Modeler):
+    "Test split body by slicer edge"
+    
+     # Skip for Linux service
+    skip_if_linux(modeler, test_split_body_by_slicer_edge.__name__, "split_body_by_slicer_edge")
+       
+    design = modeler.open_file(FILES_DIR / "Edge_Slice_test.dsco")
+    
+    assert len(design.bodies) == 1
+    body = design.bodies[0]
+    assert len(body.faces) == 4
+    assert len(body.edges) == 3
+    assert body.volume.m == pytest.approx(Quantity(6.283185307179587e-06, UNITS.m**3).m, rel=1e-5, abs=1e-8)
+    
+    edge_to_split = body.edges[2]
+    
+    success = modeler.geometry_commands.split_body([body], None, [edge_to_split], None, True)
+    assert success is True
+    
+    assert len(design.bodies) == 2
+    
+    assert design.bodies[0].volume.m == pytest.approx(Quantity(3.1415927e-06, UNITS.m**3).m, rel=1e-5, abs=1e-8)
+    assert design.bodies[1].volume.m == pytest.approx(Quantity(3.1415927e-06, UNITS.m**3).m, rel=1e-5, abs=1e-8)
     
 def test_split_body_by_face(modeler: Modeler):
     "Test split body by face"
