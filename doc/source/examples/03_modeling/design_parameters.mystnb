@@ -100,8 +100,8 @@ Parameter values are returned in the default unit for each dimension type. Since
 
 ## Edit a parameter value
 
-You can edit the parameters name or value by simply setting these fields. Let's
-set the second parameter (p2 value to 350 mm. )
+You can edit the parameter's name or value by simply setting these fields.
+Set the second parameter (p2 value to 350 mm).
 
 ```{code-cell} ipython3
 parameter1 = my_parameters[1]
