@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -22,7 +22,8 @@
 """Provides for managing components."""
 
 from enum import Enum, unique
-from typing import TYPE_CHECKING, Optional, Union
+from functools import cached_property
+from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
 from beartype import beartype as check_input_types
@@ -36,6 +37,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     CreateSphereBodyRequest,
+    CreateSurfaceBodyRequest,
     CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
     TranslateRequest,
@@ -57,10 +59,11 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     trimmed_curve_to_grpc_trimmed_curve,
+    trimmed_surface_to_grpc_trimmed_surface,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.beam import Beam, BeamProfile
-from ansys.geometry.core.designer.body import Body, MasterBody
+from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
@@ -76,6 +79,7 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
+from ansys.geometry.core.shapes.surfaces import TrimmedSurface
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -103,9 +107,10 @@ class ExtrusionDirection(Enum):
     @classmethod
     def from_string(cls, string: str, use_default_if_error: bool = False) -> "ExtrusionDirection":
         """Convert a string to an ``ExtrusionDirection`` enum."""
-        if string == "+":
+        lcase_string = string.lower()
+        if lcase_string in ("+", "p", "pos", "positive"):
             return cls.POSITIVE
-        elif string == "-":
+        elif lcase_string in ("-", "n", "neg", "negative"):
             return cls.NEGATIVE
         elif use_default_if_error:
             from ansys.geometry.core.logger import LOG
@@ -133,6 +138,8 @@ class Component:
     template : Component, default: None
         Template to create this component from. This creates an
         instance component that shares a master with the template component.
+    instance_name: str, default: None
+        User defined optional name for the component instance.
     preexisting_id : str, default: None
         ID of a component pre-existing on the server side to use to create the component
         on the client-side data model. If an ID is specified, a new component is not
@@ -160,6 +167,7 @@ class Component:
         parent_component: Union["Component", None],
         grpc_client: GrpcClient,
         template: Optional["Component"] = None,
+        instance_name: Optional[str] = None,
         preexisting_id: str | None = None,
         master_component: MasterComponent | None = None,
         read_existing_comp: bool = False,
@@ -171,21 +179,33 @@ class Component:
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
+        # Align instance name behavior with the server - empty string if None
+        instance_name = instance_name if instance_name else ""
+
         if preexisting_id:
             self._name = name
             self._id = preexisting_id
+            self._instance_name = instance_name
         else:
             if parent_component:
                 template_id = template.id if template else ""
                 new_component = self._component_stub.Create(
-                    CreateRequest(name=name, parent=parent_component.id, template=template_id)
+                    CreateRequest(
+                        name=name,
+                        parent=parent_component.id,
+                        template=template_id,
+                        instance_name=instance_name,
+                    )
                 )
+
                 # Remove this method call once we know Service sends correct ObjectPath id
                 self._id = new_component.component.id
                 self._name = new_component.component.name
+                self._instance_name = new_component.component.instance_name
             else:
                 self._name = name
                 self._id = None
+                self._instance_name = instance_name
 
         # Initialize needed instance variables
         self._components = []
@@ -221,6 +241,11 @@ class Component:
 
         self._master_component.occurrences.append(self)
 
+    def _clear_cached_bodies(self) -> None:
+        """Clear the cached bodies."""
+        if "bodies" in self.__dict__:
+            del self.__dict__["bodies"]
+
     @property
     def id(self) -> str:
         """ID of the component."""
@@ -232,11 +257,16 @@ class Component:
         return self._name
 
     @property
+    def instance_name(self) -> str:
+        """Name of the component instance."""
+        return self._instance_name
+
+    @property
     def components(self) -> list["Component"]:
         """List of ``Component`` objects inside of the component."""
         return self._components
 
-    @property
+    @cached_property
     def bodies(self) -> list[Body]:
         """List of ``Body`` objects inside of the component."""
         bodies = []
@@ -295,6 +325,20 @@ class Component:
             )
             self.components.append(new)
 
+    def get_all_bodies(self) -> list[Body]:
+        """Get all bodies in the component hierarchy.
+
+        Returns
+        -------
+        list[Body]
+            List of all bodies in the component hierarchy.
+        """
+        bodies = []
+        for comp in self.components:
+            bodies.extend(comp.get_all_bodies())
+        bodies.extend(self.bodies)
+        return bodies
+
     def get_world_transform(self) -> Matrix44:
         """Get the full transformation matrix of the component in world space.
 
@@ -318,11 +362,6 @@ class Component:
     ):
         """Apply a translation and/or rotation to the placement matrix.
 
-        Notes
-        -----
-        To reset a component's placement to an identity matrix, see
-        :func:`reset_placement()` or call :func:`modify_placement()` with no arguments.
-
         Parameters
         ----------
         translation : Vector3D, default: None
@@ -333,6 +372,11 @@ class Component:
             Direction of the axis to rotate the component about.
         rotation_angle : ~pint.Quantity | Angle | Real, default: 0
             Angle to rotate the component around the axis.
+
+        Notes
+        -----
+        To reset a component's placement to an identity matrix, see
+        :func:`reset_placement()` or call :func:`modify_placement()` with no arguments.
         """
         t = (
             Direction(x=translation.x, y=translation.y, z=translation.z)
@@ -367,7 +411,9 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
-    def add_component(self, name: str, template: Optional["Component"] = None) -> "Component":
+    def add_component(
+        self, name: str, template: Optional["Component"] = None, instance_name: str = None
+    ) -> "Component":
         """Add a new component under this component within the design assembly.
 
         Parameters
@@ -383,10 +429,11 @@ class Component:
         Component
             New component with no children in the design assembly.
         """
-        new_comp = Component(name, self, self._grpc_client, template=template)
+        new_comp = Component(
+            name, self, self._grpc_client, template=template, instance_name=instance_name
+        )
         master = new_comp._master_component
         master_id = new_comp.id.split("/")[-1]
-
         for comp in self._master_component.occurrences:
             if comp.id != self.id:
                 comp.components.append(
@@ -394,7 +441,8 @@ class Component:
                         name,
                         comp,
                         self._grpc_client,
-                        template,
+                        template=template,
+                        instance_name=instance_name,
                         preexisting_id=f"{comp.id}/{master_id}",
                         master_component=master,
                         read_existing_comp=True,
@@ -435,12 +483,9 @@ class Component:
         sketch: Sketch,
         distance: Quantity | Distance | Real,
         direction: ExtrusionDirection | str = ExtrusionDirection.POSITIVE,
-    ) -> Body:
+        cut: bool = False,
+    ) -> Body | None:
         """Create a solid body by extruding the sketch profile a distance.
-
-        Notes
-        -----
-        The newly created body is placed under this component within the design assembly.
 
         Parameters
         ----------
@@ -454,11 +499,20 @@ class Component:
             Direction for extruding the solid body.
             The default is to extrude in the positive normal direction of the sketch.
             Options are "+" and "-" as a string, or the enum values.
+        cut : bool, default: False
+            Whether to cut the extrusion from the existing component.
+            By default, the extrusion is added to the existing component.
 
         Returns
         -------
         Body
             Extruded body from the given sketch.
+        None
+            If the cut parameter is ``True``, the function returns ``None``.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
@@ -482,7 +536,27 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
-        return Body(response.id, response.name, self, tb)
+        self._clear_cached_bodies()
+
+        created_body = Body(response.id, response.name, self, tb)
+        if not cut:
+            return created_body
+        else:
+            # If cut is True, subtract the created body from all existing bodies
+            # in the component...
+            for existing_body in self.get_all_bodies():
+                # Skip the created body
+                if existing_body.id == created_body.id:
+                    continue
+                # Check for collision
+                if existing_body.get_collision(created_body) != CollisionType.NONE:
+                    existing_body.subtract(created_body, keep_other=True)
+
+            # Finally, delete the created body
+            self.delete_body(created_body)
+
+            # And obviously return None... since no body is created
+            return None
 
     @min_backend_version(24, 2, 0)
     @protect_grpc
@@ -495,10 +569,6 @@ class Component:
         path: list[TrimmedCurve],
     ) -> Body:
         """Create a body by sweeping a planar profile along a path.
-
-        Notes
-        -----
-        The newly created body is placed under this component within the design assembly.
 
         Parameters
         ----------
@@ -513,6 +583,10 @@ class Component:
         -------
         Body
             Created body from the given sketch.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
         """
         # Convert each ``TrimmedCurve`` in path to equivalent gRPC type
         path_grpc = []
@@ -531,6 +605,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingProfile(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -545,10 +620,6 @@ class Component:
     ) -> Body:
         """Create a body by sweeping a chain of curves along a path.
 
-        Notes
-        -----
-        The newly created body is placed under this component within the design assembly.
-
         Parameters
         ----------
         name : str
@@ -562,6 +633,10 @@ class Component:
         -------
         Body
             Created body from the given sketch.
+
+        Notes
+        -----
+        The newly created body is placed under this component within the design assembly.
         """
         # Convert each ``TrimmedCurve`` in path and chain to equivalent gRPC types
         path_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in path]
@@ -578,6 +653,7 @@ class Component:
         response = self._bodies_stub.CreateSweepingChain(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @min_backend_version(24, 2, 0)
@@ -647,12 +723,6 @@ class Component:
 
         There are no modifications against the body containing the source face.
 
-        Notes
-        -----
-        The source face can be anywhere within the design component hierarchy.
-        Therefore, there is no validation requiring that the face is placed under the
-        target component where the body is to be created.
-
         Parameters
         ----------
         name : str
@@ -670,6 +740,12 @@ class Component:
         -------
         Body
             Extruded solid body.
+
+        Notes
+        -----
+        The source face can be anywhere within the design component hierarchy.
+        Therefore, there is no validation requiring that the face is placed under the
+        target component where the body is to be created.
         """
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
@@ -693,6 +769,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -726,6 +803,7 @@ class Component:
         response = self._bodies_stub.CreateSphereBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -792,6 +870,7 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBodyFromLoftProfiles(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -829,6 +908,7 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @protect_grpc
@@ -836,12 +916,6 @@ class Component:
     @ensure_design_is_active
     def create_surface_from_face(self, name: str, face: Face) -> Body:
         """Create a surface body based on a face.
-
-        Notes
-        -----
-        The source face can be anywhere within the design component hierarchy.
-        Therefore, there is no validation requiring that the face is placed under the
-        target component where the body is to be created.
 
         Parameters
         ----------
@@ -854,6 +928,12 @@ class Component:
         -------
         Body
             Surface body.
+
+        Notes
+        -----
+        The source face can be anywhere within the design component hierarchy.
+        Therefore, there is no validation requiring that the face is placed under the
+        target component where the body is to be created.
         """
         # Take the face source directly. No need to verify the source of the face.
         request = CreateBodyFromFaceRequest(
@@ -869,6 +949,48 @@ class Component:
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
         self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(25, 1, 0)
+    def create_body_from_surface(self, name: str, trimmed_surface: TrimmedSurface) -> Body:
+        """Create a surface body from a trimmed surface.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new surface body.
+        trimmed_surface : TrimmedSurface
+            Geometry for the new surface body.
+
+        Returns
+        -------
+        Body
+            Surface body.
+
+        Notes
+        -----
+        It is possible to create a closed solid body (as opposed to an open surface body) with a
+        Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
+        """
+        surface = trimmed_surface_to_grpc_trimmed_surface(trimmed_surface)
+        request = CreateSurfaceBodyRequest(
+            name=name,
+            parent=self.id,
+            trimmed_surface=surface,
+        )
+
+        self._grpc_client.log.debug(
+            f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
+        )
+        response = self._bodies_stub.CreateSurfaceBody(request)
+
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
+        self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
     @check_input_types
@@ -901,11 +1023,6 @@ class Component:
     ) -> None:
         """Translate the bodies in a specified direction by a distance.
 
-        Notes
-        -----
-        If the body does not belong to this component (or its children), it
-        is not translated.
-
         Parameters
         ----------
         bodies: list[Body]
@@ -918,6 +1035,11 @@ class Component:
         Returns
         -------
         None
+
+        Notes
+        -----
+        If the body does not belong to this component (or its children), it
+        is not translated.
         """
         body_ids_found = []
 
@@ -953,17 +1075,17 @@ class Component:
     ) -> list[Beam]:
         """Create beams under the component.
 
-        Notes
-        -----
-        The newly created beams synchronize to a design within a supporting
-        Geometry service instance.
-
         Parameters
         ----------
         segments : list[tuple[Point3D, Point3D]]
             list of start and end pairs, each specifying a single line segment.
         profile : BeamProfile
             Beam profile to use to create the beams.
+
+        Notes
+        -----
+        The newly created beams synchronize to a design within a supporting
+        Geometry service instance.
         """
         request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
 
@@ -1012,15 +1134,15 @@ class Component:
     def delete_component(self, component: Union["Component", str]) -> None:
         """Delete a component (itself or its children).
 
-        Notes
-        -----
-        If the component is not this component (or its children), it
-        is not deleted.
-
         Parameters
         ----------
         component : Component | str
             ID of the component or instance to delete.
+
+        Notes
+        -----
+        If the component is not this component (or its children), it
+        is not deleted.
         """
         id = component if isinstance(component, str) else component.id
         component_requested = self.search_component(id)
@@ -1047,15 +1169,15 @@ class Component:
     def delete_body(self, body: Body | str) -> None:
         """Delete a body belonging to this component (or its children).
 
-        Notes
-        -----
-        If the body does not belong to this component (or its children), it
-        is not deleted.
-
         Parameters
         ----------
         body : Body | str
             ID of the body or instance to delete.
+
+        Notes
+        -----
+        If the body does not belong to this component (or its children), it
+        is not deleted.
         """
         id = body if isinstance(body, str) else body.id
         body_requested = self.search_body(id)
@@ -1069,6 +1191,7 @@ class Component:
             # on the client side
             body_requested._is_alive = False
             self._grpc_client.log.debug(f"Body {body_requested.id} has been deleted.")
+            self._clear_cached_bodies()
         else:
             self._grpc_client.log.warning(
                 f"Body {id} is not found in this component (or subcomponents)."
@@ -1134,16 +1257,16 @@ class Component:
     def delete_beam(self, beam: Beam | str) -> None:
         """Delete an existing beam belonging to this component's scope.
 
+        Parameters
+        ----------
+        beam : Beam | str
+            ID of the beam or instance to delete.
+
         Notes
         -----
         If the beam belongs to this component's children, it is deleted.
         If the beam does not belong to this component (or its children), it
         is not deleted.
-
-        Parameters
-        ----------
-        beam : Beam | str
-            ID of the beam or instance to delete.
         """
         id = beam if isinstance(beam, str) else beam.id
         beam_requested = self.search_beam(id)
@@ -1200,11 +1323,6 @@ class Component:
     def search_body(self, id: str) -> Body | None:
         """Search bodies in the component's scope.
 
-        Notes
-        -----
-        This method searches for bodies in the component and nested components
-        recursively.
-
         Parameters
         ----------
         id : str
@@ -1214,6 +1332,11 @@ class Component:
         -------
         Body | None
             Body with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for bodies in the component and nested components
+        recursively.
         """
         # Search in component's bodies
         for body in self.bodies:
@@ -1234,11 +1357,6 @@ class Component:
     def search_beam(self, id: str) -> Beam | None:
         """Search beams in the component's scope.
 
-        Notes
-        -----
-        This method searches for beams in the component and nested components
-        recursively.
-
         Parameters
         ----------
         id : str
@@ -1248,6 +1366,11 @@ class Component:
         -------
         Beam | None
             Beam with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for beams in the component and nested components
+        recursively.
         """
         # Search in component's beams
         for beam in self.beams:
@@ -1283,109 +1406,86 @@ class Component:
         # Kill itself
         self._is_alive = False
 
-    def tessellate(
-        self, merge_component: bool = False, merge_bodies: bool = False
-    ) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(self, _recursive_call: bool = False) -> Union["PolyData", list["MultiBlock"]]:
         """Tessellate the component.
 
         Parameters
         ----------
-        merge_component : bool, default: False
-            Whether to merge this component into a single dataset. When ``True``,
-            all the individual bodies are effectively combined into a single
-            dataset without any hierarchy.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively
-            merged into a single dataset without separating faces.
+        _recursive_call: bool, default: False
+            Internal flag to indicate if this method is being called recursively.
+            Not to be used by the user.
 
         Returns
         -------
-        ~pyvista.PolyData, ~pyvista.MultiBlock
-            Merged :class:`pyvista.PolyData` if ``merge_component=True`` or a
-            composite dataset.
+        ~pyvista.PolyData, list[~pyvista.MultiBlock]
+            Tessellated component as a single PolyData object.
+            If the method is called recursively, a list of MultiBlock objects is returned.
 
-        Examples
-        --------
-        Create two stacked bodies and return the tessellation as two merged bodies:
-
-        >>> from ansys.geometry.core.sketch import Sketch
-        >>> from ansys.geometry.core import Modeler
-        >>> from ansys.geometry.core.math import Point2D, Point3D, Plane
-        >>> from ansys.geometry.core.misc import UNITS
-        >>> modeler = Modeler("10.54.0.72", "50051")
-        >>> sketch_1 = Sketch()
-        >>> box = sketch_1.box(
-        >>>    Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
-        >>> sketch_1.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
-        >>> design = modeler.create_design("MyDesign")
-        >>> comp = design.add_component("MyComponent")
-        >>> distance = Quantity(10, UNITS.m)
-        >>> body = comp.extrude_sketch("Body", sketch=sketch_1, distance=distance)
-        >>> sketch_2 = Sketch(Plane([0, 0, 10]))
-        >>> box = sketch_2.box(
-        >>>    Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(5, UNITS.m))
-        >>> circle = sketch_2.circle(Point2D([0, 0], UNITS.m), Quantity(25, UNITS.m))
-        >>> body = comp.extrude_sketch("Body", sketch=sketch_2, distance=distance)
-        >>> dataset = comp.tessellate(merge_bodies=True)
-        >>> dataset
-        MultiBlock (0x7ff6bcb511e0)
-          N Blocks:     2
-          X Bounds:     -25.000, 25.000
-          Y Bounds:     -24.991, 24.991
-          Z Bounds:     0.000, 20.000
         """
         import pyvista as pv
 
         # Tessellate the bodies in this component
-        datasets = [body.tessellate(merge_bodies) for body in self.bodies]
-
-        blocks_list = [pv.MultiBlock(datasets)]
+        datasets: list["MultiBlock"] = [body.tessellate(merge=False) for body in self.bodies]
 
         # Now, go recursively inside its subcomponents (with no arguments) and
         # merge the PolyData obtained into our blocks
         for comp in self._components:
             if not comp.is_alive:
                 continue
-            blocks_list.append(comp.tessellate(merge_bodies=merge_bodies))
+            datasets.extend(comp.tessellate(_recursive_call=True))
 
-        # Transform the list of MultiBlock objects into a single MultiBlock
-        blocks = pv.MultiBlock(blocks_list)
-
-        if merge_component:
-            ugrid = blocks.combine()
-            # Convert to polydata as it's slightly faster than extract surface
-            return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
-        return blocks
+        # Convert to polydata as it's slightly faster than extract surface
+        # plus this method is only for visualizing the component as a whole (no
+        # need to keep the hierarchy)
+        if _recursive_call:
+            return datasets
+        else:
+            ugrid = pv.MultiBlock(datasets).combine()
+            return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
 
     def plot(
         self,
-        merge_component: bool = False,
-        merge_bodies: bool = False,
+        merge_component: bool = True,
+        merge_bodies: bool = True,
         screenshot: str | None = None,
         use_trame: bool | None = None,
+        use_service_colors: bool | None = None,
+        allow_picking: bool | None = None,
         **plotting_options: dict | None,
-    ) -> None:
+    ) -> None | list[Any]:
         """Plot the component.
 
         Parameters
         ----------
-        merge_component : bool, default: False
-            Whether to merge the component into a single dataset. When ``True``,
-            all the individual bodies are effectively merged into a single
-            dataset without any hierarchy.
-        merge_bodies : bool, default: False
-            Whether to merge each body into a single dataset. When ``True``,
-            all the faces of each individual body are effectively merged
-            into a single dataset without separating faces.
+        merge_component : bool, default: True
+            Whether to merge the component into a single dataset. By default, ``True``.
+            Performance improved. When ``True``, all the faces of the component are effectively
+            merged into a single dataset. If ``False``, the individual bodies are kept separate.
+        merge_bodies : bool, default: True
+            Whether to merge each body into a single dataset. By default, ``True``.
+            Performance improved. When ``True``, all the faces of each individual body are
+            effectively merged into a single dataset. If ``False``, the individual faces are kept
+            separate.
         screenshot : str, default: None
             Path for saving a screenshot of the image being represented.
         use_trame : bool, default: None
             Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
-            The default is ``None``, in which case the ``USE_TRAME`` global setting
-            is used.
+            The default is ``None``, in which case the
+            ``ansys.tools.visualization_interface.USE_TRAME`` global setting is used.
+        use_service_colors : bool, default: None
+            Whether to use the colors assigned to the body in the service. The default
+            is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
+            global setting is used.
+        allow_picking : bool, default: None
+            Whether to enable picking. The default is ``None``, in which case the
+            picker is not enabled.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
+
+        Returns
+        -------
+        None | list[Any]
+            If ``allow_picking=True``, a list of picked objects is returned. Otherwise, ``None``.
 
         Examples
         --------
@@ -1422,15 +1522,45 @@ class Component:
             N Coordinate Systems : 0
         >>> mycomp.plot(pbr=True, metallic=1.0)
         """
+        import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
-        from ansys.tools.visualization_interface.types.mesh_object_plot import MeshObjectPlot
 
-        mesh_object = MeshObjectPlot(
-            custom_object=self, mesh=self.tessellate(merge_component, merge_bodies)
+        use_service_colors = (
+            use_service_colors
+            if use_service_colors is not None
+            else pyansys_geometry.USE_SERVICE_COLORS
         )
-        pl = GeometryPlotter(use_trame=use_trame)
-        pl.plot(mesh_object, **plotting_options)
-        pl.show(screenshot=screenshot, **plotting_options)
+        # If picking is enabled, we should not merge the component
+        if allow_picking:
+            # This blocks the user from selecting the component itself
+            # but honestly, who would want to select the component itself since
+            # you already have a reference to it? It is the object you are plotting!
+            self._grpc_client.log.info(
+                "Ignoring 'merge_component=True' (default behavior) as "
+                "'allow_picking=True' has been requested."
+            )
+            merge_component = False
+
+        # Add merge_component and merge_bodies to the plotting options
+        plotting_options["merge_component"] = merge_component
+        plotting_options["merge_bodies"] = merge_bodies
+
+        # At component level, if ``multi_colors`` or ``use_service_colors`` are defined
+        # we should not merge the component.
+        if plotting_options.get("multi_colors", False) or use_service_colors:
+            plotting_options["merge_component"] = False
+            self._grpc_client.log.info(
+                "Ignoring 'merge_component=True' (default behavior) as "
+                "'multi_colors' or 'use_service_colors' are defined."
+            )
+
+        pl = GeometryPlotter(
+            use_trame=use_trame,
+            use_service_colors=use_service_colors,
+            allow_picking=allow_picking,
+        )
+        pl.plot(self, **plotting_options)
+        return pl.show(screenshot=screenshot, **plotting_options)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""
@@ -1448,3 +1578,143 @@ class Component:
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Components         : {sum(alive_comps)}")
         return "\n".join(lines)
+
+    @check_input_types
+    def tree_print(
+        self,
+        consider_comps: bool = True,
+        consider_bodies: bool = True,
+        consider_beams: bool = True,
+        depth: int | None = None,
+        indent: int = 4,
+        sort_keys: bool = False,
+        return_list: bool = False,
+        skip_loc_header: bool = False,
+    ) -> None | list[str]:
+        """Print the component in tree format.
+
+        Parameters
+        ----------
+        consider_comps : bool, default: True
+            Whether to print the nested components.
+        consider_bodies : bool, default: True
+            Whether to print the bodies.
+        consider_beams : bool, default: True
+            Whether to print the beams.
+        depth : int | None, default: None
+            Depth level to print. If None, it prints all levels.
+        indent : int, default: 4
+            Indentation level. Minimum is 2 - if less than 2, it is set to 2
+            by default.
+        sort_keys : bool, default: False
+            Whether to sort the keys alphabetically.
+        return_list : bool, default: False
+            Whether to return a list of strings or print out
+            the tree structure.
+        skip_loc_header : bool, default: False
+            Whether to skip the location header. Mostly for internal use.
+
+        Returns
+        -------
+        None | list[str]
+            Tree-style printed component or list of strings representing the component tree.
+        """
+
+        def build_parent_tree(comp: Component, parent_tree: str = "") -> str:
+            """Private function to build the parent tree of a component."""
+            if comp.parent_component is None:
+                # We reached the top level component... return the parent tree
+                return "Root component (Design)" if not parent_tree else parent_tree
+            else:
+                if parent_tree == "":
+                    # Should only happen in the first call
+                    parent_tree = comp.name
+
+                # Add the parent component to the parent tree and continue
+                return build_parent_tree(
+                    comp.parent_component, f"{comp.parent_component.name} > {parent_tree}"
+                )
+
+        # Indentation should be at least 2
+        indent = max(2, indent)
+
+        # Initialize the lines list
+        lines: list[str] = []
+
+        # Add the location header if requested - and only on the first call
+        # (subsequent calls will have the skip_loc_header set to True)
+        if not skip_loc_header:
+            lines.append(f">>> Tree print view of component '{self.name}'")
+            lines.append("")
+            lines.append("Location")
+            lines.append(f"{'-' * len(lines[-1])}")
+            lines.append(f"{build_parent_tree(self)}")
+            lines.append("")
+            lines.append("Subtree")
+            lines.append(f"{'-' * len(lines[-1])}")
+
+        lines.append(f"(comp) {self.name}")
+        # Print the bodies
+        if consider_bodies:
+            # Check if the bodies should be sorted
+            if sort_keys:
+                body_names = [body.name for body in sorted(self.bodies, key=lambda body: body.name)]
+            else:
+                body_names = [body.name for body in self.bodies]
+
+            # Add the bodies to the lines (with indentation)
+            lines.extend([f"|{'-' * (indent - 1)}(body) {name}" for name in body_names])
+
+        # Print the beams
+        if consider_beams:
+            # Check if the bodies should be sorted
+            if sort_keys:
+                # TODO: Beams should also have names...
+                # https://github.com/ansys/pyansys-geometry/issues/1319
+                beam_names = [
+                    beam.id
+                    for beam in sorted(self.beams, key=lambda beam: beam.id)
+                    if beam.is_alive
+                ]
+            else:
+                beam_names = [beam.id for beam in self.beams if beam.is_alive]
+
+            # Add the bodies to the lines (with indentation)
+            lines.extend([f"|{'-' * (indent - 1)}(beam) {name}" for name in beam_names])
+
+        # Print the nested components
+        if consider_comps:
+            # Check if the components should be sorted
+            comps = (
+                self.components
+                if not sort_keys
+                else sorted(self.components, key=lambda comp: comp.name)
+            )
+            comps = [comp for comp in comps if comp.is_alive]
+
+            # Add the components to the lines (recursive)
+            if depth is None or depth > 1:
+                n_comps = len(comps)
+                for idx, comp in enumerate(comps):
+                    subcomp = comp.tree_print(
+                        consider_comps=consider_comps,
+                        consider_bodies=consider_bodies,
+                        consider_beams=consider_beams,
+                        depth=None if depth is None else depth - 1,
+                        indent=indent,
+                        sort_keys=sort_keys,
+                        return_list=True,
+                        skip_loc_header=True,
+                    )
+
+                    # Add indentation to the subcomponent lines
+                    lines.append(f"|{'-' * (indent - 1)}(comp) {comp.name}")
+
+                    # Determine the prefix for the subcomponent lines and add them
+                    prefix = f"{' ' * indent}" if idx == (n_comps - 1) else f":{' ' * (indent - 1)}"
+                    lines.extend([f"{prefix}{line}" for line in subcomp[1:]])
+
+            else:
+                lines.extend([f"|{'-' * (indent - 1)}(comp) {comp.name}" for comp in comps])
+
+        return lines if return_list else print("\n".join(lines))

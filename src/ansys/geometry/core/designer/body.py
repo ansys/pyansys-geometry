@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -81,6 +81,7 @@ from ansys.geometry.core.misc.checks import (
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
+from ansys.tools.visualization_interface.utils.color import Color
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
@@ -309,16 +310,16 @@ class IBody(ABC):
             Whether to project only one curve of the entire sketch. When
             ``True``, only one curve is projected.
 
+        Returns
+        -------
+        list[Face]
+            All faces from the project curves operation.
+
         Notes
         -----
         The ``only_one_curve`` parameter allows you to optimize the server call because
         projecting curves is an expensive operation. This reduces the workload on the
         server side.
-
-        Returns
-        -------
-        list[Face]
-            All faces from the project curves operation.
         """
         return
 
@@ -349,16 +350,16 @@ class IBody(ABC):
             Whether to project only one curve of the entire sketch. When
             ``True``, only one curve is projected.
 
+        Returns
+        -------
+        list[Face]
+            All imprinted faces from the operation.
+
         Notes
         -----
         The ``only_one_curve`` parameter allows you to optimize the server call because
         projecting curves is an expensive operation. This reduces the workload on the
         server side.
-
-        Returns
-        -------
-        list[Face]
-            All imprinted faces from the operation.
         """
         return
 
@@ -407,15 +408,15 @@ class IBody(ABC):
     def scale(self, value: Real) -> None:
         """Scale the geometry body by the given value.
 
-        Notes
-        -----
-        The calling object is directly modified when this method is called.
-        Thus, it is important to make copies if needed.
-
         Parameters
         ----------
         value: Real
             Value to scale the body by.
+
+        Notes
+        -----
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
         """
         return
 
@@ -423,15 +424,15 @@ class IBody(ABC):
     def map(self, frame: Frame) -> None:
         """Map the geometry body to the new specified frame.
 
-        Notes
-        -----
-        The calling object is directly modified when this method is called.
-        Thus, it is important to make copies if needed.
-
         Parameters
         ----------
         frame: Frame
             Structure defining the orientation of the body.
+
+        Notes
+        -----
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
         """
         return
 
@@ -439,15 +440,15 @@ class IBody(ABC):
     def mirror(self, plane: Plane) -> None:
         """Mirror the geometry body across the specified plane.
 
-        Notes
-        -----
-        The calling object is directly modified when this method is called.
-        Thus, it is important to make copies if needed.
-
         Parameters
         ----------
         plane: Plane
             Represents the mirror.
+
+        Notes
+        -----
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
         """
         return
 
@@ -543,25 +544,31 @@ class IBody(ABC):
     @abstractmethod
     def plot(
         self,
-        merge: bool = False,
+        merge: bool = True,
         screenshot: str | None = None,
         use_trame: bool | None = None,
+        use_service_colors: bool | None = None,
         **plotting_options: dict | None,
     ) -> None:
         """Plot the body.
 
         Parameters
         ----------
-        merge : bool, default: False
-            Whether to merge the body into a single mesh. When ``False`` (default),
-            the number of triangles are preserved and only the topology is merged.
-            When ``True``, the individual faces of the tessellation are merged.
+        merge : bool, default: True
+            Whether to merge the body into a single mesh. Performance improved when ``True``.
+            When ``True`` (default), the individual faces of the tessellation are merged.
+            When ``False``, the number of triangles are preserved and only the topology
+            is merged.
         screenshot : str, default: None
             Path for saving a screenshot of the image that is being represented.
         use_trame : bool, default: None
             Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
-            The default is ``None``, in which case the ``USE_TRAME`` global setting
-            is used.
+            The default is ``None``, in which case the
+            ``ansys.tools.visualization_interface.USE_TRAME`` global setting is used.
+        use_service_colors : bool, default: None
+            Whether to use the colors assigned to the body in the service. The default
+            is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
+            global setting is used.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
@@ -594,13 +601,6 @@ class IBody(ABC):
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Intersect two (or more) bodies.
 
-        Notes
-        -----
-        The ``self`` parameter is directly modified with the result, and
-        the ``other`` parameter is consumed. Thus, it is important to make
-        copies if needed. If the ``keep_other`` parameter is set to ``True``,
-        the intersected body is retained.
-
         Parameters
         ----------
         other : Body
@@ -612,19 +612,19 @@ class IBody(ABC):
         ------
         ValueError
             If the bodies do not intersect.
-        """
-        return
-
-    @protect_grpc
-    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
-        """Subtract two (or more) bodies.
 
         Notes
         -----
         The ``self`` parameter is directly modified with the result, and
         the ``other`` parameter is consumed. Thus, it is important to make
         copies if needed. If the ``keep_other`` parameter is set to ``True``,
-        the subtracted body is retained.
+        the intersected body is retained.
+        """
+        return
+
+    @protect_grpc
+    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
+        """Subtract two (or more) bodies.
 
         Parameters
         ----------
@@ -637,6 +637,13 @@ class IBody(ABC):
         ------
         ValueError
             If the subtraction results in an empty (complete) subtraction.
+
+        Notes
+        -----
+        The ``self`` parameter is directly modified with the result, and
+        the ``other`` parameter is consumed. Thus, it is important to make
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the subtracted body is retained.
         """
         return
 
@@ -644,19 +651,19 @@ class IBody(ABC):
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Unite two (or more) bodies.
 
-        Notes
-        -----
-        The ``self`` parameter is directly modified with the result, and
-        the ``other`` parameter is consumed. Thus, it is important to make
-        copies if needed. If the ``keep_other`` parameter is set to ``True``,
-        the united body is retained.
-
         Parameters
         ----------
         other : Body
             Body to unite with the ``self`` parameter.
         keep_other : bool, default: False
             Whether to retain the united body or not.
+
+        Notes
+        -----
+        The ``self`` parameter is directly modified with the result, and
+        the ``other`` parameter is consumed. Thus, it is important to make
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the united body is retained.
         """
         return
 
@@ -757,24 +764,21 @@ class MasterBody(IBody):
     @property
     def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
-        if self._color is None:
+        if self._color is None and self.is_alive:
+            # Assigning default value first
+            self._color = Color.DEFAULT.value
+
             if self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
                 # Server does not support color retrieval before version 25.1.0
                 self._grpc_client.log.warning(
-                    "Server does not support color retrieval. Assigning default."
+                    "Server does not support color retrieval. Default value assigned..."
                 )
-                self._color = "#000000"  # Default color
             else:
                 # Fetch color from the server if it's not cached
                 color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
-
                 if color_response.color:
                     self._color = mcolors.to_hex(color_response.color)
-                else:  # pragma: no cover
-                    self._grpc_client.log.warning(
-                        f"Color could not be retrieved for body {self._id}. Assigning default."
-                    )
-                    self._color = "#000000"  # Default color
+
         return self._color
 
     @color.setter
@@ -1093,6 +1097,7 @@ class MasterBody(IBody):
             response.master_id, copy_name, self._grpc_client, is_surface=self.is_surface
         )
         parent._master_component.part.bodies.append(tb)
+        parent._clear_cached_bodies()
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
         return Body(body_id, response.name, parent, tb)
 
@@ -1115,16 +1120,19 @@ class MasterBody(IBody):
 
         pdata = [tess_to_pd(tess).transform(transform) for tess in self._tessellation]
         comp = pv.MultiBlock(pdata)
+
         if merge:
             ugrid = comp.combine()
-            return pv.PolyData(ugrid.points, ugrid.cells, n_faces=ugrid.n_cells)
-        return comp
+            return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
+        else:
+            return comp
 
     def plot(  # noqa: D102
         self,
-        merge: bool = False,
+        merge: bool = True,
         screenshot: str | None = None,
         use_trame: bool | None = None,
+        use_service_colors: bool | None = None,
         **plotting_options: dict | None,
     ) -> None:
         raise NotImplementedError(
@@ -1199,10 +1207,14 @@ class Body(IBody):
 
         @wraps(func)
         def wrapper(self: "Body", *args, **kwargs):
-            self._template._tessellation = None
+            self._reset_tessellation_cache()
             return func(self, *args, **kwargs)
 
         return wrapper
+
+    def _reset_tessellation_cache(self):  # noqa: N805
+        """Reset the cached tessellation for a body."""
+        self._template._tessellation = None
 
     @property
     def id(self) -> str:  # noqa: D102
@@ -1506,20 +1518,33 @@ class Body(IBody):
 
     def plot(  # noqa: D102
         self,
-        merge: bool = False,
+        merge: bool = True,
         screenshot: str | None = None,
         use_trame: bool | None = None,
+        use_service_colors: bool | None = None,
         **plotting_options: dict | None,
     ) -> None:
         # lazy import here to improve initial module load time
+        import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
         from ansys.tools.visualization_interface.types.mesh_object_plot import (
             MeshObjectPlot,
         )
 
-        meshobject = MeshObjectPlot(self, self.tessellate(merge=merge))
-        pl = GeometryPlotter(use_trame=use_trame)
-        pl.plot(meshobject, **plotting_options)
+        use_service_colors = (
+            use_service_colors
+            if use_service_colors is not None
+            else pyansys_geometry.USE_SERVICE_COLORS
+        )
+
+        # Add to plotting options as well... to be used by the plotter if necessary
+        plotting_options["merge_bodies"] = merge
+
+        mesh_object = (
+            self if use_service_colors else MeshObjectPlot(self, self.tessellate(merge=merge))
+        )
+        pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
+        pl.plot(mesh_object, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
@@ -1596,6 +1621,7 @@ class Body(IBody):
         if self.is_surface:
             lines.append(f"  Surface thickness    : {self.surface_thickness}")
             lines.append(f"  Surface offset       : {self.surface_offset}")
+        lines.append(f"  Color                : {self.color}")
 
         nl = "\n"
         return f"{nl}{nl.join(lines)}{nl}"

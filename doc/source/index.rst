@@ -1,13 +1,16 @@
-PyAnsys Geometry documentation |version|
-========================================
+.. title:: PyAnsys Geometry
 
-PyAnsys Geometry is a Python client library for the Ansys Geometry service.
+.. figure:: _static/logo/logo.png
+    :align: center
+    :width: 640px
 
-.. grid:: 1 2 2 2
+PyAnsys Geometry is a Python client library for the Ansys Geometry service. You are looking at the documentation for version |version|.
 
+.. grid:: 1 2 3 3
+    :gutter: 1 2 3 3
+    :padding: 1 2 3 3
 
     .. grid-item-card:: Getting started :fa:`person-running`
-        :padding: 2 2 2 2
         :link: getting_started/index
         :link-type: doc
 
@@ -16,7 +19,6 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
         service.
 
     .. grid-item-card:: User guide :fa:`book-open-reader`
-        :padding: 2 2 2 2
         :link: user_guide/index
         :link-type: doc
 
@@ -27,7 +29,6 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
         {% if build_api %}
         .. grid-item-card:: API reference :fa:`book-bookmark`
-            :padding: 2 2 2 2
             :link: api/index
             :link-type: doc
 
@@ -37,7 +38,6 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
         {% if build_examples %}
         .. grid-item-card:: Examples :fa:`scroll`
-            :padding: 2 2 2 2
             :link: examples
             :link-type: doc
 
@@ -46,7 +46,6 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
         {% endif %}
 
     .. grid-item-card:: Contribute :fa:`people-group`
-        :padding: 2 2 2 2
         :link: contributing
         :link-type: doc
 
@@ -54,7 +53,6 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
         or documentation.
 
     .. grid-item-card:: Assets :fa:`download`
-        :padding: 2 2 2 2
         :link: assets
         :link-type: doc
 

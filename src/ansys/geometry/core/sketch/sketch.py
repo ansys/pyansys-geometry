@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -317,11 +317,6 @@ class Sketch:
     ):
         """Add a segment to the sketch starting from a given starting point.
 
-        Notes
-        -----
-        Vector magnitude determines the segment endpoint.
-        Vector magnitude is assumed to use the same unit as the starting point.
-
         Parameters
         ----------
         start : Point2D
@@ -337,6 +332,11 @@ class Sketch:
         -------
         Sketch
             Revised sketch state ready for further sketch actions.
+
+        Notes
+        -----
+        Vector magnitude determines the segment endpoint.
+        Vector magnitude is assumed to use the same unit as the starting point.
         """
         end_vec_as_point = Point2D(vector, start.unit)
         end = start + end_vec_as_point
@@ -613,16 +613,16 @@ class Sketch:
         tag : str, default: None
             User-defined label for identifying the face.
 
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+
         Notes
         -----
         If an asymmetric base angle is defined, the base angle is
         applied to the left-most angle, and the asymmetric base angle
         is applied to the right-most angle.
-
-        Returns
-        -------
-        Sketch
-            Revised sketch state ready for further sketch actions.
         """
         trapezoid = Trapezoid(base_width, height, base_angle, base_asymmetric_angle, center, angle)
         return self.face(trapezoid, tag)
@@ -892,8 +892,8 @@ class Sketch:
             Path for saving a screenshot of the image that is being represented.
         use_trame : bool, default: None
             Whether to enables the use of `trame <https://kitware.github.io/trame/index.html>`_.
-            The default is ``None``, in which case the ``USE_TRAME`` global
-            setting is used.
+            The default is ``None``, in which case the
+            ``ansys.tools.visualization_interface.USE_TRAME`` global setting is used.
         **plotting_options : dict, optional
             Keyword arguments for plotting. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
@@ -943,8 +943,8 @@ class Sketch:
             Path for saving a screenshot of the image that is being represented.
         use_trame : bool, default: None
             Whether to enables the use of `trame <https://kitware.github.io/trame/index.html>`_.
-            The default is ``None``, in which case the ``USE_TRAME`` global
-            setting is used.
+            The default is ``None``, in which case the
+            ``ansys.tools.visualization_interface.USE_TRAME`` global setting is used.
         **plotting_options : dict, optional
             Keyword arguments for plotting. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.

@@ -19,7 +19,7 @@ specify the angle of revolution to create a partial body.
 
 ```{code-cell} ipython3
 # Imports
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.math import (
   Plane,
   Point2D,
@@ -32,9 +32,12 @@ from ansys.geometry.core.sketch import Sketch
 
 ```
 
+## Initialize the modeler
+
 ```{code-cell} ipython3
 # Initialize the modeler for this example notebook
-m = Modeler()
+m = launch_modeler()
+print(m)
 ```
 
 ## Example: Creating a quarter of a donut
@@ -123,4 +126,11 @@ design.revolve_sketch(
 )
 
 design.plot()
+```
+
+## Close the modeler
+
+```{code-cell} ipython3
+# Close the modeler
+m.close()
 ```

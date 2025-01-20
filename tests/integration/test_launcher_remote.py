@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -80,7 +80,9 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
     # Assert: PyAnsys Geometry went through the PyPIM workflow
     assert mock_is_configured.called
     assert mock_connect.called
-    mock_client.create_instance.assert_called_with(product_name="geometry", product_version=None)
+    mock_client.create_instance.assert_called_with(
+        product_name="geometry", product_version="windows"
+    )
     assert mock_instance.wait_for_ready.called
     mock_instance.build_grpc_channel.assert_called_with(
         options=[

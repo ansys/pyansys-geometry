@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -314,12 +314,6 @@ class Point3D(np.ndarray, PhysicalQuantity):
     def transform(self, matrix: "Matrix44") -> "Point3D":
         """Transform the 3D point with a transformation matrix.
 
-        Notes
-        -----
-        Transform the ``Point3D`` object by applying the specified 4x4
-        transformation matrix and return a new ``Point3D`` object representing the
-        transformed point.
-
         Parameters
         ----------
         matrix : Matrix44
@@ -330,6 +324,12 @@ class Point3D(np.ndarray, PhysicalQuantity):
         Point3D
             New 3D point that is the transformed copy of the original 3D point after applying
             the transformation matrix.
+
+        Notes
+        -----
+        Transform the ``Point3D`` object by applying the specified 4x4
+        transformation matrix and return a new ``Point3D`` object representing the
+        transformed point.
         """
         point_4x1 = np.append(self, 1)
         result_4x1 = matrix * point_4x1

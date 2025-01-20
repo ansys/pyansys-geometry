@@ -31,44 +31,28 @@ Perform the required imports.
 from pint import Quantity
 import pyvista as pv
 
-from ansys.geometry.core import Modeler
-from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAGE
-from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.sketch import Sketch
 ```
 
-## Load modeling service
+## Launch modeling service
 
-Load the modeling service. While the following code uses a Docker image to interact
-with the modeling service, you can use any suitable method mentioned in the
-preceding examples.
+Launch a modeling service session.
 
 ```{code-cell} ipython3
+from ansys.geometry.core import launch_modeler
 
-list_images = []
-list_containers = []
-available_images = LocalDockerInstance.docker_client().images.list(
-    name=GEOMETRY_SERVICE_DOCKER_IMAGE
-)
-is_image_available_cont = None
-for image in available_images:
-    for geom_image, geom_cont in zip(list_images, list_containers):
-        if geom_image in image.tags:
-            is_image_available = True
-            is_image_available_cont = geom_cont
-            break
-
-docker_instance = LocalDockerInstance(
-    connect_to_existing_service=True,
-    restart_if_existing_service=True,
-    image=is_image_available_cont,
-)
-
-modeler = Modeler(docker_instance=docker_instance)
+# Start a modeler session
+modeler = launch_modeler()
+print(modeler)
 ```
+
+You can also launch your own services and connect to them. For information on
+connecting to an existing service, see the
+[Modeler API](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/modeler/Modeler.html)
+documentation.
 
 +++
 
@@ -119,6 +103,7 @@ plot_list.append(sketch)
 ```
 
 ## Create a PyVista cylinder
+
 Use PyVista to create a cylinder.
 
 ```{code-cell} ipython3
@@ -128,6 +113,7 @@ plot_list.append(cyl)
 ```
 
 ## Create a PyVista multiblock
+
 Use PyVista to create a multiblock with a sphere and a cube.
 
 ```{code-cell} ipython3
@@ -179,33 +165,6 @@ plotter = GeometryPlotter(use_trame=True)
 plotter.show(plot_list)
 ```
 
-## Render in different colors
-
-You can render the objects in different colors automatically using PyVista's default
-color cycler. In order to do this, activate the ``multi_colors=True`` option when calling
-the ``plot()`` method.
-
-In the following cell we will create a new design and plot a prism and a cylinder in different colors.
-
-```python
-design = modeler.create_design("MultiColors")
-
-# Create a sketch of a box
-sketch_box = Sketch().box(Point2D([0, 0], unit=UNITS.m), width=30 * UNITS.m, height=40 * UNITS.m)
-
-# Create a sketch of a circle (overlapping the box slightly)
-sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=3 * UNITS.m)
-
-# Extrude both sketches to get a prism and a cylinder
-design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
-design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
-
-# Design plotting
-design.plot(multi_colors=True)
-```
-
-![](../../_static/assets/multicolors.png)
-
 ## Clip objects
 
 You can clip any object represented in the plotter by defining a ``Plane`` object that
@@ -244,7 +203,42 @@ picked_list = plotter.show(plot_list)
 print(picked_list)
 ```
 
+It is also possible to enable picking directly for a specific ``design`` or ``component``
+object alone. In the following cell, picking is enabled for the ``design`` object.
+
+```{code-cell} ipython3
+picked_list = design.plot(allow_picking=True)
+print(picked_list)
+```
+
+## Render in different colors
+
+You can render the objects in different colors automatically using PyVista's default
+color cycler. In order to do this, activate the ``multi_colors=True`` option when calling
+the ``plot()`` method.
+
+In the following cell you can create a new design and plot a prism and a cylinder in different colors.
+
+```{code-cell} ipython
+design = modeler.create_design("MultiColors")
+
+# Create a sketch of a box
+sketch_box = Sketch().box(Point2D([0, 0], unit=UNITS.m), width=30 * UNITS.m, height=40 * UNITS.m)
+
+# Create a sketch of a circle (overlapping the box slightly)
+sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=3 * UNITS.m)
+
+# Extrude both sketches to get a prism and a cylinder
+design.extrude_sketch("Prism", sketch_box, 50 * UNITS.m)
+design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+# Design plotting
+design.plot(multi_colors=True)
+```
+
+
 ## Close session
+
 When you finish interacting with your modeling service, you should close the active
 server session. This frees resources wherever the service is running.
 

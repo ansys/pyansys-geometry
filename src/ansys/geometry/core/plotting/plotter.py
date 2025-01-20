@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,12 +21,14 @@
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
 
+from itertools import cycle
 from typing import Any
 
 import numpy as np
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
+import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.design import Design
@@ -44,6 +46,8 @@ from ansys.tools.visualization_interface import (
 )
 from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
 
+POLYDATA_COLOR_CYCLER = cycle(pv.colors.get_cycler("matplotlib"))
+
 
 class GeometryPlotter(PlotterInterface):
     """Plotter for PyAnsys Geometry objects.
@@ -54,6 +58,8 @@ class GeometryPlotter(PlotterInterface):
     ----------
     use_trame : bool, optional
         Whether to use trame visualizer or not, by default None.
+    use_service_colors : bool, optional
+        Whether to use service colors or not, by default None.
     allow_picking : bool, optional
         Whether to allow picking or not, by default False.
     show_plane : bool, optional
@@ -63,7 +69,8 @@ class GeometryPlotter(PlotterInterface):
     def __init__(
         self,
         use_trame: bool | None = None,
-        allow_picking: bool | None = False,
+        use_service_colors: bool | None = None,
+        allow_picking: bool = False,
         show_plane: bool = True,
     ) -> None:
         """Initialize the GeometryPlotter class."""
@@ -74,6 +81,18 @@ class GeometryPlotter(PlotterInterface):
         self._backend._use_trame = use_trame
         self._backend.add_widget(ShowDesignPoints(self))
         self._backend._pl._show_plane = show_plane
+
+        # Store the use_service_colors flag
+        self._use_service_colors = (
+            use_service_colors
+            if use_service_colors is not None
+            else pyansys_geometry.USE_SERVICE_COLORS
+        )
+
+    @property
+    def use_service_colors(self) -> bool:
+        """Indicates whether to use service colors for plotting purposes."""
+        return self._use_service_colors
 
     def add_frame(self, frame: Frame, plotting_options: dict | None = None) -> None:
         """Plot a frame in the scene.
@@ -217,12 +236,27 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
+        if self.use_service_colors:
+            plotting_options["color"] = body.color
+        # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
+        # so if multi_colors is True and merge is True (returns PolyData) then
+        # we need to set the color manually
+        elif (
+            merge
+            and plotting_options.get("multi_colors", False)
+            and "color" not in plotting_options
+        ):
+            plotting_options["color"] = next(POLYDATA_COLOR_CYCLER)["color"]
+
         # Use the default PyAnsys Geometry add_mesh arguments
         self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
         body_plot = MeshObjectPlot(custom_object=body, mesh=dataset)
         self._backend.pv_interface.plot(body_plot, **plotting_options)
-        self.add_body_edges(body_plot)
+
+        # Edges should ONLY be plotted individually if picking is enabled
+        if self._backend._allow_picking:
+            self.add_body_edges(body_plot)
 
     def add_component(
         self,
@@ -249,11 +283,41 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        # Use the default PyAnsys Geometry add_mesh arguments
-        self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
-        dataset = component.tessellate(merge_component=merge_component, merge_bodies=merge_bodies)
-        component_polydata = MeshObjectPlot(component, dataset)
-        self.plot(component_polydata, **plotting_options)
+        if merge_component:
+            self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
+            dataset = component.tessellate()
+            component_polydata = MeshObjectPlot(component, dataset)
+            self.plot(component_polydata, **plotting_options)
+        else:
+            self.add_component_by_body(
+                component,
+                merge_bodies=merge_bodies,
+                **plotting_options,
+            )
+
+    def add_component_by_body(
+        self, component: Component, merge_bodies: bool, **plotting_options: dict | None
+    ) -> None:
+        """Add a component on a per body basis.
+
+        Parameters
+        ----------
+        component : Component
+            Component to add.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+        Notes
+        -----
+        This will allow to make use of the service colors. At the same time, it will be
+        slower than the add_component method.
+        """
+        # Recursively add the bodies and components
+        for body in component.bodies:
+            self.add_body(body, merge=merge_bodies, **plotting_options)
+        for comp in component.components:
+            self.add_component_by_body(comp, merge_bodies=merge_bodies, **plotting_options)
 
     def add_sketch_polydata(
         self, polydata_entries: list[pv.PolyData], sketch: Sketch = None, **plotting_options
@@ -339,24 +403,24 @@ class GeometryPlotter(PlotterInterface):
         else:
             merge_bodies = None
 
-        if "merge_components" in plotting_options:
-            merge_components = plotting_options["merge_components"]
-            plotting_options.pop("merge_components", None)
+        if "merge_component" in plotting_options:
+            merge_component = plotting_options["merge_component"]
+            plotting_options.pop("merge_component", None)
         else:
-            merge_components = None
+            merge_component = None
         # Add the custom object to the plotter
         if isinstance(plottable_object, DesignPoint):
             self.add_design_point(plottable_object, **plotting_options)
         elif isinstance(plottable_object, Sketch):
             self.add_sketch(plottable_object, **plotting_options)
-        elif isinstance(plottable_object, Body) or isinstance(object, MasterBody):
+        elif isinstance(plottable_object, (Body, MasterBody)):
             self.add_body(plottable_object, merge_bodies, **plotting_options)
-        elif isinstance(plottable_object, Design) or isinstance(object, Component):
-            self.add_component(plottable_object, merge_components, merge_bodies, **plotting_options)
+        elif isinstance(plottable_object, (Design, Component)):
+            self.add_component(plottable_object, merge_component, merge_bodies, **plotting_options)
         elif (
             isinstance(plottable_object, list)
-            and plottable_object != []
-            and isinstance(plottable_object[0], pv.PolyData)
+            and len(plottable_object) > 0
+            and all([isinstance(entry, pv.PolyData) for entry in plottable_object])
         ):
             self.add_sketch_polydata(plottable_object, **plotting_options)
         elif isinstance(plottable_object, list):
@@ -373,7 +437,7 @@ class GeometryPlotter(PlotterInterface):
         plotting_object: Any = None,
         screenshot: str | None = None,
         **plotting_options,
-    ) -> None:
+    ) -> None | list[Any]:
         """Show the plotter.
 
         Parameters
@@ -388,4 +452,17 @@ class GeometryPlotter(PlotterInterface):
         """
         if plotting_object is not None:
             self.plot(plotting_object, **plotting_options)
-        self._backend.show(screenshot=screenshot, **plotting_options)
+        picked_objs = self._backend.show(screenshot=screenshot, **plotting_options)
+
+        # Return the picked objects if picking is enabled... but as the actual PyAnsys
+        # Geometry objects (or PyVista objects if not)
+        if picked_objs:
+            lib_objects = []
+            for element in picked_objs:
+                if isinstance(element, MeshObjectPlot):
+                    lib_objects.append(element.custom_object)
+                elif isinstance(element, EdgePlot):
+                    lib_objects.append(element.edge_object)
+                else:  # Either a PyAnsys Geometry object or a PyVista object
+                    lib_objects.append(element)
+            return lib_objects

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -99,6 +99,11 @@ class Edge:
     def _grpc_id(self) -> EntityIdentifier:
         """Entity ID of this edge on the server side."""
         return EntityIdentifier(id=self._id)
+
+    @property
+    def body(self) -> "Body":
+        """Body of the edge."""
+        return self._body
 
     @property
     def is_reversed(self) -> bool:

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -28,9 +28,6 @@ from .conftest import FILES_DIR, skip_if_linux
 
 def test_volume_extract_from_faces(modeler: Modeler):
     """Test a volume is created from the provided faces."""
-    skip_if_linux(
-        modeler, test_volume_extract_from_faces.__name__, "prepare_tools"
-    )  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "hollowCylinder.scdocx")
 
     body = design.bodies[0]
@@ -43,17 +40,12 @@ def test_volume_extract_from_faces(modeler: Modeler):
 
 def test_volume_extract_from_edge_loops(modeler: Modeler):
     """Test a volume is created from the provided edges."""
-    skip_if_linux(
-        modeler, test_volume_extract_from_edge_loops.__name__, "prepare_tools"
-    )  # Skip test on Linux
     design = modeler.open_file(FILES_DIR / "hollowCylinder.scdocx")
 
     body = design.bodies[0]
-    inside_faces = []
     sealing_edges = [body.edges[2], body.edges[3]]
     created_bodies = modeler.prepare_tools.extract_volume_from_edge_loops(
         sealing_edges,
-        inside_faces,
     )
 
     assert len(created_bodies) == 1

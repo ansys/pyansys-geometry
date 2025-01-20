@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -34,18 +34,18 @@ class ParamUV:
     """
     Parameter class containing 2 parameters: (u, v).
 
-    Notes
-    -----
-    Likened to a 2D point in UV space Used as an argument in parametric
-    surface evaluations. This matches the service implementation for the
-    Geometry service.
-
     Parameters
     ----------
     u : Real
-        u-parameter.
+        U parameter.
     v : Real
-        v-parameter.
+        V parameter.
+
+    Notes
+    -----
+    Likened to a 2D point in UV space. Used as an argument in parametric
+    surface evaluations. This matches the service implementation for the
+    Geometry service.
     """
 
     def __init__(self, u: Real, v: Real) -> None:
@@ -55,12 +55,12 @@ class ParamUV:
 
     @property
     def u(self) -> Real:
-        """u-parameter."""
+        """U parameter."""
         return self._u
 
     @property
     def v(self) -> Real:
-        """v-parameter."""
+        """V parameter."""
         return self._v
 
     @check_input_types

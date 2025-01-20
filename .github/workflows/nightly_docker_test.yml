@@ -1,6 +1,12 @@
-name: Nightly Server test - Latest build
+name: Unstable build tests and promotion
 on:
   workflow_dispatch:
+    inputs:
+      promote:
+        description: 'Promote the latest build to stable (if tests pass)'
+        required: false
+        default: false
+        type: boolean
   schedule: # UTC at 0300
     - cron: "0 3 * * *"
   # Trigger workflow when file is modified
@@ -15,9 +21,10 @@ on:
       - v*
 
 env:
-  MAIN_PYTHON_VERSION: '3.11'
+  MAIN_PYTHON_VERSION: '3.12'
   ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest-unstable
-  ANSRV_GEO_IMAGE_LINUX_TAG: ghcr.io/ansys/geometry:linux-latest-unstable
+  ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG: ghcr.io/ansys/geometry:core-windows-latest-unstable
+  ANSRV_GEO_IMAGE_LINUX_CORE_TAG: ghcr.io/ansys/geometry:core-linux-latest-unstable
   ANSRV_GEO_PORT: 710
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo_nightly
@@ -28,15 +35,68 @@ concurrency:
 
 jobs:
 
+  manifests:
+    name: Check Docker manifests
+    runs-on: ubuntu-latest
+    outputs:
+      skip_dms: ${{ steps.services.outputs.skip_dms }}
+      skip_core_windows: ${{ steps.services.outputs.skip_core_windows }}
+      skip_core_linux: ${{ steps.services.outputs.skip_core_linux }}
+    strategy:
+      matrix:
+        include:
+          - container-stable: "windows-latest"
+            container-unstable: "windows-latest-unstable"
+            service: "dms"
+            service-name: "Windows DMS"
+          - container-stable: "core-windows-latest"
+            container-unstable: "core-windows-latest-unstable"
+            service: "core_windows"
+            service-name: "Windows Core Service"
+          - container-stable: "core-linux-latest"
+            container-unstable: "core-linux-latest-unstable"
+            service: "core_linux"
+            service-name: "Linux Core Service"
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check ${{ matrix.service-name }} manifest
+        id: services
+        run: |
+          docker manifest inspect ghcr.io/ansys/geometry:${{ matrix.container-stable }} > ${{ matrix.container-stable }}.json
+          docker manifest inspect ghcr.io/ansys/geometry:${{ matrix.container-unstable }} > ${{ matrix.container-unstable }}.json || true
+
+          # Verify that the unstable manifest exists - otherwise create an empty file
+          if [ ! -f ${{ matrix.container-unstable }}.json ]; then
+            touch ${{ matrix.container-unstable }}.json
+          fi
+
+
+          # Check if the manifests are the same (and if so, create an output that will skip the next job)
+          if diff ${{ matrix.container-stable }}.json ${{ matrix.container-unstable }}.json; then
+            echo "${{ matrix.service-name }} container manifests are the same... skipping"
+            echo "skip_${{ matrix.service }}=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "${{ matrix.service-name }} container manifests are different"
+            echo "skip_${{ matrix.service }}=0" >> "$GITHUB_OUTPUT"
+          fi
+
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # =================================================================================================
 
-  windows-tests:
-    name: Nightly unstable testing - Windows
-    if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
+  windows-dms-tests:
+    name: Windows DMS
+    needs: manifests
+    if: needs.manifests.outputs.skip_dms == 0
     runs-on: [self-hosted, Windows, pygeometry]
-
+    env:
+      PYVISTA_OFF_SCREEN: true
     steps:
       - uses: actions/checkout@v4
 
@@ -46,7 +106,9 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@v2
+        uses: pyvista/setup-headless-display-action@v3
+        with:
+          pyvista: false
 
       - name: Create Python venv
         run: |
@@ -68,8 +130,8 @@ jobs:
 
       - name: Download Geometry service container (always latest version)
         run: |
-          docker image rm $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
-          docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_TAG
+          docker image rm ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
+          docker pull ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-2'
@@ -79,7 +141,7 @@ jobs:
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_TAG }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run PyAnsys Geometry tests
@@ -90,9 +152,9 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop $env:GEO_CONT_NAME
-          docker logs $env:GEO_CONT_NAME
-          docker rm $env:GEO_CONT_NAME
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
 
       - name: Stop any remaining containers
         if: always()
@@ -117,12 +179,12 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "summary": "Nightly Tests for Windows failing",
+              "summary": "Unstable build tests for Windows DMS failing",
               "themeColor": "f44336",
-              "title": "PyAnsys Geometry Nightly Tests - Windows failing",
+              "title": "PyAnsys Geometry unstable build tests - Windows DMS failing",
               "sections": [
                 {
-                  "activityTitle": "Windows nightly tests are failing",
+                  "activityTitle": "Windows DMS unstable build tests are failing",
                   "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
                   "facts": [
                     {
@@ -134,13 +196,124 @@ jobs:
               ]
             }
 
+  windows-core-tests:
+    name: Windows Core Service
+    needs: manifests
+    if: needs.manifests.outputs.skip_core_windows == 0
+    # runs-on: [self-hosted, Windows, pygeometry]
+    runs-on: # TODO: Waiting for ansys-network runner to be updated
+      group: pyansys-self-hosted
+      labels: [self-hosted, Windows, pygeometry]
+    env:
+      PYVISTA_OFF_SCREEN: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Set up headless display
+        uses: pyvista/setup-headless-display-action@v3
+        with:
+          pyvista: false
+
+      - name: Create Python venv
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
+
+      - name: Install packages for testing
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          pip install --upgrade build
+          pip install .[tests]
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Geometry service container (always latest version)
+        run: |
+          docker image rm ${{ env.ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG }}
+          docker pull ${{ env.ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG }}
+
+      - name: Check location of self-hosted runner and define license server accordingly
+        if: runner.name == 'pygeometry-ci-2'
+        run:
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Start Geometry service and verify start
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG }}
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
+      - name: Run PyAnsys Geometry tests
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          pytest -v
+
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          docker stop ${{ env.GEO_CONT_NAME }}
+          docker logs ${{ env.GEO_CONT_NAME }}
+          docker rm ${{ env.GEO_CONT_NAME }}
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
+
+      - name: Clean all Docker dangling images
+        if: always()
+        run: docker image prune -f
+
+      - name: Microsoft Teams Notification
+        uses: skitionek/notify-microsoft-teams@master
+        if: failure()
+        with:
+          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
+          # Message to send to Teams as a webhook notification in JSON Payload format
+          raw: >-
+            {
+              "@type": "MessageCard",
+              "@context": "http://schema.org/extensions",
+              "summary": "Unstable build tests for Windows Core Service failing",
+              "themeColor": "f44336",
+              "title": "PyAnsys Geometry unstable build tests - Windows Core Service failing",
+              "sections": [
+                {
+                  "activityTitle": "Windows Core Service unstable build tests are failing",
+                  "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
+                  "facts": [
+                    {
+                      "name": "Status",
+                      "value": "Failed"
+                    }
+                  ]
+                }
+              ]
+            }
+
+
 # =================================================================================================
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # =================================================================================================
 
   linux-tests:
-    name: Nightly unstable testing - Linux
-    if: vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY != 1
+    name: Linux Core Service
+    needs: manifests
+    if: needs.manifests.outputs.skip_core_linux == 0
     runs-on: ubuntu-latest
 
     steps:
@@ -153,11 +326,11 @@ jobs:
 
       - name: Pull and launch geometry service
         run: |
-          docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_TAG }}
+          docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_CORE_TAG }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_CORE_TAG }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@v7
+        uses: ansys/actions/tests-pytest@v8
         env:
           ALLOW_PLOTTING: true
         with:
@@ -181,12 +354,12 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "summary": "Nightly Tests for Linux failing",
+              "summary": "Unstable build tests for Linux Core Service failing",
               "themeColor": "f44336",
-              "title": "PyAnsys Geometry Nightly Tests - Linux failing",
+              "title": "PyAnsys Geometry unstable build tests - Linux Core Service failing",
               "sections": [
                 {
-                  "activityTitle": "Linux nightly tests are failing",
+                  "activityTitle": "Linux Core Service unstable build tests are failing",
                   "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
                   "facts": [
                     {
@@ -197,3 +370,78 @@ jobs:
                 }
               ]
             }
+
+  promote-windows-dms:
+    needs: windows-dms-tests
+    runs-on: windows-latest
+    name: Promote Windows DMS container
+    if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
+    env:
+      WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:windows-latest-unstable
+      WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:windows-latest
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Windows latest unstable container
+        run: docker pull ${{ env.WINDOWS_UNSTABLE }}
+
+      - name: Tag container as latest (stable) for Github Container registry
+        run: docker tag ${{ env.WINDOWS_UNSTABLE }} ${{ env.WINDOWS_STABLE_GHCR }}
+
+      - name: Publish latest stable container in ghcr.io
+        run: docker push ${{ env.WINDOWS_STABLE_GHCR }}
+
+  promote-windows-core:
+    needs: windows-core-tests
+    runs-on: windows-latest
+    name: Promote Windows Core Service container
+    if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
+    env:
+      WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:core-windows-latest-unstable
+      WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:core-windows-latest
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Windows latest unstable container
+        run: docker pull ${{ env.WINDOWS_UNSTABLE }}
+
+      - name: Tag container as latest (stable) for Github Container registry
+        run: docker tag ${{ env.WINDOWS_UNSTABLE }} ${{ env.WINDOWS_STABLE_GHCR }}
+
+      - name: Publish latest stable container in ghcr.io
+        run: docker push ${{ env.WINDOWS_STABLE_GHCR }}
+
+  promote-linux:
+    needs: linux-tests
+    runs-on: ubuntu-latest
+    name: Promote Linux Core Service container
+    if: ${{ github.event.inputs.promote == 'true' || github.event_name == 'schedule' }}
+    env:
+      LINUX_UNSTABLE: ghcr.io/ansys/geometry:core-linux-latest-unstable
+      LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:core-linux-latest
+    steps:
+      - name: Login in Github Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Linux latest unstable container
+        run: docker pull ${{ env.LINUX_UNSTABLE }}
+
+      - name: Tag container as latest (stable) for Github Container registry
+        run: docker tag ${{ env.LINUX_UNSTABLE }} ${{ env.LINUX_STABLE_GHCR }}
+
+      - name: Publish latest stable container in ghcr.io
+        run: docker push ${{ env.LINUX_STABLE_GHCR }}

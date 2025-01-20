@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -102,11 +102,6 @@ class Part:
 class MasterComponent:
     """Represents a part occurrence.
 
-    Notes
-    -----
-    This class should not be accessed by users. It holds the fundamental data of
-    an assembly. Master components wrap parts by adding a transform matrix.
-
     Parameters
     ----------
     id : str
@@ -117,6 +112,11 @@ class MasterComponent:
         Reference to the transformed part's master part.
     transform : Matrix44
         4x4 transformation matrix from the master part.
+
+    Notes
+    -----
+    This class should not be accessed by users. It holds the fundamental data of
+    an assembly. Master components wrap parts by adding a transform matrix.
     """
 
     def __init__(

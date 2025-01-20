@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -121,7 +121,7 @@ def test_design_import_simple_case(modeler: Modeler):
 
     # And now assert all its elements
     assert read_design is not None
-    assert len(new_client._designs) == 1
+    assert len(new_client.designs) == 1
 
     # Check the design
     _checker_method(read_design, design)

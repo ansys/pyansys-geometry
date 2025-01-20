@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -43,6 +43,7 @@ def ensure_design_is_active(method):
 
     def wrapper(self, *args, **kwargs):
         import ansys.geometry.core as pyansys_geometry
+        from ansys.geometry.core.errors import GeometryRuntimeError
 
         if pyansys_geometry.DISABLE_MULTIPLE_DESIGN_CHECK:
             # If the user has disabled the check, then we can skip it
@@ -66,12 +67,16 @@ def ensure_design_is_active(method):
         # Get the design reference
         design = get_design_ref(self)
 
+        # Verify whether the Design has been closed on the backend
+        if design.is_closed:
+            raise GeometryRuntimeError(
+                "The design has been closed on the backend. Cannot perform any operations on it."
+            )
+
         # Activate the design if it is not active
         if not design.is_active:
             # First, check the backend allows for multiple documents
             if not design._grpc_client.multiple_designs_allowed:
-                from ansys.geometry.core.errors import GeometryRuntimeError
-
                 raise GeometryRuntimeError(
                     "The design is not active and multiple designs are "
                     "not allowed with the current backend."

@@ -41,7 +41,7 @@ def get_wheelhouse_assets_dictionary():
     """Auxiliary method to build the wheelhouse assets dictionary."""
     assets_context_os = ["Linux", "Windows", "MacOS"]
     assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
-    assets_context_python_versions = ["3.10", "3.11", "3.12"]
+    assets_context_python_versions = ["3.10", "3.11", "3.12", "3.13"]
     if get_version_match(__version__) == "dev":
         # Try to retrieve the content three times before failing
         content = None
@@ -84,12 +84,6 @@ def get_wheelhouse_assets_dictionary():
 def intersphinx_pyansys_geometry(switcher_version: str):
     """Auxiliary method to build the intersphinx mapping for PyAnsys Geometry.
 
-    Notes
-    -----
-    If the objects.inv file is not found whenever it is a release, the method
-    will default to the "dev" version. If the objects.inv file is not found
-    for the "dev" version, the method will return an empty string.
-
     Parameters
     ----------
     switcher_version : str
@@ -99,6 +93,12 @@ def intersphinx_pyansys_geometry(switcher_version: str):
     -------
     str
         The intersphinx mapping for PyAnsys Geometry.
+
+    Notes
+    -----
+    If the objects.inv file is not found whenever it is a release, the method
+    will default to the "dev" version. If the objects.inv file is not found
+    for the "dev" version, the method will return an empty string.
     """
     prefix = "https://geometry.docs.pyansys.com/version"
 
@@ -135,6 +135,7 @@ html_context = {
     "doc_path": "doc/source",
 }
 html_theme_options = {
+    "header_links_before_dropdown": 4,
     "logo": "pyansys",
     "switcher": {
         "json_url": f"https://{cname}/versions.json",
@@ -160,16 +161,26 @@ html_theme_options = {
             "icon": "fa fa-file-pdf fa-fw",
         },
     ],
-    "use_meilisearch": {
-        "api_key": os.getenv("MEILISEARCH_PUBLIC_API_KEY", ""),
-        "index_uids": {
-            f"pyansys-geometry-v{get_version_match(__version__).replace('.', '-')}": "PyAnsys-Geometry",  # noqa: E501
-        },
-    },
     "ansys_sphinx_theme_autoapi": {
         "project": project,
     },
+    "cheatsheet": {
+        "file": "cheatsheet/cheat_sheet.qmd",
+        "pages": ["index", "getting_started/index", "user_guide/index"],
+        "title": "PyAnsys Geometry cheat sheet",
+        "version": __version__,
+    },
+    "static_search": {
+        "threshold": 0.5,
+        "minMatchCharLength": 2,
+        "ignoreLocation": True,
+    },
 }
+
+# Determine whether to skip cheat sheet build or not
+if os.environ.get("SKIP_BUILD_CHEAT_SHEET"):
+    html_theme_options.pop("cheatsheet")
+
 # Sphinx extensions
 extensions = [
     "sphinx.ext.intersphinx",
@@ -185,16 +196,16 @@ extensions = [
 
 # Intersphinx mapping
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3.11", None),
+    "python": ("https://docs.python.org/3.13", None),
     "numpy": ("https://numpy.org/doc/stable", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
-    "pyvista": ("https://docs.pyvista.org/version/stable", None),
-    "grpc": ("https://grpc.github.io/grpc/python/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy", None),
+    "pyvista": ("https://docs.pyvista.org", None),
+    "grpc": ("https://grpc.github.io/grpc/python", None),
     "pint": ("https://pint.readthedocs.io/en/stable", None),
-    "beartype": ("https://beartype.readthedocs.io/en/stable/", None),
-    "docker": ("https://docker-py.readthedocs.io/en/stable/", None),
+    "beartype": ("https://beartype.readthedocs.io/en/stable", None),
+    "docker": ("https://docker-py.readthedocs.io/en/stable", None),
     "pypim": ("https://pypim.docs.pyansys.com/version/stable", None),
-    "semver": ("https://python-semver.readthedocs.io/en/latest/", None),
+    "semver": ("https://python-semver.readthedocs.io/en/latest", None),
 }
 
 # Conditional intersphinx mapping
@@ -219,11 +230,20 @@ numpydoc_validation_checks = {
     "GL10",  # reST directives {directives} must be followed by two colons
     "SS01",  # No summary found
     "SS02",  # Summary does not start with a capital letter
-    # "SS03", # Summary does not end with a period
+    "SS03",  # Summary does not end with a period
     "SS04",  # Summary contains heading whitespaces
     # "SS05", # Summary must start with infinitive verb, not third person
     "RT02",  # The first line of the Returns section should contain only the
     # type, unless multiple values are being returned"
+}
+
+# Ignoring numpydoc validation on built-in methods from Python
+numpydoc_validation_exclude = {
+    "add_note",
+    "isEnabledFor",
+    "validate",
+    "__cause__",
+    "__context__",
 }
 
 # static path
@@ -249,7 +269,12 @@ source_suffix = {
 master_doc = "index"
 
 # Configuration for Sphinx autoapi
-suppress_warnings = ["autoapi.python_import_resolution", "design.grid", "config.cache"]
+suppress_warnings = [
+    "autoapi.python_import_resolution",
+    "design.grid",
+    "config.cache",
+    "design.fa-build",
+]
 
 # Examples gallery customization
 nbsphinx_execute = "always"
@@ -267,6 +292,7 @@ nbsphinx_thumbnails = {
     "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
     "examples/03_modeling/add_design_material": "_static/thumbnails/add_design_material.png",
     "examples/03_modeling/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
+    "examples/03_modeling/cut_operation_on_extrude": "_static/thumbnails/cut_operation_on_extrude.png",  # noqa: E501
     "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
     "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
     "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",
@@ -274,6 +300,10 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/sweep_chain_profile": "_static/thumbnails/sweep_chain_profile.png",
     "examples/03_modeling/revolving": "_static/thumbnails/revolving.png",
     "examples/03_modeling/export_design": "_static/thumbnails/export_design.png",
+    "examples/03_modeling/design_tree": "_static/thumbnails/design_tree.png",
+    "examples/03_modeling/service_colors": "_static/thumbnails/service_colors.png",
+    "examples/03_modeling/surface_bodies": "_static/thumbnails/quarter_sphere.png",
+    "examples/03_modeling/chamfer": "_static/thumbnails/chamfer.png",
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
 }
@@ -314,9 +344,8 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # change the preamble of latex with customized title page
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
-sd_fontawesome_latex = True
 
-linkcheck_exclude_documents = ["index", "getting_started/local/index"]
+linkcheck_exclude_documents = ["index", "getting_started/local/index", "changelog"]
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries",
     r"https://download.ansys.com/",
@@ -435,6 +464,7 @@ def setup(app: sphinx.application.Sphinx):
         Sphinx instance containing all the configuration for the documentation build.
     """
     logger.info("Configuring Sphinx hooks...")
+
     if BUILD_EXAMPLES:
         # Run at the end of the build process
         logger.info("Connecting build-finished hook for converting notebooks to scripts...")

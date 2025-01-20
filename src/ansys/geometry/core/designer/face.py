@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -84,11 +84,6 @@ class FaceLoopType(Enum):
 class FaceLoop:
     """Provides an internal class holding the face loops defined.
 
-    Notes
-    -----
-    This class is to be used only when parsing server side results. It is not
-    intended to be instantiated by a user.
-
     Parameters
     ----------
     type : FaceLoopType
@@ -101,6 +96,11 @@ class FaceLoop:
         Maximum point of the bounding box containing the loop.
     edges : list[Edge]
         Edges contained in the loop.
+
+    Notes
+    -----
+    This class is to be used only when parsing server side results. It is not
+    intended to be instantiated by a user.
     """
 
     def __init__(
@@ -291,12 +291,6 @@ class Face:
     def normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
         """Get the normal direction to the face at certain UV coordinates.
 
-        Notes
-        -----
-        To properly use this method, you must handle UV coordinates. Thus, you must
-        know how these relate to the underlying Geometry service. It is an advanced
-        method for Geometry experts only.
-
         Parameters
         ----------
         u : float, default: 0.5
@@ -312,6 +306,12 @@ class Face:
             :class:`UnitVector3D` object evaluated at the given U and V coordinates.
             This :class:`UnitVector3D` object is perpendicular to the surface at the
             given UV coordinates.
+
+        Notes
+        -----
+        To properly use this method, you must handle UV coordinates. Thus, you must
+        know how these relate to the underlying Geometry service. It is an advanced
+        method for Geometry experts only.
         """
         try:
             return self.shape.normal(u, v)
@@ -325,10 +325,6 @@ class Face:
     def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:  # [deprecated-method]
         """Get the normal direction to the face at certain UV coordinates.
 
-        Notes
-        -----
-        This method is deprecated. Use the ``normal`` method instead.
-
         Parameters
         ----------
         u : float, default: 0.5
@@ -344,6 +340,10 @@ class Face:
             :class:`UnitVector3D` object evaluated at the given U and V coordinates.
             This :class:`UnitVector3D` object is perpendicular to the surface at the
             given UV coordinates.
+
+        Notes
+        -----
+        This method is deprecated. Use the ``normal`` method instead.
         """
         return self.normal(u, v)
 
@@ -351,12 +351,6 @@ class Face:
     @ensure_design_is_active
     def point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
         """Get a point of the face evaluated at certain UV coordinates.
-
-        Notes
-        -----
-        To properly use this method, you must handle UV coordinates. Thus, you must
-        know how these relate to the underlying Geometry service. It is an advanced
-        method for Geometry experts only.
 
         Parameters
         ----------
@@ -371,6 +365,12 @@ class Face:
         -------
         Point3D
             :class:`Point3D` object evaluated at the given UV coordinates.
+
+        Notes
+        -----
+        To properly use this method, you must handle UV coordinates. Thus, you must
+        know how these relate to the underlying Geometry service. It is an advanced
+        method for Geometry experts only.
         """
         try:
             return self.shape.evaluate_proportion(u, v).position
@@ -384,10 +384,6 @@ class Face:
     def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
         """Get a point of the face evaluated at certain UV coordinates.
 
-        Notes
-        -----
-        This method is deprecated. Use the ``point`` method instead.
-
         Parameters
         ----------
         u : float, default: 0.5
@@ -401,6 +397,10 @@ class Face:
         -------
         Point3D
             :class:`Point3D` object evaluated at the given UV coordinates.
+
+        Notes
+        -----
+        This method is deprecated. Use the ``point`` method instead.
         """
         return self.point(u, v)
 

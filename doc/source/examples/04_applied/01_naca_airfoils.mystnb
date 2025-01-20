@@ -43,7 +43,7 @@ import numpy as np
 
 from ansys.geometry.core.math import Point2D
 
-def naca_airfoil_4digits(number: Union[int, str], n_points: int = 200) -> List[Point2D]:
+def naca_airfoil_4digits(number: Union[int, str], n_points: int = 200) -> list[Point2D]:
     """
     Generate a NACA 4-digits airfoil.
 
@@ -58,7 +58,7 @@ def naca_airfoil_4digits(number: Union[int, str], n_points: int = 200) -> List[P
 
     Returns
     -------
-    List[Point2D]
+    list[Point2D]
         List of points that define the airfoil.
     """
     # Check if the number is a string
@@ -194,6 +194,12 @@ file = design.export_to_fmd()
 print(f"Design saved to {file}")
 ```
 
+### Close the modeler
+
+```{code-cell} ipython3
+modeler.close()
+```
+
 ## Example of a cambered airfoil: NACA 6412
 
 This code creates a NACA 6412 airfoil, which is cambered. This airfoil has a maximum
@@ -251,4 +257,10 @@ In this case, the design is saved as an SCDOCX file.
 # Save the design
 file = design.export_to_scdocx()
 print(f"Design saved to {file}")
+```
+
+### Close the modeler
+
+```{code-cell} ipython3
+modeler.close()
 ```

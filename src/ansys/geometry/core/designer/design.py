@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -132,6 +132,7 @@ class Design(Component):
         self._beam_profiles = {}
         self._design_id = ""
         self._is_active = False
+        self._is_closed = False
         self._modeler = modeler
 
         # Check whether we want to process an existing design or create a new one.
@@ -169,6 +170,28 @@ class Design(Component):
     def is_active(self) -> bool:
         """Whether the design is currently active."""
         return self._is_active
+
+    @property
+    def is_closed(self) -> bool:
+        """Whether the design is closed."""
+        return self._is_closed
+
+    def close(self) -> None:
+        """Close the design."""
+        # Check if the design is already closed
+        if self._is_closed:
+            self._grpc_client.log.warning(f"Design {self.name} is already closed.")
+            return
+
+        # Attempt to close the design
+        try:
+            self._design_stub.Close(EntityIdentifier(id=self._design_id))
+        except Exception as err:
+            self._grpc_client.log.warning(f"Design {self.name} could not be closed. Error: {err}.")
+            self._grpc_client.log.warning("Ignoring response and assuming the design is closed.")
+
+        # Consider the design closed (even if the close request failed)
+        self._is_closed = True
 
     @protect_grpc
     def _activate(self, called_after_design_creation: bool = False) -> None:
@@ -565,11 +588,6 @@ class Design(Component):
     def delete_component(self, component: Union["Component", str]) -> None:
         """Delete a component (itself or its children).
 
-        Notes
-        -----
-        If the component is not this component (or its children), it
-        is not deleted.
-
         Parameters
         ----------
         id : Union[Component, str]
@@ -579,6 +597,11 @@ class Design(Component):
         ------
         ValueError
             The design itself cannot be deleted.
+
+        Notes
+        -----
+        If the component is not this component (or its children), it
+        is not deleted.
         """
         id = component if isinstance(component, str) else component.id
         if id == self.id:

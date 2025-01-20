@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -34,6 +34,9 @@ from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.typing import Real, RealSequence
+
+_NUMPY_MAJOR_VERSION = int(np.__version__[0])
+"""Major version of the numpy library."""
 
 
 class Vector3D(np.ndarray):
@@ -138,12 +141,6 @@ class Vector3D(np.ndarray):
     def transform(self, matrix: "Matrix44") -> "Vector3D":
         """Transform the 3D vector3D with a transformation matrix.
 
-        Notes
-        -----
-        Transform the ``Vector3D`` object by applying the specified 4x4
-        transformation matrix and return a new ``Vector3D`` object representing the
-        transformed vector.
-
         Parameters
         ----------
         matrix : Matrix44
@@ -154,6 +151,12 @@ class Vector3D(np.ndarray):
         Vector3D
             A new 3D vector that is the transformed copy of the original 3D vector after applying
             the transformation matrix.
+
+        Notes
+        -----
+        Transform the ``Vector3D`` object by applying the specified 4x4
+        transformation matrix and return a new ``Vector3D`` object representing the
+        transformed vector.
         """
         vector_4x1 = np.append(self, 1)
         result_4x1 = matrix * vector_4x1
@@ -190,7 +193,7 @@ class Vector3D(np.ndarray):
 
     @check_input_types
     def cross(self, v: "Vector3D") -> "Vector3D":
-        """Get the cross product of ``Vector3D`` objects."""
+        """Return the cross product of ``Vector3D`` objects."""
         return np.cross(self, v).view(Vector3D)
 
     @check_input_types
@@ -250,15 +253,15 @@ class Vector3D(np.ndarray):
             :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
             class representing the second point.
 
-        Notes
-        -----
-        The resulting 3D vector is always expressed in ``Point3D``
-        base units.
-
         Returns
         -------
         Vector3D
             3D vector from ``point_a`` to ``point_b``.
+
+        Notes
+        -----
+        The resulting 3D vector is always expressed in ``Point3D``
+        base units.
         """
         return Vector3D(point_b - point_a)
 
@@ -323,9 +326,16 @@ class Vector2D(np.ndarray):
         return all([comp == 0 for comp in self])
 
     @check_input_types
-    def cross(self, v: "Vector2D"):
+    def cross(self, v: "Vector2D") -> Real:
         """Return the cross product of ``Vector2D`` objects."""
-        return np.cross(self, v)
+        if _NUMPY_MAJOR_VERSION >= 2:
+            # See https://github.com/numpy/numpy/issues/26620 and more specifically
+            # https://github.com/numpy/numpy/issues/26620#issuecomment-2150748569
+            return self[..., 0] * v[..., 1] - self[..., 1] * v[..., 0]
+        else:  # pragma: no cover
+            # Coverage is measured with the latest version of numpy
+            # so this code is not covered
+            return np.cross(self, v)
 
     @check_input_types
     def is_perpendicular_to(self, other_vector: "Vector2D") -> bool:
@@ -415,7 +425,7 @@ class Vector2D(np.ndarray):
         """Subtraction operation overload for 2D vectors."""
         return np.subtract(self, other).view(Vector2D)
 
-    def __mod__(self, other: "Vector2D") -> "Vector2D":
+    def __mod__(self, other: "Vector2D") -> Real:
         """Overload % operator with cross product."""
         return self.cross(other)
 
@@ -437,15 +447,15 @@ class Vector2D(np.ndarray):
             :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
             class representing the second point.
 
-        Notes
-        -----
-        The resulting 2D vector is always expressed in ``Point2D``
-        base units.
-
         Returns
         -------
         Vector2D
             2D vector from ``point_a`` to ``point_b``.
+
+        Notes
+        -----
+        The resulting 2D vector is always expressed in ``Point2D``
+        base units.
         """
         return Vector2D(point_b - point_a)
 

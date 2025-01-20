@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -149,3 +149,16 @@ def clean_plot_result_images():
     # Clean up the directory
     for file in results_dir.iterdir():
         file.unlink()
+
+
+@pytest.fixture
+def use_service_colors():
+    # Perform the state change
+    import ansys.geometry.core as pyansys_geometry
+
+    pyansys_geometry.USE_SERVICE_COLORS = True
+
+    yield  # This allows the test to run
+
+    # Code here runs after the test, reverting the state
+    pyansys_geometry.USE_SERVICE_COLORS = False

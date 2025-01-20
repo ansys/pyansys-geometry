@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -72,14 +72,14 @@ class SketchFace:
     def plane_change(self, plane: "Plane") -> None:
         """Redefine the plane containing ``SketchFace`` objects.
 
-        Notes
-        -----
-        This implies that their 3D definition might suffer changes. This method does
-        nothing by default. It is required to be implemented in child ``SketchFace`` classes.
-
         Parameters
         ----------
         plane : Plane
             Desired new plane that is to contain the sketched face.
+
+        Notes
+        -----
+        This implies that their 3D definition might suffer changes. This method does
+        nothing by default. It is required to be implemented in child ``SketchFace`` classes.
         """
         pass

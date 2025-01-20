@@ -29,7 +29,7 @@ Perform the required imports.
 ```{code-cell} ipython3
 from pint import Quantity
 
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Frame, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import UNITS
@@ -47,10 +47,13 @@ sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
 
 ## Initiate design on server
 
-Establish a server connection and initiate a design on the server.
+Launch a modeling service session  and initiate a design on the server.
 
 ```{code-cell} ipython3
-modeler = Modeler()
+# Start a modeler session
+modeler = launch_modeler()
+print(modeler)
+
 design_name = "ExtrudeProfile"
 design = modeler.create_design(design_name)
 ```
@@ -87,4 +90,15 @@ body = design.extrude_sketch("SingleBody", sketch, Quantity(10, UNITS.mm))
 body.assign_material(material)
 
 body.plot()
+```
+
+## Close session
+
+When you finish interacting with your modeling service, you should close the active
+server session. This frees resources wherever the service is running.
+
+Close the server session.
+
+```{code-cell} ipython3
+modeler.close()
 ```

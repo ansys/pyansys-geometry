@@ -21,7 +21,7 @@ Perform the required imports.
 ```{code-cell} ipython3
 from typing import List
 
-from ansys.geometry.core import launch_docker_modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.designer import Body
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNITS
@@ -37,7 +37,8 @@ modeler, see the "Launch a modeling service" section in the
 [PyAnsys Geometry 101: Modeling](../01_getting_started/04_modeling.mystnb) example.
 
 ```{code-cell} ipython3
-modeler = launch_docker_modeler()
+modeler = launch_modeler()
+print(modeler)
 ```
 
 ## Define bodies
@@ -90,7 +91,7 @@ output list is sorted according to the picking order.
 pl = GeometryPlotter(allow_picking=True)
 pl.plot(design.bodies)
 pl.show()
-bodies: List[Body] = GeometryPlotter(allow_picking=True).show(design.bodies)
+bodies: list[Body] = GeometryPlotter(allow_picking=True).show(design.bodies)
 ```
 
 Otherwise, you can select bodies from the design directly.
@@ -212,6 +213,14 @@ the ``prism`` body has been consumed.
 
 ```{code-cell} ipython3
 print(design.bodies)
+```
+
+### Close the modeler
+
+Close the modeler to release the resources.
+
+```{code-cell} ipython3
+modeler.close()
 ```
 
 ## Summary

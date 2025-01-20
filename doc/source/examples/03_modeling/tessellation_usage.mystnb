@@ -25,7 +25,7 @@ Perform the required imports.
 ```{code-cell} ipython3
 from pint import Quantity
 
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.math import Point2D, Point3D, Plane
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
@@ -44,7 +44,7 @@ merge each body into a single dataset. This effectively combines all the faces
 of each individual body into a single dataset without separating faces.
 
 ```{code-cell} ipython3
-modeler = Modeler()
+modeler = launch_modeler()
 
 sketch_1 = Sketch()
 box = sketch_1.box(
@@ -76,30 +76,30 @@ combines all the faces of each individual body into a single dataset without
 separating faces.
 
 ```{code-cell} ipython3
-dataset = comp.tessellate(merge_bodies=True)
+dataset = comp.tessellate()
 dataset
 ```
-If you want to tessellate the body and return the geometry as triangles, single body tessellation
-is possible. If you want to merge the individual faces of the tessellation, enable the
-``merge`` option so that the body is rendered into a single mesh. This preserves the number of
-triangles and only merges the topology.
 
-**Code without merging the body**
+Single body tessellation is possible. In that case, users can request the body-level tessellation
+method to tessellate the body and merge all the faces into a single dataset.
 
 ```{code-cell} ipython3
-dataset = body.tessellate()
+dataset = comp.bodies[0].tessellate()
 dataset
 ```
-**Code with merging the body**
 
-```{code-cell} ipython3
-mesh = body.tessellate(merge=True)
-mesh
-```
 ## Plot design
 
 Plot the design.
 
 ```{code-cell} ipython3
 design.plot()
+```
+
+## Close the modeler
+
+Close the modeler.
+
+```{code-cell} ipython3
+modeler.close()
 ```

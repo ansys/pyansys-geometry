@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -37,6 +37,7 @@ import os
 from ansys.geometry.core.connection.launcher import (
     launch_docker_modeler,
     launch_modeler,
+    launch_modeler_with_core_service,
     launch_modeler_with_discovery,
     launch_modeler_with_discovery_and_pimlight,
     launch_modeler_with_geometry_service,
@@ -50,10 +51,9 @@ from ansys.geometry.core.modeler import Modeler
 
 # Global config constants
 # ------------------------------------------------------------------------------
-
-USE_TRAME: bool = False
-"""Global constant for checking whether to use `trame <https://kitware.github.io/trame/>`_
-for visualization."""
+USE_SERVICE_COLORS: bool = False
+"""Global constant for checking whether to use service colors for plotting
+purposes. If set to False, the default colors will be used (speed gain)."""
 
 DISABLE_MULTIPLE_DESIGN_CHECK: bool = False
 """Global constant for disabling the ``ensure_design_is_active`` check.
