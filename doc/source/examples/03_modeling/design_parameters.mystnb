@@ -51,7 +51,7 @@ def download_file(url, filename):
 # URL of the file to download
 url = "https://github.com/ansys/pyansys-geometry/blob/main/tests/integration/files/blockswithparameters.dsco"
 
-# Local path where the file will be saved
+# Local path to save the file to
 file_name = "blockswithparameters.dsco"
 current_path = os.getcwd()
 file_path = os.path.join(current_path, file_name)
