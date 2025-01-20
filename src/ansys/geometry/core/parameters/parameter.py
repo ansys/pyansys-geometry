@@ -29,7 +29,7 @@ from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus
 
 @unique
 class ParameterType(Enum):
-    """Provides values for parameter types supported."""
+    """Provides values for the parameter types supported."""
 
     DIMENSIONTYPE_UNKNOWN = 0
     DIMENSIONTYPE_LINEAR = 1
