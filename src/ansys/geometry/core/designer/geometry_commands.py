@@ -553,6 +553,11 @@ class GeometryCommands:
             How many times the pattern repeats in the y direction.
         pitch_y : Real, default: None
             The spacing between each pattern member in the y direction.
+
+            Returns
+            -------
+            bool
+                ``True`` when successful, ``False`` when failed.
         """
         from ansys.geometry.core.designer.face import Face
 
