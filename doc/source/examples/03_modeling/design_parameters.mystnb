@@ -128,7 +128,7 @@ response = design.set_parameter(parameter1)
 print(response)
 ```
 
-Therefore user can query the parameters once again to get updated list.
+To get the updated list, query the parameters once again.
 
 ```{code-cell} ipython3
 my_parameters = design.get_all_parameters()
