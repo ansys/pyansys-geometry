@@ -14,7 +14,7 @@ kernelspec:
 # Modeling: Using design parameters
 
 You can read and update parameters that are part of the design.
-In this example, we have a simple design with two associated parameters.
+The simple design in this example has two associated parameters.
 
 +++
 
