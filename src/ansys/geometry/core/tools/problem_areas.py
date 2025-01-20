@@ -284,7 +284,6 @@ class ExtraEdgeProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_edge(self.edges[0])
-        print(self._id_grpc)
         request = FixExtraEdgesRequest(extra_edge_problem_area_id=self._id_grpc)
         response = self._repair_stub.FixExtraEdges(request)
         parent_design._update_design_inplace()

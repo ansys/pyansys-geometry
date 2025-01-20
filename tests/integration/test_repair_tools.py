@@ -273,8 +273,6 @@ def test_find_simplify(modeler: Modeler):
     """Test to read geometry and find it's unsimplified face problem areas."""
     design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
     problem_areas = modeler.repair_tools.find_simplify(design.bodies)
-    for area in problem_areas:
-        print(area.id)
     assert len(problem_areas) == 46
 
 
