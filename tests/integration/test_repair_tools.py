@@ -268,6 +268,7 @@ def test_fix_short_edges(modeler: Modeler):
     problem_areas = modeler.repair_tools.find_short_edges(design.bodies, 10)
     assert problem_areas[0].fix().success is True
 
+
 def test_find_simplify(modeler: Modeler):
     """Test to read geometry and find it's unsimplified face problem areas."""
     design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
@@ -282,6 +283,8 @@ def test_fix_simplify(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
     problem_areas = modeler.repair_tools.find_simplify(design.bodies)
     assert problem_areas[0].fix().success is True
+
+
 def test_find_and_fix_duplicate_faces(modeler: Modeler):
     """Test to read geometry, find and fix duplicate faces and validate they are removed."""
     design = modeler.open_file(FILES_DIR / "DuplicateFaces.scdocx")
@@ -291,6 +294,7 @@ def test_find_and_fix_duplicate_faces(modeler: Modeler):
     for area in areas:
         area.fix()
     assert len(design.bodies) == 1
+
 
 def test_find_and_fix_extra_edges(modeler: Modeler):
     """Test to read geometry, find and fix extra edges and validate they are removed."""
@@ -342,3 +346,4 @@ def test_find_and_fix_inexact_edges(modeler: Modeler):
     assert len(design.bodies[0].edges) == 993
     inexact_edges = modeler.repair_tools.find_inexact_edges(design.bodies)
     assert len(inexact_edges) == 0
+    
