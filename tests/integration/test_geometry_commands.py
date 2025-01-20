@@ -302,14 +302,14 @@ def test_rename_component_object(modeler: Modeler):
     result = modeler.geometry_commands.rename_object(selection, "new_name")
     design._update_design_inplace()
 
-    component = design.components[0]
+    component = body.parent_component
     assert result
     assert component.name == "new_name"
 
     result = modeler.geometry_commands.rename_object(selection, "new_name2")
     design._update_design_inplace()
 
-    component = design.components[0]
+    component = body.parent_component
     assert result
     assert component.name == "new_name2"
 

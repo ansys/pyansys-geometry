@@ -537,6 +537,7 @@ class GeometryCommands:
             How many times the pattern repeats in the y direction.
         pitch_y : Real, default: None
             The spacing between each pattern member in the y direction.
+        """
         from ansys.geometry.core.designer.face import Face
 
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
