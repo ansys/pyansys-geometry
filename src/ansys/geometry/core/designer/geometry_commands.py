@@ -784,7 +784,7 @@ class GeometryCommands:
     ) -> bool:
         """Update a fill pattern.
 
-        When the face a fill pattern exists upon changes in size, the
+        When the face that a fill pattern exists upon changes in size, the
         fill pattern can be updated to fill the new space.
 
         Parameters
