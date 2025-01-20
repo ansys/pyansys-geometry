@@ -21,10 +21,15 @@
 # SOFTWARE.
 """Testing of geometry commands."""
 
+import numpy as np
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode
+from ansys.geometry.core.designer.geometry_commands import (
+    ExtrudeType,
+    FillPatternType,
+    OffsetMode,
+)
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNITS
@@ -391,3 +396,154 @@ def test_linear_pattern(modeler: Modeler):
         modeler.geometry_commands.create_linear_pattern(
             body.faces[-1], body.edges[0], 5, 0.2, False, 5, 0.2
         )
+
+
+def test_circular_pattern(modeler: Modeler):
+    design = modeler.create_design("d1")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    axis = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 0.01, 0.01), 1)
+    base.subtract(axis)
+    axis = base.edges[-4]
+
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.2, 0]), 0.005), 1)
+    base.subtract(cutout)
+
+    assert base.volume.m == pytest.approx(
+        Quantity(0.999821460184, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 11
+
+    # full two-dimensional test - creates 3 rings around the center
+    success = modeler.geometry_commands.create_circular_pattern(
+        base.faces[-1], axis, 12, np.pi * 2, True, 3, 0.05, UnitVector3D([1, 0, 0])
+    )
+    assert success
+    assert base.volume.m == pytest.approx(
+        Quantity(0.997072566612, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 46
+
+    # input validation test
+    with pytest.raises(
+        ValueError,
+        match="If the pattern is two-dimensional, linear_count and linear_pitch must be provided.",
+    ):
+        modeler.geometry_commands.create_circular_pattern(base.faces[-1], axis, 12, np.pi * 2, True)
+    with pytest.raises(
+        ValueError,
+        match=(
+            "You provided linear_count and linear_pitch. Ensure two_dimensional is True if a "
+            "two-dimensional pattern is desired."
+        ),
+    ):
+        modeler.geometry_commands.create_circular_pattern(
+            base.faces[-1], axis, 12, np.pi * 2, False, 3, 0.05
+        )
+
+
+def test_fill_pattern(modeler: Modeler):
+    design = modeler.create_design("d1")
+
+    # grid fill pattern
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
+    base.subtract(cutout)
+    assert base.volume.m == pytest.approx(
+        Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 7
+
+    success = modeler.geometry_commands.create_fill_pattern(
+        base.faces[-1],
+        base.edges[2],
+        FillPatternType.GRID,
+        0.01,
+        0.1,
+        0.1,
+    )
+    assert success
+    assert base.volume.m == pytest.approx(
+        Quantity(0.803650459151, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 31
+
+    # offset fill pattern
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
+    base.subtract(cutout)
+    assert base.volume.m == pytest.approx(
+        Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 7
+
+    success = modeler.geometry_commands.create_fill_pattern(
+        base.faces[-1],
+        base.edges[2],
+        FillPatternType.OFFSET,
+        0.01,
+        0.05,
+        0.05,
+    )
+    assert success
+    assert base.volume.m == pytest.approx(
+        Quantity(0.670132771373, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 48
+
+    # skewed fill pattern
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
+    base.subtract(cutout)
+    assert base.volume.m == pytest.approx(
+        Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 7
+
+    success = modeler.geometry_commands.create_fill_pattern(
+        base.faces[-1],
+        base.edges[2],
+        FillPatternType.SKEWED,
+        0.01,
+        0.1,
+        0.1,
+        0.1,
+        0.2,
+        0.2,
+        0.1,
+    )
+    assert success
+    assert base.volume.m == pytest.approx(
+        Quantity(0.787942495883, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 33
+
+    # update fill pattern
+    base = design.extrude_sketch("update_fill", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
+    base.subtract(cutout)
+    base.translate(UnitVector3D([1, 0, 0]), 5)
+    assert base.volume.m == pytest.approx(
+        Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 7
+
+    success = modeler.geometry_commands.create_fill_pattern(
+        base.faces[-1],
+        base.edges[2],
+        FillPatternType.GRID,
+        0.01,
+        0.1,
+        0.1,
+    )
+    assert success
+    assert base.volume.m == pytest.approx(
+        Quantity(0.803650459151, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 31
+
+    face = base.faces[3]
+    modeler.geometry_commands.extrude_faces(face, 1, face.normal(0, 0))
+    success = modeler.geometry_commands.update_fill_pattern(base.faces[-1])
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(1.60730091830, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 56
