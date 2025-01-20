@@ -244,7 +244,7 @@ class Modeler:
         self.client.close()
 
     def close_all_designs(self) -> None:
-        """Close all designs in the modeler workspace."""
+        """Close all existing designs in the modeler workspace."""
         [design.close() for design in self._designs.values()]
 
     def exit(self, close_designs: bool = True) -> None:
