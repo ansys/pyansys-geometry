@@ -34,6 +34,7 @@ from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.sketch.sketch import Sketch
 
 
@@ -547,3 +548,57 @@ def test_fill_pattern(modeler: Modeler):
     assert success
     assert base.volume.m == pytest.approx(Quantity(1.60730091830, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 56
+
+
+def test_revolve_faces(modeler: Modeler):
+    design = modeler.create_design("revolve_faces")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    bodies = modeler.geometry_commands.revolve_faces(
+        base.faces[2], Line([0.5, 0.5, 0], [0, 0, 1]), np.pi * 3 / 2
+    )
+    assert len(bodies) == 0
+    assert base.volume.m == pytest.approx(Quantity(3.35619449019, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 5
+
+
+def test_revolve_faces_up_to(modeler: Modeler):
+    design = modeler.create_design("revolve_faces_up_to")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    bodies = modeler.geometry_commands.revolve_faces_up_to(
+        base.faces[2],
+        base.faces[4],
+        Line([0.5, 0.5, 0], [0, 0, 1]),
+        UnitVector3D([1, 0, 0]),
+        ExtrudeType.FORCE_ADD,
+    )
+    assert len(bodies) == 0
+    assert base.volume.m == pytest.approx(Quantity(1.78539816340, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+
+def test_revolve_faces_by_helix(modeler: Modeler):
+    design = modeler.create_design("revolve_faces_by_helix")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    bodies = modeler.geometry_commands.revolve_faces_by_helix(
+        base.faces[2],
+        Line([0.5, 0.5, 0], [0, 0, 1]),
+        UnitVector3D([1, 0, 0]),
+        5,
+        1,
+        np.pi / 4,
+        True,
+        True,
+    )
+    assert len(bodies) == 2
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    assert design.bodies[1].volume.m == pytest.approx(
+        Quantity(86.2510674259, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 6
+
+    assert design.bodies[2].volume.m == pytest.approx(
+        Quantity(86.2510735368, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 6
