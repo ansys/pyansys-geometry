@@ -1250,7 +1250,8 @@ class Body(IBody):
     def _reset_tessellation_cache(self):  # noqa: N805
         """Reset the cached tessellation for a body."""
         self._template._tessellation = None
-        # if body in the part is different reference than self
+        # if this reference is stale, reset the real cache in the part
+        # this gets the matching id master body in the part
         master_in_part = next(
             (
                 b
