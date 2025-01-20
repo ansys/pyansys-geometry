@@ -118,7 +118,7 @@ class Parameter:
         self._dimension_value = value
 
     def _to_proto(self):
-        """Convert a ``Parameter`` instance to a proto object."""
+        """Convert a ``Parameter`` instance to a ``proto`` object."""
         return ParameterProto(
             id=self.id,
             name=self.name,
