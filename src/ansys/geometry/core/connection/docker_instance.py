@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -62,14 +62,20 @@ def _docker_python_available(func):
 class GeometryContainers(Enum):
     """Provides an enum holding the available Geometry services."""
 
-    WINDOWS_LATEST = 0, "windows", "windows-latest"
-    LINUX_LATEST = 1, "linux", "linux-latest"
-    WINDOWS_LATEST_UNSTABLE = 2, "windows", "windows-latest-unstable"
-    LINUX_LATEST_UNSTABLE = 3, "linux", "linux-latest-unstable"
-    WINDOWS_24_1 = 4, "windows", "windows-24.1"
-    LINUX_24_1 = 5, "linux", "linux-24.1"
-    WINDOWS_24_2 = 6, "windows", "windows-24.2"
-    LINUX_24_2 = 7, "linux", "linux-24.2"
+    CORE_WINDOWS_LATEST = 0, "windows", "core-windows-latest"
+    CORE_LINUX_LATEST = 1, "linux", "core-linux-latest"
+    CORE_WINDOWS_LATEST_UNSTABLE = 2, "windows", "core-windows-latest-unstable"
+    CORE_LINUX_LATEST_UNSTABLE = 3, "linux", "core-linux-latest-unstable"
+    # TO BE REMOVED at some point... - START
+    WINDOWS_LATEST = 4, "windows", "windows-latest"
+    WINDOWS_LATEST_UNSTABLE = 5, "windows", "windows-latest-unstable"
+    # TO BE REMOVED at some point... - END
+    WINDOWS_24_1 = 6, "windows", "windows-24.1"
+    WINDOWS_24_2 = 7, "windows", "windows-24.2"
+    WINDOWS_25_1 = 8, "windows", "windows-25.1"
+    WINDOWS_25_2 = 9, "windows", "windows-25.2"
+    CORE_WINDOWS_25_2 = 10, "windows", "core-windows-25.2"
+    CORE_LINUX_25_2 = 11, "linux", "core-linux-25.2"
 
 
 class LocalDockerInstance:
@@ -115,15 +121,15 @@ class LocalDockerInstance:
     def docker_client() -> "DockerClient":
         """Get the initialized ``__DOCKER_CLIENT__`` object.
 
-        Notes
-        -----
-        The ``LocalDockerInstance`` class performs a lazy initialization of the
-        ``__DOCKER_CLIENT__`` class variable.
-
         Returns
         -------
         ~docker.client.DockerClient
             Initialized Docker client.
+
+        Notes
+        -----
+        The ``LocalDockerInstance`` class performs a lazy initialization of the
+        ``__DOCKER_CLIENT__`` class variable.
         """
         if not LocalDockerInstance.__DOCKER_CLIENT__:
             LocalDockerInstance.__DOCKER_CLIENT__ = DockerClient.from_env()
@@ -327,10 +333,6 @@ class LocalDockerInstance:
 def get_geometry_container_type(instance: LocalDockerInstance) -> GeometryContainers | None:
     """Provide back the ``GeometryContainers`` value.
 
-    Notes
-    -----
-    This method returns the first hit on the available tags.
-
     Parameters
     ----------
     instance : LocalDockerInstance
@@ -341,6 +343,10 @@ def get_geometry_container_type(instance: LocalDockerInstance) -> GeometryContai
     GeometryContainers or None
         The GeometryContainer value corresponding to the previous image or None
         if not match.
+
+    Notes
+    -----
+    This method returns the first hit on the available tags.
     """
     for tag in instance.container.image.tags:
         for geom_services in GeometryContainers:

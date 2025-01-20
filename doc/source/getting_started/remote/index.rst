@@ -3,7 +3,7 @@
 Launch a remote session
 =======================
 
-If a remote server is running Ansys 2023 R2 or later and is also running PIM (Product
+If a remote server is running Ansys 2024 R1 or later and is also running PIM (Product
 Instance Manager), you can use PIM to start a Discovery or SpaceClaim session
 that PyAnsys Geometry can connect to.
 

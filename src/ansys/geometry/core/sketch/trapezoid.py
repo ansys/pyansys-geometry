@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -207,8 +207,6 @@ class Trapezoid(SketchFace):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
-        import numpy as np
-
         return pv.Quadrilateral(
             np.array(
                 [

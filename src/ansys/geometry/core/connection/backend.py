@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -44,7 +44,8 @@ class ApiVersions(Enum):
     V_232 = 232
     V_241 = 241
     V_242 = 242
-    V_251 = LATEST = 251
+    V_251 = 251
+    V_252 = LATEST = 252
 
     @staticmethod
     def parse_input(version: Union[int, str, "ApiVersions"]) -> "ApiVersions":

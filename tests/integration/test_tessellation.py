@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -77,7 +77,7 @@ def test_body_tessellate(modeler: Modeler):
         )
     else:
         assert blocks_2.bounds == pytest.approx(
-            [0.019999999999999997, 0.04, 0.019999999999999886, 0.040000000000000036, 0.0, 0.03],
+            [0.019999999999999997, 0.04, 0.020151922469877917, 0.03984807753012208, 0.0, 0.03],
             rel=1e-6,
             abs=1e-8,
         )
@@ -93,8 +93,8 @@ def test_body_tessellate(modeler: Modeler):
         assert mesh_2.n_arrays == 0
     else:
         assert "PolyData" in str(mesh_2)
-        assert mesh_2.n_cells == 7200
-        assert mesh_2.n_points == 7204
+        assert mesh_2.n_cells == 72
+        assert mesh_2.n_points == 76
         assert mesh_2.n_arrays == 0
 
     # Make sure instance body tessellation is the same as original
@@ -146,12 +146,12 @@ def test_component_tessellate(modeler: Modeler):
             abs=1e-8,
         )
     else:
-        assert mesh.n_cells == 15872
-        assert mesh.n_faces == 15872
+        assert mesh.n_cells == 3280
+        assert mesh.n_faces == 3280
         assert mesh.n_arrays == 0
-        assert mesh.n_points == 15892
+        assert mesh.n_points == 3300
         assert mesh.bounds == pytest.approx(
-            [-25.0, 25.0, -25.0, 25.0, 0.0, 20.0],
+            [-25.0, 25.0, -24.999251562526105, 24.999251562526105, 0.0, 20.0],
             rel=1e-6,
             abs=1e-8,
         )

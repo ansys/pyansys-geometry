@@ -33,12 +33,12 @@ awp_root = {}
 for env_key, env_val in os.environ.items():
     if env_key.startswith("AWP_ROOT"):
         # There is an Ansys installation... Check that the version is at
-        # least 2023R2. Environment variables are in the form
-        # AWP_ROOT232=/path/to/2023R2
+        # least 2024R1. Environment variables are in the form
+        # AWP_ROOT241=/path/to/2024R1
         #
         # Get the version number
         version = env_key.split("AWP_ROOT")[1]
-        if version < "232":
+        if version < "241":
             # This version is too old, so we will ignore it
             continue
         else:
@@ -48,13 +48,13 @@ for env_key, env_val in os.environ.items():
 if len(awp_root) == 0:
     # There are no Ansys installations
     print("XXXXXXX No Ansys compatible installations found.. exiting process. XXXXXXX")
-    print("XXXXXXX Please install Ansys 2023R2 or newer.                      XXXXXXX")
+    print("XXXXXXX Please install Ansys 2024R1 or newer.                      XXXXXXX")
     exit(0)
 
 # Request the user to select the version of Ansys to use
 print(">>> Select the version of Ansys to use:")
 for i, (env_key, _) in enumerate(awp_root.items()):
-    print(f"{i+1}: {env_key}")
+    print(f"{i + 1}: {env_key}")
 selection = input("Selection [default - last option]: ")
 
 # If no selection is made, use the first version
@@ -69,6 +69,20 @@ print(f">>> Using {ANSYS_VER}")
 # Get the path to the Ansys installation
 ANSYS_PATH = Path(awp_root[ANSYS_VER])
 
+# Starting on 2025R2, the user can select between DMS and Core Services
+if ANSYS_VER > 252:
+    print("Select between DMS and Core Services")
+    print("1: DMS")
+    print("2: Core Services")
+    backend_selection = input("Selection [default - 1]: ")
+    backend_selection = 1 if backend_selection == "" else int(backend_selection)
+    if backend_selection not in [1, 2]:
+        print("XXXXXXX Invalid selection XXXXXXX")
+        exit(0)
+else:
+    # Default to DMS for older versions
+    backend_selection = 1
+
 # Verify that the Geometry Service is installed
 if not Path.exists(ANSYS_PATH / "GeometryService"):
     print("XXXXXXX Geometry Service not installed.. exiting process. XXXXXXX")
@@ -80,7 +94,10 @@ TMP_DIR = Path(tempfile.mkdtemp(prefix="docker_geometry_service_"))
 
 # Copy the Geometry Service files to the temporary directory
 print(f">>> Copying Geometry Service files to temporary directory to {TMP_DIR}")
-BIN_DIR = TMP_DIR / "bins" / "DockerWindows" / "bin" / "x64" / "Release_Headless" / "net472"
+if backend_selection == 1:
+    BIN_DIR = TMP_DIR / "bins" / "DockerWindows" / "bin" / "x64" / "Release_Headless" / "net472"
+else:
+    BIN_DIR = TMP_DIR / "bins" / "DockerWindows" / "bin" / "x64" / "Release_Core_Windows" / "net8.0"
 
 # Create the directory structure
 shutil.copytree(
@@ -91,7 +108,7 @@ shutil.copytree(
 # ZIP the temporary directory and delete it
 print(">>> Zipping temporary directory. This might take some time...")
 zip_file = shutil.make_archive(
-    "windows-binaries",
+    "windows-dms-binaries" if backend_selection == 1 else "windows-core-binaries",
     "zip",
     root_dir=TMP_DIR / "bins",
 )
@@ -106,8 +123,12 @@ shutil.rmtree(TMP_DIR / "bins")
 
 # Download the Dockerfile from the repository
 print(">>> Downloading Dockerfile")
+if backend_selection == 1:
+    dockerfile_url = "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/docker/windows/dms/Dockerfile"
+else:
+    dockerfile_url = "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/docker/windows/coreservice/Dockerfile"
 urllib.request.urlretrieve(
-    "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/docker/windows/Dockerfile",
+    dockerfile_url,
     TMP_DIR / "Dockerfile",
 )
 
@@ -119,20 +140,23 @@ with Path.open(TMP_DIR / "Dockerfile", "r") as f:
 
 # Find environment variables that start with AWP_ROOT
 # inside the Dockerfile and replace them with the correct value
-LENGTH_NO_VER = 12
-LENGTH_VER = LENGTH_NO_VER + 3
-line = dockerfile.find("ENV AWP_ROOT")
-if line != -1:
-    # Get the environment variable name
-    env_var = dockerfile[line : LENGTH_NO_VER + line] + ANSYS_VER
-    # Replace the environment variable with the correct value
-    dockerfile = dockerfile.replace(
-        dockerfile[line : LENGTH_VER + line],
-        env_var,
-    )
-else:
-    print("XXXXXXX No AWP_ROOT environment variable found in Dockerfile.. exiting process. XXXXXXX")
-    exit(0)
+if backend_selection == 1:
+    LENGTH_NO_VER = 12
+    LENGTH_VER = LENGTH_NO_VER + 3
+    line = dockerfile.find("ENV AWP_ROOT")
+    if line != -1:
+        # Get the environment variable name
+        env_var = dockerfile[line : LENGTH_NO_VER + line] + ANSYS_VER
+        # Replace the environment variable with the correct value
+        dockerfile = dockerfile.replace(
+            dockerfile[line : LENGTH_VER + line],
+            env_var,
+        )
+    else:
+        print(
+            "XXXXXXX No AWP_ROOT environment variable found in Dockerfile.. exiting process. XXXXXXX"  # noqa: E501
+        )
+        exit(0)
 
 # Check if Docker is installed on the system
 print(">>> Checking if Docker is installed")
@@ -142,8 +166,13 @@ if shutil.which("docker") is None:
 
 # Build the docker image
 print(">>> Building docker image. This might take some time...")
+if backend_selection == 1:
+    image_name = "ghcr.io/ansys/geometry:windows-latest"
+else:
+    image_name = "ghcr.io/ansys/geometry:core-windows-latest"
+
 out = subprocess.run(
-    ["docker", "build", "-t", "ghcr.io/ansys/geometry:windows-latest", "."],
+    ["docker", "build", "-t", image_name, "."],
     cwd=TMP_DIR,
     capture_output=True,
 )

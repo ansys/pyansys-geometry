@@ -14,25 +14,26 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Add the binary files from the latest release
-COPY linux-binaries.zip .
-RUN unzip -qq linux-binaries.zip -d . && \
-    rm linux-binaries.zip && \
-    chmod -R 0755 DockerLinux && \
-    mv DockerLinux/bin/x64/Release_Linux/net8.0/* . && \
-    rm -rf DockerLinux
+COPY linux-core-binaries.zip .
+RUN unzip -qq linux-core-binaries.zip -d . && \
+    rm linux-core-binaries.zip && \
+    chmod -R 0755 bin && \
+    mv bin/x64/Release_Core_Linux/net8.0/* . && \
+    rm -rf bin
 
 # Let the dynamic link loader where to search for shared libraries
-ENV LD_LIBRARY_PATH="/app:/app/CADIntegration/bin"
+ENV LD_LIBRARY_PATH=/app:/app/CADIntegration/bin:/app/Native/Linux
 
 # Define env variables
 ENV ANS_DSCO_REMOTE_PORT=50051
 ENV ANS_DSCO_REMOTE_IP="0.0.0.0"
-ENV ANS_DSCO_REMOTE_LOGS_CONFIG="linux"
 ENV LOG_LEVEL=2
 ENV ENABLE_TRACE=0
 ENV ANSYSLMD_LICENSE_FILE=""
+ENV ANS_DSCO_REMOTE_LOGS_CONFIG="linux"
 ENV ANSYS_CI_INSTALL=/app/CADIntegration
 ENV P_SCHEMA=/app/Schema/
+ENV ANSYSCL251_DIR=/app/licensingclient/
 
 # Add container labels
 LABEL org.opencontainers.image.authors="ANSYS Inc."

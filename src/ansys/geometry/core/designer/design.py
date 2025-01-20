@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -588,11 +588,6 @@ class Design(Component):
     def delete_component(self, component: Union["Component", str]) -> None:
         """Delete a component (itself or its children).
 
-        Notes
-        -----
-        If the component is not this component (or its children), it
-        is not deleted.
-
         Parameters
         ----------
         id : Union[Component, str]
@@ -602,6 +597,11 @@ class Design(Component):
         ------
         ValueError
             The design itself cannot be deleted.
+
+        Notes
+        -----
+        If the component is not this component (or its children), it
+        is not deleted.
         """
         id = component if isinstance(component, str) else component.id
         if id == self.id:

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -49,6 +49,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer.design import Design
+    from ansys.geometry.core.designer.geometry_commands import GeometryCommands
     from ansys.platform.instancemanagement import Instance
 
 
@@ -59,7 +60,7 @@ class Modeler:
     ----------
     host : str,  default: DEFAULT_HOST
         Host where the server is running.
-    port : Union[str, int], default: DEFAULT_PORT
+    port : str | int, default: DEFAULT_PORT
         Port number where the server is running.
     channel : ~grpc.Channel, default: None
         gRPC channel for server communication.
@@ -103,6 +104,8 @@ class Modeler:
         backend_type: BackendType | None = None,
     ):
         """Initialize the ``Modeler`` class."""
+        from ansys.geometry.core.designer.geometry_commands import GeometryCommands
+
         self._grpc_client = GrpcClient(
             host=host,
             port=port,
@@ -120,14 +123,15 @@ class Modeler:
         # TODO: delete "if" when Linux service is able to use repair tools
         # https://github.com/ansys/pyansys-geometry/issues/1319
         if self.client.backend_type == BackendType.LINUX_SERVICE:
-            self._repair_tools = None
-            self._prepare_tools = None
             self._measurement_tools = None
-            LOG.warning("Linux backend does not support repair or prepare tools.")
+            LOG.warning("Linux backend does not support measurement tools.")
         else:
-            self._repair_tools = RepairTools(self._grpc_client)
-            self._prepare_tools = PrepareTools(self._grpc_client)
             self._measurement_tools = MeasurementTools(self._grpc_client)
+
+        # Enabling tools/commands for all: repair and prepare tools, geometry commands
+        self._repair_tools = RepairTools(self._grpc_client)
+        self._prepare_tools = PrepareTools(self._grpc_client)
+        self._geometry_commands = GeometryCommands(self._grpc_client)
 
         # Maintaining references to all designs within the modeler workspace
         self._designs: dict[str, "Design"] = {}
@@ -242,15 +246,15 @@ class Modeler:
     def exit(self, close_designs: bool = True) -> None:
         """Access the client's close method.
 
-        Notes
-        -----
-        This method is calling the same method as
-        :func:`close() <ansys.geometry.core.modeler.Modeler.close>`.
-
         Parameters
         ----------
         close_designs : bool, default: True
             Whether to close all designs before closing the client.
+
+        Notes
+        -----
+        This method is calling the same method as
+        :func:`close() <ansys.geometry.core.modeler.Modeler.close>`.
         """
         self.close(close_designs=close_designs)
 
@@ -261,11 +265,6 @@ class Modeler:
         import_options: ImportOptions = ImportOptions(),
     ) -> str:
         """Upload a file from the client to the server.
-
-        Notes
-        -----
-        This method creates a file on the server that has the same name and extension
-        as the file on the client.
 
         Parameters
         ----------
@@ -280,6 +279,11 @@ class Modeler:
         -------
         file_path : str
             Full path of the file uploaded to the server.
+
+        Notes
+        -----
+        This method creates a file on the server that has the same name and extension
+        as the file on the client.
         """
         from pathlib import Path
 
@@ -400,7 +404,7 @@ class Modeler:
             bodies in the design.
 
         The implied API version of the script should match the API version of the running
-        Geometry Service. DMS API versions 23.2.1 and later are supported. DMS is a
+        Geometry Service. DMS API versions 24.1 and later are supported. DMS is a
         Windows-based modeling service that has been containerized to ease distribution,
         execution, and remotability operations.
 
@@ -417,19 +421,13 @@ class Modeler:
             script modifies the current design, the design may be out-of-sync. By default,
             ``False``.
         api_version : int | str | ApiVersions, optional
-            The scripting API version to use. For example, version 23.2 can be passed as
-            an integer 232, a string "232" or using the
+            The scripting API version to use. For example, version 24.1 can be passed as
+            an integer 241, a string "241" or using the
             ``ansys.geometry.core.connection.backend.ApiVersions`` enum class.
             By default, ``None``. When specified, the service will attempt to run the script with
             the specified API version. If the API version is not supported, the service will raise
             an error. If you are using Discovery or SpaceClaim, the product will determine the API
             version to use, so there is no need to specify this parameter.
-
-        Notes
-        -----
-            The Ansys Geometry Service only supports scripts that are of the
-            same version as the running service. Any ``api_version`` input will
-            be ignored.
 
         Returns
         -------
@@ -443,6 +441,12 @@ class Modeler:
         GeometryRuntimeError
             If the Discovery script fails to run. Otherwise, assume that the script
             ran successfully.
+
+        Notes
+        -----
+            The Ansys Geometry Service only supports scripts that are of the
+            same version as the running service. Any ``api_version`` input will
+            be ignored.
         """
         # Use str format of Path object here
         file_path = str(file_path) if isinstance(file_path, Path) else file_path
@@ -497,3 +501,49 @@ class Modeler:
     def measurement_tools(self) -> MeasurementTools:
         """Access to measurement tools."""
         return self._measurement_tools
+
+    @property
+    def geometry_commands(self) -> "GeometryCommands":
+        """Access to geometry commands."""
+        return self._geometry_commands
+
+    @min_backend_version(25, 1, 0)
+    def get_service_logs(
+        self,
+        all_logs: bool = False,
+        dump_to_file: bool = False,
+        logs_folder: str | Path | None = None,
+    ) -> str | dict[str, str] | Path:
+        """Get the service logs.
+
+        Parameters
+        ----------
+        all_logs : bool, default: False
+            Flag indicating whether all logs should be retrieved. By default,
+            only the current logs are retrieved.
+        dump_to_file : bool, default: False
+            Flag indicating whether the logs should be dumped to a file.
+            By default, the logs are not dumped to a file.
+        logs_folder : str,  Path or None, default: None
+            Name of the folder where the logs should be dumped. This parameter
+            is only used if the ``dump_to_file`` parameter is set to ``True``.
+
+        Returns
+        -------
+        str
+            Service logs as a string. This is returned if the ``dump_to_file`` parameter
+            is set to ``False``.
+        dict[str, str]
+            Dictionary containing the logs. The keys are the logs names,
+            and the values are the logs as strings. This is returned if the ``all_logs``
+            parameter is set to ``True`` and the ``dump_to_file`` parameter
+            is set to ``False``.
+        Path
+            Path to the folder containing the logs (if the ``all_logs``
+            parameter is set to ``True``) or the path to the log file (if only
+            the current logs are retrieved). The ``dump_to_file`` parameter
+            must be set to ``True``.
+        """
+        return self.client._get_service_logs(
+            all_logs=all_logs, dump_to_file=dump_to_file, logs_folder=logs_folder
+        )

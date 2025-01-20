@@ -1,4 +1,4 @@
-name: Upload Windows latest to Ansys Lab
+name: Upload Windows latest to Ansys Lab (DMS)
 
 on:
   workflow_dispatch:

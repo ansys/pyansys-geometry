@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -148,15 +148,15 @@ class Arc(SketchEdge):
     def visualization_polydata(self) -> pv.PolyData:
         """VTK polydata representation for PyVista visualization.
 
-        Notes
-        -----
-        The representation lies in the X/Y plane within
-        the standard global Cartesian coordinate system.
-
         Returns
         -------
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
+
+        Notes
+        -----
+        The representation lies in the X/Y plane within
+        the standard global Cartesian coordinate system.
         """
         if np.isclose(self.angle, np.pi):
             # PyVista hack... Maybe worth implementing something in PyVista...
@@ -201,6 +201,11 @@ class Arc(SketchEdge):
     def __arc_pyvista_hack(self):
         """Hack for close to PI arcs.
 
+        Returns
+        -------
+        pyvista.PolyData
+            VTK pyvista.Polydata configuration.
+
         Notes
         -----
         PyVista does not know whether the rotation is
@@ -209,11 +214,6 @@ class Arc(SketchEdge):
 
         This means that the arc must be divided in two so that it is properly
         defined based on the known sense of rotation.
-
-        Returns
-        -------
-        pyvista.PolyData
-            VTK pyvista.Polydata configuration.
         """
         # Define the arc mid point
         if not self.is_clockwise:
