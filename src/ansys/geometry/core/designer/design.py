@@ -721,7 +721,7 @@ class Design(Component):
         response = self._parameters_stub.UpdateParameter(request)
         status = response.status
 
-        # Update the design in place. This method is expensive,
+        # Update the design in place. This method is computationally expensive,
         # consider finding a more efficient approach.
         self._update_design_inplace()
 
