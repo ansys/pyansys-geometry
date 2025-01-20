@@ -21,8 +21,6 @@
 # SOFTWARE.
 """ "Testing of repair tools."""
 
-import pytest
-
 from ansys.geometry.core.modeler import Modeler
 
 from .conftest import FILES_DIR, skip_if_linux
@@ -80,7 +78,6 @@ def test_find_extra_edge_edges(modeler: Modeler):
     assert len(problem_areas[0].edges) > 0
 
 
-@pytest.mark.skip(reason="This test is failing on the Geometry Service - issue 1335")
 def test_fix_extra_edge(modeler: Modeler):
     """Test to find and fix extra edge problem areas."""
     design = modeler.open_file(FILES_DIR / "ExtraEdgesDesignBefore.scdocx")
