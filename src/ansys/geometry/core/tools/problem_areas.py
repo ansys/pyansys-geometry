@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING
 from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.api.geometry.v0.repairtools_pb2 import (
+    FixAdjustSimplifyRequest,
     FixDuplicateFacesRequest,
     FixExtraEdgesRequest,
     FixInexactEdgesRequest,
@@ -35,7 +36,6 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixSmallFacesRequest,
     FixSplitEdgesRequest,
     FixStitchFacesRequest,
-    FixAdjustSimplifyRequest
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -527,10 +527,10 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
     def faces(self) -> list["Face"]:
         """The list of the bodies connected to this problem area."""
         return self._faces
-    
+
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
-        
+
         Returns
         -------
         message: RepairToolMessage
@@ -538,7 +538,7 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
         """
         if not self.faces:
             return RepairToolMessage(False, [], [])
-        
+
         parent_design = get_design_from_face(self.faces[0])
         response = self._repair_stub.FixAdjustSimplify(
             FixAdjustSimplifyRequest(adjust_simplify_problem_area_id=self._id_grpc)
