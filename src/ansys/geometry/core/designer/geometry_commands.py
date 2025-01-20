@@ -842,3 +842,8 @@ class GeometryCommands:
         )
 
         return result.result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def shell():
+        return
