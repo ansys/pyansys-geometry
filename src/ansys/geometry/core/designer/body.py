@@ -73,6 +73,7 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.misc.checks import (
     check_type,
     ensure_design_is_active,
@@ -82,7 +83,10 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 from ansys.tools.visualization_interface.utils.color import Color
-
+from ansys.api.geometry.v0.commands_pb2 import (
+    CombineMergeBodiesRequest,
+    CombineIntersectBodiesRequest
+)
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
@@ -1551,14 +1555,62 @@ class Body(IBody):
         pl.plot(mesh_object, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 
-    def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
+    def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = True, subtract_from_target: bool = False) -> None:  # noqa: D102        
+        #self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")        
+        self.__generic_boolean_command(other, False, False, "intersect", "bodies do not intersect")
 
-    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
+    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False, subtract_from_target: bool = False) -> None:  # noqa: D102
+        #self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
+        self.__generic_boolean_command(other, False, False, "subtract", "empty (complete) subtraction")
 
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
+        #self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")  
+        self.__generic_boolean_command(other, False, False, "unite", "union operation failed")         
+
+   
+    @protect_grpc
+    @check_input_types
+    def __generic_boolean_command(
+        self, 
+        other: Union["Body", Iterable["Body"]], 
+        keep_other: bool,
+        subtract_from_target: bool,
+        type_bool_op: str,
+        err_bool_op: str,
+    ) -> None:
+        parent_design = get_design_from_body(self)
+        other_bodies = other if isinstance(other, Iterable) else [other]
+        if (type_bool_op == "intersect"):
+            body_ids = [EntityIdentifier(id=body.id) for body in other_bodies]
+            target_ids = [EntityIdentifier(id=body.id) for body in [self]]
+            request = CombineIntersectBodiesRequest(target_selection=target_ids, tool_selection=body_ids)
+            response = self._template._commands_stub.CombineIntersectBodies(request)
+        elif (type_bool_op == "subtract"):
+            body_ids = [EntityIdentifier(id=body.id) for body in other_bodies]
+            target_ids = [EntityIdentifier(id=body.id) for body in [self]]
+            request = CombineIntersectBodiesRequest(target_selection=target_ids, tool_selection=body_ids)
+            response = self._template._commands_stub.CombineIntersectBodies(request)
+            if not keep_other:
+                for b in other_bodies:
+                    b.parent_component.delete_body(b)
+        elif (type_bool_op == "unite"):
+            bodies = [self]
+            bodies.extend(other_bodies)
+            body_ids = [EntityIdentifier(id=body.id) for body in bodies]
+            request = CombineMergeBodiesRequest(target_selection=body_ids)
+            response = self._template._commands_stub.CombineMergeBodies(request)
+            for b in other_bodies:
+                b.parent_component.delete_body(b)
+        else:
+            raise ValueError("Unknown operation requested")       
+        if response == 1:
+            raise ValueError(
+                f"Operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
+                f"Involving bodies:{self}, {grpc_other}"
+            )
+
+        parent_design._update_design_inplace()                
+
 
     @protect_grpc
     @reset_tessellation_cache
