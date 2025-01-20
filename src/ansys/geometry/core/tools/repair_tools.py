@@ -377,6 +377,8 @@ class RepairTools:
         list[InterfenceProblemAreas]
             List of objects representing interference problem areas.
         """
+        from ansys.geometry.core.designer.body import Body
+
         if not bodies:
             return []
 
