@@ -346,4 +346,3 @@ def test_find_and_fix_inexact_edges(modeler: Modeler):
     assert len(design.bodies[0].edges) == 993
     inexact_edges = modeler.repair_tools.find_inexact_edges(design.bodies)
     assert len(inexact_edges) == 0
-
