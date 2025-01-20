@@ -24,6 +24,7 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, List, Union
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
     CreateCircularPatternRequest,
@@ -37,6 +38,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FullFilletRequest,
     ModifyLinearPatternRequest,
     PatternRequest,
+    RenameObjectRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -60,6 +62,7 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
 
@@ -308,7 +311,7 @@ class GeometryCommands:
         seed_point : Point3D
             Origin to define the extrusion.
         direction : UnitVector3D, default: None
-            Direction of extrusion.
+            Direction of extrusion. If no direction is provided, it will be inferred.
         extrude_type : ExtrudeType, default: ExtrudeType.ADD
             Type of extrusion to be performed.
         offset_mode : OffsetMode, default: OffsetMode.MOVE_FACES_TOGETHER
@@ -496,6 +499,32 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
+    def rename_object(
+        self,
+        selection: Union[List["Body"] | List["Component"] | List["Face"] | List["Edge"]],
+        name: str,
+    ) -> bool:
+        """Rename an object.
+
+        Parameters
+        ----------
+        selection : List[Body] | List[Component] | List[Face] | List[Edge]
+            Selection of the object to rename.
+        name : str
+            New name for the object.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        result = self._commands_stub.RenameObject(
+            RenameObjectRequest(
+                selection=[EntityIdentifier(id=object._id) for object in selection], name=name
+            )
+        )
+        return result.success
+
     def create_linear_pattern(
         self,
         selection: Union["Face", List["Face"]],

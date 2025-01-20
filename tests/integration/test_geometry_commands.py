@@ -277,6 +277,48 @@ def test_extrude_edges_and_up_to(modeler: Modeler):
     )
 
 
+def test_rename_body_object(modeler: Modeler):
+    """Test renaming body objects."""
+    design = modeler.create_design("rename")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    selection = [body]
+    result = modeler.geometry_commands.rename_object(selection, "new_name")
+    design._update_design_inplace()
+
+    body = design.bodies[0]
+    assert result
+    assert body.name == "new_name"
+
+    result = modeler.geometry_commands.rename_object(selection, "new_name2")
+    design._update_design_inplace()
+
+    body = design.bodies[0]
+    assert result
+    assert body.name == "new_name2"
+
+
+def test_rename_component_object(modeler: Modeler):
+    """Test renaming component objects."""
+    design = modeler.create_design("rename_component")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    selection = [body.parent_component]
+    result = modeler.geometry_commands.rename_object(selection, "new_name")
+    design._update_design_inplace()
+
+    component = body.parent_component
+    assert result
+    assert component.name == "new_name"
+
+    result = modeler.geometry_commands.rename_object(selection, "new_name2")
+    design._update_design_inplace()
+
+    component = body.parent_component
+    assert result
+    assert component.name == "new_name2"
+
+
 def test_linear_pattern(modeler: Modeler):
     design = modeler.create_design("linear_pattern")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
