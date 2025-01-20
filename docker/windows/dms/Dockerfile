@@ -19,8 +19,8 @@ WORKDIR /app
 COPY windows-dms-binaries.zip .
 RUN mkdir tmp_folder && \
     tar -xf windows-dms-binaries.zip -C tmp_folder && \
-    xcopy tmp_folder\DockerWindows\bin\x64\Release_Headless\net472\* . /e /i /h && \
-    xcopy tmp_folder\DockerWindows\* . && \
+    xcopy tmp_folder\bin\x64\Release_Headless\net472\* . /e /i /h && \
+    xcopy tmp_folder\* . && \
     del windows-dms-binaries.zip && \
     rmdir /s /q tmp_folder
 
@@ -29,7 +29,7 @@ ENV LICENSE_SERVER=""
 ENV SERVER_ENDPOINT="0.0.0.0:50051"
 ENV ENABLE_TRACE=0
 ENV LOG_LEVEL=2
-ENV AWP_ROOT251=C:/app/unified
+ENV AWP_ROOT252=C:/app/unified
 
 # Add container labels
 LABEL org.opencontainers.image.authors="ANSYS Inc."
