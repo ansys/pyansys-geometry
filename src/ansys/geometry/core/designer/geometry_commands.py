@@ -554,8 +554,8 @@ class GeometryCommands:
         pitch_y : Real, default: None
             The spacing between each pattern member in the y direction.
 
-            Returns
-            -------
+        Returns
+        -------
             bool
                 ``True`` when successful, ``False`` when failed.
         """
