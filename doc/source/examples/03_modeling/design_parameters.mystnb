@@ -28,7 +28,7 @@ from ansys.geometry.core.modeler import *
 from ansys.geometry.core.parameters import *
 ```
 
-The file for this example is in the integration tests folder, so let's download it.
+The file for this example is in the integration tests folder and can be downloaded.
 
 +++
 
