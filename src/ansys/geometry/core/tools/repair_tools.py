@@ -27,6 +27,7 @@ from google.protobuf.wrappers_pb2 import DoubleValue
 
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.repairtools_pb2 import (
+    FindAdjustSimplifyRequest,
     FindDuplicateFacesRequest,
     FindExtraEdgesRequest,
     FindInexactEdgesRequest,
@@ -35,16 +36,17 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FindSmallFacesRequest,
     FindSplitEdgesRequest,
     FindStitchFacesRequest,
-    FindAdjustSimplifyRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_body,
     get_edges_from_ids,
     get_faces_from_ids,
 )
+from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
@@ -57,8 +59,6 @@ from ansys.geometry.core.tools.problem_areas import (
     UnsimplifiedFaceProblemAreas,
 )
 from ansys.geometry.core.typing import Real
-from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.checks import min_backend_version
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -364,13 +364,12 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies to search.
-        
+
         Returns
         -------
         list[int]
             List of problem area ids.
         """
-
         body_ids = [body.id for body in bodies]
 
         parent_design = get_design_from_body(bodies[0])
