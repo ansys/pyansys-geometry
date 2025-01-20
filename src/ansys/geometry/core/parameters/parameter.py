@@ -89,7 +89,7 @@ class Parameter:
 
     @classmethod
     def _from_proto(cls, proto):
-        """Create a ``Parameter`` instance from a proto object."""
+        """Create a ``Parameter`` instance from a ``proto`` object."""
         return cls(
             id=proto.id,
             name=proto.name,
