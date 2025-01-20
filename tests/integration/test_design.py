@@ -2766,7 +2766,7 @@ def test_surface_body_creation(modeler: Modeler):
 
 def test_design_parameters(modeler: Modeler):
     """Test the design parameter's functionality."""
-
+    modeler.close_all_designs()
     design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
     test_parameters = design.get_all_parameters()
 
