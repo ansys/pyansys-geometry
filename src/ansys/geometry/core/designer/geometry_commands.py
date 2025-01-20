@@ -848,7 +848,7 @@ class GeometryCommands:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def replace_face(self, target_selection: Union["Face", list["Face"]], replacement_selection: Union["Face", list["Face"]]) -> bool:
-        """Replaces a face with another face.
+        """Replace a face with another face.
 
         Parameters
         ----------
