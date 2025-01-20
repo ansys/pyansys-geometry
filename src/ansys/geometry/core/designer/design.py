@@ -705,7 +705,7 @@ class Design(Component):
     @check_input_types
     @min_backend_version(25, 1, 0)
     def set_parameter(self, dimension: Parameter) -> ParameterUpdateStatus:
-        """Update a parameter of the design.
+        """Set or update a parameter of the design.
 
         Parameters
         ----------
