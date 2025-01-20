@@ -277,7 +277,7 @@ def test_rename_body_object(modeler: Modeler):
     design = modeler.create_design("rename")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    selection = [body.id]
+    selection = [body]
     result = modeler.geometry_commands.rename_object(selection, "new_name")
     design._update_design_inplace()
 
@@ -298,7 +298,7 @@ def test_rename_component_object(modeler: Modeler):
     design = modeler.create_design("rename_component")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    selection = [body.parent_component.id]
+    selection = [body.parent_component]
     result = modeler.geometry_commands.rename_object(selection, "new_name")
     design._update_design_inplace()
 

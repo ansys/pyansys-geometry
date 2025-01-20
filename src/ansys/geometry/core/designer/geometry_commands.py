@@ -59,6 +59,7 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
 
@@ -486,12 +487,12 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def rename_object(self, selection: List[EntityIdentifier], name: str) -> bool:
+    def rename_object(self, selection: Union[List["Body"] | List["Component"] | List["Face"] | List["Edge"]], name: str) -> bool:
         """Rename an object.
 
         Parameters
         ----------
-        selection : List[str]
+        selection : List[Body] | List[Component] | List[Face] | List[Edge]
             Selection of the object to rename.
         name : str
             New name for the object.
@@ -503,7 +504,7 @@ class GeometryCommands:
         """
         result = self._commands_stub.RenameObject(
             RenameObjectRequest(
-                selection=[EntityIdentifier(id=entity_id) for entity_id in selection], name=name
+                selection=[EntityIdentifier(id=object._id) for object in selection], name=name
             )
         )
         return result.success
