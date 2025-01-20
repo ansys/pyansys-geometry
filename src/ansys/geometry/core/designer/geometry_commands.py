@@ -556,8 +556,8 @@ class GeometryCommands:
 
         Returns
         -------
-            bool
-                ``True`` when successful, ``False`` when failed.
+        bool
+            ``True`` when successful, ``False`` when failed.
         """
         from ansys.geometry.core.designer.face import Face
 
