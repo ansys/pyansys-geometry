@@ -499,7 +499,11 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def rename_object(self, selection: Union[List["Body"] | List["Component"] | List["Face"] | List["Edge"]], name: str) -> bool:
+    def rename_object(
+        self,
+        selection: Union[List["Body"] | List["Component"] | List["Face"] | List["Edge"]],
+        name: str,
+    ) -> bool:
         """Rename an object.
 
         Parameters
