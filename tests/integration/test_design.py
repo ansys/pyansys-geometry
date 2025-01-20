@@ -2792,7 +2792,7 @@ def test_design_parameters(modeler: Modeler):
 
 
 def test_cached_bodies(modeler: Modeler):
-    """Test verifying that bodies are cached correctly.
+    """Test that bodies are cached correctly.
 
     Whenever a new body is created, modified etc. we should make sure that the cache is updated.
     """
