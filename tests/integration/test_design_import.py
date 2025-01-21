@@ -184,7 +184,10 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         "2", PersistentIdType.PRIME_ID
     )
 
-    assert base_body.id in [b.id for b in bodies1]
+    b_ids1 = [b.id for b in bodies1]
+    print("bodies1: ", b_ids1)
+    print(base_body.id)
+    assert base_body.id in b_ids1
     assert wheel_body.id in [b.id for b in bodies2]
 
     faces = modeler.unsupported.get_face_occurrences_from_import_id("3", PersistentIdType.PRIME_ID)
