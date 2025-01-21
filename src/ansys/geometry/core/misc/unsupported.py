@@ -24,6 +24,7 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest, ImportIdRequest
 from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
 from ansys.geometry.core.connection import GrpcClient
@@ -32,8 +33,6 @@ from ansys.geometry.core.misc import auxiliary
 from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
-
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -149,9 +148,7 @@ class UnsupportedCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def set_export_id(
-        self, moniker: "str", id_type: "PersistentIdType", value: "str"
-    ) -> None:
+    def set_export_id(self, moniker: "str", id_type: "PersistentIdType", value: "str") -> None:
         """Set the persistent id for the moniker.
 
         Parameters
@@ -169,7 +166,9 @@ class UnsupportedCommands:
         -------
         None
         """
-        request = ExportIdRequest(moniker=EntityIdentifier(id=moniker), id=value, type=id_type.value)
+        request = ExportIdRequest(
+            moniker=EntityIdentifier(id=moniker), id=value, type=id_type.value
+        )
         self._unsupported_stub.SetExportId(request)
         self.__id_map = {}
 
