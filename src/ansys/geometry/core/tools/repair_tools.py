@@ -58,6 +58,7 @@ from ansys.geometry.core.tools.problem_areas import (
     StitchFaceProblemAreas,
     UnsimplifiedFaceProblemAreas,
 )
+from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
