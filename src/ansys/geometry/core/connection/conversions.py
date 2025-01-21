@@ -662,3 +662,21 @@ def trimmed_surface_to_grpc_trimmed_surface(
         v_min=trimmed_surface.box_uv.interval_v.start,
         v_max=trimmed_surface.box_uv.interval_v.end,
     )
+
+
+def line_to_grpc_line(line: Line) -> GRPCLine:
+    """Convert a ``Line`` to a line gRPC message.
+
+    Parameters
+    ----------
+    line : Line
+        Line to convert.
+
+    Returns
+    -------
+    GRPCLine
+        Geometry service gRPC ``Line`` message.
+    """
+    start = line.origin
+    end = line.origin + line.direction
+    return GRPCLine(start=point3d_to_grpc_point(start), end=point3d_to_grpc_point(end))
