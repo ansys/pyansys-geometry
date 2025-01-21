@@ -24,8 +24,11 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, List, Union
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
+    CreateCircularPatternRequest,
+    CreateFillPatternRequest,
     CreateLinearPatternRequest,
     ExtrudeEdgesRequest,
     ExtrudeEdgesUpToRequest,
@@ -34,6 +37,8 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FilletRequest,
     FullFilletRequest,
     ModifyLinearPatternRequest,
+    PatternRequest,
+    RenameObjectRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -57,6 +62,7 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
 
@@ -81,6 +87,15 @@ class OffsetMode(Enum):
     IGNORE_RELATIONSHIPS = 0
     MOVE_FACES_TOGETHER = 1
     MOVE_FACES_APART = 2
+
+
+@unique
+class FillPatternType(Enum):
+    """Provides values for types of fill patterns."""
+
+    GRID = 0
+    OFFSET = 1
+    SKEWED = 2
 
 
 class GeometryCommands:
@@ -296,7 +311,7 @@ class GeometryCommands:
         seed_point : Point3D
             Origin to define the extrusion.
         direction : UnitVector3D, default: None
-            Direction of extrusion.
+            Direction of extrusion. If no direction is provided, it will be inferred.
         extrude_type : ExtrudeType, default: ExtrudeType.ADD
             Type of extrusion to be performed.
         offset_mode : OffsetMode, default: OffsetMode.MOVE_FACES_TOGETHER
@@ -484,6 +499,32 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
+    def rename_object(
+        self,
+        selection: Union[List["Body"] | List["Component"] | List["Face"] | List["Edge"]],
+        name: str,
+    ) -> bool:
+        """Rename an object.
+
+        Parameters
+        ----------
+        selection : List[Body] | List[Component] | List[Face] | List[Edge]
+            Selection of the object to rename.
+        name : str
+            New name for the object.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        result = self._commands_stub.RenameObject(
+            RenameObjectRequest(
+                selection=[EntityIdentifier(id=object._id) for object in selection], name=name
+            )
+        )
+        return result.success
+
     def create_linear_pattern(
         self,
         selection: Union["Face", List["Face"]],
@@ -607,6 +648,196 @@ class GeometryCommands:
                 pitch_y=pitch_y,
                 new_seed_index=new_seed_index,
                 old_seed_index=old_seed_index,
+            )
+        )
+
+        return result.result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def create_circular_pattern(
+        self,
+        selection: Union["Face", List["Face"]],
+        circular_axis: "Edge",
+        circular_count: int,
+        circular_angle: Real,
+        two_dimensional: bool = False,
+        linear_count: int = None,
+        linear_pitch: Real = None,
+        radial_direction: UnitVector3D = None,
+    ) -> bool:
+        """Create a circular pattern. The pattern can be one or two dimensions.
+
+        Parameters
+        ----------
+        selection : Face | List[Face]
+            Faces to create the pattern out of.
+        circular_axis : Edge
+            The axis of the circular pattern, determined by the direction of an edge.
+        circular_count : int
+            How many members are in the circular pattern.
+        circular_angle : Real
+            The angular range of the pattern.
+        two_dimensional : bool, default: False
+            If ``True``, create a two-dimensional pattern.
+        linear_count : int, default: None
+            How many times the circular pattern repeats along the radial lines for a
+            two-dimensional pattern.
+        linear_pitch : Real, default: None
+            The spacing along the radial lines for a two-dimensional pattern.
+        radial_direction : UnitVector3D, default: None
+            The direction from the center out for a two-dimensional pattern.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        if two_dimensional and None in (linear_count, linear_pitch):
+            raise ValueError(
+                "If the pattern is two-dimensional, linear_count and linear_pitch must be provided."
+            )
+        if not two_dimensional and None not in (
+            linear_count,
+            linear_pitch,
+        ):
+            raise ValueError(
+                (
+                    "You provided linear_count and linear_pitch. Ensure two_dimensional is True if "
+                    "a two-dimensional pattern is desired."
+                )
+            )
+
+        result = self._commands_stub.CreateCircularPattern(
+            CreateCircularPatternRequest(
+                selection=[object._grpc_id for object in selection],
+                circular_axis=circular_axis._grpc_id,
+                circular_count=circular_count,
+                circular_angle=circular_angle,
+                two_dimensional=two_dimensional,
+                linear_count=linear_count,
+                linear_pitch=linear_pitch,
+                radial_direction=None
+                if radial_direction is None
+                else unit_vector_to_grpc_direction(radial_direction),
+            )
+        )
+
+        return result.result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def create_fill_pattern(
+        self,
+        selection: Union["Face", List["Face"]],
+        linear_direction: Union["Edge", "Face"],
+        fill_pattern_type: FillPatternType,
+        margin: Real,
+        x_spacing: Real,
+        y_spacing: Real,
+        row_x_offset: Real = 0,
+        row_y_offset: Real = 0,
+        column_x_offset: Real = 0,
+        column_y_offset: Real = 0,
+    ) -> bool:
+        """Create a fill pattern.
+
+        Parameters
+        ----------
+        selection : Face | List[Face]
+            Faces to create the pattern out of.
+        linear_direction : Edge
+            Direction of the linear pattern, determined by the direction of an edge.
+        fill_pattern_type : FillPatternType
+            The type of fill pattern.
+        margin : Real
+            Margin defining the border of the fill pattern.
+        x_spacing : Real
+            Spacing between the pattern members in the x direction.
+        y_spacing : Real
+            Spacing between the pattern members in the x direction.
+        row_x_offset : Real, default: 0
+            Offset for the rows in the x direction. Only used with ``FillPattern.SKEWED``.
+        row_y_offset : Real, default: 0
+            Offset for the rows in the y direction. Only used with ``FillPattern.SKEWED``.
+        column_x_offset : Real, default: 0
+            Offset for the columns in the x direction. Only used with ``FillPattern.SKEWED``.
+        column_y_offset : Real, default: 0
+            Offset for the columns in the y direction. Only used with ``FillPattern.SKEWED``.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        result = self._commands_stub.CreateFillPattern(
+            CreateFillPatternRequest(
+                selection=[object._grpc_id for object in selection],
+                linear_direction=linear_direction._grpc_id,
+                fill_pattern_type=fill_pattern_type.value,
+                margin=margin,
+                x_spacing=x_spacing,
+                y_spacing=y_spacing,
+                row_x_offset=row_x_offset,
+                row_y_offset=row_y_offset,
+                column_x_offset=column_x_offset,
+                column_y_offset=column_y_offset,
+            )
+        )
+
+        return result.result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def update_fill_pattern(
+        self,
+        selection: Union["Face", List["Face"]],
+    ) -> bool:
+        """Update a fill pattern.
+
+        When the face that a fill pattern exists upon changes in size, the
+        fill pattern can be updated to fill the new space.
+
+        Parameters
+        ----------
+        selection : Face | List[Face]
+            Face(s) that are part of a fill pattern.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        result = self._commands_stub.UpdateFillPattern(
+            PatternRequest(
+                selection=[object._grpc_id for object in selection],
             )
         )
 
