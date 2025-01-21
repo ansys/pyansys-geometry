@@ -389,7 +389,7 @@ class RepairTools:
         return message
 
     def find_and_fix_extra_edges(
-        self, bodies: list["Body"]
+        self, bodies: list["Body"], length: Real = 0.0
     ) -> RepairToolMessage:
         """Find and fix the extra edge problem areas.
 
