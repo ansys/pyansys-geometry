@@ -54,6 +54,7 @@ from ansys.geometry.core.tools.problem_areas import (
     SplitEdgeProblemAreas,
     StitchFaceProblemAreas,
 )
+from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -350,3 +351,118 @@ class RepairTools:
             )
             for res in problem_areas_response.result
         ]
+        
+    def find_and_fix_short_edges(
+        self, bodies: list["Body"], length: Real = 0.0
+    ) -> RepairToolMessage:
+        """Find and fix the short edge problem areas.
+
+        This method finds the short edges in the bodies and fixes them.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies that short edges are investigated on.
+
+        Returns
+        -------
+        RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        if not bodies:
+            return RepairToolMessage(False, [], [])
+
+        response = self._repair_stub.FindAndFixShortEdges(
+            FindShortEdgesRequest(
+                selection=[body.id for body in bodies],
+                max_edge_length=DoubleValue(value=length),
+            )
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+        return message
+
+    def find_and_fix_extra_edges(
+        self, bodies: list["Body"], length: Real = 0.0
+    ) -> RepairToolMessage:
+        """Find and fix the extra edge problem areas.
+
+        This method finds the extra edges in the bodies and fixes them.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies that short edges are investigated on.
+
+        Returns
+        -------
+        RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        if not bodies:
+            return RepairToolMessage(False, [], [])
+
+        response = self._repair_stub.FindAndFixExtraEdges(
+            FindExtraEdgesRequest(
+                selection=[body.id for body in bodies],
+                max_edge_length=DoubleValue(value=length),
+            )
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+        return message
+    
+    def find_and_fix_split_edges(
+        self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
+    ) -> RepairToolMessage:
+        """Find and fix the split edge problem areas.
+
+        This method finds the extra edges in the bodies and fixes them.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies that split edges are investigated on.
+        angle : Real
+            The maximum angle between edges.
+        length : Real
+            The maximum length of the edges.
+
+        Returns
+        -------
+        RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        if not bodies:
+            return RepairToolMessage(False, [], [])
+        
+        angle_value = DoubleValue(value=float(angle))
+        length_value = DoubleValue(value=float(length))
+        body_ids = [body.id for body in bodies]
+
+        response = self._repair_stub.FindAndFixSplitEdges(
+            FindSplitEdgesRequest(
+                bodies_or_faces=body_ids, angle=angle_value, distance=length_value
+            )
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+        return message
