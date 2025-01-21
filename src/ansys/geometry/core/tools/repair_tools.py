@@ -463,7 +463,7 @@ class RepairTools:
             response.result.modified_bodies_monikers,
         )
         return message
-    
+
     def find_and_fix_split_edges(
         self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
     ) -> RepairToolMessage:
@@ -487,7 +487,7 @@ class RepairTools:
         """
         if not bodies:
             return RepairToolMessage(False, [], [])
-        
+
         angle_value = DoubleValue(value=float(angle))
         length_value = DoubleValue(value=float(length))
         body_ids = [body.id for body in bodies]
