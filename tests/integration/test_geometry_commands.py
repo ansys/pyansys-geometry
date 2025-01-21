@@ -616,7 +616,7 @@ def test_shell_multiple_faces(modeler: Modeler):
     assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 10
 
-    
+
 def test_replace_face(modeler: Modeler):
     """Test replacing a face with another face."""
     design = modeler.create_design("replace_face")

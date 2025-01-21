@@ -39,8 +39,8 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ModifyLinearPatternRequest,
     PatternRequest,
     RenameObjectRequest,
-    ShellRequest,
     ReplaceFaceRequest,
+    ShellRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -881,9 +881,9 @@ class GeometryCommands:
                 replacement_selection=[selection._grpc_id for selection in replacement_selection],
             )
         )
-        
+
         return result.success
-    
+
     def shell_bodies(self, selection: Union["Body", List["Body"]], offset: Real) -> bool:
         """Shell a given set of bodies.
 
