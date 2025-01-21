@@ -39,6 +39,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ModifyLinearPatternRequest,
     PatternRequest,
     RenameObjectRequest,
+    ShellRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -845,5 +846,76 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def shell():
-        return
+    def shell_bodies(self, selection: Union["Body", List["Body"]], offset: Real) -> bool:
+        """Shell a given set of bodies.
+
+        Parameters
+        ----------
+        selection : Body | List[Body]
+            Body or bodies to be shelled.
+        offset : Real
+            Shell thickness.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.body import Body 
+        selection: list[Body] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, Body)
+        check_is_float_int(offset, "offset")
+
+        for body in selection:
+            body._reset_tessellation_cache()
+
+        result = self._commands_stub.Shell(
+            ShellRequest(
+                selection=[body._grpc_id for body in selection],
+                offset=offset,
+            )
+        )
+
+        design = get_design_from_face(selection[0].faces[0])
+        design._update_design_inplace()
+
+        return result.success
+    
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def remove_faces(self, selection: Union["Face", List["Face"]], offset: Real) -> bool:
+        """Shell a given set of bodies.
+
+        Parameters
+        ----------
+        selection : Body | List[Body]
+            Body or bodies to be shelled.
+        offset : Real
+            Shell thickness.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face 
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, Face)
+        check_is_float_int(offset, "offset")
+
+        for face in selection:
+            face.body._reset_tessellation_cache()
+
+        result = self._commands_stub.RemoveFaces(
+            ShellRequest(
+                selection=[face._grpc_id for face in selection],
+                offset=offset,
+            )
+        )
+
+        design = get_design_from_face(selection[0])
+        design._update_design_inplace()
+
+        return result.success
