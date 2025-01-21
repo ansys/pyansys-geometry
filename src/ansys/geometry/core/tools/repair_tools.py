@@ -351,7 +351,7 @@ class RepairTools:
             )
             for res in problem_areas_response.result
         ]
-        
+
     def find_and_fix_short_edges(
         self, bodies: list["Body"], length: Real = 0.0
     ) -> RepairToolMessage:
@@ -388,9 +388,7 @@ class RepairTools:
         )
         return message
 
-    def find_and_fix_extra_edges(
-        self, bodies: list["Body"]
-    ) -> RepairToolMessage:
+    def find_and_fix_extra_edges(self, bodies: list["Body"]) -> RepairToolMessage:
         """Find and fix the extra edge problem areas.
 
         This method finds the extra edges in the bodies and fixes them.
@@ -423,7 +421,7 @@ class RepairTools:
             response.result.modified_bodies_monikers,
         )
         return message
-    
+
     def find_and_fix_split_edges(
         self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
     ) -> RepairToolMessage:
@@ -447,7 +445,7 @@ class RepairTools:
         """
         if not bodies:
             return RepairToolMessage(False, [], [])
-        
+
         angle_value = DoubleValue(value=float(angle))
         length_value = DoubleValue(value=float(length))
         body_ids = [body.id for body in bodies]
