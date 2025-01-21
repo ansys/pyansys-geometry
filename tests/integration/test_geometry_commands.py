@@ -597,8 +597,8 @@ def test_revolve_faces_by_helix(modeler: Modeler):
         Quantity(86.2510674259, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
     assert len(base.faces) == 6
-
+    # raise tolerance to 1e-4 to account for windows/linux parasolid differences
     assert design.bodies[2].volume.m == pytest.approx(
-        Quantity(86.2510735368, UNITS.m**3).m, rel=1e-6, abs=1e-8
+        Quantity(86.2510735368, UNITS.m**3).m, rel=1e-4, abs=1e-8
     )
     assert len(base.faces) == 6
