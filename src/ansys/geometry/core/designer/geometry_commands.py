@@ -37,9 +37,9 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FilletRequest,
     FullFilletRequest,
     ModifyLinearPatternRequest,
-    SplitBodyRequest,
     PatternRequest,
     RenameObjectRequest,
+    SplitBodyRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -846,17 +846,19 @@ class GeometryCommands:
         )
 
         return result.result.success
-        
+
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def split_body(self, 
+    def split_body(
+        self,
         bodies: List["Body"],
         plane: Plane,
         slicers: Union["Edge", List["Edge"], "Face", List["Face"]],
         faces: List["Face"],
-        extendfaces: bool) -> bool:
+        extendfaces: bool,
+    ) -> bool:
         """Split bodies with a plane, slicers, or faces.
-        
+
         Parameters
         ----------
         bodies : List[Body]
@@ -869,45 +871,43 @@ class GeometryCommands:
             Faces to split with
         extendFaces : bool
             Extend faces if split with faces
-        
+
         Returns
         -------
         bool
             ``True`` when successful, ``False`` when failed.
         """
         from ansys.geometry.core.designer.body import Body
-        from ansys.geometry.core.designer.edge import Edge
-        from ansys.geometry.core.designer.face import Face
-        
+
         check_type_all_elements_in_iterable(bodies, Body)
-        # check_type_all_elements_in_iterable(slicers, (Edge, Face))
-        # check_type_all_elements_in_iterable(faces, Face)
-        
+
         for body in bodies:
             body._reset_tessellation_cache()
-        
+
         plane_item = None
-        if (plane is not None):
+        if plane is not None:
             plane_item = plane_to_grpc_plane(plane)
-        
+
         slicer_items = None
-        if (slicers is not None):
+        if slicers is not None:
             slicer_items = [slicer._grpc_id for slicer in slicers]
-            
+
         face_items = None
-        if (faces is not None):
+        if faces is not None:
             face_items = [face._grpc_id for face in faces]
-        
+
         result = self._commands_stub.SplitBody(
             SplitBodyRequest(
                 selection=[body._grpc_id for body in bodies],
                 split_by_plane=plane_item,
                 split_by_slicer=slicer_items,
                 split_by_faces=face_items,
-                extend_surfaces=extendfaces))
-        
-        if (result.success):
+                extend_surfaces=extendfaces,
+            )
+        )
+
+        if result.success:
             design = get_design_from_body(bodies[0])
             design._update_design_inplace()
-        
+
         return result.success

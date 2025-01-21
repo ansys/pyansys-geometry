@@ -122,7 +122,7 @@ def plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
     -------
     GRPCPlane
         Geometry service gRPC plane message. The unit is meters.
-    """    
+    """
     return GRPCPlane(
         frame=GRPCFrame(
             origin=point3d_to_grpc_point(plane.origin),
