@@ -23,7 +23,6 @@
 
 from enum import Enum, unique
 from typing import TYPE_CHECKING
-
 from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest, ImportIdRequest
 from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
 from ansys.geometry.core.connection import GrpcClient
@@ -32,12 +31,13 @@ from ansys.geometry.core.misc import auxiliary
 from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
+from ansys.geometry.core.designer.body import Body
+from ansys.geometry.core.designer.edge import Edge
+from ansys.geometry.core.designer.face import Face
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-    from ansys.geometry.core.designer.body import Body
-    from ansys.geometry.core.designer.edge import Edge
-    from ansys.geometry.core.designer.face import Face
+
 
 
 @unique
