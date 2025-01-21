@@ -554,17 +554,13 @@ def test_shell_bodies(modeler: Modeler):
     design = modeler.create_design("shell")
     base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    assert base.volume.m == pytest.approx(
-        Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 6
 
     # shell
     success = modeler.geometry_commands.shell_bodies(base, 0.1)
     assert success
-    assert base.volume.m == pytest.approx(
-        Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    assert base.volume.m == pytest.approx(Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 12
 
 
@@ -572,30 +568,22 @@ def test_shell_multiple_bodies(modeler: Modeler):
     """Test shell command for multiple bodies."""
     design = modeler.create_design("shell")
     box_1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    box_2 = design.extrude_sketch("box2", Sketch().box(Point2D([5, 5]), 1, 1), 1)   
+    box_2 = design.extrude_sketch("box2", Sketch().box(Point2D([5, 5]), 1, 1), 1)
 
-    assert box_1.volume.m == pytest.approx(
-        Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    assert box_1.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(box_1.faces) == 6
 
-    assert box_2.volume.m == pytest.approx(
-        Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    assert box_2.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(box_2.faces) == 6
-    
+
     # shell with multiple bodies
     success = modeler.geometry_commands.shell_bodies([box_1, box_2], 0.1)
     assert success
-    
-    assert box_1.volume.m == pytest.approx(
-        Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+
+    assert box_1.volume.m == pytest.approx(Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(box_1.faces) == 12
 
-    assert box_2.volume.m == pytest.approx(
-        Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    assert box_2.volume.m == pytest.approx(Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(box_2.faces) == 12
 
 
@@ -604,17 +592,13 @@ def test_shell_faces(modeler: Modeler):
     design = modeler.create_design("shell")
     base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    assert base.volume.m == pytest.approx(
-        Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 6
 
     # shell
     success = modeler.geometry_commands.remove_faces(base.faces[0], 0.1)
     assert success
-    assert base.volume.m == pytest.approx(
-        Quantity(0.584, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    assert base.volume.m == pytest.approx(Quantity(0.584, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 11
 
 
@@ -623,15 +607,11 @@ def test_shell_multiple_faces(modeler: Modeler):
     design = modeler.create_design("shell")
     base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    assert base.volume.m == pytest.approx(
-        Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 6
 
     # shell
     success = modeler.geometry_commands.remove_faces([base.faces[0], base.faces[2]], 0.1)
     assert success
-    assert base.volume.m == pytest.approx(
-        Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 10

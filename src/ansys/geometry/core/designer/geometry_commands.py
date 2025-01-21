@@ -861,7 +861,8 @@ class GeometryCommands:
         bool
             ``True`` when successful, ``False`` when failed.
         """
-        from ansys.geometry.core.designer.body import Body 
+        from ansys.geometry.core.designer.body import Body
+
         selection: list[Body] = selection if isinstance(selection, list) else [selection]
 
         check_type_all_elements_in_iterable(selection, Body)
@@ -881,7 +882,7 @@ class GeometryCommands:
         design._update_design_inplace()
 
         return result.success
-    
+
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def remove_faces(self, selection: Union["Face", List["Face"]], offset: Real) -> bool:
@@ -899,7 +900,8 @@ class GeometryCommands:
         bool
             ``True`` when successful, ``False`` when failed.
         """
-        from ansys.geometry.core.designer.face import Face 
+        from ansys.geometry.core.designer.face import Face
+
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
 
         check_type_all_elements_in_iterable(selection, Face)
