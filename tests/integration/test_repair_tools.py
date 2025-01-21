@@ -389,3 +389,17 @@ def test_find_and_stitch_and_missing_faces(modeler: Modeler):
         face.fix()
     assert len(design.bodies) == 1
     assert not design.bodies[0].is_surface
+
+    
+def test_find_simplify(modeler: Modeler):
+    """Test to read geometry and find it's unsimplified face problem areas."""
+    design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
+    problem_areas = modeler.repair_tools.find_simplify(design.bodies)
+    assert len(problem_areas) == 46
+
+
+def test_fix_simplify(modeler: Modeler):
+    """Test to read geometry and find and fix it's unsimplified face problem areas."""
+    design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
+    problem_areas = modeler.repair_tools.find_simplify(design.bodies)
+    assert problem_areas[0].fix().success is True

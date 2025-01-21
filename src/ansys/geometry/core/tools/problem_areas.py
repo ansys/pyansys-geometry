@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING
 from google.protobuf.wrappers_pb2 import Int32Value
 
 from ansys.api.geometry.v0.repairtools_pb2 import (
+    FixAdjustSimplifyRequest,
     FixDuplicateFacesRequest,
     FixExtraEdgesRequest,
     FixInexactEdgesRequest,
@@ -498,6 +499,44 @@ class StitchFaceProblemAreas(ProblemArea):
         parent_design = get_design_from_body(self.bodies[0])
         response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=self._id_grpc)
+        )
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+        return message
+
+
+class UnsimplifiedFaceProblemAreas(ProblemArea):
+    """Represents a unsimplified face problem area with unique identifier and associated faces."""
+
+    def __init__(self, id: str, grpc_client: GrpcClient, faces: list["Face"]):
+        """Initialize a new instance of the unsimplified face problem area class."""
+        super().__init__(id, grpc_client)
+
+        self._faces = faces
+
+    @property
+    def faces(self) -> list["Face"]:
+        """The list of the bodies connected to this problem area."""
+        return self._faces
+
+    def fix(self) -> RepairToolMessage:
+        """Fix the problem area.
+
+        Returns
+        -------
+        message: RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        if not self.faces:
+            return RepairToolMessage(False, [], [])
+
+        parent_design = get_design_from_face(self.faces[0])
+        response = self._repair_stub.FixAdjustSimplify(
+            FixAdjustSimplifyRequest(adjust_simplify_problem_area_id=self._id_grpc)
         )
         parent_design._update_design_inplace()
         message = RepairToolMessage(
