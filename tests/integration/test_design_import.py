@@ -183,15 +183,15 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     bodies2 = modeler.unsupported.get_body_occurrences_from_import_id(
         "2", PersistentIdType.PRIME_ID
     )
-    
-    # requires a change to core service, uncomment on next core service udpate
+
+    # requires a change to core service, uncomment on next core service update
     # assert base_body.id in [b.id for b in bodies1]
     # assert wheel_body.id in [b.id for b in bodies2]
 
     faces = modeler.unsupported.get_face_occurrences_from_import_id("3", PersistentIdType.PRIME_ID)
     edges = modeler.unsupported.get_edge_occurrences_from_import_id("4", PersistentIdType.PRIME_ID)
 
-    # requires a change to core service, uncomment on next core service udpate
+    # requires a change to core service, uncomment on next core service update
     # assert base_body.faces[0].id in [f.id for f in faces]
     # assert base_body.edges[0].id in [e.id for e in edges]
 
