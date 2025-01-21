@@ -549,7 +549,7 @@ def test_fill_pattern(modeler: Modeler):
     assert base.volume.m == pytest.approx(Quantity(1.60730091830, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 56
 
-    
+
 def test_shell_bodies(modeler: Modeler):
     """Test shell command."""
     design = modeler.create_design("shell")
@@ -617,7 +617,7 @@ def test_shell_multiple_faces(modeler: Modeler):
     assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 10
 
-    
+
 def test_revolve_faces(modeler: Modeler):
     design = modeler.create_design("revolve_faces")
     base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
