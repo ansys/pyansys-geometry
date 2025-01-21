@@ -44,6 +44,7 @@ from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.typing import Real
+from ansys.geometry.core.misc.unsupported import UnsupportedCommands
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
@@ -132,6 +133,7 @@ class Modeler:
         self._repair_tools = RepairTools(self._grpc_client)
         self._prepare_tools = PrepareTools(self._grpc_client)
         self._geometry_commands = GeometryCommands(self._grpc_client)
+        self._unsupported = UnsupportedCommands(self._grpc_client, self)
 
         # Maintaining references to all designs within the modeler workspace
         self._designs: dict[str, "Design"] = {}
@@ -510,6 +512,11 @@ class Modeler:
     def geometry_commands(self) -> "GeometryCommands":
         """Access to geometry commands."""
         return self._geometry_commands
+
+    @property
+    def unsupported(self) -> "Unsupported":
+        """Access to unsupported commands."""
+        return self._unsupported
 
     @min_backend_version(25, 1, 0)
     def get_service_logs(
