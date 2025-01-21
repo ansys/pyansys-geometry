@@ -37,6 +37,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     CreateSphereBodyRequest,
+    CreateSurfaceBodyFromTrimmedCurvesRequest,
     CreateSurfaceBodyRequest,
     CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
@@ -987,6 +988,42 @@ class Component:
             f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
         )
         response = self._bodies_stub.CreateSurfaceBody(request)
+
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
+        self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
+        return Body(response.id, response.name, self, tb)
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def create_surface_from_trimmed_curves(
+        self, name: str, trimmed_curves: list[TrimmedCurve]
+    ) -> Body:
+        """Create a surface body from a list of trimmed curves all lying on the same plane.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new surface body.
+        trimmed_curves : list[TrimmedCurve]
+            Curves to define the plane and body.
+
+        Returns
+        -------
+        Body
+            Surface body.
+        """
+        curves = [trimmed_curve_to_grpc_trimmed_curve(curve) for curve in trimmed_curves]
+        request = CreateSurfaceBodyFromTrimmedCurvesRequest(
+            name=name,
+            parent=self.id,
+            trimmed_curves=curves,
+        )
+
+        self._grpc_client.log.debug(
+            f"Creating surface body from trimmed curves provided on {self.id}. Creating body..."
+        )
+        response = self._bodies_stub.CreateSurfaceBodyFromTrimmedCurves(request)
 
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
         self._master_component.part.bodies.append(tb)

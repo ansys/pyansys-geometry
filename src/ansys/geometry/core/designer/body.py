@@ -44,6 +44,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     SetColorRequest,
     SetFillStyleRequest,
     SetNameRequest,
+    SetSuppressedRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -150,6 +151,16 @@ class IBody(ABC):
     @abstractmethod
     def set_fill_style(self, fill_style: FillStyle) -> None:
         """Set the fill style of the body."""
+        return
+
+    @abstractmethod
+    def is_suppressed(self) -> bool:
+        """Get the body suppression state."""
+        return
+
+    @abstractmethod
+    def set_suppressed(self, suppressed: bool) -> None:
+        """Set the body suppression state."""
         return
 
     @abstractmethod
@@ -762,6 +773,15 @@ class MasterBody(IBody):
         self.set_fill_style(value)
 
     @property
+    def is_suppressed(self) -> bool:  # noqa: D102
+        response = self._bodies_stub.IsSuppressed(EntityIdentifier(id=self._id))
+        return response.result
+
+    @is_suppressed.setter
+    def is_suppressed(self, value: bool):  # noqa: D102
+        self.set_suppressed(value)
+
+    @property
     def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
         if self._color is None and self.is_alive:
@@ -976,6 +996,21 @@ class MasterBody(IBody):
             )
         )
         self._fill_style = fill_style
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def set_suppressed(  # noqa: D102
+        self, suppressed: bool
+    ) -> None:
+        """Set the body suppression state."""
+        self._grpc_client.log.debug(f"Setting body {self.id}, as suppressed: {suppressed}.")
+        self._bodies_stub.SetSuppressed(
+            SetSuppressedRequest(
+                bodies=[EntityIdentifier(id=self.id)],
+                is_suppressed=suppressed,
+            )
+        )
 
     @protect_grpc
     @check_input_types
@@ -1215,10 +1250,26 @@ class Body(IBody):
     def _reset_tessellation_cache(self):  # noqa: N805
         """Reset the cached tessellation for a body."""
         self._template._tessellation = None
+        # if this reference is stale, reset the real cache in the part
+        # this gets the matching id master body in the part
+        master_in_part = next(
+            (
+                b
+                for b in self.parent_component._master_component.part.bodies
+                if b.id == self._template.id
+            ),
+            None,
+        )
+        if master_in_part is not None:
+            master_in_part._tessellation = None
 
     @property
     def id(self) -> str:  # noqa: D102
         return self._id
+
+    @property
+    def _grpc_id(self) -> EntityIdentifier:
+        return EntityIdentifier(id=self._id)
 
     @property
     def name(self) -> str:  # noqa: D102
@@ -1235,6 +1286,14 @@ class Body(IBody):
     @fill_style.setter
     def fill_style(self, fill_style: FillStyle) -> str:  # noqa: D102
         self._template.fill_style = fill_style
+
+    @property
+    def is_suppressed(self) -> bool:  # noqa: D102
+        return self._template.is_suppressed
+
+    @is_suppressed.setter
+    def is_suppressed(self, suppressed: bool):  # noqa: D102
+        self._template.is_suppressed = suppressed
 
     @property
     def color(self) -> str:  # noqa: D102
@@ -1470,6 +1529,10 @@ class Body(IBody):
     @ensure_design_is_active
     def set_fill_style(self, fill_style: FillStyle) -> None:  # noqa: D102
         return self._template.set_fill_style(fill_style)
+
+    @ensure_design_is_active
+    def set_suppressed(self, suppressed: bool) -> None:  # noqa: D102
+        return self._template.set_suppressed(suppressed)
 
     @ensure_design_is_active
     def set_color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
