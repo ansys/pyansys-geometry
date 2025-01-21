@@ -39,6 +39,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ModifyLinearPatternRequest,
     PatternRequest,
     RenameObjectRequest,
+    ReplaceFaceRequest,
     RevolveFacesByHelixRequest,
     RevolveFacesRequest,
     RevolveFacesUpToRequest,
@@ -1025,3 +1026,40 @@ class GeometryCommands:
         else:
             self._grpc_client.log.info("Failed to revolve faces.")
             return []
+
+    def replace_face(
+        self,
+        target_selection: Union["Face", list["Face"]],
+        replacement_selection: Union["Face", list["Face"]],
+    ) -> bool:
+        """Replace a face with another face.
+
+        Parameters
+        ----------
+        target_selection : Union[Face, list[Face]]
+            The face or faces to replace.
+        replacement_selection : Union[Face, list[Face]]
+            The face or faces to replace with.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        target_selection: list["Face"] = (
+            target_selection if isinstance(target_selection, list) else [target_selection]
+        )
+        replacement_selection: list["Face"] = (
+            replacement_selection
+            if isinstance(replacement_selection, list)
+            else [replacement_selection]
+        )
+
+        result = self._commands_stub.ReplaceFace(
+            ReplaceFaceRequest(
+                target_selection=[selection._grpc_id for selection in target_selection],
+                replacement_selection=[selection._grpc_id for selection in replacement_selection],
+            )
+        )
+
+        return result.success
