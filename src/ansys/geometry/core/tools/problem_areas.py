@@ -518,9 +518,6 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
 
         from ansys.geometry.core.designer.face import Face
 
-        # Verify that all elements in the list are of type Body
-        check_type_all_elements_in_iterable(faces, Face)
-
         self._faces = faces
 
     @property
