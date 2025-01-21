@@ -516,8 +516,6 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
         """Initialize a new instance of the unsimplified face problem area class."""
         super().__init__(id, grpc_client)
 
-        from ansys.geometry.core.designer.face import Face
-
         self._faces = faces
 
     @property

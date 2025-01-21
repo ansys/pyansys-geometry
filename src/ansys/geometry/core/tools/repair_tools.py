@@ -46,10 +46,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_edges_from_ids,
     get_faces_from_ids,
 )
-from ansys.geometry.core.misc.checks import (
-    min_backend_version,
-    check_type_all_elements_in_iterable
-)
+from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
@@ -374,6 +371,7 @@ class RepairTools:
             List of problem area ids.
         """
         from ansys.geometry.core.designer.body import Body
+
         check_type_all_elements_in_iterable(bodies, Body)
         body_ids = [body.id for body in bodies]
 
