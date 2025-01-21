@@ -514,7 +514,7 @@ class Modeler:
         return self._geometry_commands
 
     @property
-    def unsupported(self) -> "Unsupported":
+    def unsupported(self) -> "UnsupportedCommands":
         """Access to unsupported commands."""
         return self._unsupported
 

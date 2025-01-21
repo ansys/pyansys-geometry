@@ -141,7 +141,7 @@ def __traverse_all_bodies(comp: Union["Design", "Component"]) -> list["Body"]:
 
 
 def get_all_bodies_from_design(design: "Design") -> list["Body"]:
-    """Find all the ``Body`` objects inside a ``Design``
+    """Find all the ``Body`` objects inside a ``Design``.
 
     Parameters
     ----------
