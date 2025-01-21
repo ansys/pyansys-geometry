@@ -390,7 +390,7 @@ def test_find_and_stitch_and_missing_faces(modeler: Modeler):
     assert len(design.bodies) == 1
     assert not design.bodies[0].is_surface
 
-    
+
 def test_find_simplify(modeler: Modeler):
     """Test to read geometry and find it's unsimplified face problem areas."""
     design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
