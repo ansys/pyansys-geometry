@@ -615,3 +615,28 @@ def test_shell_multiple_faces(modeler: Modeler):
     assert success
     assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 10
+
+    
+def test_replace_face(modeler: Modeler):
+    """Test replacing a face with another face."""
+    design = modeler.create_design("replace_face")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
+    base.subtract(cutout)
+
+    # replace face with a new face
+    new_face = design.extrude_sketch("new_face", Sketch().box(Point2D([0, 0]), 0.1, 0.1), 1)
+    success = modeler.geometry_commands.replace_face(base.faces[-1], new_face.faces[0])
+    assert success
+    assert base.volume.m == pytest.approx(
+        Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 7
+
+    # replace face with an existing face
+    success = modeler.geometry_commands.replace_face(base.faces[-1], base.faces[0])
+    assert success
+    assert base.volume.m == pytest.approx(
+        Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 7

@@ -40,6 +40,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     PatternRequest,
     RenameObjectRequest,
     ShellRequest,
+    ReplaceFaceRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -846,6 +847,43 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
+    def replace_face(
+        self,
+        target_selection: Union["Face", list["Face"]],
+        replacement_selection: Union["Face", list["Face"]],
+    ) -> bool:
+        """Replace a face with another face.
+
+        Parameters
+        ----------
+        target_selection : Union[Face, list[Face]]
+            The face or faces to replace.
+        replacement_selection : Union[Face, list[Face]]
+            The face or faces to replace with.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        target_selection: list["Face"] = (
+            target_selection if isinstance(target_selection, list) else [target_selection]
+        )
+        replacement_selection: list["Face"] = (
+            replacement_selection
+            if isinstance(replacement_selection, list)
+            else [replacement_selection]
+        )
+
+        result = self._commands_stub.ReplaceFace(
+            ReplaceFaceRequest(
+                target_selection=[selection._grpc_id for selection in target_selection],
+                replacement_selection=[selection._grpc_id for selection in replacement_selection],
+            )
+        )
+        
+        return result.success
+    
     def shell_bodies(self, selection: Union["Body", List["Body"]], offset: Real) -> bool:
         """Shell a given set of bodies.
 
@@ -886,12 +924,12 @@ class GeometryCommands:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def remove_faces(self, selection: Union["Face", List["Face"]], offset: Real) -> bool:
-        """Shell a given set of bodies.
+        """Shell by removing a given set of faces.
 
         Parameters
         ----------
-        selection : Body | List[Body]
-            Body or bodies to be shelled.
+        selection : Face | List[Face]
+            Face or faces to be removed.
         offset : Real
             Shell thickness.
 
