@@ -27,17 +27,18 @@ from typing import TYPE_CHECKING
 from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest, ImportIdRequest
 from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.designer.body import Body
-from ansys.geometry.core.designer.edge import Edge
-from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc import auxiliary
 from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+
 if TYPE_CHECKING:  # pragma: no cover
-    from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+    from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.edge import Edge
+    from ansys.geometry.core.designer.face import Face
 
 
 @unique
@@ -59,7 +60,7 @@ class UnsupportedCommands:
 
     @protect_grpc
     def __init__(self, grpc_client: GrpcClient, modeler):
-        """Initialize an instance of the ``GeometryCommands`` class."""
+        """Initialize an instance of the ``UnsupportedCommands`` class."""
         self._grpc_client = grpc_client
         self._unsupported_stub = UnsupportedStub(self._grpc_client.channel)
         self.__id_map = {}
@@ -76,10 +77,6 @@ class UnsupportedCommands:
         id_type : PersistentIdType
             type of id
 
-        Returns
-        -------
-        None
-
         Notes
         -----
         This cache should be cleared on design change
@@ -91,10 +88,6 @@ class UnsupportedCommands:
     @min_backend_version(25, 2, 0)
     def __clear_cache(self) -> None:
         """Clear the cache of persistent id's.
-
-        Returns
-        -------
-        None
 
         Notes
         -----
@@ -157,13 +150,13 @@ class UnsupportedCommands:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def set_export_id(
-        self, moniker: "EntityIdentifier", id_type: "PersistentIdType", value: "str"
+        self, moniker: "str", id_type: "PersistentIdType", value: "str"
     ) -> None:
         """Set the persistent id for the moniker.
 
         Parameters
         ----------
-        moniker : EntityIdentifier
+        moniker : str
             moniker to set the id for
 
         id_type : PersistentIdType
@@ -176,7 +169,7 @@ class UnsupportedCommands:
         -------
         None
         """
-        request = ExportIdRequest(moniker=moniker, id=value, type=id_type.value)
+        request = ExportIdRequest(moniker=EntityIdentifier(id=moniker), id=value, type=id_type.value)
         self._unsupported_stub.SetExportId(request)
         self.__id_map = {}
 
@@ -202,7 +195,7 @@ class UnsupportedCommands:
         moniker = self.__get_moniker_from_import_id(id_type, import_id)
 
         if moniker is None:
-            return list[Body]()
+            return list()
 
         design = self.__modeler.get_active_design()
         return [
@@ -233,7 +226,7 @@ class UnsupportedCommands:
         moniker = self.__get_moniker_from_import_id(id_type, import_id)
 
         if moniker is None:
-            return list[Face]()
+            return list()
 
         design = self.__modeler.get_active_design()
         return [
@@ -265,7 +258,7 @@ class UnsupportedCommands:
         moniker = self.__get_moniker_from_import_id(id_type, import_id)
 
         if moniker is None:
-            return list[Edge]()
+            return list()
 
         design = self.__modeler.get_active_design()
         return [

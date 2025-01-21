@@ -173,17 +173,17 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     comp1.extrude_sketch("Top", sketch, 5)
 
     modeler.unsupported.set_export_id(
-        EntityIdentifier(id=base_body.id), PersistentIdType.PRIME_ID, "1"
+        base_body.id, PersistentIdType.PRIME_ID, "1"
     )
     modeler.unsupported.set_export_id(
-        EntityIdentifier(id=wheel_body.id), PersistentIdType.PRIME_ID, "2"
+        wheel_body.id, PersistentIdType.PRIME_ID, "2"
     )
 
     modeler.unsupported.set_export_id(
-        EntityIdentifier(id=base_body.faces[0].id), PersistentIdType.PRIME_ID, "3"
+        base_body.faces[0].id, PersistentIdType.PRIME_ID, "3"
     )
     modeler.unsupported.set_export_id(
-        EntityIdentifier(id=base_body.edges[0].id), PersistentIdType.PRIME_ID, "4"
+       base_body.edges[0].id, PersistentIdType.PRIME_ID, "4"
     )
 
     bodies1 = modeler.unsupported.get_body_occurrences_from_import_id(
