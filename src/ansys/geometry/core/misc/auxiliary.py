@@ -23,14 +23,14 @@
 
 from typing import TYPE_CHECKING, Union
 
-
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
-    
+
+
 def get_design_from_component(component: "Component") -> "Design":
     """Get the ``Design`` of the given ``Component`` object.
 
@@ -158,6 +158,7 @@ def get_all_bodies_from_design(design: "Design") -> list["Body"]:
     This method takes a design and gets the corresponding ``Body`` objects.
     """
     return __traverse_all_bodies(design)
+
 
 def get_bodies_from_ids(design: "Design", body_ids: list[str]) -> list["Body"]:
     """Find the ``Body`` objects inside a ``Design`` from its ids.

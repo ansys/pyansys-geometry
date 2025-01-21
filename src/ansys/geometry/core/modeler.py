@@ -40,11 +40,11 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.misc.unsupported import UnsupportedCommands
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.typing import Real
-from ansys.geometry.core.misc.unsupported import UnsupportedCommands
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
