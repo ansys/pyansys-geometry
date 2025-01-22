@@ -762,7 +762,7 @@ def test_create_matrix_from_rotation():
 
 
 def test_create_matrix_from_translation():
-    origin = Vector3D([1, 2, 3])
+    origin = Point3D([1, 2, 3])
 
     expected_matrix = Matrix44([[1, 0, 0, 1], [0, 1, 0, 2], [0, 0, 1, 3], [0, 0, 0, 1]])
     translation_matrix = Matrix44.create_matrix_from_translation(origin)
