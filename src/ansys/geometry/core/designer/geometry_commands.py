@@ -43,23 +43,28 @@ from ansys.api.geometry.v0.commands_pb2 import (
     RevolveFacesByHelixRequest,
     RevolveFacesRequest,
     RevolveFacesUpToRequest,
+    SplitBodyRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     line_to_grpc_line,
+    plane_to_grpc_plane,
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math import Point3D, UnitVector3D
+from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
+    get_design_from_body,
     get_design_from_edge,
     get_design_from_face,
 )
 from ansys.geometry.core.misc.checks import (
     check_is_float_int,
+    check_type,
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
@@ -1061,5 +1066,77 @@ class GeometryCommands:
                 replacement_selection=[selection._grpc_id for selection in replacement_selection],
             )
         )
+
+        return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def split_body(
+        self,
+        bodies: List["Body"],
+        plane: Plane,
+        slicers: Union["Edge", List["Edge"], "Face", List["Face"]],
+        faces: List["Face"],
+        extendfaces: bool,
+    ) -> bool:
+        """Split bodies with a plane, slicers, or faces.
+
+        Parameters
+        ----------
+        bodies : List[Body]
+            Bodies to split
+        plane : Plane
+            Plane to split with
+        slicers : Edge | list[Edge] | Face | list[Face]
+            Slicers to split with
+        faces : List[Face]
+            Faces to split with
+        extendFaces : bool
+            Extend faces if split with faces
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.body import Body
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        for body in bodies:
+            body._reset_tessellation_cache()
+
+        plane_item = None
+        if plane is not None:
+            check_type(plane, Plane)
+            plane_item = plane_to_grpc_plane(plane)
+
+        slicer_items = None
+        if slicers is not None:
+            slicers: list["Face", "Edge"] = slicers if isinstance(slicers, list) else [slicers]
+            check_type_all_elements_in_iterable(slicers, (Edge, Face))
+            slicer_items = [slicer._grpc_id for slicer in slicers]
+
+        face_items = None
+        if faces is not None:
+            faces: list["Face"] = faces if isinstance(faces, list) else [faces]
+            check_type_all_elements_in_iterable(faces, Face)
+            face_items = [face._grpc_id for face in faces]
+
+        result = self._commands_stub.SplitBody(
+            SplitBodyRequest(
+                selection=[body._grpc_id for body in bodies],
+                split_by_plane=plane_item,
+                split_by_slicer=slicer_items,
+                split_by_faces=face_items,
+                extend_surfaces=extendfaces,
+            )
+        )
+
+        if result.success:
+            design = get_design_from_body(bodies[0])
+            design._update_design_inplace()
 
         return result.success
