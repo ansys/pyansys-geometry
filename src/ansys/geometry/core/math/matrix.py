@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from ansys.geometry.core.math.frame import Frame  # For type hints
+    from ansys.geometry.core.math.point import Point3D  # For type hints
     from ansys.geometry.core.math.vector import Vector3D  # For type hints
 
 from beartype import beartype as check_input_types
@@ -150,15 +151,14 @@ class Matrix44(Matrix):
         return matrix
 
     @classmethod
-    def create_matrix_from_translation(cls, origin: "Vector3D") -> "Matrix44":
+    def create_matrix_from_translation(cls, origin: "Point3D") -> "Matrix44":
         """Matrix44 helper method -- create_matrix_from_translation."""
-        from ansys.geometry.core.math.matrix import Matrix44
-
-        matrix = Matrix44(
+        print(origin)
+        matrix = cls(
             [
-                [1, 0, 0, origin.x],
-                [0, 1, 0, origin.y],
-                [0, 0, 1, origin.z],
+                [1, 0, 0, origin.x.m],
+                [0, 1, 0, origin.y.m],
+                [0, 0, 1, origin.z.m],
                 [0, 0, 0, 1],
             ]
         )
@@ -167,7 +167,7 @@ class Matrix44(Matrix):
     @classmethod
     def create_matrix_from_mapping(cls, frame: "Frame") -> "Matrix44":  # noqa
         """Matrix44 helper method -- create_matrix_from_mapping."""
-        translation_matrix = Matrix44.create_matrix_from_translation(frame.origin)
-        rotation_matrix = Matrix44.create_matrix_from_rotation(frame.direction_x, frame.direction_y)
+        translation_matrix = cls.create_matrix_from_translation(frame.origin)
+        rotation_matrix = cls.create_matrix_from_rotation(frame.direction_x, frame.direction_y)
 
         return translation_matrix * rotation_matrix

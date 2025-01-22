@@ -776,6 +776,7 @@ def test_create_matrix_from_mapping():
     frame = Frame(origin, direction_x, direction_y)
 
     expected_matrix = Matrix44([[1, 0, 0, 1], [0, 1, 0, 2], [0, 0, 1, 3], [0, 0, 0, 1]])
+
     mapping_matrix = Matrix44.create_matrix_from_mapping(frame)
     assert np.array_equal(expected_matrix, mapping_matrix)
 
