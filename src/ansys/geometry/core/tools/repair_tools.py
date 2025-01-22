@@ -392,7 +392,7 @@ class RepairTools:
             for res in problem_areas_response.result
         ]
 
-	def find_and_fix_short_edges(
+    def find_and_fix_short_edges(
         self, bodies: list["Body"], length: Real = 0.0
     ) -> RepairToolMessage:
         """Find and fix the short edge problem areas.
