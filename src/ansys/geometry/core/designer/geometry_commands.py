@@ -1113,17 +1113,13 @@ class GeometryCommands:
 
         slicer_items = None
         if slicers is not None:
-            slicers: list["Face", "Edge"] = (
-            slicers if isinstance(slicers, list) else [slicers]
-            )
+            slicers: list["Face", "Edge"] = slicers if isinstance(slicers, list) else [slicers]
             check_type_all_elements_in_iterable(slicers, (Edge, Face))
             slicer_items = [slicer._grpc_id for slicer in slicers]
 
         face_items = None
         if faces is not None:
-            faces: list["Face"] = (
-            faces if isinstance(faces, list) else [faces]
-            )
+            faces: list["Face"] = faces if isinstance(faces, list) else [faces]
             check_type_all_elements_in_iterable(faces, Face)
             face_items = [face._grpc_id for face in faces]
 
