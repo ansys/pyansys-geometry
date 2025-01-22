@@ -53,8 +53,8 @@ from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceThicknessRequest,
     ImprintCurvesRequest,
     ProjectCurvesRequest,
+    RemoveFacesRequest,
     ShellRequest,
-    RemoveFacesRequest
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
@@ -570,23 +570,24 @@ class IBody(ABC):
             ``True`` when successful, ``False`` when failed.
         """
         return
-    
+
     @abstractmethod
     def remove_faces(self, selection: Union["Face", list["Face"]], offset: Real) -> bool:
         """Shell by removing a given set of faces.
-        
+
         Parameters
         ----------
         selection : Face | List[Face]
             Face or faces to be removed.
         offset : Real
             Shell thickness.
+
         Returns
         -------
         bool
             ``True`` when successful, ``False`` when failed.
         """
-    
+
     @abstractmethod
     def plot(
         self,
@@ -1211,12 +1212,12 @@ class MasterBody(IBody):
         )
 
         return result.success
-    
+
     @protect_grpc
     @reset_tessellation_cache
     def remove_faces(self, selection: Union["Face", list["Face"]], offset: Real) -> bool:  # noqa: D102
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
-        
+
         check_type(offset, Real)
         check_type_all_elements_in_iterable(selection, Face)
 
@@ -1651,7 +1652,7 @@ class Body(IBody):
     @ensure_design_is_active
     def shell_body(self, offset: Real) -> bool:
         return self._template.shell_body(offset)
-    
+
     @ensure_design_is_active
     def remove_faces(self, selection: Union["Face", list["Face"]], offset: Real) -> bool:  # noqa: D102
         return self._template.remove_faces(selection, offset)
