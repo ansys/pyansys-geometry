@@ -23,7 +23,6 @@
 
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 from google.protobuf.wrappers_pb2 import DoubleValue
 
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -47,8 +46,11 @@ from ansys.geometry.core.misc.auxiliary import (
     get_edges_from_ids,
     get_faces_from_ids,
 )
-
-from ansys.geometry.core.misc.checks import check_type, check_type_all_elements_in_iterable, min_backend_version
+from ansys.geometry.core.misc.checks import (
+    check_type,
+    check_type_all_elements_in_iterable,
+    min_backend_version,
+)
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
@@ -415,7 +417,6 @@ class RepairTools:
         RepairToolMessage
             Message containing created and/or modified bodies.
         """
-
         check_type_all_elements_in_iterable(bodies, Body)
         check_type(length, Real)
 
@@ -459,7 +460,6 @@ class RepairTools:
         RepairToolMessage
             Message containing created and/or modified bodies.
         """
-
         check_type_all_elements_in_iterable(bodies, Body)
         check_type(length, Real)
 
@@ -505,7 +505,6 @@ class RepairTools:
         RepairToolMessage
             Message containing created and/or modified bodies.
         """
-
         check_type_all_elements_in_iterable(bodies, Body)
         check_type(length, Real)
 
