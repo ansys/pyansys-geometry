@@ -23,6 +23,7 @@
 
 from typing import TYPE_CHECKING
 
+from beartype import beartype as check_input_types
 from google.protobuf.wrappers_pb2 import DoubleValue
 
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
