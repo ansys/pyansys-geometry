@@ -64,6 +64,7 @@ from ansys.geometry.core.misc.auxiliary import (
 )
 from ansys.geometry.core.misc.checks import (
     check_is_float_int,
+    check_type,
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
@@ -1109,6 +1110,7 @@ class GeometryCommands:
 
         plane_item = None
         if plane is not None:
+            check_type(plane, Plane)
             plane_item = plane_to_grpc_plane(plane)
 
         slicer_items = None
