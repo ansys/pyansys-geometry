@@ -24,6 +24,8 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, List, Union
 
+from beartype import beartype as check_input_types
+
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
@@ -1069,6 +1071,7 @@ class GeometryCommands:
         return result.success
 
     @protect_grpc
+    @check_input_types
     @min_backend_version(25, 2, 0)
     def split_body(
         self,
