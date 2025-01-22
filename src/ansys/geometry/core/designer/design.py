@@ -289,25 +289,7 @@ class Design(Component):
 
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
-        received_bytes = bytes()
-        if format is DesignFileFormat.SCDOCX:
-            response = self._commands_stub.DownloadFile(Empty())
-            received_bytes += response.data
-        elif format in [
-            DesignFileFormat.PARASOLID_TEXT,
-            DesignFileFormat.PARASOLID_BIN,
-            DesignFileFormat.FMD,
-            DesignFileFormat.STEP,
-            DesignFileFormat.IGES,
-            DesignFileFormat.PMDB,
-        ]:
-            response = self._parts_stub.Export(ExportRequest(format=format.value[1]))
-            received_bytes += response.data
-        else:
-            self._grpc_client.log.warning(
-                f"{format.value[0]} format requested is not supported. Ignoring download request."
-            )
-            return
+        received_bytes = self.__export_and_download(format=format)
 
         # Write to file
         downloaded_file = Path(file_location).open(mode="wb")
@@ -324,9 +306,8 @@ class Design(Component):
     @ensure_design_is_active
     def __export_and_download(
         self,
-        file_location: Path | str,
         format: DesignFileFormat = DesignFileFormat.SCDOCX,
-    ) -> None:
+    ) -> bytes:
         """Export and download the design from the server.
 
         Parameters
@@ -336,47 +317,30 @@ class Design(Component):
         format : DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
         """
-        # Sanity checks on inputs
-        if isinstance(file_location, str):
-            file_location = Path(file_location)
-
-        # Check if the folder for the file location exists
-        if not file_location.parent.exists():
-            # Create the parent directory
-            file_location.parent.mkdir(parents=True, exist_ok=True)
-
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
         received_bytes = bytes()
-        if format is DesignFileFormat.SCDOCX:
-            response = self._design_stub.DownloadExportFile(DownloadExportFileRequest(
-                
-            ))
-            received_bytes += response.data
-        elif format in [
+
+        if format in [
             DesignFileFormat.PARASOLID_TEXT,
             DesignFileFormat.PARASOLID_BIN,
             DesignFileFormat.FMD,
             DesignFileFormat.STEP,
             DesignFileFormat.IGES,
             DesignFileFormat.PMDB,
+            DesignFileFormat.DISCO,
+            DesignFileFormat.SCDOCX,
+            DesignFileFormat.STRIDE
         ]:
-            response = self._parts_stub.Export(ExportRequest(format=format.value[1]))
+            response = self._design_stub.DownloadExportFile(DownloadExportFileRequest(format=format.value[1]))
             received_bytes += response.data
         else:
             self._grpc_client.log.warning(
                 f"{format.value[0]} format requested is not supported. Ignoring download request."
             )
             return
-
-        # Write to file
-        downloaded_file = Path(file_location).open(mode="wb")
-        downloaded_file.write(received_bytes)
-        downloaded_file.close()
-
-        self._grpc_client.log.debug(
-            f"Design is successfully downloaded at location {file_location}."
-        )        
+        
+        return received_bytes      
 
     def __build_export_file_location(self, location: Path | str | None, ext: str) -> Path:
         """Build the file location for export functions.
