@@ -34,6 +34,7 @@ from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.sketch.sketch import Sketch
 
 from .conftest import FILES_DIR, skip_if_linux
@@ -551,6 +552,96 @@ def test_fill_pattern(modeler: Modeler):
     assert len(base.faces) == 56
 
 
+def test_revolve_faces(modeler: Modeler):
+    design = modeler.create_design("revolve_faces")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    bodies = modeler.geometry_commands.revolve_faces(
+        base.faces[2], Line([0.5, 0.5, 0], [0, 0, 1]), np.pi * 3 / 2
+    )
+    assert len(bodies) == 0
+    assert base.volume.m == pytest.approx(Quantity(3.35619449019, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 5
+
+
+def test_revolve_faces_up_to(modeler: Modeler):
+    design = modeler.create_design("revolve_faces_up_to")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    bodies = modeler.geometry_commands.revolve_faces_up_to(
+        base.faces[2],
+        base.faces[4],
+        Line([0.5, 0.5, 0], [0, 0, 1]),
+        UnitVector3D([1, 0, 0]),
+        ExtrudeType.FORCE_ADD,
+    )
+    assert len(bodies) == 0
+    assert base.volume.m == pytest.approx(Quantity(1.78539816340, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+
+def test_revolve_faces_by_helix(modeler: Modeler):
+    design = modeler.create_design("revolve_faces_by_helix")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    bodies = modeler.geometry_commands.revolve_faces_by_helix(
+        base.faces[2],
+        Line([0.5, 0.5, 0], [0, 0, 1]),
+        UnitVector3D([1, 0, 0]),
+        5,
+        1,
+        np.pi / 4,
+        True,
+        True,
+    )
+    assert len(bodies) == 2
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    assert design.bodies[1].volume.m == pytest.approx(
+        Quantity(86.2510674259, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 6
+    # raise tolerance to 1e-4 to account for windows/linux parasolid differences
+    assert design.bodies[2].volume.m == pytest.approx(
+        Quantity(86.2510735368, UNITS.m**3).m, rel=1e-4, abs=1e-8
+    )
+    assert len(base.faces) == 6
+
+
+def test_replace_face(modeler: Modeler):
+    """Test replacing a face with another face."""
+    design = modeler.create_design("replace_face")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
+    base.subtract(cutout)
+
+    # replace face with a new face
+    new_face = design.extrude_sketch("new_face", Sketch().box(Point2D([0, 0]), 0.1, 0.1), 1)
+    success = modeler.geometry_commands.replace_face(base.faces[-1], new_face.faces[0])
+    assert success
+    assert base.volume.m == pytest.approx(
+        Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 7
+
+    # replace face with an existing face
+    success = modeler.geometry_commands.replace_face(base.faces[-1], base.faces[0])
+    assert success
+    assert base.volume.m == pytest.approx(
+        Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert len(base.faces) == 7
+
+    success = modeler.geometry_commands.split_body([body], None, [edge_to_split], None, True)
+    assert success is True
+
+    assert len(design.bodies) == 2
+
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(3.1415927e-06, UNITS.m**3).m, rel=1e-5, abs=1e-8
+    )
+    assert design.bodies[1].volume.m == pytest.approx(
+        Quantity(3.1415927e-06, UNITS.m**3).m, rel=1e-5, abs=1e-8
+    )
+    
 def test_split_body_by_plane(modeler: Modeler):
     "Test split body by plane"
     from ansys.geometry.core.math import Plane, Point2D, Point3D
@@ -576,7 +667,6 @@ def test_split_body_by_plane(modeler: Modeler):
     assert design.bodies[1].volume.m == pytest.approx(
         Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
-
 
 def test_split_body_by_slicer_face(modeler: Modeler):
     "Test split body by slicer face"

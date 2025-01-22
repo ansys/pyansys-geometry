@@ -40,11 +40,16 @@ from ansys.api.geometry.v0.commands_pb2 import (
     PatternRequest,
     RenameObjectRequest,
     SplitBodyRequest,
+    ReplaceFaceRequest,
+    RevolveFacesByHelixRequest,
+    RevolveFacesRequest,
+    RevolveFacesUpToRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
+    line_to_grpc_line,
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
@@ -62,6 +67,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
+from ansys.geometry.core.shapes.curves import Line
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -505,7 +511,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def rename_object(
         self,
-        selection: Union[List["Body"] | List["Component"] | List["Face"] | List["Edge"]],
+        selection: Union[List["Body"], List["Component"], List["Face"], List["Edge"]],
         name: str,
     ) -> bool:
         """Rename an object.
@@ -847,6 +853,221 @@ class GeometryCommands:
 
         return result.result.success
 
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def revolve_faces(
+        self,
+        selection: Union["Face", List["Face"]],
+        axis: Line,
+        angle: Real,
+    ) -> List["Body"]:
+        """Revolve face around an axis.
+
+        Parameters
+        ----------
+        selection : Face | List[Face]
+            Face(s) to revolve.
+        axis : Line
+            Axis of revolution.
+        angle : Real
+            Angular distance to revolve.
+
+        Returns
+        -------
+        List[Body]
+            Bodies created by the extrusion if any.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        result = self._commands_stub.RevolveFaces(
+            RevolveFacesRequest(
+                selection=[object._grpc_id for object in selection],
+                axis=line_to_grpc_line(axis),
+                angle=angle,
+            )
+        )
+
+        design = get_design_from_face(selection[0])
+
+        if result.success:
+            bodies_ids = [created_body.id for created_body in result.created_bodies]
+            design._update_design_inplace()
+            return get_bodies_from_ids(design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to revolve faces.")
+            return []
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def revolve_faces_up_to(
+        self,
+        selection: Union["Face", List["Face"]],
+        up_to: Union["Face", "Edge", "Body"],
+        axis: Line,
+        direction: UnitVector3D,
+        extrude_type: ExtrudeType = ExtrudeType.ADD,
+    ) -> List["Body"]:
+        """Revolve face around an axis up to a certain object.
+
+        Parameters
+        ----------
+        selection : Face | List[Face]
+            Face(s) to revolve.
+        up_to : Face | Edge | Body
+            Object to revolve the face up to.
+        axis : Line
+            Axis of revolution.
+        direction : UnitVector3D
+            Direction of extrusion.
+        extrude_type : ExtrudeType, default: ExtrudeType.ADD
+            Type of extrusion to be performed.
+
+        Returns
+        -------
+        List[Body]
+            Bodies created by the extrusion if any.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        result = self._commands_stub.RevolveFacesUpTo(
+            RevolveFacesUpToRequest(
+                selection=[object._grpc_id for object in selection],
+                up_to_selection=up_to._grpc_id,
+                axis=line_to_grpc_line(axis),
+                direction=unit_vector_to_grpc_direction(direction),
+                extrude_type=extrude_type.value,
+            )
+        )
+
+        design = get_design_from_face(selection[0])
+
+        if result.success:
+            bodies_ids = [created_body.id for created_body in result.created_bodies]
+            design._update_design_inplace()
+            return get_bodies_from_ids(design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to revolve faces.")
+            return []
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def revolve_faces_by_helix(
+        self,
+        selection: Union["Face", List["Face"]],
+        axis: Line,
+        direction: UnitVector3D,
+        height: Real,
+        pitch: Real,
+        taper_angle: Real,
+        right_handed: bool,
+        both_sides: bool,
+    ) -> List["Body"]:
+        """Revolve face around an axis in a helix shape.
+
+        Parameters
+        ----------
+        selection : Face | List[Face]
+            Face(s) to revolve.
+        axis : Line
+            Axis of revolution.
+        direction : UnitVector3D
+            Direction of extrusion.
+        height : Real,
+            Height of the helix.
+        pitch : Real,
+            Pitch of the helix.
+        taper_angle : Real,
+            Tape angle of the helix.
+        right_handed : bool,
+            Right-handed helix if ``True``, left-handed if ``False``.
+        both_sides : bool,
+            Create on both sides if ``True``, one side if ``False``.
+
+        Returns
+        -------
+        List[Body]
+            Bodies created by the extrusion if any.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        result = self._commands_stub.RevolveFacesByHelix(
+            RevolveFacesByHelixRequest(
+                selection=[object._grpc_id for object in selection],
+                axis=line_to_grpc_line(axis),
+                direction=unit_vector_to_grpc_direction(direction),
+                height=height,
+                pitch=pitch,
+                taper_angle=taper_angle,
+                right_handed=right_handed,
+                both_sides=both_sides,
+            )
+        )
+
+        design = get_design_from_face(selection[0])
+
+        if result.success:
+            bodies_ids = [created_body.id for created_body in result.created_bodies]
+            design._update_design_inplace()
+            return get_bodies_from_ids(design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to revolve faces.")
+            return []
+
+    def replace_face(
+        self,
+        target_selection: Union["Face", list["Face"]],
+        replacement_selection: Union["Face", list["Face"]],
+    ) -> bool:
+        """Replace a face with another face.
+
+        Parameters
+        ----------
+        target_selection : Union[Face, list[Face]]
+            The face or faces to replace.
+        replacement_selection : Union[Face, list[Face]]
+            The face or faces to replace with.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        target_selection: list["Face"] = (
+            target_selection if isinstance(target_selection, list) else [target_selection]
+        )
+        replacement_selection: list["Face"] = (
+            replacement_selection
+            if isinstance(replacement_selection, list)
+            else [replacement_selection]
+        )
+
+        result = self._commands_stub.ReplaceFace(
+            ReplaceFaceRequest(
+                target_selection=[selection._grpc_id for selection in target_selection],
+                replacement_selection=[selection._grpc_id for selection in replacement_selection],
+            )
+        )
+
+        return result.success
+        
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def split_body(
