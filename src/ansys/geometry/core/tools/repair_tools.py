@@ -22,6 +22,7 @@
 """Provides tools for repairing bodies."""
 
 from typing import TYPE_CHECKING
+from beartype import beartype as check_input_types
 
 from google.protobuf.wrappers_pb2 import DoubleValue
 
@@ -391,8 +392,11 @@ class RepairTools:
             )
             for res in problem_areas_response.result
         ]
-
-	def find_and_fix_short_edges(
+    
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def find_and_fix_short_edges(
         self, bodies: list["Body"], length: Real = 0.0
     ) -> RepairToolMessage:
         """Find and fix the short edge problem areas.
@@ -403,6 +407,8 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that short edges are investigated on.
+        length : Real
+            The maximum length of the edges.
 
         Returns
         -------
@@ -428,6 +434,9 @@ class RepairTools:
         )
         return message
 
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
     def find_and_fix_extra_edges(
         self, bodies: list["Body"], length: Real = 0.0
     ) -> RepairToolMessage:
@@ -439,6 +448,8 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that short edges are investigated on.
+        length : Real
+            The maximum length of the edges.
 
         Returns
         -------
@@ -463,7 +474,10 @@ class RepairTools:
             response.result.modified_bodies_monikers,
         )
         return message
-    
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
     def find_and_fix_split_edges(
         self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
     ) -> RepairToolMessage:
