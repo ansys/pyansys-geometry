@@ -39,17 +39,17 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ModifyLinearPatternRequest,
     PatternRequest,
     RenameObjectRequest,
-    SplitBodyRequest,
     ReplaceFaceRequest,
     RevolveFacesByHelixRequest,
     RevolveFacesRequest,
     RevolveFacesUpToRequest,
+    SplitBodyRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.conversions import (
-    plane_to_grpc_plane,
     line_to_grpc_line,
+    plane_to_grpc_plane,
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
@@ -1067,7 +1067,7 @@ class GeometryCommands:
         )
 
         return result.success
-        
+
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def split_body(

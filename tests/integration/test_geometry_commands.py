@@ -630,18 +630,7 @@ def test_replace_face(modeler: Modeler):
     )
     assert len(base.faces) == 7
 
-    success = modeler.geometry_commands.split_body([body], None, [edge_to_split], None, True)
-    assert success is True
 
-    assert len(design.bodies) == 2
-
-    assert design.bodies[0].volume.m == pytest.approx(
-        Quantity(3.1415927e-06, UNITS.m**3).m, rel=1e-5, abs=1e-8
-    )
-    assert design.bodies[1].volume.m == pytest.approx(
-        Quantity(3.1415927e-06, UNITS.m**3).m, rel=1e-5, abs=1e-8
-    )
-    
 def test_split_body_by_plane(modeler: Modeler):
     "Test split body by plane"
     from ansys.geometry.core.math import Plane, Point2D, Point3D
@@ -667,6 +656,7 @@ def test_split_body_by_plane(modeler: Modeler):
     assert design.bodies[1].volume.m == pytest.approx(
         Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
 
 def test_split_body_by_slicer_face(modeler: Modeler):
     "Test split body by slicer face"
