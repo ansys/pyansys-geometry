@@ -22,7 +22,6 @@
 """Provides tools for repairing bodies."""
 
 from typing import TYPE_CHECKING
-from beartype import beartype as check_input_types
 
 from google.protobuf.wrappers_pb2 import DoubleValue
 
@@ -47,7 +46,8 @@ from ansys.geometry.core.misc.auxiliary import (
     get_edges_from_ids,
     get_faces_from_ids,
 )
-from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
+
+from ansys.geometry.core.misc.checks import check_type, check_type_all_elements_in_iterable, min_backend_version
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
@@ -394,7 +394,6 @@ class RepairTools:
         ]
 
     @protect_grpc
-    @check_input_types
     @min_backend_version(25, 2, 0)
     def find_and_fix_short_edges(
         self, bodies: list["Body"], length: Real = 0.0
@@ -415,6 +414,10 @@ class RepairTools:
         RepairToolMessage
             Message containing created and/or modified bodies.
         """
+
+        check_type_all_elements_in_iterable(bodies, Body)
+        check_type(length, Real)
+
         if not bodies:
             return RepairToolMessage(False, [], [])
 
@@ -435,7 +438,6 @@ class RepairTools:
         return message
 
     @protect_grpc
-    @check_input_types
     @min_backend_version(25, 2, 0)
     def find_and_fix_extra_edges(
         self, bodies: list["Body"], length: Real = 0.0
@@ -456,6 +458,10 @@ class RepairTools:
         RepairToolMessage
             Message containing created and/or modified bodies.
         """
+
+        check_type_all_elements_in_iterable(bodies, Body)
+        check_type(length, Real)
+
         if not bodies:
             return RepairToolMessage(False, [], [])
 
@@ -476,7 +482,6 @@ class RepairTools:
         return message
 
     @protect_grpc
-    @check_input_types
     @min_backend_version(25, 2, 0)
     def find_and_fix_split_edges(
         self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
@@ -499,6 +504,10 @@ class RepairTools:
         RepairToolMessage
             Message containing created and/or modified bodies.
         """
+
+        check_type_all_elements_in_iterable(bodies, Body)
+        check_type(length, Real)
+
         if not bodies:
             return RepairToolMessage(False, [], [])
 
