@@ -21,8 +21,8 @@ WORKDIR /app
 COPY windows-core-binaries.zip .
 RUN mkdir tmp_folder && \
     tar -xf windows-core-binaries.zip -C tmp_folder && \
-    xcopy tmp_folder\DockerWindows\bin\x64\Release_Core_Windows\net8.0\* . /e /i /h && \
-    xcopy tmp_folder\DockerWindows\* . && \
+    xcopy tmp_folder\bin\x64\Release_Core_Windows\net8.0\* . /e /i /h && \
+    xcopy tmp_folder\* . && \
     del windows-core-binaries.zip && \
     rmdir /s /q tmp_folder
 
@@ -47,4 +47,5 @@ LABEL org.opencontainers.image.vendor="ANSYS Inc."
 EXPOSE 50051
 
 # Define the entrypoint for the Geometry service
-ENTRYPOINT ["dotnet", "C:\app\Presentation.ApiServerLinux.dll"]
+# hadolint ignore=DL3025
+ENTRYPOINT dotnet C:\app\Presentation.ApiServerLinux.dll

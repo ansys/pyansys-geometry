@@ -56,12 +56,14 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
+from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
     Cone,
     Cylinder,
     Ellipse,
     Interval,
+    Line,
     ParamUV,
     Sphere,
     Torus,
@@ -2045,6 +2047,29 @@ def test_set_fill_style(modeler: Modeler):
     assert box.fill_style == FillStyle.OPAQUE
 
 
+def test_body_suppression(modeler: Modeler):
+    """Test the suppression of a body."""
+
+    design = modeler.create_design("RVE")
+    unit = DEFAULT_UNITS.LENGTH
+
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
+    box = design.extrude_sketch("Matrix", box_plane, 1 * unit)
+
+    assert box.is_suppressed is False
+    box.set_suppressed(True)
+    assert box.is_suppressed is True
+    box.is_suppressed = False
+    assert box.is_suppressed is False
+
+
 def test_set_body_color(modeler: Modeler):
     """Test the getting and setting of body color."""
 
@@ -2739,8 +2764,36 @@ def test_surface_body_creation(modeler: Modeler):
     assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
 
 
+def test_design_parameters(modeler: Modeler):
+    """Test the design parameter's functionality."""
+    # DISCLAIMER : This is a workaround to get batch tests working
+    modeler.close_all_designs()
+    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
+    test_parameters = design.get_all_parameters()
+
+    # Verify the initial parameters
+    assert len(test_parameters) == 2
+    assert test_parameters[0].name == "p1"
+    assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
+    assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    assert test_parameters[1].name == "p2"
+    assert abs(test_parameters[1].dimension_value - 0.0002552758322160813) < 1e-8
+    assert test_parameters[1].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    # Update the second parameter and verify the status
+    test_parameters[1].dimension_value = 0.0006
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.SUCCESS
+
+    # Attempt to update the first parameter and expect a constrained status
+    test_parameters[0].dimension_value = 0.0006
+    status = design.set_parameter(test_parameters[0])
+    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+
+
 def test_cached_bodies(modeler: Modeler):
-    """Test verifying that bodies are cached correctly.
+    """Test that bodies are cached correctly.
 
     Whenever a new body is created, modified etc. we should make sure that the cache is updated.
     """
@@ -2859,3 +2912,27 @@ def test_extrude_sketch_with_cut_request_no_collision(modeler: Modeler):
 
     # Verify the volume of the resulting body is exactly the same
     assert design.bodies[0].volume == volume_box
+
+
+def test_create_surface_body_from_trimmed_curves(modeler: Modeler):
+    design = modeler.create_design("surface")
+
+    # pill shape
+    circle1 = Circle(Point3D([0, 0, 0]), 1).trim(Interval(0, np.pi))
+    line1 = Line(Point3D([-1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
+    circle2 = Circle(Point3D([0, -1, 0]), 1).trim(Interval(np.pi, np.pi * 2))
+    line2 = Line(Point3D([1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
+
+    body = design.create_surface_from_trimmed_curves("body", [circle1, line1, line2, circle2])
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(
+        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+
+    # create from edges (by getting their trimmed curves)
+    trimmed_curves_from_edges = [edge.shape for edge in body.edges]
+    body = design.create_surface_from_trimmed_curves("body2", trimmed_curves_from_edges)
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(
+        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )

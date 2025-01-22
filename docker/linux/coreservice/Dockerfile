@@ -17,9 +17,9 @@ RUN apt-get update && \
 COPY linux-core-binaries.zip .
 RUN unzip -qq linux-core-binaries.zip -d . && \
     rm linux-core-binaries.zip && \
-    chmod -R 0755 DockerLinux && \
-    mv DockerLinux/bin/x64/Release_Linux/net8.0/* . && \
-    rm -rf DockerLinux
+    chmod -R 0755 bin && \
+    mv bin/x64/Release_Core_Linux/net8.0/* . && \
+    rm -rf bin
 
 # Let the dynamic link loader where to search for shared libraries
 ENV LD_LIBRARY_PATH=/app:/app/CADIntegration/bin:/app/Native/Linux

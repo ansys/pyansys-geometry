@@ -37,6 +37,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     CreateSphereBodyRequest,
+    CreateSurfaceBodyFromTrimmedCurvesRequest,
     CreateSurfaceBodyRequest,
     CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
@@ -993,6 +994,42 @@ class Component:
         self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def create_surface_from_trimmed_curves(
+        self, name: str, trimmed_curves: list[TrimmedCurve]
+    ) -> Body:
+        """Create a surface body from a list of trimmed curves all lying on the same plane.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new surface body.
+        trimmed_curves : list[TrimmedCurve]
+            Curves to define the plane and body.
+
+        Returns
+        -------
+        Body
+            Surface body.
+        """
+        curves = [trimmed_curve_to_grpc_trimmed_curve(curve) for curve in trimmed_curves]
+        request = CreateSurfaceBodyFromTrimmedCurvesRequest(
+            name=name,
+            parent=self.id,
+            trimmed_curves=curves,
+        )
+
+        self._grpc_client.log.debug(
+            f"Creating surface body from trimmed curves provided on {self.id}. Creating body..."
+        )
+        response = self._bodies_stub.CreateSurfaceBodyFromTrimmedCurves(request)
+
+        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
+        self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
+        return Body(response.id, response.name, self, tb)
+
     @check_input_types
     @ensure_design_is_active
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
@@ -1663,7 +1700,7 @@ class Component:
                 body_names = [body.name for body in self.bodies]
 
             # Add the bodies to the lines (with indentation)
-            lines.extend([f"|{'-' * (indent-1)}(body) {name}" for name in body_names])
+            lines.extend([f"|{'-' * (indent - 1)}(body) {name}" for name in body_names])
 
         # Print the beams
         if consider_beams:
@@ -1680,7 +1717,7 @@ class Component:
                 beam_names = [beam.id for beam in self.beams if beam.is_alive]
 
             # Add the bodies to the lines (with indentation)
-            lines.extend([f"|{'-' * (indent-1)}(beam) {name}" for name in beam_names])
+            lines.extend([f"|{'-' * (indent - 1)}(beam) {name}" for name in beam_names])
 
         # Print the nested components
         if consider_comps:
@@ -1708,13 +1745,13 @@ class Component:
                     )
 
                     # Add indentation to the subcomponent lines
-                    lines.append(f"|{'-' * (indent-1)}(comp) {comp.name}")
+                    lines.append(f"|{'-' * (indent - 1)}(comp) {comp.name}")
 
                     # Determine the prefix for the subcomponent lines and add them
-                    prefix = f"{' ' * indent}" if idx == (n_comps - 1) else f":{' ' * (indent-1)}"
+                    prefix = f"{' ' * indent}" if idx == (n_comps - 1) else f":{' ' * (indent - 1)}"
                     lines.extend([f"{prefix}{line}" for line in subcomp[1:]])
 
             else:
-                lines.extend([f"|{'-' * (indent-1)}(comp) {comp.name}" for comp in comps])
+                lines.extend([f"|{'-' * (indent - 1)}(comp) {comp.name}" for comp in comps])
 
         return lines if return_list else print("\n".join(lines))
