@@ -501,7 +501,7 @@ class RepairTools:
         """
         if not bodies:
             return RepairToolMessage(False, [], [])
-        
+
         angle_value = DoubleValue(value=float(angle))
         length_value = DoubleValue(value=float(length))
         body_ids = [body.id for body in bodies]
