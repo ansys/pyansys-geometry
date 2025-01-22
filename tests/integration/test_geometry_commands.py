@@ -634,6 +634,9 @@ def test_replace_face(modeler: Modeler):
 def test_split_body_by_plane(modeler: Modeler):
     "Test split body by plane"
     from ansys.geometry.core.math import Plane, Point2D, Point3D
+    
+    # DISCLAIMER : This is a workaround to get batch tests working
+    modeler.close_all_designs()
 
     design = modeler.create_design("split_body_by_plane")
 
@@ -655,11 +658,14 @@ def test_split_body_by_plane(modeler: Modeler):
     )
     assert design.bodies[1].volume.m == pytest.approx(
         Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    )    
 
 
 def test_split_body_by_slicer_face(modeler: Modeler):
     "Test split body by slicer face"
+
+    # DISCLAIMER : This is a workaround to get batch tests working
+    modeler.close_all_designs()
 
     design = modeler.create_design("split_body_by_slicer_face")
 
@@ -724,6 +730,9 @@ def test_split_body_by_slicer_edge(modeler: Modeler):
 
 def test_split_body_by_face(modeler: Modeler):
     "Test split body by face"
+    
+    # DISCLAIMER : This is a workaround to get batch tests working
+    modeler.close_all_designs()
 
     design = modeler.create_design("split_body_by_face")
 
