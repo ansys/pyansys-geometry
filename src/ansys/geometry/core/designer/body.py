@@ -1650,7 +1650,7 @@ class Body(IBody):
         return self._template.tessellate(merge, self.parent_component.get_world_transform())
 
     @ensure_design_is_active
-    def shell_body(self, offset: Real) -> bool:
+    def shell_body(self, offset: Real) -> bool: #noqa: D102
         return self._template.shell_body(offset)
 
     @ensure_design_is_active
