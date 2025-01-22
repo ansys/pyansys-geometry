@@ -24,8 +24,6 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, List, Union
 
-from beartype import beartype as check_input_types
-
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
@@ -1071,7 +1069,6 @@ class GeometryCommands:
         return result.success
 
     @protect_grpc
-    @check_input_types
     @min_backend_version(25, 2, 0)
     def split_body(
         self,
@@ -1102,6 +1099,8 @@ class GeometryCommands:
             ``True`` when successful, ``False`` when failed.
         """
         from ansys.geometry.core.designer.body import Body
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
 
         check_type_all_elements_in_iterable(bodies, Body)
 
@@ -1114,10 +1113,18 @@ class GeometryCommands:
 
         slicer_items = None
         if slicers is not None:
+            slicers: list["Face", "Edge"] = (
+            slicers if isinstance(slicers, list) else [slicers]
+            )
+            check_type_all_elements_in_iterable(slicers, (Edge, Face))
             slicer_items = [slicer._grpc_id for slicer in slicers]
 
         face_items = None
         if faces is not None:
+            faces: list["Face"] = (
+            faces if isinstance(faces, list) else [faces]
+            )
+            check_type_all_elements_in_iterable(faces, Face)
             face_items = [face._grpc_id for face in faces]
 
         result = self._commands_stub.SplitBody(
