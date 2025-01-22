@@ -392,8 +392,8 @@ class RepairTools:
             )
             for res in problem_areas_response.result
         ]
-    
-    @protect_grpc
+
+	@protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
     def find_and_fix_short_edges(
