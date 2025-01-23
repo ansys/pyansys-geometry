@@ -662,22 +662,18 @@ class IBody(ABC):
         return
 
     @protect_grpc
-    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
+    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:
         """Unite two (or more) bodies.
 
         Parameters
         ----------
         other : Body
             Body to unite with the ``self`` parameter.
-        keep_other : bool, default: False
-            Whether to retain the united body or not.
 
         Notes
         -----
         The ``self`` parameter is directly modified with the result, and
-        the ``other`` parameter is consumed. Thus, it is important to make
-        copies if needed. If the ``keep_other`` parameter is set to ``True``,
-        the united body is retained.
+        the ``other`` parameter is consumed.
         """
         return
 
@@ -1187,7 +1183,7 @@ class MasterBody(IBody):
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
 
-    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
+    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
@@ -1625,7 +1621,7 @@ class Body(IBody):
             other, keep_other, True, "subtract", "empty (complete) subtraction"
         )
 
-    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
+    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
         # self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
         self.__generic_boolean_command(other, False, False, "unite", "union operation failed")
 
