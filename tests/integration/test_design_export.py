@@ -138,7 +138,11 @@ def test_export_to_parasolid_text(modeler: Modeler, tmp_path_factory: pytest.Tem
     # Define the location and expected file location
     location = tmp_path_factory.mktemp("test_export_to_parasolid_text")
 
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+    if modeler.client.backend_type in (
+        BackendType.LINUX_SERVICE,
+        BackendType.CORE_LINUX,
+        BackendType.CORE_WINDOWS,
+    ):
         file_location = location / f"{design.name}.x_t"
     else:
         file_location = location / f"{design.name}.xmt_txt"
@@ -161,7 +165,11 @@ def test_export_to_parasolid_binary(modeler: Modeler, tmp_path_factory: pytest.T
     # Define the location and expected file location
     location = tmp_path_factory.mktemp("test_export_to_parasolid_binary")
 
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+    if modeler.client.backend_type in (
+        BackendType.LINUX_SERVICE,
+        BackendType.CORE_LINUX,
+        BackendType.CORE_WINDOWS,
+    ):
         file_location = location / f"{design.name}.x_b"
     else:
         file_location = location / f"{design.name}.xmt_bin"
@@ -191,7 +199,11 @@ def test_export_to_step(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
     # Check the exported file
     assert file_location.exists()
 
-    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+    if modeler.client.backend_type not in (
+        BackendType.LINUX_SERVICE,
+        BackendType.CORE_LINUX,
+        BackendType.CORE_WINDOWS,
+    ):
         # Import the STEP file
         design_read = modeler.open_file(file_location)
 
