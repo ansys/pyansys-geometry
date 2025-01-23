@@ -30,8 +30,7 @@ from ansys.geometry.core.designer.geometry_commands import (
     FillPatternType,
     OffsetMode,
 )
-from ansys.geometry.core.math import Point3D, UnitVector3D
-from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes.curves.line import Line
@@ -633,11 +632,6 @@ def test_replace_face(modeler: Modeler):
 
 def test_split_body_by_plane(modeler: Modeler):
     "Test split body by plane"
-    from ansys.geometry.core.math import Plane, Point2D, Point3D
-
-    # DISCLAIMER : This is a workaround to get batch tests working
-    modeler.close_all_designs()
-
     design = modeler.create_design("split_body_by_plane")
 
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
@@ -663,10 +657,6 @@ def test_split_body_by_plane(modeler: Modeler):
 
 def test_split_body_by_slicer_face(modeler: Modeler):
     "Test split body by slicer face"
-
-    # DISCLAIMER : This is a workaround to get batch tests working
-    modeler.close_all_designs()
-
     design = modeler.create_design("split_body_by_slicer_face")
 
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
@@ -730,10 +720,6 @@ def test_split_body_by_slicer_edge(modeler: Modeler):
 
 def test_split_body_by_face(modeler: Modeler):
     "Test split body by face"
-
-    # DISCLAIMER : This is a workaround to get batch tests working
-    modeler.close_all_designs()
-
     design = modeler.create_design("split_body_by_face")
 
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
