@@ -22,6 +22,7 @@
 """Module providing for conversions."""
 
 from typing import TYPE_CHECKING
+from pint import Quantity, UndefinedUnitError
 
 from ansys.api.geometry.v0.models_pb2 import (
     Arc as GRPCArc,
@@ -33,6 +34,8 @@ from ansys.api.geometry.v0.models_pb2 import (
     Geometries as GRPCGeometries,
     Line as GRPCLine,
     Matrix as GRPCMatrix,
+    Material as GRPCMaterial,
+    MaterialProperty as GRPCMaterialProperty,
     Plane as GRPCPlane,
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
@@ -41,6 +44,11 @@ from ansys.api.geometry.v0.models_pb2 import (
     Tessellation,
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
+)
+from ansys.geometry.core.materials.material import (
+    Material, 
+    MaterialProperty, 
+    MaterialPropertyType,
 )
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
@@ -680,3 +688,32 @@ def line_to_grpc_line(line: Line) -> GRPCLine:
     start = line.origin
     end = line.origin + line.direction
     return GRPCLine(start=point3d_to_grpc_point(start), end=point3d_to_grpc_point(end))
+
+
+def grpc_material_to_material(material: GRPCMaterial) -> Material:
+    """Convert a material gRPC message to a ``Material`` class."""
+    properties = []
+    density = Quantity(0)
+    for property in material.material_properties:
+        mp = grpc_material_property_to_material_property(property)
+        properties.append(mp)
+        if mp.type == MaterialPropertyType.DENSITY:
+            density = mp.quantity
+            
+    return Material(material.name, density, properties)
+
+
+def grpc_material_property_to_material_property(material_property: GRPCMaterialProperty) -> MaterialProperty:
+    """Convert a material property gRPC message to a ``MaterialProperty`` class."""
+    try:
+        mp_type = MaterialPropertyType.from_id(material_property.id)
+    except ValueError as err:
+        mp_type = material_property.id
+
+    try:
+        mp_quantity = Quantity(material_property.value, material_property.units)
+    except (UndefinedUnitError, TypeError,) as err:
+        mp_quantity = material_property.value
+
+    mp = MaterialProperty(mp_type, material_property.display_name, mp_quantity)
+    return mp

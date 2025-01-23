@@ -63,11 +63,16 @@ from ansys.geometry.core.connection.conversions import (
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
     unit_vector_to_grpc_direction,
+    grpc_material_to_material,
 )
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.materials.material import Material
+from ansys.geometry.core.materials.material import (
+    Material, 
+    MaterialProperty, 
+    MaterialPropertyType,
+)
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
@@ -248,6 +253,17 @@ class IBody(ABC):
         ----------
         material : Material
             Source material data.
+        """
+        return
+    
+    @abstractmethod
+    def get_assigned_material(self) -> Material:
+        """Get the assigned material of the body.
+
+        Returns
+        -------
+        Material
+            Material assigned to the body.
         """
         return
 
@@ -872,6 +888,13 @@ class MasterBody(IBody):
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
 
+    @property
+    @protect_grpc
+    def get_assigned_material(self) -> Material:  # noqa: D102
+        self._grpc_client.log.debug(f"Retrieving assigned material for body {self.id}.")
+        material_response = self._bodies_stub.GetAssignedMaterial(self._grpc_id)
+        return grpc_material_to_material(material_response)
+
     @protect_grpc
     @check_input_types
     def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102
@@ -1389,6 +1412,11 @@ class Body(IBody):
     @ensure_design_is_active
     def assign_material(self, material: Material) -> None:  # noqa: D102
         self._template.assign_material(material)
+
+    @property
+    @ensure_design_is_active
+    def get_assigned_material(self) -> Material: # noqa: D102
+        return self._template.get_assigned_material
 
     @ensure_design_is_active
     def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102
