@@ -46,8 +46,11 @@ from ansys.geometry.core.misc.auxiliary import (
     get_edges_from_ids,
     get_faces_from_ids,
 )
-
-from ansys.geometry.core.misc.checks import check_type, check_type_all_elements_in_iterable, min_backend_version
+from ansys.geometry.core.misc.checks import (
+    check_type,
+    check_type_all_elements_in_iterable,
+    min_backend_version,
+)
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
