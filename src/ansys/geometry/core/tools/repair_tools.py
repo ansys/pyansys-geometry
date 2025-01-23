@@ -27,6 +27,7 @@ from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.repairtools_pb2 import (
+    FindAdjustSimplifyRequest,
     FindDuplicateFacesRequest,
     FindExtraEdgesRequest,
     FindInexactEdgesRequest,
@@ -40,12 +41,14 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_body,
     get_edges_from_ids,
     get_faces_from_ids,
 )
+from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
 from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
@@ -57,6 +60,7 @@ from ansys.geometry.core.tools.problem_areas import (
     SmallFaceProblemAreas,
     SplitEdgeProblemAreas,
     StitchFaceProblemAreas,
+    UnsimplifiedFaceProblemAreas,
 )
 from ansys.geometry.core.typing import Real
 
@@ -351,6 +355,42 @@ class RepairTools:
                 f"{res.id}",
                 self._grpc_client,
                 get_bodies_from_ids(parent_design, res.body_monikers),
+            )
+            for res in problem_areas_response.result
+        ]
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def find_simplify(self, bodies: list["Body"]) -> list[UnsimplifiedFaceProblemAreas]:
+        """Detect faces in a body that can be simplified.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to search.
+
+        Returns
+        -------
+        list[int]
+            List of problem area ids.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        check_type_all_elements_in_iterable(bodies, Body)
+        body_ids = [body.id for body in bodies]
+
+        parent_design = get_design_from_body(bodies[0])
+        problem_areas_response = self._repair_stub.FindAdjustSimplify(
+            FindAdjustSimplifyRequest(
+                selection=body_ids,
+            )
+        )
+
+        return [
+            UnsimplifiedFaceProblemAreas(
+                f"{res.id}",
+                self._grpc_client,
+                get_faces_from_ids(parent_design, res.body_monikers),
             )
             for res in problem_areas_response.result
         ]
