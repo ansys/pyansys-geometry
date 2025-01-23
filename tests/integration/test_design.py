@@ -1566,7 +1566,7 @@ def test_boolean_body_operations(modeler: Modeler):
                 x) identity
                 y) transform
     """
-    modeler.close_all_designs()    
+    modeler.close_all_designs()
     design = modeler.create_design("TestBooleanOperations")
 
     comp1 = design.add_component("Comp1")
