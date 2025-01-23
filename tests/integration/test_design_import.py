@@ -179,7 +179,11 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     _checker_method(design, design2, True)
 
     # Test HOOPS formats (Windows only)
-    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+    if modeler.client.backend_type not in (
+        BackendType.LINUX_SERVICE,
+        BackendType.CORE_LINUX,
+        BackendType.CORE_WINDOWS,
+    ):
         # IGES
         #
         # TODO: Something has gone wrong with IGES

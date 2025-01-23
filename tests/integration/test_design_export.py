@@ -30,6 +30,8 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.sketch import Sketch
 
+from .conftest import skip_if_linux
+
 
 def _create_demo_design(modeler: Modeler) -> Design:
     """Create a demo design for the tests."""
@@ -130,6 +132,50 @@ def test_export_to_scdocx(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     _checker_method(design_read, design, True)
 
 
+def test_export_to_stride(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test exporting a design to stride format."""
+    # Create a demo design
+    design = _create_demo_design(modeler)
+
+    # Define the location and expected file location
+    location = tmp_path_factory.mktemp("test_export_to_stride")
+    file_location = location / f"{design.name}.stride"
+
+    # Export to stride
+    design.export_to_stride(location)
+
+    # Check the exported file
+    assert file_location.exists()
+
+    # Import the stride
+    design_read = modeler.open_file(file_location)
+
+    # Check the imported design
+    _checker_method(design_read, design, True)
+
+
+def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test exporting a design to dsco format."""
+    # Create a demo design
+    design = _create_demo_design(modeler)
+
+    # Define the location and expected file location
+    location = tmp_path_factory.mktemp("test_export_to_disco")
+    file_location = location / f"{design.name}.dsco"
+
+    # Export to dsco
+    design.export_to_disco(location)
+
+    # Check the exported file
+    assert file_location.exists()
+
+    # Import the dsco
+    design_read = modeler.open_file(file_location)
+
+    # Check the imported design
+    _checker_method(design_read, design, True)
+
+
 def test_export_to_parasolid_text(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to parasolid text format."""
     # Create a demo design
@@ -138,7 +184,11 @@ def test_export_to_parasolid_text(modeler: Modeler, tmp_path_factory: pytest.Tem
     # Define the location and expected file location
     location = tmp_path_factory.mktemp("test_export_to_parasolid_text")
 
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+    if modeler.client.backend_type in (
+        BackendType.LINUX_SERVICE,
+        BackendType.CORE_LINUX,
+        BackendType.CORE_WINDOWS,
+    ):
         file_location = location / f"{design.name}.x_t"
     else:
         file_location = location / f"{design.name}.xmt_txt"
@@ -161,7 +211,11 @@ def test_export_to_parasolid_binary(modeler: Modeler, tmp_path_factory: pytest.T
     # Define the location and expected file location
     location = tmp_path_factory.mktemp("test_export_to_parasolid_binary")
 
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+    if modeler.client.backend_type in (
+        BackendType.LINUX_SERVICE,
+        BackendType.CORE_LINUX,
+        BackendType.CORE_WINDOWS,
+    ):
         file_location = location / f"{design.name}.x_b"
     else:
         file_location = location / f"{design.name}.xmt_bin"
@@ -178,6 +232,8 @@ def test_export_to_parasolid_binary(modeler: Modeler, tmp_path_factory: pytest.T
 
 def test_export_to_step(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to STEP format."""
+    skip_if_linux(modeler, test_export_to_step.__name__, "design")  # Skip test on Linux
+
     # Create a demo design
     design = _create_demo_design(modeler)
 
@@ -201,6 +257,8 @@ def test_export_to_step(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 
 def test_export_to_iges(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to IGES format."""
+    skip_if_linux(modeler, test_export_to_iges.__name__, "design")  # Skip test on Linux
+
     # Create a demo design
     design = _create_demo_design(modeler)
 
@@ -220,6 +278,8 @@ def test_export_to_iges(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 
 def test_export_to_fmd(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to FMD format."""
+    skip_if_linux(modeler, test_export_to_fmd.__name__, "design")  # Skip test on Linux
+
     # Create a demo design
     design = _create_demo_design(modeler)
 

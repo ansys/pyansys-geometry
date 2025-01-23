@@ -33,6 +33,8 @@ class BackendType(Enum):
     SPACECLAIM = 1
     WINDOWS_SERVICE = 2
     LINUX_SERVICE = 3
+    CORE_WINDOWS = 4
+    CORE_LINUX = 5
 
 
 class ApiVersions(Enum):

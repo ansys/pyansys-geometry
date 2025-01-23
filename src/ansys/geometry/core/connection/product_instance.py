@@ -263,7 +263,12 @@ def prepare_and_start_backend(
     """
     from ansys.geometry.core.modeler import Modeler
 
-    if os.name != "nt" and backend_type != BackendType.LINUX_SERVICE:  # pragma: no cover
+    if (
+        os.name != "nt"
+        and backend_type != BackendType.LINUX_SERVICE
+        and backend_type != BackendType.CORE_WINDOWS
+        and backend_type != BackendType.CORE_LINUX
+    ):  # pragma: no cover
         raise RuntimeError(
             "Method 'prepare_and_start_backend' is only available on Windows."
             "A Linux version is only available for the Core Geometry Service."
@@ -362,7 +367,11 @@ def prepare_and_start_backend(
             )
         )
     # This should be modified to Windows Core Service in the future
-    elif backend_type == BackendType.LINUX_SERVICE:
+    elif backend_type in (
+        BackendType.LINUX_SERVICE,
+        BackendType.CORE_WINDOWS,
+        BackendType.CORE_LINUX,
+    ):
         # Define several Ansys Geometry Core Service folders needed
         root_service_folder = Path(installations[product_version], CORE_GEOMETRY_SERVICE_FOLDER)
         native_folder = root_service_folder / "Native"
