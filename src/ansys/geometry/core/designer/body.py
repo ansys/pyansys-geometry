@@ -1222,9 +1222,7 @@ class MasterBody(IBody):
         # check if faces belong to this body
         for face in selection:
             if face.body.id != self.id:
-                raise ValueError(
-                    f"Face {face.id} does not belong to body {self.id}."
-                )
+                raise ValueError(f"Face {face.id} does not belong to body {self.id}.")
 
         self._grpc_client.log.debug(f"Removing faces to shell body {self.id}.")
 
