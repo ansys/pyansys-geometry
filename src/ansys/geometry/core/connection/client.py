@@ -211,10 +211,11 @@ class GrpcClient:
                 backend_type = BackendType.DISCOVERY
             elif grpc_backend_type == GRPCBackendType.SPACECLAIM:
                 backend_type = BackendType.SPACECLAIM
-            elif (
-                grpc_backend_type == GRPCBackendType.WINDOWS_DMS
-                or grpc_backend_type == GRPCBackendType.CORE_SERVICE_WINDOWS
-            ):
+            elif grpc_backend_type == GRPCBackendType.WINDOWS_DMS:
+                backend_type = BackendType.WINDOWS_SERVICE
+            elif grpc_backend_type == GRPCBackendType.LINUX_DMS:
+                backend_type = BackendType.LINUX_SERVICE
+            elif grpc_backend_type == GRPCBackendType.CORE_SERVICE_WINDOWS:
                 backend_type = BackendType.CORE_WINDOWS
             elif grpc_backend_type == GRPCBackendType.CORE_SERVICE_LINUX:
                 backend_type = BackendType.CORE_LINUX
