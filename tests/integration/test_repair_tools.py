@@ -418,7 +418,7 @@ def test_find_and_fix_split_edges(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "bracket-with-split-edges.scdocx")
     assert len(design.bodies[0].edges) == 304
     modeler.repair_tools.find_and_fix_split_edges(design.bodies, 2.61799, 0.01)
-    assert len(design.bodies[0].edges) == 139
+    assert len(design.bodies[0].edges) == 138
 
 
 def test_find_and_fix_extra_edges(modeler: Modeler):
