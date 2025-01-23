@@ -444,7 +444,7 @@ class RepairTools:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_fix_extra_edges(
-        self, bodies: list["Body"], length: Real = 0.0
+        self, bodies: list["Body"]
     ) -> RepairToolMessage:
         """Find and fix the extra edge problem areas.
 
@@ -465,7 +465,6 @@ class RepairTools:
         from ansys.geometry.core.designer.body import Body
 
         check_type_all_elements_in_iterable(bodies, Body)
-        check_type(length, Real)
 
         if not bodies:
             return RepairToolMessage(False, [], [])
@@ -473,7 +472,6 @@ class RepairTools:
         response = self._repair_stub.FindAndFixExtraEdges(
             FindExtraEdgesRequest(
                 selection=[body.id for body in bodies],
-                max_edge_length=DoubleValue(value=length),
             )
         )
 
