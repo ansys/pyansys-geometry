@@ -1199,9 +1199,8 @@ class MasterBody(IBody):
             return comp
 
     @protect_grpc
+    @check_input_types
     def shell_body(self, offset: Real) -> bool:  # noqa: D102
-        check_type(offset, Real)
-
         self._grpc_client.log.debug(f"Shelling body {self.id} to offset {offset}.")
 
         result = self._commands_stub.Shell(
@@ -1215,11 +1214,17 @@ class MasterBody(IBody):
 
     @protect_grpc
     @reset_tessellation_cache
+    @check_input_types
     def remove_faces(self, selection: Union["Face", list["Face"]], offset: Real) -> bool:  # noqa: D102
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
-
-        check_type(offset, Real)
         check_type_all_elements_in_iterable(selection, Face)
+
+        # check if faces belong to this body
+        for face in selection:
+            if face.body.id != self.id:
+                raise ValueError(
+                    f"Face {face.id} does not belong to body {self.id}."
+                )
 
         self._grpc_client.log.debug(f"Removing faces to shell body {self.id}.")
 
