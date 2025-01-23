@@ -349,7 +349,7 @@ def test_find_and_fix_missing_faces(modeler: Modeler):
         assert not comp.bodies[0].is_surface
 
 
-def test_find_and_fix_short_edges(modeler: Modeler):
+def test_find_and_fix_short_edges_problem_areas(modeler: Modeler):
     """Test to read geometry, find and fix short edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "ShortEdges.scdocx")
     assert len(design.bodies[0].edges) == 685
@@ -403,3 +403,11 @@ def test_fix_simplify(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
     problem_areas = modeler.repair_tools.find_simplify(design.bodies)
     assert problem_areas[0].fix().success is True
+
+
+def test_find_and_fix_short_edges(modeler: Modeler):
+    """Test to read geometry, find and fix short edges and validate they are fixed removed."""
+    design = modeler.open_file(FILES_DIR / "ShortEdges.scdocx")
+    assert len(design.bodies[0].edges) == 685
+    modeler.repair_tools.find_and_fix_short_edges(design.bodies, 0.000127)
+    assert len(design.bodies[0].edges) == 673  ##We get 673 edges if we repair all in one go
