@@ -1679,7 +1679,7 @@ class Body(IBody):
             response = self._template._commands_stub.CombineMergeBodies(request)
         else:
             raise ValueError("Unknown operation requested")
-        if response.success == False:
+        if not response.success:
             raise ValueError(
                 f"Operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
                 f"Involving bodies:{self}, {other_bodies}"
