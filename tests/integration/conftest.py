@@ -142,12 +142,10 @@ def modeler(session_modeler: Modeler):
     yield session_modeler
 
     # Cleanup on exit
-    design = session_modeler.get_active_design()
-    design.close()
+    [design.close() for design in session_modeler.designs.values()]
 
-    # Assert the design is closed
-    assert design.is_closed is True
-
+    # Empty the designs dictionary
+    session_modeler._designs = {}
 
 @pytest.fixture(scope="session", autouse=True)
 def clean_plot_result_images():
