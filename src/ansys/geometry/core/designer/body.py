@@ -58,20 +58,18 @@ from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
+    grpc_material_to_material,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
     unit_vector_to_grpc_direction,
-    grpc_material_to_material,
 )
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import (
-    Material, 
-    MaterialProperty, 
-    MaterialPropertyType,
+    Material,
 )
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.frame import Frame
@@ -255,7 +253,7 @@ class IBody(ABC):
             Source material data.
         """
         return
-    
+
     @abstractmethod
     def get_assigned_material(self) -> Material:
         """Get the assigned material of the body.
@@ -1415,7 +1413,7 @@ class Body(IBody):
 
     @property
     @ensure_design_is_active
-    def get_assigned_material(self) -> Material: # noqa: D102
+    def get_assigned_material(self) -> Material:  # noqa: D102
         return self._template.get_assigned_material
 
     @ensure_design_is_active

@@ -22,6 +22,7 @@
 """Module providing for conversions."""
 
 from typing import TYPE_CHECKING
+
 from pint import Quantity, UndefinedUnitError
 
 from ansys.api.geometry.v0.models_pb2 import (
@@ -33,9 +34,9 @@ from ansys.api.geometry.v0.models_pb2 import (
     Frame as GRPCFrame,
     Geometries as GRPCGeometries,
     Line as GRPCLine,
-    Matrix as GRPCMatrix,
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
+    Matrix as GRPCMatrix,
     Plane as GRPCPlane,
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
@@ -46,8 +47,8 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedSurface as GRPCTrimmedSurface,
 )
 from ansys.geometry.core.materials.material import (
-    Material, 
-    MaterialProperty, 
+    Material,
+    MaterialProperty,
     MaterialPropertyType,
 )
 from ansys.geometry.core.math.frame import Frame
@@ -699,20 +700,25 @@ def grpc_material_to_material(material: GRPCMaterial) -> Material:
         properties.append(mp)
         if mp.type == MaterialPropertyType.DENSITY:
             density = mp.quantity
-            
+
     return Material(material.name, density, properties)
 
 
-def grpc_material_property_to_material_property(material_property: GRPCMaterialProperty) -> MaterialProperty:
+def grpc_material_property_to_material_property(
+    material_property: GRPCMaterialProperty,
+) -> MaterialProperty:
     """Convert a material property gRPC message to a ``MaterialProperty`` class."""
     try:
         mp_type = MaterialPropertyType.from_id(material_property.id)
-    except ValueError as err:
+    except ValueError:
         mp_type = material_property.id
 
     try:
         mp_quantity = Quantity(material_property.value, material_property.units)
-    except (UndefinedUnitError, TypeError,) as err:
+    except (
+        UndefinedUnitError,
+        TypeError,
+    ):
         mp_quantity = material_property.value
 
     mp = MaterialProperty(mp_type, material_property.display_name, mp_quantity)

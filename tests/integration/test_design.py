@@ -159,7 +159,7 @@ def test_assigning_and_getting_material(modeler: Modeler):
     design = modeler.create_design(design_name)
 
     # Add a material to body
-    density = Quantity(125, 1000 * UNITS.kg / (UNITS.m ** 3))
+    density = Quantity(125, 1000 * UNITS.kg / (UNITS.m**3))
     poisson_ratio = Quantity(0.33, UNITS.dimensionless)
     tensile_strength = Quantity(45.0, UNITS.pascal)
     material = Material(
@@ -183,10 +183,16 @@ def test_assigning_and_getting_material(modeler: Modeler):
     assert material.properties[MaterialPropertyType.DENSITY].type == MaterialPropertyType.DENSITY
     assert material.properties[MaterialPropertyType.DENSITY].name == "Density"
     assert material.properties[MaterialPropertyType.DENSITY].quantity == density
-    assert material.properties[MaterialPropertyType.POISSON_RATIO].type == MaterialPropertyType.POISSON_RATIO
+    assert (
+        material.properties[MaterialPropertyType.POISSON_RATIO].type
+        == MaterialPropertyType.POISSON_RATIO
+    )
     assert material.properties[MaterialPropertyType.POISSON_RATIO].name == "myPoisson"
     assert material.properties[MaterialPropertyType.POISSON_RATIO].quantity == poisson_ratio
-    assert material.properties[MaterialPropertyType.TENSILE_STRENGTH].type == MaterialPropertyType.TENSILE_STRENGTH
+    assert (
+        material.properties[MaterialPropertyType.TENSILE_STRENGTH].type
+        == MaterialPropertyType.TENSILE_STRENGTH
+    )
     assert material.properties[MaterialPropertyType.TENSILE_STRENGTH].name == "myTensile"
     assert material.properties[MaterialPropertyType.TENSILE_STRENGTH].quantity == tensile_strength
 
