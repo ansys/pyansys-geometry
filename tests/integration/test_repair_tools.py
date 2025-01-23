@@ -21,8 +21,6 @@
 # SOFTWARE.
 """ "Testing of repair tools."""
 
-import pytest
-
 from ansys.geometry.core.modeler import Modeler
 
 from .conftest import FILES_DIR, skip_if_linux
@@ -80,7 +78,6 @@ def test_find_extra_edge_edges(modeler: Modeler):
     assert len(problem_areas[0].edges) > 0
 
 
-@pytest.mark.skip(reason="This test is failing on the Geometry Service - issue 1335")
 def test_fix_extra_edge(modeler: Modeler):
     """Test to find and fix extra edge problem areas."""
     design = modeler.open_file(FILES_DIR / "ExtraEdgesDesignBefore.scdocx")
@@ -330,3 +327,79 @@ def test_find_and_fix_inexact_edges(modeler: Modeler):
     assert len(design.bodies[0].edges) == 993
     inexact_edges = modeler.repair_tools.find_inexact_edges(design.bodies)
     assert len(inexact_edges) == 0
+
+
+def test_find_and_fix_missing_faces(modeler: Modeler):
+    """Test to read geometry, find and fix missing faces and validate that we now have solids."""
+    design = modeler.open_file(FILES_DIR / "MissingFaces.scdocx")
+    assert len(design.bodies) == 1
+    assert design.bodies[0].is_surface
+    assert len(design.components) == 3
+    for comp in design.components:
+        assert comp.bodies[0].is_surface
+    missing_faces = modeler.repair_tools.find_missing_faces(design.bodies)
+    for face in missing_faces:
+        face.fix()
+    for components in design.components:
+        missing_faces = modeler.repair_tools.find_missing_faces(components.bodies)
+        for face in missing_faces:
+            face.fix()
+    assert not design.bodies[0].is_surface
+    for comp in design.components:
+        assert not comp.bodies[0].is_surface
+
+
+def test_find_and_fix_short_edges(modeler: Modeler):
+    """Test to read geometry, find and fix short edges and validate they are fixed removed."""
+    design = modeler.open_file(FILES_DIR / "ShortEdges.scdocx")
+    assert len(design.bodies[0].edges) == 685
+    short_edges = modeler.repair_tools.find_short_edges(design.bodies, 0.000127)
+    assert len(short_edges) == 8
+    for i in short_edges:
+        i.fix()
+    assert len(design.bodies[0].edges) == 675  ##We get 673 edges if we repair all in one go
+
+
+def test_find_and_fix_split_edges(modeler: Modeler):
+    """Test to read geometry, find and fix split edges and validate they are fixed removed."""
+    design = modeler.open_file(FILES_DIR / "bracket-with-split-edges.scdocx")
+    assert len(design.bodies[0].edges) == 304
+    split_edges = modeler.repair_tools.find_split_edges(design.bodies, 150, 0.0001)
+    assert len(split_edges) == 166
+    for i in split_edges:
+        try:  # Try/Except is a workaround. Having .alive would be better
+            i.fix()
+        except Exception:
+            pass
+    assert len(design.bodies[0].edges) == 169
+
+
+def test_find_and_stitch_and_missing_faces(modeler: Modeler):
+    """Test to read geometry,fix stitch faces and fix missing faces, verify that we get a solid."""
+    design = modeler.open_file(FILES_DIR / "Stitch_And_MissingFaces.scdocx")
+    assert len(design.bodies) == 132
+    stitch_faces = modeler.repair_tools.find_stitch_faces(design.bodies)
+    assert len(stitch_faces) == 1
+    for i in stitch_faces:
+        i.fix()
+    assert len(design.bodies) == 1
+    assert design.bodies[0].is_surface
+    missing_faces = modeler.repair_tools.find_missing_faces(design.bodies)
+    for face in missing_faces:
+        face.fix()
+    assert len(design.bodies) == 1
+    assert not design.bodies[0].is_surface
+
+
+def test_find_simplify(modeler: Modeler):
+    """Test to read geometry and find it's unsimplified face problem areas."""
+    design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
+    problem_areas = modeler.repair_tools.find_simplify(design.bodies)
+    assert len(problem_areas) == 46
+
+
+def test_fix_simplify(modeler: Modeler):
+    """Test to read geometry and find and fix it's unsimplified face problem areas."""
+    design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
+    problem_areas = modeler.repair_tools.find_simplify(design.bodies)
+    assert problem_areas[0].fix().success is True
