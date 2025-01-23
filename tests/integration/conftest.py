@@ -147,6 +147,7 @@ def modeler(session_modeler: Modeler):
     # Empty the designs dictionary
     session_modeler._designs = {}
 
+
 @pytest.fixture(scope="session", autouse=True)
 def clean_plot_result_images():
     """Method cleaning up the image results path.
