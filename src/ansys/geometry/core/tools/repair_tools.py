@@ -435,9 +435,9 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            response.success,
+            response.created_bodies_monikers,
+            response.modified_bodies_monikers,
         )
         return message
 
@@ -478,9 +478,9 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            response.success,
+            response.created_bodies_monikers,
+            response.modified_bodies_monikers,
         )
         return message
 
@@ -528,8 +528,8 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            response.success,
+            response.created_bodies_monikers,
+            response.modified_bodies_monikers,
         )
         return message
