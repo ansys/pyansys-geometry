@@ -1620,7 +1620,7 @@ class Body(IBody):
         subtract_from_target: bool = False,
     ) -> None:  # noqa: D102
         # self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
-        self.__generic_boolean_command(other, False, False, "intersect", "bodies do not intersect")
+        self.__generic_boolean_command(other, keep_other, False, "intersect", "bodies do not intersect")
 
     def subtract(
         self,
@@ -1628,9 +1628,9 @@ class Body(IBody):
         keep_other: bool = False,
         subtract_from_target: bool = False,
     ) -> None:  # noqa: D102
-        # self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
+        #self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
         self.__generic_boolean_command(
-            other, False, False, "subtract", "empty (complete) subtraction"
+            other, keep_other, True, "subtract", "empty (complete) subtraction"
         )
 
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
@@ -1653,34 +1653,35 @@ class Body(IBody):
             body_ids = [EntityIdentifier(id=body.id) for body in other_bodies]
             target_ids = [EntityIdentifier(id=body.id) for body in [self]]
             request = CombineIntersectBodiesRequest(
-                target_selection=target_ids, tool_selection=body_ids
+                target_selection=target_ids, tool_selection=body_ids,
+                subtract_from_target=False, keep_cutter=keep_other
             )
-            response = self._template._commands_stub.CombineIntersectBodies(request)
+            response = self._template._commands_stub.CombineIntersectBodies(request)           
         elif type_bool_op == "subtract":
             body_ids = [EntityIdentifier(id=body.id) for body in other_bodies]
             target_ids = [EntityIdentifier(id=body.id) for body in [self]]
             request = CombineIntersectBodiesRequest(
-                target_selection=target_ids, tool_selection=body_ids
+                target_selection=target_ids, tool_selection=body_ids,
+                subtract_from_target= True, keep_cutter=keep_other
             )
             response = self._template._commands_stub.CombineIntersectBodies(request)
-            if not keep_other:
-                for b in other_bodies:
-                    b.parent_component.delete_body(b)
         elif type_bool_op == "unite":
             bodies = [self]
             bodies.extend(other_bodies)
             body_ids = [EntityIdentifier(id=body.id) for body in bodies]
             request = CombineMergeBodiesRequest(target_selection=body_ids)
             response = self._template._commands_stub.CombineMergeBodies(request)
-            for b in other_bodies:
-                b.parent_component.delete_body(b)
         else:
             raise ValueError("Unknown operation requested")
-        if response == 1:
+        if response.success == False:
             raise ValueError(
                 f"Operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
                 f"Involving bodies:{self}, {other_bodies}"
             )
+        
+        if not keep_other:
+            for b in other_bodies:
+                b.parent_component.delete_body(b)
 
         parent_design._update_design_inplace()
 
