@@ -412,6 +412,7 @@ def test_find_and_fix_short_edges(modeler: Modeler):
     modeler.repair_tools.find_and_fix_short_edges(design.bodies, 0.000127)
     assert len(design.bodies[0].edges) == 673  ##We get 673 edges if we repair all in one go
 
+
 def test_find_and_fix_split_edges(modeler: Modeler):
     """Test to read geometry, find and fix split edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "bracket-with-split-edges.scdocx")
