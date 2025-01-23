@@ -116,7 +116,7 @@ def docker_instance(use_existing_service):
 
 
 @pytest.fixture(scope="session")
-def modeler(docker_instance):
+def session_modeler(docker_instance):
     # Log to file - accepts str or Path objects, Path is passed for testing/coverage purposes.
     log_file_path = Path(__file__).absolute().parent / "logs" / "integration_tests_logs.txt"
 
@@ -134,6 +134,19 @@ def modeler(docker_instance):
     # Cleanup on exit
     modeler.exit()
     assert modeler.client.is_closed
+
+
+@pytest.fixture(scope="function")
+def modeler(session_modeler: Modeler):
+    # Yield the modeler
+    yield session_modeler
+
+    # Cleanup on exit
+    design = session_modeler.get_active_design()
+    design.close()
+
+    # Assert the design is closed
+    assert design.is_closed is True
 
 
 @pytest.fixture(scope="session", autouse=True)
