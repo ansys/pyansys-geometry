@@ -443,9 +443,7 @@ class RepairTools:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def find_and_fix_extra_edges(
-        self, bodies: list["Body"]
-    ) -> RepairToolMessage:
+    def find_and_fix_extra_edges(self, bodies: list["Body"]) -> RepairToolMessage:
         """Find and fix the extra edge problem areas.
 
         This method finds the extra edges in the bodies and fixes them.
