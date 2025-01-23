@@ -757,7 +757,7 @@ def test_create_matrix_from_rotation():
     direction_y = Vector3D([0, 1, 0])
 
     expected_matrix = Matrix44([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    rotation_matrix = Matrix44.create_matrix_from_rotation(direction_x, direction_y)
+    rotation_matrix = Matrix44.create_from_rotation(direction_x, direction_y)
     assert np.array_equal(expected_matrix, rotation_matrix)
 
 
@@ -765,7 +765,7 @@ def test_create_matrix_from_translation():
     origin = Point3D([1, 2, 3])
 
     expected_matrix = Matrix44([[1, 0, 0, 1], [0, 1, 0, 2], [0, 0, 1, 3], [0, 0, 0, 1]])
-    translation_matrix = Matrix44.create_matrix_from_translation(origin)
+    translation_matrix = Matrix44.create_from_translation(origin)
     assert np.array_equal(expected_matrix, translation_matrix)
 
 
@@ -777,7 +777,7 @@ def test_create_matrix_from_mapping():
 
     expected_matrix = Matrix44([[1, 0, 0, 1], [0, 1, 0, 2], [0, 0, 1, 3], [0, 0, 0, 1]])
 
-    mapping_matrix = Matrix44.create_matrix_from_mapping(frame)
+    mapping_matrix = Matrix44.create_from_mapping(frame)
     assert np.array_equal(expected_matrix, mapping_matrix)
 
 

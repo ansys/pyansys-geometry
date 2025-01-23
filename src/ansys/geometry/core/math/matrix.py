@@ -136,22 +136,39 @@ class Matrix44(Matrix):
         return obj
 
     @classmethod
-    def create_matrix_from_rotation(
-        cls, direction_x: "Vector3D", direction_y: "Vector3D"
+    def create_from_rotation(
+        cls, direction_x: "Vector3D", direction_y: "Vector3D", direction_z: "Vector3D" = None
     ) -> "Matrix44":
-        """Matrix44 helper method -- create_matrix_from_rotation."""
+        """Create a 4x4 transformation matrix based on the provided direction vectors."""
+        direction_x = direction_x.normalize()
+        direction_y = direction_y.normalize()
+
+        if direction_z is None:
+            cross_product = direction_x.cross(direction_y)
+            norm = np.linalg.norm(cross_product)
+            if norm == 0:
+                raise ValueError(
+                    "direction_x and direction_y are collinear, cannot compute direction_z."
+                )
+            direction_z = cross_product / norm  # Normalize the vector
+
+        if np.linalg.norm(direction_x.cross(direction_y)) == 0:
+            raise ValueError(
+                "direction_x and direction_y are collinear, cannot compute direction_z."
+            )
+
         matrix = cls(
             [
                 [direction_x.x, direction_x.y, direction_x.z, 0],
                 [direction_y.x, direction_y.y, direction_y.z, 0],
-                [0, 0, 1, 0],
+                [0.0, 0.0, 1.0, 0],
                 [0, 0, 0, 1],
             ]
         )
         return matrix
 
     @classmethod
-    def create_matrix_from_translation(cls, origin: "Point3D") -> "Matrix44":
+    def create_from_translation(cls, origin: "Point3D") -> "Matrix44":
         """Matrix44 helper method -- create_matrix_from_translation."""
         print(origin)
         matrix = cls(
@@ -165,9 +182,9 @@ class Matrix44(Matrix):
         return matrix
 
     @classmethod
-    def create_matrix_from_mapping(cls, frame: "Frame") -> "Matrix44":  # noqa
+    def create_from_mapping(cls, frame: "Frame") -> "Matrix44":  # noqa
         """Matrix44 helper method -- create_matrix_from_mapping."""
-        translation_matrix = cls.create_matrix_from_translation(frame.origin)
-        rotation_matrix = cls.create_matrix_from_rotation(frame.direction_x, frame.direction_y)
+        translation_matrix = cls.create_from_translation(frame.origin)
+        rotation_matrix = cls.create_from_rotation(frame.direction_x, frame.direction_y)
 
         return translation_matrix * rotation_matrix
