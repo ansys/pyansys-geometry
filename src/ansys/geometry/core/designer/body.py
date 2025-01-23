@@ -1613,23 +1613,13 @@ class Body(IBody):
         pl.plot(mesh_object, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 
-    def intersect(
-        self,
-        other: Union["Body", Iterable["Body"]],
-        keep_other: bool = True,
-        subtract_from_target: bool = False,
-    ) -> None:  # noqa: D102
+    def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         # self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
         self.__generic_boolean_command(
             other, keep_other, False, "intersect", "bodies do not intersect"
         )
 
-    def subtract(
-        self,
-        other: Union["Body", Iterable["Body"]],
-        keep_other: bool = False,
-        subtract_from_target: bool = False,
-    ) -> None:  # noqa: D102
+    def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         # self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
         self.__generic_boolean_command(
             other, keep_other, True, "subtract", "empty (complete) subtraction"
