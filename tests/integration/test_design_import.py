@@ -170,19 +170,21 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     # Create top of car - applies to BOTH cars
     sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
     comp1.extrude_sketch("Top", sketch, 5)
+    
+    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
 
-    modeler.unsupported.set_export_id(base_body.id, PersistentIdType.PRIME_ID, "1")
-    modeler.unsupported.set_export_id(wheel_body.id, PersistentIdType.PRIME_ID, "2")
+        modeler.unsupported.set_export_id(base_body.id, PersistentIdType.PRIME_ID, "1")
+        modeler.unsupported.set_export_id(wheel_body.id, PersistentIdType.PRIME_ID, "2")
 
-    modeler.unsupported.set_export_id(base_body.faces[0].id, PersistentIdType.PRIME_ID, "3")
-    modeler.unsupported.set_export_id(base_body.edges[0].id, PersistentIdType.PRIME_ID, "4")
+        modeler.unsupported.set_export_id(base_body.faces[0].id, PersistentIdType.PRIME_ID, "3")
+        modeler.unsupported.set_export_id(base_body.edges[0].id, PersistentIdType.PRIME_ID, "4")
 
-    bodies1 = modeler.unsupported.get_body_occurrences_from_import_id(
-        "1", PersistentIdType.PRIME_ID
-    )
-    bodies2 = modeler.unsupported.get_body_occurrences_from_import_id(
-        "2", PersistentIdType.PRIME_ID
-    )
+        bodies1 = modeler.unsupported.get_body_occurrences_from_import_id(
+            "1", PersistentIdType.PRIME_ID
+        )
+        bodies2 = modeler.unsupported.get_body_occurrences_from_import_id(
+            "2", PersistentIdType.PRIME_ID
+        )
 
     # requires a change to core service, uncomment on next core service update
     # assert base_body.id in [b.id for b in bodies1]
