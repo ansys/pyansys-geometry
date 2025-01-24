@@ -1631,7 +1631,6 @@ class Body(IBody):
         self,
         other: Union["Body", Iterable["Body"]],
         keep_other: bool,
-        subtract_from_target: bool,
         type_bool_op: str,
         err_bool_op: str,
     ) -> None:
