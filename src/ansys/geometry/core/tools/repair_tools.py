@@ -427,10 +427,11 @@ class RepairTools:
 
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
+        check_type(cut_smaller_body, bool)
 
         parent_design = get_design_from_body(bodies[0])
         body_ids = [body.id for body in bodies]
-        cut_smaller_body_bool = BoolValue(value=bool(cut_smaller_body))
+        cut_smaller_body_bool = BoolValue(value=cut_smaller_body)
         problem_areas_response = self._repair_stub.FindInterference(
             FindInterferenceRequest(bodies=body_ids, cut_smaller_body=cut_smaller_body_bool)
         )
@@ -451,6 +452,10 @@ class RepairTools:
         """Find and fix the short edge problem areas.
 
         This method finds the short edges in the bodies and fixes them.
+
+        Parameters
+        ----------
+        bodies : list[Body]
             List of bodies that short edges are investigated on.
         length : Real
             The maximum length of the edges.
