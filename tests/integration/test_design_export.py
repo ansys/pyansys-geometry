@@ -30,7 +30,10 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import skip_if_linux, skip_if_windows
+from .conftest import (
+    skip_if_linux, 
+    skip_if_windows,
+    skip_if_spaceclaim)
 
 
 def _create_demo_design(modeler: Modeler) -> Design:
@@ -197,6 +200,7 @@ def test_export_to_stride(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
 
 def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to dsco format."""
+    skip_if_spaceclaim(modeler, test_export_to_disco.__name__, "disco export")
     # Create a demo design
     design = _create_demo_design(modeler)
 
