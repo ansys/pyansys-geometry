@@ -56,7 +56,7 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, UNITS
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.ellipse import Ellipse
@@ -694,7 +694,7 @@ def line_to_grpc_line(line: Line) -> GRPCLine:
 def grpc_material_to_material(material: GRPCMaterial) -> Material:
     """Convert a material gRPC message to a ``Material`` class."""
     properties = []
-    density = Quantity(0)
+    density = Quantity(0, UNITS.kg / UNITS.m ** 3)
     for property in material.material_properties:
         mp = grpc_material_property_to_material_property(property)
         properties.append(mp)
