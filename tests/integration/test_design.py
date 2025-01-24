@@ -2983,3 +2983,48 @@ def test_create_surface_body_from_trimmed_curves(modeler: Modeler):
     assert body.faces[0].area.m == pytest.approx(
         Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_shell_body(modeler: Modeler):
+    """Test shell command."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.shell_body(0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 12
+
+
+def test_shell_faces(modeler: Modeler):
+    """Test shell commands for a single face."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.remove_faces(base.faces[0], 0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.584, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 11
+
+
+def test_shell_multiple_faces(modeler: Modeler):
+    """Test shell commands for multiple faces."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.remove_faces([base.faces[0], base.faces[2]], 0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 10

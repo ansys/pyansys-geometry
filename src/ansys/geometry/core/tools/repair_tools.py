@@ -23,7 +23,7 @@
 
 from typing import TYPE_CHECKING
 
-from google.protobuf.wrappers_pb2 import DoubleValue
+from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.repairtools_pb2 import (
@@ -31,6 +31,7 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FindDuplicateFacesRequest,
     FindExtraEdgesRequest,
     FindInexactEdgesRequest,
+    FindInterferenceRequest,
     FindMissingFacesRequest,
     FindShortEdgesRequest,
     FindSmallFacesRequest,
@@ -46,11 +47,16 @@ from ansys.geometry.core.misc.auxiliary import (
     get_edges_from_ids,
     get_faces_from_ids,
 )
-from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
+from ansys.geometry.core.misc.checks import (
+    check_type,
+    check_type_all_elements_in_iterable,
+    min_backend_version,
+)
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
     InexactEdgeProblemAreas,
+    InterferenceProblemAreas,
     MissingFaceProblemAreas,
     ShortEdgeProblemAreas,
     SmallFaceProblemAreas,
@@ -58,6 +64,7 @@ from ansys.geometry.core.tools.problem_areas import (
     StitchFaceProblemAreas,
     UnsimplifiedFaceProblemAreas,
 )
+from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -390,3 +397,183 @@ class RepairTools:
             )
             for res in problem_areas_response.result
         ]
+
+    @protect_grpc
+    def find_interferences(
+        self, bodies: list["Body"], cut_smaller_body: bool = False
+    ) -> list[InterferenceProblemAreas]:
+        """Find the interference problem areas.
+
+        This method finds and returns a list of ids of interference problem areas
+        objects.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies that small faces are investigated on.
+
+        cut_smaller_body : bool
+            Whether to cut the smaller body if an intererference is found.
+
+        Returns
+        -------
+        list[InterfenceProblemAreas]
+            List of objects representing interference problem areas.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        if not bodies:
+            return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
+        check_type(cut_smaller_body, bool)
+
+        parent_design = get_design_from_body(bodies[0])
+        body_ids = [body.id for body in bodies]
+        cut_smaller_body_bool = BoolValue(value=cut_smaller_body)
+        problem_areas_response = self._repair_stub.FindInterference(
+            FindInterferenceRequest(bodies=body_ids, cut_smaller_body=cut_smaller_body_bool)
+        )
+
+        return [
+            InterferenceProblemAreas(
+                f"{res.id}",
+                self._grpc_client,
+                get_bodies_from_ids(parent_design, res.body_monikers),
+            )
+            for res in problem_areas_response.result
+        ]
+
+    @min_backend_version(25, 2, 0)
+    def find_and_fix_short_edges(
+        self, bodies: list["Body"], length: Real = 0.0
+    ) -> RepairToolMessage:
+        """Find and fix the short edge problem areas.
+
+        This method finds the short edges in the bodies and fixes them.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies that short edges are investigated on.
+        length : Real
+            The maximum length of the edges.
+
+        Returns
+        -------
+        RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        check_type_all_elements_in_iterable(bodies, Body)
+        check_type(length, Real)
+
+        if not bodies:
+            return RepairToolMessage(False, [], [])
+
+        response = self._repair_stub.FindAndFixShortEdges(
+            FindShortEdgesRequest(
+                selection=[body.id for body in bodies],
+                max_edge_length=DoubleValue(value=length),
+            )
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+        return message
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def find_and_fix_extra_edges(
+        self, bodies: list["Body"], length: Real = 0.0
+    ) -> RepairToolMessage:
+        """Find and fix the extra edge problem areas.
+
+        This method finds the extra edges in the bodies and fixes them.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies that short edges are investigated on.
+        length : Real
+            The maximum length of the edges.
+
+        Returns
+        -------
+        RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        check_type_all_elements_in_iterable(bodies, Body)
+        check_type(length, Real)
+
+        if not bodies:
+            return RepairToolMessage(False, [], [])
+
+        response = self._repair_stub.FindAndFixExtraEdges(
+            FindExtraEdgesRequest(
+                selection=[body.id for body in bodies],
+                max_edge_length=DoubleValue(value=length),
+            )
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+        return message
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def find_and_fix_split_edges(
+        self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
+    ) -> RepairToolMessage:
+        """Find and fix the split edge problem areas.
+
+        This method finds the extra edges in the bodies and fixes them.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies that split edges are investigated on.
+        angle : Real
+            The maximum angle between edges.
+        length : Real
+            The maximum length of the edges.
+
+        Returns
+        -------
+        RepairToolMessage
+            Message containing created and/or modified bodies.
+        """
+        check_type_all_elements_in_iterable(bodies, Body)
+        check_type(length, Real)
+
+        if not bodies:
+            return RepairToolMessage(False, [], [])
+
+        angle_value = DoubleValue(value=float(angle))
+        length_value = DoubleValue(value=float(length))
+        body_ids = [body.id for body in bodies]
+
+        response = self._repair_stub.FindAndFixSplitEdges(
+            FindSplitEdgesRequest(
+                bodies_or_faces=body_ids, angle=angle_value, distance=length_value
+            )
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.result.success,
+            response.result.created_bodies_monikers,
+            response.result.modified_bodies_monikers,
+        )
+        return message
