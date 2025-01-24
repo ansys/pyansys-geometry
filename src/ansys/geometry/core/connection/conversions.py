@@ -23,6 +23,8 @@
 
 from typing import TYPE_CHECKING
 
+from pint import Quantity, UndefinedUnitError
+
 from ansys.api.geometry.v0.models_pb2 import (
     Arc as GRPCArc,
     Circle as GRPCCircle,
@@ -32,6 +34,8 @@ from ansys.api.geometry.v0.models_pb2 import (
     Frame as GRPCFrame,
     Geometries as GRPCGeometries,
     Line as GRPCLine,
+    Material as GRPCMaterial,
+    MaterialProperty as GRPCMaterialProperty,
     Matrix as GRPCMatrix,
     Plane as GRPCPlane,
     Point as GRPCPoint,
@@ -42,12 +46,17 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
+from ansys.geometry.core.materials.material import (
+    Material,
+    MaterialProperty,
+    MaterialPropertyType,
+)
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, UNITS
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.ellipse import Ellipse
@@ -680,3 +689,37 @@ def line_to_grpc_line(line: Line) -> GRPCLine:
     start = line.origin
     end = line.origin + line.direction
     return GRPCLine(start=point3d_to_grpc_point(start), end=point3d_to_grpc_point(end))
+
+
+def grpc_material_to_material(material: GRPCMaterial) -> Material:
+    """Convert a material gRPC message to a ``Material`` class."""
+    properties = []
+    density = Quantity(0, UNITS.kg / UNITS.m**3)
+    for property in material.material_properties:
+        mp = grpc_material_property_to_material_property(property)
+        properties.append(mp)
+        if mp.type == MaterialPropertyType.DENSITY:
+            density = mp.quantity
+
+    return Material(material.name, density, properties)
+
+
+def grpc_material_property_to_material_property(
+    material_property: GRPCMaterialProperty,
+) -> MaterialProperty:
+    """Convert a material property gRPC message to a ``MaterialProperty`` class."""
+    try:
+        mp_type = MaterialPropertyType.from_id(material_property.id)
+    except ValueError:
+        mp_type = material_property.id
+
+    try:
+        mp_quantity = Quantity(material_property.value, material_property.units)
+    except (
+        UndefinedUnitError,
+        TypeError,
+    ):
+        mp_quantity = material_property.value
+
+    mp = MaterialProperty(mp_type, material_property.display_name, mp_quantity)
+    return mp
