@@ -22,6 +22,7 @@
 """Provides for creating and managing a NURBS curve."""
 
 from functools import cached_property
+from typing import Optional
 
 import geomdl.NURBS as geomdl_nurbs  # noqa: N811
 
@@ -200,12 +201,62 @@ class NURBSCurve(Curve):
     def contains_point(self, point: Point3D) -> bool:  # noqa: D102
         raise NotImplementedError("contains_point() is not implemented.")
 
-    def project_point(self, point: Point3D) -> CurveEvaluation:
+    def project_point(
+        self, point: Point3D, initial_guess: Optional[Real] = None
+    ) -> CurveEvaluation:
         """Project a point to the NURBS curve.
 
         This method returns the evaluation at the closest point.
+
+        Notes
+        -----
+        Based on `the NURBS book <https://link.springer.com/book/10.1007/978-3-642-59223-2>`_,
+        the projection of a point to a NURBS curve is the solution to the following optimization
+        problem: minimize the distance between the point and the curve. The distance is defined
+        as the Euclidean distance squared. For more information, please refer to
+        the implementation of the `distance_squared` function.
+
+        Parameters
+        ----------
+        point : Point3D
+            Point to project to the curve.
+        initial_guess : Real, optional
+            Initial guess for the optimization algorithm. If not provided, the midpoint
+            of the domain is used.
+
+        Returns
+        -------
+        CurveEvaluation
+            Evaluation at the closest point on the curve.
+
         """
-        raise NotImplementedError("project_point() is not implemented.")
+        import numpy as np
+        from scipy.optimize import minimize
+
+        # Function to minimize (distance squared)
+        def distance_squared(
+            u: float, geomdl_nurbs_curbe: geomdl_nurbs.Curve, point: np.ndarray
+        ) -> np.ndarray:
+            point_on_curve = np.array(geomdl_nurbs_curbe.evaluate_single(u))
+            return np.sum((point_on_curve - point) ** 2)
+
+        # Define the domain and initial guess (midpoint of the domain by default)
+        domain = self._nurbs_curve.domain
+        initial_guess = initial_guess if initial_guess else (domain[0] + domain[1]) / 2
+
+        # Minimize the distance squared
+        result = minimize(
+            distance_squared,
+            initial_guess,
+            bounds=[domain],
+            args=(self._nurbs_curve, np.array(point)),
+        )
+
+        # Closest point on the curve
+        u_min = result.x[0]
+
+        # Return the evaluation at the closest point
+        return self.evaluate(u_min)
 
 
 class NURBSCurveEvaluation(CurveEvaluation):

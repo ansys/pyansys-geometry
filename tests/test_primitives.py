@@ -1003,3 +1003,26 @@ def test_nurbs_curve_evaluation():
     assert eval.first_derivative == Vector3D([2, -2, 0])
     assert eval.second_derivative == Vector3D([0, -4, 0])
     assert np.isclose(eval.curvature, 0.3535533905932737)
+
+
+def test_nurbs_curve_point_projection():
+    # Define the NUTBS curve
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([1, 1, 0]),
+        Point3D([2, 0, 0]),
+    ]
+    degree = 2
+    knots = [0, 0, 0, 1, 1, 1]
+    nurbs_curve = NURBSCurve.from_control_points(
+        control_points=control_points, degree=degree, knots=knots
+    )
+
+    # Test projection of a point on the curve
+    point = Point3D([1, 3, 0])
+    projection = nurbs_curve.project_point(point, initial_guess=0.1)
+
+    assert projection is not None
+    assert projection.is_set() is True
+    assert np.allclose(projection.position, Point3D([1, 0.5, 0]))
+    assert np.isclose(projection.parameter, 0.5)
