@@ -23,7 +23,7 @@
 
 from typing import TYPE_CHECKING
 
-from google.protobuf.wrappers_pb2 import DoubleValue
+from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.repairtools_pb2 import (
@@ -31,6 +31,7 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FindDuplicateFacesRequest,
     FindExtraEdgesRequest,
     FindInexactEdgesRequest,
+    FindInterferenceRequest,
     FindMissingFacesRequest,
     FindShortEdgesRequest,
     FindSmallFacesRequest,
@@ -55,6 +56,7 @@ from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
     InexactEdgeProblemAreas,
+    InterferenceProblemAreas,
     MissingFaceProblemAreas,
     ShortEdgeProblemAreas,
     SmallFaceProblemAreas,
@@ -397,6 +399,52 @@ class RepairTools:
         ]
 
     @protect_grpc
+    def find_interferences(
+        self, bodies: list["Body"], cut_smaller_body: bool = False
+    ) -> list[InterferenceProblemAreas]:
+        """Find the interference problem areas.
+
+        This method finds and returns a list of ids of interference problem areas
+        objects.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies that small faces are investigated on.
+
+        cut_smaller_body : bool
+            Whether to cut the smaller body if an intererference is found.
+
+        Returns
+        -------
+        list[InterfenceProblemAreas]
+            List of objects representing interference problem areas.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        if not bodies:
+            return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
+        check_type(cut_smaller_body, bool)
+
+        parent_design = get_design_from_body(bodies[0])
+        body_ids = [body.id for body in bodies]
+        cut_smaller_body_bool = BoolValue(value=cut_smaller_body)
+        problem_areas_response = self._repair_stub.FindInterference(
+            FindInterferenceRequest(bodies=body_ids, cut_smaller_body=cut_smaller_body_bool)
+        )
+
+        return [
+            InterferenceProblemAreas(
+                f"{res.id}",
+                self._grpc_client,
+                get_bodies_from_ids(parent_design, res.body_monikers),
+            )
+            for res in problem_areas_response.result
+        ]
+
     @min_backend_version(25, 2, 0)
     def find_and_fix_short_edges(
         self, bodies: list["Body"], length: Real = 0.0
