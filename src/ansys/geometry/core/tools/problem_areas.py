@@ -566,11 +566,6 @@ class InterferenceProblemAreas(ProblemArea):
         """Initialize a new instance of the interference problem area class."""
         super().__init__(id, grpc_client)
 
-        from ansys.geometry.core.designer.body import Body
-
-        # Verify that all elements in the list are of type Body
-        check_type_all_elements_in_iterable(bodies, Body)
-
         self._bodies = bodies
 
     @property
