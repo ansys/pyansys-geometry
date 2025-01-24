@@ -694,7 +694,7 @@ def line_to_grpc_line(line: Line) -> GRPCLine:
 def grpc_material_to_material(material: GRPCMaterial) -> Material:
     """Convert a material gRPC message to a ``Material`` class."""
     properties = []
-    density = Quantity(0, UNITS.kg / UNITS.m ** 3)
+    density = Quantity(0, UNITS.kg / UNITS.m**3)
     for property in material.material_properties:
         mp = grpc_material_property_to_material_property(property)
         properties.append(mp)
