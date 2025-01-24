@@ -1872,7 +1872,7 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
     assert len(comp3.bodies) == 1
 
     # ---- Verify unite operation ----
-    body1.unite([body2, body3], keep_other=True)
+    body1.unite([body2, body3])
 
     assert body1.is_alive
     assert not body2.is_alive
