@@ -265,9 +265,7 @@ def prepare_and_start_backend(
 
     if (
         os.name != "nt"
-        and backend_type != BackendType.LINUX_SERVICE
-        and backend_type != BackendType.CORE_WINDOWS
-        and backend_type != BackendType.CORE_LINUX
+        and backend_type not in (BackendType.LINUX_SERVICE, BackendType.CORE_WINDOWS, BackendType.CORE_LINUX)
     ):  # pragma: no cover
         raise RuntimeError(
             "Method 'prepare_and_start_backend' is only available on Windows."
