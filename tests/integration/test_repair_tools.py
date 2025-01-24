@@ -380,7 +380,7 @@ def test_find_and_fix_split_edges(modeler: Modeler):
     """Test to read geometry, find and fix split edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "bracket-with-split-edges.scdocx")
     assert len(design.bodies[0].edges) == 304
-    split_edges = modeler.repair_tools.find_split_edges(design.bodies, 150, 0.0001)
+    split_edges = modeler.repair_tools.find_split_edges(design.bodies, 0.0001, 150)
     assert len(split_edges) == 166
     for i in split_edges:
         try:  # Try/Except is a workaround. Having .alive would be better
