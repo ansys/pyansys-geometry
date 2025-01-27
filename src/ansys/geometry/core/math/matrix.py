@@ -187,7 +187,7 @@ class Matrix44(Matrix):
         Returns
         -------
         bool
-            True if the matrix represents a translation, False otherwise.
+            ``True`` if the matrix represents a translation, ``False`` otherwise.
 
         Examples
         --------
@@ -287,9 +287,9 @@ class Matrix44(Matrix):
 
         matrix = cls(
             [
-                [direction_x.x, direction_x.y, direction_x.z, 0],
-                [direction_y.x, direction_y.y, direction_y.z, 0],
-                [direction_z.x, direction_z.y, direction_z.z, 0],
+                [direction_x.x, direction_y.x, direction_z.x, 0],
+                [direction_x.y, direction_y.y, direction_z.y, 0],
+                [direction_x.z, direction_y.z, direction_z.z, 0],
                 [0, 0, 0, 1],
             ]
         )

@@ -761,12 +761,46 @@ def test_create_translation_matrix():
 
 
 def test_create_rotation_matrix():
+    # Test 0: No rotation
     direction_x = Vector3D([1, 0, 0])
     direction_y = Vector3D([0, 1, 0])
     expected_matrix = Matrix44([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
     rotation_matrix = Matrix44.create_rotation(direction_x, direction_y)
     assert np.array_equal(expected_matrix, rotation_matrix)
 
+    # Test 1: Rotation around Z-axis by 90 degrees counter clockwise
+
+    new_x = Vector3D([0, 1, 0])
+    new_y = Vector3D([-1, 0, 0])
+
+    rotation_matrix = Matrix44.create_rotation(new_x, new_y)
+    p_before = np.array([1, 0, 0, 0])
+    p_after = rotation_matrix * p_before
+    p_expected = np.array([0, 1, 0, 0])
+    assert np.array_equal(p_after, p_expected), "Rotation around Z-axis failed"
+
+    # Test 2: Rotation around Z-axis by 180 degrees counter clockwise
+    new_x = Vector3D([-1, 0, 0])
+    new_y = Vector3D([0, -1, 0])
+
+    rotation_matrix = Matrix44.create_rotation(new_x, new_y)
+    p_before = np.array([1, 0, 0, 0])
+    p_after = rotation_matrix * p_before
+    p_expected = np.array([-1, 0, 0, 0])
+    assert np.array_equal(p_after, p_expected), "Rotation around Z-axis failed"
+
+    # Test 3: Rotation around Z-axis by 270 degrees counter clockwise
+    new_x = Vector3D([0, -1, 0])
+    new_y = Vector3D([1, 0, 0])
+    new_z = Vector3D([0, 0, 1])
+
+    rotation_matrix = Matrix44.create_rotation(new_x, new_y, new_z)
+    p_before = np.array([3, 4, 0, 0])
+    p_after = rotation_matrix * p_before
+    p_expected = np.array([4, -3, 0, 0])
+    assert np.array_equal(p_after, p_expected), "Rotation around Z-axis failed"
+
+    # Rotation around Z for one radian
     direction_x = Vector3D([1, 0, 0])
     direction_y = Vector3D([0, 1, 0])
     direction_z = Vector3D([0, 0, 1])
