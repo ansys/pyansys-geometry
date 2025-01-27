@@ -39,7 +39,7 @@ class BackendType(Enum):
 
     @staticmethod
     def is_core_service(backend_type: "BackendType") -> bool:
-        """Determines whether the backend is Core Service based or not.
+        """Determines whether the backend is CoreService based or not.
 
         Parameters
         ----------
