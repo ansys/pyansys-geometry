@@ -120,6 +120,9 @@ class Modeler:
             backend_type=backend_type,
         )
 
+        # Maintaining references to all designs within the modeler workspace
+        self._designs: dict[str, "Design"] = {}
+
         # Initialize the RepairTools - Not available on Linux
         # TODO: delete "if" when Linux service is able to use repair tools
         # https://github.com/ansys/pyansys-geometry/issues/1319
@@ -134,9 +137,6 @@ class Modeler:
         self._prepare_tools = PrepareTools(self._grpc_client)
         self._geometry_commands = GeometryCommands(self._grpc_client)
         self._unsupported = UnsupportedCommands(self._grpc_client, self)
-
-        # Maintaining references to all designs within the modeler workspace
-        self._designs: dict[str, "Design"] = {}
 
         # Check if the backend allows for multiple designs and throw warning if needed
         if not self.client.multiple_designs_allowed:
