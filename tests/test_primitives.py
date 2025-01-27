@@ -35,7 +35,17 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
-from ansys.geometry.core.shapes import Circle, Cone, Cylinder, Ellipse, Line, ParamUV, Sphere, Torus
+from ansys.geometry.core.shapes import (
+    Circle,
+    Cone,
+    Cylinder,
+    Ellipse,
+    Line,
+    NURBSCurve,
+    ParamUV,
+    Sphere,
+    Torus,
+)
 
 
 def test_cylinder():
@@ -917,3 +927,102 @@ def test_ellipse_evaluation():
     )
 
     assert Accuracy.length_is_equal(eval2.curvature, 0.31540327)
+
+
+def test_nurbs_curve_from_control_points():
+    """``NURBSCurve`` construction from control points."""
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([1, 1, 0]),
+        Point3D([2, 0, 0]),
+    ]
+    degree = 2
+    knots = [0, 0, 0, 1, 1, 1]
+    nurbs_curve = NURBSCurve.from_control_points(
+        control_points=control_points, degree=degree, knots=knots
+    )
+    assert nurbs_curve.degree == 2
+    assert nurbs_curve.knots == [0, 0, 0, 1, 1, 1]
+    assert nurbs_curve.control_points == control_points
+    assert nurbs_curve.weights == [1, 1, 1]
+
+    # Test with a different weight vector
+    weights = [1, 2, 1]
+    nurbs_curve_weights = NURBSCurve.from_control_points(
+        control_points=control_points, degree=degree, knots=knots, weights=weights
+    )
+
+    assert nurbs_curve_weights.degree == 2
+    assert nurbs_curve_weights.knots == [0, 0, 0, 1, 1, 1]
+    assert nurbs_curve_weights.control_points == control_points
+    assert nurbs_curve_weights.weights == weights
+
+    # Verify that the curves are different
+    assert nurbs_curve != nurbs_curve_weights
+
+
+def test_nurbs_curve_evaluation():
+    """``NURBSCurve`` evaluation."""
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([1, 1, 0]),
+        Point3D([2, 0, 0]),
+    ]
+    degree = 2
+    knots = [0, 0, 0, 1, 1, 1]
+    nurbs_curve = NURBSCurve.from_control_points(
+        control_points=control_points, degree=degree, knots=knots
+    )
+
+    # Test evaluation at 0
+    eval = nurbs_curve.evaluate(0)
+    assert eval is not None
+    assert eval.is_set() is True
+    assert eval.parameter == 0
+    assert eval.position == Point3D([0, 0, 0])
+    assert eval.first_derivative == Vector3D([2, 2, 0])
+    assert eval.second_derivative == Vector3D([0, -4, 0])
+    assert np.isclose(eval.curvature, 0.3535533905932737)
+
+    # Test evaluation at 0.5
+    eval = nurbs_curve.evaluate(0.5)
+    assert eval is not None
+    assert eval.is_set() is True
+    assert eval.parameter == 0.5
+    assert eval.position == Point3D([1, 0.5, 0])
+    assert eval.first_derivative == Vector3D([2, 0, 0])
+    assert eval.second_derivative == Vector3D([0, -4, 0])
+    assert np.isclose(eval.curvature, 1)
+
+    # Test evaluation at 1
+    eval = nurbs_curve.evaluate(1)
+    assert eval is not None
+    assert eval.is_set() is True
+    assert eval.parameter == 1
+    assert eval.position == Point3D([2, 0, 0])
+    assert eval.first_derivative == Vector3D([2, -2, 0])
+    assert eval.second_derivative == Vector3D([0, -4, 0])
+    assert np.isclose(eval.curvature, 0.3535533905932737)
+
+
+def test_nurbs_curve_point_projection():
+    # Define the NUTBS curve
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([1, 1, 0]),
+        Point3D([2, 0, 0]),
+    ]
+    degree = 2
+    knots = [0, 0, 0, 1, 1, 1]
+    nurbs_curve = NURBSCurve.from_control_points(
+        control_points=control_points, degree=degree, knots=knots
+    )
+
+    # Test projection of a point on the curve
+    point = Point3D([1, 3, 0])
+    projection = nurbs_curve.project_point(point, initial_guess=0.1)
+
+    assert projection is not None
+    assert projection.is_set() is True
+    assert np.allclose(projection.position, Point3D([1, 0.5, 0]))
+    assert np.isclose(projection.parameter, 0.5)
