@@ -29,7 +29,7 @@ from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest, ImportIdReque
 from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc import auxiliary
+from ansys.geometry.core.misc.auxiliary import get_all_bodies_from_design
 from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
@@ -38,6 +38,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.modeler import Modeler
 
 
 @unique
@@ -58,17 +59,17 @@ class UnsupportedCommands:
     """
 
     @protect_grpc
-    def __init__(self, grpc_client: GrpcClient, modeler):
+    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize an instance of the ``UnsupportedCommands`` class."""
         self._grpc_client = grpc_client
         self._unsupported_stub = UnsupportedStub(self._grpc_client.channel)
         self.__id_map = {}
         self.__modeler = modeler
-        self.__current_design = None
+        self.__current_design = modeler.get_active_design()
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def __fill_imported_id_map(self, id_type: "PersistentIdType") -> None:
+    def __fill_imported_id_map(self, id_type: PersistentIdType) -> None:
         """Populate the persistent id map for caching.
 
         Parameters
@@ -96,7 +97,7 @@ class UnsupportedCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def __is_occurrence(self, master: "EntityIdentifier", occ: "str") -> bool:
+    def __is_occurrence(self, master: EntityIdentifier, occ: str) -> bool:
         """Determine if the master is the master of the occurrence.
 
         Parameters
@@ -118,7 +119,7 @@ class UnsupportedCommands:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def __get_moniker_from_import_id(
-        self, id_type: "PersistentIdType", import_id: "str"
+        self, id_type: PersistentIdType, import_id: str
     ) -> "EntityIdentifier | None":
         """Look up the moniker from the id map.
 
@@ -148,7 +149,7 @@ class UnsupportedCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def set_export_id(self, moniker: "str", id_type: "PersistentIdType", value: "str") -> None:
+    def set_export_id(self, moniker: str, id_type: PersistentIdType, value: str) -> None:
         """Set the persistent id for the moniker.
 
         Parameters
@@ -175,7 +176,7 @@ class UnsupportedCommands:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def get_body_occurrences_from_import_id(
-        self, import_id: "str", id_type: "PersistentIdType"
+        self, import_id: str, id_type: PersistentIdType
     ) -> list["Body"]:
         """Get all body occurrences whose master has the given import id.
 
@@ -194,19 +195,19 @@ class UnsupportedCommands:
         moniker = self.__get_moniker_from_import_id(id_type, import_id)
 
         if moniker is None:
-            return list()
+            return []
 
         design = self.__modeler.get_active_design()
         return [
             body
-            for body in auxiliary.get_all_bodies_from_design(design)
+            for body in get_all_bodies_from_design(design)
             if self.__is_occurrence(moniker, body.id)
         ]
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def get_face_occurrences_from_import_id(
-        self, import_id: "str", id_type: "PersistentIdType"
+        self, import_id: str, id_type: PersistentIdType
     ) -> list["Face"]:
         """Get all face occurrences whose master has the given import id.
 
@@ -225,12 +226,12 @@ class UnsupportedCommands:
         moniker = self.__get_moniker_from_import_id(id_type, import_id)
 
         if moniker is None:
-            return list()
+            return []
 
         design = self.__modeler.get_active_design()
         return [
             face
-            for body in auxiliary.get_all_bodies_from_design(design)
+            for body in get_all_bodies_from_design(design)
             for face in body.faces
             if self.__is_occurrence(moniker, face.id)
         ]
@@ -238,7 +239,7 @@ class UnsupportedCommands:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def get_edge_occurrences_from_import_id(
-        self, import_id: "str", id_type: "PersistentIdType"
+        self, import_id: str, id_type: PersistentIdType
     ) -> list["Edge"]:
         """Get all edge occurrences whose master has the given import id.
 
@@ -257,12 +258,12 @@ class UnsupportedCommands:
         moniker = self.__get_moniker_from_import_id(id_type, import_id)
 
         if moniker is None:
-            return list()
+            return []
 
         design = self.__modeler.get_active_design()
         return [
             edge
-            for body in auxiliary.get_all_bodies_from_design(design)
+            for body in get_all_bodies_from_design(design)
             for edge in body.edges
             if self.__is_occurrence(moniker, edge.id)
         ]
