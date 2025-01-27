@@ -91,6 +91,7 @@ jobs:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
+          whitelist-license-check: 'attrs'
 
   docker-style:
     name: Docker Style Check
