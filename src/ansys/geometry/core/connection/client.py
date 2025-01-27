@@ -232,7 +232,7 @@ class GrpcClient:
                 BackendType.LINUX_SERVICE,
                 BackendType.CORE_LINUX,
                 BackendType.CORE_WINDOWS,
-                BackendType.DISCOVERY_HEADLESS
+                BackendType.DISCOVERY_HEADLESS,
             )
             else True
         )
