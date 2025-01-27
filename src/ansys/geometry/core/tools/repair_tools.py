@@ -465,6 +465,8 @@ class RepairTools:
         RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        from ansys.geometry.core.designer.body import Body
+
         check_type_all_elements_in_iterable(bodies, Body)
         check_type(length, Real)
 
@@ -481,17 +483,15 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            response.success,
+            response.created_bodies_monikers,
+            response.modified_bodies_monikers,
         )
         return message
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def find_and_fix_extra_edges(
-        self, bodies: list["Body"], length: Real = 0.0
-    ) -> RepairToolMessage:
+    def find_and_fix_extra_edges(self, bodies: list["Body"]) -> RepairToolMessage:
         """Find and fix the extra edge problem areas.
 
         This method finds the extra edges in the bodies and fixes them.
@@ -508,8 +508,9 @@ class RepairTools:
         RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        from ansys.geometry.core.designer.body import Body
+
         check_type_all_elements_in_iterable(bodies, Body)
-        check_type(length, Real)
 
         if not bodies:
             return RepairToolMessage(False, [], [])
@@ -517,16 +518,15 @@ class RepairTools:
         response = self._repair_stub.FindAndFixExtraEdges(
             FindExtraEdgesRequest(
                 selection=[body.id for body in bodies],
-                max_edge_length=DoubleValue(value=length),
             )
         )
 
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            response.success,
+            response.created_bodies_monikers,
+            response.modified_bodies_monikers,
         )
         return message
 
@@ -553,6 +553,8 @@ class RepairTools:
         RepairToolMessage
             Message containing created and/or modified bodies.
         """
+        from ansys.geometry.core.designer.body import Body
+
         check_type_all_elements_in_iterable(bodies, Body)
         check_type(length, Real)
 
@@ -572,8 +574,8 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            response.success,
+            response.created_bodies_monikers,
+            response.modified_bodies_monikers,
         )
         return message
