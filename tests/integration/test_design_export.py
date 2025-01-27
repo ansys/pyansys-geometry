@@ -30,7 +30,7 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import skip_if_linux
+from .conftest import skip_if_core_service
 
 
 def _create_demo_design(modeler: Modeler) -> Design:
@@ -180,7 +180,7 @@ def test_export_to_parasolid_binary(modeler: Modeler, tmp_path_factory: pytest.T
 
 def test_export_to_step(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to STEP format."""
-    skip_if_linux(modeler, test_export_to_step.__name__, "step_export")
+    skip_if_core_service(modeler, test_export_to_step.__name__, "step_export")
     # Create a demo design
     design = _create_demo_design(modeler)
 
@@ -204,7 +204,7 @@ def test_export_to_step(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 
 def test_export_to_iges(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to IGES format."""
-    skip_if_linux(modeler, test_export_to_iges.__name__, "iges_export")
+    skip_if_core_service(modeler, test_export_to_iges.__name__, "iges_export")
     # Create a demo design
     design = _create_demo_design(modeler)
 
@@ -224,7 +224,7 @@ def test_export_to_iges(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 
 def test_export_to_fmd(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to FMD format."""
-    skip_if_linux(modeler, test_export_to_fmd.__name__, "fmd_export")
+    skip_if_core_service(modeler, test_export_to_fmd.__name__, "fmd_export")
     # Create a demo design
     design = _create_demo_design(modeler)
 
