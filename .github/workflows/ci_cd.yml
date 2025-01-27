@@ -162,7 +162,7 @@ jobs:
     needs: [smoke-tests, manifests]
     # runs-on: [self-hosted, Windows, pygeometry]
     runs-on: # TODO: Waiting for ansys-network runner to be updated
-      group: pyansys-self-hosted
+      group: ansys-network
       labels:  [self-hosted, Windows, pygeometry]
     continue-on-error: ${{ matrix.experimental }}
     env:
@@ -338,8 +338,8 @@ jobs:
     needs: [docs-style]
     # Doc build performed on self-hosted runners outside the Ansys network only
     runs-on:
-      group: pyansys-self-hosted
-      labels: [Windows, pygeometry]
+      group: ansys-network
+      labels: [self-hosted, Windows, pygeometry]
     env:
       PYVISTA_OFF_SCREEN: true
     steps:
@@ -651,7 +651,7 @@ jobs:
     name: Building Geometry Service - Windows
     # runs-on: [self-hosted, Windows, pygeometry]
     runs-on: # TODO: Waiting for ansys-network runner to be updated
-      group: pyansys-self-hosted
+      group: ansys-network
       labels:  [self-hosted, Windows, pygeometry]
     needs: [fetch-release-artifacts]
     strategy:
