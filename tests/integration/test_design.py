@@ -148,6 +148,55 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
 
 
+def test_assigning_and_getting_material(modeler: Modeler):
+    """Test the assignment and retrieval of materials from a design."""
+    # Create a Sketch and draw a circle (all client side)
+    sketch = Sketch()
+    sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create your design on the server side
+    design_name = "ExtrudeProfile"
+    design = modeler.create_design(design_name)
+
+    # Add a material to body
+    density = Quantity(125, 1000 * UNITS.kg / (UNITS.m**3))
+    poisson_ratio = Quantity(0.33, UNITS.dimensionless)
+    tensile_strength = Quantity(45.0, UNITS.pascal)
+    material = Material(
+        "steel",
+        density,
+        [MaterialProperty(MaterialPropertyType.POISSON_RATIO, "myPoisson", poisson_ratio)],
+    )
+    material.add_property(MaterialPropertyType.TENSILE_STRENGTH, "myTensile", Quantity(45))
+    design.add_material(material)
+
+    # Extrude the sketch to create a Body
+    body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
+
+    # Assign a material to a Body
+    body.assign_material(material)
+    material = body.get_assigned_material
+
+    # Test material and property retrieval
+    assert material.name == "steel"
+    assert len(material.properties) == 3
+    assert material.properties[MaterialPropertyType.DENSITY].type == MaterialPropertyType.DENSITY
+    assert material.properties[MaterialPropertyType.DENSITY].name == "Density"
+    assert material.properties[MaterialPropertyType.DENSITY].quantity == density
+    assert (
+        material.properties[MaterialPropertyType.POISSON_RATIO].type
+        == MaterialPropertyType.POISSON_RATIO
+    )
+    assert material.properties[MaterialPropertyType.POISSON_RATIO].name == "myPoisson"
+    assert material.properties[MaterialPropertyType.POISSON_RATIO].quantity == poisson_ratio
+    assert (
+        material.properties[MaterialPropertyType.TENSILE_STRENGTH].type
+        == MaterialPropertyType.TENSILE_STRENGTH
+    )
+    assert material.properties[MaterialPropertyType.TENSILE_STRENGTH].name == "myTensile"
+    assert material.properties[MaterialPropertyType.TENSILE_STRENGTH].quantity == tensile_strength
+
+
 def test_face_to_body_creation(modeler: Modeler):
     """Test in charge of validating the extrusion of an existing face."""
     # Create a Sketch and draw a circle (all client side)
@@ -2945,3 +2994,48 @@ def test_create_surface_body_from_trimmed_curves(modeler: Modeler):
     assert body.faces[0].area.m == pytest.approx(
         Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_shell_body(modeler: Modeler):
+    """Test shell command."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.shell_body(0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 12
+
+
+def test_shell_faces(modeler: Modeler):
+    """Test shell commands for a single face."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.remove_faces(base.faces[0], 0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.584, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 11
+
+
+def test_shell_multiple_faces(modeler: Modeler):
+    """Test shell commands for multiple faces."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.remove_faces([base.faces[0], base.faces[2]], 0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 10
