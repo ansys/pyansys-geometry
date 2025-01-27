@@ -57,10 +57,11 @@ def get_wheelhouse_assets_dictionary():
                 time.sleep(2)
 
         if content is None:
-            raise requests.exceptions.RequestException("Failed to retrieve the latest release.")
-
-        # Just point to the latest version
-        assets_context_version = json.loads(content)["name"]
+            print("Adapting URL to point to the latest version... (hack)")
+            assets_context_version = "dev"
+        else:
+            # Just point to the latest version
+            assets_context_version = json.loads(content)["name"]
     else:
         assets_context_version = f"v{__version__}"
 
@@ -68,12 +69,18 @@ def get_wheelhouse_assets_dictionary():
     for assets_os, assets_runner in zip(assets_context_os, assets_context_runners):
         download_links = []
         for assets_py_ver in assets_context_python_versions:
+            if assets_context_version == "dev":
+                prefix_url = "https://github.com/ansys/pyansys-geometry/releases/latest/download"
+            else:
+                prefix_url = (
+                    f"https://github.com/ansys/pyansys-geometry/releases/download/{assets_context_version}",
+                )
             temp_dict = {
                 "os": assets_os,
                 "runner": assets_runner,
                 "python_versions": assets_py_ver,
                 "latest_released_version": assets_context_version,
-                "prefix_url": f"https://github.com/ansys/pyansys-geometry/releases/download/{assets_context_version}",  # noqa: E501
+                "prefix_url": prefix_url,
             }
             download_links.append(temp_dict)
 
