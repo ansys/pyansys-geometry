@@ -70,7 +70,7 @@ from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.sketch import Sketch
 from ansys.tools.visualization_interface.utils.color import Color
 
-from .conftest import FILES_DIR, skip_if_linux
+from .conftest import FILES_DIR, skip_if_core_service
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -911,7 +911,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     assert file.exists()
 
     # Check that we can also save it (even if it is not accessible on the server)
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+    if modeler.client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX):
         file_save = "/tmp/cylinder-temp.scdocx"
     else:
         file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
@@ -919,7 +919,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     design.save(file_location=file_save)
 
     # Check for other exports - Windows backend...
-    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+    if not BackendType.is_core_service(modeler.client.backend_type):
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
@@ -1111,8 +1111,8 @@ def test_copy_body(modeler: Modeler):
 
 def test_beams(modeler: Modeler):
     """Test beam creation."""
-    # Skip on Linux
-    skip_if_linux(modeler, test_beams.__name__, "create_beam")
+    # Skip on CoreService
+    skip_if_core_service(modeler, test_beams.__name__, "create_beam")
 
     # Create your design on the server side
     design = modeler.create_design("BeamCreation")
@@ -1414,8 +1414,8 @@ def test_named_selections_beams(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with
     beams.
     """
-    # Skip on Linux
-    skip_if_linux(modeler, test_named_selections_beams.__name__, "create_beam")
+    # Skip on CoreService
+    skip_if_core_service(modeler, test_named_selections_beams.__name__, "create_beam")
 
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
@@ -2002,7 +2002,8 @@ def test_get_collision(modeler: Modeler):
 
 def test_set_body_name(modeler: Modeler):
     """Test the setting the name of a body."""
-    skip_if_linux(modeler, test_set_body_name.__name__, "set_name")  # Skip test on Linux
+    # Skip test on CoreService
+    skip_if_core_service(modeler, test_set_body_name.__name__, "set_name")
 
     design = modeler.create_design("simple_cube")
     unit = DEFAULT_UNITS.LENGTH
@@ -2023,7 +2024,8 @@ def test_set_body_name(modeler: Modeler):
 
 def test_set_fill_style(modeler: Modeler):
     """Test the setting the fill style of a body."""
-    skip_if_linux(modeler, test_set_fill_style.__name__, "set_fill_style")  # Skip test on Linux
+    # Skip test on CoreService
+    skip_if_core_service(modeler, test_set_fill_style.__name__, "set_fill_style")
 
     design = modeler.create_design("RVE")
     unit = DEFAULT_UNITS.LENGTH
@@ -2196,7 +2198,9 @@ def test_body_mapping(modeler: Modeler):
 
 def test_sphere_creation(modeler: Modeler):
     """Test the creation of a sphere body with a given radius."""
-    skip_if_linux(modeler, test_sphere_creation.__name__, "create_sphere")
+    # Skip test on CoreService
+    skip_if_core_service(modeler, test_sphere_creation.__name__, "create_sphere")
+
     design = modeler.create_design("Spheretest")
     center_point = Point3D([10, 10, 10], UNITS.m)
     radius = Distance(1, UNITS.m)
@@ -2208,7 +2212,9 @@ def test_sphere_creation(modeler: Modeler):
 
 def test_body_mirror(modeler: Modeler):
     """Test the mirroring of a body."""
-    skip_if_linux(modeler, test_body_mirror.__name__, "mirror")
+    # Skip test on CoreService
+    skip_if_core_service(modeler, test_body_mirror.__name__, "mirror")
+
     design = modeler.create_design("Design1")
 
     # Create shape with no lines of symmetry in any axis
@@ -2414,7 +2420,8 @@ def test_create_body_from_loft_profile(modeler: Modeler):
     """Test the ``create_body_from_loft_profile()`` method to create a vase
     shape.
     """
-    skip_if_linux(
+    # Skip test on CoreService
+    skip_if_core_service(
         modeler, test_create_body_from_loft_profile.__name__, "'create_body_from_loft_profile'"
     )
     design_sketch = modeler.create_design("loftprofile")
@@ -2530,8 +2537,8 @@ def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
 
 def test_component_tree_print(modeler: Modeler):
     """Test for verifying the tree print for ``Component`` objects."""
-    # Skip on Linux
-    skip_if_linux(modeler, test_component_tree_print.__name__, "create_beam")
+    # Skip on CoreService
+    skip_if_core_service(modeler, test_component_tree_print.__name__, "create_beam")
 
     def check_list_equality(lines, expected_lines):
         # By doing "a in b" rather than "a == b", we can check for substrings
