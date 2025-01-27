@@ -1610,20 +1610,26 @@ class Body(IBody):
         pl.show(screenshot=screenshot, **plotting_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        # self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
-        self.__generic_boolean_command(
-            other, keep_other, False, "intersect", "bodies do not intersect"
-        )
+        if self._grpc_client.backend_version < (25, 2, 0):
+            self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
+        else:
+            self.__generic_boolean_command(
+                other, keep_other, False, "intersect", "bodies do not intersect"
+            )
 
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        # self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
-        self.__generic_boolean_command(
-            other, keep_other, True, "subtract", "empty (complete) subtraction"
-        )
+        if self._grpc_client.backend_version < (25, 2, 0):
+            self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
+        else:
+            self.__generic_boolean_command(
+                other, keep_other, True, "subtract", "empty (complete) subtraction"
+            )
 
-    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
-        # self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
-        self.__generic_boolean_command(other, False, False, "unite", "union operation failed")
+    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
+        if self._grpc_client.backend_version < (25, 2, 0):
+            self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
+        else:
+            self.__generic_boolean_command(other, False, False, "unite", "union operation failed")
 
     @protect_grpc
     @check_input_types
