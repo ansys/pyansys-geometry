@@ -55,11 +55,14 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CombineMergeBodiesRequest,
     ImprintCurvesRequest,
     ProjectCurvesRequest,
+    RemoveFacesRequest,
+    ShellRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
+    grpc_material_to_material,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
@@ -79,6 +82,7 @@ from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.misc.checks import (
     check_type,
+    check_type_all_elements_in_iterable,
     ensure_design_is_active,
     min_backend_version,
 )
@@ -251,6 +255,17 @@ class IBody(ABC):
         ----------
         material : Material
             Source material data.
+        """
+        return
+
+    @abstractmethod
+    def get_assigned_material(self) -> Material:
+        """Get the assigned material of the body.
+
+        Returns
+        -------
+        Material
+            Material assigned to the body.
         """
         return
 
@@ -554,6 +569,39 @@ class IBody(ABC):
           N Arrays:	0
         """
         return
+
+    @abstractmethod
+    def shell_body(self, offset: Real) -> bool:
+        """Shell the body to the thickness specified.
+
+        Parameters
+        ----------
+        offset : Real
+            Shell thickness.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        return
+
+    @abstractmethod
+    def remove_faces(self, selection: Union["Face", list["Face"]], offset: Real) -> bool:
+        """Shell by removing a given set of faces.
+
+        Parameters
+        ----------
+        selection : Face | List[Face]
+            Face or faces to be removed.
+        offset : Real
+            Shell thickness.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
 
     @abstractmethod
     def plot(
@@ -871,6 +919,13 @@ class MasterBody(IBody):
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
 
+    @property
+    @protect_grpc
+    def get_assigned_material(self) -> Material:  # noqa: D102
+        self._grpc_client.log.debug(f"Retrieving assigned material for body {self.id}.")
+        material_response = self._bodies_stub.GetAssignedMaterial(self._grpc_id)
+        return grpc_material_to_material(material_response)
+
     @protect_grpc
     @check_input_types
     def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102
@@ -1161,6 +1216,43 @@ class MasterBody(IBody):
         else:
             return comp
 
+    @protect_grpc
+    @check_input_types
+    def shell_body(self, offset: Real) -> bool:  # noqa: D102
+        self._grpc_client.log.debug(f"Shelling body {self.id} to offset {offset}.")
+
+        result = self._commands_stub.Shell(
+            ShellRequest(
+                selection=self._grpc_id,
+                offset=offset,
+            )
+        )
+
+        return result.success
+
+    @protect_grpc
+    @reset_tessellation_cache
+    @check_input_types
+    def remove_faces(self, selection: Union["Face", list["Face"]], offset: Real) -> bool:  # noqa: D102
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+        check_type_all_elements_in_iterable(selection, Face)
+
+        # check if faces belong to this body
+        for face in selection:
+            if face.body.id != self.id:
+                raise ValueError(f"Face {face.id} does not belong to body {self.id}.")
+
+        self._grpc_client.log.debug(f"Removing faces to shell body {self.id}.")
+
+        result = self._commands_stub.RemoveFaces(
+            RemoveFacesRequest(
+                selection=[face._grpc_id for face in selection],
+                offset=offset,
+            )
+        )
+
+        return result.success
+
     def plot(  # noqa: D102
         self,
         merge: bool = True,
@@ -1389,6 +1481,11 @@ class Body(IBody):
     def assign_material(self, material: Material) -> None:  # noqa: D102
         self._template.assign_material(material)
 
+    @property
+    @ensure_design_is_active
+    def get_assigned_material(self) -> Material:  # noqa: D102
+        return self._template.get_assigned_material
+
     @ensure_design_is_active
     def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102
         self._template.add_midsurface_thickness(thickness)
@@ -1577,6 +1674,14 @@ class Body(IBody):
         self, merge: bool = False
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate(merge, self.parent_component.get_world_transform())
+
+    @ensure_design_is_active
+    def shell_body(self, offset: Real) -> bool:  # noqa: D102
+        return self._template.shell_body(offset)
+
+    @ensure_design_is_active
+    def remove_faces(self, selection: Union["Face", list["Face"]], offset: Real) -> bool:  # noqa: D102
+        return self._template.remove_faces(selection, offset)
 
     def plot(  # noqa: D102
         self,

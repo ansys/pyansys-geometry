@@ -40,10 +40,10 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
-from ansys.geometry.core.misc.unsupported import UnsupportedCommands
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
+from ansys.geometry.core.tools.unsupported import UnsupportedCommands
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -120,6 +120,9 @@ class Modeler:
             backend_type=backend_type,
         )
 
+        # Maintaining references to all designs within the modeler workspace
+        self._designs: dict[str, "Design"] = {}
+
         # Initialize the RepairTools - Not available on Linux
         # TODO: delete "if" when Linux service is able to use repair tools
         # https://github.com/ansys/pyansys-geometry/issues/1319
@@ -134,9 +137,6 @@ class Modeler:
         self._prepare_tools = PrepareTools(self._grpc_client)
         self._geometry_commands = GeometryCommands(self._grpc_client)
         self._unsupported = UnsupportedCommands(self._grpc_client, self)
-
-        # Maintaining references to all designs within the modeler workspace
-        self._designs: dict[str, "Design"] = {}
 
         # Check if the backend allows for multiple designs and throw warning if needed
         if not self.client.multiple_designs_allowed:
