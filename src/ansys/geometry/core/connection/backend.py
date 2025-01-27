@@ -39,7 +39,18 @@ class BackendType(Enum):
 
     @staticmethod
     def is_core_service(backend_type: "BackendType") -> bool:
-        """Is backend of core service type (either Linux or Windosw)?."""
+        """Is backend of core service type (either Linux or Windosw)?.
+
+        Parameters
+        ----------
+        backend_type : BackendType
+            The backend type to check whether or not it's a CoreService type.
+
+        Returns
+        -------
+        bool
+            True if the backend is CoreService based, False otherwise.
+        """
         return backend_type in (
             BackendType.LINUX_SERVICE,
             BackendType.CORE_WINDOWS,
