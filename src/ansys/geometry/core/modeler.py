@@ -122,7 +122,7 @@ class Modeler:
         # Initialize the RepairTools - Not available on Linux
         # TODO: delete "if" when Linux service is able to use repair tools
         # https://github.com/ansys/pyansys-geometry/issues/1319
-        if self.client.backend_type == BackendType.LINUX_SERVICE:
+        if BackendType.is_core_service(self.client.backend_type):
             self._measurement_tools = None
             LOG.warning("Linux backend does not support measurement tools.")
         else:

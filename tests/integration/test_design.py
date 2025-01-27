@@ -911,7 +911,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     assert file.exists()
 
     # Check that we can also save it (even if it is not accessible on the server)
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+    if modeler.client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX):
         file_save = "/tmp/cylinder-temp.scdocx"
     else:
         file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
@@ -919,7 +919,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     design.save(file_location=file_save)
 
     # Check for other exports - Windows backend...
-    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+    if not BackendType.is_core_service(modeler.client.backend_type):
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
