@@ -293,7 +293,7 @@ def test_find_and_fix_duplicate_faces(modeler: Modeler):
     assert len(design.bodies) == 1
 
 
-def test_find_and_fix_extra_edges(modeler: Modeler):
+def test_find_and_fix_extra_edges_problem_areas(modeler: Modeler):
     """Test to read geometry, find and fix extra edges and validate they are removed."""
     design = modeler.open_file(FILES_DIR / "ExtraEdges_NoComponents.scdocx")
     assert len(design.bodies) == 3
@@ -365,7 +365,7 @@ def test_find_and_fix_missing_faces(modeler: Modeler):
         assert not comp.bodies[0].is_surface
 
 
-def test_find_and_fix_short_edges(modeler: Modeler):
+def test_find_and_fix_short_edges_problem_areas(modeler: Modeler):
     """Test to read geometry, find and fix short edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "ShortEdges.scdocx")
     assert len(design.bodies[0].edges) == 685
@@ -376,11 +376,11 @@ def test_find_and_fix_short_edges(modeler: Modeler):
     assert len(design.bodies[0].edges) == 675  ##We get 673 edges if we repair all in one go
 
 
-def test_find_and_fix_split_edges(modeler: Modeler):
+def test_find_and_fix_split_edges_problem_areas(modeler: Modeler):
     """Test to read geometry, find and fix split edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "bracket-with-split-edges.scdocx")
     assert len(design.bodies[0].edges) == 304
-    split_edges = modeler.repair_tools.find_split_edges(design.bodies, 150, 0.0001)
+    split_edges = modeler.repair_tools.find_split_edges(design.bodies, 2.61799, 0.01)
     assert len(split_edges) == 166
     for i in split_edges:
         try:  # Try/Except is a workaround. Having .alive would be better
@@ -419,3 +419,34 @@ def test_fix_simplify(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
     problem_areas = modeler.repair_tools.find_simplify(design.bodies)
     assert problem_areas[0].fix().success is True
+
+
+def test_find_and_fix_short_edges(modeler: Modeler):
+    """Test to read geometry, find and fix short edges and validate they are fixed removed."""
+    design = modeler.open_file(FILES_DIR / "ShortEdges.scdocx")
+    assert len(design.bodies[0].edges) == 685
+    modeler.repair_tools.find_and_fix_short_edges(design.bodies, 0.000127)
+    assert len(design.bodies[0].edges) == 673  ##We get 673 edges if we repair all in one go
+
+
+def test_find_and_fix_split_edges(modeler: Modeler):
+    """Test to read geometry, find and fix split edges and validate they are fixed removed."""
+    design = modeler.open_file(FILES_DIR / "bracket-with-split-edges.scdocx")
+    assert len(design.bodies[0].edges) == 304
+    modeler.repair_tools.find_and_fix_split_edges(design.bodies, 2.61799, 0.01)
+    assert len(design.bodies[0].edges) == 138
+
+
+def test_find_and_fix_extra_edges(modeler: Modeler):
+    """Test to read geometry, find and fix extra edges and validate they are removed."""
+    design = modeler.open_file(FILES_DIR / "ExtraEdges_NoComponents.scdocx")
+    assert len(design.bodies) == 3
+    starting_edge_count = 0
+    for body in design.bodies:
+        starting_edge_count += len(body.edges)
+    assert starting_edge_count == 69
+    modeler.repair_tools.find_and_fix_extra_edges(design.bodies)
+    final_edge_count = 0
+    for body in design.bodies:
+        final_edge_count += len(body.edges)
+    assert final_edge_count == 36
