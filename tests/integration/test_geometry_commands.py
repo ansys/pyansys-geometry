@@ -691,7 +691,9 @@ def test_split_body_by_slicer_edge(modeler: Modeler):
     "Test split body by slicer edge"
 
     # Skip for Core service
-    skip_if_core_service(modeler, test_split_body_by_slicer_edge.__name__, "split_body_by_slicer_edge")
+    skip_if_core_service(
+        modeler, test_split_body_by_slicer_edge.__name__, "split_body_by_slicer_edge"
+    )
 
     design = modeler.open_file(FILES_DIR / "Edge_Slice_test.dsco")
 
