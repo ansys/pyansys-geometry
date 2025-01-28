@@ -135,7 +135,7 @@ def test_component_tessellate(modeler: Modeler):
     mesh = comp.tessellate()
     comp.plot()
     assert "PolyData" in str(mesh)
-    if  not BackendType.is_core_service(modeler.client.backend_type):
+    if not BackendType.is_core_service(modeler.client.backend_type):
         assert mesh.n_cells == 3280
         assert mesh.n_faces == 3280
         assert mesh.n_arrays == 0
