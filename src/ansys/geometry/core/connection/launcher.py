@@ -1088,7 +1088,7 @@ def launch_modeler_with_core_service(
         LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
 
     return prepare_and_start_backend(
-        BackendType.CORE_WINDOWS,
+        BackendType.LINUX_SERVICE,
         product_version=product_version,
         host=host,
         port=port,
