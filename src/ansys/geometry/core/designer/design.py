@@ -334,7 +334,7 @@ class Design(Component):
         ----------
         format : DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
-            
+
         Returns
         -------
         bytes
@@ -377,7 +377,7 @@ class Design(Component):
         ----------
         format : DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
-        
+
         Returns
         -------
         bytes
