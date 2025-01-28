@@ -332,10 +332,13 @@ class Design(Component):
 
         Parameters
         ----------
-        file_location : ~pathlib.Path | str
-            Location on disk to save the file to.
         format : DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
+            
+        Returns
+        -------
+        bytes
+            The raw data from the exported and downloaded file.
         """
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
@@ -372,10 +375,13 @@ class Design(Component):
 
         Parameters
         ----------
-        file_location : ~pathlib.Path | str
-            Location on disk to save the file to.
         format : DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
+        
+        Returns
+        -------
+        bytes
+            The raw data from the exported and downloaded file.
         """
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
