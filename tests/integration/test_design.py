@@ -1628,7 +1628,7 @@ def test_boolean_body_operations(modeler: Modeler):
     # 1.a.i.x
     copy1 = body1.copy(comp1, "Copy1")
     copy2 = body2.copy(comp2, "Copy2")
-    copy1.intersect(copy2, False)
+    copy1.intersect(copy2)
 
     assert not copy2.is_alive
     assert body2.is_alive
@@ -1638,7 +1638,7 @@ def test_boolean_body_operations(modeler: Modeler):
     copy1 = body1.copy(comp1, "Copy1")
     copy2 = body2.copy(comp2, "Copy2")
     copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
-    copy1.intersect(copy2, False)
+    copy1.intersect(copy2)
 
     assert not copy2.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 0.25)
@@ -1739,7 +1739,7 @@ def test_boolean_body_operations(modeler: Modeler):
     # 2.a.i.x
     copy1 = body1.copy(comp1_i, "Copy1")
     copy2 = body2.copy(comp2_i, "Copy2")
-    copy1.intersect(copy2, False)
+    copy1.intersect(copy2)
 
     assert not copy2.is_alive
     assert body2.is_alive
@@ -1749,7 +1749,7 @@ def test_boolean_body_operations(modeler: Modeler):
     copy1 = body1.copy(comp1_i, "Copy1")
     copy2 = body2.copy(comp2_i, "Copy2")
     copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
-    copy1.intersect(copy2, False)
+    copy1.intersect(copy2)
 
     assert not copy2.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 0.25)
@@ -1881,7 +1881,7 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     copy1_int = body1.copy(comp1, "Copy1_intersect")
     copy2_int = body2.copy(comp2, "Copy2_intersect")
     copy3_int = body3.copy(comp3, "Copy3_intersect")  # Body 3 does not intersect them
-    copy1_int.intersect([copy2_int], False)
+    copy1_int.intersect([copy2_int])
 
     assert not copy2_int.is_alive
     assert copy3_int.is_alive
