@@ -25,7 +25,7 @@ from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.tools.measurement_tools import Gap
 
-from .conftest import FILES_DIR, skip_if_linux
+from .conftest import FILES_DIR, skip_if_core_service
 
 
 def test_distance_property(modeler: Modeler):
@@ -36,9 +36,9 @@ def test_distance_property(modeler: Modeler):
 
 def test_min_distance_between_objects(modeler: Modeler):
     """Test if split edge problem areas are detectable."""
-    skip_if_linux(
+    skip_if_core_service(
         modeler, test_min_distance_between_objects.__name__, "measurement_tools"
-    )  # Skip test on Linux
+    )  # Skip test on CoreService
     design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
     gap = modeler.measurement_tools.min_distance_between_objects(design.bodies[2], design.bodies[1])
     assert abs(gap.distance._value - 0.0892) <= 0.01
