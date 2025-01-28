@@ -932,6 +932,11 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         design.download(iges_file, format=DesignFileFormat.IGES)
         assert iges_file.exists()
 
+        # FMD
+        fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
+        design.download(fmd_file, format=DesignFileFormat.FMD)
+        assert fmd_file.exists()
+
     # Linux backend...
     else:
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
@@ -940,17 +945,12 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     # PMDB
     pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
 
-    # FMD
-    fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
-
     design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN)
     design.download(text_parasolid_file, format=DesignFileFormat.PARASOLID_TEXT)
-    design.download(fmd_file, format=DesignFileFormat.FMD)
     design.download(pmdb_file, format=DesignFileFormat.PMDB)
 
     assert binary_parasolid_file.exists()
     assert text_parasolid_file.exists()
-    assert fmd_file.exists()
     assert pmdb_file.exists()
 
 
