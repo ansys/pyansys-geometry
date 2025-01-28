@@ -30,13 +30,13 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import DSCOSCRIPTS_FILES_DIR, skip_if_linux
+from .conftest import DSCOSCRIPTS_FILES_DIR, skip_if_core_service
 
 
 # Python (.py)
 def test_python_simple_script(modeler: Modeler):
-    # Skip on Linux
-    skip_if_linux(modeler, test_python_simple_script.__name__, "run_discovery_script_file")
+    # Skip on CoreService
+    skip_if_core_service(modeler, test_python_simple_script.__name__, "run_discovery_script_file")
 
     result = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.py")
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
@@ -49,8 +49,8 @@ def test_python_simple_script(modeler: Modeler):
 def test_python_simple_script_ignore_api_version(
     modeler: Modeler, caplog: pytest.LogCaptureFixture
 ):
-    # Skip on Linux
-    skip_if_linux(
+    # Skip on CoreService
+    skip_if_core_service(
         modeler, test_python_simple_script_ignore_api_version.__name__, "run_discovery_script_file"
     )
 
@@ -73,15 +73,17 @@ def test_python_simple_script_ignore_api_version(
 
 
 def test_python_failing_script(modeler: Modeler):
-    # Skip on Linux
-    skip_if_linux(modeler, test_python_failing_script.__name__, "run_discovery_script_file")
+    # Skip on CoreService
+    skip_if_core_service(modeler, test_python_failing_script.__name__, "run_discovery_script_file")
     with pytest.raises(GeometryRuntimeError):
         modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "failing_script.py")
 
 
 def test_python_integrated_script(modeler: Modeler):
-    # Skip on Linux
-    skip_if_linux(modeler, test_python_integrated_script.__name__, "run_discovery_script_file")
+    # Skip on CoreService
+    skip_if_core_service(
+        modeler, test_python_integrated_script.__name__, "run_discovery_script_file"
+    )
 
     # Tests the workflow of creating a design in PyAnsys Geometry, modifying it with a script,
     # and continuing to use it in PyAnsys Geometry
@@ -103,8 +105,8 @@ def test_python_integrated_script(modeler: Modeler):
 
 # SpaceClaim (.scscript)
 def test_scscript_simple_script(modeler: Modeler):
-    # Skip on Linux
-    skip_if_linux(modeler, test_scscript_simple_script.__name__, "run_discovery_script_file")
+    # Skip on CoreService
+    skip_if_core_service(modeler, test_scscript_simple_script.__name__, "run_discovery_script_file")
 
     result = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.scscript")
     assert len(result) == 2
@@ -117,8 +119,8 @@ def test_scscript_simple_script(modeler: Modeler):
 
 # Discovery (.dscript)
 def test_dscript_simple_script(modeler: Modeler):
-    # Skip on Linux
-    skip_if_linux(modeler, test_dscript_simple_script.__name__, "run_discovery_script_file")
+    # Skip on CoreService
+    skip_if_core_service(modeler, test_dscript_simple_script.__name__, "run_discovery_script_file")
 
     result = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.dscript")
     assert len(result) == 2
