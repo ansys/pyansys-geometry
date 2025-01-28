@@ -753,6 +753,8 @@ def test_matrix_44():
 
 
 def test_create_translation_matrix():
+    """Test the creation of a translation matrix."""
+
     vector = Vector3D([1, 2, 3])
     expected_matrix = Matrix44([[1, 0, 0, 1], [0, 1, 0, 2], [0, 0, 1, 3], [0, 0, 0, 1]])
     translation_matrix = Matrix44.create_translation(vector)
@@ -760,7 +762,22 @@ def test_create_translation_matrix():
     assert translation_matrix.is_translation()
 
 
+def test_is_translation():
+    """Test the is_translation method of the Matrix44 class."""
+    matrix = Matrix44([[1, 0, 0, 5], [0, 1, 0, 3], [0, 0, 1, 2], [0, 0, 0, 1]])
+    assert matrix.is_translation()
+    # Test the identity matrix
+    identity_matrix = Matrix44([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    assert identity_matrix.is_translation() is False
+    # Test a matrix that is not a translation (rotation matrix)
+    rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    assert rotation_matrix.is_translation() is False
+    rotation_matrix = Matrix44([[1, 0, 1, 5], [0, 1, 0, 3], [0, 0, 1, 2], [0, 0, 0, 1]])
+    assert (rotation_matrix.is_translation()) is False
+
+
 def test_create_rotation_matrix():
+    """Test the creation of a rotation matrix."""
     # Test 0: No rotation
     direction_x = Vector3D([1, 0, 0])
     direction_y = Vector3D([0, 1, 0])
@@ -768,7 +785,7 @@ def test_create_rotation_matrix():
     rotation_matrix = Matrix44.create_rotation(direction_x, direction_y)
     assert np.array_equal(expected_matrix, rotation_matrix)
 
-    # Test 1: Rotation around Z-axis by 90 degrees counter clockwise
+    # Test: Rotation around Z-axis by 90 degrees counter clockwise
 
     new_x = Vector3D([0, 1, 0])
     new_y = Vector3D([-1, 0, 0])
@@ -779,7 +796,7 @@ def test_create_rotation_matrix():
     p_expected = np.array([0, 1, 0, 0])
     assert np.array_equal(p_after, p_expected), "Rotation around Z-axis failed"
 
-    # Test 2: Rotation around Z-axis by 180 degrees counter clockwise
+    # Test: Rotation around Z-axis by 180 degrees counter clockwise
     new_x = Vector3D([-1, 0, 0])
     new_y = Vector3D([0, -1, 0])
 
@@ -789,7 +806,7 @@ def test_create_rotation_matrix():
     p_expected = np.array([-1, 0, 0, 0])
     assert np.array_equal(p_after, p_expected), "Rotation around Z-axis failed"
 
-    # Test 3: Rotation around Z-axis by 270 degrees counter clockwise
+    # Test: Rotation around Z-axis by 270 degrees counter clockwise
     new_x = Vector3D([0, -1, 0])
     new_y = Vector3D([1, 0, 0])
     new_z = Vector3D([0, 0, 1])
