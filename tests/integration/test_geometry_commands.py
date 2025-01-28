@@ -405,7 +405,7 @@ def test_circular_pattern(modeler: Modeler):
     base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     axis = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 0.01, 0.01), 1)
     base.subtract(axis)
-    axis = base.edges[-4]
+    axis = base.edges[20]
 
     cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.2, 0]), 0.005), 1)
     base.subtract(cutout)
