@@ -33,8 +33,8 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.misc.unsupported import PersistentIdType
 from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.tools.unsupported import PersistentIdType
 
 from .conftest import FILES_DIR, IMPORT_FILES_DIR, skip_if_linux
 
@@ -214,10 +214,21 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     if modeler.client.backend_type == BackendType.LINUX_SERVICE:
         modeler.unsupported.set_export_id(base_body.id, PersistentIdType.PRIME_ID, "1")
         modeler.unsupported.set_export_id(wheel_body.id, PersistentIdType.PRIME_ID, "2")
+    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+        modeler.unsupported.set_export_id(base_body.id, PersistentIdType.PRIME_ID, "1")
+        modeler.unsupported.set_export_id(wheel_body.id, PersistentIdType.PRIME_ID, "2")
 
         modeler.unsupported.set_export_id(base_body.faces[0].id, PersistentIdType.PRIME_ID, "3")
         modeler.unsupported.set_export_id(base_body.edges[0].id, PersistentIdType.PRIME_ID, "4")
+        modeler.unsupported.set_export_id(base_body.faces[0].id, PersistentIdType.PRIME_ID, "3")
+        modeler.unsupported.set_export_id(base_body.edges[0].id, PersistentIdType.PRIME_ID, "4")
 
+        bodies1 = modeler.unsupported.get_body_occurrences_from_import_id(
+            "1", PersistentIdType.PRIME_ID
+        )
+        bodies2 = modeler.unsupported.get_body_occurrences_from_import_id(
+            "2", PersistentIdType.PRIME_ID
+        )
         bodies1 = modeler.unsupported.get_body_occurrences_from_import_id(
             "1", PersistentIdType.PRIME_ID
         )
@@ -231,6 +242,12 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         # assert base_body.id not in [b.id for b in bodies1]
         # assert wheel_body.id not in [b.id for b in bodies2]
 
+        faces = modeler.unsupported.get_face_occurrences_from_import_id(
+            "3", PersistentIdType.PRIME_ID
+        )
+        edges = modeler.unsupported.get_edge_occurrences_from_import_id(
+            "4", PersistentIdType.PRIME_ID
+        )
         faces = modeler.unsupported.get_face_occurrences_from_import_id(
             "3", PersistentIdType.PRIME_ID
         )
