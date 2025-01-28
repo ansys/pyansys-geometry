@@ -29,9 +29,15 @@ from beartype import beartype as check_input_types
 from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity, UndefinedUnitError
+import semver
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
-from ansys.api.dbu.v0.designs_pb2 import InsertRequest, NewRequest, SaveAsRequest
+from ansys.api.dbu.v0.designs_pb2 import (
+    DownloadExportFileRequest,
+    InsertRequest,
+    NewRequest,
+    SaveAsRequest,
+)
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.dbu.v0.drivingdimensions_pb2 import GetAllRequest, UpdateRequest
 from ansys.api.dbu.v0.drivingdimensions_pb2_grpc import DrivingDimensionsStub
@@ -84,13 +90,15 @@ from ansys.geometry.core.typing import RealSequence
 class DesignFileFormat(Enum):
     """Provides supported file formats that can be downloaded for designs."""
 
-    SCDOCX = "SCDOCX", None
+    SCDOCX = "SCDOCX", PartExportFormat.PARTEXPORTFORMAT_SCDOCX
     PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
     PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
     FMD = "FMD", PartExportFormat.PARTEXPORTFORMAT_FMD
     STEP = "STEP", PartExportFormat.PARTEXPORTFORMAT_STEP
     IGES = "IGES", PartExportFormat.PARTEXPORTFORMAT_IGES
     PMDB = "PMDB", PartExportFormat.PARTEXPORTFORMAT_PMDB
+    STRIDE = "STRIDE", PartExportFormat.PARTEXPORTFORMAT_STRIDE
+    DISCO = "DISCO", PartExportFormat.PARTEXPORTFORMAT_DISCO
     INVALID = "INVALID", None
 
 
@@ -296,6 +304,44 @@ class Design(Component):
 
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
+        if self._modeler.client.backend_version < semver.Version(25, 2, 0):
+            received_bytes = self.__export_and_download_legacy(format=format)
+        else:
+            received_bytes = self.__export_and_download(format=format)
+
+        # Write to file
+        downloaded_file = Path(file_location).open(mode="wb")
+        downloaded_file.write(received_bytes)
+        downloaded_file.close()
+
+        self._grpc_client.log.debug(
+            f"Design is successfully downloaded at location {file_location}."
+        )
+
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    def __export_and_download_legacy(
+        self,
+        format: DesignFileFormat = DesignFileFormat.SCDOCX,
+    ) -> bytes:
+        """Export and download the design from the server.
+
+            This is a legacy method, which used in versions
+            up to Ansys 25.1.1 products.
+
+        Parameters
+        ----------
+        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
+            Format for the file to save to.
+
+        Returns
+        -------
+        bytes
+            The raw data from the exported and downloaded file.
+        """
+        # Process response
+        self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
         received_bytes = bytes()
         if format is DesignFileFormat.SCDOCX:
             response = self._commands_stub.DownloadFile(Empty())
@@ -316,14 +362,53 @@ class Design(Component):
             )
             return
 
-        # Write to file
-        downloaded_file = Path(file_location).open(mode="wb")
-        downloaded_file.write(received_bytes)
-        downloaded_file.close()
+        return received_bytes
 
-        self._grpc_client.log.debug(
-            f"Design is successfully downloaded at location {file_location}."
-        )
+    @protect_grpc
+    @check_input_types
+    @ensure_design_is_active
+    def __export_and_download(
+        self,
+        format: DesignFileFormat = DesignFileFormat.SCDOCX,
+    ) -> bytes:
+        """Export and download the design from the server.
+
+        Parameters
+        ----------
+        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
+            Format for the file to save to.
+
+        Returns
+        -------
+        bytes
+            The raw data from the exported and downloaded file.
+        """
+        # Process response
+        self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
+        received_bytes = bytes()
+
+        if format in [
+            DesignFileFormat.PARASOLID_TEXT,
+            DesignFileFormat.PARASOLID_BIN,
+            DesignFileFormat.FMD,
+            DesignFileFormat.STEP,
+            DesignFileFormat.IGES,
+            DesignFileFormat.PMDB,
+            DesignFileFormat.DISCO,
+            DesignFileFormat.SCDOCX,
+            DesignFileFormat.STRIDE,
+        ]:
+            response = self._design_stub.DownloadExportFile(
+                DownloadExportFileRequest(format=format.value[1])
+            )
+            received_bytes += response.data
+        else:
+            self._grpc_client.log.warning(
+                f"{format.value[0]} format requested is not supported. Ignoring download request."
+            )
+            return
+
+        return received_bytes
 
     def __build_export_file_location(self, location: Path | str | None, ext: str) -> Path:
         """Build the file location for export functions.
@@ -366,6 +451,52 @@ class Design(Component):
         # Return the file location
         return file_location
 
+    def export_to_disco(self, location: Path | str | None = None) -> Path:
+        """Export the design to an dsco file.
+
+        Parameters
+        ----------
+        location : ~pathlib.Path | str, optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        ~pathlib.Path
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = self.__build_export_file_location(location, "dsco")
+
+        # Export the design to an dsco file
+        self.download(file_location, DesignFileFormat.DISCO)
+
+        # Return the file location
+        return file_location
+
+    def export_to_stride(self, location: Path | str | None = None) -> Path:
+        """Export the design to an stride file.
+
+        Parameters
+        ----------
+        location : ~pathlib.Path | str, optional
+            Location on disk to save the file to. If None, the file will be saved
+            in the current working directory.
+
+        Returns
+        -------
+        ~pathlib.Path
+            The path to the saved file.
+        """
+        # Define the file location
+        file_location = self.__build_export_file_location(location, "stride")
+
+        # Export the design to an stride file
+        self.download(file_location, DesignFileFormat.STRIDE)
+
+        # Return the file location
+        return file_location
+
     def export_to_parasolid_text(self, location: Path | str | None = None) -> Path:
         """Export the design to a Parasolid text file.
 
@@ -381,7 +512,11 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = "x_t" if self._grpc_client.backend_type == BackendType.LINUX_SERVICE else "xmt_txt"
+        ext = (
+            "x_t"
+            if self._grpc_client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX)
+            else "xmt_txt"
+        )
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)
@@ -407,7 +542,11 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = "x_b" if self._grpc_client.backend_type == BackendType.LINUX_SERVICE else "xmt_bin"
+        ext = (
+            "x_b"
+            if self._grpc_client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX)
+            else "xmt_bin"
+        )
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)

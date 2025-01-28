@@ -974,6 +974,11 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
+        # FMD
+        fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
+        design.download(fmd_file, format=DesignFileFormat.FMD)
+        assert fmd_file.exists()
+
         # Windows-only HOOPS exports for now
         step_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.stp"
         design.download(step_file, format=DesignFileFormat.STEP)

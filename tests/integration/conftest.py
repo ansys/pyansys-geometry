@@ -57,6 +57,26 @@ def skip_if_core_service(modeler: Modeler, test_name: str, element_not_available
         )  # skip!
 
 
+def skip_if_windows(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on Linux."""
+    if modeler.client.backend_type in (
+        BackendType.SPACECLAIM,
+        BackendType.WINDOWS_SERVICE,
+        BackendType.DISCOVERY,
+    ):
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Windows services."
+        )  # skip!
+
+
+def skip_if_spaceclaim(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on SpaceClaim."""
+    if modeler.client.backend_type == BackendType.SPACECLAIM:
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on SpaceClaim."
+        )  # skip!
+
+
 @pytest.fixture(scope="session")
 def docker_instance(use_existing_service):
     # This will only have a value in case that:

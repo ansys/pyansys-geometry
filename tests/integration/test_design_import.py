@@ -39,6 +39,46 @@ from ansys.geometry.core.tools.unsupported import PersistentIdType
 from .conftest import FILES_DIR, IMPORT_FILES_DIR, skip_if_core_service
 
 
+def _create_flat_design(modeler: Modeler) -> Design:
+    """Create a demo design for the tests."""
+    modeler.create_design("Demo")
+
+    design_name = "DemoFlatDesign"
+    design = modeler.create_design(design_name)
+
+    # Create a car
+    comp1 = design.add_component("A")
+    wheel1 = design.add_component("Wheel1")
+
+    # Create car base frame
+    sketch = Sketch().box(Point2D([5, 10]), 10, 20)
+    design.add_component("Base").extrude_sketch("BaseBody", sketch, 5)
+
+    # Create first wheel
+    sketch = Sketch(Plane(direction_x=Vector3D([0, 1, 0]), direction_y=Vector3D([0, 0, 1])))
+    sketch.circle(Point2D([0, 0]), 5)
+    wheel1.extrude_sketch("Wheel", sketch, -5)
+
+    # Create 3 other wheels and move them into position
+    rotation_origin = Point3D([0, 0, 0])
+    rotation_direction = UnitVector3D([0, 0, 1])
+
+    wheel2 = design.add_component("Wheel2", wheel1)
+    wheel2.modify_placement(Vector3D([0, 20, 0]))
+
+    wheel3 = design.add_component("Wheel3", wheel1)
+    wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_origin, rotation_direction, np.pi)
+
+    wheel4 = design.add_component("Wheel4", wheel1)
+    wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_origin, rotation_direction, np.pi)
+
+    # Create top of car - applies to BOTH cars
+    sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
+    comp1.extrude_sketch("Top", sketch, 5)
+
+    return design
+
+
 def _checker_method(comp: Component, comp_ref: Component, precise_check: bool = True) -> None:
     # Check component features
     if precise_check:
@@ -171,7 +211,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
     comp1.extrude_sketch("Top", sketch, 5)
 
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+    if BackendType.is_core_service(modeler.client.backend_type):
         modeler.unsupported.set_export_id(base_body.id, PersistentIdType.PRIME_ID, "1")
         modeler.unsupported.set_export_id(wheel_body.id, PersistentIdType.PRIME_ID, "2")
 
@@ -185,11 +225,8 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
             "2", PersistentIdType.PRIME_ID
         )
 
-        # requires a change to core service, uncomment on next core service update
-        # assert base_body.id in [b.id for b in bodies1]
-        # assert wheel_body.id in [b.id for b in bodies2]
-        assert base_body.id not in [b.id for b in bodies1]
-        assert wheel_body.id not in [b.id for b in bodies2]
+        assert base_body.id in [b.id for b in bodies1]
+        assert wheel_body.id in [b.id for b in bodies2]
 
         faces = modeler.unsupported.get_face_occurrences_from_import_id(
             "3", PersistentIdType.PRIME_ID
@@ -198,11 +235,8 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
             "4", PersistentIdType.PRIME_ID
         )
 
-        # requires a change to core service, uncomment on next core service update
-        # assert base_body.faces[0].id in [f.id for f in faces]
-        # assert base_body.edges[0].id in [e.id for e in edges]
-        assert base_body.faces[0].id not in [f.id for f in faces]
-        assert base_body.edges[0].id not in [e.id for e in edges]
+        assert base_body.faces[0].id in [f.id for f in faces]
+        assert base_body.edges[0].id in [e.id for e in edges]
 
     file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
     design.download(str(file))
@@ -256,6 +290,18 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         # .prt
         design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "disk1.prt"))
         assert len(design2.bodies) == 1
+
+    if modeler.client.backend_type not in (
+        BackendType.SPACECLAIM,
+        BackendType.WINDOWS_SERVICE,
+        BackendType.DISCOVERY,
+    ):
+        design_stride = _create_flat_design(modeler)
+        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.stride"
+        design_stride.download(file, DesignFileFormat.STRIDE)
+        design2 = modeler.open_file(file)
+        design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.stride"))
+        _checker_method(design2, design3, False)
 
 
 def test_design_insert(modeler: Modeler):
