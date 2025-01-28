@@ -36,7 +36,7 @@ from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import PersistentIdType
 
-from .conftest import FILES_DIR, IMPORT_FILES_DIR, skip_if_linux
+from .conftest import FILES_DIR, IMPORT_FILES_DIR, skip_if_core_service
 
 
 def _create_flat_design(modeler: Modeler) -> Design:
@@ -270,7 +270,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     _checker_method(design, design2, True)
 
     # Test HOOPS formats (Windows only)
-    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+    if not BackendType.is_core_service(modeler.client.backend_type):
         # IGES
         #
         # TODO: Something has gone wrong with IGES
@@ -329,8 +329,8 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
 def test_design_insert(modeler: Modeler):
     """Test inserting a file into the design."""
-    # Skip for Linux service
-    skip_if_linux(modeler, test_design_insert.__name__, "insert_file")
+    # Skip for CoreService
+    skip_if_core_service(modeler, test_design_insert.__name__, "insert_file")
 
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
@@ -352,8 +352,8 @@ def test_design_insert_with_import(modeler: Modeler):
     """Test inserting a file into the design through the external format import
     process.
     """
-    # Skip for Linux service
-    skip_if_linux(modeler, test_design_insert_with_import.__name__, "insert_file")
+    # Skip for CoreService
+    skip_if_core_service(modeler, test_design_insert_with_import.__name__, "insert_file")
 
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")

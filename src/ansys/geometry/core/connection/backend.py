@@ -33,6 +33,29 @@ class BackendType(Enum):
     SPACECLAIM = 1
     WINDOWS_SERVICE = 2
     LINUX_SERVICE = 3
+    CORE_WINDOWS = 4
+    CORE_LINUX = 5
+    DISCOVERY_HEADLESS = 6
+
+    @staticmethod
+    def is_core_service(backend_type: "BackendType") -> bool:
+        """Determine whether the backend is CoreService based or not.
+
+        Parameters
+        ----------
+        backend_type : BackendType
+            The backend type to check whether or not it's a CoreService type.
+
+        Returns
+        -------
+        bool
+            True if the backend is CoreService based, False otherwise.
+        """
+        return backend_type in (
+            BackendType.LINUX_SERVICE,
+            BackendType.CORE_WINDOWS,
+            BackendType.CORE_LINUX,
+        )
 
 
 class ApiVersions(Enum):

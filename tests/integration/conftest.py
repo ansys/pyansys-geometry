@@ -49,11 +49,11 @@ DSCOSCRIPTS_FILES_DIR = Path(Path(__file__).parent, "files", "disco_scripts")
 FILES_DIR = Path(Path(__file__).parent, "files")
 
 
-def skip_if_linux(modeler: Modeler, test_name: str, element_not_available: str):
-    """Skip test if running on Linux."""
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+def skip_if_core_service(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on CoreService."""
+    if BackendType.is_core_service(modeler.client.backend_type):
         pytest.skip(
-            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Linux service."
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on CoreService."
         )  # skip!
 
 
