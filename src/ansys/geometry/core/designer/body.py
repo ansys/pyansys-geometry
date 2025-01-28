@@ -710,7 +710,7 @@ class IBody(ABC):
         return
 
     @protect_grpc
-    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:
+    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Unite two (or more) bodies.
 
         Parameters
@@ -721,7 +721,15 @@ class IBody(ABC):
         Notes
         -----
         The ``self`` parameter is directly modified with the result, and
-        the ``other`` parameter is consumed.
+        keep_other : bool, default: False
+            Whether to retain the united body or not.
+
+        Notes
+        -----
+        The ``self`` parameter is directly modified with the result, and
+        the ``other`` parameter is consumed. Thus, it is important to make
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the united body is retained.
         """
         return
 
@@ -1275,7 +1283,7 @@ class MasterBody(IBody):
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
 
-    def unite(self, other: Union["Body", Iterable["Body"]]) -> None:  # noqa: D102
+    def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
