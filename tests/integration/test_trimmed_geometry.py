@@ -87,11 +87,7 @@ def create_hedgehog(modeler: Modeler):
                 create_sketch_line(design, p1, p2)
                 current_gap += 1
     # Add isoparametric curves, not on linux
-    if modeler.client.backend_type not in (
-        BackendType.LINUX_SERVICE,
-        BackendType.CORE_LINUX,
-        BackendType.CORE_WINDOWS,
-    ):
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
         param = 0.20
         while param <= 1:
             for face in body.faces:

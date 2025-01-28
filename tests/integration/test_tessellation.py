@@ -69,11 +69,7 @@ def test_body_tessellate(modeler: Modeler):
     blocks_2 = body_2.tessellate()
     assert "MultiBlock" in str(blocks_2)
     assert blocks_2.n_blocks == 3
-    if modeler.client.backend_type not in (
-        BackendType.LINUX_SERVICE,
-        BackendType.CORE_LINUX,
-        BackendType.CORE_WINDOWS,
-    ):
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
         assert blocks_2.bounds == pytest.approx(
             [0.019999999999999997, 0.04, 0.020151922469877917, 0.03984807753012208, 0.0, 0.03],
             rel=1e-6,
@@ -90,11 +86,7 @@ def test_body_tessellate(modeler: Modeler):
 
     # Tessellate the body merging the individual faces
     mesh_2 = body_2.tessellate(merge=True)
-    if modeler.client.backend_type not in (
-        BackendType.LINUX_SERVICE,
-        BackendType.CORE_LINUX,
-        BackendType.CORE_WINDOWS,
-    ):
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
         assert "PolyData" in str(mesh_2)
         assert mesh_2.n_cells == 72
         assert mesh_2.n_points == 76
@@ -143,11 +135,7 @@ def test_component_tessellate(modeler: Modeler):
     mesh = comp.tessellate()
     comp.plot()
     assert "PolyData" in str(mesh)
-    if modeler.client.backend_type not in (
-        BackendType.LINUX_SERVICE,
-        BackendType.CORE_LINUX,
-        BackendType.CORE_WINDOWS,
-    ):
+    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
         assert mesh.n_cells == 3280
         assert mesh.n_faces == 3280
         assert mesh.n_arrays == 0
