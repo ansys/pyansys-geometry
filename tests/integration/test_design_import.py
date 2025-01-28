@@ -33,8 +33,8 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.misc.unsupported import PersistentIdType
 from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.tools.unsupported import PersistentIdType
 
 from .conftest import FILES_DIR, IMPORT_FILES_DIR, skip_if_linux
 

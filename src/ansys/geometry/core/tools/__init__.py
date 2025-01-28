@@ -30,3 +30,4 @@ from ansys.geometry.core.tools.problem_areas import (
 )
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.tools.repair_tools import RepairTools
+from ansys.geometry.core.tools.unsupported import PersistentIdType, UnsupportedCommands
