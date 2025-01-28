@@ -717,10 +717,6 @@ class IBody(ABC):
         ----------
         other : Body
             Body to unite with the ``self`` parameter.
-
-        Notes
-        -----
-        The ``self`` parameter is directly modified with the result, and
         keep_other : bool, default: False
             Whether to retain the united body or not.
 
