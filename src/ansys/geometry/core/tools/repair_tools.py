@@ -59,7 +59,6 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
-
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
@@ -541,6 +540,8 @@ class RepairTools:
         )
         return message
 
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
     def inspect_geometry(self, bodies: list["Body"]) -> list[InspectResult]:
         """Return a list of geometry issues organized by body.
 
@@ -558,23 +559,20 @@ class RepairTools:
             List of objects representing geometry issues and the bodies where issues are found.
         """
         parent_design = self._modeler.get_active_design()
-        #parent_design = get_design_from_body(bodies[0])
         body_ids = [body.id for body in bodies]
         inspect_result_response = self._repair_stub.InspectGeometry(
             InspectGeometryRequest(bodies=body_ids)
         )
-        aaa = self.__create_inspect_result_from_response(
+        return self.__create_inspect_result_from_response(
             parent_design, inspect_result_response.issues_by_body
         )
-        return aaa
 
     def __create_inspect_result_from_response(
         self, design, inspect_geometry_results: list["InspectGeometryResult"]
     ) -> list[InspectResult]:
         inspect_results = []
         for inspect_geometry_result in inspect_geometry_results:
-            #body = get_bodies_from_ids(design, [inspect_geometry_result.body])
-            body = inspect_geometry_result.body
+            body = get_bodies_from_ids(design, [inspect_geometry_result.body])
             issues = self.__create_issues_from_response(design, inspect_geometry_result.issues)
             inspect_result = InspectResult(grpc_client=self._grpc_client, body=body, issues=issues)
             inspect_results.append(inspect_result)
@@ -615,6 +613,8 @@ class RepairTools:
             issues.append(issue)
         return issues
 
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
     def repair_geometry(self, bodies: list["Body"]) -> RepairToolMessage:
         """Attempt to repairs the geometry for the given bodies.
 
@@ -623,7 +623,7 @@ class RepairTools:
         Parameters
         ----------
         bodies : list[Body]
-            List of bodies where to ateempt to repair the geometry.
+            List of bodies where to attempt to repair the geometry.
 
         Returns
         -------
