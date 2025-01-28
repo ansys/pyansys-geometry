@@ -30,10 +30,7 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import (
-    skip_if_linux, 
-    skip_if_windows,
-    skip_if_spaceclaim)
+from .conftest import skip_if_linux, skip_if_spaceclaim, skip_if_windows
 
 
 def _create_demo_design(modeler: Modeler) -> Design:

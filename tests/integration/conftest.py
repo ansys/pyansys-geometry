@@ -67,7 +67,8 @@ def skip_if_windows(modeler: Modeler, test_name: str, element_not_available: str
         pytest.skip(
             reason=f"Skipping '{test_name}'. '{element_not_available}' not on Windows services."
         )  # skip!
-        
+
+
 def skip_if_spaceclaim(modeler: Modeler, test_name: str, element_not_available: str):
     """Skip test if running on SpaceClaim."""
     if modeler.client.backend_type == BackendType.SPACECLAIM:

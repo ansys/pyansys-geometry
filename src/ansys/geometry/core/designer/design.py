@@ -533,7 +533,7 @@ class Design(Component):
         """
         # Determine the extension based on the backend type
         ext = "x_b" if self._grpc_client.backend_type == BackendType.LINUX_SERVICE else "xmt_bin"
-        
+
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)
 
