@@ -211,7 +211,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
     comp1.extrude_sketch("Top", sketch, 5)
 
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+    if BackendType.is_core_service(modeler.client.backend_type):
         modeler.unsupported.set_export_id(base_body.id, PersistentIdType.PRIME_ID, "1")
         modeler.unsupported.set_export_id(wheel_body.id, PersistentIdType.PRIME_ID, "2")
 
