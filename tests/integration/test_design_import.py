@@ -36,7 +36,7 @@ from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import PersistentIdType
 
-from .conftest import FILES_DIR, IMPORT_FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR, IMPORT_FILES_DIR
 
 
 def _create_flat_design(modeler: Modeler) -> Design:
