@@ -57,6 +57,26 @@ def skip_if_core_service(modeler: Modeler, test_name: str, element_not_available
         )  # skip!
 
 
+def skip_if_windows(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on Windows."""
+    if modeler.client.backend_type in (
+        BackendType.SPACECLAIM,
+        BackendType.WINDOWS_SERVICE,
+        BackendType.DISCOVERY,
+    ):
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Windows services."
+        )  # skip!
+
+
+def skip_if_spaceclaim(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on SpaceClaim."""
+    if modeler.client.backend_type == BackendType.SPACECLAIM:
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on SpaceClaim."
+        )  # skip!
+
+
 @pytest.fixture(scope="session")
 def docker_instance(use_existing_service):
     # This will only have a value in case that:
@@ -116,7 +136,7 @@ def docker_instance(use_existing_service):
 
 
 @pytest.fixture(scope="session")
-def modeler(docker_instance):
+def session_modeler(docker_instance):
     # Log to file - accepts str or Path objects, Path is passed for testing/coverage purposes.
     log_file_path = Path(__file__).absolute().parent / "logs" / "integration_tests_logs.txt"
 
@@ -134,6 +154,18 @@ def modeler(docker_instance):
     # Cleanup on exit
     modeler.exit()
     assert modeler.client.is_closed
+
+
+@pytest.fixture(scope="function")
+def modeler(session_modeler: Modeler):
+    # Yield the modeler
+    yield session_modeler
+
+    # Cleanup on exit
+    [design.close() for design in session_modeler.designs.values()]
+
+    # Empty the designs dictionary
+    session_modeler._designs = {}
 
 
 @pytest.fixture(scope="session", autouse=True)

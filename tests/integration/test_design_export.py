@@ -30,7 +30,7 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import skip_if_core_service
+from .conftest import skip_if_core_service, skip_if_spaceclaim, skip_if_windows
 
 
 def _create_demo_design(modeler: Modeler) -> Design:
@@ -71,6 +71,46 @@ def _create_demo_design(modeler: Modeler) -> Design:
     # Create 2nd car
     car2 = design.add_component("Car2", car1)
     car2.modify_placement(Vector3D([30, 0, 0]))
+
+    # Create top of car - applies to BOTH cars
+    sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
+    comp1.extrude_sketch("Top", sketch, 5)
+
+    return design
+
+
+def _create_flat_design(modeler: Modeler) -> Design:
+    """Create a demo design for the tests."""
+    modeler.create_design("Demo")
+
+    design_name = "DemoFlatDesign"
+    design = modeler.create_design(design_name)
+
+    # Create a car
+    comp1 = design.add_component("A")
+    wheel1 = design.add_component("Wheel1")
+
+    # Create car base frame
+    sketch = Sketch().box(Point2D([5, 10]), 10, 20)
+    design.add_component("Base").extrude_sketch("BaseBody", sketch, 5)
+
+    # Create first wheel
+    sketch = Sketch(Plane(direction_x=Vector3D([0, 1, 0]), direction_y=Vector3D([0, 0, 1])))
+    sketch.circle(Point2D([0, 0]), 5)
+    wheel1.extrude_sketch("Wheel", sketch, -5)
+
+    # Create 3 other wheels and move them into position
+    rotation_origin = Point3D([0, 0, 0])
+    rotation_direction = UnitVector3D([0, 0, 1])
+
+    wheel2 = design.add_component("Wheel2", wheel1)
+    wheel2.modify_placement(Vector3D([0, 20, 0]))
+
+    wheel3 = design.add_component("Wheel3", wheel1)
+    wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_origin, rotation_direction, np.pi)
+
+    wheel4 = design.add_component("Wheel4", wheel1)
+    wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_origin, rotation_direction, np.pi)
 
     # Create top of car - applies to BOTH cars
     sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
@@ -126,6 +166,52 @@ def test_export_to_scdocx(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     assert file_location.exists()
 
     # Import the scdocx
+    design_read = modeler.open_file(file_location)
+
+    # Check the imported design
+    _checker_method(design_read, design, True)
+
+
+def test_export_to_stride(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test exporting a design to stride format."""
+    skip_if_windows(modeler, test_export_to_stride.__name__, "design")  # Skip test on SC/DMS
+    # Create a demo design
+    design = _create_flat_design(modeler)
+
+    # Define the location and expected file location
+    location = tmp_path_factory.mktemp("test_export_to_stride")
+    file_location = location / f"{design.name}.stride"
+
+    # Export to stride
+    design.export_to_stride(location)
+
+    # Check the exported file
+    assert file_location.exists()
+
+    # Import the stride
+    design_read = modeler.open_file(file_location)
+
+    # Check the imported design
+    _checker_method(design_read, design, False)
+
+
+def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test exporting a design to dsco format."""
+    skip_if_spaceclaim(modeler, test_export_to_disco.__name__, "disco export")
+    # Create a demo design
+    design = _create_demo_design(modeler)
+
+    # Define the location and expected file location
+    location = tmp_path_factory.mktemp("test_export_to_disco")
+    file_location = location / f"{design.name}.dsco"
+
+    # Export to dsco
+    design.export_to_disco(location)
+
+    # Check the exported file
+    assert file_location.exists()
+
+    # Import the dsco
     design_read = modeler.open_file(file_location)
 
     # Check the imported design
@@ -205,6 +291,7 @@ def test_export_to_step(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 def test_export_to_iges(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to IGES format."""
     skip_if_core_service(modeler, test_export_to_iges.__name__, "iges_export")
+
     # Create a demo design
     design = _create_demo_design(modeler)
 
@@ -225,6 +312,7 @@ def test_export_to_iges(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 def test_export_to_fmd(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to FMD format."""
     skip_if_core_service(modeler, test_export_to_fmd.__name__, "fmd_export")
+
     # Create a demo design
     design = _create_demo_design(modeler)
 

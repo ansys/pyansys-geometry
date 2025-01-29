@@ -25,6 +25,7 @@ from ansys.geometry.core.shapes.curves.circle import Circle, CircleEvaluation
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.ellipse import Ellipse, EllipseEvaluation
 from ansys.geometry.core.shapes.curves.line import Line, LineEvaluation
+from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve, NURBSCurveEvaluation
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
