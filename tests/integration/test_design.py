@@ -174,27 +174,29 @@ def test_assigning_and_getting_material(modeler: Modeler):
     body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
 
     # Assign a material to a Body
-    body.assign_material(material)
-    material = body.get_assigned_material
+    body.material = material
+    mat_service = body.material
 
     # Test material and property retrieval
-    assert material.name == "steel"
-    assert len(material.properties) == 3
-    assert material.properties[MaterialPropertyType.DENSITY].type == MaterialPropertyType.DENSITY
-    assert material.properties[MaterialPropertyType.DENSITY].name == "Density"
-    assert material.properties[MaterialPropertyType.DENSITY].quantity == density
+    assert mat_service.name == "steel"
+    assert len(mat_service.properties) == 3
+    assert mat_service.properties[MaterialPropertyType.DENSITY].type == MaterialPropertyType.DENSITY
+    assert mat_service.properties[MaterialPropertyType.DENSITY].name == "Density"
+    assert mat_service.properties[MaterialPropertyType.DENSITY].quantity == density
     assert (
-        material.properties[MaterialPropertyType.POISSON_RATIO].type
+        mat_service.properties[MaterialPropertyType.POISSON_RATIO].type
         == MaterialPropertyType.POISSON_RATIO
     )
-    assert material.properties[MaterialPropertyType.POISSON_RATIO].name == "myPoisson"
-    assert material.properties[MaterialPropertyType.POISSON_RATIO].quantity == poisson_ratio
+    assert mat_service.properties[MaterialPropertyType.POISSON_RATIO].name == "myPoisson"
+    assert mat_service.properties[MaterialPropertyType.POISSON_RATIO].quantity == poisson_ratio
     assert (
-        material.properties[MaterialPropertyType.TENSILE_STRENGTH].type
+        mat_service.properties[MaterialPropertyType.TENSILE_STRENGTH].type
         == MaterialPropertyType.TENSILE_STRENGTH
     )
-    assert material.properties[MaterialPropertyType.TENSILE_STRENGTH].name == "myTensile"
-    assert material.properties[MaterialPropertyType.TENSILE_STRENGTH].quantity == tensile_strength
+    assert mat_service.properties[MaterialPropertyType.TENSILE_STRENGTH].name == "myTensile"
+    assert (
+        mat_service.properties[MaterialPropertyType.TENSILE_STRENGTH].quantity == tensile_strength
+    )
 
 
 def test_face_to_body_creation(modeler: Modeler):

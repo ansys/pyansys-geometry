@@ -141,6 +141,11 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def _grpc_id(self) -> EntityIdentifier:
+        """Entity identifier of this body on the server side."""
+        return
+
+    @abstractmethod
     def name(self) -> str:
         """Get the name of the body."""
         return
@@ -244,6 +249,17 @@ class IBody(ABC):
         Notes
         -----
         When dealing with a planar surface, a value of ``0`` is returned as a volume.
+        """
+        return
+
+    @abstractmethod
+    def material(self) -> Material:
+        """Get the assigned material of the body.
+
+        Returns
+        -------
+        Material
+            Material assigned to the body.
         """
         return
 
@@ -587,12 +603,12 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def remove_faces(self, selection: Union["Face", list["Face"]], offset: Real) -> bool:
+    def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:
         """Shell by removing a given set of faces.
 
         Parameters
         ----------
-        selection : Face | List[Face]
+        selection : Face | Iterable[Face]
             Face or faces to be removed.
         offset : Real
             Shell thickness.
@@ -602,6 +618,7 @@ class IBody(ABC):
         bool
             ``True`` when successful, ``False`` when failed.
         """
+        return
 
     @abstractmethod
     def plot(
@@ -799,13 +816,12 @@ class MasterBody(IBody):
         return wrapper
 
     @property
-    def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
-        """Entity identifier of this body on the server side."""
-        return EntityIdentifier(id=self._id)
-
-    @property
     def id(self) -> str:  # noqa: D102
         return self._id
+
+    @property
+    def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
+        return EntityIdentifier(id=self._id)
 
     @property
     def name(self) -> str:  # noqa: D102
@@ -824,6 +840,7 @@ class MasterBody(IBody):
         self.set_fill_style(value)
 
     @property
+    @protect_grpc
     def is_suppressed(self) -> bool:  # noqa: D102
         response = self._bodies_stub.IsSuppressed(EntityIdentifier(id=self._id))
         return response.result
@@ -833,6 +850,7 @@ class MasterBody(IBody):
         self.set_suppressed(value)
 
     @property
+    @protect_grpc
     def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
         if self._color is None and self.is_alive:
@@ -915,6 +933,14 @@ class MasterBody(IBody):
             volume_response = self._bodies_stub.GetVolume(self._grpc_id)
             return Quantity(volume_response.volume, DEFAULT_UNITS.SERVER_VOLUME)
 
+    @property
+    def material(self) -> Material:  # noqa: D102
+        return self.get_assigned_material()
+
+    @material.setter
+    def material(self, value: Material):  # noqa: D102
+        self.assign_material(value)
+
     @protect_grpc
     @check_input_types
     def assign_material(self, material: Material) -> None:  # noqa: D102
@@ -923,7 +949,6 @@ class MasterBody(IBody):
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
 
-    @property
     @protect_grpc
     def get_assigned_material(self) -> Material:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving assigned material for body {self.id}.")
@@ -1221,7 +1246,9 @@ class MasterBody(IBody):
             return comp
 
     @protect_grpc
+    @reset_tessellation_cache
     @check_input_types
+    @min_backend_version(25, 2, 0)
     def shell_body(self, offset: Real) -> bool:  # noqa: D102
         self._grpc_client.log.debug(f"Shelling body {self.id} to offset {offset}.")
 
@@ -1232,13 +1259,17 @@ class MasterBody(IBody):
             )
         )
 
+        if result.success is False:
+            self._grpc_client.log.warning(f"Failed to shell body {self.id}.")
+
         return result.success
 
     @protect_grpc
     @reset_tessellation_cache
     @check_input_types
-    def remove_faces(self, selection: Union["Face", list["Face"]], offset: Real) -> bool:  # noqa: D102
-        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+    @min_backend_version(25, 2, 0)
+    def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
+        selection: list[Face] = selection if isinstance(selection, Iterable) else [selection]
         check_type_all_elements_in_iterable(selection, Face)
 
         # check if faces belong to this body
@@ -1254,6 +1285,9 @@ class MasterBody(IBody):
                 offset=offset,
             )
         )
+
+        if result.success is False:
+            self._grpc_client.log.warning(f"Failed to remove faces from body {self.id}.")
 
         return result.success
 
@@ -1363,7 +1397,7 @@ class Body(IBody):
         return self._id
 
     @property
-    def _grpc_id(self) -> EntityIdentifier:
+    def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
         return EntityIdentifier(id=self._id)
 
     @property
@@ -1481,14 +1515,22 @@ class Body(IBody):
     def volume(self) -> Quantity:  # noqa: D102
         return self._template.volume
 
+    @property
+    @ensure_design_is_active
+    def material(self) -> Material:  # noqa: D102
+        return self._template.material
+
+    @material.setter
+    def material(self, value: Material):  # noqa: D102
+        self._template.material = value
+
     @ensure_design_is_active
     def assign_material(self, material: Material) -> None:  # noqa: D102
         self._template.assign_material(material)
 
-    @property
     @ensure_design_is_active
     def get_assigned_material(self) -> Material:  # noqa: D102
-        return self._template.get_assigned_material
+        return self._template.get_assigned_material()
 
     @ensure_design_is_active
     def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102
@@ -1684,7 +1726,7 @@ class Body(IBody):
         return self._template.shell_body(offset)
 
     @ensure_design_is_active
-    def remove_faces(self, selection: Union["Face", list["Face"]], offset: Real) -> bool:  # noqa: D102
+    def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
         return self._template.remove_faces(selection, offset)
 
     def plot(  # noqa: D102
@@ -1741,6 +1783,8 @@ class Body(IBody):
             self.__generic_boolean_command(other, False, "unite", "union operation failed")
 
     @protect_grpc
+    @reset_tessellation_cache
+    @ensure_design_is_active
     @check_input_types
     def __generic_boolean_command(
         self,
@@ -1752,8 +1796,8 @@ class Body(IBody):
         parent_design = get_design_from_body(self)
         other_bodies = other if isinstance(other, Iterable) else [other]
         if type_bool_op == "intersect":
-            body_ids = [EntityIdentifier(id=body.id) for body in other_bodies]
-            target_ids = [EntityIdentifier(id=body.id) for body in [self]]
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [self._grpc_id]
             request = CombineIntersectBodiesRequest(
                 target_selection=target_ids,
                 tool_selection=body_ids,
@@ -1762,8 +1806,8 @@ class Body(IBody):
             )
             response = self._template._commands_stub.CombineIntersectBodies(request)
         elif type_bool_op == "subtract":
-            body_ids = [EntityIdentifier(id=body.id) for body in other_bodies]
-            target_ids = [EntityIdentifier(id=body.id) for body in [self]]
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [self._grpc_id]
             request = CombineIntersectBodiesRequest(
                 target_selection=target_ids,
                 tool_selection=body_ids,
@@ -1774,7 +1818,7 @@ class Body(IBody):
         elif type_bool_op == "unite":
             bodies = [self]
             bodies.extend(other_bodies)
-            body_ids = [EntityIdentifier(id=body.id) for body in bodies]
+            body_ids = [body._grpc_id for body in bodies]
             request = CombineMergeBodiesRequest(target_selection=body_ids)
             response = self._template._commands_stub.CombineMergeBodies(request)
         else:
