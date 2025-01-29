@@ -110,11 +110,10 @@ print(my_parameters[0].dimension_value)
 print(my_parameters[1].dimension_value)
 ```
 
-After a successful parameter update, the design in the backend might have been updated. Therefore,
-you must refresh the design on the client.
+After a successful parameter update, the design is updated. If we request the design
+plot again, we see the updated design.
 
 ```{code-cell} ipython3
-design = modeler.read_existing_design()
 design.plot()
 ```
 
