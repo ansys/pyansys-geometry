@@ -306,9 +306,6 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
 def test_design_insert(modeler: Modeler):
     """Test inserting a file into the design."""
-    # Skip for CoreService
-    skip_if_core_service(modeler, test_design_insert.__name__, "insert_file")
-
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
     sketch = Sketch()
@@ -321,6 +318,7 @@ def test_design_insert(modeler: Modeler):
 
     # Check that there are two components
     assert len(design.components) == 2
+    assert design._is_active
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "DuplicatesDesign"
 
@@ -329,9 +327,6 @@ def test_design_insert_with_import(modeler: Modeler):
     """Test inserting a file into the design through the external format import
     process.
     """
-    # Skip for CoreService
-    skip_if_core_service(modeler, test_design_insert_with_import.__name__, "insert_file")
-
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
     sketch = Sketch()
@@ -344,5 +339,6 @@ def test_design_insert_with_import(modeler: Modeler):
 
     # Check that there are two components
     assert len(design.components) == 2
+    assert design._is_active
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "Wheel1"

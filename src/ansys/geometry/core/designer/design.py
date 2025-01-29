@@ -983,27 +983,7 @@ class Design(Component):
         self._design_stub.Insert(InsertRequest(filepath=filepath_server))
         self._grpc_client.log.debug(f"File {file_location} successfully inserted into design.")
 
-        # Get a temporal design object to update the current one
-        tmp_design = Design("", self._modeler, read_existing_design=True)
-
-        # Update the reference to the design
-        for component in tmp_design.components:
-            component._parent_component = self
-
-        # Update the design's components - add the new one
-        #
-        # If the list is empty, add the components from the new design
-        if not self._components:
-            self._components.extend(tmp_design.components)
-        else:
-            # Insert operation adds the inserted file as a component to the design.
-            for tmp_component in tmp_design.components:
-                # Otherwise, check which is the new component added
-                for component in self._components:
-                    if component.id == tmp_component.id:
-                        break
-                    # If not equal, add the component - since it has not been found
-                    self._components.append(tmp_component)
+        self._update_design_inplace()
 
         self._grpc_client.log.debug(f"Design {self.name} is successfully updated.")
 
