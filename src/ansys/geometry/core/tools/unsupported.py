@@ -56,9 +56,10 @@ class UnsupportedCommands:
     ----------
     grpc_client : GrpcClient
         gRPC client to use for the geometry commands.
+    modeler : Modeler
+        Modeler instance to use for the geometry commands.
     """
 
-    @protect_grpc
     def __init__(self, grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize an instance of the ``UnsupportedCommands`` class."""
         self._grpc_client = grpc_client
@@ -75,65 +76,59 @@ class UnsupportedCommands:
         Parameters
         ----------
         id_type : PersistentIdType
-            type of id
+            Type of id.
 
         Notes
         -----
-        This cache should be cleared on design change
+        This cache should be cleared on design change.
         """
         request = ImportIdRequest(type=id_type.value)
         self.__id_map[id_type] = self._unsupported_stub.GetImportIdMap(request).id_map
 
-    @protect_grpc
-    @min_backend_version(25, 2, 0)
     def __clear_cache(self) -> None:
         """Clear the cache of persistent id's.
 
         Notes
         -----
-        This should be called on design change
+        This should be called on design change.
         """
         self.__id_map = {}
 
-    @protect_grpc
-    @min_backend_version(25, 2, 0)
     def __is_occurrence(self, master: EntityIdentifier, occ: str) -> bool:
         """Determine if the master is the master of the occurrence.
 
         Parameters
         ----------
         master : EntityIdentifier
-            master moniker
-
+            Master moniker.
         occ : str
-            occurrence moniker
+            Occurrence moniker.
 
         Returns
         -------
-        bool : true if the master is the master of the occurrence
+        bool
+            ``True`` if the master is the master of the occurrence.
 
         """
         master_id = occ.split("/")[-1]
         return master.id == master_id
 
-    @protect_grpc
-    @min_backend_version(25, 2, 0)
     def __get_moniker_from_import_id(
         self, id_type: PersistentIdType, import_id: str
-    ) -> "EntityIdentifier | None":
+    ) -> EntityIdentifier | None:
         """Look up the moniker from the id map.
 
         Parameters
         ----------
         id_type : PersistentIdType
-            type of id
-
+            Type of id.
         import_id : str
-            persistent id
+            Persistent id.
 
         Returns
         -------
-        EntityIdentifier : moniker associated with the id or None
+        EntityIdentifier
+            Moniker associated with the id or None
 
         Notes
         -----
@@ -155,17 +150,11 @@ class UnsupportedCommands:
         Parameters
         ----------
         moniker : str
-            moniker to set the id for
-
+            Moniker to set the id for.
         id_type : PersistentIdType
-            type of id
-
+            Type of id.
         value : str
-            id to set
-
-        Returns
-        -------
-        None
+            Id to set.
         """
         request = ExportIdRequest(
             moniker=EntityIdentifier(id=moniker), id=value, type=id_type.value
@@ -173,8 +162,6 @@ class UnsupportedCommands:
         self._unsupported_stub.SetExportId(request)
         self.__id_map = {}
 
-    @protect_grpc
-    @min_backend_version(25, 2, 0)
     def get_body_occurrences_from_import_id(
         self, import_id: str, id_type: PersistentIdType
     ) -> list["Body"]:
@@ -183,14 +170,14 @@ class UnsupportedCommands:
         Parameters
         ----------
         import_id : str
-            persistent id
-
+            Persistent id
         id_type : PersistentIdType
-            type of id
+            Type of id
 
         Returns
         -------
-        None
+        list[Body]
+            List of body occurrences.
         """
         moniker = self.__get_moniker_from_import_id(id_type, import_id)
 
@@ -204,8 +191,6 @@ class UnsupportedCommands:
             if self.__is_occurrence(moniker, body.id)
         ]
 
-    @protect_grpc
-    @min_backend_version(25, 2, 0)
     def get_face_occurrences_from_import_id(
         self, import_id: str, id_type: PersistentIdType
     ) -> list["Face"]:
@@ -214,14 +199,14 @@ class UnsupportedCommands:
         Parameters
         ----------
         import_id : str
-            persistent id
-
+            Persistent id.
         id_type : PersistentIdType
-            type of id
+            Type of id.
 
         Returns
         -------
-        None
+        list[Face]
+            List of face occurrences.
         """
         moniker = self.__get_moniker_from_import_id(id_type, import_id)
 
@@ -236,8 +221,6 @@ class UnsupportedCommands:
             if self.__is_occurrence(moniker, face.id)
         ]
 
-    @protect_grpc
-    @min_backend_version(25, 2, 0)
     def get_edge_occurrences_from_import_id(
         self, import_id: str, id_type: PersistentIdType
     ) -> list["Edge"]:
@@ -246,14 +229,14 @@ class UnsupportedCommands:
         Parameters
         ----------
         import_id : str
-           persistent id
-
+           Persistent id.
         id_type : PersistentIdType
-           type of id
+           Type of id.
 
         Returns
         -------
-        None
+        list[Edge]
+           List of edge occurrences.
         """
         moniker = self.__get_moniker_from_import_id(id_type, import_id)
 

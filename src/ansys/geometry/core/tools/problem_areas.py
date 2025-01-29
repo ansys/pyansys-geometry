@@ -69,7 +69,7 @@ class ProblemArea:
     def __init__(self, id: str, grpc_client: GrpcClient):
         """Initialize a new instance of a problem area class."""
         self._id = id
-        self._id_grpc = Int32Value(value=int(id))
+        self._grpc_id = Int32Value(value=int(id))
         self._repair_stub = RepairToolsStub(grpc_client.channel)
 
     @property
@@ -91,7 +91,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
     Parameters
     ----------
     id : str
-        Server-defined ID for the body.
+        Server-defined ID for the problem area.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
     faces : list[Face]
@@ -111,9 +111,10 @@ class DuplicateFaceProblemAreas(ProblemArea):
 
     @property
     def faces(self) -> list["Face"]:
-        """The list of the edges connected to this problem area."""
+        """The list of faces connected to this problem area."""
         return self._faces
 
+    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -127,7 +128,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_face(self.faces[0])
         response = self._repair_stub.FixDuplicateFaces(
-            FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._id_grpc)
+            FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._grpc_id)
         )
         parent_design._update_design_inplace()
         message = RepairToolMessage(
@@ -145,7 +146,7 @@ class MissingFaceProblemAreas(ProblemArea):
     Parameters
     ----------
     id : str
-        Server-defined ID for the body.
+        Server-defined ID for the problem area.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
     edges : list[Edge]
@@ -165,9 +166,10 @@ class MissingFaceProblemAreas(ProblemArea):
 
     @property
     def edges(self) -> list["Edge"]:
-        """The list of the edges connected to this problem area."""
+        """The list of edges connected to this problem area."""
         return self._edges
 
+    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -181,7 +183,7 @@ class MissingFaceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_edge(self.edges[0])
         response = self._repair_stub.FixMissingFaces(
-            FixMissingFacesRequest(missing_face_problem_area_id=self._id_grpc)
+            FixMissingFacesRequest(missing_face_problem_area_id=self._grpc_id)
         )
         parent_design._update_design_inplace()
         message = RepairToolMessage(
@@ -198,7 +200,7 @@ class InexactEdgeProblemAreas(ProblemArea):
     Parameters
     ----------
     id : str
-        Server-defined ID for the body.
+        Server-defined ID for the problem area.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
     edges : list[Edge]
@@ -218,9 +220,10 @@ class InexactEdgeProblemAreas(ProblemArea):
 
     @property
     def edges(self) -> list["Edge"]:
-        """The list of the edges connected to this problem area."""
+        """The list of edges connected to this problem area."""
         return self._edges
 
+    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -234,7 +237,7 @@ class InexactEdgeProblemAreas(ProblemArea):
 
         parent_design = get_design_from_edge(self.edges[0])
         response = self._repair_stub.FixInexactEdges(
-            FixInexactEdgesRequest(inexact_edge_problem_area_id=self._id_grpc)
+            FixInexactEdgesRequest(inexact_edge_problem_area_id=self._grpc_id)
         )
         parent_design._update_design_inplace()
         message = RepairToolMessage(
@@ -251,7 +254,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
     Parameters
     ----------
     id : str
-        Server-defined ID for the body.
+        Server-defined ID for the problem area.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
     edges : list[Edge]
@@ -271,9 +274,10 @@ class ExtraEdgeProblemAreas(ProblemArea):
 
     @property
     def edges(self) -> list["Edge"]:
-        """The list of the ids of the edges connected to this problem area."""
+        """The list of edges connected to this problem area."""
         return self._edges
 
+    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -286,7 +290,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_edge(self.edges[0])
-        request = FixExtraEdgesRequest(extra_edge_problem_area_id=self._id_grpc)
+        request = FixExtraEdgesRequest(extra_edge_problem_area_id=self._grpc_id)
         response = self._repair_stub.FixExtraEdges(request)
         parent_design._update_design_inplace()
         message = RepairToolMessage(
@@ -304,7 +308,7 @@ class ShortEdgeProblemAreas(ProblemArea):
     Parameters
     ----------
     id : str
-        Server-defined ID for the body.
+        Server-defined ID for the problem area.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
     edges : list[Edge]
@@ -324,9 +328,10 @@ class ShortEdgeProblemAreas(ProblemArea):
 
     @property
     def edges(self) -> list["Edge"]:
-        """The list of the ids of the edges connected to this problem area."""
+        """The list of edges connected to this problem area."""
         return self._edges
 
+    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -340,7 +345,7 @@ class ShortEdgeProblemAreas(ProblemArea):
 
         parent_design = get_design_from_edge(self.edges[0])
         response = self._repair_stub.FixShortEdges(
-            FixShortEdgesRequest(short_edge_problem_area_id=self._id_grpc)
+            FixShortEdgesRequest(short_edge_problem_area_id=self._grpc_id)
         )
         parent_design._update_design_inplace()
         message = RepairToolMessage(
@@ -358,7 +363,7 @@ class SmallFaceProblemAreas(ProblemArea):
     Parameters
     ----------
     id : str
-        Server-defined ID for the body.
+        Server-defined ID for the problem area.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
     faces : list[Face]
@@ -378,9 +383,10 @@ class SmallFaceProblemAreas(ProblemArea):
 
     @property
     def faces(self) -> list["Face"]:
-        """The list of the ids of the edges connected to this problem area."""
+        """The list of faces connected to this problem area."""
         return self._faces
 
+    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -394,7 +400,7 @@ class SmallFaceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_face(self.faces[0])
         response = self._repair_stub.FixSmallFaces(
-            FixSmallFacesRequest(small_face_problem_area_id=self._id_grpc)
+            FixSmallFacesRequest(small_face_problem_area_id=self._grpc_id)
         )
         parent_design._update_design_inplace()
         message = RepairToolMessage(
@@ -411,7 +417,7 @@ class SplitEdgeProblemAreas(ProblemArea):
     Parameters
     ----------
     id : str
-        Server-defined ID for the body.
+        Server-defined ID for the problem area.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
     edges : list[Edge]
@@ -434,6 +440,7 @@ class SplitEdgeProblemAreas(ProblemArea):
         """The list of edges connected to this problem area."""
         return self._edges
 
+    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -447,7 +454,7 @@ class SplitEdgeProblemAreas(ProblemArea):
 
         parent_design = get_design_from_edge(self.edges[0])
         response = self._repair_stub.FixSplitEdges(
-            FixSplitEdgesRequest(split_edge_problem_area_id=self._id_grpc)
+            FixSplitEdgesRequest(split_edge_problem_area_id=self._grpc_id)
         )
         parent_design._update_design_inplace()
         message = RepairToolMessage(
@@ -464,7 +471,7 @@ class StitchFaceProblemAreas(ProblemArea):
     Parameters
     ----------
     id : str
-        Server-defined ID for the body.
+        Server-defined ID for the problem area.
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
     bodies : list[Body]
@@ -484,9 +491,10 @@ class StitchFaceProblemAreas(ProblemArea):
 
     @property
     def bodies(self) -> list["Body"]:
-        """The list of the bodies connected to this problem area."""
+        """The list of bodies connected to this problem area."""
         return self._bodies
 
+    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -500,7 +508,7 @@ class StitchFaceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_body(self.bodies[0])
         response = self._repair_stub.FixStitchFaces(
-            FixStitchFacesRequest(stitch_face_problem_area_id=self._id_grpc)
+            FixStitchFacesRequest(stitch_face_problem_area_id=self._grpc_id)
         )
         parent_design._update_design_inplace()
         message = RepairToolMessage(
@@ -512,7 +520,17 @@ class StitchFaceProblemAreas(ProblemArea):
 
 
 class UnsimplifiedFaceProblemAreas(ProblemArea):
-    """Represents a unsimplified face problem area with unique identifier and associated faces."""
+    """Represents a unsimplified face problem area with unique identifier and associated faces.
+
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the problem area.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    faces : list[Face]
+        List of faces associated with the design.
+    """
 
     def __init__(self, id: str, grpc_client: GrpcClient, faces: list["Face"]):
         """Initialize a new instance of the unsimplified face problem area class."""
@@ -522,9 +540,10 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
 
     @property
     def faces(self) -> list["Face"]:
-        """The list of the bodies connected to this problem area."""
+        """The list of faces connected to this problem area."""
         return self._faces
 
+    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -538,7 +557,7 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_face(self.faces[0])
         response = self._repair_stub.FixAdjustSimplify(
-            FixAdjustSimplifyRequest(adjust_simplify_problem_area_id=self._id_grpc)
+            FixAdjustSimplifyRequest(adjust_simplify_problem_area_id=self._grpc_id)
         )
         parent_design._update_design_inplace()
         message = RepairToolMessage(
@@ -570,7 +589,7 @@ class InterferenceProblemAreas(ProblemArea):
 
     @property
     def bodies(self) -> list["Body"]:
-        """The list of the ids of the bodies connected to this problem area."""
+        """The list of the bodies connected to this problem area."""
         return self._bodies
 
     @protect_grpc
@@ -592,7 +611,7 @@ class InterferenceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_body(self.bodies[0])
         response = self._repair_stub.FixInterference(
-            FixInterferenceRequest(interference_problem_area_id=self._id_grpc)
+            FixInterferenceRequest(interference_problem_area_id=self._grpc_id)
         )
         parent_design._update_design_inplace()
         ## The tool does not return the created or modified objects.

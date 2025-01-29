@@ -24,6 +24,7 @@
 from functools import cached_property
 from typing import Optional
 
+from beartype import beartype as check_input_types
 import geomdl.NURBS as geomdl_nurbs  # noqa: N811
 
 from ansys.geometry.core.math import Matrix44, Point3D
@@ -90,6 +91,7 @@ class NURBSCurve(Curve):
         return self._nurbs_curve.weights
 
     @classmethod
+    @check_input_types
     def from_control_points(
         cls,
         control_points: list[Point3D],

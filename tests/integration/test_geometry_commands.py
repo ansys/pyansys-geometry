@@ -232,6 +232,7 @@ def test_extrude_faces_up_to(modeler: Modeler):
 
 
 def test_extrude_edges_and_up_to(modeler: Modeler):
+    """Test extrude edges and up to."""
     design = modeler.create_design("extrude_edges")
     upto = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     upto.translate(UnitVector3D([0, 0, 1]), 5)
@@ -322,6 +323,7 @@ def test_rename_component_object(modeler: Modeler):
 
 
 def test_linear_pattern(modeler: Modeler):
+    """Test linear pattern."""
     design = modeler.create_design("linear_pattern")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-0.4, -0.4]), 0.05), 1)
@@ -401,6 +403,7 @@ def test_linear_pattern(modeler: Modeler):
 
 
 def test_circular_pattern(modeler: Modeler):
+    """Test circular pattern."""
     design = modeler.create_design("d1")
     base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     axis = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 0.01, 0.01), 1)
@@ -444,6 +447,7 @@ def test_circular_pattern(modeler: Modeler):
 
 
 def test_fill_pattern(modeler: Modeler):
+    """Test fill pattern."""
     design = modeler.create_design("d1")
 
     # grid fill pattern
@@ -552,6 +556,7 @@ def test_fill_pattern(modeler: Modeler):
 
 
 def test_revolve_faces(modeler: Modeler):
+    """Test revolve faces."""
     design = modeler.create_design("revolve_faces")
     base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     bodies = modeler.geometry_commands.revolve_faces(
@@ -563,6 +568,7 @@ def test_revolve_faces(modeler: Modeler):
 
 
 def test_revolve_faces_up_to(modeler: Modeler):
+    """Test revolve faces up to."""
     design = modeler.create_design("revolve_faces_up_to")
     base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     bodies = modeler.geometry_commands.revolve_faces_up_to(
@@ -578,6 +584,7 @@ def test_revolve_faces_up_to(modeler: Modeler):
 
 
 def test_revolve_faces_by_helix(modeler: Modeler):
+    """Test revolve faces by helix."""
     design = modeler.create_design("revolve_faces_by_helix")
     base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     bodies = modeler.geometry_commands.revolve_faces_by_helix(
@@ -631,7 +638,7 @@ def test_replace_face(modeler: Modeler):
 
 
 def test_split_body_by_plane(modeler: Modeler):
-    "Test split body by plane"
+    """Test split body by plane"""
     design = modeler.create_design("split_body_by_plane")
 
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
@@ -656,7 +663,7 @@ def test_split_body_by_plane(modeler: Modeler):
 
 
 def test_split_body_by_slicer_face(modeler: Modeler):
-    "Test split body by slicer face"
+    """Test split body by slicer face"""
     design = modeler.create_design("split_body_by_slicer_face")
 
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
@@ -688,8 +695,7 @@ def test_split_body_by_slicer_face(modeler: Modeler):
 
 
 def test_split_body_by_slicer_edge(modeler: Modeler):
-    "Test split body by slicer edge"
-
+    """Test split body by slicer edge"""
     # Skip for Core service
     skip_if_core_service(
         modeler, test_split_body_by_slicer_edge.__name__, "split_body_by_slicer_edge"
@@ -721,7 +727,7 @@ def test_split_body_by_slicer_edge(modeler: Modeler):
 
 
 def test_split_body_by_face(modeler: Modeler):
-    "Test split body by face"
+    """Test split body by face"""
     design = modeler.create_design("split_body_by_face")
 
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)

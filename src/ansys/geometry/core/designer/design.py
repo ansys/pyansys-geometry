@@ -29,7 +29,6 @@ from beartype import beartype as check_input_types
 from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity, UndefinedUnitError
-import semver
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
 from ansys.api.dbu.v0.designs_pb2 import (
@@ -304,31 +303,25 @@ class Design(Component):
 
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
-        if self._modeler.client.backend_version < semver.Version(25, 2, 0):
+        if self._modeler.client.backend_version < (25, 2, 0):
             received_bytes = self.__export_and_download_legacy(format=format)
         else:
             received_bytes = self.__export_and_download(format=format)
 
         # Write to file
-        downloaded_file = Path(file_location).open(mode="wb")
-        downloaded_file.write(received_bytes)
-        downloaded_file.close()
+        file_location.write_bytes(received_bytes)
+        self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
 
-        self._grpc_client.log.debug(
-            f"Design is successfully downloaded at location {file_location}."
-        )
-
-    @protect_grpc
-    @check_input_types
-    @ensure_design_is_active
     def __export_and_download_legacy(
         self,
         format: DesignFileFormat = DesignFileFormat.SCDOCX,
     ) -> bytes:
         """Export and download the design from the server.
 
-            This is a legacy method, which used in versions
-            up to Ansys 25.1.1 products.
+        Notes
+        -----
+        This is a legacy method, which is used in versions
+        up to Ansys 25.1.1 products.
 
         Parameters
         ----------
@@ -364,9 +357,6 @@ class Design(Component):
 
         return received_bytes
 
-    @protect_grpc
-    @check_input_types
-    @ensure_design_is_active
     def __export_and_download(
         self,
         format: DesignFileFormat = DesignFileFormat.SCDOCX,

@@ -692,7 +692,18 @@ def line_to_grpc_line(line: Line) -> GRPCLine:
 
 
 def grpc_material_to_material(material: GRPCMaterial) -> Material:
-    """Convert a material gRPC message to a ``Material`` class."""
+    """Convert a material gRPC message to a ``Material`` class.
+
+    Parameters
+    ----------
+    material : GRPCMaterial
+        Material gRPC message.
+
+    Returns
+    -------
+    Material
+        Converted material.
+    """
     properties = []
     density = Quantity(0, UNITS.kg / UNITS.m**3)
     for property in material.material_properties:
@@ -707,7 +718,18 @@ def grpc_material_to_material(material: GRPCMaterial) -> Material:
 def grpc_material_property_to_material_property(
     material_property: GRPCMaterialProperty,
 ) -> MaterialProperty:
-    """Convert a material property gRPC message to a ``MaterialProperty`` class."""
+    """Convert a material property gRPC message to a ``MaterialProperty`` class.
+
+    Parameters
+    ----------
+    material_property : GRPCMaterialProperty
+        Material property gRPC message.
+
+    Returns
+    -------
+    MaterialProperty
+        Converted material property.
+    """
     try:
         mp_type = MaterialPropertyType.from_id(material_property.id)
     except ValueError:
@@ -721,5 +743,4 @@ def grpc_material_property_to_material_property(
     ):
         mp_quantity = material_property.value
 
-    mp = MaterialProperty(mp_type, material_property.display_name, mp_quantity)
-    return mp
+    return MaterialProperty(mp_type, material_property.display_name, mp_quantity)

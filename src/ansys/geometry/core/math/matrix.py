@@ -23,14 +23,14 @@
 
 from typing import TYPE_CHECKING, Union
 
-if TYPE_CHECKING:
-    from ansys.geometry.core.math.vector import Vector3D  # For type hints
-
 from beartype import beartype as check_input_types
 import numpy as np
 
-from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
+from ansys.geometry.core.misc.checks import check_ndarray_is_float_int, check_type
 from ansys.geometry.core.typing import Real, RealSequence
+
+if TYPE_CHECKING:
+    from ansys.geometry.core.math.vector import Vector3D  # For type hints
 
 DEFAULT_MATRIX33 = np.identity(3)
 """Default value of the 3x3 identity matrix for the ``Matrix33`` class."""
@@ -158,6 +158,11 @@ class Matrix44(Matrix):
          [0. 0. 1. 3.]
          [0. 0. 0. 1.]]
         """
+        from ansys.geometry.core.math.vector import Vector3D
+
+        # Verify the input
+        check_type(translation, Vector3D)
+
         matrix = cls(
             [
                 [1, 0, 0, translation.x],
@@ -168,11 +173,12 @@ class Matrix44(Matrix):
         )
         return matrix
 
-    def is_translation(self, including_identity=False):
+    def is_translation(self, including_identity: bool = False) -> bool:
         """Check if the matrix represents a translation.
 
         This method checks if the matrix represents a translation transformation.
         A translation matrix has the following form:
+
             [1 0 0 tx]
             [0 1 0 ty]
             [0 0 1 tz]
@@ -181,8 +187,8 @@ class Matrix44(Matrix):
         Parameters
         ----------
         including_identity : bool, optional
-            If True, the method will return True for the identity matrix as well.
-            If False, the method will return False for the identity matrix.
+            If ``True``, the method will return ``True`` for the identity matrix as well.
+            If ``False``, the method will return ``False`` for the identity matrix.
 
         Returns
         -------
@@ -267,6 +273,14 @@ class Matrix44(Matrix):
         [0. 0. 1. 0.]
         [0. 0. 0. 1.]]
         """
+        from ansys.geometry.core.math.vector import Vector3D
+
+        # Verify the inputs
+        check_type(direction_x, Vector3D)
+        check_type(direction_y, Vector3D)
+        if direction_z is not None:
+            check_type(direction_z, Vector3D)
+
         if not direction_x.is_perpendicular_to(direction_y):
             raise ValueError("The provided direction vectors are not orthogonal.")
 

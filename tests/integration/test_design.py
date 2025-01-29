@@ -174,27 +174,29 @@ def test_assigning_and_getting_material(modeler: Modeler):
     body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
 
     # Assign a material to a Body
-    body.assign_material(material)
-    material = body.get_assigned_material
+    body.material = material
+    mat_service = body.material
 
     # Test material and property retrieval
-    assert material.name == "steel"
-    assert len(material.properties) == 3
-    assert material.properties[MaterialPropertyType.DENSITY].type == MaterialPropertyType.DENSITY
-    assert material.properties[MaterialPropertyType.DENSITY].name == "Density"
-    assert material.properties[MaterialPropertyType.DENSITY].quantity == density
+    assert mat_service.name == "steel"
+    assert len(mat_service.properties) == 3
+    assert mat_service.properties[MaterialPropertyType.DENSITY].type == MaterialPropertyType.DENSITY
+    assert mat_service.properties[MaterialPropertyType.DENSITY].name == "Density"
+    assert mat_service.properties[MaterialPropertyType.DENSITY].quantity == density
     assert (
-        material.properties[MaterialPropertyType.POISSON_RATIO].type
+        mat_service.properties[MaterialPropertyType.POISSON_RATIO].type
         == MaterialPropertyType.POISSON_RATIO
     )
-    assert material.properties[MaterialPropertyType.POISSON_RATIO].name == "myPoisson"
-    assert material.properties[MaterialPropertyType.POISSON_RATIO].quantity == poisson_ratio
+    assert mat_service.properties[MaterialPropertyType.POISSON_RATIO].name == "myPoisson"
+    assert mat_service.properties[MaterialPropertyType.POISSON_RATIO].quantity == poisson_ratio
     assert (
-        material.properties[MaterialPropertyType.TENSILE_STRENGTH].type
+        mat_service.properties[MaterialPropertyType.TENSILE_STRENGTH].type
         == MaterialPropertyType.TENSILE_STRENGTH
     )
-    assert material.properties[MaterialPropertyType.TENSILE_STRENGTH].name == "myTensile"
-    assert material.properties[MaterialPropertyType.TENSILE_STRENGTH].quantity == tensile_strength
+    assert mat_service.properties[MaterialPropertyType.TENSILE_STRENGTH].name == "myTensile"
+    assert (
+        mat_service.properties[MaterialPropertyType.TENSILE_STRENGTH].quantity == tensile_strength
+    )
 
 
 def test_face_to_body_creation(modeler: Modeler):
@@ -974,11 +976,6 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
-        # FMD
-        fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
-        design.download(fmd_file, format=DesignFileFormat.FMD)
-        assert fmd_file.exists()
-
         # Windows-only HOOPS exports for now
         step_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.stp"
         design.download(step_file, format=DesignFileFormat.STEP)
@@ -1678,7 +1675,6 @@ def test_boolean_body_operations(modeler: Modeler):
     # 1.b.ii
     copy1 = body1.copy(comp1, "Copy1")
     copy1a = body1.copy(comp1, "Copy1a")
-    # with pytest.raises(ValueError):
     copy1.subtract(copy1a)
 
     assert copy1.is_alive
@@ -1789,7 +1785,6 @@ def test_boolean_body_operations(modeler: Modeler):
     # 2.b.ii
     copy1 = body1.copy(comp1_i, "Copy1")
     copy1a = body1.copy(comp1_i, "Copy1a")
-    # with pytest.raises(ValueError):
     copy1.subtract(copy1a)
 
     assert copy1.is_alive
@@ -2839,7 +2834,7 @@ def test_surface_body_creation(modeler: Modeler):
 def test_design_parameters(modeler: Modeler):
     """Test the design parameter's functionality."""
     design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
-    test_parameters = design.get_all_parameters()
+    test_parameters = design.parameters
 
     # Verify the initial parameters
     assert len(test_parameters) == 2

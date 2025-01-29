@@ -22,9 +22,8 @@
 """Provides tools for pulling geometry."""
 
 from enum import Enum, unique
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, Union
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
     CreateCircularPatternRequest,
@@ -46,7 +45,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     SplitBodyRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     line_to_grpc_line,
     plane_to_grpc_plane,
@@ -54,8 +53,9 @@ from ansys.geometry.core.connection.conversions import (
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_body,
@@ -68,7 +68,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
-from ansys.geometry.core.shapes.curves import Line
+from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -128,7 +128,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def chamfer(
         self,
-        selection: Union["Edge", List["Edge"], "Face", List["Face"]],
+        selection: Union["Edge", list["Edge"], "Face", list["Face"]],
         distance: Real,
     ) -> bool:
         """Create a chamfer on an edge or adjust the chamfer of a face.
@@ -165,7 +165,7 @@ class GeometryCommands:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def fillet(
-        self, selection: Union["Edge", List["Edge"], "Face", List["Face"]], radius: Real
+        self, selection: Union["Edge", list["Edge"], "Face", list["Face"]], radius: Real
     ) -> bool:
         """Create a fillet on an edge or adjust the fillet of a face.
 
@@ -200,12 +200,12 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def full_fillet(self, faces: List["Face"]) -> bool:
+    def full_fillet(self, faces: list["Face"]) -> bool:
         """Create a full fillet betweens a collection of faces.
 
         Parameters
         ----------
-        faces : List[Face]
+        faces : list[Face]
             Faces to round.
 
         Returns
@@ -230,7 +230,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def extrude_faces(
         self,
-        faces: Union["Face", List["Face"]],
+        faces: Union["Face", list["Face"]],
         distance: Real,
         direction: UnitVector3D = None,
         extrude_type: ExtrudeType = ExtrudeType.ADD,
@@ -238,12 +238,12 @@ class GeometryCommands:
         pull_symmetric: bool = False,
         copy: bool = False,
         force_do_as_extrude: bool = False,
-    ) -> List["Body"]:
+    ) -> list["Body"]:
         """Extrude a selection of faces.
 
         Parameters
         ----------
-        faces : Face | List[Face]
+        faces : Face | list[Face]
             Faces to extrude.
         distance : Real
             Distance to extrude.
@@ -262,7 +262,7 @@ class GeometryCommands:
 
         Returns
         -------
-        List[Body]
+        list[Body]
             Bodies created by the extrusion if any.
         """
         from ansys.geometry.core.designer.face import Face
@@ -301,7 +301,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def extrude_faces_up_to(
         self,
-        faces: Union["Face", List["Face"]],
+        faces: Union["Face", list["Face"]],
         up_to_selection: Union["Face", "Edge", "Body"],
         seed_point: Point3D,
         direction: UnitVector3D,
@@ -310,12 +310,12 @@ class GeometryCommands:
         pull_symmetric: bool = False,
         copy: bool = False,
         force_do_as_extrude: bool = False,
-    ) -> List["Body"]:
+    ) -> list["Body"]:
         """Extrude a selection of faces up to another object.
 
         Parameters
         ----------
-        faces : Face | List[Face]
+        faces : Face | list[Face]
             Faces to extrude.
         up_to_selection : Face | Edge | Body
             The object to pull the faces up to.
@@ -336,7 +336,7 @@ class GeometryCommands:
 
         Returns
         -------
-        List[Body]
+        list[Body]
             Bodies created by the extrusion if any.
         """
         from ansys.geometry.core.designer.face import Face
@@ -375,7 +375,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def extrude_edges(
         self,
-        edges: Union["Edge", List["Edge"]],
+        edges: Union["Edge", list["Edge"]],
         distance: Real,
         from_face: "Face" = None,
         from_point: Point3D = None,
@@ -384,12 +384,12 @@ class GeometryCommands:
         pull_symmetric: bool = False,
         copy: bool = False,
         natural_extension: bool = False,
-    ) -> List["Body"]:
+    ) -> list["Body"]:
         """Extrude a selection of edges. Provide either a face or a direction and point.
 
         Parameters
         ----------
-        edges : Edge | List[Edge]
+        edges : Edge | list[Edge]
             Edges to extrude.
         distance : Real
             Distance to extrude.
@@ -410,7 +410,7 @@ class GeometryCommands:
 
         Returns
         -------
-        List[Body]
+        list[Body]
             Bodies created by the extrusion if any.
         """
         from ansys.geometry.core.designer.edge import Edge
@@ -454,17 +454,17 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def extrude_edges_up_to(
         self,
-        edges: Union["Edge", List["Edge"]],
+        edges: Union["Edge", list["Edge"]],
         up_to_selection: Union["Face", "Edge", "Body"],
         seed_point: Point3D,
         direction: UnitVector3D,
         extrude_type: ExtrudeType = ExtrudeType.ADD,
-    ) -> List["Body"]:
+    ) -> list["Body"]:
         """Extrude a selection of edges up to another object.
 
         Parameters
         ----------
-        edges : Edge | List[Edge]
+        edges : Edge | list[Edge]
             Edges to extrude.
         up_to_selection : Face, default: None
             The object to pull the faces up to.
@@ -477,7 +477,7 @@ class GeometryCommands:
 
         Returns
         -------
-        List[Body]
+        list[Body]
             Bodies created by the extrusion if any.
         """
         from ansys.geometry.core.designer.edge import Edge
@@ -512,14 +512,14 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def rename_object(
         self,
-        selection: Union[List["Body"], List["Component"], List["Face"], List["Edge"]],
+        selection: Union[list["Body"], list["Component"], list["Face"], list["Edge"]],
         name: str,
     ) -> bool:
         """Rename an object.
 
         Parameters
         ----------
-        selection : List[Body] | List[Component] | List[Face] | List[Edge]
+        selection : list[Body] | list[Component] | list[Face] | list[Edge]
             Selection of the object to rename.
         name : str
             New name for the object.
@@ -530,15 +530,13 @@ class GeometryCommands:
             ``True`` when successful, ``False`` when failed.
         """
         result = self._commands_stub.RenameObject(
-            RenameObjectRequest(
-                selection=[EntityIdentifier(id=object._id) for object in selection], name=name
-            )
+            RenameObjectRequest(selection=[object._grpc_id for object in selection], name=name)
         )
         return result.success
 
     def create_linear_pattern(
         self,
-        selection: Union["Face", List["Face"]],
+        selection: Union["Face", list["Face"]],
         linear_direction: Union["Edge", "Face"],
         count_x: int,
         pitch_x: Real,
@@ -550,7 +548,7 @@ class GeometryCommands:
 
         Parameters
         ----------
-        selection : Face | List[Face]
+        selection : Face | list[Face]
             Faces to create the pattern out of.
         linear_direction : Edge | Face
             Direction of the linear pattern, determined by the direction of an edge or face normal.
@@ -609,7 +607,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def modify_linear_pattern(
         self,
-        selection: Union["Face", List["Face"]],
+        selection: Union["Face", list["Face"]],
         count_x: int = 0,
         pitch_x: Real = 0.0,
         count_y: int = 0,
@@ -621,7 +619,7 @@ class GeometryCommands:
 
         Parameters
         ----------
-        selection : Face | List[Face]
+        selection : Face | list[Face]
             Faces that belong to the pattern.
         count_x : int, default: 0
             How many times the pattern repeats in the x direction.
@@ -668,7 +666,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def create_circular_pattern(
         self,
-        selection: Union["Face", List["Face"]],
+        selection: Union["Face", list["Face"]],
         circular_axis: "Edge",
         circular_count: int,
         circular_angle: Real,
@@ -681,7 +679,7 @@ class GeometryCommands:
 
         Parameters
         ----------
-        selection : Face | List[Face]
+        selection : Face | list[Face]
             Faces to create the pattern out of.
         circular_axis : Edge
             The axis of the circular pattern, determined by the direction of an edge.
@@ -749,7 +747,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def create_fill_pattern(
         self,
-        selection: Union["Face", List["Face"]],
+        selection: Union["Face", list["Face"]],
         linear_direction: Union["Edge", "Face"],
         fill_pattern_type: FillPatternType,
         margin: Real,
@@ -764,7 +762,7 @@ class GeometryCommands:
 
         Parameters
         ----------
-        selection : Face | List[Face]
+        selection : Face | list[Face]
             Faces to create the pattern out of.
         linear_direction : Edge
             Direction of the linear pattern, determined by the direction of an edge.
@@ -820,7 +818,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def update_fill_pattern(
         self,
-        selection: Union["Face", List["Face"]],
+        selection: Union["Face", list["Face"]],
     ) -> bool:
         """Update a fill pattern.
 
@@ -829,7 +827,7 @@ class GeometryCommands:
 
         Parameters
         ----------
-        selection : Face | List[Face]
+        selection : Face | list[Face]
             Face(s) that are part of a fill pattern.
 
         Returns
@@ -858,15 +856,15 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def revolve_faces(
         self,
-        selection: Union["Face", List["Face"]],
+        selection: Union["Face", list["Face"]],
         axis: Line,
         angle: Real,
-    ) -> List["Body"]:
+    ) -> list["Body"]:
         """Revolve face around an axis.
 
         Parameters
         ----------
-        selection : Face | List[Face]
+        selection : Face | list[Face]
             Face(s) to revolve.
         axis : Line
             Axis of revolution.
@@ -875,7 +873,7 @@ class GeometryCommands:
 
         Returns
         -------
-        List[Body]
+        list[Body]
             Bodies created by the extrusion if any.
         """
         from ansys.geometry.core.designer.face import Face
@@ -908,17 +906,17 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def revolve_faces_up_to(
         self,
-        selection: Union["Face", List["Face"]],
+        selection: Union["Face", list["Face"]],
         up_to: Union["Face", "Edge", "Body"],
         axis: Line,
         direction: UnitVector3D,
         extrude_type: ExtrudeType = ExtrudeType.ADD,
-    ) -> List["Body"]:
+    ) -> list["Body"]:
         """Revolve face around an axis up to a certain object.
 
         Parameters
         ----------
-        selection : Face | List[Face]
+        selection : Face | list[Face]
             Face(s) to revolve.
         up_to : Face | Edge | Body
             Object to revolve the face up to.
@@ -931,7 +929,7 @@ class GeometryCommands:
 
         Returns
         -------
-        List[Body]
+        list[Body]
             Bodies created by the extrusion if any.
         """
         from ansys.geometry.core.designer.face import Face
@@ -966,7 +964,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def revolve_faces_by_helix(
         self,
-        selection: Union["Face", List["Face"]],
+        selection: Union["Face", list["Face"]],
         axis: Line,
         direction: UnitVector3D,
         height: Real,
@@ -974,12 +972,12 @@ class GeometryCommands:
         taper_angle: Real,
         right_handed: bool,
         both_sides: bool,
-    ) -> List["Body"]:
+    ) -> list["Body"]:
         """Revolve face around an axis in a helix shape.
 
         Parameters
         ----------
-        selection : Face | List[Face]
+        selection : Face | list[Face]
             Face(s) to revolve.
         axis : Line
             Axis of revolution.
@@ -998,7 +996,7 @@ class GeometryCommands:
 
         Returns
         -------
-        List[Body]
+        list[Body]
             Bodies created by the extrusion if any.
         """
         from ansys.geometry.core.designer.face import Face
@@ -1073,23 +1071,23 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def split_body(
         self,
-        bodies: List["Body"],
+        bodies: list["Body"],
         plane: Plane,
-        slicers: Union["Edge", List["Edge"], "Face", List["Face"]],
-        faces: List["Face"],
+        slicers: Union["Edge", list["Edge"], "Face", list["Face"]],
+        faces: list["Face"],
         extendfaces: bool,
     ) -> bool:
         """Split bodies with a plane, slicers, or faces.
 
         Parameters
         ----------
-        bodies : List[Body]
+        bodies : list[Body]
             Bodies to split
         plane : Plane
             Plane to split with
         slicers : Edge | list[Edge] | Face | list[Face]
             Slicers to split with
-        faces : List[Face]
+        faces : list[Face]
             Faces to split with
         extendFaces : bool
             Extend faces if split with faces

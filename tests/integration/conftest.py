@@ -58,7 +58,7 @@ def skip_if_core_service(modeler: Modeler, test_name: str, element_not_available
 
 
 def skip_if_windows(modeler: Modeler, test_name: str, element_not_available: str):
-    """Skip test if running on Linux."""
+    """Skip test if running on Windows."""
     if modeler.client.backend_type in (
         BackendType.SPACECLAIM,
         BackendType.WINDOWS_SERVICE,

@@ -930,7 +930,7 @@ def test_ellipse_evaluation():
 
 
 def test_nurbs_curve_from_control_points():
-    """``NURBSCurve`` construction from control points."""
+    """Test ``NURBSCurve`` construction from control points."""
     control_points = [
         Point3D([0, 0, 0]),
         Point3D([1, 1, 0]),
@@ -962,7 +962,7 @@ def test_nurbs_curve_from_control_points():
 
 
 def test_nurbs_curve_evaluation():
-    """``NURBSCurve`` evaluation."""
+    """Test ``NURBSCurve`` evaluation."""
     control_points = [
         Point3D([0, 0, 0]),
         Point3D([1, 1, 0]),
@@ -1006,6 +1006,7 @@ def test_nurbs_curve_evaluation():
 
 
 def test_nurbs_curve_point_projection():
+    """Test projection of a point onto a NURBS curve."""
     # Define the NUTBS curve
     control_points = [
         Point3D([0, 0, 0]),

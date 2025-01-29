@@ -80,6 +80,7 @@ class RepairTools:
         self._repair_stub = RepairToolsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
 
+    @protect_grpc
     def find_split_edges(
         self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
     ) -> list[SplitEdgeProblemAreas]:
@@ -124,6 +125,7 @@ class RepairTools:
             for res in problem_areas_response.result
         ]
 
+    @protect_grpc
     def find_extra_edges(self, bodies: list["Body"]) -> list[ExtraEdgeProblemAreas]:
         """Find the extra edges in the given list of bodies.
 
@@ -158,6 +160,7 @@ class RepairTools:
             for res in problem_areas_response.result
         ]
 
+    @protect_grpc
     def find_inexact_edges(self, bodies: list["Body"]) -> list[InexactEdgeProblemAreas]:
         """Find inexact edges in the given list of bodies.
 
@@ -193,6 +196,7 @@ class RepairTools:
             for res in problem_areas_response.result
         ]
 
+    @protect_grpc
     def find_short_edges(
         self, bodies: list["Body"], length: Real = 0.0
     ) -> list[ShortEdgeProblemAreas]:
@@ -231,6 +235,7 @@ class RepairTools:
             for res in problem_areas_response.result
         ]
 
+    @protect_grpc
     def find_duplicate_faces(self, bodies: list["Body"]) -> list[DuplicateFaceProblemAreas]:
         """Find the duplicate face problem areas.
 
@@ -265,6 +270,7 @@ class RepairTools:
             for res in problem_areas_response.result
         ]
 
+    @protect_grpc
     def find_missing_faces(self, bodies: list["Body"]) -> list[MissingFaceProblemAreas]:
         """Find the missing faces.
 
@@ -298,6 +304,7 @@ class RepairTools:
             for res in problem_areas_response.result
         ]
 
+    @protect_grpc
     def find_small_faces(self, bodies: list["Body"]) -> list[SmallFaceProblemAreas]:
         """Find the small face problem areas.
 
@@ -332,6 +339,7 @@ class RepairTools:
             for res in problem_areas_response.result
         ]
 
+    @protect_grpc
     def find_stitch_faces(self, bodies: list["Body"]) -> list[StitchFaceProblemAreas]:
         """Return the list of stitch face problem areas.
 
@@ -374,8 +382,8 @@ class RepairTools:
 
         Returns
         -------
-        list[int]
-            List of problem area ids.
+        list[UnsimplifiedFaceProblemAreas]
+            List of objects representing unsimplified face problem areas.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -399,11 +407,14 @@ class RepairTools:
         ]
 
     @protect_grpc
+    @min_backend_version(25, 2, 0)
     def find_interferences(
         self, bodies: list["Body"], cut_smaller_body: bool = False
     ) -> list[InterferenceProblemAreas]:
         """Find the interference problem areas.
 
+        Notes
+        -----
         This method finds and returns a list of ids of interference problem areas
         objects.
 
@@ -411,9 +422,9 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that small faces are investigated on.
-
-        cut_smaller_body : bool
+        cut_smaller_body : bool, optional
             Whether to cut the smaller body if an intererference is found.
+            By default, False.
 
         Returns
         -------
@@ -445,20 +456,23 @@ class RepairTools:
             for res in problem_areas_response.result
         ]
 
+    @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_fix_short_edges(
         self, bodies: list["Body"], length: Real = 0.0
     ) -> RepairToolMessage:
         """Find and fix the short edge problem areas.
 
+        Notes
+        -----
         This method finds the short edges in the bodies and fixes them.
 
         Parameters
         ----------
         bodies : list[Body]
             List of bodies that short edges are investigated on.
-        length : Real
-            The maximum length of the edges.
+        length : Real, optional
+            The maximum length of the edges. By default, 0.0.
 
         Returns
         -------
@@ -494,6 +508,8 @@ class RepairTools:
     def find_and_fix_extra_edges(self, bodies: list["Body"]) -> RepairToolMessage:
         """Find and fix the extra edge problem areas.
 
+        Notes
+        -----
         This method finds the extra edges in the bodies and fixes them.
 
         Parameters
@@ -537,16 +553,18 @@ class RepairTools:
     ) -> RepairToolMessage:
         """Find and fix the split edge problem areas.
 
+        Notes
+        -----
         This method finds the extra edges in the bodies and fixes them.
 
         Parameters
         ----------
         bodies : list[Body]
             List of bodies that split edges are investigated on.
-        angle : Real
-            The maximum angle between edges.
-        length : Real
-            The maximum length of the edges.
+        angle : Real, optional
+            The maximum angle between edges. By default, 0.0.
+        length : Real, optional
+            The maximum length of the edges. By default, 0.0.
 
         Returns
         -------
@@ -556,6 +574,7 @@ class RepairTools:
         from ansys.geometry.core.designer.body import Body
 
         check_type_all_elements_in_iterable(bodies, Body)
+        check_type(angle, Real)
         check_type(length, Real)
 
         if not bodies:
