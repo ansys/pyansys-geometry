@@ -21,11 +21,10 @@ The simple design in this example has two associated parameters.
 ## Perform required imports
 
 ```{code-cell} ipython3
-import os
+from pathlib import Path
 import requests
+
 from ansys.geometry.core import launch_modeler
-from ansys.geometry.core.modeler import *
-from ansys.geometry.core.parameters import *
 ```
 
 The file for this example is in the integration tests folder and can be downloaded.
@@ -39,8 +38,6 @@ The file for this example is in the integration tests folder and can be download
 Download the file for this example from the integration tests folder in the PyAnsys Geometry repository.
 
 ```{code-cell} ipython3
-import requests
-
 def download_file(url, filename):
     """Download a file from a URL and save it to a local file."""
     response = requests.get(url)
@@ -49,15 +46,14 @@ def download_file(url, filename):
         file.write(response.content)
 
 # URL of the file to download
-url = "https://github.com/ansys/pyansys-geometry/blob/main/tests/integration/files/blockswithparameters.dsco"
+url = "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/tests/integration/files/blockswithparameters.dsco"
 
 # Local path to save the file to
-file_name = "blockswithparameters.dsco"
-current_path = os.getcwd()
-file_path = os.path.join(current_path, file_name)
+file_path = Path.cwd() / "blockswithparameters.dsco"
+
 # Download the file
 download_file(url, file_path)
-print("File is downloaded to " + file_path)
+print(f"File is downloaded to {file_path}")
 ```
 
 ## Import a design with parameters
@@ -75,10 +71,11 @@ design.plot()
 
 ## Read existing parameters of the design
 
-You can get all the parameters of the design as a list of parameters. Because this example has two parameters, you see two items in the list.
+You can get all the parameters of the design as a list of parameters. Because this
+example has two parameters, you see two items in the list.
 
 ```{code-cell} ipython3
-my_parameters = design.get_all_parameters()
+my_parameters = design.parameters
 print(len(my_parameters))
 ```
 
@@ -94,7 +91,8 @@ print(my_parameters[1].dimension_value)
 print(my_parameters[1].dimension_type)
 ```
 
-Parameter values are returned in the default unit for each dimension type. Since default length unit is meter and default area unit is meter square, the value is returned in metersquare.
+Parameter values are returned in the default unit for each dimension type. Since default length
+unit is meter and default area unit is meter square, the value is returned in square meters.
 
 +++
 
@@ -112,14 +110,18 @@ print(my_parameters[0].dimension_value)
 print(my_parameters[1].dimension_value)
 ```
 
-After a successful parameter update, the design in the backend might have been updated. Therefore, you must refresh the design on the client.
+After a successful parameter update, the design in the backend might have been updated. Therefore,
+you must refresh the design on the client.
 
 ```{code-cell} ipython3
 design = modeler.read_existing_design()
 design.plot()
 ```
 
-The ``set_parameter()`` method returns a ``Success`` status message if the parameter is updated or a "FAILURE" status message if the update fails. If the ``p2`` parameter depends on the ``p1`` parameter, updating the ``p1`` parameter might also change the ``p2`` parameter. In such cases, the method returns ``CONSTRAINED_PARAMETERS``, which indicates other parameters were also updated.
+The ``set_parameter()`` method returns a ``Success`` status message if the parameter is updated or
+a "FAILURE" status message if the update fails. If the ``p2`` parameter depends on the ``p1``
+parameter, updating the ``p1`` parameter might also change the ``p2`` parameter. In such cases,
+the method returns ``CONSTRAINED_PARAMETERS``, which indicates other parameters were also updated.
 
 ```{code-cell} ipython3
 parameter1 = my_parameters[0]
@@ -131,7 +133,7 @@ print(response)
 To get the updated list, query the parameters once again.
 
 ```{code-cell} ipython3
-my_parameters = design.get_all_parameters()
+my_parameters = design.parameters
 print(my_parameters[0].dimension_value)
 print(my_parameters[1].dimension_value)
 ```
