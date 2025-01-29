@@ -30,6 +30,7 @@ from ansys.geometry.core.connection.conversions import (
     grpc_frame_to_frame,
     grpc_matrix_to_matrix,
     grpc_surface_to_surface,
+    line_to_grpc_line,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,

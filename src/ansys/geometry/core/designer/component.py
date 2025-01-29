@@ -253,6 +253,11 @@ class Component:
         return self._id
 
     @property
+    def _grpc_id(self) -> EntityIdentifier:
+        """ID of the component in gRPC format."""
+        return EntityIdentifier(id=self.id)
+
+    @property
     def name(self) -> str:
         """Name of the component."""
         return self._name
