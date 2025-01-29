@@ -56,12 +56,14 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
+from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
     Cone,
     Cylinder,
     Ellipse,
     Interval,
+    Line,
     ParamUV,
     Sphere,
     Torus,
@@ -70,7 +72,7 @@ from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.sketch import Sketch
 from ansys.tools.visualization_interface.utils.color import Color
 
-from .conftest import FILES_DIR, skip_if_linux
+from .conftest import FILES_DIR, skip_if_core_service
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -144,6 +146,57 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     # Use download approach when available.
     #
     # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
+
+
+def test_assigning_and_getting_material(modeler: Modeler):
+    """Test the assignment and retrieval of materials from a design."""
+    # Create a Sketch and draw a circle (all client side)
+    sketch = Sketch()
+    sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create your design on the server side
+    design_name = "ExtrudeProfile"
+    design = modeler.create_design(design_name)
+
+    # Add a material to body
+    density = Quantity(125, 1000 * UNITS.kg / (UNITS.m**3))
+    poisson_ratio = Quantity(0.33, UNITS.dimensionless)
+    tensile_strength = Quantity(45.0, UNITS.pascal)
+    material = Material(
+        "steel",
+        density,
+        [MaterialProperty(MaterialPropertyType.POISSON_RATIO, "myPoisson", poisson_ratio)],
+    )
+    material.add_property(MaterialPropertyType.TENSILE_STRENGTH, "myTensile", Quantity(45))
+    design.add_material(material)
+
+    # Extrude the sketch to create a Body
+    body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
+
+    # Assign a material to a Body
+    body.material = material
+    mat_service = body.material
+
+    # Test material and property retrieval
+    assert mat_service.name == "steel"
+    assert len(mat_service.properties) == 3
+    assert mat_service.properties[MaterialPropertyType.DENSITY].type == MaterialPropertyType.DENSITY
+    assert mat_service.properties[MaterialPropertyType.DENSITY].name == "Density"
+    assert mat_service.properties[MaterialPropertyType.DENSITY].quantity == density
+    assert (
+        mat_service.properties[MaterialPropertyType.POISSON_RATIO].type
+        == MaterialPropertyType.POISSON_RATIO
+    )
+    assert mat_service.properties[MaterialPropertyType.POISSON_RATIO].name == "myPoisson"
+    assert mat_service.properties[MaterialPropertyType.POISSON_RATIO].quantity == poisson_ratio
+    assert (
+        mat_service.properties[MaterialPropertyType.TENSILE_STRENGTH].type
+        == MaterialPropertyType.TENSILE_STRENGTH
+    )
+    assert mat_service.properties[MaterialPropertyType.TENSILE_STRENGTH].name == "myTensile"
+    assert (
+        mat_service.properties[MaterialPropertyType.TENSILE_STRENGTH].quantity == tensile_strength
+    )
 
 
 def test_face_to_body_creation(modeler: Modeler):
@@ -911,7 +964,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     assert file.exists()
 
     # Check that we can also save it (even if it is not accessible on the server)
-    if modeler.client.backend_type == BackendType.LINUX_SERVICE:
+    if modeler.client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX):
         file_save = "/tmp/cylinder-temp.scdocx"
     else:
         file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
@@ -919,7 +972,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     design.save(file_location=file_save)
 
     # Check for other exports - Windows backend...
-    if modeler.client.backend_type != BackendType.LINUX_SERVICE:
+    if not BackendType.is_core_service(modeler.client.backend_type):
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
@@ -932,6 +985,11 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         design.download(iges_file, format=DesignFileFormat.IGES)
         assert iges_file.exists()
 
+        # FMD
+        fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
+        design.download(fmd_file, format=DesignFileFormat.FMD)
+        assert fmd_file.exists()
+
     # Linux backend...
     else:
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
@@ -940,17 +998,12 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     # PMDB
     pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
 
-    # FMD
-    fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
-
     design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN)
     design.download(text_parasolid_file, format=DesignFileFormat.PARASOLID_TEXT)
-    design.download(fmd_file, format=DesignFileFormat.FMD)
     design.download(pmdb_file, format=DesignFileFormat.PMDB)
 
     assert binary_parasolid_file.exists()
     assert text_parasolid_file.exists()
-    assert fmd_file.exists()
     assert pmdb_file.exists()
 
 
@@ -1111,8 +1164,8 @@ def test_copy_body(modeler: Modeler):
 
 def test_beams(modeler: Modeler):
     """Test beam creation."""
-    # Skip on Linux
-    skip_if_linux(modeler, test_beams.__name__, "create_beam")
+    # Skip on CoreService
+    skip_if_core_service(modeler, test_beams.__name__, "create_beam")
 
     # Create your design on the server side
     design = modeler.create_design("BeamCreation")
@@ -1414,8 +1467,8 @@ def test_named_selections_beams(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with
     beams.
     """
-    # Skip on Linux
-    skip_if_linux(modeler, test_named_selections_beams.__name__, "create_beam")
+    # Skip on CoreService
+    skip_if_core_service(modeler, test_named_selections_beams.__name__, "create_beam")
 
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
@@ -1622,20 +1675,20 @@ def test_boolean_body_operations(modeler: Modeler):
     # 1.b.ii
     copy1 = body1.copy(comp1, "Copy1")
     copy1a = body1.copy(comp1, "Copy1a")
-    with pytest.raises(ValueError):
-        copy1.subtract(copy1a)
+    copy1.subtract(copy1a)
 
     assert copy1.is_alive
-    assert copy1a.is_alive
+    assert not copy1a.is_alive
 
     # 1.b.iii
     copy1 = body1.copy(comp1, "Copy1")
     copy3 = body3.copy(comp3, "Copy3")
-    copy1.subtract(copy3)
+    with pytest.raises(ValueError):
+        copy1.subtract(copy3)
 
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
     assert copy1.volume
-    assert not copy3.is_alive
+    assert copy3.is_alive
 
     # 1.c.i.x
     copy1 = body1.copy(comp1, "Copy1")
@@ -1658,9 +1711,10 @@ def test_boolean_body_operations(modeler: Modeler):
     # 1.c.ii
     copy1 = body1.copy(comp1, "Copy1")
     copy3 = body3.copy(comp3, "Copy3")
-    copy1.unite(copy3)
+    with pytest.raises(ValueError):
+        copy1.unite(copy3)
 
-    assert not copy3.is_alive
+    assert copy3.is_alive
     assert body3.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
 
@@ -1731,20 +1785,20 @@ def test_boolean_body_operations(modeler: Modeler):
     # 2.b.ii
     copy1 = body1.copy(comp1_i, "Copy1")
     copy1a = body1.copy(comp1_i, "Copy1a")
-    with pytest.raises(ValueError):
-        copy1.subtract(copy1a)
+    copy1.subtract(copy1a)
 
     assert copy1.is_alive
-    assert copy1a.is_alive
+    assert not copy1a.is_alive
 
     # 2.b.iii
     copy1 = body1.copy(comp1_i, "Copy1")
     copy3 = body3.copy(comp3_i, "Copy3")
-    copy1.subtract(copy3)
+    with pytest.raises(ValueError):
+        copy1.subtract(copy3)
 
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
     assert copy1.volume
-    assert not copy3.is_alive
+    assert copy3.is_alive
 
     # 2.c.i.x
     copy1 = body1.copy(comp1_i, "Copy1")
@@ -1767,9 +1821,10 @@ def test_boolean_body_operations(modeler: Modeler):
     # 2.c.ii
     copy1 = body1.copy(comp1_i, "Copy1")
     copy3 = body3.copy(comp3_i, "Copy3")
-    copy1.unite(copy3)
+    with pytest.raises(ValueError):
+        copy1.unite(copy3)
 
-    assert not copy3.is_alive
+    assert copy3.is_alive
     assert body3.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
 
@@ -1866,19 +1921,26 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
     assert len(comp3.bodies) == 1
 
     # ---- Verify unite operation ----
-    body1.unite([body2, body3], keep_other=True)
+    body1.unite([body2, body3])
 
-    assert body2.is_alive
-    assert body3.is_alive
+    assert body1.is_alive
+    assert not body2.is_alive
     assert len(comp1.bodies) == 1
-    assert len(comp2.bodies) == 1
-    assert len(comp3.bodies) == 1
+    assert len(comp2.bodies) == 0
+    assert len(comp3.bodies) == 0
 
     # ---- Verify intersect operation ----
-    body1.intersect(body2, keep_other=True)
+    comp2 = design.add_component("Comp2")
+    comp3 = design.add_component("Comp3")
+    body1 = comp1.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = comp2.extrude_sketch("Body2", Sketch().box(Point2D([0.5, 0]), 1, 1), 1)
+    body3 = comp3.extrude_sketch("Body3", Sketch().box(Point2D([5, 0]), 1, 1), 1)
+    body1.intersect([body2, body3], keep_other=True)
 
+    assert body1.is_alive
     assert body2.is_alive
-    assert len(comp1.bodies) == 1
+    assert body3.is_alive
+    assert len(comp1.bodies) == 2
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 1
 
@@ -2002,7 +2064,8 @@ def test_get_collision(modeler: Modeler):
 
 def test_set_body_name(modeler: Modeler):
     """Test the setting the name of a body."""
-    skip_if_linux(modeler, test_set_body_name.__name__, "set_name")  # Skip test on Linux
+    # Skip test on CoreService
+    skip_if_core_service(modeler, test_set_body_name.__name__, "set_name")
 
     design = modeler.create_design("simple_cube")
     unit = DEFAULT_UNITS.LENGTH
@@ -2023,7 +2086,8 @@ def test_set_body_name(modeler: Modeler):
 
 def test_set_fill_style(modeler: Modeler):
     """Test the setting the fill style of a body."""
-    skip_if_linux(modeler, test_set_fill_style.__name__, "set_fill_style")  # Skip test on Linux
+    # Skip test on CoreService
+    skip_if_core_service(modeler, test_set_fill_style.__name__, "set_fill_style")
 
     design = modeler.create_design("RVE")
     unit = DEFAULT_UNITS.LENGTH
@@ -2043,6 +2107,29 @@ def test_set_fill_style(modeler: Modeler):
     assert box.fill_style == FillStyle.TRANSPARENT
     box.fill_style = FillStyle.OPAQUE
     assert box.fill_style == FillStyle.OPAQUE
+
+
+def test_body_suppression(modeler: Modeler):
+    """Test the suppression of a body."""
+
+    design = modeler.create_design("RVE")
+    unit = DEFAULT_UNITS.LENGTH
+
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
+    box = design.extrude_sketch("Matrix", box_plane, 1 * unit)
+
+    assert box.is_suppressed is False
+    box.set_suppressed(True)
+    assert box.is_suppressed is True
+    box.is_suppressed = False
+    assert box.is_suppressed is False
 
 
 def test_set_body_color(modeler: Modeler):
@@ -2196,7 +2283,9 @@ def test_body_mapping(modeler: Modeler):
 
 def test_sphere_creation(modeler: Modeler):
     """Test the creation of a sphere body with a given radius."""
-    skip_if_linux(modeler, test_sphere_creation.__name__, "create_sphere")
+    # Skip test on CoreService
+    skip_if_core_service(modeler, test_sphere_creation.__name__, "create_sphere")
+
     design = modeler.create_design("Spheretest")
     center_point = Point3D([10, 10, 10], UNITS.m)
     radius = Distance(1, UNITS.m)
@@ -2208,7 +2297,9 @@ def test_sphere_creation(modeler: Modeler):
 
 def test_body_mirror(modeler: Modeler):
     """Test the mirroring of a body."""
-    skip_if_linux(modeler, test_body_mirror.__name__, "mirror")
+    # Skip test on CoreService
+    skip_if_core_service(modeler, test_body_mirror.__name__, "mirror")
+
     design = modeler.create_design("Design1")
 
     # Create shape with no lines of symmetry in any axis
@@ -2414,7 +2505,8 @@ def test_create_body_from_loft_profile(modeler: Modeler):
     """Test the ``create_body_from_loft_profile()`` method to create a vase
     shape.
     """
-    skip_if_linux(
+    # Skip test on CoreService
+    skip_if_core_service(
         modeler, test_create_body_from_loft_profile.__name__, "'create_body_from_loft_profile'"
     )
     design_sketch = modeler.create_design("loftprofile")
@@ -2530,8 +2622,8 @@ def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
 
 def test_component_tree_print(modeler: Modeler):
     """Test for verifying the tree print for ``Component`` objects."""
-    # Skip on Linux
-    skip_if_linux(modeler, test_component_tree_print.__name__, "create_beam")
+    # Skip on CoreService
+    skip_if_core_service(modeler, test_component_tree_print.__name__, "create_beam")
 
     def check_list_equality(lines, expected_lines):
         # By doing "a in b" rather than "a == b", we can check for substrings
@@ -2739,8 +2831,34 @@ def test_surface_body_creation(modeler: Modeler):
     assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
 
 
+def test_design_parameters(modeler: Modeler):
+    """Test the design parameter's functionality."""
+    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
+    test_parameters = design.parameters
+
+    # Verify the initial parameters
+    assert len(test_parameters) == 2
+    assert test_parameters[0].name == "p1"
+    assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
+    assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    assert test_parameters[1].name == "p2"
+    assert abs(test_parameters[1].dimension_value - 0.0002552758322160813) < 1e-8
+    assert test_parameters[1].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    # Update the second parameter and verify the status
+    test_parameters[1].dimension_value = 0.0006
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.SUCCESS
+
+    # Attempt to update the first parameter and expect a constrained status
+    test_parameters[0].dimension_value = 0.0006
+    status = design.set_parameter(test_parameters[0])
+    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+
+
 def test_cached_bodies(modeler: Modeler):
-    """Test verifying that bodies are cached correctly.
+    """Test that bodies are cached correctly.
 
     Whenever a new body is created, modified etc. we should make sure that the cache is updated.
     """
@@ -2859,3 +2977,72 @@ def test_extrude_sketch_with_cut_request_no_collision(modeler: Modeler):
 
     # Verify the volume of the resulting body is exactly the same
     assert design.bodies[0].volume == volume_box
+
+
+def test_create_surface_body_from_trimmed_curves(modeler: Modeler):
+    design = modeler.create_design("surface")
+
+    # pill shape
+    circle1 = Circle(Point3D([0, 0, 0]), 1).trim(Interval(0, np.pi))
+    line1 = Line(Point3D([-1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
+    circle2 = Circle(Point3D([0, -1, 0]), 1).trim(Interval(np.pi, np.pi * 2))
+    line2 = Line(Point3D([1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
+
+    body = design.create_surface_from_trimmed_curves("body", [circle1, line1, line2, circle2])
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(
+        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+
+    # create from edges (by getting their trimmed curves)
+    trimmed_curves_from_edges = [edge.shape for edge in body.edges]
+    body = design.create_surface_from_trimmed_curves("body2", trimmed_curves_from_edges)
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(
+        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_shell_body(modeler: Modeler):
+    """Test shell command."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.shell_body(0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 12
+
+
+def test_shell_faces(modeler: Modeler):
+    """Test shell commands for a single face."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.remove_faces(base.faces[0], 0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.584, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 11
+
+
+def test_shell_multiple_faces(modeler: Modeler):
+    """Test shell commands for multiple faces."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.remove_faces([base.faces[0], base.faces[2]], 0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 10
