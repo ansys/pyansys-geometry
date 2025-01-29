@@ -72,9 +72,7 @@ def get_wheelhouse_assets_dictionary():
             if assets_context_version == "dev":
                 prefix_url = "https://github.com/ansys/pyansys-geometry/releases/latest/download"
             else:
-                prefix_url = (
-                    f"https://github.com/ansys/pyansys-geometry/releases/download/{assets_context_version}",
-                )
+                prefix_url = f"https://github.com/ansys/pyansys-geometry/releases/download/{assets_context_version}"
             temp_dict = {
                 "os": assets_os,
                 "runner": assets_runner,
