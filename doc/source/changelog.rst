@@ -9,6 +9,86 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.8.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.8.2>`_ - 2025-01-29
+=====================================================================================
+
+Added
+^^^^^
+
+- create a fillet on an edge/face `#1621 <https://github.com/ansys/pyansys-geometry/pull/1621>`_
+- create a full fillet between multiple faces `#1623 <https://github.com/ansys/pyansys-geometry/pull/1623>`_
+- extrude existing faces, setup face offset relationships `#1628 <https://github.com/ansys/pyansys-geometry/pull/1628>`_
+- interference repair tool `#1633 <https://github.com/ansys/pyansys-geometry/pull/1633>`_
+- extrude existing edges to create surface bodies `#1638 <https://github.com/ansys/pyansys-geometry/pull/1638>`_
+- create and modify linear patterns `#1641 <https://github.com/ansys/pyansys-geometry/pull/1641>`_
+- body suppression state `#1643 <https://github.com/ansys/pyansys-geometry/pull/1643>`_
+- parameters refurbished `#1647 <https://github.com/ansys/pyansys-geometry/pull/1647>`_
+- rename object `#1648 <https://github.com/ansys/pyansys-geometry/pull/1648>`_
+- surface body from trimmed curves `#1650 <https://github.com/ansys/pyansys-geometry/pull/1650>`_
+- create circular and fill patterns `#1653 <https://github.com/ansys/pyansys-geometry/pull/1653>`_
+- find fix simplify `#1661 <https://github.com/ansys/pyansys-geometry/pull/1661>`_
+- replace face `#1664 <https://github.com/ansys/pyansys-geometry/pull/1664>`_
+- commands for merge and intersect `#1665 <https://github.com/ansys/pyansys-geometry/pull/1665>`_
+- revolve faces a set distance, up to another object, or by a helix `#1666 <https://github.com/ansys/pyansys-geometry/pull/1666>`_
+- add split body and tests `#1669 <https://github.com/ansys/pyansys-geometry/pull/1669>`_
+- enable get/set persistent ids for stride import/export `#1671 <https://github.com/ansys/pyansys-geometry/pull/1671>`_
+- find and fix edge methods `#1672 <https://github.com/ansys/pyansys-geometry/pull/1672>`_
+- shell methods `#1673 <https://github.com/ansys/pyansys-geometry/pull/1673>`_
+- implementation of NURBS curves `#1675 <https://github.com/ansys/pyansys-geometry/pull/1675>`_
+- get assigned material `#1684 <https://github.com/ansys/pyansys-geometry/pull/1684>`_
+- matrix rotation and translation `#1689 <https://github.com/ansys/pyansys-geometry/pull/1689>`_
+- is_core_service BackendType static method `#1692 <https://github.com/ansys/pyansys-geometry/pull/1692>`_
+- export and download stride format `#1698 <https://github.com/ansys/pyansys-geometry/pull/1698>`_
+- blitz development `#1701 <https://github.com/ansys/pyansys-geometry/pull/1701>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump ansys-tools-visualization-interface from 0.7.0 to 0.8.1 `#1640 <https://github.com/ansys/pyansys-geometry/pull/1640>`_
+- bump ansys-api-geometry from 0.4.27 to 0.4.28 `#1644 <https://github.com/ansys/pyansys-geometry/pull/1644>`_
+- bump sphinx-autodoc-typehints from 3.0.0 to 3.0.1 in the docs-deps group `#1651 <https://github.com/ansys/pyansys-geometry/pull/1651>`_
+- bump ansys-api-geometry from 0.4.28 to 0.4.30 `#1652 <https://github.com/ansys/pyansys-geometry/pull/1652>`_
+- bump protobuf from 5.28.3 to 5.29.3 in the grpc-deps group across 1 directory `#1656 <https://github.com/ansys/pyansys-geometry/pull/1656>`_
+- bump numpy from 2.2.1 to 2.2.2 `#1662 <https://github.com/ansys/pyansys-geometry/pull/1662>`_
+- bump ansys-api-geometry from 0.4.30 to 0.4.31 `#1663 <https://github.com/ansys/pyansys-geometry/pull/1663>`_
+- bump ansys api geometry from 0.4.30 to 0.4.32 `#1677 <https://github.com/ansys/pyansys-geometry/pull/1677>`_
+- bump ansys-api-geometry from 0.4.31 to 0.4.32 `#1681 <https://github.com/ansys/pyansys-geometry/pull/1681>`_
+- bump panel from 1.5.5 to 1.6.0 `#1682 <https://github.com/ansys/pyansys-geometry/pull/1682>`_
+- bump semver from 3.0.2 to 3.0.4 `#1687 <https://github.com/ansys/pyansys-geometry/pull/1687>`_
+- bump ansys-api-geometry from 0.4.32 to 0.4.33 `#1695 <https://github.com/ansys/pyansys-geometry/pull/1695>`_
+- bump nbconvert from 7.16.5 to 7.16.6 in the docs-deps group `#1700 <https://github.com/ansys/pyansys-geometry/pull/1700>`_
+
+
+Fixed
+^^^^^
+
+- reactivate test on failing extra edges test `#1396 <https://github.com/ansys/pyansys-geometry/pull/1396>`_
+- filter set export id to only CoreService based backends `#1685 <https://github.com/ansys/pyansys-geometry/pull/1685>`_
+- cleanup unsupported module `#1690 <https://github.com/ansys/pyansys-geometry/pull/1690>`_
+- disable unimplemented tests `#1691 <https://github.com/ansys/pyansys-geometry/pull/1691>`_
+- tech review fixes for blitz branch `#1703 <https://github.com/ansys/pyansys-geometry/pull/1703>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- update CHANGELOG for v0.8.1 `#1639 <https://github.com/ansys/pyansys-geometry/pull/1639>`_
+- whitelist semver package temporarily `#1657 <https://github.com/ansys/pyansys-geometry/pull/1657>`_
+- reverting semver package whitelist since problematic version is yanked `#1659 <https://github.com/ansys/pyansys-geometry/pull/1659>`_
+- pre-commit automatic update `#1667 <https://github.com/ansys/pyansys-geometry/pull/1667>`_, `#1696 <https://github.com/ansys/pyansys-geometry/pull/1696>`_
+- ensure design is closed on test exit `#1680 <https://github.com/ansys/pyansys-geometry/pull/1680>`_
+- use dedicate pygeometry-ci-2 runner `#1693 <https://github.com/ansys/pyansys-geometry/pull/1693>`_
+- remove towncrier info duplicates `#1702 <https://github.com/ansys/pyansys-geometry/pull/1702>`_
+
+
+Test
+^^^^
+
+- add more find and fix tests for repair tools `#1645 <https://github.com/ansys/pyansys-geometry/pull/1645>`_
+- Add some new tests `#1670 <https://github.com/ansys/pyansys-geometry/pull/1670>`_
+- add unit tests for 3 repair tools `#1683 <https://github.com/ansys/pyansys-geometry/pull/1683>`_
+
 `0.8.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.8.1>`_ - 2025-01-15
 =====================================================================================
 
