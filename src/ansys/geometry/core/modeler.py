@@ -43,6 +43,7 @@ from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
+from ansys.geometry.core.tools.unsupported import UnsupportedCommands
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -119,12 +120,15 @@ class Modeler:
             backend_type=backend_type,
         )
 
+        # Maintaining references to all designs within the modeler workspace
+        self._designs: dict[str, "Design"] = {}
+
         # Initialize the RepairTools - Not available on Linux
         # TODO: delete "if" when Linux service is able to use repair tools
         # https://github.com/ansys/pyansys-geometry/issues/1319
-        if self.client.backend_type == BackendType.LINUX_SERVICE:
+        if BackendType.is_core_service(self.client.backend_type):
             self._measurement_tools = None
-            LOG.warning("Linux backend does not support measurement tools.")
+            LOG.warning("CoreService backend does not support measurement tools.")
         else:
             self._measurement_tools = MeasurementTools(self._grpc_client)
 
@@ -132,9 +136,7 @@ class Modeler:
         self._repair_tools = RepairTools(self._grpc_client)
         self._prepare_tools = PrepareTools(self._grpc_client)
         self._geometry_commands = GeometryCommands(self._grpc_client)
-
-        # Maintaining references to all designs within the modeler workspace
-        self._designs: dict[str, "Design"] = {}
+        self._unsupported = UnsupportedCommands(self._grpc_client, self)
 
         # Check if the backend allows for multiple designs and throw warning if needed
         if not self.client.multiple_designs_allowed:
@@ -506,6 +508,11 @@ class Modeler:
     def geometry_commands(self) -> "GeometryCommands":
         """Access to geometry commands."""
         return self._geometry_commands
+
+    @property
+    def unsupported(self) -> "UnsupportedCommands":
+        """Access to unsupported commands."""
+        return self._unsupported
 
     @min_backend_version(25, 1, 0)
     def get_service_logs(

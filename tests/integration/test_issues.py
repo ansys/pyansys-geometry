@@ -37,7 +37,7 @@ from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import FILES_DIR, skip_if_linux
+from .conftest import FILES_DIR, skip_if_core_service
 
 
 def test_issue_834_design_import_with_surfaces(modeler: Modeler):
@@ -48,7 +48,7 @@ def test_issue_834_design_import_with_surfaces(modeler: Modeler):
     """
     # TODO: to be reactivated
     # https://github.com/ansys/pyansys-geometry/issues/799
-    skip_if_linux(modeler, test_issue_834_design_import_with_surfaces.__name__, "open_file")
+    skip_if_core_service(modeler, test_issue_834_design_import_with_surfaces.__name__, "open_file")
 
     # Open the design
     design = modeler.open_file(Path(FILES_DIR, "DuplicateFacesDesignBefore.scdocx"))
@@ -86,8 +86,8 @@ def test_issue_1184_sphere_creation_crashes(modeler: Modeler):
     For more info see
     https://github.com/ansys/pyansys-geometry/issues/1184
     """
-    # Skip this test on Linux since it is not implemented yet
-    skip_if_linux(modeler, test_issue_1184_sphere_creation_crashes.__name__, "create_sphere")
+    # Skip this test on CoreService since it is not implemented yet
+    skip_if_core_service(modeler, test_issue_1184_sphere_creation_crashes.__name__, "create_sphere")
 
     design = modeler.create_design("SphereCreationIssue")
 

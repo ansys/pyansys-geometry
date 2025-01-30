@@ -27,6 +27,8 @@ from typing import TYPE_CHECKING
 from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.api.geometry.v0.commands_pb2 import FaceOffsetRequest
+from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.faces_pb2 import (
     CreateIsoParamCurvesRequest,
@@ -176,10 +178,9 @@ class Face:
         self._grpc_client = grpc_client
         self._faces_stub = FacesStub(grpc_client.channel)
         self._edges_stub = EdgesStub(grpc_client.channel)
+        self._commands_stub = CommandsStub(grpc_client.channel)
         self._is_reversed = is_reversed
         self._shape = None
-
-        self._grpc_client.log.debug("Requesting surface properties from server.")
 
     @property
     def id(self) -> str:
@@ -472,3 +473,35 @@ class Face:
             )
 
         return trimmed_curves
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def setup_offset_relationship(
+        self, other_face: "Face", set_baselines: bool = False, process_adjacent_faces: bool = False
+    ) -> bool:
+        """Create an offset relationship between two faces.
+
+        Parameters
+        ----------
+        other_face : Face
+            The face to setup an offset relationship with.
+        set_baselines : bool, default: False
+            Automatically set baseline faces.
+        process_adjacent_faces : bool, default: False
+            Look for relationships of the same offset on adjacent faces.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        result = self._commands_stub.FaceOffset(
+            FaceOffsetRequest(
+                face1=self._grpc_id,
+                face2=other_face._grpc_id,
+                set_baselines=set_baselines,
+                process_adjacent_faces=process_adjacent_faces,
+            )
+        )
+
+        return result.success

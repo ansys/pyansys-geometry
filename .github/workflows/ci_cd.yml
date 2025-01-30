@@ -91,7 +91,7 @@ jobs:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
-          whitelist-license-check: semver
+          whitelist-license-check: 'attrs'
 
   docker-style:
     name: Docker Style Check
@@ -161,10 +161,7 @@ jobs:
   testing-windows:
     name: Testing and coverage (Windows)
     needs: [smoke-tests, manifests]
-    # runs-on: [self-hosted, Windows, pygeometry]
-    runs-on: # TODO: Waiting for ansys-network runner to be updated
-      group: pyansys-self-hosted
-      labels:  [self-hosted, Windows, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     continue-on-error: ${{ matrix.experimental }}
     env:
       SKIP_UNSTABLE: false
@@ -337,10 +334,7 @@ jobs:
   docs:
     name: Documentation
     needs: [docs-style]
-    # Doc build performed on self-hosted runners outside the Ansys network only
-    runs-on:
-      group: pyansys-self-hosted
-      labels: [Windows, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     env:
       PYVISTA_OFF_SCREEN: true
     steps:
@@ -650,10 +644,7 @@ jobs:
 
   build-windows-container:
     name: Building Geometry Service - Windows
-    # runs-on: [self-hosted, Windows, pygeometry]
-    runs-on: # TODO: Waiting for ansys-network runner to be updated
-      group: pyansys-self-hosted
-      labels:  [self-hosted, Windows, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     needs: [fetch-release-artifacts]
     strategy:
       fail-fast: false
