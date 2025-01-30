@@ -43,12 +43,14 @@ from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
+from ansys.geometry.core.tools.unsupported import UnsupportedCommands
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer.design import Design
+    from ansys.geometry.core.designer.geometry_commands import GeometryCommands
     from ansys.platform.instancemanagement import Instance
 
 
@@ -59,7 +61,7 @@ class Modeler:
     ----------
     host : str,  default: DEFAULT_HOST
         Host where the server is running.
-    port : Union[str, int], default: DEFAULT_PORT
+    port : str | int, default: DEFAULT_PORT
         Port number where the server is running.
     channel : ~grpc.Channel, default: None
         gRPC channel for server communication.
@@ -103,6 +105,8 @@ class Modeler:
         backend_type: BackendType | None = None,
     ):
         """Initialize the ``Modeler`` class."""
+        from ansys.geometry.core.designer.geometry_commands import GeometryCommands
+
         self._grpc_client = GrpcClient(
             host=host,
             port=port,
@@ -116,21 +120,23 @@ class Modeler:
             backend_type=backend_type,
         )
 
+        # Maintaining references to all designs within the modeler workspace
+        self._designs: dict[str, "Design"] = {}
+
         # Initialize the RepairTools - Not available on Linux
         # TODO: delete "if" when Linux service is able to use repair tools
         # https://github.com/ansys/pyansys-geometry/issues/1319
-        if self.client.backend_type == BackendType.LINUX_SERVICE:
-            self._repair_tools = None
-            self._prepare_tools = None
+        if BackendType.is_core_service(self.client.backend_type):
             self._measurement_tools = None
-            LOG.warning("Linux backend does not support repair or prepare tools.")
+            LOG.warning("CoreService backend does not support measurement tools.")
         else:
-            self._repair_tools = RepairTools(self._grpc_client)
-            self._prepare_tools = PrepareTools(self._grpc_client)
             self._measurement_tools = MeasurementTools(self._grpc_client)
 
-        # Maintaining references to all designs within the modeler workspace
-        self._designs: dict[str, "Design"] = {}
+        # Enabling tools/commands for all: repair and prepare tools, geometry commands
+        self._repair_tools = RepairTools(self._grpc_client)
+        self._prepare_tools = PrepareTools(self._grpc_client)
+        self._geometry_commands = GeometryCommands(self._grpc_client)
+        self._unsupported = UnsupportedCommands(self._grpc_client, self)
 
         # Check if the backend allows for multiple designs and throw warning if needed
         if not self.client.multiple_designs_allowed:
@@ -508,6 +514,16 @@ class Modeler:
     def measurement_tools(self) -> MeasurementTools:
         """Access to measurement tools."""
         return self._measurement_tools
+
+    @property
+    def geometry_commands(self) -> "GeometryCommands":
+        """Access to geometry commands."""
+        return self._geometry_commands
+
+    @property
+    def unsupported(self) -> "UnsupportedCommands":
+        """Access to unsupported commands."""
+        return self._unsupported
 
     @min_backend_version(25, 1, 0)
     def get_service_logs(

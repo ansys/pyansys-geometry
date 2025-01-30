@@ -91,6 +91,7 @@ jobs:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
+          whitelist-license-check: 'attrs'
 
   docker-style:
     name: Docker Style Check
@@ -160,10 +161,7 @@ jobs:
   testing-windows:
     name: Testing and coverage (Windows)
     needs: [smoke-tests, manifests]
-    # runs-on: [self-hosted, Windows, pygeometry]
-    runs-on: # TODO: Waiting for ansys-network runner to be updated
-      group: pyansys-self-hosted
-      labels:  [self-hosted, Windows, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     continue-on-error: ${{ matrix.experimental }}
     env:
       SKIP_UNSTABLE: false
@@ -336,10 +334,7 @@ jobs:
   docs:
     name: Documentation
     needs: [docs-style]
-    # Doc build performed on self-hosted runners outside the Ansys network only
-    runs-on:
-      group: pyansys-self-hosted
-      labels: [Windows, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     env:
       PYVISTA_OFF_SCREEN: true
     steps:
@@ -649,18 +644,17 @@ jobs:
 
   build-windows-container:
     name: Building Geometry Service - Windows
-    # runs-on: [self-hosted, Windows, pygeometry]
-    runs-on: # TODO: Waiting for ansys-network runner to be updated
-      group: pyansys-self-hosted
-      labels:  [self-hosted, Windows, pygeometry]
+    runs-on: [self-hosted, Windows, pygeometry]
     needs: [fetch-release-artifacts]
     strategy:
       fail-fast: false
       matrix:
         include:
           - mode: "dms"
+            docker-file: "windows-dms-dockerfile.zip"
             zip-file: "windows-dms-binaries.zip"
           - mode: "coreservice"
+            docker-file: "windows-core-dockerfile.zip"
             zip-file: "windows-core-binaries.zip"
     steps:
       - name: Checkout repository
@@ -715,13 +709,13 @@ jobs:
         uses: vimtor/action-zip@v1.2
         with:
           files: docker/windows/${{ matrix.mode }}/Dockerfile
-          dest: windows-${{ matrix.mode }}-dockerfile.zip
+          dest: ${{ matrix.docker-file }}
 
       - name: Upload Windows Dockerfile
         uses: actions/upload-artifact@v4
         with:
-          name: windows-${{ matrix.mode }}-dockerfile.zip
-          path: windows-${{ matrix.mode }}-dockerfile.zip
+          name: ${{ matrix.docker-file }}
+          path: ${{ matrix.docker-file }}
           retention-days: 7
 
       - name: Stop the Geometry service
@@ -772,7 +766,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f linux/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
+          docker build -f linux/coreservice/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
 
       - name: Launch Geometry service
         run: |

@@ -44,19 +44,25 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     SetColorRequest,
     SetFillStyleRequest,
     SetNameRequest,
+    SetSuppressedRequest,
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
+    CombineIntersectBodiesRequest,
+    CombineMergeBodiesRequest,
     ImprintCurvesRequest,
     ProjectCurvesRequest,
+    RemoveFacesRequest,
+    ShellRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
+    grpc_material_to_material,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
@@ -73,8 +79,10 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.misc.checks import (
     check_type,
+    check_type_all_elements_in_iterable,
     ensure_design_is_active,
     min_backend_version,
 )
@@ -133,6 +141,11 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def _grpc_id(self) -> EntityIdentifier:
+        """Entity identifier of this body on the server side."""
+        return
+
+    @abstractmethod
     def name(self) -> str:
         """Get the name of the body."""
         return
@@ -150,6 +163,16 @@ class IBody(ABC):
     @abstractmethod
     def set_fill_style(self, fill_style: FillStyle) -> None:
         """Set the fill style of the body."""
+        return
+
+    @abstractmethod
+    def is_suppressed(self) -> bool:
+        """Get the body suppression state."""
+        return
+
+    @abstractmethod
+    def set_suppressed(self, suppressed: bool) -> None:
+        """Set the body suppression state."""
         return
 
     @abstractmethod
@@ -230,6 +253,17 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def material(self) -> Material:
+        """Get the assigned material of the body.
+
+        Returns
+        -------
+        Material
+            Material assigned to the body.
+        """
+        return
+
+    @abstractmethod
     def assign_material(self, material: Material) -> None:
         """Assign a material against the active design.
 
@@ -237,6 +271,17 @@ class IBody(ABC):
         ----------
         material : Material
             Source material data.
+        """
+        return
+
+    @abstractmethod
+    def get_assigned_material(self) -> Material:
+        """Get the assigned material of the body.
+
+        Returns
+        -------
+        Material
+            Material assigned to the body.
         """
         return
 
@@ -542,6 +587,40 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def shell_body(self, offset: Real) -> bool:
+        """Shell the body to the thickness specified.
+
+        Parameters
+        ----------
+        offset : Real
+            Shell thickness.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        return
+
+    @abstractmethod
+    def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:
+        """Shell by removing a given set of faces.
+
+        Parameters
+        ----------
+        selection : Face | Iterable[Face]
+            Face or faces to be removed.
+        offset : Real
+            Shell thickness.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        return
+
+    @abstractmethod
     def plot(
         self,
         merge: bool = True,
@@ -737,13 +816,12 @@ class MasterBody(IBody):
         return wrapper
 
     @property
-    def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
-        """Entity identifier of this body on the server side."""
-        return EntityIdentifier(id=self._id)
-
-    @property
     def id(self) -> str:  # noqa: D102
         return self._id
+
+    @property
+    def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
+        return EntityIdentifier(id=self._id)
 
     @property
     def name(self) -> str:  # noqa: D102
@@ -762,6 +840,17 @@ class MasterBody(IBody):
         self.set_fill_style(value)
 
     @property
+    @protect_grpc
+    def is_suppressed(self) -> bool:  # noqa: D102
+        response = self._bodies_stub.IsSuppressed(EntityIdentifier(id=self._id))
+        return response.result
+
+    @is_suppressed.setter
+    def is_suppressed(self, value: bool):  # noqa: D102
+        self.set_suppressed(value)
+
+    @property
+    @protect_grpc
     def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
         if self._color is None and self.is_alive:
@@ -844,6 +933,14 @@ class MasterBody(IBody):
             volume_response = self._bodies_stub.GetVolume(self._grpc_id)
             return Quantity(volume_response.volume, DEFAULT_UNITS.SERVER_VOLUME)
 
+    @property
+    def material(self) -> Material:  # noqa: D102
+        return self.get_assigned_material()
+
+    @material.setter
+    def material(self, value: Material):  # noqa: D102
+        self.assign_material(value)
+
     @protect_grpc
     @check_input_types
     def assign_material(self, material: Material) -> None:  # noqa: D102
@@ -851,6 +948,12 @@ class MasterBody(IBody):
         self._bodies_stub.SetAssignedMaterial(
             SetAssignedMaterialRequest(id=self._id, material=material.name)
         )
+
+    @protect_grpc
+    def get_assigned_material(self) -> Material:  # noqa: D102
+        self._grpc_client.log.debug(f"Retrieving assigned material for body {self.id}.")
+        material_response = self._bodies_stub.GetAssignedMaterial(self._grpc_id)
+        return grpc_material_to_material(material_response)
 
     @protect_grpc
     @check_input_types
@@ -976,6 +1079,21 @@ class MasterBody(IBody):
             )
         )
         self._fill_style = fill_style
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def set_suppressed(  # noqa: D102
+        self, suppressed: bool
+    ) -> None:
+        """Set the body suppression state."""
+        self._grpc_client.log.debug(f"Setting body {self.id}, as suppressed: {suppressed}.")
+        self._bodies_stub.SetSuppressed(
+            SetSuppressedRequest(
+                bodies=[EntityIdentifier(id=self.id)],
+                is_suppressed=suppressed,
+            )
+        )
 
     @protect_grpc
     @check_input_types
@@ -1127,6 +1245,52 @@ class MasterBody(IBody):
         else:
             return comp
 
+    @protect_grpc
+    @reset_tessellation_cache
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def shell_body(self, offset: Real) -> bool:  # noqa: D102
+        self._grpc_client.log.debug(f"Shelling body {self.id} to offset {offset}.")
+
+        result = self._commands_stub.Shell(
+            ShellRequest(
+                selection=self._grpc_id,
+                offset=offset,
+            )
+        )
+
+        if result.success is False:
+            self._grpc_client.log.warning(f"Failed to shell body {self.id}.")
+
+        return result.success
+
+    @protect_grpc
+    @reset_tessellation_cache
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
+        selection: list[Face] = selection if isinstance(selection, Iterable) else [selection]
+        check_type_all_elements_in_iterable(selection, Face)
+
+        # check if faces belong to this body
+        for face in selection:
+            if face.body.id != self.id:
+                raise ValueError(f"Face {face.id} does not belong to body {self.id}.")
+
+        self._grpc_client.log.debug(f"Removing faces to shell body {self.id}.")
+
+        result = self._commands_stub.RemoveFaces(
+            RemoveFacesRequest(
+                selection=[face._grpc_id for face in selection],
+                offset=offset,
+            )
+        )
+
+        if result.success is False:
+            self._grpc_client.log.warning(f"Failed to remove faces from body {self.id}.")
+
+        return result.success
+
     def plot(  # noqa: D102
         self,
         merge: bool = True,
@@ -1207,14 +1371,34 @@ class Body(IBody):
 
         @wraps(func)
         def wrapper(self: "Body", *args, **kwargs):
-            self._template._tessellation = None
+            self._reset_tessellation_cache()
             return func(self, *args, **kwargs)
 
         return wrapper
 
+    def _reset_tessellation_cache(self):  # noqa: N805
+        """Reset the cached tessellation for a body."""
+        self._template._tessellation = None
+        # if this reference is stale, reset the real cache in the part
+        # this gets the matching id master body in the part
+        master_in_part = next(
+            (
+                b
+                for b in self.parent_component._master_component.part.bodies
+                if b.id == self._template.id
+            ),
+            None,
+        )
+        if master_in_part is not None:
+            master_in_part._tessellation = None
+
     @property
     def id(self) -> str:  # noqa: D102
         return self._id
+
+    @property
+    def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
+        return EntityIdentifier(id=self._id)
 
     @property
     def name(self) -> str:  # noqa: D102
@@ -1231,6 +1415,14 @@ class Body(IBody):
     @fill_style.setter
     def fill_style(self, fill_style: FillStyle) -> str:  # noqa: D102
         self._template.fill_style = fill_style
+
+    @property
+    def is_suppressed(self) -> bool:  # noqa: D102
+        return self._template.is_suppressed
+
+    @is_suppressed.setter
+    def is_suppressed(self, suppressed: bool):  # noqa: D102
+        self._template.is_suppressed = suppressed
 
     @property
     def color(self) -> str:  # noqa: D102
@@ -1323,9 +1515,22 @@ class Body(IBody):
     def volume(self) -> Quantity:  # noqa: D102
         return self._template.volume
 
+    @property
+    @ensure_design_is_active
+    def material(self) -> Material:  # noqa: D102
+        return self._template.material
+
+    @material.setter
+    def material(self, value: Material):  # noqa: D102
+        self._template.material = value
+
     @ensure_design_is_active
     def assign_material(self, material: Material) -> None:  # noqa: D102
         self._template.assign_material(material)
+
+    @ensure_design_is_active
+    def get_assigned_material(self) -> Material:  # noqa: D102
+        return self._template.get_assigned_material()
 
     @ensure_design_is_active
     def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102
@@ -1468,6 +1673,10 @@ class Body(IBody):
         return self._template.set_fill_style(fill_style)
 
     @ensure_design_is_active
+    def set_suppressed(self, suppressed: bool) -> None:  # noqa: D102
+        return self._template.set_suppressed(suppressed)
+
+    @ensure_design_is_active
     def set_color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
         return self._template.set_color(color)
 
@@ -1512,6 +1721,14 @@ class Body(IBody):
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate(merge, self.parent_component.get_world_transform())
 
+    @ensure_design_is_active
+    def shell_body(self, offset: Real) -> bool:  # noqa: D102
+        return self._template.shell_body(offset)
+
+    @ensure_design_is_active
+    def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
+        return self._template.remove_faces(selection, offset)
+
     def plot(  # noqa: D102
         self,
         merge: bool = True,
@@ -1544,13 +1761,79 @@ class Body(IBody):
         pl.show(screenshot=screenshot, **plotting_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
+        if self._template._grpc_client.backend_version < (25, 2, 0):
+            self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
+        else:
+            self.__generic_boolean_command(
+                other, keep_other, "intersect", "bodies do not intersect"
+            )
 
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
+        if self._template._grpc_client.backend_version < (25, 2, 0):
+            self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
+        else:
+            self.__generic_boolean_command(
+                other, keep_other, "subtract", "empty (complete) subtraction"
+            )
 
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
+        if self._template._grpc_client.backend_version < (25, 2, 0):
+            self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
+        else:
+            self.__generic_boolean_command(other, False, "unite", "union operation failed")
+
+    @protect_grpc
+    @reset_tessellation_cache
+    @ensure_design_is_active
+    @check_input_types
+    def __generic_boolean_command(
+        self,
+        other: Union["Body", Iterable["Body"]],
+        keep_other: bool,
+        type_bool_op: str,
+        err_bool_op: str,
+    ) -> None:
+        parent_design = get_design_from_body(self)
+        other_bodies = other if isinstance(other, Iterable) else [other]
+        if type_bool_op == "intersect":
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [self._grpc_id]
+            request = CombineIntersectBodiesRequest(
+                target_selection=target_ids,
+                tool_selection=body_ids,
+                subtract_from_target=False,
+                keep_cutter=keep_other,
+            )
+            response = self._template._commands_stub.CombineIntersectBodies(request)
+        elif type_bool_op == "subtract":
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [self._grpc_id]
+            request = CombineIntersectBodiesRequest(
+                target_selection=target_ids,
+                tool_selection=body_ids,
+                subtract_from_target=True,
+                keep_cutter=keep_other,
+            )
+            response = self._template._commands_stub.CombineIntersectBodies(request)
+        elif type_bool_op == "unite":
+            bodies = [self]
+            bodies.extend(other_bodies)
+            body_ids = [body._grpc_id for body in bodies]
+            request = CombineMergeBodiesRequest(target_selection=body_ids)
+            response = self._template._commands_stub.CombineMergeBodies(request)
+        else:
+            raise ValueError("Unknown operation requested")
+        if not response.success:
+            raise ValueError(
+                f"Operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
+                f"Involving bodies:{self}, {other_bodies}"
+            )
+
+        if not keep_other:
+            for b in other_bodies:
+                b.parent_component.delete_body(b)
+
+        parent_design._update_design_inplace()
 
     @protect_grpc
     @reset_tessellation_cache
