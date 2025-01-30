@@ -251,8 +251,8 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         # IGES
         #
         # TODO: Something has gone wrong with IGES
-        # https://github.com/ansys/pyansys-geometry/issues/801
-
+        # https://github.com/ansys/pyansys-geometry/issues/1146
+        #
         # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
         # design.download(file, DesignFileFormat.IGES)
         # design2 = modeler.open_file(file)
