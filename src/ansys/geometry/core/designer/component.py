@@ -75,7 +75,7 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
+from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
@@ -358,7 +358,6 @@ class Component:
         return self.parent_component.get_world_transform() * self._master_component.transform
 
     @protect_grpc
-    @ensure_design_is_active
     def modify_placement(
         self,
         translation: Vector3D | None = None,
@@ -416,7 +415,6 @@ class Component:
         self.modify_placement()
 
     @check_input_types
-    @ensure_design_is_active
     def add_component(
         self, name: str, template: Optional["Component"] = None, instance_name: str = None
     ) -> "Component":
@@ -460,7 +458,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
         """Set the shared topology to apply to the component.
 
@@ -482,7 +479,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def extrude_sketch(
         self,
         name: str,
@@ -567,7 +563,6 @@ class Component:
     @min_backend_version(24, 2, 0)
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def sweep_sketch(
         self,
         name: str,
@@ -617,7 +612,6 @@ class Component:
     @min_backend_version(24, 2, 0)
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def sweep_chain(
         self,
         name: str,
@@ -717,7 +711,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def extrude_face(
         self,
         name: str,
@@ -780,7 +773,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def create_sphere(self, name: str, center: Point3D, radius: Distance) -> Body:
         """Create a sphere body defined by the center point and the radius.
@@ -814,7 +806,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def create_body_from_loft_profile(
         self,
@@ -881,7 +872,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def create_surface(self, name: str, sketch: Sketch) -> Body:
         """Create a surface body with a sketch profile.
 
@@ -919,7 +909,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def create_surface_from_face(self, name: str, face: Face) -> Body:
         """Create a surface body based on a face.
 
@@ -960,7 +949,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     @min_backend_version(25, 1, 0)
     def create_body_from_surface(self, name: str, trimmed_surface: TrimmedSurface) -> Body:
         """Create a surface body from a trimmed surface.
@@ -1036,7 +1024,6 @@ class Component:
         return Body(response.id, response.name, self, tb)
 
     @check_input_types
-    @ensure_design_is_active
     def create_coordinate_system(self, name: str, frame: Frame) -> CoordinateSystem:
         """Create a coordinate system.
 
@@ -1059,7 +1046,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def translate_bodies(
         self, bodies: list[Body], direction: UnitVector3D, distance: Quantity | Distance | Real
     ) -> None:
@@ -1111,7 +1097,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def create_beams(
         self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
     ) -> list[Beam]:
@@ -1172,7 +1157,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def delete_component(self, component: Union["Component", str]) -> None:
         """Delete a component (itself or its children).
 
@@ -1207,7 +1191,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def delete_body(self, body: Body | str) -> None:
         """Delete a body belonging to this component (or its children).
 
@@ -1259,7 +1242,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def add_design_points(
         self,
         name: str,
@@ -1295,7 +1277,6 @@ class Component:
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def delete_beam(self, beam: Beam | str) -> None:
         """Delete an existing beam belonging to this component's scope.
 

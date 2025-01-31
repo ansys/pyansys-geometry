@@ -55,12 +55,5 @@ USE_SERVICE_COLORS: bool = False
 """Global constant for checking whether to use service colors for plotting
 purposes. If set to False, the default colors will be used (speed gain)."""
 
-DISABLE_MULTIPLE_DESIGN_CHECK: bool = False
-"""Global constant for disabling the ``ensure_design_is_active`` check.
-
-Only set this to false if you are sure you want to disable this check
-and you will ONLY be working with one design.
-"""
-
 DOCUMENTATION_BUILD: bool = os.environ.get("PYANSYS_GEOMETRY_DOC_BUILD", "false").lower() == "true"
 """Global flag for the documentation to use the proper PyVista Jupyter backend."""

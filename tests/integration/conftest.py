@@ -162,11 +162,7 @@ def modeler(session_modeler: Modeler):
     yield session_modeler
 
     # Cleanup on exit
-    [design.close() for design in session_modeler.designs.values()]
-
-    # Empty the designs dictionary
-    session_modeler._designs = {}
-
+    session_modeler.design.close()
 
 @pytest.fixture(scope="session", autouse=True)
 def clean_plot_result_images():

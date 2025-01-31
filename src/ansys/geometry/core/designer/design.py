@@ -78,7 +78,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
+from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
@@ -212,10 +212,6 @@ class Design(Component):
     @protect_grpc
     def _activate(self, called_after_design_creation: bool = False) -> None:
         """Activate the design."""
-        # Deactivate all designs first
-        for design in self._modeler._designs.values():
-            design._is_active = False
-
         # Activate the current design
         if not called_after_design_creation:
             self._design_stub.PutActive(EntityIdentifier(id=self._design_id))
@@ -226,7 +222,6 @@ class Design(Component):
     # https://github.com/ansys/pyansys-geometry/issues/1319
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def add_material(self, material: Material) -> None:
         """Add a material to the design.
 
@@ -259,7 +254,6 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def save(self, file_location: Path | str) -> None:
         """Save a design to disk on the active Geometry server instance.
 
@@ -277,7 +271,6 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def download(
         self,
         file_location: Path | str,
@@ -640,7 +633,6 @@ class Design(Component):
         return file_location
 
     @check_input_types
-    @ensure_design_is_active
     def create_named_selection(
         self,
         name: str,
@@ -691,7 +683,6 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def delete_named_selection(self, named_selection: NamedSelection | str) -> None:
         """Delete a named selection on the active Geometry server instance.
 
@@ -722,7 +713,6 @@ class Design(Component):
             pass
 
     @check_input_types
-    @ensure_design_is_active
     def delete_component(self, component: Union["Component", str]) -> None:
         """Delete a component (itself or its children).
 
@@ -764,7 +754,6 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def add_beam_circular_profile(
         self,
         name: str,
@@ -858,7 +847,6 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def add_midsurface_thickness(self, thickness: Quantity, bodies: list[Body]) -> None:
         """Add a mid-surface thickness to a list of bodies.
 
@@ -898,7 +886,6 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def add_midsurface_offset(self, offset_type: MidSurfaceOffsetType, bodies: list[Body]) -> None:
         """Add a mid-surface offset type to a list of bodies.
 
@@ -936,7 +923,6 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     def delete_beam_profile(self, beam_profile: BeamProfile | str) -> None:
         """Remove a beam profile on the active geometry server instance.
 
@@ -961,7 +947,6 @@ class Design(Component):
 
     @protect_grpc
     @check_input_types
-    @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def insert_file(self, file_location: Path | str) -> Component:
         """Insert a file into the design.
@@ -1199,13 +1184,5 @@ class Design(Component):
         self._named_selections = {}
         self._coordinate_systems = {}
 
-        # Get the previous design id
-        previous_design_id = self._design_id
-
         # Read the existing design
         self.__read_existing_design()
-
-        # If the design id has changed, update the design id in the Modeler
-        if previous_design_id != self._design_id:
-            self._modeler._designs[self._design_id] = self
-            self._modeler._designs.pop(previous_design_id)

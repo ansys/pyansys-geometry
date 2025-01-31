@@ -45,7 +45,6 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import (
     deprecated_method,
-    ensure_design_is_active,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
@@ -204,7 +203,6 @@ class Face:
 
     @property
     @protect_grpc
-    @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def shape(self) -> TrimmedSurface:
         """Underlying trimmed surface of the face.
@@ -234,7 +232,6 @@ class Face:
 
     @property
     @protect_grpc
-    @ensure_design_is_active
     def area(self) -> Quantity:
         """Calculated area of the face."""
         self._grpc_client.log.debug("Requesting face area from server.")
@@ -243,7 +240,6 @@ class Face:
 
     @property
     @protect_grpc
-    @ensure_design_is_active
     def edges(self) -> list[Edge]:
         """List of all edges of the face."""
         self._grpc_client.log.debug("Requesting face edges from server.")
@@ -252,7 +248,6 @@ class Face:
 
     @property
     @protect_grpc
-    @ensure_design_is_active
     def loops(self) -> list[FaceLoop]:
         """List of all loops of the face."""
         self._grpc_client.log.debug("Requesting face loops from server.")
@@ -288,7 +283,6 @@ class Face:
         return loops
 
     @protect_grpc
-    @ensure_design_is_active
     def normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
         """Get the normal direction to the face at certain UV coordinates.
 
@@ -349,7 +343,6 @@ class Face:
         return self.normal(u, v)
 
     @protect_grpc
-    @ensure_design_is_active
     def point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
         """Get a point of the face evaluated at certain UV coordinates.
 
@@ -434,7 +427,6 @@ class Face:
         return edges
 
     @protect_grpc
-    @ensure_design_is_active
     def create_isoparametric_curves(
         self, use_u_param: bool, parameter: float
     ) -> list[TrimmedCurve]:
