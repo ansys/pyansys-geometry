@@ -756,3 +756,39 @@ def test_split_body_by_face(modeler: Modeler):
     assert design.bodies[2].volume.m == pytest.approx(
         Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_get_round_info(modeler: Modeler):
+    """Test getting the round info from a face"""
+    design = modeler.create_design("full_fillet")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+    assert len(body.edges) == 12
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    modeler.geometry_commands.fillet(body.edges[0], 0.1)
+    assert len(body.faces) == 7
+    assert len(body.edges) == 15
+    assert body.volume.m == pytest.approx(
+        Quantity(0.9978539816339744, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+    _, radius = modeler.geometry_commands.get_round_info(body.faces[6])
+    assert radius == pytest.approx(
+        Quantity(0.1, UNITS.m).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_get_empty_round_info(modeler: Modeler):
+    """Test getting the round info from a face that doesnt have any rounding"""
+    design = modeler.create_design("full_fillet")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+    assert len(body.edges) == 12
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    _, radius = modeler.geometry_commands.get_round_info(body.faces[5])
+    assert radius == 0.0
+    

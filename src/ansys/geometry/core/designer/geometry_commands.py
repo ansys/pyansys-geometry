@@ -43,6 +43,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     RevolveFacesRequest,
     RevolveFacesUpToRequest,
     SplitBodyRequest,
+    RoundInfoRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
@@ -1138,3 +1139,28 @@ class GeometryCommands:
             design._update_design_inplace()
 
         return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def get_round_info(self, face: "Face") -> tuple[bool, Real]:
+        """Get info on the rounding of a face.
+
+        Parameters
+        ----------
+        Face
+            The design face to get round info on
+
+        Returns
+        -------
+        bool
+            Direction of circular cross-section
+        Real
+            Radius of the round
+        """
+        result = self._commands_stub.GetRoundInfo(
+            RoundInfoRequest(
+                face = face._grpc_id
+            )
+        )
+        
+        return (result.along_u, result.radius)

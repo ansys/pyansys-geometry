@@ -322,6 +322,25 @@ def point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
     )
 
 
+def grpc_point_to_point3d(point: GRPCPoint) -> Point3D:
+    """Convert a point gRPC message class to a ``Point3D`` class.
+
+    Parameters
+    ----------
+    point : GRPCPoint
+        Source point data.
+
+    Returns
+    -------
+    Point3D
+        Converted point.
+    """
+    return Point3D(
+        [point.x, point.y, point.z],
+        UNITS.m,
+    )
+
+
 def point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
     """Convert a ``Point2D`` class to a point gRPC message.
 
