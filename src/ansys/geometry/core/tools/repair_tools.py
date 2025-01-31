@@ -22,10 +22,15 @@
 """Provides tools for repairing bodies."""
 
 from typing import TYPE_CHECKING
-
 from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
+from ansys.api.geometry.v0.models_pb2 import (
+    InspectGeometryMessageId,
+    InspectGeometryMessageType,
+    InspectGeometryResult,
+    InspectGeometryResultIssue,
+)
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FindAdjustSimplifyRequest,
     FindDuplicateFacesRequest,
@@ -37,6 +42,8 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FindSmallFacesRequest,
     FindSplitEdgesRequest,
     FindStitchFacesRequest,
+    InspectGeometryRequest,
+    RepairGeometryRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from ansys.geometry.core.connection import GrpcClient
@@ -52,6 +59,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
+from ansys.geometry.core.tools.check_geometry import GeometryIssue, InspectResult
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
@@ -74,11 +82,12 @@ if TYPE_CHECKING:  # pragma: no cover
 class RepairTools:
     """Repair tools for PyAnsys Geometry."""
 
-    def __init__(self, grpc_client: GrpcClient):
+    def __init__(self, grpc_client: GrpcClient, modeler):
         """Initialize a new instance of the ``RepairTools`` class."""
         self._grpc_client = grpc_client
         self._repair_stub = RepairToolsStub(self._grpc_client.channel)
         self._bodies_stub = BodiesStub(self._grpc_client.channel)
+        self._modeler = modeler
 
     @protect_grpc
     def find_split_edges(
@@ -597,4 +606,110 @@ class RepairTools:
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
         )
+        return message
+
+    def inspect_geometry(self, bodies: list["Body"]) -> list[InspectResult]:
+        """Return a list of geometry issues organized by body.
+
+        This method inspects the geometry and returns a list of the issues grouped by
+        the body where they are found.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to inspect the geometry for.
+
+        Returns
+        -------
+        list[IssuesByBody]
+            List of objects representing geometry issues and the bodies where issues are found.
+        """
+        parent_design = self._modeler.get_active_design()
+        body_ids = [body.id for body in bodies]
+        inspect_result_response = self._repair_stub.InspectGeometry(
+            InspectGeometryRequest(bodies=body_ids)
+        )
+        return self.__create_inspect_result_from_response(
+            parent_design, inspect_result_response.issues_by_body
+        )
+
+    def __create_inspect_result_from_response(
+        self, design, inspect_geometry_results: list["InspectGeometryResult"]
+    ) -> list[InspectResult]:
+        inspect_results = []
+        for inspect_geometry_result in inspect_geometry_results:
+            body = get_bodies_from_ids(design, [inspect_geometry_result.body.id])
+            issues = self.__create_issues_from_response(design, inspect_geometry_result.issues)
+            inspect_result = InspectResult(grpc_client=self._grpc_client, body=body[0], issues=issues)
+            inspect_results.append(inspect_result)
+
+        return inspect_results
+
+    def __create_issues_from_response(
+        self,
+        design,
+        inspect_geometry_result_issues: list["InspectGeometryResultIssue"],
+    ) -> list[GeometryIssue]:
+        issues = []
+        for inspect_result_issue in inspect_geometry_result_issues:
+            message_type = InspectGeometryMessageType.Name(inspect_result_issue.message_type)
+            message_id = InspectGeometryMessageId.Name(inspect_result_issue.message_id)
+            message = inspect_result_issue.message
+
+            #faces = [
+            #    Face(
+            #        grpc_face.id,
+            #        SurfaceType(grpc_face.surface_type),
+            #        self,
+            #        self._grpc_client,
+            #        grpc_face.is_reversed,
+            #    )
+            #    for grpc_face in inspect_result_issue.faces
+            #]
+
+            #edges = [
+            #    Edge(
+            #        grpc_edge.id,
+            #        CurveType(grpc_edge.curve_type),
+            #        self,
+            #        self._grpc_client,
+            #        grpc_edge.is_reversed,
+            #    )
+            #    for grpc_edge in inspect_result_issue.edges
+            #]
+
+            issue = GeometryIssue(
+                message_type=message_type,
+                message_id=message_id,
+                message=message,
+                faces=(face.id for face in inspect_result_issue.faces),
+                edges=(edge.id for edge in inspect_result_issue.edges)
+            )
+            a = 1
+            issues.append(issue)
+        return issues
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def repair_geometry(self, bodies: list["Body"]) -> RepairToolMessage:
+        """Attempt to repairs the geometry for the given bodies.
+
+        This method inspects the geometry for the given bodies and attempts to repair them.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies where to attempt to repair the geometry.
+
+        Returns
+        -------
+        Message containing success of the operation.
+        """
+        # parent_design = get_design_from_body(bodies[0])
+        body_ids = [body.id for body in bodies]
+        repair_result_response = self._repair_stub.RepairGeometry(
+            RepairGeometryRequest(bodies=body_ids)
+        )
+
+        message = RepairToolMessage(repair_result_response.result.success, [], [])
         return message
