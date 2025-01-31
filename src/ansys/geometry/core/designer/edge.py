@@ -32,7 +32,7 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_curve_to_curve
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
+from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.curves.trimmed_curve import ReversedTrimmedCurve, TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -112,7 +112,6 @@ class Edge:
 
     @property
     @protect_grpc
-    @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def shape(self) -> TrimmedCurve:
         """Underlying trimmed curve of the edge.
@@ -145,7 +144,6 @@ class Edge:
 
     @property
     @protect_grpc
-    @ensure_design_is_active
     def length(self) -> Quantity:
         """Calculated length of the edge."""
         try:
@@ -163,7 +161,6 @@ class Edge:
 
     @property
     @protect_grpc
-    @ensure_design_is_active
     def faces(self) -> list["Face"]:
         """Faces that contain the edge."""
         from ansys.geometry.core.designer.face import Face, SurfaceType
@@ -183,7 +180,6 @@ class Edge:
 
     @property
     @protect_grpc
-    @ensure_design_is_active
     def start(self) -> Point3D:
         """Start point of the edge."""
         try:
@@ -196,7 +192,6 @@ class Edge:
 
     @property
     @protect_grpc
-    @ensure_design_is_active
     def end(self) -> Point3D:
         """End point of the edge."""
         try:

@@ -83,7 +83,6 @@ from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.misc.checks import (
     check_type,
     check_type_all_elements_in_iterable,
-    ensure_design_is_active,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
@@ -1438,7 +1437,6 @@ class Body(IBody):
 
     @property
     @protect_grpc
-    @ensure_design_is_active
     def faces(self) -> list[Face]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
         grpc_faces = self._template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
@@ -1455,7 +1453,6 @@ class Body(IBody):
 
     @property
     @protect_grpc
-    @ensure_design_is_active
     def edges(self) -> list[Edge]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
         grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
@@ -1511,12 +1508,10 @@ class Body(IBody):
         return self._surface_offset
 
     @property
-    @ensure_design_is_active
     def volume(self) -> Quantity:  # noqa: D102
         return self._template.volume
 
     @property
-    @ensure_design_is_active
     def material(self) -> Material:  # noqa: D102
         return self._template.material
 
@@ -1524,26 +1519,21 @@ class Body(IBody):
     def material(self, value: Material):  # noqa: D102
         self._template.material = value
 
-    @ensure_design_is_active
     def assign_material(self, material: Material) -> None:  # noqa: D102
         self._template.assign_material(material)
 
-    @ensure_design_is_active
     def get_assigned_material(self) -> Material:  # noqa: D102
         return self._template.get_assigned_material()
 
-    @ensure_design_is_active
     def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102
         self._template.add_midsurface_thickness(thickness)
 
-    @ensure_design_is_active
     def add_midsurface_offset(  # noqa: D102
         self, offset: "MidSurfaceOffsetType"
     ) -> None:
         self._template.add_midsurface_offset(offset)
 
     @protect_grpc
-    @ensure_design_is_active
     def imprint_curves(  # noqa: D102
         self, faces: list[Face], sketch: Sketch
     ) -> tuple[list[Edge], list[Face]]:
@@ -1594,7 +1584,6 @@ class Body(IBody):
         return (new_edges, new_faces)
 
     @protect_grpc
-    @ensure_design_is_active
     def project_curves(  # noqa: D102
         self,
         direction: UnitVector3D,
@@ -1630,7 +1619,6 @@ class Body(IBody):
 
     @check_input_types
     @protect_grpc
-    @ensure_design_is_active
     def imprint_projected_curves(  # noqa: D102
         self,
         direction: UnitVector3D,
@@ -1664,29 +1652,23 @@ class Body(IBody):
 
         return imprinted_faces
 
-    @ensure_design_is_active
     def set_name(self, name: str) -> None:  # noqa: D102
         return self._template.set_name(name)
 
-    @ensure_design_is_active
     def set_fill_style(self, fill_style: FillStyle) -> None:  # noqa: D102
         return self._template.set_fill_style(fill_style)
 
-    @ensure_design_is_active
     def set_suppressed(self, suppressed: bool) -> None:  # noqa: D102
         return self._template.set_suppressed(suppressed)
 
-    @ensure_design_is_active
     def set_color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
         return self._template.set_color(color)
 
-    @ensure_design_is_active
     def translate(  # noqa: D102
         self, direction: UnitVector3D, distance: Quantity | Distance | Real
     ) -> None:
         return self._template.translate(direction, distance)
 
-    @ensure_design_is_active
     def rotate(  # noqa: D102
         self,
         axis_origin: Point3D,
@@ -1695,37 +1677,29 @@ class Body(IBody):
     ) -> None:
         return self._template.rotate(axis_origin, axis_direction, angle)
 
-    @ensure_design_is_active
     def scale(self, value: Real) -> None:  # noqa: D102
         return self._template.scale(value)
 
-    @ensure_design_is_active
     def map(self, frame: Frame) -> None:  # noqa: D102
         return self._template.map(frame)
 
-    @ensure_design_is_active
     def mirror(self, plane: Plane) -> None:  # noqa: D102
         return self._template.mirror(plane)
 
-    @ensure_design_is_active
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
         return self._template.get_collision(body)
 
-    @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         return self._template.copy(parent, name)
 
-    @ensure_design_is_active
     def tessellate(  # noqa: D102
         self, merge: bool = False
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate(merge, self.parent_component.get_world_transform())
 
-    @ensure_design_is_active
     def shell_body(self, offset: Real) -> bool:  # noqa: D102
         return self._template.shell_body(offset)
 
-    @ensure_design_is_active
     def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
         return self._template.remove_faces(selection, offset)
 
@@ -1784,7 +1758,6 @@ class Body(IBody):
 
     @protect_grpc
     @reset_tessellation_cache
-    @ensure_design_is_active
     @check_input_types
     def __generic_boolean_command(
         self,
@@ -1837,7 +1810,6 @@ class Body(IBody):
 
     @protect_grpc
     @reset_tessellation_cache
-    @ensure_design_is_active
     @check_input_types
     def __generic_boolean_op(
         self,

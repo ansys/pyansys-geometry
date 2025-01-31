@@ -37,8 +37,7 @@ from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
-from ansys.geometry.core.logger import LOG
-from ansys.geometry.core.misc.checks import check_type, min_backend_version
+from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
@@ -120,15 +119,15 @@ class Modeler:
             backend_type=backend_type,
         )
 
-        # Maintaining references to all designs within the modeler workspace
-        self._designs: dict[str, "Design"] = {}
+        # Single design for the Modeler
+        self._design: Optional["Design"] = None
 
         # Initialize the RepairTools - Not available on Linux
         # TODO: delete "if" when Linux service is able to use repair tools
         # https://github.com/ansys/pyansys-geometry/issues/1319
         if BackendType.is_core_service(self.client.backend_type):
             self._measurement_tools = None
-            LOG.warning("CoreService backend does not support measurement tools.")
+            self.client.log.warning("CoreService backend does not support measurement tools.")
         else:
             self._measurement_tools = MeasurementTools(self._grpc_client)
 
@@ -140,7 +139,7 @@ class Modeler:
 
         # Check if the backend allows for multiple designs and throw warning if needed
         if not self.client.multiple_designs_allowed:
-            LOG.warning(
+            self.client.log.warning(
                 "Linux and Ansys Discovery backends do not support multiple "
                 "designs open in the same session. Only the last design created "
                 "will be available to perform modeling operations."
@@ -152,14 +151,20 @@ class Modeler:
         return self._grpc_client
 
     @property
-    def designs(self) -> dict[str, "Design"]:
-        """All designs within the modeler workspace.
+    def design(self) -> "Design":
+        """Retrieve the design within the modeler workspace."""
+        return self._design
 
+    @property
+    @deprecated_method(alternative="design")
+    def designs(self) -> dict[str, "Design"]:
+        """Retrieve the design within the modeler workspace.
+        
         Notes
         -----
-        This property is read-only. **DO NOT** modify the dictionary.
+        This method is deprecated. Use the :func:`design` property instead.
         """
-        return self._designs
+        return {self._design.id: self._design}
 
     def create_design(self, name: str) -> "Design":
         """Initialize a new design with the connected client.
@@ -177,14 +182,20 @@ class Modeler:
         from ansys.geometry.core.designer.design import Design
 
         check_type(name, str)
+
+        # If a previous design was available... inform the user that it will be deleted
+        # when creating a new design.
+        if self._design is not None and self._design.is_active:
+            self.client.log.warning("Closing previous design before creating a new one.")
+            self._design.close()
+
+        # Create the new design
         design = Design(name, self)
-        self._designs[design.design_id] = design
-        if len(self._designs) > 1:
-            LOG.warning(
-                "Some backends only support one design. "
-                + "Previous designs may be deleted (on the service) when creating a new one."
-            )
-        return self._designs[design.design_id]
+
+        # Update the design stored in the modeler
+        self._design = design
+        
+        return self._design
 
     def get_active_design(self, sync_with_backend: bool = True) -> "Design":
         """Get the active design on the modeler object.
@@ -201,14 +212,13 @@ class Modeler:
         Design
             Design object already existing on the modeler.
         """
-        for _, design in self._designs.items():
-            if design._is_active:
-                # Check if sync_with_backend is requested
-                if sync_with_backend:
-                    design._update_design_inplace()
-
-                # Return the active design
-                return design
+        if self._design is not None and self._design.is_active:
+            # Check if sync_with_backend is requested
+            if sync_with_backend:
+                self._design._update_design_inplace()
+            return self._design 
+        else:
+            self.client.log.warning("No active design available.")
 
         return None
 
@@ -222,43 +232,39 @@ class Modeler:
         """
         from ansys.geometry.core.designer.design import Design
 
-        design = Design("", self, read_existing_design=True)
-        self._designs[design.design_id] = design
-        if len(self._designs) > 1:
-            LOG.warning(
-                "Some backends only support one design. "
-                + "Previous designs may be deleted (on the service) when reading a new one."
-            )
-        return self._designs[design.design_id]
+        self._design = Design("", self, read_existing_design=True)
+        
+        return self._design
 
-    def close(self, close_designs: bool = True) -> None:
+    def close(self, close_design: bool = True) -> None:
         """Access the client's close method.
 
         Parameters
         ----------
-        close_designs : bool, default: True
-            Whether to close all designs before closing the client.
+        close_design : bool, default: True
+            Whether to close the design before closing the client.
         """
-        # Close all designs (if requested)
-        [design.close() for design in self._designs.values() if close_designs]
+        # Close design (if requested)
+        if close_design and self._design is not None:
+            self._design.close()
 
         # Close the client
         self.client.close()
 
-    def exit(self, close_designs: bool = True) -> None:
+    def exit(self, close_design: bool = True) -> None:
         """Access the client's close method.
 
         Parameters
         ----------
-        close_designs : bool, default: True
-            Whether to close all designs before closing the client.
+        close_design : bool, default: True
+            Whether to close the design before closing the client.
 
         Notes
         -----
         This method is calling the same method as
         :func:`close() <ansys.geometry.core.modeler.Modeler.close>`.
         """
-        self.close(close_designs=close_designs)
+        self.close(close_design=close_design)
 
     def _upload_file(
         self,
@@ -301,7 +307,7 @@ class Modeler:
         with fp_path.open(mode="rb") as file:
             data = file.read()
 
-        c_stub = CommandsStub(self._grpc_client.channel)
+        c_stub = CommandsStub(self.client.channel)
 
         response = c_stub.UploadFile(
             UploadFileRequest(
@@ -361,7 +367,7 @@ class Modeler:
                         self._upload_file(full_path)
             self._upload_file(file_path, True, import_options)
         else:
-            DesignsStub(self._grpc_client.channel).Open(
+            DesignsStub(self.client.channel).Open(
                 OpenRequest(filepath=file_path, import_options=import_options.to_dict())
             )
 
@@ -372,7 +378,7 @@ class Modeler:
         lines = []
         lines.append(f"Ansys Geometry Modeler ({hex(id(self))})")
         lines.append("")
-        lines.append(str(self._grpc_client))
+        lines.append(str(self.client))
         return "\n".join(lines)
 
     @protect_grpc
@@ -468,7 +474,7 @@ class Modeler:
                 api_version = ApiVersions.parse_input(api_version)
 
         serv_path = self._upload_file(file_path)
-        ga_stub = DbuApplicationStub(self._grpc_client.channel)
+        ga_stub = DbuApplicationStub(self.client.channel)
         request = RunScriptFileRequest(
             script_path=serv_path,
             script_args=script_args,
