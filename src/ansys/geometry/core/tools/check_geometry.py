@@ -22,24 +22,33 @@
 """Module for repair tool message."""
 
 from typing import TYPE_CHECKING
-#from ansys.geometry.core.misc.auxiliary import get_design_from_body
-from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.misc.auxiliary import get_design_from_body
-from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
-from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
-from ansys.api.geometry.v0.models_pb2 import InspectGeometryMessageType, InspectGeometryMessageId
-from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
+
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.api.geometry.v0.models_pb2 import InspectGeometryMessageId, InspectGeometryMessageType
+from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
+from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
+
+# from ansys.geometry.core.misc.auxiliary import get_design_from_body
+from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
 
+
 class GeometryIssue:
     """Provides return message for the repair tool methods."""
 
-    def __init__(self, message_type: InspectGeometryMessageType, message_id: InspectGeometryMessageId, message: str, edges: list["Edge"], faces: list["Face"]):
+    def __init__(
+        self,
+        message_type: InspectGeometryMessageType,
+        message_id: InspectGeometryMessageId,
+        message: str,
+        edges: list["Edge"],
+        faces: list["Face"],
+    ):
         """Initialize a new instance of a geometry issue found during geometry inspect.
 
         Parameters
@@ -51,9 +60,9 @@ class GeometryIssue:
         message
             Message that describes the geometry issue.
         edges: list[Edge]
-            List of edges (if any) that are part of the issue. 
+            List of edges (if any) that are part of the issue.
         modified_bodies: list[Face]
-            List of faces that are part of the issue. 
+            List of faces that are part of the issue.
         """
         self._message_type = message_type
         self._message_id = message_id
@@ -70,28 +79,29 @@ class GeometryIssue:
     def message_id(self) -> InspectGeometryMessageId:
         """The identifier for the message."""
         return self._message_id
-    
+
     @property
     def message(self) -> str:
         """The identifier for the message."""
         return self._message
-    
+
     @property
     def edges(self) -> list["Edge"]:
         """The List of edges (if any) that are part of the issue."""
         return self._edges
-    
+
     @property
     def faces(self) -> list["Face"]:
         """The List of faces (if any) that are part of the issue."""
         return self._faces
+
 
 class InspectResult:
     """Provides the result of the inspect geometry operation"""
 
     def __init__(self, grpc_client: GrpcClient, body: "Body", issues: list[GeometryIssue]):
         """Initialize a new instance of the result of the inspect geometry operation.
-        
+
         Parameters
         ----------
         body: Body
@@ -99,7 +109,6 @@ class InspectResult:
         issues: list[GeometryIssue]
             List of issues for the body.
         """
-
         self._body = body
         self._issues = issues
         self._repair_stub = RepairToolsStub(grpc_client.channel)
@@ -108,12 +117,12 @@ class InspectResult:
     def body(self) -> "Body":
         """The body for which issues are found."""
         return self._body
-    
+
     @property
     def issues(self) -> list[GeometryIssue]:
         """The list of issues for the body"""
-        return self._issues 
-    
+        return self._issues
+
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -126,10 +135,9 @@ class InspectResult:
             return RepairToolMessage(False, [], [])
 
         repair_result_response = self._repair_stub.RepairGeometry(
-            RepairGeometryRequest(bodies=[EntityIdentifier(id=self.body.id)]))
-
-        message = RepairToolMessage(
-            repair_result_response.result.success, [], []
+            RepairGeometryRequest(bodies=[EntityIdentifier(id=self.body.id)])
         )
-        
-        return message       
+
+        message = RepairToolMessage(repair_result_response.result.success, [], [])
+
+        return message

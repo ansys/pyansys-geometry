@@ -22,6 +22,7 @@
 """Provides tools for repairing bodies."""
 
 from typing import TYPE_CHECKING
+
 from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
@@ -640,7 +641,9 @@ class RepairTools:
         for inspect_geometry_result in inspect_geometry_results:
             body = get_bodies_from_ids(design, [inspect_geometry_result.body.id])
             issues = self.__create_issues_from_response(design, inspect_geometry_result.issues)
-            inspect_result = InspectResult(grpc_client=self._grpc_client, body=body[0], issues=issues)
+            inspect_result = InspectResult(
+                grpc_client=self._grpc_client, body=body[0], issues=issues
+            )
             inspect_results.append(inspect_result)
 
         return inspect_results
@@ -656,7 +659,7 @@ class RepairTools:
             message_id = InspectGeometryMessageId.Name(inspect_result_issue.message_id)
             message = inspect_result_issue.message
 
-            #faces = [
+            # faces = [
             #    Face(
             #        grpc_face.id,
             #        SurfaceType(grpc_face.surface_type),
@@ -665,9 +668,9 @@ class RepairTools:
             #        grpc_face.is_reversed,
             #    )
             #    for grpc_face in inspect_result_issue.faces
-            #]
+            # ]
 
-            #edges = [
+            # edges = [
             #    Edge(
             #        grpc_edge.id,
             #        CurveType(grpc_edge.curve_type),
@@ -676,14 +679,14 @@ class RepairTools:
             #        grpc_edge.is_reversed,
             #    )
             #    for grpc_edge in inspect_result_issue.edges
-            #]
+            # ]
 
             issue = GeometryIssue(
                 message_type=message_type,
                 message_id=message_id,
                 message=message,
                 faces=(face.id for face in inspect_result_issue.faces),
-                edges=(edge.id for edge in inspect_result_issue.edges)
+                edges=(edge.id for edge in inspect_result_issue.edges),
             )
             a = 1
             issues.append(issue)
