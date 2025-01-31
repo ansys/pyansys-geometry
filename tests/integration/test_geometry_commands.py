@@ -894,6 +894,7 @@ def test_update_fill_pattern_on_imported_geometry_faces(modeler: Modeler):
         Quantity(5.2270374e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
     success = modeler.geometry_commands.update_fill_pattern(design.bodies[0].faces[3])
+    assert success
     assert len(design.bodies) == 1
     assert len(design.bodies[0].faces) == 342
     assert design.bodies[0].volume.m == pytest.approx(
