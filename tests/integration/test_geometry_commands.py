@@ -791,4 +791,18 @@ def test_get_empty_round_info(modeler: Modeler):
 
     _, radius = modeler.geometry_commands.get_round_info(body.faces[5])
     assert radius == 0.0
-    
+
+
+def test_get_closest_face_separation(modeler: Modeler):
+    """Test getting the closest face separation."""
+    design = modeler.create_design("closest_face_separation")
+
+    body1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 0]), 1, 1), 1)
+
+    distance, _, _ = body1.faces[0].get_closest_separation(body2.faces[0])
+    assert distance == pytest.approx(1.0, rel=1e-6, abs=1e-8)
+
+    body2.translate(UnitVector3D([0, 0, 1]), 1)
+    distance, _, _ = body1.faces[0].get_closest_separation(body2.faces[0])
+    assert distance == pytest.approx(1.41421356237, rel=1e-6, abs=1e-8)

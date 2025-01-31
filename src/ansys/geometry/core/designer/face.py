@@ -34,11 +34,16 @@ from ansys.api.geometry.v0.faces_pb2 import (
     CreateIsoParamCurvesRequest,
     EvaluateRequest,
     GetNormalRequest,
+    GetClosestSeparationRequest,
 )
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_surface_to_surface
+from ansys.geometry.core.connection.conversions import (
+    grpc_curve_to_curve, 
+    grpc_surface_to_surface,
+    grpc_point_to_point3d,
+)
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.point import Point3D
@@ -49,6 +54,7 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.typing import Real
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -505,3 +511,31 @@ class Face:
         )
 
         return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def get_closest_separation(self, other: "Face") -> tuple[Real, "Point3D", "Point3D"]:
+        """Find the closest separation between two faces.
+
+        Parameters
+        ----------
+        other: Body
+            other body to find the closest separation with.
+                    
+        Returns
+        -------
+        tuple[Real, Point3D, Point3D]
+            tuple with the distance between the faces, the point on the first face (self), and the point on the second face.
+        """
+        self._grpc_client.log.debug(f"Getting closest separation from {self.id} to {other._id}.")
+
+        result = self._faces_stub.GetClosestSeparation(
+            GetClosestSeparationRequest(
+                face_1=self._grpc_id,
+                face_2=other._grpc_id,
+            )
+        )
+
+        point_a = grpc_point_to_point3d(result.point_a)
+        point_b = grpc_point_to_point3d(result.point_b)
+        return (result.distance, point_a, point_b)
