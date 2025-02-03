@@ -301,7 +301,8 @@ def prepare_and_start_backend(
         product_version = get_latest_ansys_installation()[0]
 
     # Verify that the minimum version is installed.
-    _check_minimal_versions(product_version, specific_minimum_version)
+    if os.getenv("ANS_CORE_SERVICE_DIR") is None:
+        _check_minimal_versions(product_version, specific_minimum_version)
 
     if server_logs_folder is not None:
         # Verify that the user has write permissions to the folder and that it exists.
@@ -367,7 +368,9 @@ def prepare_and_start_backend(
     # This should be modified to Windows Core Service in the future
     elif BackendType.is_core_service(backend_type):
         # Define several Ansys Geometry Core Service folders needed
-        root_service_folder = Path(installations[product_version], CORE_GEOMETRY_SERVICE_FOLDER)
+        root_service_folder = Path(os.getenv("ANS_CORE_SERVICE_DIR"))
+        if root_service_folder is None:
+            root_service_folder = Path(installations[product_version], CORE_GEOMETRY_SERVICE_FOLDER)
         native_folder = root_service_folder / "Native"
         cad_integration_folder = root_service_folder / "CADIntegration"
         schema_folder = root_service_folder / "Schema"
@@ -395,8 +398,7 @@ def prepare_and_start_backend(
             # For Windows, we need to use the exe file to launch the Core Geometry Service
             args.append(
                 Path(
-                    installations[product_version],
-                    CORE_GEOMETRY_SERVICE_FOLDER,
+                    root_service_folder,
                     CORE_GEOMETRY_SERVICE_EXE,
                 )
             )
@@ -431,8 +433,7 @@ def prepare_and_start_backend(
             args.append("dotnet")
             args.append(
                 Path(
-                    installations[product_version],
-                    CORE_GEOMETRY_SERVICE_FOLDER,
+                    root_service_folder,
                     CORE_GEOMETRY_SERVICE_EXE.replace(".exe", ".dll"),
                 )
             )
