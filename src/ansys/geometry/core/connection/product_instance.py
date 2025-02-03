@@ -142,6 +142,8 @@ BACKEND_SPLASH_OFF = "/Splash=False"
 To be used only with Ansys Discovery and Ansys SpaceClaim.
 """
 
+ANSYS_GEOMETRY_SERVICE_ROOT = "ANSYS_GEOMETRY_SERVICE_ROOT"
+
 
 class ProductInstance:
     """``ProductInstance`` class.
@@ -301,7 +303,7 @@ def prepare_and_start_backend(
         product_version = get_latest_ansys_installation()[0]
 
     # Verify that the minimum version is installed.
-    if os.getenv("ANS_CORE_SERVICE_DIR") is None:
+    if os.getenv(ANSYS_GEOMETRY_SERVICE_ROOT) is None:
         _check_minimal_versions(product_version, specific_minimum_version)
 
     if server_logs_folder is not None:
@@ -358,17 +360,23 @@ def prepare_and_start_backend(
             )
 
     elif backend_type == BackendType.WINDOWS_SERVICE:
+        root_service_folder = os.getenv(ANSYS_GEOMETRY_SERVICE_ROOT)
+        if root_service_folder is None:
+            root_service_folder = Path(
+                installations[product_version], WINDOWS_GEOMETRY_SERVICE_FOLDER
+            )
+        else:
+            root_service_folder = Path(root_service_folder)
         args.append(
             Path(
-                installations[product_version],
-                WINDOWS_GEOMETRY_SERVICE_FOLDER,
+                root_service_folder,
                 GEOMETRY_SERVICE_EXE,
             )
         )
     # This should be modified to Windows Core Service in the future
     elif BackendType.is_core_service(backend_type):
         # Define several Ansys Geometry Core Service folders needed
-        root_service_folder = os.getenv("ANS_CORE_SERVICE_DIR")
+        root_service_folder = os.getenv(ANSYS_GEOMETRY_SERVICE_ROOT)
         if root_service_folder is None:
             root_service_folder = Path(installations[product_version], CORE_GEOMETRY_SERVICE_FOLDER)
         else:
