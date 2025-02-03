@@ -24,6 +24,7 @@
 import sys
 
 from beartype import beartype as check_input_types
+from typing import Union
 
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.accuracy import Accuracy
@@ -206,6 +207,38 @@ class BoundingBox2D:
             and self.y_max == other.y_max
         )
 
+    @check_input_types
     def __ne__(self, other: "BoundingBox2D") -> bool:
         """Not equals operator for the ``BoundingBox2D`` class."""
         return not self == other
+
+    @check_input_types
+    def __and__(self, other: "BoundingBox2D") -> Union[None, "BoundingBox2D"]:
+        """Bitwise and operator for the ``BoundingBox2D`` class."""
+        intersect, minX, maxX = self.intersect_interval(self.x_min, other.x_min, self.x_max, other.x_max)
+        if not intersect:
+            return None
+
+        intersect, minY, maxY = self.intersect_interval(self.y_min, other.y_min, self.y_max, other.y_max)
+        if not intersect:
+            return None
+
+        return BoundingBox2D(minX, maxX, minY, maxY)
+
+    @staticmethod
+    def intersect_interval(firstMin, secondMin, firstMax, secondMax) -> bool:
+        min = secondMin
+        if (firstMin > min):
+            min = firstMin
+
+        max = secondMax
+        if (firstMax < max):
+            max = firstMax
+
+        if (min > max):
+            if min - max > Accuracy.length_accuracy():
+                return False, 0, 0
+
+            max, min = min, max
+
+        return True, min, max
