@@ -123,8 +123,8 @@ class InspectResult:
         """The list of issues for the body"""
         return self._issues
 
-    def fix(self) -> RepairToolMessage:
-        """Fix the problem area.
+    def repair(self) -> RepairToolMessage:
+        """Repair the problem area.
 
         Returns
         -------

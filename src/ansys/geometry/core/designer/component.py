@@ -542,7 +542,9 @@ class Component:
         response = self._bodies_stub.CreateExtrudedBody(request)
         tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
+        ss = self.bodies
         self._clear_cached_bodies()
+        gg = self.bodies
 
         created_body = Body(response.id, response.name, self, tb)
         if not cut:

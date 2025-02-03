@@ -688,7 +688,6 @@ class RepairTools:
                 faces=(face.id for face in inspect_result_issue.faces),
                 edges=(edge.id for edge in inspect_result_issue.edges),
             )
-            a = 1
             issues.append(issue)
         return issues
 
