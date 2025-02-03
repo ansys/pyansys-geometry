@@ -368,9 +368,11 @@ def prepare_and_start_backend(
     # This should be modified to Windows Core Service in the future
     elif BackendType.is_core_service(backend_type):
         # Define several Ansys Geometry Core Service folders needed
-        root_service_folder = Path(os.getenv("ANS_CORE_SERVICE_DIR"))
+        root_service_folder = os.getenv("ANS_CORE_SERVICE_DIR")
         if root_service_folder is None:
             root_service_folder = Path(installations[product_version], CORE_GEOMETRY_SERVICE_FOLDER)
+        else:
+            root_service_folder = Path(root_service_folder)
         native_folder = root_service_folder / "Native"
         cad_integration_folder = root_service_folder / "CADIntegration"
         schema_folder = root_service_folder / "Schema"
