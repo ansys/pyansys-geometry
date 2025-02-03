@@ -806,3 +806,17 @@ def test_get_closest_face_separation(modeler: Modeler):
     body2.translate(UnitVector3D([0, 0, 1]), 1)
     distance, _, _ = body1.faces[0].get_closest_separation(body2.faces[0])
     assert distance == pytest.approx(1.41421356237, rel=1e-6, abs=1e-8)
+
+
+def test_get_face_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a face."""
+    design = modeler.create_design("face_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    bounding_box = body.faces[0].get_bounding_box()
+    assert bounding_box.x_min == bounding_box.y_min == -0.5
+    assert bounding_box.x_max == bounding_box.y_max == 0.5
+
+    bounding_box = body.faces[1].get_bounding_box()
+    assert bounding_box.x_min == bounding_box.y_min == -0.5
+    assert bounding_box.x_max == bounding_box.y_max == 0.5

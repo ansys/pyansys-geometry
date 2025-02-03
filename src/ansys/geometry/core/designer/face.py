@@ -46,6 +46,7 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.math.bbox import BoundingBox2D
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import (
@@ -511,6 +512,28 @@ class Face:
         )
 
         return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def get_bounding_box(self) -> BoundingBox2D:
+        """Get the bounding box for the face
+        
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        BoundingBox2D
+            The bounding box for the face.
+        """
+        self._grpc_client.log.debug(f"Getting bounding box for {self.id}.")
+
+        result = self._faces_stub.GetBoundingBox(
+            request=self._grpc_id
+        )
+
+        return BoundingBox2D(result.min.x, result.max.x, result.min.y, result.max.y)
 
     @protect_grpc
     @min_backend_version(25, 2, 0)

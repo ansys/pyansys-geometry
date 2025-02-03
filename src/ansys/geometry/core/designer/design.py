@@ -80,6 +80,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
+from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.typing import RealSequence
@@ -963,13 +964,15 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
-    def insert_file(self, file_location: Path | str) -> Component:
+    def insert_file(self, file_location: Path | str, import_options: ImportOptions = ImportOptions()) -> Component:
         """Insert a file into the design.
 
         Parameters
         ----------
         file_location : ~pathlib.Path | str
             Location on disk where the file is located.
+        import_options : ImportOptions
+            The options to pass into upload file
 
         Returns
         -------
@@ -977,7 +980,7 @@ class Design(Component):
             The newly inserted component.
         """
         # Upload the file to the server
-        filepath_server = self._modeler._upload_file(file_location)
+        filepath_server = self._modeler._upload_file(file_location, import_options=import_options)
 
         # Insert the file into the design
         self._design_stub.Insert(InsertRequest(filepath=filepath_server))
