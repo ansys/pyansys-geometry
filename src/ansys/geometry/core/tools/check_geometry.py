@@ -34,9 +34,6 @@ from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
-    from ansys.geometry.core.designer.edge import Edge
-    from ansys.geometry.core.designer.face import Face
-
 
 class GeometryIssue:
     """Provides return message for the repair tool methods."""
@@ -46,8 +43,8 @@ class GeometryIssue:
         message_type: InspectGeometryMessageType,
         message_id: InspectGeometryMessageId,
         message: str,
-        edges: list["Edge"],
-        faces: list["Face"],
+        edges: list[str],
+        faces: list[str],
     ):
         """Initialize a new instance of a geometry issue found during geometry inspect.
 
@@ -59,9 +56,9 @@ class GeometryIssue:
             Identifier for the message.
         message
             Message that describes the geometry issue.
-        edges: list[Edge]
+        edges: list[str]
             List of edges (if any) that are part of the issue.
-        modified_bodies: list[Face]
+        modified_bodies: list[str]
             List of faces that are part of the issue.
         """
         self._message_type = message_type
@@ -82,16 +79,16 @@ class GeometryIssue:
 
     @property
     def message(self) -> str:
-        """The identifier for the message."""
+        """The content of the message."""
         return self._message
 
     @property
-    def edges(self) -> list["Edge"]:
+    def edges(self) -> list[str]:
         """The List of edges (if any) that are part of the issue."""
         return self._edges
 
     @property
-    def faces(self) -> list["Face"]:
+    def faces(self) -> list[str]:
         """The List of faces (if any) that are part of the issue."""
         return self._faces
 
