@@ -38,6 +38,24 @@ either Discovery, SpaceClaim, or the Geometry service.
 When launching via Geometry Service, if you have a custom local install, you can define the path of this install
 in the ANSYS_GEOMETRY_SERVICE_ROOT environment variable. The launcher will use this location by default.
 
+.. tab-set::
+
+   .. tab-item:: Powershell
+
+      .. code-block:: pwsh
+
+            $env:ANSYS_GEOMETRY_SERVICE_ROOT="C:\Program Files\ANSYS Inc\v252\GeometryService"
+            # or
+            $env:ANSYS_GEOMETRY_SERVICE_ROOT="C:\myCustomPath\CoreGeometryService"
+
+   .. tab-item:: Windows CMD
+
+      .. code-block:: bash
+
+            SET ANSYS_GEOMETRY_SERVICE_ROOT="C:\Program Files\ANSYS Inc\v252\GeometryService"
+            # or
+            SET ANSYS_GEOMETRY_SERVICE_ROOT="C:\myCustomPath\CoreGeometryService"
+
 For more information on the arguments accepted by the launcher methods, see
 their API documentation:
 
