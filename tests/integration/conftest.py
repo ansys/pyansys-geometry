@@ -164,6 +164,7 @@ def modeler(session_modeler: Modeler):
     # Cleanup on exit
     session_modeler.design.close()
 
+
 @pytest.fixture(scope="session", autouse=True)
 def clean_plot_result_images():
     """Method cleaning up the image results path.
