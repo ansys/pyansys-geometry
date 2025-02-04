@@ -41,6 +41,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_face,
 )
 from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
+from ansys.geometry.core.tools.repair_tool_message import EnhancedRepairToolMessage
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -204,3 +205,50 @@ class PrepareTools:
             )
         )
         return share_topo_response.result
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def enhanced_share_topology(
+        self, bodies: list["Body"], tol: Real = 0.0, preserve_instances: bool = False
+    ) -> EnhancedRepairToolMessage:
+        """Share topology between the chosen bodies.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to share topology between.
+        tol : Real
+            Maximum distance between bodies.
+        preserve_instances : bool
+            Whether instances are preserved.
+
+        Returns
+        -------
+        EnhancedRepairToolMessage
+            Message containing number of problem areas found/fixed, created and/or modified bodies.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        if not bodies:
+            return EnhancedRepairToolMessage(False, 0, 0, [], [])
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        share_topo_response = self._prepare_stub.ShareTopology(
+            ShareTopologyRequest(
+                selection=[GRPCBody(id=body.id) for body in bodies],
+                tolerance=DoubleValue(value=tol),
+                preserve_instances=BoolValue(value=preserve_instances),
+            )
+        )
+
+        message = EnhancedRepairToolMessage(
+            share_topo_response.success,
+            share_topo_response.found, 
+            share_topo_response.repaired,
+            share_topo_response.created_bodies_monikers,
+            share_topo_response.modified_bodies_monikers,
+        )
+        return message
+
