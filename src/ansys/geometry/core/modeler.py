@@ -137,14 +137,6 @@ class Modeler:
         self._geometry_commands = GeometryCommands(self._grpc_client)
         self._unsupported = UnsupportedCommands(self._grpc_client, self)
 
-        # Check if the backend allows for multiple designs and throw warning if needed
-        if not self.client.multiple_designs_allowed:
-            self.client.log.warning(
-                "Linux and Ansys Discovery backends do not support multiple "
-                "designs open in the same session. Only the last design created "
-                "will be available to perform modeling operations."
-            )
-
     @property
     def client(self) -> GrpcClient:
         """``Modeler`` instance client."""
@@ -159,7 +151,7 @@ class Modeler:
     @deprecated_method(alternative="design")
     def designs(self) -> dict[str, "Design"]:
         """Retrieve the design within the modeler workspace.
-        
+
         Notes
         -----
         This method is deprecated. Use the :func:`design` property instead.
@@ -194,7 +186,7 @@ class Modeler:
 
         # Update the design stored in the modeler
         self._design = design
-        
+
         return self._design
 
     def get_active_design(self, sync_with_backend: bool = True) -> "Design":
@@ -216,7 +208,7 @@ class Modeler:
             # Check if sync_with_backend is requested
             if sync_with_backend:
                 self._design._update_design_inplace()
-            return self._design 
+            return self._design
         else:
             self.client.log.warning("No active design available.")
 
@@ -233,7 +225,7 @@ class Modeler:
         from ansys.geometry.core.designer.design import Design
 
         self._design = Design("", self, read_existing_design=True)
-        
+
         return self._design
 
     def close(self, close_design: bool = True) -> None:

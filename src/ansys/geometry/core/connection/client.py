@@ -29,6 +29,7 @@ from typing import Optional
 import warnings
 
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.checks import deprecated_method
 
 # TODO: Remove this context and filter once the protobuf UserWarning issue is downgraded to INFO
 # https://github.com/grpc/grpc/issues/37609
@@ -224,18 +225,6 @@ class GrpcClient:
 
         # Store the backend type
         self._backend_type = backend_type
-        self._multiple_designs_allowed = (
-            False
-            if backend_type
-            in (
-                BackendType.DISCOVERY,
-                BackendType.LINUX_SERVICE,
-                BackendType.CORE_LINUX,
-                BackendType.CORE_WINDOWS,
-                BackendType.DISCOVERY_HEADLESS,
-            )
-            else True
-        )
 
         # retrieve the backend version
         if hasattr(grpc_backend_response, "version"):
@@ -277,15 +266,18 @@ class GrpcClient:
         return self._backend_version
 
     @property
+    @deprecated_method(info="Multiple designs for the same service are no longer supported.")
     def multiple_designs_allowed(self) -> bool:
         """Flag indicating whether multiple designs are allowed.
 
+        Deprecated since version 0.8.X.
+
         Notes
         -----
-        This method will return ``False`` if the backend type is ``Discovery`` or
-        ``Linux Service``. Otherwise, it will return ``True``.
+        Currently, only one design is allowed per service. This method will always
+        return ``False``.
         """
-        return self._multiple_designs_allowed
+        return False
 
     @property
     def channel(self) -> grpc.Channel:
