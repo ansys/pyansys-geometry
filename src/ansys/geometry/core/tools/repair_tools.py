@@ -64,7 +64,9 @@ from ansys.geometry.core.tools.problem_areas import (
     StitchFaceProblemAreas,
     UnsimplifiedFaceProblemAreas,
 )
-from ansys.geometry.core.tools.repair_tool_message import EnhancedRepairToolMessage, RepairToolMessage
+from ansys.geometry.core.tools.repair_tool_message import (
+    EnhancedRepairToolMessage,
+)
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -498,7 +500,7 @@ class RepairTools:
         parent_design._update_design_inplace()
         message = EnhancedRepairToolMessage(
             response.success,
-            response.found, 
+            response.found,
             response.repaired,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
@@ -543,7 +545,7 @@ class RepairTools:
         parent_design._update_design_inplace()
         message = EnhancedRepairToolMessage(
             response.success,
-            response.found, 
+            response.found,
             response.repaired,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
@@ -598,7 +600,7 @@ class RepairTools:
         parent_design._update_design_inplace()
         message = EnhancedRepairToolMessage(
             response.success,
-            response.found, 
+            response.found,
             response.repaired,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,

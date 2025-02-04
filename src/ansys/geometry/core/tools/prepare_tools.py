@@ -245,10 +245,9 @@ class PrepareTools:
 
         message = EnhancedRepairToolMessage(
             share_topo_response.success,
-            share_topo_response.found, 
+            share_topo_response.found,
             share_topo_response.repaired,
             share_topo_response.created_bodies_monikers,
             share_topo_response.modified_bodies_monikers,
         )
         return message
-
