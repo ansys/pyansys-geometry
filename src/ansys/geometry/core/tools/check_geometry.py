@@ -35,6 +35,7 @@ from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
 
+
 class GeometryIssue:
     """Provides return message for the repair tool methods."""
 
@@ -94,7 +95,7 @@ class GeometryIssue:
 
 
 class InspectResult:
-    """Provides the result of the inspect geometry operation"""
+    """Provides the result of the inspect geometry operation."""
 
     def __init__(self, grpc_client: GrpcClient, body: "Body", issues: list[GeometryIssue]):
         """Initialize a new instance of the result of the inspect geometry operation.
@@ -117,7 +118,7 @@ class InspectResult:
 
     @property
     def issues(self) -> list[GeometryIssue]:
-        """The list of issues for the body"""
+        """The list of issues for the body."""
         return self._issues
 
     def repair(self) -> RepairToolMessage:

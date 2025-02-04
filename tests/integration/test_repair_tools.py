@@ -454,9 +454,10 @@ def test_find_and_fix_extra_edges(modeler: Modeler):
         final_edge_count += len(body.edges)
     assert final_edge_count == 36
 
+
 def test_inspect_geometry(modeler: Modeler):
     """Test the result of the inspect geometry query and the ability to repair one issue"""
-    design = modeler.open_file(FILES_DIR / "bad-geometry-many-issues.scdocx")
+    modeler.open_file(FILES_DIR / "bad-geometry-many-issues.scdocx")
     inspect_results = modeler.repair_tools.inspect_geometry(bodies=[])
     assert len(inspect_results) == 5
     assert len(inspect_results[0].issues) == 3
@@ -467,11 +468,11 @@ def test_inspect_geometry(modeler: Modeler):
     assert len(inspect_results) == 5
     assert len(inspect_results[0].issues) == 1
 
+
 def test_repair_geometry(modeler: Modeler):
     """Test the ability to repair a geometry. Inspect geometry is called behind the scenes"""
-    design = modeler.open_file(FILES_DIR / "bad-geometry-many-issues.scdocx")
+    modeler.open_file(FILES_DIR / "bad-geometry-many-issues.scdocx")
     modeler.repair_tools.repair_geometry(bodies=[])
     inspect_results = modeler.repair_tools.inspect_geometry(bodies=[])
     assert len(inspect_results) == 5
     assert len(inspect_results[0].issues) == 1
- 
