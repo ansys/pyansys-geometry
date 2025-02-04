@@ -35,6 +35,8 @@ either Discovery, SpaceClaim, or the Geometry service.
 
           modeler = launch_modeler_with_geometry_service()
 
+When launching via Geometry Service, if you have a custom local install, you can define the path of this install
+in the ANSYS_GEOMETRY_SERVICE_ROOT environment variable. The launcher will use this location by default.
 
 For more information on the arguments accepted by the launcher methods, see
 their API documentation:

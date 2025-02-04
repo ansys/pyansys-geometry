@@ -143,6 +143,7 @@ To be used only with Ansys Discovery and Ansys SpaceClaim.
 """
 
 ANSYS_GEOMETRY_SERVICE_ROOT = "ANSYS_GEOMETRY_SERVICE_ROOT"
+"""Local Geometry Service install location. This is for GeometryService and CoreGeometryService."""
 
 
 class ProductInstance:
