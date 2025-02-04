@@ -56,6 +56,13 @@ in the ANSYS_GEOMETRY_SERVICE_ROOT environment variable. The launcher will use t
             # or
             SET ANSYS_GEOMETRY_SERVICE_ROOT="C:\myCustomPath\CoreGeometryService"
 
+   .. tab-item:: Linux
+
+      .. code-block:: bash
+
+            export ANSYS_GEOMETRY_SERVICE_ROOT=/my_path/to/core_geometry_service
+
+
 For more information on the arguments accepted by the launcher methods, see
 their API documentation:
 
