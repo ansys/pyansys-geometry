@@ -609,7 +609,7 @@ class RepairTools:
         )
         return message
 
-    def inspect_geometry(self, bodies: list["Body"]) -> list[InspectResult]:
+    def inspect_geometry(self, bodies: list["Body"] = None) -> list[InspectResult]:
         """Return a list of geometry issues organized by body.
 
         This method inspects the geometry and returns a list of the issues grouped by
@@ -619,6 +619,7 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies to inspect the geometry for.
+            All bodies are inspected if the argument is not given.
 
         Returns
         -------
@@ -626,7 +627,7 @@ class RepairTools:
             List of objects representing geometry issues and the bodies where issues are found.
         """
         parent_design = self._modeler.get_active_design()
-        body_ids = [body.id for body in bodies]
+        body_ids = [] if bodies is None else [body.id for body in bodies]
         inspect_result_response = self._repair_stub.InspectGeometry(
             InspectGeometryRequest(bodies=body_ids)
         )
@@ -635,12 +636,12 @@ class RepairTools:
         )
 
     def __create_inspect_result_from_response(
-        self, design, inspect_geometry_results: list["InspectGeometryResult"]
+        self, design, inspect_geometry_results: list[InspectGeometryResult]
     ) -> list[InspectResult]:
         inspect_results = []
         for inspect_geometry_result in inspect_geometry_results:
             body = get_bodies_from_ids(design, [inspect_geometry_result.body.id])
-            issues = self.__create_issues_from_response(design, inspect_geometry_result.issues)
+            issues = self.__create_issues_from_response(inspect_geometry_result.issues)
             inspect_result = InspectResult(
                 grpc_client=self._grpc_client, body=body[0], issues=issues
             )
@@ -650,36 +651,13 @@ class RepairTools:
 
     def __create_issues_from_response(
         self,
-        design,
-        inspect_geometry_result_issues: list["InspectGeometryResultIssue"],
+        inspect_geometry_result_issues: list[InspectGeometryResultIssue],
     ) -> list[GeometryIssue]:
         issues = []
         for inspect_result_issue in inspect_geometry_result_issues:
             message_type = InspectGeometryMessageType.Name(inspect_result_issue.message_type)
             message_id = InspectGeometryMessageId.Name(inspect_result_issue.message_id)
             message = inspect_result_issue.message
-
-            # faces = [
-            #    Face(
-            #        grpc_face.id,
-            #        SurfaceType(grpc_face.surface_type),
-            #        self,
-            #        self._grpc_client,
-            #        grpc_face.is_reversed,
-            #    )
-            #    for grpc_face in inspect_result_issue.faces
-            # ]
-
-            # edges = [
-            #    Edge(
-            #        grpc_edge.id,
-            #        CurveType(grpc_edge.curve_type),
-            #        self,
-            #        self._grpc_client,
-            #        grpc_edge.is_reversed,
-            #    )
-            #    for grpc_edge in inspect_result_issue.edges
-            # ]
 
             issue = GeometryIssue(
                 message_type=message_type,
@@ -693,7 +671,7 @@ class RepairTools:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def repair_geometry(self, bodies: list["Body"]) -> RepairToolMessage:
+    def repair_geometry(self, bodies: list["Body"] = None) -> RepairToolMessage:
         """Attempt to repairs the geometry for the given bodies.
 
         This method inspects the geometry for the given bodies and attempts to repair them.
@@ -702,13 +680,14 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies where to attempt to repair the geometry.
+            All bodies are repaired if the argument is not given.
 
         Returns
         -------
         Message containing success of the operation.
         """
         # parent_design = get_design_from_body(bodies[0])
-        body_ids = [body.id for body in bodies]
+        body_ids = [] if bodies is None else [body.id for body in bodies]
         repair_result_response = self._repair_stub.RepairGeometry(
             RepairGeometryRequest(bodies=body_ids)
         )

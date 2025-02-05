@@ -23,8 +23,6 @@
 
 from typing import TYPE_CHECKING
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.models_pb2 import InspectGeometryMessageId, InspectGeometryMessageType
 from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 
@@ -41,8 +39,8 @@ class GeometryIssue:
 
     def __init__(
         self,
-        message_type: InspectGeometryMessageType,
-        message_id: InspectGeometryMessageId,
+        message_type: str,
+        message_id: str,
         message: str,
         edges: list[str],
         faces: list[str],
@@ -51,9 +49,9 @@ class GeometryIssue:
 
         Parameters
         ----------
-        message_type: InspectGeometryMessageType
+        message_type: str
             Type of the message (warning, error, info).
-        message_id: InspectGeometryMessageId
+        message_id: str
             Identifier for the message.
         message
             Message that describes the geometry issue.
@@ -69,12 +67,12 @@ class GeometryIssue:
         self._faces = faces
 
     @property
-    def message_type(self) -> InspectGeometryMessageType:
+    def message_type(self) -> str:
         """The type of the message (warning, error, info)."""
         return self._message_type
 
     @property
-    def message_id(self) -> InspectGeometryMessageId:
+    def message_id(self) -> str:
         """The identifier for the message."""
         return self._message_id
 
@@ -133,7 +131,7 @@ class InspectResult:
             return RepairToolMessage(False, [], [])
 
         repair_result_response = self._repair_stub.RepairGeometry(
-            RepairGeometryRequest(bodies=[EntityIdentifier(id=self.body.id)])
+            RepairGeometryRequest(bodies=[self.body._grpc_id])
         )
 
         message = RepairToolMessage(repair_result_response.result.success, [], [])
