@@ -142,6 +142,9 @@ BACKEND_SPLASH_OFF = "/Splash=False"
 To be used only with Ansys Discovery and Ansys SpaceClaim.
 """
 
+ANSYS_GEOMETRY_SERVICE_ROOT = "ANSYS_GEOMETRY_SERVICE_ROOT"
+"""Local Geometry Service install location. This is for GeometryService and CoreGeometryService."""
+
 
 class ProductInstance:
     """``ProductInstance`` class.
@@ -283,25 +286,35 @@ def prepare_and_start_backend(
 
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
-    if product_version is not None:
-        try:
-            _check_version_is_available(product_version, installations)
-        except SystemError as serr:
-            # The user requested a version as a Student version...
-            # Let's negate it and try again... if this works, we override the
-            # product_version variable.
-            try:
-                _check_version_is_available(-product_version, installations)
-            except SystemError:
-                # The student version is not installed either... raise the original error.
-                raise serr
-
-            product_version = -product_version
+    if os.getenv(ANSYS_GEOMETRY_SERVICE_ROOT) is not None and backend_type in (
+        BackendType.WINDOWS_SERVICE,
+        BackendType.LINUX_SERVICE,
+        BackendType.CORE_WINDOWS,
+        BackendType.CORE_LINUX,
+    ):
+        # If the user has set the ANSYS_GEOMETRY_SERVICE_ROOT environment variable,
+        # we will use it as the root folder for the Geometry Service.
+        pass
     else:
-        product_version = get_latest_ansys_installation()[0]
+        if product_version is not None:
+            try:
+                _check_version_is_available(product_version, installations)
+            except SystemError as serr:
+                # The user requested a version as a Student version...
+                # Let's negate it and try again... if this works, we override the
+                # product_version variable.
+                try:
+                    _check_version_is_available(-product_version, installations)
+                except SystemError:
+                    # The student version is not installed either... raise the original error.
+                    raise serr
 
-    # Verify that the minimum version is installed.
-    _check_minimal_versions(product_version, specific_minimum_version)
+                product_version = -product_version
+        else:
+            product_version = get_latest_ansys_installation()[0]
+
+        # Verify that the minimum version is installed.
+        _check_minimal_versions(product_version, specific_minimum_version)
 
     if server_logs_folder is not None:
         # Verify that the user has write permissions to the folder and that it exists.
@@ -357,17 +370,27 @@ def prepare_and_start_backend(
             )
 
     elif backend_type == BackendType.WINDOWS_SERVICE:
+        root_service_folder = os.getenv(ANSYS_GEOMETRY_SERVICE_ROOT)
+        if root_service_folder is None:
+            root_service_folder = Path(
+                installations[product_version], WINDOWS_GEOMETRY_SERVICE_FOLDER
+            )
+        else:
+            root_service_folder = Path(root_service_folder)
         args.append(
             Path(
-                installations[product_version],
-                WINDOWS_GEOMETRY_SERVICE_FOLDER,
+                root_service_folder,
                 GEOMETRY_SERVICE_EXE,
             )
         )
     # This should be modified to Windows Core Service in the future
     elif BackendType.is_core_service(backend_type):
         # Define several Ansys Geometry Core Service folders needed
-        root_service_folder = Path(installations[product_version], CORE_GEOMETRY_SERVICE_FOLDER)
+        root_service_folder = os.getenv(ANSYS_GEOMETRY_SERVICE_ROOT)
+        if root_service_folder is None:
+            root_service_folder = Path(installations[product_version], CORE_GEOMETRY_SERVICE_FOLDER)
+        else:
+            root_service_folder = Path(root_service_folder)
         native_folder = root_service_folder / "Native"
         cad_integration_folder = root_service_folder / "CADIntegration"
         schema_folder = root_service_folder / "Schema"
@@ -395,8 +418,7 @@ def prepare_and_start_backend(
             # For Windows, we need to use the exe file to launch the Core Geometry Service
             args.append(
                 Path(
-                    installations[product_version],
-                    CORE_GEOMETRY_SERVICE_FOLDER,
+                    root_service_folder,
                     CORE_GEOMETRY_SERVICE_EXE,
                 )
             )
@@ -431,8 +453,7 @@ def prepare_and_start_backend(
             args.append("dotnet")
             args.append(
                 Path(
-                    installations[product_version],
-                    CORE_GEOMETRY_SERVICE_FOLDER,
+                    root_service_folder,
                     CORE_GEOMETRY_SERVICE_EXE.replace(".exe", ".dll"),
                 )
             )
