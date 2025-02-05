@@ -548,6 +548,7 @@ class RepairTools:
             response.found, 
             response.repaired,
         )
+        return message
 
     @protect_grpc
     @min_backend_version(25, 2, 0)

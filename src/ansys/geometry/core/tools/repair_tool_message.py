@@ -21,8 +21,9 @@
 # SOFTWARE.
 """Module for repair tool message."""
 
+
 class RepairToolMessage:
-    """Provides detailed return message for the repair tool methods."""
+    """Provides return message for the repair tool methods."""
 
     def __init__(self, success: bool, created_bodies: list[str], modified_bodies: list[str], found: int = -1, repaired: int = -1):
         """Initialize a new instance of the extra edge problem area class.
