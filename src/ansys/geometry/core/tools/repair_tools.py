@@ -500,7 +500,7 @@ class RepairTools:
             response.success,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
-            response.found, 
+            response.found,
             response.repaired,
         )
         return message
@@ -545,7 +545,7 @@ class RepairTools:
             response.success,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
-            response.found, 
+            response.found,
             response.repaired,
         )
         return message
@@ -600,7 +600,7 @@ class RepairTools:
             response.success,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
-            response.found, 
+            response.found,
             response.repaired,
         )
         return message
