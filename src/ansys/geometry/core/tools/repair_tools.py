@@ -485,7 +485,7 @@ class RepairTools:
         check_type(length, Real)
 
         if not bodies:
-            return RepairToolMessage(False, 0, 0, [], [])
+            return RepairToolMessage(False, [], [], 0, 0)
 
         response = self._repair_stub.FindAndFixShortEdges(
             FindShortEdgesRequest(
