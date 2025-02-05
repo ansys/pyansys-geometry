@@ -224,3 +224,48 @@ def test_issue_1309_revolve_operation_with_coincident_origins(modeler: Modeler):
     )
 
     assert revolved_body.name == "toroid"
+
+
+def test_issue_1724_intersect_failures(modeler: Modeler):
+    """Test that intersecting two bodies that overlap does not crash the program.
+
+    For more info see
+    https://github.com/ansys/pyansys-geometry/issues/1724
+    """
+    wx = 10
+    wy = 10
+    wz = 2
+    radius = 1
+    unit = DEFAULT_UNITS.LENGTH
+
+    design = modeler.create_design("Test")
+
+    start_at = Point3D([wx / 2, wy / 2, 0.0], unit=unit)
+
+    plane = Plane(
+        start_at,
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0], unit=unit), width=wx, height=wy)
+
+    box = design.extrude_sketch("box", box_plane, wz)
+
+    point = Point3D([wx / 2, wx / 2, 0.0], unit=unit)
+    plane = Plane(point, UNITVECTOR3D_X, UNITVECTOR3D_Y)
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([0.0, 0.0], unit=unit), radius=radius)
+    cylinder = design.extrude_sketch("cylinder", sketch_cylinder, wz)
+
+    # Store the cylinder volume
+    cylinder_volume = cylinder.volume
+
+    # Request the intersection
+    cylinder.intersect(box)
+
+    # Only the cylinder should be present
+    assert len(design.bodies) == 1
+    assert design.bodies[0].name == "cylinder"
+    # Verify that the volume of the cylinder is the same
+    assert design.bodies[0].volume == cylinder_volume
