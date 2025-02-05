@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.33",
+    "ansys-api-geometry==0.4.35",
     "ansys-tools-path>=0.3,<1",
     "ansys-tools-visualization-interface>=0.2.6,<1",
     "attrs!=24.3.0",
@@ -79,7 +79,7 @@ tests-minimal = [
     "pytest-xvfb==3.0.0",
 ]
 doc = [
-    "ansys-sphinx-theme[autoapi]==1.2.6",
+    "ansys-sphinx-theme[autoapi]==1.2.7",
     "ansys-tools-path==0.7.1",
     "ansys-tools-visualization-interface==0.8.1",
     "beartype==0.19.0",
