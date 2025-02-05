@@ -21,10 +21,12 @@
 # SOFTWARE.
 """Module for managing a face."""
 
-from enum import Enum, unique
+from enum import Enum, unique  # noqa: I001
 from typing import TYPE_CHECKING
 
+from beartype import beartype as check_input_types
 from pint import Quantity
+import matplotlib.colors as mcolors
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import FaceOffsetRequest
@@ -35,6 +37,7 @@ from ansys.api.geometry.v0.faces_pb2 import (
     EvaluateRequest,
     GetNormalRequest,
     GetClosestSeparationRequest,
+    SetColorRequest,
 )
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
@@ -63,6 +66,7 @@ from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
     ReversedTrimmedSurface,
     TrimmedSurface,
 )
+from ansys.tools.visualization_interface.utils.color import Color
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -188,6 +192,7 @@ class Face:
         self._commands_stub = CommandsStub(grpc_client.channel)
         self._is_reversed = is_reversed
         self._shape = None
+        self._color = None
 
     @property
     def id(self) -> str:
@@ -293,6 +298,63 @@ class Face:
             )
 
         return loops
+
+    @property
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def color(self) -> str:
+        """Get the current color of the face.""" 
+        response = self._faces_stub.GetColor(
+            EntityIdentifier(id=self.id)
+        )
+
+        if response.color:
+            self._color = mcolors.to_hex(response.color)
+        else:
+            self._color = Color.DEFAULT.value
+
+        return self._color
+    
+    @color.setter
+    def color(self, color: str | tuple[float, float, float]) -> None:
+        self.set_color(color)
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def set_color(self, color: str | tuple[float, float, float]) -> None:
+        """Set the color of the face."""
+        self._grpc_client.log.debug(f"Setting face color of {self.id} to {color}.")
+
+        try:
+            if isinstance(color, tuple):
+                # Ensure that all elements are within 0-1 or 0-255 range
+                if all(0 <= c <= 1 for c in color):
+                    # Ensure they are floats if in 0-1 range
+                    if not all(isinstance(c, float) for c in color):
+                        raise ValueError("RGB values in the 0-1 range must be floats.")
+                elif all(0 <= c <= 255 for c in color):
+                    # Ensure they are integers if in 0-255 range
+                    if not all(isinstance(c, int) for c in color):
+                        raise ValueError("RGB values in the 0-255 range must be integers.")
+                    # Normalize the 0-255 range to 0-1
+                    color = tuple(c / 255.0 for c in color)
+                else:
+                    raise ValueError("RGB tuple contains mixed ranges or invalid values.")
+
+                color = mcolors.to_hex(color)
+            elif isinstance(color, str):
+                color = mcolors.to_hex(color)
+        except ValueError as err:
+            raise ValueError(f"Invalid color value: {err}")
+
+        self._faces_stub.SetColor(
+            SetColorRequest(
+                face_id=self.id,
+                color=color,
+            )
+        )
+        self._color = color
 
     @protect_grpc
     @ensure_design_is_active
@@ -516,7 +578,7 @@ class Face:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def get_bounding_box(self) -> BoundingBox2D:
-        """Get the bounding box for the face
+        """Get the bounding box for the face.
         
         Parameters
         ----------
@@ -548,7 +610,8 @@ class Face:
         Returns
         -------
         tuple[Real, Point3D, Point3D]
-            tuple with the distance between the faces, the point on the first face (self), and the point on the second face.
+            tuple with the distance between the faces, the point on the first face (self), 
+            and the point on the second face.
         """
         self._grpc_client.log.debug(f"Getting closest separation from {self.id} to {other._id}.")
 
