@@ -2297,9 +2297,6 @@ def test_sphere_creation(modeler: Modeler):
 
 def test_body_mirror(modeler: Modeler):
     """Test the mirroring of a body."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_body_mirror.__name__, "mirror")
-
     design = modeler.create_design("Design1")
 
     # Create shape with no lines of symmetry in any axis
