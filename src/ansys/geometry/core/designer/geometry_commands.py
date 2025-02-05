@@ -765,9 +765,9 @@ class GeometryCommands:
             How many times the circular pattern repeats along the radial lines for a
             two-dimensional pattern.
         step_angle : Real, default: 0.0 
-            Defines the circular angle
+            Defines the circular angle.
         step_linear : Real, default: 0.0
-            Defines the step, along the radial lines, for a pattern dimension greater than 1
+            Defines the step, along the radial lines, for a pattern dimension greater than 1.
 
         Returns
         -------

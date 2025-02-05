@@ -21,11 +21,10 @@
 # SOFTWARE.
 """Module for repair tool message."""
 
-
 class RepairToolMessage:
-    """Provides return message for the repair tool methods."""
+    """Provides detailed return message for the repair tool methods."""
 
-    def __init__(self, success: bool, created_bodies: list[str], modified_bodies: list[str]):
+    def __init__(self, success: bool, created_bodies: list[str], modified_bodies: list[str], found: int = -1, repaired: int = -1):
         """Initialize a new instance of the extra edge problem area class.
 
         Parameters
@@ -36,10 +35,20 @@ class RepairToolMessage:
             List of bodies created after the repair operation.
         modified_bodies: list[str]
             List of bodies modified after the repair operation.
+        found: int, default: -1 
+            Number of problem areas found for the repair operation.
+            If default, the operation does not provide the number of found problem areas. 
+        repaired: int, default: -1
+            Number of problem areas repaired during the repair operation.
+            If default, the operation does not provide the number of fixed problem areas. 
+ 
+
         """
         self._success = success
         self._created_bodies = created_bodies
         self._modified_bodies = modified_bodies
+        self._found = found
+        self._repaired = repaired
 
     @property
     def success(self) -> bool:
@@ -55,36 +64,6 @@ class RepairToolMessage:
     def modified_bodies(self) -> list[str]:
         """The list of the modified bodies after the repair operation."""
         return self._modified_bodies
-
-class EnhancedRepairToolMessage:
-    """Provides detailed return message for the repair tool methods."""
-
-    def __init__(self, success: bool, found: int, repaired: int, created_bodies: list[str], modified_bodies: list[str]):
-        """Initialize a new instance of the extra edge problem area class.
-
-        Parameters
-        ----------
-        success: bool
-            True if the repair operation was effective, false if it is not.
-        found: int
-            Number of problem areas found for the repair operation.
-        repaired: int 
-            Number of problem areas repaired during the repair operation.
-        created_bodies: list[str]
-            List of bodies created after the repair operation.
-        modified_bodies: list[str]
-            List of bodies modified after the repair operation.
-        """
-        self._success = success
-        self._found = found
-        self._repaired = repaired
-        self._created_bodies = created_bodies
-        self._modified_bodies = modified_bodies
-
-    @property
-    def success(self) -> bool:
-        """The success of the repair operation."""
-        return self._success
     
     @property
     def found(self) -> int:
@@ -95,13 +74,3 @@ class EnhancedRepairToolMessage:
     def repaired(self) -> int:
         """Number of problem areas repaired during the repair operation."""
         return self._repaired
-
-    @property
-    def created_bodies(self) -> list[str]:
-        """The list of the created bodies after the repair operation."""
-        return self._created_bodies
-
-    @property
-    def modified_bodies(self) -> list[str]:
-        """The list of the modified bodies after the repair operation."""
-        return self._modified_bodies

@@ -64,7 +64,7 @@ from ansys.geometry.core.tools.problem_areas import (
     StitchFaceProblemAreas,
     UnsimplifiedFaceProblemAreas,
 )
-from ansys.geometry.core.tools.repair_tool_message import EnhancedRepairToolMessage, RepairToolMessage
+from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -460,7 +460,7 @@ class RepairTools:
     @min_backend_version(25, 2, 0)
     def find_and_fix_short_edges(
         self, bodies: list["Body"], length: Real = 0.0
-    ) -> EnhancedRepairToolMessage:
+    ) -> RepairToolMessage:
         """Find and fix the short edge problem areas.
 
         Notes
@@ -476,7 +476,7 @@ class RepairTools:
 
         Returns
         -------
-        EnhancedRepairToolMessage
+        RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
         """
         from ansys.geometry.core.designer.body import Body
@@ -485,7 +485,7 @@ class RepairTools:
         check_type(length, Real)
 
         if not bodies:
-            return EnhancedRepairToolMessage(False, 0, 0, [], [])
+            return RepairToolMessage(False, 0, 0, [], [])
 
         response = self._repair_stub.FindAndFixShortEdges(
             FindShortEdgesRequest(
@@ -496,18 +496,18 @@ class RepairTools:
 
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
-        message = EnhancedRepairToolMessage(
+        message = RepairToolMessage(
             response.success,
-            response.found, 
-            response.repaired,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
+            response.found, 
+            response.repaired,
         )
         return message
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def find_and_fix_extra_edges(self, bodies: list["Body"]) -> EnhancedRepairToolMessage:
+    def find_and_fix_extra_edges(self, bodies: list["Body"]) -> RepairToolMessage:
         """Find and fix the extra edge problem areas.
 
         Notes
@@ -523,7 +523,7 @@ class RepairTools:
 
         Returns
         -------
-        EnhancedRepairToolMessage
+        RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
         """
         from ansys.geometry.core.designer.body import Body
@@ -531,7 +531,7 @@ class RepairTools:
         check_type_all_elements_in_iterable(bodies, Body)
 
         if not bodies:
-            return EnhancedRepairToolMessage(False, 0, 0, [], [])
+            return RepairToolMessage(False, [], [], 0, 0)
 
         response = self._repair_stub.FindAndFixExtraEdges(
             FindExtraEdgesRequest(
@@ -541,20 +541,19 @@ class RepairTools:
 
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
-        message = EnhancedRepairToolMessage(
+        message = RepairToolMessage(
             response.success,
-            response.found, 
-            response.repaired,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
+            response.found, 
+            response.repaired,
         )
-        return message
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_fix_split_edges(
         self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
-    ) -> EnhancedRepairToolMessage:
+    ) -> RepairToolMessage:
         """Find and fix the split edge problem areas.
 
         Notes
@@ -572,7 +571,7 @@ class RepairTools:
 
         Returns
         -------
-        EnhancedRepairToolMessage
+        RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
         """
         from ansys.geometry.core.designer.body import Body
@@ -582,7 +581,7 @@ class RepairTools:
         check_type(length, Real)
 
         if not bodies:
-            return EnhancedRepairToolMessage(False, 0, 0, [], [])
+            return RepairToolMessage(False, [], [], 0, 0)
 
         angle_value = DoubleValue(value=float(angle))
         length_value = DoubleValue(value=float(length))
@@ -596,11 +595,11 @@ class RepairTools:
 
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
-        message = EnhancedRepairToolMessage(
+        message = RepairToolMessage(
             response.success,
-            response.found, 
-            response.repaired,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
+            response.found, 
+            response.repaired,
         )
         return message

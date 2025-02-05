@@ -41,7 +41,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_face,
 )
 from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
-from ansys.geometry.core.tools.repair_tool_message import EnhancedRepairToolMessage
+from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -210,7 +210,7 @@ class PrepareTools:
     @min_backend_version(25, 2, 0)
     def enhanced_share_topology(
         self, bodies: list["Body"], tol: Real = 0.0, preserve_instances: bool = False
-    ) -> EnhancedRepairToolMessage:
+    ) -> RepairToolMessage:
         """Share topology between the chosen bodies.
 
         Parameters
@@ -224,13 +224,13 @@ class PrepareTools:
 
         Returns
         -------
-        EnhancedRepairToolMessage
+        RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
         """
         from ansys.geometry.core.designer.body import Body
 
         if not bodies:
-            return EnhancedRepairToolMessage(False, 0, 0, [], [])
+            return RepairToolMessage(False, [], [], 0, 0)
 
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
@@ -243,12 +243,11 @@ class PrepareTools:
             )
         )
 
-        message = EnhancedRepairToolMessage(
+        message = RepairToolMessage(
             share_topo_response.success,
-            share_topo_response.found, 
-            share_topo_response.repaired,
             share_topo_response.created_bodies_monikers,
             share_topo_response.modified_bodies_monikers,
+            share_topo_response.found, 
+            share_topo_response.repaired,
         )
         return message
-
