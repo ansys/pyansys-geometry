@@ -690,7 +690,7 @@ class RepairTools:
         RepairToolMessage
             Message containing success of the operation.
         """
-        body_ids = [] if bodies is None else [body.id for body in bodies]
+        body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
         repair_result_response = self._repair_stub.RepairGeometry(
             RepairGeometryRequest(bodies=body_ids)
         )
