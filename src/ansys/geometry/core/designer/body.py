@@ -1604,6 +1604,7 @@ class Body(IBody):
                 body=self._id,
                 curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
                 faces=[face._id for face in faces],
+                plane=plane_to_grpc_plane(sketch.plane),
             )
         )
 
@@ -1649,6 +1650,7 @@ class Body(IBody):
                 curves=curves,
                 direction=unit_vector_to_grpc_direction(direction),
                 closest_face=closest_face,
+                plane=plane_to_grpc_plane(sketch.plane),
             )
         )
 
@@ -1685,6 +1687,7 @@ class Body(IBody):
                 curves=curves,
                 direction=unit_vector_to_grpc_direction(direction),
                 closest_face=closest_face,
+                plane=plane_to_grpc_plane(sketch.plane),
             )
         )
 
