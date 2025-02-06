@@ -672,7 +672,7 @@ class RepairTools:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def repair_geometry(self, bodies: list["Body"] = None) -> RepairToolMessage:
-        """Attempt to repairs the geometry for the given bodies.
+        """Attempt to repair the geometry for the given bodies.
 
         This method inspects the geometry for the given bodies and attempts to repair them.
 
