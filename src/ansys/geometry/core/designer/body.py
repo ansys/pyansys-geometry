@@ -1800,6 +1800,38 @@ class Body(IBody):
         pl.plot(mesh_object, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
 
+    def export_gltf(  # noqa: D102
+        self,
+        merge: bool = False,
+        screenshot: str | None = None,
+        use_trame: bool | None = None,
+        use_service_colors: bool | None = None,
+        **plotting_options: dict | None,
+    ) -> None:
+        # lazy import here to improve initial module load time
+        import ansys.geometry.core as pyansys_geometry
+        from ansys.geometry.core.plotting import GeometryPlotter
+
+        use_service_colors = (
+            use_service_colors
+            if use_service_colors is not None
+            else pyansys_geometry.USE_SERVICE_COLORS
+        )
+        
+        pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
+
+        faces = self.faces
+        dataset = self.tessellate()
+        for i, block in enumerate(dataset):
+            if faces[i].color != Color.DEFAULT.value:
+                plotting_options["color"] = faces[i].color
+            else:
+                plotting_options["color"] = self.color
+            pl._backend.pv_interface.plot(block, **plotting_options)
+
+        pl.backend._pl._scene.hide_axes()
+        pl.backend._pl._scene.export_gltf(screenshot)
+
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < (25, 2, 0):
             self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")

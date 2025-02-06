@@ -906,6 +906,26 @@ def test_plot_design_multi_colors(modeler: Modeler, verify_image_cache):
 
 
 @skip_no_xserver
+def test_plot_design_face_colors(modeler: Modeler, verify_image_cache):
+    """Test plotting of design with/without multi_colors."""
+    design = modeler.create_design("DesignFaceColors")
+    # Create a sketch of a box
+    sketch_box = Sketch().box(Point2D([0, 0], unit=UNITS.m), width=10 * UNITS.m, height=10 * UNITS.m)
+    
+    # Extrude both sketches to get a prism and change face colors
+    design.extrude_sketch("Prism", sketch_box, 10 * UNITS.m)
+    design.bodies[0].faces[0].set_color((255, 0, 0))
+    design.bodies[0].faces[1].set_color((0, 255, 0))
+    design.bodies[0].faces[2].set_color((0, 0, 255))
+
+    # Design plotting
+    design.bodies[0].plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_design_face_colors.png"),
+        merge=False,
+        multi_colors=True
+    )
+
+@skip_no_xserver
 def test_export_gltf(modeler: Modeler, verify_image_cache):
     """Test exporting a box to gltf."""
     # Create a Sketch
@@ -960,26 +980,40 @@ def test_export_gltf_with_face_color(modeler: Modeler, verify_image_cache):
     """Test exporting a box to gltf."""
     # Create a Sketch
     sketch = Sketch()
-    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
 
     # Create your design on the server side
     design = modeler.create_design("BoxExtrusions")
 
     # Extrude the sketch to create a body
-    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
     box_body.set_color((255, 0, 0))
     box_body.faces[0].set_color((0, 0, 255))
     box_body.faces[1].set_color((0, 255, 0))
 
-    pl = GeometryPlotter(use_service_colors=True)
-    internal_plotter = pl._backend._pl._scene
-    
-    mesh = box_body.tessellate(merge=True)
-    print(mesh.faces)
-
-    internal_plotter.add_mesh(mesh, scalars=["colors"])
     output_gltf_path = Path(IMAGE_RESULTS_DIR, "plot_box_gltf_face_colored.gltf")
+    box_body.export_gltf(screenshot=output_gltf_path, use_service_colors=True)
+    
     output_png_path = Path(IMAGE_RESULTS_DIR, "plot_box_gltf_face_colored.png")
+    box_body.plot(merge=False, screenshot=output_png_path, multi_colors=True)
 
-    internal_plotter.export_gltf(output_gltf_path)
-    internal_plotter.screenshot(output_png_path)
+
+@skip_no_xserver
+def test_export_gltf_cylinder_with_face_color(modeler: Modeler, verify_image_cache):
+    """Test exporting a cylinder to gltf."""
+    # Create your design on the server side
+    design = modeler.create_design("BoxExtrusions")
+    
+    # Create a sketch of a circle (overlapping the box slightly)
+    sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=3 * UNITS.m)
+    cyl = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+    cyl.set_color((255, 0, 0))
+    cyl.faces[0].set_color((0, 0, 255))
+    cyl.faces[1].set_color((0, 255, 0))
+
+    output_gltf_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_gltf_face_colored.gltf")
+    cyl.export_gltf(screenshot=output_gltf_path, use_service_colors=True)
+    
+    output_png_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_gltf_face_colored.png")
+    cyl.plot(merge=False, screenshot=output_png_path, multi_colors=True)

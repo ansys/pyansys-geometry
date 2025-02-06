@@ -303,15 +303,21 @@ class Face:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def color(self) -> str:
-        """Get the current color of the face.""" 
-        response = self._faces_stub.GetColor(
-            EntityIdentifier(id=self.id)
-        )
-
-        if response.color:
-            self._color = mcolors.to_hex(response.color)
-        else:
+        """Get the current color of the face."""
+        if self._color is None and self.body.is_alive:
+            # Assigning default value first
             self._color = Color.DEFAULT.value
+
+            # If color is not cached, retrieve from the server
+            response = self._faces_stub.GetColor(
+                EntityIdentifier(id=self.id)
+            )
+
+            # Return if valid color returned
+            if response.color:
+                self._color = mcolors.to_hex(response.color)
+            else:
+                self._color = Color.DEFAULT.value
 
         return self._color
     
