@@ -630,7 +630,7 @@ class RepairTools:
             List of objects representing geometry issues and the bodies where issues are found.
         """
         parent_design = self._modeler.get_active_design()
-        body_ids = [] if bodies is None else [body.id for body in bodies]
+        body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
         inspect_result_response = self._repair_stub.InspectGeometry(
             InspectGeometryRequest(bodies=body_ids)
         )
