@@ -460,19 +460,43 @@ def test_inspect_geometry(modeler: Modeler):
     modeler.open_file(FILES_DIR / "bad-geometry-many-issues.scdocx")
     inspect_results = modeler.repair_tools.inspect_geometry()
     assert len(inspect_results) == 5
-    assert len(inspect_results[0].issues) == 150
-    assert len(inspect_results[4].issues) == 12
-    result_to_repair = inspect_results[4]
+
+    # Issue count for each body
+    issues_refs = {"JA1": 3, "SCON20": 150, "SCONN24a": 4, "SCONN24b": 92, "D9": 12}
+
+    result_to_repair = None
+    for result in inspect_results:
+        assert len(result.issues) == issues_refs[result.body.name]
+
+        # Let's repair the D9 issue
+        if result.body.name == "D9":
+            result_to_repair = result
+
+    # Repair the D9 issue ONLY
     result_to_repair.repair()
+
+    # Reinspect the geometry
     inspect_results = modeler.repair_tools.inspect_geometry()
     assert len(inspect_results) == 5
-    assert len(inspect_results[4].issues) == 3
+
+    # The D9 issues should have changed - now 48
+    # The other issues should remain the same
+    for result in inspect_results:
+        if result.body.name == "D9":
+            assert len(result.issues) == 48
+        else:
+            assert len(result.issues) == issues_refs[result.body.name]
 
 
 def test_repair_geometry(modeler: Modeler):
     """Test the ability to repair a geometry. Inspect geometry is called behind the scenes"""
     modeler.open_file(FILES_DIR / "bad-geometry-many-issues.scdocx")
     modeler.repair_tools.repair_geometry()
-    inspect_results = modeler.repair_tools.inspect_geometry(bodies=[])
+    inspect_results = modeler.repair_tools.inspect_geometry()
+
+    # Issue count for each body (after repairing)
+    issues_refs = {"JA1": 1, "SCON20": 150, "SCONN24a": 3, "SCONN24b": 92, "D9": 48}
+
     assert len(inspect_results) == 5
-    assert len(inspect_results[3].issues) == 92
+    for result in inspect_results:
+        assert len(result.issues) == issues_refs[result.body.name]
