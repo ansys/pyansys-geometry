@@ -757,6 +757,7 @@ def test_split_body_by_face(modeler: Modeler):
         Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
 
+
 def test_get_round_info(modeler: Modeler):
     """Test getting the round info from a face"""
     design = modeler.create_design("full_fillet")
@@ -774,9 +775,7 @@ def test_get_round_info(modeler: Modeler):
     )
 
     _, radius = modeler.geometry_commands.get_round_info(body.faces[6])
-    assert radius == pytest.approx(
-        Quantity(0.1, UNITS.m).m, rel=1e-6, abs=1e-8
-    )
+    assert radius == pytest.approx(Quantity(0.1, UNITS.m).m, rel=1e-6, abs=1e-8)
 
 
 def test_get_empty_round_info(modeler: Modeler):
@@ -820,7 +819,7 @@ def test_get_face_bounding_box(modeler: Modeler):
     assert bounding_box.x_min == bounding_box.y_min == -0.5
     assert bounding_box.x_max == bounding_box.y_max == 0.5
 
-    
+
 def test_linear_pattern_on_imported_geometry_faces(modeler: Modeler):
     """Test create a linear pattern on imported geometry"""
     design = modeler.open_file(FILES_DIR / "LinearPatterns.scdocx")

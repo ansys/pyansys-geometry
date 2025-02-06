@@ -42,8 +42,8 @@ from ansys.api.geometry.v0.commands_pb2 import (
     RevolveFacesByHelixRequest,
     RevolveFacesRequest,
     RevolveFacesUpToRequest,
-    SplitBodyRequest,
     RoundInfoRequest,
+    SplitBodyRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
@@ -1157,10 +1157,6 @@ class GeometryCommands:
         Real
             Radius of the round
         """
-        result = self._commands_stub.GetRoundInfo(
-            RoundInfoRequest(
-                face = face._grpc_id
-            )
-        )
-        
+        result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))
+
         return (result.along_u, result.radius)

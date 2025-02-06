@@ -35,6 +35,7 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
+    GetClosestSeparationRequest,
     GetCollisionRequest,
     MapRequest,
     MirrorRequest,
@@ -46,7 +47,6 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     SetNameRequest,
     SetSuppressedRequest,
     TranslateRequest,
-    GetClosestSeparationRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -64,9 +64,9 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
     grpc_material_to_material,
+    grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
-    grpc_point_to_point3d,
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
     unit_vector_to_grpc_direction,
@@ -621,7 +621,7 @@ class IBody(ABC):
             ``True`` when successful, ``False`` when failed.
         """
         return
-    
+
     @abstractmethod
     def get_closest_separation(self, other: "Body") -> tuple[Real, "Point3D", "Point3D"]:
         """Find the closest separation between two bodies.
@@ -630,7 +630,7 @@ class IBody(ABC):
         ----------
         other: Body
             other body to find the closest separation with.
-                    
+
         Returns
         -------
         tuple[Real, Point3D, Point3D]
@@ -1310,10 +1310,10 @@ class MasterBody(IBody):
             self._grpc_client.log.warning(f"Failed to remove faces from body {self.id}.")
 
         return result.success
-    
+
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def get_closest_separation(self, other: "Body") -> tuple[Real, "Point3D", "Point3D"]: # noqa: D102
+    def get_closest_separation(self, other: "Body") -> tuple[Real, "Point3D", "Point3D"]:  # noqa: D102
         self._grpc_client.log.debug(f"Getting closest separation from {self.id} to {other._id}.")
 
         result = self._bodies_stub.GetClosestSeparation(
@@ -1767,9 +1767,9 @@ class Body(IBody):
     @ensure_design_is_active
     def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
         return self._template.remove_faces(selection, offset)
-    
+
     @ensure_design_is_active
-    def get_closest_separation(self, other: "Body") -> tuple[Real, "Point3D", "Point3D"] : # noqa: D102
+    def get_closest_separation(self, other: "Body") -> tuple[Real, "Point3D", "Point3D"]:  # noqa: D102
         return self._template.get_closest_separation(other)
 
     def plot(  # noqa: D102
@@ -1820,7 +1820,7 @@ class Body(IBody):
             if use_service_colors is not None
             else pyansys_geometry.USE_SERVICE_COLORS
         )
-        
+
         pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
 
         faces = self.faces

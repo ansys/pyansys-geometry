@@ -43,7 +43,7 @@ from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
-    grpc_curve_to_curve, 
+    grpc_curve_to_curve,
     grpc_surface_to_surface,
     grpc_point_to_point3d,
 )
@@ -309,9 +309,7 @@ class Face:
             self._color = Color.DEFAULT.value
 
             # If color is not cached, retrieve from the server
-            response = self._faces_stub.GetColor(
-                EntityIdentifier(id=self.id)
-            )
+            response = self._faces_stub.GetColor(EntityIdentifier(id=self.id))
 
             # Return if valid color returned
             if response.color:
@@ -320,7 +318,7 @@ class Face:
                 self._color = Color.DEFAULT.value
 
         return self._color
-    
+
     @color.setter
     def color(self, color: str | tuple[float, float, float]) -> None:
         self.set_color(color)
@@ -585,7 +583,7 @@ class Face:
     @min_backend_version(25, 2, 0)
     def get_bounding_box(self) -> BoundingBox2D:
         """Get the bounding box for the face.
-        
+
         Parameters
         ----------
         None
@@ -597,9 +595,7 @@ class Face:
         """
         self._grpc_client.log.debug(f"Getting bounding box for {self.id}.")
 
-        result = self._faces_stub.GetBoundingBox(
-            request=self._grpc_id
-        )
+        result = self._faces_stub.GetBoundingBox(request=self._grpc_id)
 
         return BoundingBox2D(result.min.x, result.max.x, result.min.y, result.max.y)
 
@@ -612,11 +608,11 @@ class Face:
         ----------
         other: Body
             other body to find the closest separation with.
-                    
+
         Returns
         -------
         tuple[Real, Point3D, Point3D]
-            tuple with the distance between the faces, the point on the first face (self), 
+            tuple with the distance between the faces, the point on the first face (self),
             and the point on the second face.
         """
         self._grpc_client.log.debug(f"Getting closest separation from {self.id} to {other._id}.")

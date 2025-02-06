@@ -964,7 +964,9 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
-    def insert_file(self, file_location: Path | str, import_options: ImportOptions = ImportOptions()) -> Component:
+    def insert_file(
+        self, file_location: Path | str, import_options: ImportOptions = ImportOptions()
+    ) -> Component:
         """Insert a file into the design.
 
         Parameters
