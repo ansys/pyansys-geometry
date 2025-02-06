@@ -256,7 +256,7 @@ def test_issue_1724_intersect_failures(modeler: Modeler):
     plane = Plane(point, UNITVECTOR3D_X, UNITVECTOR3D_Y)
     sketch_cylinder = Sketch(plane)
     sketch_cylinder.circle(Point2D([0.0, 0.0], unit=unit), radius=radius)
-    cylinder = design.extrude_sketch("cylinder", sketch_cylinder, wz-0.1)
+    cylinder = design.extrude_sketch("cylinder", sketch_cylinder, wz - 0.1)
 
     # Request the intersection
     cylinder.intersect(box)
@@ -266,4 +266,4 @@ def test_issue_1724_intersect_failures(modeler: Modeler):
     assert design.bodies[0].name == "cylinder"
 
     # Verify that the volume of the cylinder is the same (the intersect is the same as the cylinder)
-    assert np.isclose(design.bodies[0].volume.m, np.pi * radius ** 2 * (wz - 0.1))
+    assert np.isclose(design.bodies[0].volume.m, np.pi * radius**2 * (wz - 0.1))
