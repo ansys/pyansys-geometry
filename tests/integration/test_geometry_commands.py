@@ -756,3 +756,153 @@ def test_split_body_by_face(modeler: Modeler):
     assert design.bodies[2].volume.m == pytest.approx(
         Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_linear_pattern_on_imported_geometry_faces(modeler: Modeler):
+    """Test create a linear pattern on imported geometry"""
+    design = modeler.open_file(FILES_DIR / "LinearPatterns.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 11
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(7.227e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.create_linear_pattern(
+        [
+            design.bodies[0].faces[1],
+            design.bodies[0].faces[2],
+            design.bodies[0].faces[0],
+            design.bodies[0].faces[4],
+            design.bodies[0].faces[3],
+        ],
+        design.bodies[0].edges[12],
+        13,
+        0.004,
+        True,
+        7,
+        0.007,
+    )
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 266
+    assert success
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(1.08992e-5, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_modify_linear_pattern_on_imported_geometry_faces(modeler: Modeler):
+    """Test modifying a linear pattern on an imported geometry"""
+    design = modeler.open_file(FILES_DIR / "LinearPatternsModify.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 266
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(1.08992e-5, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.modify_linear_pattern(
+        [
+            design.bodies[0].faces[1],
+            design.bodies[0].faces[2],
+            design.bodies[0].faces[0],
+            design.bodies[0].faces[4],
+            design.bodies[0].faces[3],
+        ],
+        10,
+        0.004,
+        3,
+        0.0105,
+        0,
+        0,
+    )
+    assert success
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 156
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(9.3152e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_circular_pattern_on_imported_geometry_faces(modeler: Modeler):
+    """Test creating a circular pattern out of imported geometry"""
+    design = modeler.open_file(FILES_DIR / "Fan_OneBlade_CircularPatter.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 13
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(0.00019496, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.create_circular_pattern(
+        [
+            design.bodies[0].faces[10],
+            design.bodies[0].faces[11],
+            design.bodies[0].faces[7],
+            design.bodies[0].faces[9],
+            design.bodies[0].faces[8],
+            design.bodies[0].faces[12],
+        ],
+        design.bodies[0].edges[3],
+        8,
+        np.pi * 2,
+        False,
+        None,
+        None,
+        None,
+    )
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 55
+    assert success
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(0.0002373, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_fill_pattern_on_imported_geometry_faces(modeler: Modeler):
+    """Test create a fill pattern on imported geometry"""
+    design = modeler.open_file(FILES_DIR / "FillPattern.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 12
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(8.267e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.create_fill_pattern(
+        [
+            design.bodies[0].faces[3],
+            design.bodies[0].faces[4],
+            design.bodies[0].faces[2],
+            design.bodies[0].faces[5],
+            design.bodies[0].faces[1],
+            design.bodies[0].faces[0],
+        ],
+        design.bodies[0].edges[0],
+        FillPatternType.GRID,
+        0.0005,
+        0.00075,
+        0.001,
+    )
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 294
+    assert success
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(4.40535e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_update_fill_pattern_on_imported_geometry_faces(modeler: Modeler):
+    """Test modify a fill pattern on imported geometry"""
+    design = modeler.open_file(FILES_DIR / "FillPatternUpdate.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 294
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(4.40535e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    face = design.bodies[0].faces[3]
+    modeler.geometry_commands.extrude_faces(face, 0.001, face.normal(0, 0))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 294
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(5.2270374e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.update_fill_pattern(design.bodies[0].faces[3])
+    assert success
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 342
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(4.70663693e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
