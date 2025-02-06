@@ -22,10 +22,12 @@
 """Provides tools for pulling geometry."""
 
 from enum import Enum, unique
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Iterable, Union
 
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
+    CombineIntersectBodiesRequest,
+    CombineMergeBodiesRequest,
     CreateCircularPatternRequest,
     CreateFillPatternRequest,
     CreateLinearPatternRequest,
@@ -1138,3 +1140,130 @@ class GeometryCommands:
             design._update_design_inplace()
 
         return result.success
+
+    def intersect_bodies(
+        self,
+        main_body: "Body",
+        other_bodies: Union["Body", Iterable["Body"]],
+        keep_other: bool = False,
+    ) -> bool:
+        """Intersect a body with other bodies.
+
+        Parameters
+        ----------
+        main_body : Body
+            Main body to intersect with.
+        other_bodies : Body | list[Body]
+            Other bodies to intersect with.
+        keep_other : bool, default: False
+            Keep the other bodies if ``True``.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        self.__generic_boolean_command(
+            main_body, other_bodies, keep_other, "intersect", "Intersecting bodies failed."
+        )
+        return True
+
+    def subtract_bodies(
+        self,
+        main_body: "Body",
+        other_bodies: Union["Body", Iterable["Body"]],
+        keep_other: bool = False,
+    ) -> bool:
+        """Subtract a body from other bodies.
+
+        Parameters
+        ----------
+        main_body : Body
+            Main body to subtract from.
+        other_bodies : Body | list[Body]
+            Other bodies to subtract.
+        keep_other : bool, default: False
+            Keep the other bodies if ``True``.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful.
+        """
+        self.__generic_boolean_command(
+            main_body, other_bodies, keep_other, "subtract", "Subtracting bodies failed."
+        )
+        return True
+
+    def unite(self, main_body: "Body", other_bodies: Union["Body", Iterable["Body"]]) -> bool:
+        """Unite a body with other bodies.
+
+        Parameters
+        ----------
+        main_body : Body
+            Main body to unite with.
+        other_bodies : Body | list[Body]
+            Other bodies to unite.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful.
+        """
+        self.__generic_boolean_command(
+            main_body, other_bodies, False, "unite", "Uniting bodies failed."
+        )
+        return True
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def __generic_boolean_command(
+        self,
+        main: "Body",
+        other: Union["Body", Iterable["Body"]],
+        keep_other: bool,
+        type_bool_op: str,
+        err_bool_op: str,
+    ) -> None:
+        parent_design = get_design_from_body(main)
+        other_bodies = other if isinstance(other, Iterable) else [other]
+        if type_bool_op == "intersect":
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [main._grpc_id]
+            request = CombineIntersectBodiesRequest(
+                target_selection=target_ids,
+                tool_selection=body_ids,
+                subtract_from_target=False,
+                keep_cutter=keep_other,
+            )
+            response = self._commands_stub.CombineIntersectBodies(request)
+        elif type_bool_op == "subtract":
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [main._grpc_id]
+            request = CombineIntersectBodiesRequest(
+                target_selection=target_ids,
+                tool_selection=body_ids,
+                subtract_from_target=True,
+                keep_cutter=keep_other,
+            )
+            response = self._commands_stub.CombineIntersectBodies(request)
+        elif type_bool_op == "unite":
+            bodies = [main]
+            bodies.extend(other_bodies)
+            body_ids = [body._grpc_id for body in bodies]
+            request = CombineMergeBodiesRequest(target_selection=body_ids)
+            response = self._commands_stub.CombineMergeBodies(request)
+        else:
+            raise ValueError("Unknown operation requested")
+
+        if not response.success:
+            raise ValueError(
+                f"Operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
+                f"Involving bodies:{main}, {other_bodies}"
+            )
+
+        if not keep_other:
+            for b in other_bodies:
+                b.parent_component.delete_body(b)
+
+        parent_design._update_design_inplace()

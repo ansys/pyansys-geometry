@@ -51,8 +51,6 @@ from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
-    CombineIntersectBodiesRequest,
-    CombineMergeBodiesRequest,
     ImprintCurvesRequest,
     ProjectCurvesRequest,
     RemoveFacesRequest,
@@ -79,7 +77,6 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.misc.checks import (
     check_type,
     check_type_all_elements_in_iterable,
@@ -1764,79 +1761,13 @@ class Body(IBody):
         pl.show(screenshot=screenshot, **plotting_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        if self._template._grpc_client.backend_version < (25, 2, 0):
-            self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
-        else:
-            self.__generic_boolean_command(
-                other, keep_other, "intersect", "bodies do not intersect"
-            )
+        self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
 
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        if self._template._grpc_client.backend_version < (25, 2, 0):
-            self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
-        else:
-            self.__generic_boolean_command(
-                other, keep_other, "subtract", "empty (complete) subtraction"
-            )
+        self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
 
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        if self._template._grpc_client.backend_version < (25, 2, 0):
-            self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
-        else:
-            self.__generic_boolean_command(other, False, "unite", "union operation failed")
-
-    @protect_grpc
-    @reset_tessellation_cache
-    @ensure_design_is_active
-    @check_input_types
-    def __generic_boolean_command(
-        self,
-        other: Union["Body", Iterable["Body"]],
-        keep_other: bool,
-        type_bool_op: str,
-        err_bool_op: str,
-    ) -> None:
-        parent_design = get_design_from_body(self)
-        other_bodies = other if isinstance(other, Iterable) else [other]
-        if type_bool_op == "intersect":
-            body_ids = [body._grpc_id for body in other_bodies]
-            target_ids = [self._grpc_id]
-            request = CombineIntersectBodiesRequest(
-                target_selection=target_ids,
-                tool_selection=body_ids,
-                subtract_from_target=False,
-                keep_cutter=keep_other,
-            )
-            response = self._template._commands_stub.CombineIntersectBodies(request)
-        elif type_bool_op == "subtract":
-            body_ids = [body._grpc_id for body in other_bodies]
-            target_ids = [self._grpc_id]
-            request = CombineIntersectBodiesRequest(
-                target_selection=target_ids,
-                tool_selection=body_ids,
-                subtract_from_target=True,
-                keep_cutter=keep_other,
-            )
-            response = self._template._commands_stub.CombineIntersectBodies(request)
-        elif type_bool_op == "unite":
-            bodies = [self]
-            bodies.extend(other_bodies)
-            body_ids = [body._grpc_id for body in bodies]
-            request = CombineMergeBodiesRequest(target_selection=body_ids)
-            response = self._template._commands_stub.CombineMergeBodies(request)
-        else:
-            raise ValueError("Unknown operation requested")
-        if not response.success:
-            raise ValueError(
-                f"Operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
-                f"Involving bodies:{self}, {other_bodies}"
-            )
-
-        if not keep_other:
-            for b in other_bodies:
-                b.parent_component.delete_body(b)
-
-        parent_design._update_design_inplace()
+        self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
 
     @protect_grpc
     @reset_tessellation_cache
