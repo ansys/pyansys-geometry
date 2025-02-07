@@ -103,6 +103,7 @@ if TYPE_CHECKING:  # pragma: no cover
 # https://github.com/ansys/pyansys-geometry/issues/1733
 __TEMPORARY_BOOL_OPS_FIX__ = (99, 0, 0)
 
+
 @unique
 class MidSurfaceOffsetType(Enum):
     """Provides values for mid-surface offsets supported."""

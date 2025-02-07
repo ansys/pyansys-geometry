@@ -139,6 +139,7 @@ def test_issue_1304_arc_sketch_creation():
         # Reverse the default units to meter
         DEFAULT_UNITS.LENGTH = UNITS.meter
 
+
 # TODO: Temporary fix for boolean operations
 # Issue had to be skipped due to the fact that the intersect operation is not working as expected
 # when using command-based boolean operations.
