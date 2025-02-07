@@ -96,6 +96,12 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from ansys.geometry.core.designer.component import Component
 
+# TODO: Temporary fix for boolean operations
+# This is a temporary fix for the boolean operations issue. The issue is that the
+# boolean operations are not working as expected with command-based operations. The
+# goal is to fix this issue in the future.
+# https://github.com/ansys/pyansys-geometry/issues/1733
+__TEMPORARY_BOOL_OPS_FIX__ = (99, 0, 0)
 
 @unique
 class MidSurfaceOffsetType(Enum):
@@ -1764,7 +1770,7 @@ class Body(IBody):
         pl.show(screenshot=screenshot, **plotting_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        if self._template._grpc_client.backend_version < (25, 2, 0):
+        if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
         else:
             self.__generic_boolean_command(
@@ -1772,7 +1778,7 @@ class Body(IBody):
             )
 
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        if self._template._grpc_client.backend_version < (25, 2, 0):
+        if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
         else:
             self.__generic_boolean_command(
@@ -1780,7 +1786,7 @@ class Body(IBody):
             )
 
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        if self._template._grpc_client.backend_version < (25, 2, 0):
+        if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
         else:
             self.__generic_boolean_command(other, False, "unite", "union operation failed")
