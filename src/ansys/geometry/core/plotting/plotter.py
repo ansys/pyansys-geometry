@@ -237,7 +237,15 @@ class GeometryPlotter(PlotterInterface):
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         if self.use_service_colors:
-            plotting_options["color"] = body.color
+            faces = body.faces
+            dataset = body.tessellate()
+            for i, block in enumerate(dataset):
+                if faces[i].color != Color.DEFAULT.value:
+                    plotting_options["color"] = faces[i].color
+                else:
+                    plotting_options["color"] = body.color
+                self._backend.pv_interface.plot(block, **plotting_options)
+            return
         # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
         # so if multi_colors is True and merge is True (returns PolyData) then
         # we need to set the color manually
@@ -247,7 +255,7 @@ class GeometryPlotter(PlotterInterface):
             and "color" not in plotting_options
         ):
             plotting_options["color"] = next(POLYDATA_COLOR_CYCLER)["color"]
-
+        
         # Use the default PyAnsys Geometry add_mesh arguments
         self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
@@ -466,3 +474,27 @@ class GeometryPlotter(PlotterInterface):
                 else:  # Either a PyAnsys Geometry object or a PyVista object
                     lib_objects.append(element)
             return lib_objects
+
+    def export_gltf(
+            self, 
+            plotting_object: Any = None, 
+            screenshot: str | None = None, 
+            **plotting_options
+    ) -> None:
+        """Export the design to a gltf file. Does not support picked objects.
+        
+        Parameters
+        ----------
+        plotting_object : Any, default: None
+            Object you can add to the plotter.
+        screenshot : str, default: None
+            Path to save a screenshot of the plotter.
+        **plotting_options : dict, default: None
+            Keyword arguments for the plotter. Arguments depend of the backend implementation
+            you are using.
+        """
+        if plotting_object is not None:
+            self.plot(plotting_object, **plotting_options)
+
+        self.backend._pl._scene.hide_axes()
+        self.backend._pl._scene.export_gltf(screenshot)
