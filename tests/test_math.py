@@ -1228,7 +1228,7 @@ def test_bounding_box_bitwise_and():
     box2 = BoundingBox2D(0.5, 1.5, 0, 1)
 
     # Get intersection and check
-    intersection = box1 & box2
+    intersection = BoundingBox2D.intersect_bboxes(box1, box2)
     assert intersection is not None
     assert intersection == BoundingBox2D(0.5, 1, 0, 1)
 
@@ -1240,5 +1240,5 @@ def test_bounding_box_bitwise_and_no_intersection():
     box2 = BoundingBox2D(2, 3, 0, 1)
 
     # Get intersection and check
-    intersection = box1 & box2
+    intersection = BoundingBox2D.intersect_bboxes(box1, box2)
     assert intersection is None

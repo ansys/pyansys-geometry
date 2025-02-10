@@ -228,3 +228,43 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     return [
         edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids
     ]  # noqa: E501
+
+def convert_color_to_hex(color: str | tuple[float, float, float]) -> str:
+    """Get the hex string color from input formats.
+    
+    Parameters
+    ----------
+    color : str | tuple[float, float, float]
+        Color to set the body to. This can be a string representing a color name
+        or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
+    
+    Returns
+    -------
+    str
+        The hex code string for the color.
+    """
+    import matplotlib.colors as mcolors
+    
+    try:
+        if isinstance(color, tuple):
+            # Ensure that all elements are within 0-1 or 0-255 range
+            if all(0 <= c <= 1 for c in color):
+                # Ensure they are floats if in 0-1 range
+                if not all(isinstance(c, float) for c in color):
+                    raise ValueError("RGB values in the 0-1 range must be floats.")
+            elif all(0 <= c <= 255 for c in color):
+                # Ensure they are integers if in 0-255 range
+                if not all(isinstance(c, int) for c in color):
+                    raise ValueError("RGB values in the 0-255 range must be integers.")
+                # Normalize the 0-255 range to 0-1
+                color = tuple(c / 255.0 for c in color)
+            else:
+                raise ValueError("RGB tuple contains mixed ranges or invalid values.")
+
+            color = mcolors.to_hex(color)
+        elif isinstance(color, str):
+            color = mcolors.to_hex(color)
+    except ValueError as err:
+        raise ValueError(f"Invalid color value: {err}")
+    
+    return color

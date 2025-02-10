@@ -81,7 +81,10 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.auxiliary import get_design_from_body
+from ansys.geometry.core.misc.auxiliary import (
+    convert_color_to_hex,
+    get_design_from_body,
+)
 from ansys.geometry.core.misc.checks import (
     check_type,
     check_type_all_elements_in_iterable,
@@ -623,21 +626,6 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def get_closest_separation(self, other: "Body") -> tuple[Real, "Point3D", "Point3D"]:
-        """Find the closest separation between two bodies.
-
-        Parameters
-        ----------
-        other: Body
-            other body to find the closest separation with.
-
-        Returns
-        -------
-        tuple[Real, Point3D, Point3D]
-            tuple with the distance between the bodies, the point on the first body (self), and the point on the second body.
-        """
-
-    @abstractmethod
     def plot(
         self,
         merge: bool = True,
@@ -969,10 +957,7 @@ class MasterBody(IBody):
     @protect_grpc
     def get_assigned_material(self) -> Material:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving assigned material for body {self.id}.")
-        try:
-            material_response = self._bodies_stub.GetAssignedMaterial(self._grpc_id)
-        except:
-            return None
+        material_response = self._bodies_stub.GetAssignedMaterial(self._grpc_id)
         return grpc_material_to_material(material_response)
 
     @protect_grpc
@@ -1121,28 +1106,7 @@ class MasterBody(IBody):
     def set_color(self, color: str | tuple[float, float, float]) -> None:
         """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
-
-        try:
-            if isinstance(color, tuple):
-                # Ensure that all elements are within 0-1 or 0-255 range
-                if all(0 <= c <= 1 for c in color):
-                    # Ensure they are floats if in 0-1 range
-                    if not all(isinstance(c, float) for c in color):
-                        raise ValueError("RGB values in the 0-1 range must be floats.")
-                elif all(0 <= c <= 255 for c in color):
-                    # Ensure they are integers if in 0-255 range
-                    if not all(isinstance(c, int) for c in color):
-                        raise ValueError("RGB values in the 0-255 range must be integers.")
-                    # Normalize the 0-255 range to 0-1
-                    color = tuple(c / 255.0 for c in color)
-                else:
-                    raise ValueError("RGB tuple contains mixed ranges or invalid values.")
-
-                color = mcolors.to_hex(color)
-            elif isinstance(color, str):
-                color = mcolors.to_hex(color)
-        except ValueError as err:
-            raise ValueError(f"Invalid color value: {err}")
+        color = convert_color_to_hex(color)
 
         self._bodies_stub.SetColor(
             SetColorRequest(
@@ -1310,22 +1274,6 @@ class MasterBody(IBody):
             self._grpc_client.log.warning(f"Failed to remove faces from body {self.id}.")
 
         return result.success
-
-    @protect_grpc
-    @min_backend_version(25, 2, 0)
-    def get_closest_separation(self, other: "Body") -> tuple[Real, "Point3D", "Point3D"]:  # noqa: D102
-        self._grpc_client.log.debug(f"Getting closest separation from {self.id} to {other._id}.")
-
-        result = self._bodies_stub.GetClosestSeparation(
-            GetClosestSeparationRequest(
-                body_1=self._grpc_id,
-                body_2=other._grpc_id,
-            )
-        )
-
-        point_a = grpc_point_to_point3d(result.point_a)
-        point_b = grpc_point_to_point3d(result.point_b)
-        return (result.distance, point_a, point_b)
 
     def plot(  # noqa: D102
         self,
@@ -1768,10 +1716,6 @@ class Body(IBody):
     def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
         return self._template.remove_faces(selection, offset)
 
-    @ensure_design_is_active
-    def get_closest_separation(self, other: "Body") -> tuple[Real, "Point3D", "Point3D"]:  # noqa: D102
-        return self._template.get_closest_separation(other)
-
     def plot(  # noqa: D102
         self,
         merge: bool = True,
@@ -1802,38 +1746,6 @@ class Body(IBody):
         pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
         pl.plot(mesh_object, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
-
-    def export_gltf(  # noqa: D102
-        self,
-        merge: bool = False,
-        screenshot: str | None = None,
-        use_trame: bool | None = None,
-        use_service_colors: bool | None = None,
-        **plotting_options: dict | None,
-    ) -> None:
-        # lazy import here to improve initial module load time
-        import ansys.geometry.core as pyansys_geometry
-        from ansys.geometry.core.plotting import GeometryPlotter
-
-        use_service_colors = (
-            use_service_colors
-            if use_service_colors is not None
-            else pyansys_geometry.USE_SERVICE_COLORS
-        )
-
-        pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
-
-        faces = self.faces
-        dataset = self.tessellate()
-        for i, block in enumerate(dataset):
-            if faces[i].color != Color.DEFAULT.value:
-                plotting_options["color"] = faces[i].color
-            else:
-                plotting_options["color"] = self.color
-            pl._backend.pv_interface.plot(block, **plotting_options)
-
-        pl.backend._pl._scene.hide_axes()
-        pl.backend._pl._scene.export_gltf(screenshot)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < (25, 2, 0):

@@ -337,7 +337,7 @@ def grpc_point_to_point3d(point: GRPCPoint) -> Point3D:
     """
     return Point3D(
         [point.x, point.y, point.z],
-        UNITS.m,
+        DEFAULT_UNITS.SERVER_LENGTH,
     )
 
 

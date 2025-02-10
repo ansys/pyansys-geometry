@@ -1083,15 +1083,15 @@ class GeometryCommands:
         Parameters
         ----------
         bodies : list[Body]
-            Bodies to split
+            Bodies to split.
         plane : Plane
             Plane to split with
         slicers : Edge | list[Edge] | Face | list[Face]
-            Slicers to split with
+            Slicers to split with.
         faces : list[Face]
-            Faces to split with
+            Faces to split with.
         extendFaces : bool
-            Extend faces if split with faces
+            Extend faces if split with faces.
 
         Returns
         -------
@@ -1148,14 +1148,13 @@ class GeometryCommands:
         Parameters
         ----------
         Face
-            The design face to get round info on
+            The design face to get round info on.
 
         Returns
         -------
-        bool
-            Direction of circular cross-section
-        Real
-            Radius of the round
+        tuple[bool, Real]
+            ``True`` if round is aligned with face's U-parameter direction, ``False`` otherwise. 
+            Radius of the round.
         """
         result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))
 

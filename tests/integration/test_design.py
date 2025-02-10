@@ -199,6 +199,28 @@ def test_assigning_and_getting_material(modeler: Modeler):
     )
 
 
+def test_get_empty_material(modeler: Modeler):
+    # Create a Sketch and draw a circle (all client side)
+    sketch = Sketch()
+    sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create your design on the server side
+    design_name = "ExtrudeProfile"
+    design = modeler.create_design(design_name)
+
+    # Extrude the sketch to create a Body
+    body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
+
+    # Assign a material to a Body
+    mat_service = body.material
+    print(mat_service._density.quantity)
+    assert mat_service.name == ""
+    assert (
+        mat_service.properties[MaterialPropertyType.DENSITY].quantity 
+        == Quantity(0, UNITS.kg / (UNITS.m**3))
+    )
+    assert len(mat_service.properties) == 1
+
 def test_face_to_body_creation(modeler: Modeler):
     """Test in charge of validating the extrusion of an existing face."""
     # Create a Sketch and draw a circle (all client side)
@@ -3040,25 +3062,6 @@ def test_shell_multiple_faces(modeler: Modeler):
     assert success
     assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 10
-
-
-def test_get_closest_separation(modeler: Modeler):
-    """Test getting closest separation point between two bodies"""
-    design = modeler.create_design("SeparationTest")
-
-    # Create two bodies
-    body1 = design.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    body2 = design.extrude_sketch("Body2", Sketch().box(Point2D([2, 2]), 1, 1), 1)
-
-    # Get the closest separation point
-    distance, point_a, point_b = body1.get_closest_separation(body2)
-
-    # Verify the separation distance
-    assert distance == pytest.approx(Quantity(np.sqrt(2), UNITS.m).m, rel=1e-6, abs=1e-8)
-
-    # Verify the points of closest separation
-    assert point_a == Point3D([0.5, 0.5, 0.5], UNITS.m)
-    assert point_b == Point3D([1.5, 1.5, 0.5], UNITS.m)
 
 
 def test_set_face_color(modeler: Modeler):

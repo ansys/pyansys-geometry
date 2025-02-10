@@ -52,6 +52,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.bbox import BoundingBox2D
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.auxiliary import convert_color_to_hex
 from ansys.geometry.core.misc.checks import (
     deprecated_method,
     ensure_design_is_active,
@@ -329,28 +330,7 @@ class Face:
     def set_color(self, color: str | tuple[float, float, float]) -> None:
         """Set the color of the face."""
         self._grpc_client.log.debug(f"Setting face color of {self.id} to {color}.")
-
-        try:
-            if isinstance(color, tuple):
-                # Ensure that all elements are within 0-1 or 0-255 range
-                if all(0 <= c <= 1 for c in color):
-                    # Ensure they are floats if in 0-1 range
-                    if not all(isinstance(c, float) for c in color):
-                        raise ValueError("RGB values in the 0-1 range must be floats.")
-                elif all(0 <= c <= 255 for c in color):
-                    # Ensure they are integers if in 0-255 range
-                    if not all(isinstance(c, int) for c in color):
-                        raise ValueError("RGB values in the 0-255 range must be integers.")
-                    # Normalize the 0-255 range to 0-1
-                    color = tuple(c / 255.0 for c in color)
-                else:
-                    raise ValueError("RGB tuple contains mixed ranges or invalid values.")
-
-                color = mcolors.to_hex(color)
-            elif isinstance(color, str):
-                color = mcolors.to_hex(color)
-        except ValueError as err:
-            raise ValueError(f"Invalid color value: {err}")
+        color = convert_color_to_hex(color)
 
         self._faces_stub.SetColor(
             SetColorRequest(
@@ -584,10 +564,6 @@ class Face:
     def get_bounding_box(self) -> BoundingBox2D:
         """Get the bounding box for the face.
 
-        Parameters
-        ----------
-        None
-
         Returns
         -------
         BoundingBox2D
@@ -598,32 +574,3 @@ class Face:
         result = self._faces_stub.GetBoundingBox(request=self._grpc_id)
 
         return BoundingBox2D(result.min.x, result.max.x, result.min.y, result.max.y)
-
-    @protect_grpc
-    @min_backend_version(25, 2, 0)
-    def get_closest_separation(self, other: "Face") -> tuple[Real, "Point3D", "Point3D"]:
-        """Find the closest separation between two faces.
-
-        Parameters
-        ----------
-        other: Body
-            other body to find the closest separation with.
-
-        Returns
-        -------
-        tuple[Real, Point3D, Point3D]
-            tuple with the distance between the faces, the point on the first face (self),
-            and the point on the second face.
-        """
-        self._grpc_client.log.debug(f"Getting closest separation from {self.id} to {other._id}.")
-
-        result = self._faces_stub.GetClosestSeparation(
-            GetClosestSeparationRequest(
-                face_1=self._grpc_id,
-                face_2=other._grpc_id,
-            )
-        )
-
-        point_a = grpc_point_to_point3d(result.point_a)
-        point_b = grpc_point_to_point3d(result.point_b)
-        return (result.distance, point_a, point_b)
