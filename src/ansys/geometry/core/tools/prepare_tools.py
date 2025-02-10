@@ -235,7 +235,7 @@ class PrepareTools:
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
 
-        share_topo_response = self._prepare_stub.ShareTopology(
+        share_topo_response = self._prepare_stub.EnhancedShareTopology(
             ShareTopologyRequest(
                 selection=[GRPCBody(id=body.id) for body in bodies],
                 tolerance=DoubleValue(value=tol),
