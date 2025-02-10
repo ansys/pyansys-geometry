@@ -779,7 +779,7 @@ def test_get_round_info(modeler: Modeler):
 
 
 def test_get_empty_round_info(modeler: Modeler):
-    """Test getting the round info from a face that doesnt have any rounding"""
+    """Test getting the round info from a face that does not have any rounding"""
     design = modeler.create_design("full_fillet")
 
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
