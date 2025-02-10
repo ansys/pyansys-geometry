@@ -852,6 +852,7 @@ def test_circular_pattern_on_imported_geometry_faces(modeler: Modeler):
         Quantity(0.0002373, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
 
+
 def test_circular_pattern_on_imported_geometry_faces_modify(modeler: Modeler):
     """Test creating a circular pattern out of imported geometry and modifying it"""
     design = modeler.open_file(FILES_DIR / "Fan_OneBlade_CircularPatter.scdocx")
@@ -883,13 +884,16 @@ def test_circular_pattern_on_imported_geometry_faces_modify(modeler: Modeler):
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(0.0002373, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
-    success = modeler.geometry_commands.modify_circular_pattern([design.bodies[0].faces[30]],12,0,0.523598775598,None)
+    success = modeler.geometry_commands.modify_circular_pattern(
+        [design.bodies[0].faces[30]], 12, 0, 0.523598775598, None
+    )
     assert len(design.bodies) == 1
     assert len(design.bodies[0].faces) == 79
     assert success
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(0.00026159, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
 
 def test_fill_pattern_on_imported_geometry_faces(modeler: Modeler):
     """Test create a fill pattern on imported geometry"""

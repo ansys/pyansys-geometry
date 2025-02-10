@@ -35,6 +35,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ExtrudeFacesUpToRequest,
     FilletRequest,
     FullFilletRequest,
+    ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
     PatternRequest,
     RenameObjectRequest,
@@ -43,7 +44,6 @@ from ansys.api.geometry.v0.commands_pb2 import (
     RevolveFacesRequest,
     RevolveFacesUpToRequest,
     SplitBodyRequest,
-    ModifyCircularPatternRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
