@@ -967,3 +967,45 @@ def test_export_gltf_with_color(modeler: Modeler, verify_image_cache):
 
     output_gltf_path = Path(IMAGE_RESULTS_DIR, "plot_box_gltf_colored.gltf")
     pl.export_gltf(screenshot=output_gltf_path)
+
+
+@skip_no_xserver
+def test_export_gltf_with_face_color(modeler: Modeler, verify_image_cache):
+    """Test exporting a box to gltf."""
+    # Create a Sketch
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Create your design on the server side
+    design = modeler.create_design("BoxExtrusions")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+    box_body.set_color((255, 0, 0))
+    box_body.faces[0].set_color((0, 0, 255))
+    box_body.faces[1].set_color((0, 255, 0))
+
+    pl = GeometryPlotter(use_service_colors=True)
+
+    output_gltf_path = Path(IMAGE_RESULTS_DIR, "plot_box_gltf_face_colored.gltf")
+    pl.export_gltf(box_body, screenshot=output_gltf_path)
+
+
+@skip_no_xserver
+def test_export_gltf_cylinder_with_face_color(modeler: Modeler, verify_image_cache):
+    """Test exporting a cylinder to gltf."""
+    # Create your design on the server side
+    design = modeler.create_design("BoxExtrusions")
+
+    # Create a sketch of a circle (overlapping the box slightly)
+    sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=3 * UNITS.m)
+    cyl = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+    cyl.set_color((255, 0, 0))
+    cyl.faces[0].set_color((0, 0, 255))
+    cyl.faces[1].set_color((0, 255, 0))
+
+    pl = GeometryPlotter(use_service_colors=True)
+
+    output_gltf_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_gltf_face_colored.gltf")
+    pl.export_gltf(cyl, screenshot=output_gltf_path)
