@@ -1153,7 +1153,7 @@ class GeometryCommands:
         Returns
         -------
         tuple[bool, Real]
-            ``True`` if round is aligned with face's U-parameter direction, ``False`` otherwise. 
+            ``True`` if round is aligned with face's U-parameter direction, ``False`` otherwise.
             Radius of the round.
         """
         result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))

@@ -35,7 +35,6 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
-    GetClosestSeparationRequest,
     GetCollisionRequest,
     MapRequest,
     MirrorRequest,
@@ -64,7 +63,6 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
     grpc_material_to_material,
-    grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
