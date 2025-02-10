@@ -109,7 +109,7 @@ class MeasurementTools:
         Gap
             Gap between two bodies.
         """
-        response = self._measure_stub.MinDistanceBetweenObjects(
+        response = self._measure_stub.MinDistanceBetweenSelectionObjects(
             MinDistanceBetweenObjectsRequest(selection=[object1._grpc_id, object2._grpc_id])
         )
         return Gap._from_distance_response(response)
