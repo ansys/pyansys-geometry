@@ -215,11 +215,11 @@ def test_get_empty_material(modeler: Modeler):
     mat_service = body.material
     print(mat_service._density.quantity)
     assert mat_service.name == ""
-    assert (
-        mat_service.properties[MaterialPropertyType.DENSITY].quantity 
-        == Quantity(0, UNITS.kg / (UNITS.m**3))
+    assert mat_service.properties[MaterialPropertyType.DENSITY].quantity == Quantity(
+        0, UNITS.kg / (UNITS.m**3)
     )
     assert len(mat_service.properties) == 1
+
 
 def test_face_to_body_creation(modeler: Modeler):
     """Test in charge of validating the extrusion of an existing face."""

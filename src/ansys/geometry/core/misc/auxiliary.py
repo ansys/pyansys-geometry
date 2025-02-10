@@ -229,22 +229,23 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
         edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids
     ]  # noqa: E501
 
+
 def convert_color_to_hex(color: str | tuple[float, float, float]) -> str:
     """Get the hex string color from input formats.
-    
+
     Parameters
     ----------
     color : str | tuple[float, float, float]
         Color to set the body to. This can be a string representing a color name
         or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
-    
+
     Returns
     -------
     str
         The hex code string for the color.
     """
     import matplotlib.colors as mcolors
-    
+
     try:
         if isinstance(color, tuple):
             # Ensure that all elements are within 0-1 or 0-255 range
@@ -266,5 +267,5 @@ def convert_color_to_hex(color: str | tuple[float, float, float]) -> str:
             color = mcolors.to_hex(color)
     except ValueError as err:
         raise ValueError(f"Invalid color value: {err}")
-    
+
     return color

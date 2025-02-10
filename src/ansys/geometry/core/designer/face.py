@@ -36,7 +36,6 @@ from ansys.api.geometry.v0.faces_pb2 import (
     CreateIsoParamCurvesRequest,
     EvaluateRequest,
     GetNormalRequest,
-    GetClosestSeparationRequest,
     SetColorRequest,
 )
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
@@ -45,7 +44,6 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     grpc_curve_to_curve,
     grpc_surface_to_surface,
-    grpc_point_to_point3d,
 )
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
@@ -59,7 +57,6 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-from ansys.geometry.core.typing import Real
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval

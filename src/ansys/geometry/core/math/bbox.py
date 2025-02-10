@@ -213,9 +213,11 @@ class BoundingBox2D:
         return not self == other
 
     @staticmethod
-    def intersect_bboxes(box_1: "BoundingBox2D", box_2: "BoundingBox2D") -> Union[None, "BoundingBox2D"]:
+    def intersect_bboxes(
+        box_1: "BoundingBox2D", box_2: "BoundingBox2D"
+    ) -> Union[None, "BoundingBox2D"]:
         """Find the intersection of 2 BoundingBox2D objects.
-        
+
         Parameters
         ----------
         box_1: "BoundingBox2D"
