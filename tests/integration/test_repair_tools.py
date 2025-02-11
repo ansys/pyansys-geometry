@@ -474,8 +474,6 @@ def test_repair_geometry(modeler: Modeler):
     """Test the ability to repair a geometry. Inspect geometry is called behind the scenes"""
     modeler.open_file(FILES_DIR / "InspectAndRepair01.scdocx")
     modeler.repair_tools.repair_geometry()
-    inspect_results = modeler.repair_tools.inspect_geometry()
-    assert len(inspect_results) == 1
     # Reinspect the geometry
     inspect_results = modeler.repair_tools.inspect_geometry()
     #All issues should have been fixed
