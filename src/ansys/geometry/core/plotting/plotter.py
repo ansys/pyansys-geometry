@@ -22,6 +22,7 @@
 """Provides plotting for various PyAnsys Geometry objects."""
 
 from itertools import cycle
+import os
 from pathlib import Path
 from typing import Any
 
@@ -495,9 +496,10 @@ class GeometryPlotter(PlotterInterface):
         if plotting_object is not None:
             self.plot(plotting_object, **plotting_options)
 
-        gltf_filepath = Path(screenshot, ".gltf")
+        gltf_filepath = str(screenshot) + ".gltf"
 
         self.backend._pl._scene.hide_axes()
         self.backend._pl._scene.export_gltf(gltf_filepath)
 
         gltf2glb(gltf_filepath)
+        Path.unlink(gltf_filepath)

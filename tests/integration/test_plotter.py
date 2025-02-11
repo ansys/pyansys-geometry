@@ -944,7 +944,7 @@ def test_export_glb(modeler: Modeler, verify_image_cache):
     pl = GeometryPlotter()
     pl.plot(box_body)
 
-    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb.glb")
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb")
     pl.export_glb(screenshot=output_glb_path)
 
 
@@ -965,7 +965,7 @@ def test_export_glb_with_color(modeler: Modeler, verify_image_cache):
     pl = GeometryPlotter(use_service_colors=True)
     pl.plot(box_body)
 
-    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_colored.glb")
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_colored")
     pl.export_glb(screenshot=output_glb_path)
 
 
@@ -987,7 +987,7 @@ def test_export_glb_with_face_color(modeler: Modeler, verify_image_cache):
 
     pl = GeometryPlotter(use_service_colors=True)
 
-    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_face_colored.glb")
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_face_colored")
     pl.export_glb(box_body, screenshot=output_glb_path)
 
 
@@ -1007,5 +1007,5 @@ def test_export_glb_cylinder_with_face_color(modeler: Modeler, verify_image_cach
 
     pl = GeometryPlotter(use_service_colors=True)
 
-    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_glb_face_colored.glb")
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_glb_face_colored")
     pl.export_glb(cyl, screenshot=output_glb_path)
