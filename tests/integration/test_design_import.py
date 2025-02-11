@@ -246,6 +246,9 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     if not BackendType.is_core_service(modeler.client.backend_type):
         file_step = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
         design.download(file_step, DesignFileFormat.STEP)
+        #
+        # file_iges = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
+        # design.download(file_iges, DesignFileFormat.IGES)
 
     design2 = modeler.open_file(file)
 
@@ -258,10 +261,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         #
         # TODO: Something has gone wrong with IGES
         # https://github.com/ansys/pyansys-geometry/issues/1146
-        #
-        # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
-        # design.download(file, DesignFileFormat.IGES)
-        # design2 = modeler.open_file(file)
+        # design2 = modeler.open_file(file_iges)
         # design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.igs")
         # _checker_method(design2, design3, False)
 
