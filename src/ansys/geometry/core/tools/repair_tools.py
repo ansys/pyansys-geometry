@@ -475,7 +475,7 @@ class RepairTools:
             The maximum length of the edges. By default, 0.0.
         comprehensive_result : bool, optional
             Determines whether the repair tool will attempt to fix all problem areas at once (false, default), or each individually (true).
-            Fixing each area individually may take longer, but gives a more comprehensive result about the repair operation's success. 
+            Fixing each area individually may take longer, but gives a more comprehensive result about the repair operation's success.
 
         Returns
         -------
@@ -495,7 +495,7 @@ class RepairTools:
             FindShortEdgesRequest(
                 selection=[body.id for body in bodies],
                 max_edge_length=DoubleValue(value=length),
-                comprehensive=comprehensive_result
+                comprehensive=comprehensive_result,
             )
         )
 
@@ -512,7 +512,9 @@ class RepairTools:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def find_and_fix_extra_edges(self, bodies: list["Body"], comprehensive_result: bool = False) -> RepairToolMessage:
+    def find_and_fix_extra_edges(
+        self, bodies: list["Body"], comprehensive_result: bool = False
+    ) -> RepairToolMessage:
         """Find and fix the extra edge problem areas.
 
         Notes
@@ -527,7 +529,7 @@ class RepairTools:
             The maximum length of the edges.
         comprehensive_result : bool, optional
             Determines whether the repair tool will attempt to fix all problem areas at once (false, default), or each individually (true).
-            Fixing each area individually may take longer, but gives a more comprehensive result about the repair operation's success. 
+            Fixing each area individually may take longer, but gives a more comprehensive result about the repair operation's success.
 
         Returns
         -------
@@ -544,8 +546,7 @@ class RepairTools:
 
         response = self._repair_stub.FindAndFixExtraEdges(
             FindExtraEdgesRequest(
-                selection=[body.id for body in bodies],
-                comprehensive=comprehensive_result
+                selection=[body.id for body in bodies], comprehensive=comprehensive_result
             )
         )
 
@@ -563,7 +564,11 @@ class RepairTools:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_fix_split_edges(
-        self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0, comprehensive_result: bool = False
+        self,
+        bodies: list["Body"],
+        angle: Real = 0.0,
+        length: Real = 0.0,
+        comprehensive_result: bool = False,
     ) -> RepairToolMessage:
         """Find and fix the split edge problem areas.
 
@@ -581,7 +586,7 @@ class RepairTools:
             The maximum length of the edges. By default, 0.0.
         comprehensive_result : bool, optional
             Determines whether the repair tool will attempt to fix all problem areas at once (false, default), or each individually (true).
-            Fixing each area individually may take longer, but gives a more comprehensive result about the repair operation's success. 
+            Fixing each area individually may take longer, but gives a more comprehensive result about the repair operation's success.
 
 
         Returns
@@ -605,7 +610,10 @@ class RepairTools:
 
         response = self._repair_stub.FindAndFixSplitEdges(
             FindSplitEdgesRequest(
-                bodies_or_faces=body_ids, angle=angle_value, distance=length_value, comprehensive=comprehensive_result
+                bodies_or_faces=body_ids,
+                angle=angle_value,
+                distance=length_value,
+                comprehensive=comprehensive_result,
             )
         )
 
