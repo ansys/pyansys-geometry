@@ -22,7 +22,6 @@
 """Provides plotting for various PyAnsys Geometry objects."""
 
 from itertools import cycle
-import os
 from pathlib import Path
 from typing import Any
 

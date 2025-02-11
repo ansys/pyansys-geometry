@@ -308,7 +308,7 @@ class Face:
 
             # If color is not cached, retrieve from the server
             response = self._faces_stub.GetColor(self._grpc_id)
-            
+
             # Return if valid color returned
             if response.color:
                 self._color = mcolors.to_hex(response.color)
