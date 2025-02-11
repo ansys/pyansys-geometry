@@ -3084,15 +3084,15 @@ def test_set_face_color(modeler: Modeler):
 
     # Set the color of the body using color name.
     faces[2].set_color("green")
-    faces[2].color == "#008000"
+    assert faces[2].color == "#008000"
 
     # Set the color of the body using RGB values between (0,1) as floats.
     faces[0].set_color((1.0, 0.0, 0.0))
-    faces[0].color == "#ff0000"
+    assert faces[0].color == "#ff0000"
 
     # Set the color of the body using RGB values between (0,255) as integers).
     faces[1].set_color((0, 255, 0))
-    faces[1].color == "#00ff00"
+    assert faces[1].color == "#00ff00"
 
     # Assigning color object directly
     blue_color = mcolors.to_rgba("#0000FF")

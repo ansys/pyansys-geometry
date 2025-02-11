@@ -246,18 +246,18 @@ class BoundingBox2D:
 
     @staticmethod
     def __intersect_interval(first_min, second_min, first_max, second_max) -> bool:
-        min = second_min
-        if first_min > min:
-            min = first_min
+        minimum = second_min
+        if first_min > minimum:
+            minimum = first_min
 
-        max = second_max
-        if first_max < max:
-            max = first_max
+        maximum = second_max
+        if first_max < maximum:
+            maximum = first_max
 
-        if min > max:
-            if min - max > Accuracy.length_accuracy():
+        if minimum > maximum:
+            if minimum - maximum > Accuracy.length_accuracy():
                 return False, 0, 0
 
-            max, min = min, max
+            maximum, minimum = minimum, maximum
 
-        return True, min, max
+        return True, minimum, maximum
