@@ -109,7 +109,7 @@ doc = [
     "sphinx-autodoc-typehints==3.0.1",
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
-    "trame-vtk==2.8.14",
+    "trame-vtk==2.8.15",
     "vtk==9.3.1",
 ]
 
