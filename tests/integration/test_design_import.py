@@ -318,7 +318,7 @@ def test_design_insert(modeler: Modeler):
 
     # Check that there are two components
     assert len(design.components) == 2
-    assert design._is_active
+    assert design.is_active is True
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "DuplicatesDesign"
 
@@ -339,6 +339,6 @@ def test_design_insert_with_import(modeler: Modeler):
 
     # Check that there are two components
     assert len(design.components) == 2
-    assert design._is_active
+    assert design.is_active is True
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "Wheel1"
