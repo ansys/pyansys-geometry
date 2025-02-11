@@ -460,13 +460,13 @@ def test_inspect_geometry(modeler: Modeler):
     modeler.open_file(FILES_DIR / "InspectAndRepair01.scdocx")
     inspect_results = modeler.repair_tools.inspect_geometry()
     assert len(inspect_results) == 1
-    issues = len(inspect_results[0].issues) 
+    issues = len(inspect_results[0].issues)
     assert issues > 8 and issues < 11
     result_to_repair = inspect_results[0]
     result_to_repair.repair()
     # Reinspect the geometry
     inspect_results = modeler.repair_tools.inspect_geometry()
-    #All issues should have been fixed
+    # All issues should have been fixed
     assert len(inspect_results) == 0
 
 
@@ -476,6 +476,5 @@ def test_repair_geometry(modeler: Modeler):
     modeler.repair_tools.repair_geometry()
     # Reinspect the geometry
     inspect_results = modeler.repair_tools.inspect_geometry()
-    #All issues should have been fixed
+    # All issues should have been fixed
     assert len(inspect_results) == 0
-
