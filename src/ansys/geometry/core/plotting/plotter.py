@@ -239,6 +239,9 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
+        if body.is_suppressed:
+            return
+
         if self.use_service_colors:
             faces = body.faces
             dataset = body.tessellate()
