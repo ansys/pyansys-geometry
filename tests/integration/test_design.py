@@ -2064,9 +2064,6 @@ def test_get_collision(modeler: Modeler):
 
 def test_set_body_name(modeler: Modeler):
     """Test the setting the name of a body."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_set_body_name.__name__, "set_name")
-
     design = modeler.create_design("simple_cube")
     unit = DEFAULT_UNITS.LENGTH
     plane = Plane(
