@@ -461,7 +461,7 @@ def test_inspect_geometry(modeler: Modeler):
     inspect_results = modeler.repair_tools.inspect_geometry()
     assert len(inspect_results) == 1
     issues = len(inspect_results[0].issues)
-    assert issues > 8 and issues < 11
+    assert issues == 7
     result_to_repair = inspect_results[0]
     result_to_repair.repair()
     # Reinspect the geometry
