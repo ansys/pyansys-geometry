@@ -22,9 +22,11 @@
 """Provides plotting for various PyAnsys Geometry objects."""
 
 from itertools import cycle
+from pathlib import Path
 from typing import Any
 
 import numpy as np
+from pygltflib.utils import gltf2glb
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
@@ -255,7 +257,7 @@ class GeometryPlotter(PlotterInterface):
             and "color" not in plotting_options
         ):
             plotting_options["color"] = next(POLYDATA_COLOR_CYCLER)["color"]
-        
+
         # Use the default PyAnsys Geometry add_mesh arguments
         self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
         dataset = body.tessellate(merge=merge)
@@ -475,20 +477,17 @@ class GeometryPlotter(PlotterInterface):
                     lib_objects.append(element)
             return lib_objects
 
-    def export_gltf(
-            self, 
-            plotting_object: Any = None, 
-            screenshot: str | None = None, 
-            **plotting_options
+    def export_glb(
+        self, plotting_object: Any = None, screenshot: str | None = None, **plotting_options
     ) -> None:
-        """Export the design to a gltf file. Does not support picked objects.
-        
+        """Export the design to a glb file. Does not support picked objects.
+
         Parameters
         ----------
         plotting_object : Any, default: None
             Object you can add to the plotter.
         screenshot : str, default: None
-            Path to save a screenshot of the plotter.
+            Path to save a screenshot of the plotter. Do not include file extension.
         **plotting_options : dict, default: None
             Keyword arguments for the plotter. Arguments depend of the backend implementation
             you are using.
@@ -496,5 +495,9 @@ class GeometryPlotter(PlotterInterface):
         if plotting_object is not None:
             self.plot(plotting_object, **plotting_options)
 
+        gltf_filepath = Path(screenshot, ".gltf")
+
         self.backend._pl._scene.hide_axes()
-        self.backend._pl._scene.export_gltf(screenshot)
+        self.backend._pl._scene.export_gltf(gltf_filepath)
+
+        gltf2glb(gltf_filepath)

@@ -929,8 +929,8 @@ def test_plot_design_face_colors(modeler: Modeler, verify_image_cache):
 
 
 @skip_no_xserver
-def test_export_gltf(modeler: Modeler, verify_image_cache):
-    """Test exporting a box to gltf."""
+def test_export_glb(modeler: Modeler, verify_image_cache):
+    """Test exporting a box to glb."""
     # Create a Sketch
     sketch = Sketch()
     sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
@@ -944,13 +944,13 @@ def test_export_gltf(modeler: Modeler, verify_image_cache):
     pl = GeometryPlotter()
     pl.plot(box_body)
 
-    output_gltf_path = Path(IMAGE_RESULTS_DIR, "plot_box_gltf.gltf")
-    pl.export_gltf(screenshot=output_gltf_path)
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb.glb")
+    pl.export_glb(screenshot=output_glb_path)
 
 
 @skip_no_xserver
-def test_export_gltf_with_color(modeler: Modeler, verify_image_cache):
-    """Test exporting a box to gltf."""
+def test_export_glb_with_color(modeler: Modeler, verify_image_cache):
+    """Test exporting a box to glb."""
     # Create a Sketch
     sketch = Sketch()
     sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
@@ -965,13 +965,13 @@ def test_export_gltf_with_color(modeler: Modeler, verify_image_cache):
     pl = GeometryPlotter(use_service_colors=True)
     pl.plot(box_body)
 
-    output_gltf_path = Path(IMAGE_RESULTS_DIR, "plot_box_gltf_colored.gltf")
-    pl.export_gltf(screenshot=output_gltf_path)
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_colored.glb")
+    pl.export_glb(screenshot=output_glb_path)
 
 
 @skip_no_xserver
-def test_export_gltf_with_face_color(modeler: Modeler, verify_image_cache):
-    """Test exporting a box to gltf."""
+def test_export_glb_with_face_color(modeler: Modeler, verify_image_cache):
+    """Test exporting a box to glb."""
     # Create a Sketch
     sketch = Sketch()
     sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
@@ -987,13 +987,13 @@ def test_export_gltf_with_face_color(modeler: Modeler, verify_image_cache):
 
     pl = GeometryPlotter(use_service_colors=True)
 
-    output_gltf_path = Path(IMAGE_RESULTS_DIR, "plot_box_gltf_face_colored.gltf")
-    pl.export_gltf(box_body, screenshot=output_gltf_path)
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_face_colored.glb")
+    pl.export_glb(box_body, screenshot=output_glb_path)
 
 
 @skip_no_xserver
-def test_export_gltf_cylinder_with_face_color(modeler: Modeler, verify_image_cache):
-    """Test exporting a cylinder to gltf."""
+def test_export_glb_cylinder_with_face_color(modeler: Modeler, verify_image_cache):
+    """Test exporting a cylinder to glb."""
     # Create your design on the server side
     design = modeler.create_design("BoxExtrusions")
 
@@ -1007,5 +1007,5 @@ def test_export_gltf_cylinder_with_face_color(modeler: Modeler, verify_image_cac
 
     pl = GeometryPlotter(use_service_colors=True)
 
-    output_gltf_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_gltf_face_colored.gltf")
-    pl.export_gltf(cyl, screenshot=output_gltf_path)
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_glb_face_colored.glb")
+    pl.export_glb(cyl, screenshot=output_glb_path)
