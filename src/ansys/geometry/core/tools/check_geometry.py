@@ -25,8 +25,6 @@ from typing import TYPE_CHECKING
 
 from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-
-# from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
@@ -124,7 +122,7 @@ class InspectResult:
 
         Returns
         -------
-        message: RepairToolMessage
+        RepairToolMessage
             Message containing created and/or modified bodies.
         """
         if not self.body:
@@ -134,6 +132,4 @@ class InspectResult:
             RepairGeometryRequest(bodies=[self.body._grpc_id])
         )
 
-        message = RepairToolMessage(repair_result_response.result.success, [], [])
-
-        return message
+        return RepairToolMessage(repair_result_response.result.success, [], [])

@@ -78,12 +78,13 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.modeler import Modeler
 
 
 class RepairTools:
     """Repair tools for PyAnsys Geometry."""
 
-    def __init__(self, grpc_client: GrpcClient, modeler):
+    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize a new instance of the ``RepairTools`` class."""
         self._grpc_client = grpc_client
         self._repair_stub = RepairToolsStub(self._grpc_client.channel)
@@ -609,6 +610,8 @@ class RepairTools:
         )
         return message
 
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
     def inspect_geometry(self, bodies: list["Body"] = None) -> list[InspectResult]:
         """Return a list of geometry issues organized by body.
 
@@ -627,7 +630,7 @@ class RepairTools:
             List of objects representing geometry issues and the bodies where issues are found.
         """
         parent_design = self._modeler.get_active_design()
-        body_ids = [] if bodies is None else [body.id for body in bodies]
+        body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
         inspect_result_response = self._repair_stub.InspectGeometry(
             InspectGeometryRequest(bodies=body_ids)
         )
@@ -663,8 +666,8 @@ class RepairTools:
                 message_type=message_type,
                 message_id=message_id,
                 message=message,
-                faces=(face.id for face in inspect_result_issue.faces),
-                edges=(edge.id for edge in inspect_result_issue.edges),
+                faces=[face.id for face in inspect_result_issue.faces],
+                edges=[edge.id for edge in inspect_result_issue.edges],
             )
             issues.append(issue)
         return issues
@@ -672,7 +675,7 @@ class RepairTools:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def repair_geometry(self, bodies: list["Body"] = None) -> RepairToolMessage:
-        """Attempt to repairs the geometry for the given bodies.
+        """Attempt to repair the geometry for the given bodies.
 
         This method inspects the geometry for the given bodies and attempts to repair them.
 
@@ -684,10 +687,10 @@ class RepairTools:
 
         Returns
         -------
-        Message containing success of the operation.
+        RepairToolMessage
+            Message containing success of the operation.
         """
-        # parent_design = get_design_from_body(bodies[0])
-        body_ids = [] if bodies is None else [body.id for body in bodies]
+        body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
         repair_result_response = self._repair_stub.RepairGeometry(
             RepairGeometryRequest(bodies=body_ids)
         )
