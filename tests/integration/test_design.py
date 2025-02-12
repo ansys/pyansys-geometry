@@ -213,7 +213,6 @@ def test_get_empty_material(modeler: Modeler):
 
     # Assign a material to a Body
     mat_service = body.material
-    print(mat_service._density.quantity)
     assert mat_service.name == ""
     assert mat_service.properties[MaterialPropertyType.DENSITY].quantity == Quantity(
         0, UNITS.kg / (UNITS.m**3)
