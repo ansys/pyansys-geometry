@@ -1675,20 +1675,20 @@ def test_boolean_body_operations(modeler: Modeler):
     # 1.b.ii
     copy1 = body1.copy(comp1, "Copy1")
     copy1a = body1.copy(comp1, "Copy1a")
-    copy1.subtract(copy1a)
+    with pytest.raises(ValueError):
+        copy1.subtract(copy1a)
 
     assert copy1.is_alive
-    assert not copy1a.is_alive
+    assert copy1a.is_alive
 
     # 1.b.iii
     copy1 = body1.copy(comp1, "Copy1")
     copy3 = body3.copy(comp3, "Copy3")
-    with pytest.raises(ValueError):
-        copy1.subtract(copy3)
+    copy1.subtract(copy3)
 
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
     assert copy1.volume
-    assert copy3.is_alive
+    assert not copy3.is_alive
 
     # 1.c.i.x
     copy1 = body1.copy(comp1, "Copy1")
@@ -1711,10 +1711,9 @@ def test_boolean_body_operations(modeler: Modeler):
     # 1.c.ii
     copy1 = body1.copy(comp1, "Copy1")
     copy3 = body3.copy(comp3, "Copy3")
-    with pytest.raises(ValueError):
-        copy1.unite(copy3)
+    copy1.unite(copy3)
 
-    assert copy3.is_alive
+    assert not copy3.is_alive
     assert body3.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
 
@@ -1785,20 +1784,20 @@ def test_boolean_body_operations(modeler: Modeler):
     # 2.b.ii
     copy1 = body1.copy(comp1_i, "Copy1")
     copy1a = body1.copy(comp1_i, "Copy1a")
-    copy1.subtract(copy1a)
+    with pytest.raises(ValueError):
+        copy1.subtract(copy1a)
 
     assert copy1.is_alive
-    assert not copy1a.is_alive
+    assert copy1a.is_alive
 
     # 2.b.iii
     copy1 = body1.copy(comp1_i, "Copy1")
     copy3 = body3.copy(comp3_i, "Copy3")
-    with pytest.raises(ValueError):
-        copy1.subtract(copy3)
+    copy1.subtract(copy3)
 
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
     assert copy1.volume
-    assert copy3.is_alive
+    assert not copy3.is_alive
 
     # 2.c.i.x
     copy1 = body1.copy(comp1_i, "Copy1")
@@ -1821,10 +1820,9 @@ def test_boolean_body_operations(modeler: Modeler):
     # 2.c.ii
     copy1 = body1.copy(comp1_i, "Copy1")
     copy3 = body3.copy(comp3_i, "Copy3")
-    with pytest.raises(ValueError):
-        copy1.unite(copy3)
+    copy1.unite(copy3)
 
-    assert copy3.is_alive
+    assert not copy3.is_alive
     assert body3.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
 
@@ -1921,26 +1919,21 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
     assert len(comp3.bodies) == 1
 
     # ---- Verify unite operation ----
-    body1.unite([body2, body3])
+    body1.unite([body2, body3], keep_other=True)
 
-    assert body1.is_alive
-    assert not body2.is_alive
+    assert body2.is_alive
+    assert body3.is_alive
     assert len(comp1.bodies) == 1
-    assert len(comp2.bodies) == 0
-    assert len(comp3.bodies) == 0
+    assert len(comp2.bodies) == 1
+    assert len(comp3.bodies) == 1
 
     # ---- Verify intersect operation ----
-    comp2 = design.add_component("Comp2")
-    comp3 = design.add_component("Comp3")
-    body1 = comp1.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    body2 = comp2.extrude_sketch("Body2", Sketch().box(Point2D([0.5, 0]), 1, 1), 1)
-    body3 = comp3.extrude_sketch("Body3", Sketch().box(Point2D([5, 0]), 1, 1), 1)
-    body1.intersect([body2, body3], keep_other=True)
+    body1.intersect(body2, keep_other=True)
 
     assert body1.is_alive
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 2
+    assert len(comp1.bodies) == 1
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 1
 
