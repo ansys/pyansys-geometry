@@ -632,7 +632,7 @@ class RepairTools:
     def find_and_fix_simplify(
         self, bodies: list["Body"], comprehensive_result: bool = False
     ) -> RepairToolMessage:
-        """Find and simplify the provided geometry 
+        """Find and simplify the provided geometry.
 
         Notes
         -----
