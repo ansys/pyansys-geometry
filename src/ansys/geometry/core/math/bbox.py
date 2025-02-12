@@ -22,6 +22,7 @@
 """Provides for managing a bounding box."""
 
 import sys
+from typing import Union
 
 from beartype import beartype as check_input_types
 
@@ -206,6 +207,57 @@ class BoundingBox2D:
             and self.y_max == other.y_max
         )
 
+    @check_input_types
     def __ne__(self, other: "BoundingBox2D") -> bool:
         """Not equals operator for the ``BoundingBox2D`` class."""
         return not self == other
+
+    @staticmethod
+    def intersect_bboxes(
+        box_1: "BoundingBox2D", box_2: "BoundingBox2D"
+    ) -> Union[None, "BoundingBox2D"]:
+        """Find the intersection of 2 BoundingBox2D objects.
+
+        Parameters
+        ----------
+        box_1: "BoundingBox2D"
+            The box to consider the intersection of with respect to box_2.
+        box_2: "BoundingBox2D"
+            The box to consider the intersection of with respect to box_1.
+
+        Returns
+        -------
+        BoundingBox2D:
+            The box representing the intersection of the two passed in boxes
+        """
+        intersect, min_x, max_x = box_1.__intersect_interval(
+            box_1.x_min, box_2.x_min, box_1.x_max, box_2.x_max
+        )
+        if not intersect:
+            return None
+
+        intersect, min_y, max_y = box_1.__intersect_interval(
+            box_1.y_min, box_2.y_min, box_1.y_max, box_2.y_max
+        )
+        if not intersect:
+            return None
+
+        return BoundingBox2D(min_x, max_x, min_y, max_y)
+
+    @staticmethod
+    def __intersect_interval(first_min, second_min, first_max, second_max) -> bool:
+        min = second_min
+        if first_min > min:
+            min = first_min
+
+        max = second_max
+        if first_max < max:
+            max = first_max
+
+        if min > max:
+            if min - max > Accuracy.length_accuracy():
+                return False, 0, 0
+
+            max, min = min, max
+
+        return True, min, max
