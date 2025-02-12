@@ -474,8 +474,8 @@ class RepairTools:
         length : Real, optional
             The maximum length of the edges. By default, 0.0.
         comprehensive_result : bool, optional
-            Whether to fix all problem areas individually. 
-            By default, False. 
+            Whether to fix all problem areas individually.
+            By default, False.
 
         Returns
         -------
@@ -528,8 +528,8 @@ class RepairTools:
         length : Real
             The maximum length of the edges.
         comprehensive_result : bool, optional
-            Whether to fix all problem areas individually. 
-            By default, False. 
+            Whether to fix all problem areas individually.
+            By default, False.
 
         Returns
         -------
@@ -585,8 +585,8 @@ class RepairTools:
         length : Real, optional
             The maximum length of the edges. By default, 0.0.
         comprehensive_result : bool, optional
-            Whether to fix all problem areas individually. 
-            By default, False. 
+            Whether to fix all problem areas individually.
+            By default, False.
 
         Returns
         -------
@@ -632,7 +632,7 @@ class RepairTools:
     def find_and_fix_simplify(
         self, bodies: list["Body"], comprehensive_result: bool = False
     ) -> RepairToolMessage:
-        """Find and simplify the provided geometry 
+        """Find and simplify the provided geometry
 
         Notes
         -----
@@ -643,15 +643,14 @@ class RepairTools:
         bodies : list[Body]
             List of bodies to be simplified.
         comprehensive_result : bool, optional
-            Whether to fix all problem areas individually. 
-            By default, False. 
+            Whether to fix all problem areas individually.
+            By default, False.
 
         Returns
         -------
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
         """
-        
         from ansys.geometry.core.designer.body import Body
 
         check_type_all_elements_in_iterable(bodies, Body)
@@ -663,9 +662,7 @@ class RepairTools:
         body_ids = [body.id for body in bodies]
 
         response = self._repair_stub.FindAndSimplify(
-            FindAdjustSimplifyRequest(
-                bodies_or_faces=body_ids, comprehensive=comprehensive_result
-            )
+            FindAdjustSimplifyRequest(bodies_or_faces=body_ids, comprehensive=comprehensive_result)
         )
 
         parent_design = get_design_from_body(bodies[0])
