@@ -36,6 +36,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FilletRequest,
     FullFilletRequest,
     ModifyLinearPatternRequest,
+    MoveRotateRequest,
     PatternRequest,
     RenameObjectRequest,
     ReplaceFaceRequest,
@@ -68,6 +69,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
+from ansys.geometry.core.misc.options import MoveOptions
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.typing import Real
 
@@ -1136,5 +1138,50 @@ class GeometryCommands:
         if result.success:
             design = get_design_from_body(bodies[0])
             design._update_design_inplace()
+
+        return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def move_rotate(
+        self,
+        selection: Union["Body", list["Body"], "Face", list["Face"]],
+        axis: Line,
+        angle: Real,
+        options: MoveOptions = None,
+    ) -> bool:
+        """Rotate a selection around an axis for a given angle.
+
+        Parameters
+        ----------
+        selection : Body | list[Body] | Face | list[Face]
+            Selection to rotate.
+        axis : Line
+            Axis of rotation.
+        angle : Real
+            Angle of rotation in radians.
+        options : MoveOptions
+            Options for the rotation.
+
+        Returns
+        -------
+        bool:
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.body import Body
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Body | Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, (Body, Face))
+        check_is_float_int(angle, "angle")
+
+        result = self._commands_stub.MoveRotate(
+            MoveRotateRequest(
+                selection=[object._grpc_id for object in selection],
+                axis=line_to_grpc_line(axis),
+                angle=angle,
+            )
+        )
 
         return result.success

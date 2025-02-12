@@ -57,3 +57,19 @@ class ImportOptions:
     def to_dict(self):
         """Provide the dictionary representation of the ImportOptions class."""
         return {k: bool(v) for k, v in asdict(self).items()}
+
+@dataclass
+class MoveOptions:
+    """Options for moving geometry.
+
+    Parameters
+    ----------
+    copy : bool = False
+        Copy the geometry instead of moving it.
+    """
+
+    copy: bool = False
+
+    def to_dict(self):
+        """Provide the dictionary representation of the MoveOptions class."""
+        return {k: bool(v) for k, v in asdict(self).items()}

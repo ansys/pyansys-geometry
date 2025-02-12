@@ -30,7 +30,8 @@ from ansys.geometry.core.designer.geometry_commands import (
     FillPatternType,
     OffsetMode,
 )
-from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.designer.edge import Edge
+from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes.curves.line import Line
@@ -906,3 +907,28 @@ def test_update_fill_pattern_on_imported_geometry_faces(modeler: Modeler):
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(4.70663693e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_move_rotate_body(modeler: Modeler):
+    """Test move and rotate body."""
+    design = modeler.create_design("move_rotate_body")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    for edge in body.edges:
+        print(edge.start, edge.end)
+
+    # Rotate about edge ([-1, 0, 2], [1, 0, 2])
+    rotation_axis = Line([-1, 0, 2], [1, 0, 2])
+    modeler.geometry_commands.move_rotate(body, rotation_axis, 90)
+
+    # Check rotation
+    start = Point3D([-1, 2, 3])
+    end = Point3D([1, 2, 3])
+    edges = body.edges
+
+    for edge in edges:
+        print(edge.start, edge.end)
+        if edge.start == start and edge.end == end:
+            assert True
+
+    assert False
+    
