@@ -696,7 +696,7 @@ def test_split_body_by_slicer_face(modeler: Modeler):
 
 def test_split_body_by_slicer_edge(modeler: Modeler):
     """Test split body by slicer edge"""
-    design = modeler.open_file(FILES_DIR / "Edge_Slice_test.dsco")
+    design = modeler.open_file(FILES_DIR / "Edge_Slice_Test.dsco")
 
     assert len(design.bodies) == 1
     body = design.bodies[0]
