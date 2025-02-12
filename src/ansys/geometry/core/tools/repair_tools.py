@@ -474,8 +474,8 @@ class RepairTools:
         length : Real, optional
             The maximum length of the edges. By default, 0.0.
         comprehensive_result : bool, optional
-            Determines whether the repair tool will attempt to fix all problem areas at once (false, default), or each individually (true).
-            Fixing each area individually may take longer, but gives a more comprehensive result about the repair operation's success. 
+            Whether to fix all problem areas individually. 
+            By default, False. 
 
         Returns
         -------
@@ -526,8 +526,8 @@ class RepairTools:
         length : Real
             The maximum length of the edges.
         comprehensive_result : bool, optional
-            Determines whether the repair tool will attempt to fix all problem areas at once (false, default), or each individually (true).
-            Fixing each area individually may take longer, but gives a more comprehensive result about the repair operation's success. 
+            Whether to fix all problem areas individually. 
+            By default, False. 
 
         Returns
         -------
@@ -580,9 +580,8 @@ class RepairTools:
         length : Real, optional
             The maximum length of the edges. By default, 0.0.
         comprehensive_result : bool, optional
-            Determines whether the repair tool will attempt to fix all problem areas at once (false, default), or each individually (true).
-            Fixing each area individually may take longer, but gives a more comprehensive result about the repair operation's success. 
-
+            Whether to fix all problem areas individually. 
+            By default, False. 
 
         Returns
         -------
@@ -606,6 +605,58 @@ class RepairTools:
         response = self._repair_stub.FindAndFixSplitEdges(
             FindSplitEdgesRequest(
                 bodies_or_faces=body_ids, angle=angle_value, distance=length_value, comprehensive=comprehensive_result
+            )
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.success,
+            response.created_bodies_monikers,
+            response.modified_bodies_monikers,
+            response.found,
+            response.repaired,
+        )
+        return message
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def find_and_fix_simplify(
+        self, bodies: list["Body"], comprehensive_result: bool = False
+    ) -> RepairToolMessage:
+        """Find and simplify the provided geometry 
+
+        Notes
+        -----
+        This method simplifies the provided geometry.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to be simplified.
+        comprehensive_result : bool, optional
+            Whether to fix all problem areas individually. 
+            By default, False. 
+
+        Returns
+        -------
+        RepairToolMessage
+            Message containing number of problem areas found/fixed, created and/or modified bodies.
+        """
+        
+        from ansys.geometry.core.designer.body import Body
+
+        check_type_all_elements_in_iterable(bodies, Body)
+        check_type(comprehensive_result, bool)
+
+        if not bodies:
+            return RepairToolMessage(False, [], [], 0, 0)
+
+        body_ids = [body.id for body in bodies]
+
+        response = self._repair_stub.FindAndSimplify(
+            FindAdjustSimplifyRequest(
+                bodies_or_faces=body_ids, comprehensive=comprehensive_result
             )
         )
 
