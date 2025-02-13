@@ -111,7 +111,7 @@ class MeasurementTools:
         """
         if self._grpc_client.backend_version < (25, 2, 0):
             response = self._measure_stub.MinDistanceBetweenObjects(
-                MinDistanceBetweenObjectsRequest(bodies=[object1._grpc_id, object2._grpc_id])
+                MinDistanceBetweenObjectsRequest(bodies=[object1.id, object2.id])
             )
         else:
             response = self._measure_stub.MinDistanceBetweenSelectionObjects(
