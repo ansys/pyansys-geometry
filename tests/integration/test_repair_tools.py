@@ -454,7 +454,7 @@ def test_find_and_fix_extra_edges(modeler: Modeler):
         final_edge_count += len(body.edges)
     assert final_edge_count == 36
 
-    
+
    def test_inspect_geometry(modeler: Modeler):
     """Test the result of the inspect geometry query and the ability to repair one issue"""
     modeler.open_file(FILES_DIR / "InspectAndRepair01.scdocx")
@@ -479,7 +479,7 @@ def test_repair_geometry(modeler: Modeler):
     # All issues should have been fixed
     assert len(inspect_results) == 0
 
-    
+
 def test_find_and_fix_short_edges_comprehensive(modeler: Modeler):
     """Test to read geometry, find and fix short edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "ShortEdges.scdocx")
