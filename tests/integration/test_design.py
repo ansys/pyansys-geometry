@@ -1979,18 +1979,13 @@ def test_child_component_instances(modeler: Modeler):
 
 
 def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    """Generate multiple designs, make sure they are all separate, and activate
-    them when needed.
+    """Generate multiple designs, make sure they are all separate, and once
+    a design is deactivated, the next one is activated.
     """
-    # Check backend first
-    if modeler.client.backend_type in (
-        BackendType.SPACECLAIM,
-        BackendType.WINDOWS_SERVICE,
-    ):
-        pass
-    else:
-        # Test is only available for DMS and SpaceClaim
-        pytest.skip("Test only available on DMS and SpaceClaim")
+    # Initiate expected output images
+    scshot_dir = tmp_path_factory.mktemp("test_multiple_designs")
+    scshot_1 = scshot_dir / "design1.png"
+    scshot_2 = scshot_dir / "design2.png"
 
     # Create your design on the server side
     design1 = modeler.create_design("Design1")
@@ -2002,6 +1997,9 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     # Extrude the sketch to create a body
     design1.extrude_sketch("MySlot", sketch1, Quantity(10, UNITS.mm))
 
+    # Request plotting and store images
+    design1.plot(screenshot=scshot_1)
+
     # Create a second design
     design2 = modeler.create_design("Design2")
 
@@ -2012,14 +2010,8 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     # Extrude the sketch to create a body
     design2.extrude_sketch("MyRectangle", sketch2, Quantity(10, UNITS.mm))
 
-    # Initiate expected output images
-    scshot_dir = tmp_path_factory.mktemp("test_multiple_designs")
-    scshot_1 = scshot_dir / "design1.png"
-    scshot_2 = scshot_dir / "design2.png"
-
     # Request plotting and store images
-    design2.plot(screenshot=scshot_1)
-    design1.plot(screenshot=scshot_2)
+    design2.plot(screenshot=scshot_2)
 
     # Check that the images are different
     assert scshot_1.exists()
@@ -2027,13 +2019,9 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     err = pv_compare_images(str(scshot_1), str(scshot_2))
     assert not err < 0.1
 
-    # Check that design2 is not active
-    assert not design2.is_active
-    assert design1.is_active
-
-    # Check the same thing inside the modeler
-    assert not modeler.designs[design2.design_id].is_active
-    assert modeler.designs[design1.design_id].is_active
+    # Check that design1 is not active and design2 is active
+    assert not design1.is_active
+    assert design2.is_active
 
 
 def test_get_active_design(modeler: Modeler):

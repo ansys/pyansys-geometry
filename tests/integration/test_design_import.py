@@ -241,6 +241,15 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
     design.download(str(file))
 
+    # Pre-download the STEP file for comparison... once the design is closed, the
+    # file is no longer available for download from the original design
+    if not BackendType.is_core_service(modeler.client.backend_type):
+        file_step = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
+        design.download(file_step, DesignFileFormat.STEP)
+        #
+        # file_iges = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
+        # design.download(file_iges, DesignFileFormat.IGES)
+
     design2 = modeler.open_file(file)
 
     # assert the two cars are the same, excepted for the ID, which should be different
@@ -252,17 +261,12 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         #
         # TODO: Something has gone wrong with IGES
         # https://github.com/ansys/pyansys-geometry/issues/1146
-        #
-        # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
-        # design.download(file, DesignFileFormat.IGES)
-        # design2 = modeler.open_file(file)
+        # design2 = modeler.open_file(file_iges)
         # design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.igs")
         # _checker_method(design2, design3, False)
 
         # STEP
-        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
-        design.download(file, DesignFileFormat.STEP)
-        design2 = modeler.open_file(file)
+        design2 = modeler.open_file(file_step)
         design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.stp"))
         _checker_method(design2, design3, False)
 
@@ -318,7 +322,7 @@ def test_design_insert(modeler: Modeler):
 
     # Check that there are two components
     assert len(design.components) == 2
-    assert design._is_active
+    assert design.is_active is True
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "DuplicatesDesign"
 
@@ -339,6 +343,6 @@ def test_design_insert_with_import(modeler: Modeler):
 
     # Check that there are two components
     assert len(design.components) == 2
-    assert design._is_active
+    assert design.is_active is True
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "Wheel1"
