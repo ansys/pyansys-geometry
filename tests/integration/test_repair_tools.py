@@ -490,3 +490,13 @@ def test_find_and_fix_extra_edges_comprehensive(modeler: Modeler):
     for body in design.bodies:
         final_edge_count += len(body.edges)
     assert final_edge_count == 36
+    assert result.modified_bodies_monikers == 1
+
+
+def test_find_and_fix_simplify(modeler: Modeler):
+    """Test to read geometry and find and fix spline faces"""
+    design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
+    result = modeler.repair_tools.find_and_fix_simplify(design.bodies,True)
+    assert result
+    assert result.found == 46
+    assert result.repaired == 46 #There is a SC bug where success is always true

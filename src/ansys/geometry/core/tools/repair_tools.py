@@ -662,7 +662,7 @@ class RepairTools:
         body_ids = [body.id for body in bodies]
 
         response = self._repair_stub.FindAndSimplify(
-            FindAdjustSimplifyRequest(bodies_or_faces=body_ids, comprehensive=comprehensive_result)
+            FindAdjustSimplifyRequest(selection=body_ids, comprehensive=comprehensive_result)
         )
 
         parent_design = get_design_from_body(bodies[0])
