@@ -1,0 +1,117 @@
+
+
+
+
+
+The ``units.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.misc.units
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: units
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~PhysicalQuantity`
+            - Provides the base class for handling units throughout PyAnsys Geometry.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~UNITS`
+            - Units manager.
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 PhysicalQuantity<PhysicalQuantity>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for handling units homogeneously throughout PyAnsys Geometry.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: UNITS
+
+   
+   Units manager.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
