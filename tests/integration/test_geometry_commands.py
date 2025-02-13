@@ -916,9 +916,9 @@ def test_move_rotate_body(modeler: Modeler):
     for edge in body.edges:
         print(edge.start, edge.end)
 
-    # Rotate about edge ([-1, 0, 2], [1, 0, 2])
-    rotation_axis = Line([-1, 0, 2], [1, 0, 2])
-    modeler.geometry_commands.move_rotate(body, rotation_axis, 90)
+    # Rotate about edge ([1, -1, 2], [-1, -1, 2])
+    rotation_axis = Line([1, -1, 2], [-1, 0, 0])
+    modeler.geometry_commands.move_rotate(body, rotation_axis, np.pi/2)
 
     # Check rotation
     start = Point3D([-1, 2, 3])
