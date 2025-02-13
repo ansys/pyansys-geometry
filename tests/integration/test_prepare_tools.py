@@ -53,16 +53,12 @@ def test_volume_extract_from_edge_loops(modeler: Modeler):
 
 def test_share_topology(modeler: Modeler):
     """Test share topology operation is between two bodies."""
-    # Skip test on CoreService
-    # skip_if_core_service(modeler, test_share_topology.__name__, "prepare_tools")
     design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
     assert modeler.prepare_tools.share_topology(design.bodies)
 
 
 def test_enhanced_share_topology(modeler: Modeler):
     """Test enhanced share topology operation is between two bodies."""
-    # Skip test on CoreService
-    # skip_if_core_service(modeler, test_share_topology.__name__, "prepare_tools")
     design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
     face_count = (
         len(design.bodies[0].faces) + len(design.bodies[1].faces) + len(design.bodies[2].faces)

@@ -36,7 +36,7 @@ from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.sketch.sketch import Sketch
 
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_chamfer(modeler: Modeler):
@@ -696,12 +696,7 @@ def test_split_body_by_slicer_face(modeler: Modeler):
 
 def test_split_body_by_slicer_edge(modeler: Modeler):
     """Test split body by slicer edge"""
-    # Skip for Core service
-    skip_if_core_service(
-        modeler, test_split_body_by_slicer_edge.__name__, "split_body_by_slicer_edge"
-    )
-
-    design = modeler.open_file(FILES_DIR / "Edge_Slice_test.dsco")
+    design = modeler.open_file(FILES_DIR / "Edge_Slice_Test.dsco")
 
     assert len(design.bodies) == 1
     body = design.bodies[0]
