@@ -903,3 +903,26 @@ def test_plot_design_multi_colors(modeler: Modeler, verify_image_cache):
         screenshot=Path(IMAGE_RESULTS_DIR, "plot_design_multi_colors_single_color.png"),
         multi_colors=False,
     )
+
+
+@skip_no_xserver
+def test_plot_design_face_colors(modeler: Modeler, verify_image_cache):
+    """Test plotting of design with/without multi_colors."""
+    design = modeler.create_design("DesignFaceColors")
+    # Create a sketch of a box
+    sketch_box = Sketch().box(
+        Point2D([0, 0], unit=UNITS.m), width=10 * UNITS.m, height=10 * UNITS.m
+    )
+
+    # Extrude both sketches to get a prism and change face colors
+    design.extrude_sketch("Prism", sketch_box, 10 * UNITS.m)
+    design.bodies[0].faces[0].set_color((255, 0, 0))
+    design.bodies[0].faces[1].set_color((0, 255, 0))
+    design.bodies[0].faces[2].set_color((0, 0, 255))
+
+    # Design plotting
+    design.bodies[0].plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_design_face_colors.png"),
+        merge=False,
+        multi_colors=True,
+    )

@@ -1219,3 +1219,26 @@ def test_circle_intersections_coincident():
     intersections = get_two_circle_intersections(x0, y0, r0, x1, y1, r1)
 
     assert intersections is None
+
+
+def test_bounding_box_intersection():
+    """Test the intersection of two bounding boxes"""
+    # Create the two boxes
+    box1 = BoundingBox2D(0, 1, 0, 1)
+    box2 = BoundingBox2D(0.5, 1.5, 0, 1)
+
+    # Get intersection and check
+    intersection = BoundingBox2D.intersect_bboxes(box1, box2)
+    assert intersection is not None
+    assert intersection == BoundingBox2D(0.5, 1, 0, 1)
+
+
+def test_bounding_box_no_intersection():
+    """Test that the bounding box intersection returns None in the case of no overlap"""
+    # Create the two boxes
+    box1 = BoundingBox2D(0, 1, 0, 1)
+    box2 = BoundingBox2D(2, 3, 0, 1)
+
+    # Get intersection and check
+    intersection = BoundingBox2D.intersect_bboxes(box1, box2)
+    assert intersection is None
