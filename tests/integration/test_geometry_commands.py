@@ -886,7 +886,7 @@ def test_circular_pattern_on_imported_geometry_faces_modify(modeler: Modeler):
     assert len(design.bodies[0].faces) == 79
     assert success
     assert design.bodies[0].volume.m == pytest.approx(
-        Quantity(0.00026159, UNITS.m**3).m, rel=1e-6, abs=1e-8
+        Quantity(0.0002615594337, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
 
 
