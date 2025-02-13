@@ -24,7 +24,6 @@
 from pathlib import Path
 
 import numpy as np
-import pytest
 
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
@@ -38,7 +37,7 @@ from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_issue_834_design_import_with_surfaces(modeler: Modeler):
@@ -47,10 +46,6 @@ def test_issue_834_design_import_with_surfaces(modeler: Modeler):
     For more info see
     https://github.com/ansys/pyansys-geometry/issues/834
     """
-    # TODO: to be reactivated
-    # https://github.com/ansys/pyansys-geometry/issues/799
-    skip_if_core_service(modeler, test_issue_834_design_import_with_surfaces.__name__, "open_file")
-
     # Open the design
     design = modeler.open_file(Path(FILES_DIR, "DuplicateFacesDesignBefore.scdocx"))
 
@@ -87,9 +82,6 @@ def test_issue_1184_sphere_creation_crashes(modeler: Modeler):
     For more info see
     https://github.com/ansys/pyansys-geometry/issues/1184
     """
-    # Skip this test on CoreService since it is not implemented yet
-    skip_if_core_service(modeler, test_issue_1184_sphere_creation_crashes.__name__, "create_sphere")
-
     design = modeler.create_design("SphereCreationIssue")
 
     plane = Plane(
@@ -140,11 +132,6 @@ def test_issue_1304_arc_sketch_creation():
         DEFAULT_UNITS.LENGTH = UNITS.meter
 
 
-# TODO: Temporary fix for boolean operations
-# Issue had to be skipped due to the fact that the intersect operation is not working as expected
-# when using command-based boolean operations.
-# https://github.com/ansys/pyansys-geometry/issues/1733
-@pytest.mark.skip(reason="This test is not working as expected")
 def test_issue_1192_temp_body_on_empty_intersect(modeler: Modeler):
     """Test demonstrating the issue when intersecting two bodies that do not intersect
     and the empty temporal body that gets created."""

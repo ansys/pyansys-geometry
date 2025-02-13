@@ -2076,9 +2076,6 @@ def test_set_body_name(modeler: Modeler):
 
 def test_set_fill_style(modeler: Modeler):
     """Test the setting the fill style of a body."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_set_fill_style.__name__, "set_fill_style")
-
     design = modeler.create_design("RVE")
     unit = DEFAULT_UNITS.LENGTH
 
@@ -2273,9 +2270,6 @@ def test_body_mapping(modeler: Modeler):
 
 def test_sphere_creation(modeler: Modeler):
     """Test the creation of a sphere body with a given radius."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_sphere_creation.__name__, "create_sphere")
-
     design = modeler.create_design("Spheretest")
     center_point = Point3D([10, 10, 10], UNITS.m)
     radius = Distance(1, UNITS.m)
@@ -2492,10 +2486,6 @@ def test_create_body_from_loft_profile(modeler: Modeler):
     """Test the ``create_body_from_loft_profile()`` method to create a vase
     shape.
     """
-    # Skip test on CoreService
-    skip_if_core_service(
-        modeler, test_create_body_from_loft_profile.__name__, "'create_body_from_loft_profile'"
-    )
     design_sketch = modeler.create_design("loftprofile")
 
     profile1 = Circle(origin=[0, 0, 0], radius=8).trim(Interval(0, 2 * np.pi))
