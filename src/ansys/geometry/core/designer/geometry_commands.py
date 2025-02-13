@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Provides tools for pulling geometry."""
 
-from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -37,6 +36,8 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FullFilletRequest,
     ModifyLinearPatternRequest,
     MoveRotateRequest,
+    MoveTranslateRequest,
+    OffsetFacesSetRadiusRequest,
     PatternRequest,
     RenameObjectRequest,
     ReplaceFaceRequest,
@@ -69,7 +70,13 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
-from ansys.geometry.core.misc.options import MoveOptions
+from ansys.geometry.core.misc.options import (
+    ExtrudeType,
+    FillPatternType,
+    MoveOptions,
+    OffsetFaceOptions,
+    OffsetMode,
+)
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.typing import Real
 
@@ -78,37 +85,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
-
-
-@unique
-class ExtrudeType(Enum):
-    """Provides values for extrusion types."""
-
-    NONE = 0
-    ADD = 1
-    CUT = 2
-    FORCE_ADD = 3
-    FORCE_CUT = 4
-    FORCE_INDEPENDENT = 5
-    FORCE_NEW_SURFACE = 6
-
-
-@unique
-class OffsetMode(Enum):
-    """Provides values for offset modes during extrusions."""
-
-    IGNORE_RELATIONSHIPS = 0
-    MOVE_FACES_TOGETHER = 1
-    MOVE_FACES_APART = 2
-
-
-@unique
-class FillPatternType(Enum):
-    """Provides values for types of fill patterns."""
-
-    GRID = 0
-    OFFSET = 1
-    SKEWED = 2
 
 
 class GeometryCommands:
@@ -1181,6 +1157,89 @@ class GeometryCommands:
                 selection=[object._grpc_id for object in selection],
                 axis=line_to_grpc_line(axis),
                 angle=angle,
+            )
+        )
+
+        return result.success
+    
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def move_translate(
+        self, 
+        selection: Union["Body", list["Body"], "Face", list["Face"]],
+        direction: UnitVector3D,
+        distance: Real,
+        options: MoveOptions = None,
+    ) -> bool:
+        """Translate a selection along a direction for a given distance.
+
+        Parameters
+        ----------
+        selection : Body | list[Body] | Face | list[Face]
+            Selection to translate.
+        direction : UnitVector3D
+            Direction of translation.
+        distance : Real
+            Distance of translation.
+        options : MoveOptions
+            Options for the translation.
+
+        Returns
+        -------
+        bool:
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.body import Body
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Body | Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, (Body, Face))
+        check_is_float_int(distance, "distance")
+
+        result = self._commands_stub.MoveTranslate(
+            MoveTranslateRequest(
+                selection=[object._grpc_id for object in selection],
+                direction=unit_vector_to_grpc_direction(direction),
+                distance=distance,
+            )
+        )
+
+        return result.success
+    
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def offset_faces_set_radius(
+        self,
+        selection: list["Face"],
+        radius: Real,
+        options: OffsetFaceOptions = None,
+    ) -> bool:
+        """Offset faces by a given radius.
+
+        Parameters
+        ----------
+        selection : list[Face]
+            Faces to offset.
+        radius : Real
+            Radius of the offset.
+        options : OffsetFaceOptions
+            Options for the offset.
+
+        Returns
+        -------
+        bool:
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        check_type_all_elements_in_iterable(selection, Face)
+        check_is_float_int(radius, "radius")
+
+        result = self._commands_stub.OffsetFacesSetRadius(
+            OffsetFacesSetRadiusRequest(
+                selection=[face._grpc_id for face in selection],
+                radius=radius,
             )
         )
 

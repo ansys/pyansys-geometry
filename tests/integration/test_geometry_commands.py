@@ -913,22 +913,54 @@ def test_move_rotate_body(modeler: Modeler):
     """Test move and rotate body."""
     design = modeler.create_design("move_rotate_body")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
-    for edge in body.edges:
-        print(edge.start, edge.end)
 
     # Rotate about edge ([1, -1, 2], [-1, -1, 2])
     rotation_axis = Line([1, -1, 2], [-1, 0, 0])
-    modeler.geometry_commands.move_rotate(body, rotation_axis, np.pi/2)
+    modeler.geometry_commands.move_rotate(body, rotation_axis, -np.pi/2)
 
-    # Check rotation
-    start = Point3D([-1, 2, 3])
-    end = Point3D([1, 2, 3])
-    edges = body.edges
+    expected_vertices = [
+        Point3D([-1.0, -1.0, 2.0]),
+        Point3D([1.0, -1.0, 2.0]),
+        Point3D([-1.0, 1.0, 2.0]),
+        Point3D([1.0, 1.0, 2.0]),
+        Point3D([-1.0, -1.0, 4.0]),
+        Point3D([-1.0, 1.0, 4.0]),
+        Point3D([1.0, -1.0, 4.0]),
+        Point3D([1.0, 1.0, 4.0])
+    ]
 
-    for edge in edges:
-        print(edge.start, edge.end)
-        if edge.start == start and edge.end == end:
-            assert True
+    # Verify the rotation
+    rotated_vertices = []
+    for edge in body.edges:
+        rotated_vertices.extend([edge.shape.start, edge.shape.end])
 
-    assert False
+    np.isin(expected_vertices, rotated_vertices)
+
+
+def test_move_translate_body(modeler: Modeler):
+    """Test move and translate body."""
+    design = modeler.create_design("move_translate_body")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Translate by [1, 1, 1]
+    translation_vector = Vector3D([1, 1, 1])
+    modeler.geometry_commands.move_translate(body, translation_vector, 1)
+
+    expected_vertices = [
+        Point3D([1.0, 1.0, 1.0]),
+        Point3D([3.0, 1.0, 1.0]),
+        Point3D([1.0, 3.0, 1.0]),
+        Point3D([3.0, 3.0, 1.0]),
+        Point3D([1.0, 1.0, 3.0]),
+        Point3D([1.0, 3.0, 3.0]),
+        Point3D([3.0, 1.0, 3.0]),
+        Point3D([3.0, 3.0, 3.0])
+    ]
+
+    # Verify the translation
+    translated_vertices = []
+    for edge in body.edges:
+        translated_vertices.extend([edge.shape.start, edge.shape.end])
+
+    np.isin(expected_vertices, translated_vertices)
     

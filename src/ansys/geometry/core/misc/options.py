@@ -22,6 +22,37 @@
 """Provides various option classes."""
 
 from dataclasses import asdict, dataclass
+from enum import Enum, unique
+
+@unique
+class ExtrudeType(Enum):
+    """Provides values for extrusion types."""
+
+    NONE = 0
+    ADD = 1
+    CUT = 2
+    FORCE_ADD = 3
+    FORCE_CUT = 4
+    FORCE_INDEPENDENT = 5
+    FORCE_NEW_SURFACE = 6
+
+
+@unique
+class OffsetMode(Enum):
+    """Provides values for offset modes during extrusions."""
+
+    IGNORE_RELATIONSHIPS = 0
+    MOVE_FACES_TOGETHER = 1
+    MOVE_FACES_APART = 2
+
+
+@unique
+class FillPatternType(Enum):
+    """Provides values for types of fill patterns."""
+
+    GRID = 0
+    OFFSET = 1
+    SKEWED = 2
 
 
 @dataclass
@@ -73,3 +104,26 @@ class MoveOptions:
     def to_dict(self):
         """Provide the dictionary representation of the MoveOptions class."""
         return {k: bool(v) for k, v in asdict(self).items()}
+    
+
+@dataclass
+class OffsetFaceOptions:
+    """Options for offsetting faces.
+
+    Parameters
+    ----------
+    copy : bool = False
+        If True, copy the face and move instead of offsetting the original face.
+    extrude_type : ExtrudeType
+        Specifies the type of extrusion.
+    offset_mode : OffsetMode
+        Indicates how the relation between faces should be handled.
+    """
+
+    copy: bool = False
+    extrude_type: ExtrudeType = ExtrudeType.FORCE_INDEPENDENT
+    offset_mode: OffsetMode = OffsetMode.IGNORE_RELATIONSHIPS
+
+    def to_dict(self):
+        """Provide the dictionary representation of the OffsetFaceOptions class."""
+        return {k: v for k, v in asdict(self).items()}
