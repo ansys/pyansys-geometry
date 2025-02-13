@@ -455,7 +455,7 @@ def test_find_and_fix_extra_edges(modeler: Modeler):
     assert final_edge_count == 36
 
 
-   def test_inspect_geometry(modeler: Modeler):
+def test_inspect_geometry(modeler: Modeler):
     """Test the result of the inspect geometry query and the ability to repair one issue"""
     modeler.open_file(FILES_DIR / "InspectAndRepair01.scdocx")
     inspect_results = modeler.repair_tools.inspect_geometry()
@@ -521,8 +521,7 @@ def test_find_and_fix_extra_edges_comprehensive(modeler: Modeler):
 def test_find_and_fix_simplify(modeler: Modeler):
     """Test to read geometry and find and fix spline faces"""
     design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
-    result = modeler.repair_tools.find_and_fix_simplify(design.bodies,True)
+    result = modeler.repair_tools.find_and_fix_simplify(design.bodies, True)
     assert result
     assert result.found == 46
-    assert result.repaired == 46 #There is a SC bug where success is always true
-
+    assert result.repaired == 46  # There is a SC bug where success is always true
