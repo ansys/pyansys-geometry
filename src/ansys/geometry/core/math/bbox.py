@@ -26,6 +26,7 @@ from typing import Union
 
 from beartype import beartype as check_input_types
 
+from ansys.geometry.core.math.misc import intersect_interval
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
@@ -230,34 +231,16 @@ class BoundingBox2D:
         BoundingBox2D:
             The box representing the intersection of the two passed in boxes
         """
-        intersect, min_x, max_x = box_1.__intersect_interval(
+        intersect, min_x, max_x = intersect_interval(
             box_1.x_min, box_2.x_min, box_1.x_max, box_2.x_max
         )
         if not intersect:
             return None
 
-        intersect, min_y, max_y = box_1.__intersect_interval(
+        intersect, min_y, max_y = intersect_interval(
             box_1.y_min, box_2.y_min, box_1.y_max, box_2.y_max
         )
         if not intersect:
             return None
 
         return BoundingBox2D(min_x, max_x, min_y, max_y)
-
-    @staticmethod
-    def __intersect_interval(first_min, second_min, first_max, second_max) -> bool:
-        minimum = second_min
-        if first_min > minimum:
-            minimum = first_min
-
-        maximum = second_max
-        if first_max < maximum:
-            maximum = first_max
-
-        if minimum > maximum:
-            if minimum - maximum > Accuracy.length_accuracy():
-                return False, 0, 0
-
-            maximum, minimum = minimum, maximum
-
-        return True, minimum, maximum
