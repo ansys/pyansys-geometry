@@ -21,6 +21,7 @@
 # SOFTWARE.
 """ "Testing of measurement tools."""
 
+import numpy as np
 import pytest
 
 from ansys.geometry.core.math import Point2D, UnitVector3D
@@ -53,11 +54,11 @@ def test_min_distance_between_faces(modeler: Modeler):
     body2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 0]), 1, 1), 1)
 
     gap = modeler.measurement_tools.min_distance_between_objects(body1.faces[0], body2.faces[0])
-    assert gap.distance._value == pytest.approx(1.0, rel=1e-6, abs=1e-8)
+    assert np.isclose(1.0, gap.distance._value)
 
     body2.translate(UnitVector3D([0, 0, 1]), 1)
     gap = modeler.measurement_tools.min_distance_between_objects(body1.faces[0], body2.faces[0])
-    assert gap.distance._value == pytest.approx(1.41421356237, rel=1e-6, abs=1e-8)
+    assert np.isclose(1.41421356237, gap.distance._value)
 
 
 def test_min_distance_between_edges(modeler: Modeler):
@@ -68,8 +69,23 @@ def test_min_distance_between_edges(modeler: Modeler):
     body2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 0]), 1, 1), 1)
 
     gap = modeler.measurement_tools.min_distance_between_objects(body1.edges[0], body2.edges[0])
-    assert gap.distance._value == pytest.approx(1.0, rel=1e-6, abs=1e-8)
+    assert np.isclose(1.0, gap.distance._value)
 
     body2.translate(UnitVector3D([0, 0, 1]), 1)
     gap = modeler.measurement_tools.min_distance_between_objects(body1.edges[0], body2.edges[0])
-    assert gap.distance._value == pytest.approx(1.41421356237, rel=1e-6, abs=1e-8)
+    assert np.isclose(1.41421356237, gap.distance._value)
+
+
+def test_min_distance_between_face_and_body(modeler: Modeler):
+    """Test the distance between a face and a body."""
+    design = modeler.create_design("closest_face_body_separation")
+
+    body1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 0]), 1, 1), 1)
+
+    gap = modeler.measurement_tools.min_distance_between_objects(body1.faces[0], body2)
+    assert np.isclose(1.0, gap.distance._value)
+
+    body2.translate(UnitVector3D([0, 0, 1]), 1)
+    gap = modeler.measurement_tools.min_distance_between_objects(body1.faces[0], body2)
+    assert np.isclose(1.41421356237, gap.distance._value)

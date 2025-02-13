@@ -1221,8 +1221,8 @@ def test_circle_intersections_coincident():
     assert intersections is None
 
 
-def test_bounding_box_bitwise_and():
-    """Test that the bitwise & returns the intersection of two bounding boxes"""
+def test_bounding_box_intersection():
+    """Test the intersection of two bounding boxes"""
     # Create the two boxes
     box1 = BoundingBox2D(0, 1, 0, 1)
     box2 = BoundingBox2D(0.5, 1.5, 0, 1)
@@ -1233,8 +1233,8 @@ def test_bounding_box_bitwise_and():
     assert intersection == BoundingBox2D(0.5, 1, 0, 1)
 
 
-def test_bounding_box_bitwise_and_no_intersection():
-    """Test that the bitwise & returns the None in the case of no overlap"""
+def test_bounding_box_no_intersection():
+    """Test that the bounding box intersection returns None in the case of no overlap"""
     # Create the two boxes
     box1 = BoundingBox2D(0, 1, 0, 1)
     box2 = BoundingBox2D(2, 3, 0, 1)

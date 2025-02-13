@@ -791,11 +791,11 @@ def test_get_face_bounding_box(modeler: Modeler):
     design = modeler.create_design("face_bounding_box")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    bounding_box = body.faces[0].get_bounding_box()
+    bounding_box = body.faces[0].bounding_box
     assert bounding_box.x_min == bounding_box.y_min == -0.5
     assert bounding_box.x_max == bounding_box.y_max == 0.5
 
-    bounding_box = body.faces[1].get_bounding_box()
+    bounding_box = body.faces[1].bounding_box
     assert bounding_box.x_min == bounding_box.y_min == -0.5
     assert bounding_box.x_max == bounding_box.y_max == 0.5
 

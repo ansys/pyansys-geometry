@@ -220,9 +220,9 @@ class BoundingBox2D:
 
         Parameters
         ----------
-        box_1: "BoundingBox2D"
+        box_1: BoundingBox2D
             The box to consider the intersection of with respect to box_2.
-        box_2: "BoundingBox2D"
+        box_2: BoundingBox2D
             The box to consider the intersection of with respect to box_1.
 
         Returns
