@@ -228,7 +228,7 @@ class BoundingBox2D:
         Returns
         -------
         BoundingBox2D:
-            The box representing the intersection of the two passed in boxes
+            The box representing the intersection of the two passed in boxes.
         """
         intersect, min_x, max_x = box_1.__intersect_interval(
             box_1.x_min, box_2.x_min, box_1.x_max, box_2.x_max
