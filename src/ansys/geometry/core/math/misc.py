@@ -97,7 +97,7 @@ def get_two_circle_intersections(
 
 def intersect_interval(first_min, second_min, first_max, second_max) -> tuple[bool, Real, Real]:
     """Find the intersection of two intervals.
-    
+
     Parameters
     ----------
     first_min : Real
@@ -108,12 +108,12 @@ def intersect_interval(first_min, second_min, first_max, second_max) -> tuple[bo
         The maximum value of the first interval.
     second_max : Real
         The maximum value of the second interval.
-    
+
     Returns
     -------
     tuple[bool, Real, Real]
-        Tuple with a boolean to indicate whether the intervals intersect, 
-        the minimum value of the intersection interval, 
+        Tuple with a boolean to indicate whether the intervals intersect,
+        the minimum value of the intersection interval,
         and the maximum value of the intersection interval.
         If they do not intersect, then the boolean is False and the other values are 0.
     """
