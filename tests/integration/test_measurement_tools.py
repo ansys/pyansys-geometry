@@ -22,7 +22,6 @@
 """ "Testing of measurement tools."""
 
 import numpy as np
-import pytest
 
 from ansys.geometry.core.math import Point2D, UnitVector3D
 from ansys.geometry.core.misc.measurements import Distance
