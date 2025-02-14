@@ -42,6 +42,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     RevolveFacesByHelixRequest,
     RevolveFacesRequest,
     RevolveFacesUpToRequest,
+    RoundInfoRequest,
     SplitBodyRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
@@ -1082,15 +1083,15 @@ class GeometryCommands:
         Parameters
         ----------
         bodies : list[Body]
-            Bodies to split
+            Bodies to split.
         plane : Plane
             Plane to split with
         slicers : Edge | list[Edge] | Face | list[Face]
-            Slicers to split with
+            Slicers to split with.
         faces : list[Face]
-            Faces to split with
+            Faces to split with.
         extendFaces : bool
-            Extend faces if split with faces
+            Extend faces if split with faces.
 
         Returns
         -------
@@ -1138,3 +1139,23 @@ class GeometryCommands:
             design._update_design_inplace()
 
         return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def get_round_info(self, face: "Face") -> tuple[bool, Real]:
+        """Get info on the rounding of a face.
+
+        Parameters
+        ----------
+        Face
+            The design face to get round info on.
+
+        Returns
+        -------
+        tuple[bool, Real]
+            ``True`` if round is aligned with face's U-parameter direction, ``False`` otherwise.
+            Radius of the round.
+        """
+        result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))
+
+        return (result.along_u, result.radius)

@@ -753,6 +753,53 @@ def test_split_body_by_face(modeler: Modeler):
     )
 
 
+def test_get_round_info(modeler: Modeler):
+    """Test getting the round info from a face"""
+    design = modeler.create_design("full_fillet")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+    assert len(body.edges) == 12
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    modeler.geometry_commands.fillet(body.edges[0], 0.1)
+    assert len(body.faces) == 7
+    assert len(body.edges) == 15
+    assert body.volume.m == pytest.approx(
+        Quantity(0.9978539816339744, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+    _, radius = modeler.geometry_commands.get_round_info(body.faces[6])
+    assert radius == pytest.approx(Quantity(0.1, UNITS.m).m, rel=1e-6, abs=1e-8)
+
+
+def test_get_empty_round_info(modeler: Modeler):
+    """Test getting the round info from a face that does not have any rounding"""
+    design = modeler.create_design("full_fillet")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+    assert len(body.edges) == 12
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    _, radius = modeler.geometry_commands.get_round_info(body.faces[5])
+    assert radius == 0.0
+
+
+def test_get_face_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a face."""
+    design = modeler.create_design("face_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    bounding_box = body.faces[0].bounding_box
+    assert bounding_box.x_min == bounding_box.y_min == -0.5
+    assert bounding_box.x_max == bounding_box.y_max == 0.5
+
+    bounding_box = body.faces[1].bounding_box
+    assert bounding_box.x_min == bounding_box.y_min == -0.5
+    assert bounding_box.x_max == bounding_box.y_max == 0.5
+
+
 def test_linear_pattern_on_imported_geometry_faces(modeler: Modeler):
     """Test create a linear pattern on imported geometry"""
     design = modeler.open_file(FILES_DIR / "LinearPatterns.scdocx")
