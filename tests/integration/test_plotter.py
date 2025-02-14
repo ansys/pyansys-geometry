@@ -926,3 +926,86 @@ def test_plot_design_face_colors(modeler: Modeler, verify_image_cache):
         merge=False,
         multi_colors=True,
     )
+
+
+@skip_no_xserver
+def test_export_glb(modeler: Modeler, verify_image_cache):
+    """Test exporting a box to glb."""
+    # Create a Sketch
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create your design on the server side
+    design = modeler.create_design("BoxExtrusions")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
+
+    pl = GeometryPlotter()
+    pl.plot(box_body)
+
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb")
+    pl.export_glb(screenshot=output_glb_path)
+
+
+@skip_no_xserver
+def test_export_glb_with_color(modeler: Modeler, verify_image_cache):
+    """Test exporting a box to glb."""
+    # Create a Sketch
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create your design on the server side
+    design = modeler.create_design("BoxExtrusions")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
+    box_body.set_color((255, 0, 0))
+
+    pl = GeometryPlotter(use_service_colors=True)
+    pl.plot(box_body)
+
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_colored")
+    pl.export_glb(screenshot=output_glb_path)
+
+
+@skip_no_xserver
+def test_export_glb_with_face_color(modeler: Modeler, verify_image_cache):
+    """Test exporting a box to glb."""
+    # Create a Sketch
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Create your design on the server side
+    design = modeler.create_design("BoxExtrusions")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+    box_body.set_color((255, 0, 0))
+    box_body.faces[0].set_color((0, 0, 255))
+    box_body.faces[1].set_color((0, 255, 0))
+
+    pl = GeometryPlotter(use_service_colors=True)
+
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_face_colored")
+    pl.export_glb(box_body, screenshot=output_glb_path)
+
+
+@skip_no_xserver
+def test_export_glb_cylinder_with_face_color(modeler: Modeler, verify_image_cache):
+    """Test exporting a cylinder to glb."""
+    # Create your design on the server side
+    design = modeler.create_design("BoxExtrusions")
+
+    # Create a sketch of a circle (overlapping the box slightly)
+    sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=3 * UNITS.m)
+    cyl = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+    cyl.set_color((255, 0, 0))
+    cyl.faces[0].set_color((0, 0, 255))
+    cyl.faces[1].set_color((0, 255, 0))
+
+    pl = GeometryPlotter(use_service_colors=True)
+
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_glb_face_colored")
+    pl.export_glb(cyl, screenshot=output_glb_path)
