@@ -1,0 +1,1040 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Release notes &#8212; PyAnsys Geometry</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+    <link rel="stylesheet" type="text/css" href="_static/css\ansys_sphinx_theme.css?v=35e44410" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=99899407" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+ 
+<link href="_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="_static/documentation_options.js?v=319b1fff"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/thebelab-helper.js"></script>
+    <script src="_static/js\table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'changelog';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.14.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.5';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <link rel="icon" href="_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Assets" href="assets.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://geometry.docs.pyansys.com/version/stable/changelog.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+ 
+<!-- Include the MeiliSearch CSS stylesheet only if theme present -->
+<link href="_static/css/meilisearch.css" rel="stylesheet" />
+
+<!-- Create a search bar form with a text input and a dropdown selector for the search index -->
+<form
+  class="bd-search d-flex align-items-center"
+  action="search.html"
+  method="get"
+>
+  <i class="fa fa-search" aria-hidden="true" id="search-icon"></i>
+  <input
+    type="search"
+    placeholder="Search"
+    class="form-control"
+    id="search-bar-input"
+    autofocus
+  />
+  <span class="search-button__kbd-shortcut"
+    ><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span
+  >
+  <style>
+    .bd-search .search-button__kbd-shortcut {
+      right: 33%;
+    }
+  </style>
+  
+  <select id="indexUidSelector" class="index-select">
+    
+    <option value="pyansys-geometry-v0-5">PyAnsys-Geometry</option>
+    
+  </select>
+  
+  <!-- Include the MeiliSearch JavaScript library for the search bar -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+
+    
+  <script>
+    var HOST_URL = "https://backend.search.pyansys.com/";
+    var API_KEY = "9fbccc76c147935ce2b562a9ee0c6669276987572dc1f22491cea72e9e99f35d";
+    var indexUid = "pyansys-geometry-v0-5";
+  </script>
+
+  <script src="_static/js/meilisearch_theme_wrap.js"></script>
+</form>
+</div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="PyAnsys Geometry - Home"/>
+    <script>document.write(`<img src="_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="PyAnsys Geometry - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="assets.html">
+                        Assets
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link dropdown-item nav-internal" href="#">
+                        Release notes
+                      </a>
+                    </li>
+                
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/0.5/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="examples.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links-2">
+                    More
+                </button>
+                <ul id="pst-nav-more-links-2" class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link dropdown-item nav-internal" href="assets.html">
+                        Assets
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link dropdown-item nav-internal" href="#">
+                        Release notes
+                      </a>
+                    </li>
+                
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/0.5/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">Release notes</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="release-notes">
+<span id="ref-release-notes"></span><h1>Release notes<a class="headerlink" href="#release-notes" title="Link to this heading">#</a></h1>
+<p>This document contains the release notes for the PyAnsys Geometry project.</p>
+<section id="id2">
+<h2><a class="reference external" href="https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.6">0.5.6</a> - 2024-05-23<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<section id="added">
+<h3>Added<a class="headerlink" href="#added" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>feat: add new arc constructors <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1208">#1208</a></p></li>
+</ul>
+</section>
+<section id="changed">
+<h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>chore: update CHANGELOG for v0.5.5 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1205">#1205</a></p></li>
+</ul>
+</section>
+<section id="dependencies">
+<h3>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>build: bump requests from 2.31.0 to 2.32.2 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1204">#1204</a></p></li>
+<li><p>build: bump ansys-sphinx-theme[autoapi] from 0.16.0 to 0.16.2 in the docs-deps group <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1210">#1210</a></p></li>
+<li><p>build: bump docker from 7.0.0 to 7.1.0 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1211">#1211</a></p></li>
+<li><p>build: bump scipy from 1.13.0 to 1.13.1 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1212">#1212</a></p></li>
+</ul>
+</section>
+</section>
+<section id="id10">
+<h2><a class="reference external" href="https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.5">0.5.5</a> - 2024-05-21<a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
+<section id="id11">
+<h3>Changed<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>docs: adapt <code class="docutils literal notranslate"><span class="pre">ansys_sphinx_theme_autoapi</span></code> extension for <code class="docutils literal notranslate"><span class="pre">autoapi</span></code> <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1135">#1135</a></p></li>
+<li><p>chore: update CHANGELOG for v0.5.4 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1194">#1194</a></p></li>
+</ul>
+</section>
+<section id="fixed">
+<h3>Fixed<a class="headerlink" href="#fixed" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>fix: adapting <code class="docutils literal notranslate"><span class="pre">Arc</span></code> class constructor order to (start, end, center) <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1196">#1196</a></p></li>
+<li><p>chore: limit requests library version under 2.32 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1203">#1203</a></p></li>
+</ul>
+</section>
+<section id="id16">
+<h3>Dependencies<a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>build: bump grpcio from 1.63.0 to 1.64.0 in the grpc-deps group <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1198">#1198</a></p></li>
+<li><p>build: bump the docs-deps group with 2 updates <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1199">#1199</a></p></li>
+<li><p>build: bump pytest from 8.2.0 to 8.2.1 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1200">#1200</a></p></li>
+</ul>
+</section>
+<section id="miscellaneous">
+<h3>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>chore: pre-commit automatic update <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1202">#1202</a></p></li>
+</ul>
+</section>
+</section>
+<section id="id22">
+<h2><a class="reference external" href="https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.4">0.5.4</a> - 2024-05-15<a class="headerlink" href="#id22" title="Link to this heading">#</a></h2>
+<section id="id23">
+<h3>Added<a class="headerlink" href="#id23" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>feat: allow for <code class="docutils literal notranslate"><span class="pre">product_version</span></code> on geometry service launcher function <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1182">#1182</a></p></li>
+</ul>
+</section>
+<section id="id25">
+<h3>Changed<a class="headerlink" href="#id25" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>chore: update CHANGELOG for v0.5.3 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1177">#1177</a></p></li>
+</ul>
+</section>
+<section id="id27">
+<h3>Dependencies<a class="headerlink" href="#id27" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>build: bump the docs-deps group with 4 updates <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1178">#1178</a></p></li>
+<li><p>build: bump pytest from 8.1.1 to 8.2.0 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1179">#1179</a></p></li>
+<li><p>build: bump grpcio from 1.62.2 to 1.63.0 in the grpc-deps group <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1186">#1186</a></p></li>
+<li><p>build: bump the docs-deps group with 2 updates <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1187">#1187</a></p></li>
+<li><p>build: bump trame-vtk from 2.8.6 to 2.8.7 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1188">#1188</a></p></li>
+<li><p>build: bump nbsphinx from 0.9.3 to 0.9.4 in the docs-deps group <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1189">#1189</a></p></li>
+<li><p>build: bump trame-vtk from 2.8.7 to 2.8.8 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1190">#1190</a></p></li>
+</ul>
+</section>
+<section id="id35">
+<h3>Miscellaneous<a class="headerlink" href="#id35" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>chore: pre-commit automatic update <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1180">#1180</a>, <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1193">#1193</a></p></li>
+<li><p>docs: add geometry preparation for Fluent simulation <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1183">#1183</a></p></li>
+</ul>
+</section>
+</section>
+<section id="id40">
+<h2><a class="reference external" href="https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.3">0.5.3</a> - 2024-04-29<a class="headerlink" href="#id40" title="Link to this heading">#</a></h2>
+<section id="id41">
+<h3>Fixed<a class="headerlink" href="#id41" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>fix: semver intersphinx mapping not resolved properly <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1175">#1175</a></p></li>
+<li><p>fix: start and end points for edge <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1176">#1176</a></p></li>
+</ul>
+</section>
+</section>
+<section id="id45">
+<h2><a class="reference external" href="https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.2">0.5.2</a> - 2024-04-29<a class="headerlink" href="#id45" title="Link to this heading">#</a></h2>
+<section id="id46">
+<h3>Added<a class="headerlink" href="#id46" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>feat: add semver to intersphinx <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1173">#1173</a></p></li>
+</ul>
+</section>
+<section id="id48">
+<h3>Changed<a class="headerlink" href="#id48" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>chore: update CHANGELOG for v0.5.1 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1165">#1165</a></p></li>
+<li><p>chore: bump version to v0.6.dev0 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1166">#1166</a></p></li>
+<li><p>chore: update CHANGELOG for v0.5.2 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1172">#1172</a></p></li>
+<li><p>fix: allow to reuse last release binaries (if requested) <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1174">#1174</a></p></li>
+</ul>
+</section>
+<section id="id53">
+<h3>Fixed<a class="headerlink" href="#id53" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>fix: GetSurface and GetCurve not available prior to 24R2 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1171">#1171</a></p></li>
+</ul>
+</section>
+<section id="id55">
+<h3>Miscellaneous<a class="headerlink" href="#id55" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>docs: creating a NACA airfoil example <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1167">#1167</a></p></li>
+<li><p>docs: simplify README example <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1169">#1169</a></p></li>
+</ul>
+</section>
+</section>
+<section id="id59">
+<h2><a class="reference external" href="https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.1">0.5.1</a> - 2024-04-24<a class="headerlink" href="#id59" title="Link to this heading">#</a></h2>
+<section id="id60">
+<h3>Added<a class="headerlink" href="#id60" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>feat: security updates dropped for v0.3 or earlier <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1126">#1126</a></p></li>
+<li><p>feat: add <code class="docutils literal notranslate"><span class="pre">export_to</span></code> functions <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1147">#1147</a></p></li>
+</ul>
+</section>
+<section id="id63">
+<h3>Changed<a class="headerlink" href="#id63" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>ci: adapt to vale <code class="docutils literal notranslate"><span class="pre">v3</span></code> <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1129">#1129</a></p></li>
+<li><p>ci: bump ansys/actions from 5 to 6 in the actions group <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1133">#1133</a></p></li>
+<li><p>docs: add release notes in our documentation <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1138">#1138</a></p></li>
+<li><p>chore: bump ansys pre-commit hook to <code class="docutils literal notranslate"><span class="pre">v0.3.0</span></code> <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1139">#1139</a></p></li>
+<li><p>chore: use default vale version <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1140">#1140</a></p></li>
+<li><p>docs: add <code class="docutils literal notranslate"><span class="pre">user_agent</span></code> to Sphinx build <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1142">#1142</a></p></li>
+<li><p>ci: enabling Linux tests missing <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1152">#1152</a></p></li>
+<li><p>ci: perform minimal requirements tests <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1153">#1153</a></p></li>
+</ul>
+</section>
+<section id="id72">
+<h3>Fixed<a class="headerlink" href="#id72" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>fix: docs link in example <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1137">#1137</a></p></li>
+<li><p>fix: update backend version message <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1145">#1145</a></p></li>
+<li><p>fix: Trame issues <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1148">#1148</a></p></li>
+<li><p>fix: Interactive documentation <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1160">#1160</a></p></li>
+</ul>
+</section>
+<section id="id77">
+<h3>Dependencies<a class="headerlink" href="#id77" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>build: bump ansys-tools-path from 0.5.1 to 0.5.2 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1131">#1131</a></p></li>
+<li><p>build: bump the grpc-deps group across 1 directory with 3 updates <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1156">#1156</a></p></li>
+<li><p>build: bump notebook from 7.1.2 to 7.1.3 in the docs-deps group <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1157">#1157</a></p></li>
+<li><p>build: bump beartype from 0.18.2 to 0.18.5 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1158">#1158</a></p></li>
+</ul>
+</section>
+<section id="id82">
+<h3>Miscellaneous<a class="headerlink" href="#id82" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>docs: add example on exporting designs <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1149">#1149</a></p></li>
+<li><p>docs: fix link in <cite>CHANGELOG.md</cite> <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1154">#1154</a></p></li>
+<li><p>chore: pre-commit automatic update <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1159">#1159</a></p></li>
+</ul>
+</section>
+</section>
+<section id="id87">
+<h2><a class="reference external" href="https://github.com/ansys/pyansys-geometry/releases/tag/v0.5.0">0.5.0</a> - 2024-04-17<a class="headerlink" href="#id87" title="Link to this heading">#</a></h2>
+<section id="id88">
+<h3>Added<a class="headerlink" href="#id88" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>feat: inserting document into existing design <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/930">#930</a></p></li>
+<li><p>feat: add changelog action <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1023">#1023</a></p></li>
+<li><p>feat: create a sphere body on the backend <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1035">#1035</a></p></li>
+<li><p>feat: mirror a body <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1055">#1055</a></p></li>
+<li><p>feat: sweeping chains and profiles <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1056">#1056</a></p></li>
+<li><p>feat: vulnerability checks <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1071">#1071</a></p></li>
+<li><p>feat: loft profiles <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1075">#1075</a></p></li>
+<li><p>feat: accept bandit advisories in-line for subprocess <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1077">#1077</a></p></li>
+<li><p>feat: adding containers to automatic launcher <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1090">#1090</a></p></li>
+<li><p>feat: minor changes to Linux Dockerfile <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1111">#1111</a></p></li>
+<li><p>feat: avoid error if folder exists <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1125">#1125</a></p></li>
+</ul>
+</section>
+<section id="id100">
+<h3>Changed<a class="headerlink" href="#id100" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>build: changing sphinx-autoapi from 3.1.a2 to 3.1.a4 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1038">#1038</a></p></li>
+<li><p>chore: add pre-commit.ci configuration <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1065">#1065</a></p></li>
+<li><p>chore: dependabot PR automatic approval <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1067">#1067</a></p></li>
+<li><p>ci: bump the actions group with 1 update <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1082">#1082</a></p></li>
+<li><p>chore: update docker tags to be kept <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1085">#1085</a></p></li>
+<li><p>chore: update pre-commit versions <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1094">#1094</a></p></li>
+<li><p>build: use ansys-sphinx-theme autoapi target <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1097">#1097</a></p></li>
+<li><p>fix: removing &#64;PipKat from <code class="docutils literal notranslate"><span class="pre">*.md</span></code> files - changelog fragments <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1098">#1098</a></p></li>
+<li><p>ci: dashboard upload does not apply anymore <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1099">#1099</a></p></li>
+<li><p>chore: pre-commit.ci not working properly <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1108">#1108</a></p></li>
+<li><p>chore: update and adding pre-commit.ci config hook <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1109">#1109</a></p></li>
+<li><p>ci: main Python version update to 3.12 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1112">#1112</a></p></li>
+<li><p>ci: skip Linux tests with common approach <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1113">#1113</a></p></li>
+<li><p>ci: build changelog on release <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1118">#1118</a></p></li>
+<li><p>chore: update CHANGELOG for v0.5.0 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1119">#1119</a></p></li>
+</ul>
+</section>
+<section id="id116">
+<h3>Fixed<a class="headerlink" href="#id116" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>feat: re-enable open file on Linux <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/817">#817</a></p></li>
+<li><p>fix: adapt export and download tests to new hoops <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1057">#1057</a></p></li>
+<li><p>fix: linux Dockerfile - replace .NET6.0 references by .NET8.0 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1069">#1069</a></p></li>
+<li><p>fix: misleading docstring for sweep_chain() <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1070">#1070</a></p></li>
+<li><p>fix: prepare_and_start_backend is only available on Windows <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1076">#1076</a></p></li>
+<li><p>fix: unit tests failing after dms update <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1087">#1087</a></p></li>
+<li><p>build: beartype upper limit on v0.18 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1095">#1095</a></p></li>
+<li><p>fix: improper types being passed for Face and Edge ctor. <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1096">#1096</a></p></li>
+<li><p>fix: return type should be dict and not <code class="docutils literal notranslate"><span class="pre">ScalarMapContainer</span></code> (grpc type) <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1103">#1103</a></p></li>
+<li><p>fix: env version for Dockerfile Windows <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1120">#1120</a></p></li>
+<li><p>fix: changelog description ill-formatted <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1121">#1121</a></p></li>
+<li><p>fix: solve issues with intersphinx when releasing <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1123">#1123</a></p></li>
+</ul>
+</section>
+<section id="id129">
+<h3>Dependencies<a class="headerlink" href="#id129" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>build: bump the docs-deps group with 2 updates <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1062">#1062</a>, <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1093">#1093</a>, <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1105">#1105</a></p></li>
+<li><p>build: bump ansys-api-geometry from 0.3.13 to 0.4.0 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1066">#1066</a></p></li>
+<li><p>build: bump the docs-deps group with 1 update <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1080">#1080</a></p></li>
+<li><p>build: bump pytest-cov from 4.1.0 to 5.0.0 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1081">#1081</a></p></li>
+<li><p>build: bump ansys-api-geometry from 0.4.0 to 0.4.1 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1092">#1092</a></p></li>
+<li><p>build: bump beartype from 0.17.2 to 0.18.2 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1106">#1106</a></p></li>
+<li><p>build: bump ansys-tools-path from 0.4.1 to 0.5.1 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1107">#1107</a></p></li>
+<li><p>build: bump panel from 1.4.0 to 1.4.1 in the docs-deps group <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1114">#1114</a></p></li>
+<li><p>build: bump scipy from 1.12.0 to 1.13.0 <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1115">#1115</a></p></li>
+</ul>
+</section>
+<section id="id141">
+<h3>Miscellaneous<a class="headerlink" href="#id141" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>[pre-commit.ci] pre-commit autoupdate <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1063">#1063</a></p></li>
+<li><p>docs: add examples on new methods <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1089">#1089</a></p></li>
+<li><p>chore: pre-commit automatic update <a class="reference external" href="https://github.com/ansys/pyansys-geometry/pull/1116">#1116</a></p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">0.5.6 - 2024-05-23</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">0.5.5 - 2024-05-21</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed">Fixed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">Dependencies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">0.5.4 - 2024-05-15</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id23">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id25">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id27">Dependencies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id35">Miscellaneous</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id40">0.5.3 - 2024-04-29</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id41">Fixed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id45">0.5.2 - 2024-04-29</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id46">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id48">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id53">Fixed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id55">Miscellaneous</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id59">0.5.1 - 2024-04-24</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id60">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id63">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id72">Fixed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id77">Dependencies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id82">Miscellaneous</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id87">0.5.0 - 2024-04-17</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id88">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id100">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id116">Fixed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id129">Dependencies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id141">Miscellaneous</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pyansys-geometry/edit/main/doc/source/changelog.rst">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/changelog.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2024 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.16.2. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

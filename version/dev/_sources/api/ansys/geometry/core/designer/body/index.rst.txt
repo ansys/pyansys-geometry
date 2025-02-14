@@ -1,0 +1,160 @@
+
+
+
+
+
+
+The ``body.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.designer.body
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: body
+.. tab-set::
+
+
+
+    .. tab-item:: Interfaces
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.body.IBody`
+            - Defines the common methods for a body, providing the abstract body interface.
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.body.MasterBody`
+            - Represents solids and surfaces organized within the design assembly.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.body.Body`
+            - Represents solids and surfaces organized within the design assembly.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.body.MidSurfaceOffsetType`
+            - Provides values for mid-surface offsets supported.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.body.CollisionType`
+            - Provides values for collision types between bodies.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.body.FillStyle`
+            - Provides values for fill styles supported.
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~__TEMPORARY_BOOL_OPS_FIX__`
+            - 
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_interface"></span> IBody</api/ansys/geometry/core/designer/body/IBody>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> MasterBody</api/ansys/geometry/core/designer/body/MasterBody>
+    <span class="nf nf-cod-symbol_class"></span> Body</api/ansys/geometry/core/designer/body/Body>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> MidSurfaceOffsetType</api/ansys/geometry/core/designer/body/MidSurfaceOffsetType>
+    <span class="nf nf-cod-symbol_enum"></span> CollisionType</api/ansys/geometry/core/designer/body/CollisionType>
+    <span class="nf nf-cod-symbol_enum"></span> FillStyle</api/ansys/geometry/core/designer/body/FillStyle>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for managing a body.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: __TEMPORARY_BOOL_OPS_FIX__
+   :value: (99, 0, 0)
+
+
+
+
