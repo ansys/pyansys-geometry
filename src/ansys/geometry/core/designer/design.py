@@ -80,6 +80,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
+from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.typing import RealSequence
@@ -143,7 +144,6 @@ class Design(Component):
         self._beam_profiles = {}
         self._design_id = ""
         self._is_active = False
-        self._is_closed = False
         self._modeler = modeler
 
         # Check whether we want to process an existing design or create a new one.
@@ -189,13 +189,13 @@ class Design(Component):
 
     @property
     def is_closed(self) -> bool:
-        """Whether the design is closed."""
-        return self._is_closed
+        """Whether the design is closed (i.e. not active)."""
+        return not self._is_active
 
     def close(self) -> None:
         """Close the design."""
         # Check if the design is already closed
-        if self._is_closed:
+        if self.is_closed:
             self._grpc_client.log.warning(f"Design {self.name} is already closed.")
             return
 
@@ -207,15 +207,11 @@ class Design(Component):
             self._grpc_client.log.warning("Ignoring response and assuming the design is closed.")
 
         # Consider the design closed (even if the close request failed)
-        self._is_closed = True
+        self._is_active = False
 
     @protect_grpc
     def _activate(self, called_after_design_creation: bool = False) -> None:
         """Activate the design."""
-        # Deactivate all designs first
-        for design in self._modeler._designs.values():
-            design._is_active = False
-
         # Activate the current design
         if not called_after_design_creation:
             self._design_stub.PutActive(EntityIdentifier(id=self._design_id))
@@ -963,13 +959,17 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
-    def insert_file(self, file_location: Path | str) -> Component:
+    def insert_file(
+        self, file_location: Path | str, import_options: ImportOptions = ImportOptions()
+    ) -> Component:
         """Insert a file into the design.
 
         Parameters
         ----------
         file_location : ~pathlib.Path | str
             Location on disk where the file is located.
+        import_options : ImportOptions
+            The options to pass into upload file
 
         Returns
         -------
@@ -977,7 +977,7 @@ class Design(Component):
             The newly inserted component.
         """
         # Upload the file to the server
-        filepath_server = self._modeler._upload_file(file_location)
+        filepath_server = self._modeler._upload_file(file_location, import_options=import_options)
 
         # Insert the file into the design
         self._design_stub.Insert(InsertRequest(filepath=filepath_server))
@@ -1199,13 +1199,5 @@ class Design(Component):
         self._named_selections = {}
         self._coordinate_systems = {}
 
-        # Get the previous design id
-        previous_design_id = self._design_id
-
         # Read the existing design
         self.__read_existing_design()
-
-        # If the design id has changed, update the design id in the Modeler
-        if previous_design_id != self._design_id:
-            self._modeler._designs[self._design_id] = self
-            self._modeler._designs.pop(previous_design_id)

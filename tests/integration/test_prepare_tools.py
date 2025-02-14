@@ -23,7 +23,7 @@
 
 from ansys.geometry.core.modeler import Modeler
 
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_volume_extract_from_faces(modeler: Modeler):
@@ -53,8 +53,21 @@ def test_volume_extract_from_edge_loops(modeler: Modeler):
 
 def test_share_topology(modeler: Modeler):
     """Test share topology operation is between two bodies."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_share_topology.__name__, "prepare_tools")
     design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
-
     assert modeler.prepare_tools.share_topology(design.bodies)
+
+
+def test_enhanced_share_topology(modeler: Modeler):
+    """Test enhanced share topology operation is between two bodies."""
+    design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
+    face_count = (
+        len(design.bodies[0].faces) + len(design.bodies[1].faces) + len(design.bodies[2].faces)
+    )
+    edge_count = (
+        len(design.bodies[0].edges) + len(design.bodies[1].edges) + len(design.bodies[2].edges)
+    )
+    assert face_count == 127
+    assert edge_count == 284
+    result = modeler.prepare_tools.enhanced_share_topology(design.bodies, 0.000554167, True)
+    assert result.found == 14
+    assert result.repaired == 14

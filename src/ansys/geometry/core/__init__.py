@@ -55,11 +55,17 @@ USE_SERVICE_COLORS: bool = False
 """Global constant for checking whether to use service colors for plotting
 purposes. If set to False, the default colors will be used (speed gain)."""
 
-DISABLE_MULTIPLE_DESIGN_CHECK: bool = False
+# TODO: This is a deprecated constant. Not used in the codebase.
+# Left here for backwards compatibility (with older versions of the codebase).
+# https://github.com/ansys/pyansys-geometry/issues/1319
+DISABLE_MULTIPLE_DESIGN_CHECK: bool = True
+"""Deprecated constant. Use ``DISABLE_ACTIVE_DESIGN_CHECK`` instead."""
+
+DISABLE_ACTIVE_DESIGN_CHECK: bool = False
 """Global constant for disabling the ``ensure_design_is_active`` check.
 
 Only set this to false if you are sure you want to disable this check
-and you will ONLY be working with one design.
+and your objects will always exist on the server side.
 """
 
 DOCUMENTATION_BUILD: bool = os.environ.get("PYANSYS_GEOMETRY_DOC_BUILD", "false").lower() == "true"

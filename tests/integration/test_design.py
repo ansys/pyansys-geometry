@@ -199,6 +199,27 @@ def test_assigning_and_getting_material(modeler: Modeler):
     )
 
 
+def test_get_empty_material(modeler: Modeler):
+    # Create a Sketch and draw a circle (all client side)
+    sketch = Sketch()
+    sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create your design on the server side
+    design_name = "ExtrudeProfile"
+    design = modeler.create_design(design_name)
+
+    # Extrude the sketch to create a Body
+    body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
+
+    # Assign a material to a Body
+    mat_service = body.material
+    assert mat_service.name == ""
+    assert mat_service.properties[MaterialPropertyType.DENSITY].quantity == Quantity(
+        0, UNITS.kg / (UNITS.m**3)
+    )
+    assert len(mat_service.properties) == 1
+
+
 def test_face_to_body_creation(modeler: Modeler):
     """Test in charge of validating the extrusion of an existing face."""
     # Create a Sketch and draw a circle (all client side)
@@ -1979,18 +2000,13 @@ def test_child_component_instances(modeler: Modeler):
 
 
 def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    """Generate multiple designs, make sure they are all separate, and activate
-    them when needed.
+    """Generate multiple designs, make sure they are all separate, and once
+    a design is deactivated, the next one is activated.
     """
-    # Check backend first
-    if modeler.client.backend_type in (
-        BackendType.SPACECLAIM,
-        BackendType.WINDOWS_SERVICE,
-    ):
-        pass
-    else:
-        # Test is only available for DMS and SpaceClaim
-        pytest.skip("Test only available on DMS and SpaceClaim")
+    # Initiate expected output images
+    scshot_dir = tmp_path_factory.mktemp("test_multiple_designs")
+    scshot_1 = scshot_dir / "design1.png"
+    scshot_2 = scshot_dir / "design2.png"
 
     # Create your design on the server side
     design1 = modeler.create_design("Design1")
@@ -2002,6 +2018,9 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     # Extrude the sketch to create a body
     design1.extrude_sketch("MySlot", sketch1, Quantity(10, UNITS.mm))
 
+    # Request plotting and store images
+    design1.plot(screenshot=scshot_1)
+
     # Create a second design
     design2 = modeler.create_design("Design2")
 
@@ -2012,14 +2031,8 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     # Extrude the sketch to create a body
     design2.extrude_sketch("MyRectangle", sketch2, Quantity(10, UNITS.mm))
 
-    # Initiate expected output images
-    scshot_dir = tmp_path_factory.mktemp("test_multiple_designs")
-    scshot_1 = scshot_dir / "design1.png"
-    scshot_2 = scshot_dir / "design2.png"
-
     # Request plotting and store images
-    design2.plot(screenshot=scshot_1)
-    design1.plot(screenshot=scshot_2)
+    design2.plot(screenshot=scshot_2)
 
     # Check that the images are different
     assert scshot_1.exists()
@@ -2027,13 +2040,9 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     err = pv_compare_images(str(scshot_1), str(scshot_2))
     assert not err < 0.1
 
-    # Check that design2 is not active
-    assert not design2.is_active
-    assert design1.is_active
-
-    # Check the same thing inside the modeler
-    assert not modeler.designs[design2.design_id].is_active
-    assert modeler.designs[design1.design_id].is_active
+    # Check that design1 is not active and design2 is active
+    assert not design1.is_active
+    assert design2.is_active
 
 
 def test_get_active_design(modeler: Modeler):
@@ -2076,9 +2085,6 @@ def test_set_body_name(modeler: Modeler):
 
 def test_set_fill_style(modeler: Modeler):
     """Test the setting the fill style of a body."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_set_fill_style.__name__, "set_fill_style")
-
     design = modeler.create_design("RVE")
     unit = DEFAULT_UNITS.LENGTH
 
@@ -2273,9 +2279,6 @@ def test_body_mapping(modeler: Modeler):
 
 def test_sphere_creation(modeler: Modeler):
     """Test the creation of a sphere body with a given radius."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_sphere_creation.__name__, "create_sphere")
-
     design = modeler.create_design("Spheretest")
     center_point = Point3D([10, 10, 10], UNITS.m)
     radius = Distance(1, UNITS.m)
@@ -2492,10 +2495,6 @@ def test_create_body_from_loft_profile(modeler: Modeler):
     """Test the ``create_body_from_loft_profile()`` method to create a vase
     shape.
     """
-    # Skip test on CoreService
-    skip_if_core_service(
-        modeler, test_create_body_from_loft_profile.__name__, "'create_body_from_loft_profile'"
-    )
     design_sketch = modeler.create_design("loftprofile")
 
     profile1 = Circle(origin=[0, 0, 0], radius=8).trim(Interval(0, 2 * np.pi))
@@ -3033,3 +3032,39 @@ def test_shell_multiple_faces(modeler: Modeler):
     assert success
     assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 10
+
+
+def test_set_face_color(modeler: Modeler):
+    """Test the getting and setting of face colors."""
+
+    design = modeler.create_design("FaceColorTest")
+    box = design.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    faces = box.faces
+    assert len(faces) == 6
+
+    # Default body color is if it is not set on server side.
+    assert faces[0].color == Color.DEFAULT.value
+
+    # Set the color of the body using hex code.
+    faces[0].color = "#0000ff"
+    assert faces[0].color == "#0000ff"
+
+    faces[1].color = "#ffc000"
+    assert faces[1].color == "#ffc000"
+
+    # Set the color of the body using color name.
+    faces[2].set_color("green")
+    assert faces[2].color == "#008000"
+
+    # Set the color of the body using RGB values between (0,1) as floats.
+    faces[0].set_color((1.0, 0.0, 0.0))
+    assert faces[0].color == "#ff0000"
+
+    # Set the color of the body using RGB values between (0,255) as integers).
+    faces[1].set_color((0, 255, 0))
+    assert faces[1].color == "#00ff00"
+
+    # Assigning color object directly
+    blue_color = mcolors.to_rgba("#0000FF")
+    faces[2].color = blue_color
+    assert faces[2].color == "#0000ff"

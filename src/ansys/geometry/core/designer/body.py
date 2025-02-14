@@ -79,7 +79,10 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.auxiliary import get_design_from_body
+from ansys.geometry.core.misc.auxiliary import (
+    convert_color_to_hex,
+    get_design_from_body,
+)
 from ansys.geometry.core.misc.checks import (
     check_type,
     check_type_all_elements_in_iterable,
@@ -1108,28 +1111,7 @@ class MasterBody(IBody):
     def set_color(self, color: str | tuple[float, float, float]) -> None:
         """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
-
-        try:
-            if isinstance(color, tuple):
-                # Ensure that all elements are within 0-1 or 0-255 range
-                if all(0 <= c <= 1 for c in color):
-                    # Ensure they are floats if in 0-1 range
-                    if not all(isinstance(c, float) for c in color):
-                        raise ValueError("RGB values in the 0-1 range must be floats.")
-                elif all(0 <= c <= 255 for c in color):
-                    # Ensure they are integers if in 0-255 range
-                    if not all(isinstance(c, int) for c in color):
-                        raise ValueError("RGB values in the 0-255 range must be integers.")
-                    # Normalize the 0-255 range to 0-1
-                    color = tuple(c / 255.0 for c in color)
-                else:
-                    raise ValueError("RGB tuple contains mixed ranges or invalid values.")
-
-                color = mcolors.to_hex(color)
-            elif isinstance(color, str):
-                color = mcolors.to_hex(color)
-        except ValueError as err:
-            raise ValueError(f"Invalid color value: {err}")
+        color = convert_color_to_hex(color)
 
         self._bodies_stub.SetColor(
             SetColorRequest(
