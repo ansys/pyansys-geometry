@@ -964,3 +964,21 @@ def test_move_translate_body(modeler: Modeler):
 
     np.isin(expected_vertices, translated_vertices)
     
+
+def test_offset_faces_set_radius(modeler: Modeler):
+    """Test offset faces with set radius."""
+    design = modeler.create_design("offset_faces_set_radius")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # Offset faces with set radius
+    assert False # TODO
+
+
+def test_offset_faces_set_radius_invalid_face(modeler: Modeler):
+    """Test offset faces set radius with the first face not rounded."""
+    design = modeler.create_design("offset_faces_set_radius_invalid_face")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # Offset faces with set radius
+    success = modeler.geometry_commands.offset_faces_set_radius(body.faces[0], 0.5)
+    assert not success
