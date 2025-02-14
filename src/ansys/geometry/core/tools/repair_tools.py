@@ -470,7 +470,7 @@ class RepairTools:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_fix_short_edges(
-        self, bodies: list["Body"], length: Real = 0.0
+        self, bodies: list["Body"], length: Real = 0.0, comprehensive_result: bool = False
     ) -> RepairToolMessage:
         """Find and fix the short edge problem areas.
 
@@ -484,24 +484,29 @@ class RepairTools:
             List of bodies that short edges are investigated on.
         length : Real, optional
             The maximum length of the edges. By default, 0.0.
+        comprehensive_result : bool, optional
+            Whether to fix all problem areas individually.
+            By default, False.
 
         Returns
         -------
         RepairToolMessage
-            Message containing created and/or modified bodies.
+            Message containing number of problem areas found/fixed, created and/or modified bodies.
         """
         from ansys.geometry.core.designer.body import Body
 
         check_type_all_elements_in_iterable(bodies, Body)
         check_type(length, Real)
+        check_type(comprehensive_result, bool)
 
         if not bodies:
-            return RepairToolMessage(False, [], [])
+            return RepairToolMessage(False, [], [], 0, 0)
 
         response = self._repair_stub.FindAndFixShortEdges(
             FindShortEdgesRequest(
                 selection=[body.id for body in bodies],
                 max_edge_length=DoubleValue(value=length),
+                comprehensive=comprehensive_result,
             )
         )
 
@@ -511,12 +516,16 @@ class RepairTools:
             response.success,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
+            response.found,
+            response.repaired,
         )
         return message
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def find_and_fix_extra_edges(self, bodies: list["Body"]) -> RepairToolMessage:
+    def find_and_fix_extra_edges(
+        self, bodies: list["Body"], comprehensive_result: bool = False
+    ) -> RepairToolMessage:
         """Find and fix the extra edge problem areas.
 
         Notes
@@ -529,22 +538,26 @@ class RepairTools:
             List of bodies that short edges are investigated on.
         length : Real
             The maximum length of the edges.
+        comprehensive_result : bool, optional
+            Whether to fix all problem areas individually.
+            By default, False.
 
         Returns
         -------
         RepairToolMessage
-            Message containing created and/or modified bodies.
+            Message containing number of problem areas found/fixed, created and/or modified bodies.
         """
         from ansys.geometry.core.designer.body import Body
 
         check_type_all_elements_in_iterable(bodies, Body)
+        check_type(comprehensive_result, bool)
 
         if not bodies:
-            return RepairToolMessage(False, [], [])
+            return RepairToolMessage(False, [], [], 0, 0)
 
         response = self._repair_stub.FindAndFixExtraEdges(
             FindExtraEdgesRequest(
-                selection=[body.id for body in bodies],
+                selection=[body.id for body in bodies], comprehensive=comprehensive_result
             )
         )
 
@@ -554,13 +567,19 @@ class RepairTools:
             response.success,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
+            response.found,
+            response.repaired,
         )
         return message
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_fix_split_edges(
-        self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
+        self,
+        bodies: list["Body"],
+        angle: Real = 0.0,
+        length: Real = 0.0,
+        comprehensive_result: bool = False,
     ) -> RepairToolMessage:
         """Find and fix the split edge problem areas.
 
@@ -576,20 +595,24 @@ class RepairTools:
             The maximum angle between edges. By default, 0.0.
         length : Real, optional
             The maximum length of the edges. By default, 0.0.
+        comprehensive_result : bool, optional
+            Whether to fix all problem areas individually.
+            By default, False.
 
         Returns
         -------
         RepairToolMessage
-            Message containing created and/or modified bodies.
+            Message containing number of problem areas found/fixed, created and/or modified bodies.
         """
         from ansys.geometry.core.designer.body import Body
 
         check_type_all_elements_in_iterable(bodies, Body)
         check_type(angle, Real)
         check_type(length, Real)
+        check_type(comprehensive_result, bool)
 
         if not bodies:
-            return RepairToolMessage(False, [], [])
+            return RepairToolMessage(False, [], [], 0, 0)
 
         angle_value = DoubleValue(value=float(angle))
         length_value = DoubleValue(value=float(length))
@@ -597,7 +620,10 @@ class RepairTools:
 
         response = self._repair_stub.FindAndFixSplitEdges(
             FindSplitEdgesRequest(
-                bodies_or_faces=body_ids, angle=angle_value, distance=length_value
+                bodies_or_faces=body_ids,
+                angle=angle_value,
+                distance=length_value,
+                comprehensive=comprehensive_result,
             )
         )
 
@@ -607,6 +633,57 @@ class RepairTools:
             response.success,
             response.created_bodies_monikers,
             response.modified_bodies_monikers,
+            response.found,
+            response.repaired,
+        )
+        return message
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def find_and_fix_simplify(
+        self, bodies: list["Body"], comprehensive_result: bool = False
+    ) -> RepairToolMessage:
+        """Find and simplify the provided geometry.
+
+        Notes
+        -----
+        This method simplifies the provided geometry.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to be simplified.
+        comprehensive_result : bool, optional
+            Whether to fix all problem areas individually.
+            By default, False.
+
+        Returns
+        -------
+        RepairToolMessage
+            Message containing number of problem areas found/fixed, created and/or modified bodies.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        check_type_all_elements_in_iterable(bodies, Body)
+        check_type(comprehensive_result, bool)
+
+        if not bodies:
+            return RepairToolMessage(False, [], [], 0, 0)
+
+        body_ids = [body.id for body in bodies]
+
+        response = self._repair_stub.FindAndSimplify(
+            FindAdjustSimplifyRequest(selection=body_ids, comprehensive=comprehensive_result)
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.success,
+            response.created_bodies_monikers,
+            response.modified_bodies_monikers,
+            response.found,
+            response.repaired,
         )
         return message
 

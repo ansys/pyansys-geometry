@@ -35,6 +35,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ExtrudeFacesUpToRequest,
     FilletRequest,
     FullFilletRequest,
+    ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
     PatternRequest,
     RenameObjectRequest,
@@ -739,6 +740,58 @@ class GeometryCommands:
                 radial_direction=None
                 if radial_direction is None
                 else unit_vector_to_grpc_direction(radial_direction),
+            )
+        )
+
+        return result.result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def modify_circular_pattern(
+        self,
+        selection: Union["Face", list["Face"]],
+        circular_count: int = 0,
+        linear_count: int = 0,
+        step_angle: Real = 0.0,
+        step_linear: Real = 0.0,
+    ) -> bool:
+        """Modify a circular pattern. Leave an argument at 0 for it to remain unchanged.
+
+        Parameters
+        ----------
+        selection : Face | list[Face]
+            Faces that belong to the pattern.
+        circular_count : int, default: 0
+            How many members are in the circular pattern.
+        linear_count : int, default: 0
+            How many times the circular pattern repeats along the radial lines for a
+            two-dimensional pattern.
+        step_angle : Real, default: 0.0
+            Defines the circular angle.
+        step_linear : Real, default: 0.0
+            Defines the step, along the radial lines, for a pattern dimension greater than 1.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        result = self._commands_stub.ModifyCircularPattern(
+            ModifyCircularPatternRequest(
+                selection=[object._grpc_id for object in selection],
+                circular_count=circular_count,
+                linear_count=linear_count,
+                step_angle=step_angle,
+                step_linear=step_linear,
             )
         )
 
