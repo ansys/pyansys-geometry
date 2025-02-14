@@ -22,8 +22,11 @@
 """Module for managing a face."""
 
 from enum import Enum, unique
+from functools import cached_property
 from typing import TYPE_CHECKING
 
+from beartype import beartype as check_input_types
+import matplotlib.colors as mcolors
 from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
@@ -34,6 +37,7 @@ from ansys.api.geometry.v0.faces_pb2 import (
     CreateIsoParamCurvesRequest,
     EvaluateRequest,
     GetNormalRequest,
+    SetColorRequest,
 )
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
@@ -41,8 +45,10 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_surface_to_surface
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.math.bbox import BoundingBox2D
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.auxiliary import convert_color_to_hex
 from ansys.geometry.core.misc.checks import (
     deprecated_method,
     ensure_design_is_active,
@@ -56,6 +62,7 @@ from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
     ReversedTrimmedSurface,
     TrimmedSurface,
 )
+from ansys.tools.visualization_interface.utils.color import Color
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -181,6 +188,7 @@ class Face:
         self._commands_stub = CommandsStub(grpc_client.channel)
         self._is_reversed = is_reversed
         self._shape = None
+        self._color = None
 
     @property
     def id(self) -> str:
@@ -286,6 +294,57 @@ class Face:
             )
 
         return loops
+
+    @property
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def color(self) -> str:
+        """Get the current color of the face."""
+        if self._color is None and self.body.is_alive:
+            # Assigning default value first
+            self._color = Color.DEFAULT.value
+
+            # If color is not cached, retrieve from the server
+            response = self._faces_stub.GetColor(EntityIdentifier(id=self.id))
+
+            # Return if valid color returned
+            if response.color:
+                self._color = mcolors.to_hex(response.color)
+            else:
+                self._color = Color.DEFAULT.value
+
+        return self._color
+
+    @color.setter
+    def color(self, color: str | tuple[float, float, float]) -> None:
+        self.set_color(color)
+
+    @cached_property
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def bounding_box(self) -> BoundingBox2D:
+        """Get the bounding box for the face."""
+        self._grpc_client.log.debug(f"Getting bounding box for {self.id}.")
+
+        result = self._faces_stub.GetBoundingBox(request=self._grpc_id)
+
+        return BoundingBox2D(result.min.x, result.max.x, result.min.y, result.max.y)
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def set_color(self, color: str | tuple[float, float, float]) -> None:
+        """Set the color of the face."""
+        self._grpc_client.log.debug(f"Setting face color of {self.id} to {color}.")
+        color = convert_color_to_hex(color)
+
+        self._faces_stub.SetColor(
+            SetColorRequest(
+                face_id=self.id,
+                color=color,
+            )
+        )
+        self._color = color
 
     @protect_grpc
     @ensure_design_is_active

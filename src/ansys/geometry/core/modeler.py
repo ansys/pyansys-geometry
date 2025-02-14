@@ -122,16 +122,8 @@ class Modeler:
         # Single design for the Modeler
         self._design: Optional["Design"] = None
 
-        # Initialize the RepairTools - Not available on Linux
-        # TODO: delete "if" when Linux service is able to use repair tools
-        # https://github.com/ansys/pyansys-geometry/issues/1319
-        if BackendType.is_core_service(self.client.backend_type):
-            self._measurement_tools = None
-            self.client.log.warning("CoreService backend does not support measurement tools.")
-        else:
-            self._measurement_tools = MeasurementTools(self._grpc_client)
-
         # Enabling tools/commands for all: repair and prepare tools, geometry commands
+        self._measurement_tools = MeasurementTools(self._grpc_client)
         self._repair_tools = RepairTools(self._grpc_client, self)
         self._prepare_tools = PrepareTools(self._grpc_client)
         self._geometry_commands = GeometryCommands(self._grpc_client)

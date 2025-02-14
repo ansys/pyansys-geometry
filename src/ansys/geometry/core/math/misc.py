@@ -24,6 +24,7 @@
 from beartype import beartype as check_input_types
 import numpy as np
 
+from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.typing import Real
 
 
@@ -92,3 +93,42 @@ def get_two_circle_intersections(
         y4 = y2 + dy
 
         return ((x3, y3), (x4, y4))
+
+
+def intersect_interval(first_min, second_min, first_max, second_max) -> tuple[bool, Real, Real]:
+    """Find the intersection of two intervals.
+
+    Parameters
+    ----------
+    first_min : Real
+        The minimum value of the first interval.
+    second_min : Real
+        The minimum value of the second interval.
+    first_max : Real
+        The maximum value of the first interval.
+    second_max : Real
+        The maximum value of the second interval.
+
+    Returns
+    -------
+    tuple[bool, Real, Real]
+        Tuple with a boolean to indicate whether the intervals intersect,
+        the minimum value of the intersection interval,
+        and the maximum value of the intersection interval.
+        If they do not intersect, then the boolean is False and the other values are 0.
+    """
+    minimum = second_min
+    if first_min > minimum:
+        minimum = first_min
+
+    maximum = second_max
+    if first_max < maximum:
+        maximum = first_max
+
+    if minimum > maximum:
+        if minimum - maximum > Accuracy.length_accuracy():
+            return False, 0, 0
+
+        maximum, minimum = minimum, maximum
+
+    return True, minimum, maximum

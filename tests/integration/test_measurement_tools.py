@@ -21,11 +21,15 @@
 # SOFTWARE.
 """ "Testing of measurement tools."""
 
+import numpy as np
+
+from ansys.geometry.core.math import Point2D, UnitVector3D
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.tools.measurement_tools import Gap
 
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_distance_property(modeler: Modeler):
@@ -34,11 +38,53 @@ def test_distance_property(modeler: Modeler):
     assert gap.distance._value == 10.0
 
 
-def test_min_distance_between_objects(modeler: Modeler):
+def test_min_distance_between_bodies(modeler: Modeler):
     """Test if split edge problem areas are detectable."""
-    skip_if_core_service(
-        modeler, test_min_distance_between_objects.__name__, "measurement_tools"
-    )  # Skip test on CoreService
     design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
     gap = modeler.measurement_tools.min_distance_between_objects(design.bodies[2], design.bodies[1])
     assert abs(gap.distance._value - 0.0892) <= 0.01
+
+
+def test_min_distance_between_faces(modeler: Modeler):
+    """Test the distance between two faces."""
+    design = modeler.create_design("closest_face_separation")
+
+    body1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 0]), 1, 1), 1)
+
+    gap = modeler.measurement_tools.min_distance_between_objects(body1.faces[0], body2.faces[0])
+    assert np.isclose(1.0, gap.distance._value)
+
+    body2.translate(UnitVector3D([0, 0, 1]), 1)
+    gap = modeler.measurement_tools.min_distance_between_objects(body1.faces[0], body2.faces[0])
+    assert np.isclose(1.41421356237, gap.distance._value)
+
+
+def test_min_distance_between_edges(modeler: Modeler):
+    """Test the distance between two edges."""
+    design = modeler.create_design("closest_edge_separation")
+
+    body1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 0]), 1, 1), 1)
+
+    gap = modeler.measurement_tools.min_distance_between_objects(body1.edges[0], body2.edges[0])
+    assert np.isclose(1.0, gap.distance._value)
+
+    body2.translate(UnitVector3D([0, 0, 1]), 1)
+    gap = modeler.measurement_tools.min_distance_between_objects(body1.edges[0], body2.edges[0])
+    assert np.isclose(1.41421356237, gap.distance._value)
+
+
+def test_min_distance_between_face_and_body(modeler: Modeler):
+    """Test the distance between a face and a body."""
+    design = modeler.create_design("closest_face_body_separation")
+
+    body1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 0]), 1, 1), 1)
+
+    gap = modeler.measurement_tools.min_distance_between_objects(body1.faces[0], body2)
+    assert np.isclose(1.0, gap.distance._value)
+
+    body2.translate(UnitVector3D([0, 0, 1]), 1)
+    gap = modeler.measurement_tools.min_distance_between_objects(body1.faces[0], body2)
+    assert np.isclose(1.41421356237, gap.distance._value)
