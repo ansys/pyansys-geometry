@@ -21,12 +21,13 @@
 # SOFTWARE.
 """Module for managing a face."""
 
-from enum import Enum, unique  # noqa: I001
+from enum import Enum, unique
+from functools import cached_property
 from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
-from pint import Quantity
 import matplotlib.colors as mcolors
+from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import FaceOffsetRequest
@@ -41,10 +42,7 @@ from ansys.api.geometry.v0.faces_pb2 import (
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import (
-    grpc_curve_to_curve,
-    grpc_surface_to_surface,
-)
+from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_surface_to_surface
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.bbox import BoundingBox2D
@@ -307,8 +305,8 @@ class Face:
             self._color = Color.DEFAULT.value
 
             # If color is not cached, retrieve from the server
-            response = self._faces_stub.GetColor(self._grpc_id)
-            
+            response = self._faces_stub.GetColor(EntityIdentifier(id=self.id))
+
             # Return if valid color returned
             if response.color:
                 self._color = mcolors.to_hex(response.color)
@@ -320,6 +318,17 @@ class Face:
     @color.setter
     def color(self, color: str | tuple[float, float, float]) -> None:
         self.set_color(color)
+
+    @cached_property
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def bounding_box(self) -> BoundingBox2D:
+        """Get the bounding box for the face."""
+        self._grpc_client.log.debug(f"Getting bounding box for {self.id}.")
+
+        result = self._faces_stub.GetBoundingBox(request=self._grpc_id)
+
+        return BoundingBox2D(result.min.x, result.max.x, result.min.y, result.max.y)
 
     @protect_grpc
     @check_input_types
@@ -555,19 +564,3 @@ class Face:
         )
 
         return result.success
-
-    @protect_grpc
-    @min_backend_version(25, 2, 0)
-    def get_bounding_box(self) -> BoundingBox2D:
-        """Get the bounding box for the face.
-
-        Returns
-        -------
-        BoundingBox2D
-            The bounding box for the face.
-        """
-        self._grpc_client.log.debug(f"Getting bounding box for {self.id}.")
-
-        result = self._faces_stub.GetBoundingBox(request=self._grpc_id)
-
-        return BoundingBox2D(result.min.x, result.max.x, result.min.y, result.max.y)

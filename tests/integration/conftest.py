@@ -161,11 +161,9 @@ def modeler(session_modeler: Modeler):
     # Yield the modeler
     yield session_modeler
 
-    # Cleanup on exit
-    [design.close() for design in session_modeler.designs.values()]
-
-    # Empty the designs dictionary
-    session_modeler._designs = {}
+    # Cleanup on exit (if design exists)
+    if session_modeler.design:
+        session_modeler.design.close()
 
 
 @pytest.fixture(scope="session", autouse=True)
