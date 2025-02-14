@@ -1220,7 +1220,7 @@ class GeometryCommands:
         Parameters
         ----------
         selection : list[Face]
-            Faces to offset.
+            Faces to offset. The first object must be a round face.
         radius : Real
             Radius of the offset.
         options : OffsetFaceOptions
