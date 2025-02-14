@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Provides tools for pulling geometry."""
 
-from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -39,7 +38,6 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ModifyLinearPatternRequest,
     MoveRotateRequest,
     MoveTranslateRequest,
-    OffsetFacesSetRadiusRequest,
     PatternRequest,
     RenameObjectRequest,
     ReplaceFaceRequest,
@@ -77,7 +75,6 @@ from ansys.geometry.core.misc.options import (
     ExtrudeType,
     FillPatternType,
     MoveOptions,
-    OffsetFaceOptions,
     OffsetMode,
 )
 from ansys.geometry.core.shapes.curves.line import Line
@@ -1172,7 +1169,7 @@ class GeometryCommands:
 
         return result.success
 
-	@protect_grpc
+    @protect_grpc
     @min_backend_version(25, 2, 0)
     def get_round_info(self, face: "Face") -> tuple[bool, Real]:
         """Get info on the rounding of a face.
@@ -1192,7 +1189,7 @@ class GeometryCommands:
 
         return (result.along_u, result.radius)
         
-	@protect_grpc
+    @protect_grpc
     @min_backend_version(25, 2, 0)
     def move_rotate(
         self,

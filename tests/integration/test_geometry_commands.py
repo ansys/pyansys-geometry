@@ -25,14 +25,13 @@ import numpy as np
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.designer.geometry_commands import (
+from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.misc.options import (
     ExtrudeType,
     FillPatternType,
     OffsetMode,
 )
-from ansys.geometry.core.designer.edge import Edge
-from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.sketch.sketch import Sketch
