@@ -96,7 +96,7 @@ doc = [
     "notebook==7.3.2",
     "numpydoc==1.8.0",
     "numpy==2.2.3",
-    "panel==1.6.0",
+    "panel==1.6.1",
     "Pint==0.24.4",
     "protobuf==5.29.3",
     "pyvista[jupyter]==0.44.2",
