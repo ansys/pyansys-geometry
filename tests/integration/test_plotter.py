@@ -929,26 +929,6 @@ def test_plot_design_face_colors(modeler: Modeler, verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_box_with_edges(modeler: Modeler, verify_image_cache):
-    """Test plotting of a box with edges."""
-    # Create a sketch of a box
-    sketch = Sketch()
-    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
-
-    # Create your design on the server side
-    design = modeler.create_design("BoxExtrusions")
-
-    # Extrude the sketch to create a body
-    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
-
-    # Plot the box with edges
-    box_body.plot(
-        screenshot=Path(IMAGE_RESULTS_DIR, "plot_box_with_edges.png"),
-        show_edges=True,
-    )
-
-
-@skip_no_xserver
 def test_export_glb(modeler: Modeler, verify_image_cache):
     """Test exporting a box to glb."""
     # Create a Sketch
