@@ -1,0 +1,494 @@
+:py:mod:`ansys.geometry.core.designer.beam`
+===========================================
+
+.. py:module:: ansys.geometry.core.designer.beam
+
+.. autoapi-nested-parse::
+
+   ``Beam`` class module.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.designer.beam.BeamProfile
+   ansys.geometry.core.designer.beam.BeamCircularProfile
+   ansys.geometry.core.designer.beam.Beam
+
+
+
+
+.. py:class:: BeamProfile(id: str, name: str)
+
+
+   
+   Represents a single beam profile organized within the design assembly.
+
+   This profile synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the beam profile.
+
+       **name** : :class:`python:str`
+           User-defined label for the beam profile.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   ``BeamProfile`` objects are expected to be created from the ``Design`` object.
+   This means that you are not expected to instantiate your own ``BeamProfile``
+   object. You should call the specific ``Design`` API for the ``BeamProfile`` desired.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: id
+      :type: str
+
+      
+      ID of the beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: name
+      :type: str
+
+      
+      Name of the beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: BeamCircularProfile(id: str, name: str, radius: ansys.geometry.core.misc.Distance, center: ansys.geometry.core.math.Point3D, direction_x: ansys.geometry.core.math.UnitVector3D, direction_y: ansys.geometry.core.math.UnitVector3D)
+
+
+   Bases: :py:obj:`BeamProfile`
+
+   
+   Represents a single circular beam profile organized within the design assembly.
+
+   This profile synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the beam profile.
+
+       **name** : :class:`python:str`
+           User-defined label for the beam profile.
+
+       **radius** : :obj:`Distance`
+           Radius of the circle.
+
+       **center: Point3D**
+           A point representing the center of the circle.
+
+       **direction_x: UnitVector3D**
+           X-axis direction.
+
+       **direction_y: UnitVector3D**
+           Y-axis direction.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   ``BeamProfile`` objects are expected to be created from the ``Design`` object.
+   This means that you are not expected to instantiate your own ``BeamProfile``
+   object. You should call the specific ``Design`` API for the ``BeamProfile`` desired.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: radius
+      :type: ansys.geometry.core.misc.Distance
+
+      
+      Radius of the circular beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: center
+      :type: ansys.geometry.core.math.Point3D
+
+      
+      Center of the circular beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: direction_x
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      X-axis direction of the circular beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: direction_y
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      Y-axis direction of the circular beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the ``BeamCircularProfile`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: Beam(id: str, start: ansys.geometry.core.math.Point3D, end: ansys.geometry.core.math.Point3D, profile: BeamProfile, parent_component: ansys.geometry.core.designer.component.Component)
+
+
+   
+   Represents a simplified solid body with an assigned 2D cross-section.
+
+   This body synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the body.
+
+       **name** : :class:`python:str`
+           User-defined label for the body.
+
+       **start** : :obj:`Point3D`
+           Start of the beam line segment.
+
+       **end** : :obj:`Point3D`
+           End of the beam line segment.
+
+       **profile** : :obj:`BeamProfile`
+           Beam profile to use to create the beam.
+
+       **parent_component** : :obj:`Component`
+           Parent component to nest the new beam under within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: id
+      :type: str
+
+      
+      Service-defined ID of the beam.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: start
+      :type: ansys.geometry.core.math.Point3D
+
+      
+      Start of the beam line segment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: end
+      :type: ansys.geometry.core.math.Point3D
+
+      
+      End of the beam line segment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: profile
+      :type: BeamProfile
+
+      
+      Beam profile of the beam line segment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: parent_component
+      :type: beartype.typing.Union[ansys.geometry.core.designer.component.Component, None]
+
+      
+      Component node that the beam`` is under.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: is_alive
+      :type: bool
+
+      
+      Boolean indicating whether the beam is still alive on the server side.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the ``Beam`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
