@@ -22,9 +22,11 @@
 """Provides plotting for various PyAnsys Geometry objects."""
 
 from itertools import cycle
+from pathlib import Path
 from typing import Any
 
 import numpy as np
+from pygltflib.utils import gltf2glb
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
@@ -236,8 +238,19 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
+        if body.is_suppressed:
+            return
+
         if self.use_service_colors:
-            plotting_options["color"] = body.color
+            faces = body.faces
+            dataset = body.tessellate()
+            for i, block in enumerate(dataset):
+                if faces[i].color != Color.DEFAULT.value:
+                    plotting_options["color"] = faces[i].color
+                else:
+                    plotting_options["color"] = body.color
+                self._backend.pv_interface.plot(block, **plotting_options)
+            return
         # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
         # so if multi_colors is True and merge is True (returns PolyData) then
         # we need to set the color manually
@@ -466,3 +479,29 @@ class GeometryPlotter(PlotterInterface):
                 else:  # Either a PyAnsys Geometry object or a PyVista object
                     lib_objects.append(element)
             return lib_objects
+
+    def export_glb(
+        self, plotting_object: Any = None, screenshot: str | None = None, **plotting_options
+    ) -> None:
+        """Export the design to a glb file. Does not support picked objects.
+
+        Parameters
+        ----------
+        plotting_object : Any, default: None
+            Object you can add to the plotter.
+        screenshot : str, default: None
+            Path to save a screenshot of the plotter. Do not include file extension.
+        **plotting_options : dict, default: None
+            Keyword arguments for the plotter. Arguments depend of the backend implementation
+            you are using.
+        """
+        if plotting_object is not None:
+            self.plot(plotting_object, **plotting_options)
+
+        gltf_filepath = str(screenshot) + ".gltf"
+
+        self.backend._pl._scene.hide_axes()
+        self.backend._pl._scene.export_gltf(gltf_filepath)
+
+        gltf2glb(gltf_filepath)
+        Path.unlink(gltf_filepath)
