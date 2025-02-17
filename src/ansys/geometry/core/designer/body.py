@@ -1745,6 +1745,14 @@ class Body(IBody):
         # Add to plotting options as well... to be used by the plotter if necessary
         plotting_options["merge_bodies"] = merge
 
+        # In case that service colors are requested, merge will be ignored.
+        # An info message will be issued to the user.
+        if use_service_colors and merge:
+            self._template._grpc_client.log.info(
+                "Ignoring 'merge' option since 'use_service_colors' is set to True."
+            )
+            plotting_options["merge_bodies"] = False
+
         mesh_object = (
             self if use_service_colors else MeshObjectPlot(self, self.tessellate(merge=merge))
         )

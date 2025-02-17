@@ -243,14 +243,24 @@ class GeometryPlotter(PlotterInterface):
 
         if self.use_service_colors:
             faces = body.faces
-            dataset = body.tessellate()
-            for i, block in enumerate(dataset):
-                if faces[i].color != Color.DEFAULT.value:
-                    plotting_options["color"] = faces[i].color
-                else:
-                    plotting_options["color"] = body.color
-                self._backend.pv_interface.plot(block, **plotting_options)
-            return
+            dataset = body.tessellate(merge=merge)
+            body_color = body.color
+            if not merge:
+                # ASSUMPTION: the faces returned by the service are in the same order
+                # as the tessellation information returned by the service...
+                elems = [elem for elem in dataset]
+                for face, block in zip(faces, elems):
+                    face_color = face.color
+                    if face_color != Color.DEFAULT.value:
+                        plotting_options["color"] = face_color
+                    else:
+                        plotting_options["color"] = body_color
+                    self._backend.pv_interface.plot(block, **plotting_options)
+                return
+            else:
+                plotting_options["color"] = body_color
+                self._backend.pv_interface.plot(dataset, **plotting_options)
+                return
         # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
         # so if multi_colors is True and merge is True (returns PolyData) then
         # we need to set the color manually
@@ -481,7 +491,7 @@ class GeometryPlotter(PlotterInterface):
             return lib_objects
 
     def export_glb(
-        self, plotting_object: Any = None, screenshot: str | None = None, **plotting_options
+        self, plotting_object: Any = None, filename: str | Path | None = None, **plotting_options
     ) -> None:
         """Export the design to a glb file. Does not support picked objects.
 
@@ -489,19 +499,47 @@ class GeometryPlotter(PlotterInterface):
         ----------
         plotting_object : Any, default: None
             Object you can add to the plotter.
-        screenshot : str, default: None
-            Path to save a screenshot of the plotter. Do not include file extension.
+        filename : str | ~pathlib.Path, default: None
+            Path to save a GLB file of the plotter. If None, the file will be saved as
+            temp_glb.glb.
         **plotting_options : dict, default: None
             Keyword arguments for the plotter. Arguments depend of the backend implementation
             you are using.
+
+        Returns
+        -------
+        ~pathlib.Path
+            Path to the exported glb file.
         """
         if plotting_object is not None:
             self.plot(plotting_object, **plotting_options)
 
-        gltf_filepath = str(screenshot) + ".gltf"
+        # Depending on whether a name is provided, the file will be saved with the name
+        # provided or with a default name (temp_glb). If a name is provided, the file will
+        # be saved in the current working directory. If a path is provided, the file will be
+        # saved in the provided path. We will also make sure that the file has the .glb extension,
+        # and if not, we will add it.
+        if filename is None:
+            glb_filepath = Path("temp_glb.glb")
+        else:
+            glb_filepath = filename if isinstance(filename, Path) else Path(filename)
+            if glb_filepath.suffix != ".glb":
+                glb_filepath = glb_filepath.with_suffix(".glb")
 
+        # Temporary gltf file to export the scene
+        gltf_filepath = glb_filepath.with_suffix(".gltf")
+
+        # Hide the axes before exporting the gltf and then export it
         self.backend._pl._scene.hide_axes()
         self.backend._pl._scene.export_gltf(gltf_filepath)
 
+        # Convert the gltf to glb and remove the gltf file
         gltf2glb(gltf_filepath)
         Path.unlink(gltf_filepath)
+
+        # Check if the file was exported correctly
+        if not glb_filepath.exists():  # pragma: no cover
+            raise FileNotFoundError(f"GLB file not found at {glb_filepath}. Export failed.")
+
+        # Finally, return the path to the exported glb file
+        return glb_filepath

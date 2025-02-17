@@ -1588,13 +1588,19 @@ class Component:
         plotting_options["merge_bodies"] = merge_bodies
 
         # At component level, if ``multi_colors`` or ``use_service_colors`` are defined
-        # we should not merge the component.
+        # we should not merge the component or the bodies (only if ``use_service_colors`` is True).
         if plotting_options.get("multi_colors", False) or use_service_colors:
             plotting_options["merge_component"] = False
             self._grpc_client.log.info(
                 "Ignoring 'merge_component=True' (default behavior) as "
                 "'multi_colors' or 'use_service_colors' are defined."
             )
+            if use_service_colors:
+                plotting_options["merge_bodies"] = False
+                self._grpc_client.log.info(
+                    "Ignoring 'merge_bodies=True' (default behavior) as "
+                    "'use_service_colors' is defined."
+                )
 
         pl = GeometryPlotter(
             use_trame=use_trame,
