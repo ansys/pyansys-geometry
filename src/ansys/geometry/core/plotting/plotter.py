@@ -243,14 +243,24 @@ class GeometryPlotter(PlotterInterface):
 
         if self.use_service_colors:
             faces = body.faces
-            dataset = body.tessellate()
-            for i, block in enumerate(dataset):
-                if faces[i].color != Color.DEFAULT.value:
-                    plotting_options["color"] = faces[i].color
-                else:
-                    plotting_options["color"] = body.color
-                self._backend.pv_interface.plot(block, **plotting_options)
-            return
+            dataset = body.tessellate(merge=merge)
+            body_color = body.color
+            if not merge:
+                # ASSUMPTION: the faces returned by the service are in the same order
+                # as the tessellation information returned by the service...
+                elems = [elem for elem in dataset]
+                for face, block in zip(faces, elems):
+                    face_color = face.color
+                    if face_color != Color.DEFAULT.value:
+                        plotting_options["color"] = face_color
+                    else:
+                        plotting_options["color"] = body_color
+                    self._backend.pv_interface.plot(block, **plotting_options)
+                return
+            else:
+                plotting_options["color"] = body_color
+                self._backend.pv_interface.plot(dataset, **plotting_options)
+                return
         # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
         # so if multi_colors is True and merge is True (returns PolyData) then
         # we need to set the color manually
