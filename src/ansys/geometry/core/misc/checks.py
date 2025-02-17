@@ -343,7 +343,12 @@ def min_backend_version(major: int, minor: int, service_pack: int):
     return backend_version_decorator
 
 
-def deprecated_method(alternative: str | None = None, info: str | None = None):
+def deprecated_method(
+    alternative: str | None = None,
+    info: str | None = None,
+    version: str | None = None,
+    remove: str | None = None,
+):
     """Decorate a method as deprecated.
 
     Parameters
@@ -353,6 +358,10 @@ def deprecated_method(alternative: str | None = None, info: str | None = None):
         include the alternative method.
     info : str, default: None
         Additional information to include in the warning message.
+    version : str, default: None
+        Version where the method was deprecated.
+    remove : str, default: None
+        Version where the method will be removed.
     """
 
     def deprecated_decorator(method):
@@ -362,6 +371,10 @@ def deprecated_method(alternative: str | None = None, info: str | None = None):
                 msg += f" Use '{alternative}' instead."
             if info:
                 msg += f" {info}"
+            if version:
+                msg += f" This method was deprecated in version {version}."
+            if remove:
+                msg += f" This method will be removed in version {remove}."
             warnings.warn(msg, DeprecationWarning)
             return method(*args, **kwargs)
 
@@ -370,7 +383,13 @@ def deprecated_method(alternative: str | None = None, info: str | None = None):
     return deprecated_decorator
 
 
-def deprecated_argument(arg: str, alternative: str | None = None, info: str | None = None):
+def deprecated_argument(
+    arg: str,
+    alternative: str | None = None,
+    info: str | None = None,
+    version: str | None = None,
+    remove: str | None = None,
+):
     """Decorate a method argument as deprecated.
 
     Parameters
@@ -382,6 +401,10 @@ def deprecated_argument(arg: str, alternative: str | None = None, info: str | No
         include the alternative argument.
     info : str, default: None
         Additional information to include in the warning message.
+    version : str, default: None
+        Version where the method was deprecated.
+    remove : str, default: None
+        Version where the method will be removed.
     """
 
     def deprecated_decorator(method):
@@ -392,6 +415,10 @@ def deprecated_argument(arg: str, alternative: str | None = None, info: str | No
                     msg += f" Use '{alternative}' instead."
                 if info:
                     msg += f" {info}"
+                if version:
+                    msg += f" This argument was deprecated in version {version}."
+                if remove:
+                    msg += f" This argument will be removed in version {remove}."
                 warnings.warn(msg, DeprecationWarning)
 
             return method(*args, **kwargs)
