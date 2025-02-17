@@ -27,7 +27,6 @@ from pint import Quantity
 import pyvista as pv
 from scipy.spatial.transform import Rotation as SpatialRotation
 
-from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.matrix import Matrix33
 from ansys.geometry.core.math.point import Point2D
