@@ -307,7 +307,7 @@ def test_deprecated_method_decorator():
         mock_object.deprecated_method_with_info()
 
     with pytest.deprecated_call(
-        match="The method 'deprecated_method_with_info_and_alternate' is deprecated."
+        match="The method 'deprecated_method_with_info_and_alternate_and_versions' is deprecated."
         " Use 'new_method' instead. This is some extra info."
         " This method was deprecated in version 1.0.0."
         " This method will be removed in version 2.0.0."
@@ -360,7 +360,7 @@ def test_deprecated_argument_decorator():
         mock_object.deprecated_argument_with_info(dep_arg="test")
 
     with pytest.deprecated_call(
-        match="The argument 'dep_arg' in 'deprecated_argument_with_info_and_alternate'"
+        match="The argument 'dep_arg' in 'deprecated_argument_with_info_and_alternate_and_versions'"
         " is deprecated. Use 'alt_arg' instead. This is some extra info."
         " This argument was deprecated in version 1.0.0."
         " This argument will be removed in version 2.0.0."
