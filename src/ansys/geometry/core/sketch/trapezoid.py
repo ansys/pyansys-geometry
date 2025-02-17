@@ -80,13 +80,6 @@ class Trapezoid(SketchFace):
         """Initialize the trapezoid."""
         super().__init__()
 
-        # TODO: Remove this warning in the next major release (v0.8.0)
-        # https://github.com/ansys/pyansys-geometry/issues/1359
-        LOG.warning(
-            "The signature of the Trapezoid class has changed starting on "
-            "version 0.7.X. Please refer to the documentation for more information."
-        )
-
         self._center = center
         self._base_width = (
             base_width if isinstance(base_width, Distance) else Distance(base_width, center.unit)
