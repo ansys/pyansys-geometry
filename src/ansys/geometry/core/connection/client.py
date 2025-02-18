@@ -266,11 +266,13 @@ class GrpcClient:
         return self._backend_version
 
     @property
-    @deprecated_method(info="Multiple designs for the same service are no longer supported.")
+    @deprecated_method(
+        info="Multiple designs for the same service are no longer supported.",
+        version="0.9.0",
+        remove="0.11.0",
+    )
     def multiple_designs_allowed(self) -> bool:
         """Flag indicating whether multiple designs are allowed.
-
-        Deprecated since version 0.8.X.
 
         Notes
         -----

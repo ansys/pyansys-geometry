@@ -65,6 +65,8 @@ from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
 from ansys.tools.visualization_interface.utils.color import Color
 
 if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
+
     from ansys.geometry.core.designer.body import Body
 
 
@@ -381,8 +383,8 @@ class Face:
             response = self._faces_stub.GetNormal(GetNormalRequest(id=self.id, u=u, v=v)).direction
             return UnitVector3D([response.x, response.y, response.z])
 
-    @deprecated_method(alternative="normal")
-    def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:  # [deprecated-method]
+    @deprecated_method(alternative="normal", version="0.6.2", remove="0.10.0")
+    def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
         """Get the normal direction to the face at certain UV coordinates.
 
         Parameters
@@ -440,7 +442,7 @@ class Face:
             response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
             return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
 
-    @deprecated_method(alternative="point")
+    @deprecated_method(alternative="point", version="0.6.2", remove="0.10.0")
     def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
         """Get a point of the face evaluated at certain UV coordinates.
 
@@ -564,3 +566,70 @@ class Face:
         )
 
         return result.success
+
+    def tessellate(self) -> "pv.PolyData":
+        """Tessellate the face and return the geometry as triangles.
+
+        Returns
+        -------
+        ~pyvista.PolyData
+            :class:`pyvista.PolyData` object holding the face.
+        """
+        # If tessellation has not been called before... call it
+        if self._body._template._tessellation is None:
+            self._body.tessellate()
+
+        # Search the tessellation of the face - if it exists
+        # ---> We need to used the last element of the ID since we are looking inside
+        # ---> the master body tessellation.
+        red_id = self.id.split("/")[-1]
+        mb_pdata = self.body._template._tessellation.get(red_id)
+        if mb_pdata is None:  # pragma: no cover
+            raise ValueError(f"Face {self.id} not found in the tessellation.")
+
+        # Return the stored PolyData
+        return mb_pdata.transform(self.body.parent_component.get_world_transform(), inplace=False)
+
+    def plot(
+        self,
+        screenshot: str | None = None,
+        use_trame: bool | None = None,
+        use_service_colors: bool | None = None,
+        **plotting_options: dict | None,
+    ) -> None:
+        """Plot the face.
+
+        Parameters
+        ----------
+        screenshot : str, default: None
+            Path for saving a screenshot of the image that is being represented.
+        use_trame : bool, default: None
+            Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
+            The default is ``None``, in which case the
+            ``ansys.tools.visualization_interface.USE_TRAME`` global setting is used.
+        use_service_colors : bool, default: None
+            Whether to use the colors assigned to the face in the service. The default
+            is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
+            global setting is used.
+        **plotting_options : dict, default: None
+            Keyword arguments for plotting. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+        """
+        # lazy import here to improve initial module loading time
+        import ansys.geometry.core as pyansys_geometry
+        from ansys.geometry.core.plotting import GeometryPlotter
+        from ansys.tools.visualization_interface.types.mesh_object_plot import (
+            MeshObjectPlot,
+        )
+
+        use_service_colors = (
+            use_service_colors
+            if use_service_colors is not None
+            else pyansys_geometry.USE_SERVICE_COLORS
+        )
+
+        mesh_object = self if use_service_colors else MeshObjectPlot(self, self.tessellate())
+        pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
+        pl.plot(mesh_object, **plotting_options)
+        pl.show(screenshot=screenshot, **plotting_options)
