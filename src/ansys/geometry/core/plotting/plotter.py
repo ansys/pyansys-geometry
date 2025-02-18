@@ -518,7 +518,7 @@ class GeometryPlotter(PlotterInterface):
 
     def export_glb(
         self, plotting_object: Any = None, filename: str | Path | None = None, **plotting_options
-    ) -> None:
+    ) -> Path:
         """Export the design to a glb file. Does not support picked objects.
 
         Parameters
