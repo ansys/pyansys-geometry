@@ -580,7 +580,7 @@ class Face:
             self._body.tessellate()
 
         # Search the tessellation of the face - if it exists
-        # ---> We need to used the last element of the ID.. since we are looking inside
+        # ---> We need to used the last element of the ID since we are looking inside
         # ---> the master body tessellation.
         red_id = self.id.split("/")[-1]
         mb_pdata = self.body._template._tessellation.get(red_id)
@@ -616,7 +616,7 @@ class Face:
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
 
         """
-        # lazy import here to improve initial module load time
+        # lazy import here to improve initial module loading time
         import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
         from ansys.tools.visualization_interface.types.mesh_object_plot import (
