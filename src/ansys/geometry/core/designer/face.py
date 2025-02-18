@@ -608,7 +608,7 @@ class Face:
             The default is ``None``, in which case the
             ``ansys.tools.visualization_interface.USE_TRAME`` global setting is used.
         use_service_colors : bool, default: None
-            Whether to use the colors assigned to the body in the service. The default
+            Whether to use the colors assigned to the face in the service. The default
             is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
             global setting is used.
         **plotting_options : dict, default: None
