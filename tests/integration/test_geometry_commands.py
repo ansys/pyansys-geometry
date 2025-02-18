@@ -1018,3 +1018,89 @@ def test_move_rotate_body(modeler: Modeler):
         rotated_vertices.extend([edge.shape.start, edge.shape.end])
 
     np.isin(expected_vertices, rotated_vertices)
+
+
+def test_move_rotate_multiple_bodies(modeler: Modeler):
+    """Test move and rotate body."""
+    design = modeler.create_design("move_rotate_body")
+    body_1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    body_2 = body_1.copy(design, "box2")
+
+    body_2.translate(UnitVector3D([0, 0, 1]), 2)
+
+    # Rotate about line through center of boxes
+    rotation_axis = Line([1, 2, 0], [-1, 0, 0])
+    modeler.geometry_commands.move_rotate([body_1, body_2], rotation_axis, -np.pi/2)
+
+    # Snapshot of key vertices after rotation
+    expected_vertices = [
+        Point3D([1.0, 3.0, 2.0]),
+        Point3D([-1.0, 3.0, 2.0]),
+        Point3D([1.0, 3.0, 2.0]),
+        Point3D([1.0, 3.0, 2.0]),
+    ]
+
+    # Verify the rotation
+    rotated_vertices = []
+    for edge in body_1.edges:
+        rotated_vertices.extend([edge.shape.start, edge.shape.end])
+    for edge in body_2.edges:
+        rotated_vertices.extend([edge.shape.start, edge.shape.end])
+
+    np.isin(expected_vertices, rotated_vertices)
+
+
+def test_move_translate_body(modeler: Modeler):
+    """Test move_translate a body."""
+    design = modeler.create_design("move_translate_body")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Move 2 units in the negative x direction
+    modeler.geometry_commands.move_translate(body, UnitVector3D([-1, 0, 0]), 2)
+
+    expected_vertices = [
+        Point3D([-1.0, 1.0, 0.0]),
+        Point3D([-3.0, 1.0, 0.0]),
+        Point3D([-1.0, -1.0, 0.0]),
+        Point3D([-3.0, -1.0, 0.0]),
+        Point3D([-3.0, 1.0, 4.0]),
+        Point3D([-1.0, 1.0, 4.0]),
+        Point3D([-3.0, -1.0, 4.0]),
+        Point3D([-1.0, -1.0, 4.0])
+    ]
+
+    # Verify the rotation
+    rotated_vertices = []
+    for edge in body.edges:
+        rotated_vertices.extend([edge.shape.start, edge.shape.end])
+
+    np.isin(expected_vertices, rotated_vertices)
+
+
+def test_move_translate_multiple_bodies(modeler: Modeler):
+    """Test move_translate a list of bodies."""
+    design = modeler.create_design("move_translate_body")
+    body_1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    body_2 = body_1.copy(design, "box2")
+
+    body_2.translate(UnitVector3D([0, 0, 1]), 2)
+
+    # Move both boxes 2 units in the negative x direction
+    modeler.geometry_commands.move_translate([body_1, body_2], UnitVector3D([-1, 0, 0]), 2)
+
+    # Snapshot of key vertices after rotation
+    expected_vertices = [
+        Point3D([1.0, 3.0, 2.0]),
+        Point3D([-1.0, 3.0, 2.0]),
+        Point3D([1.0, 3.0, 2.0]),
+        Point3D([1.0, 3.0, 2.0]),
+    ]
+
+    # Verify the rotation
+    rotated_vertices = []
+    for edge in body_1.edges:
+        rotated_vertices.extend([edge.shape.start, edge.shape.end])
+    for edge in body_2.edges:
+        rotated_vertices.extend([edge.shape.start, edge.shape.end])
+
+    np.isin(expected_vertices, rotated_vertices)
