@@ -999,7 +999,7 @@ def test_move_rotate_body(modeler: Modeler):
 
     # Rotate about edge ([1, -1, 2], [-1, -1, 2])
     rotation_axis = Line([1, -1, 2], [-1, 0, 0])
-    modeler.geometry_commands.move_rotate(body, rotation_axis, -np.pi/2)
+    modeler.geometry_commands.move_rotate(body, rotation_axis, -np.pi / 2)
 
     expected_vertices = [
         Point3D([-1.0, -1.0, 2.0]),
@@ -1009,7 +1009,7 @@ def test_move_rotate_body(modeler: Modeler):
         Point3D([-1.0, -1.0, 4.0]),
         Point3D([-1.0, 1.0, 4.0]),
         Point3D([1.0, -1.0, 4.0]),
-        Point3D([1.0, 1.0, 4.0])
+        Point3D([1.0, 1.0, 4.0]),
     ]
 
     # Verify the rotation
@@ -1030,7 +1030,7 @@ def test_move_rotate_multiple_bodies(modeler: Modeler):
 
     # Rotate about line through center of boxes
     rotation_axis = Line([1, 2, 0], [-1, 0, 0])
-    modeler.geometry_commands.move_rotate([body_1, body_2], rotation_axis, -np.pi/2)
+    modeler.geometry_commands.move_rotate([body_1, body_2], rotation_axis, -np.pi / 2)
 
     # Snapshot of key vertices after rotation
     expected_vertices = [
@@ -1066,7 +1066,7 @@ def test_move_translate_body(modeler: Modeler):
         Point3D([-3.0, 1.0, 4.0]),
         Point3D([-1.0, 1.0, 4.0]),
         Point3D([-3.0, -1.0, 4.0]),
-        Point3D([-1.0, -1.0, 4.0])
+        Point3D([-1.0, -1.0, 4.0]),
     ]
 
     # Verify the rotation

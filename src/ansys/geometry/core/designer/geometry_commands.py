@@ -1188,7 +1188,7 @@ class GeometryCommands:
         result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))
 
         return (result.along_u, result.radius)
-        
+
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def move_rotate(
@@ -1233,11 +1233,11 @@ class GeometryCommands:
         )
 
         return result.success
-    
+
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def move_translate(
-        self, 
+        self,
         selection: Union["Body", list["Body"], "Face", list["Face"]],
         direction: UnitVector3D,
         distance: Real,

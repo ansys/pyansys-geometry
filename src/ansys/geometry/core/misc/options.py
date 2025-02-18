@@ -90,6 +90,7 @@ class ImportOptions:
         """Provide the dictionary representation of the ImportOptions class."""
         return {k: bool(v) for k, v in asdict(self).items()}
 
+
 @dataclass
 class MoveOptions:
     """Options for moving geometry.
