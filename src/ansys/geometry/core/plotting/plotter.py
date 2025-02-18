@@ -35,6 +35,7 @@ from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.designpoint import DesignPoint
+from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
@@ -243,21 +244,18 @@ class GeometryPlotter(PlotterInterface):
 
         if self.use_service_colors:
             faces = body.faces
-            dataset = body.tessellate(merge=merge)
             body_color = body.color
             if not merge:
-                # ASSUMPTION: the faces returned by the service are in the same order
-                # as the tessellation information returned by the service...
-                elems = [elem for elem in dataset]
-                for face, block in zip(faces, elems):
+                for face in faces:
                     face_color = face.color
                     if face_color != Color.DEFAULT.value:
                         plotting_options["color"] = face_color
                     else:
                         plotting_options["color"] = body_color
-                    self._backend.pv_interface.plot(block, **plotting_options)
+                    self._backend.pv_interface.plot(face.tessellate(), **plotting_options)
                 return
             else:
+                dataset = body.tessellate(merge=True)
                 plotting_options["color"] = body_color
                 self._backend.pv_interface.plot(dataset, **plotting_options)
                 return
@@ -280,6 +278,32 @@ class GeometryPlotter(PlotterInterface):
         # Edges should ONLY be plotted individually if picking is enabled
         if self._backend._allow_picking:
             self.add_body_edges(body_plot)
+
+    def add_face(self, face: Face, **plotting_options: dict | None) -> None:
+        """Add a face to the scene.
+
+        Parameters
+        ----------
+        face : Face
+            Face to add.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+        """
+        self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
+        dataset = face.tessellate()
+        if self.use_service_colors:
+            face_color = face.color
+            if face_color != Color.DEFAULT.value:
+                plotting_options["color"] = face_color
+            else:
+                plotting_options["color"] = face.body.color
+            self._backend.pv_interface.plot(dataset, **plotting_options)
+            return
+
+        # Otherwise...
+        face_plot = MeshObjectPlot(custom_object=face, mesh=dataset)
+        self._backend.pv_interface.plot(face_plot, **plotting_options)
 
     def add_component(
         self,
@@ -438,6 +462,8 @@ class GeometryPlotter(PlotterInterface):
             self.add_sketch(plottable_object, **plotting_options)
         elif isinstance(plottable_object, (Body, MasterBody)):
             self.add_body(plottable_object, merge_bodies, **plotting_options)
+        elif isinstance(plottable_object, Face):
+            self.add_face(plottable_object, **plotting_options)
         elif isinstance(plottable_object, (Design, Component)):
             self.add_component(plottable_object, merge_component, merge_bodies, **plotting_options)
         elif (
