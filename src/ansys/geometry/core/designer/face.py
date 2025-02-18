@@ -381,8 +381,8 @@ class Face:
             response = self._faces_stub.GetNormal(GetNormalRequest(id=self.id, u=u, v=v)).direction
             return UnitVector3D([response.x, response.y, response.z])
 
-    @deprecated_method(alternative="normal")
-    def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:  # [deprecated-method]
+    @deprecated_method(alternative="normal", version="0.6.2", remove="0.10.0")
+    def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
         """Get the normal direction to the face at certain UV coordinates.
 
         Parameters
@@ -440,7 +440,7 @@ class Face:
             response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
             return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
 
-    @deprecated_method(alternative="point")
+    @deprecated_method(alternative="point", version="0.6.2", remove="0.10.0")
     def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
         """Get a point of the face evaluated at certain UV coordinates.
 

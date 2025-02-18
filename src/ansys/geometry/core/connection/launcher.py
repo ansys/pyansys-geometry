@@ -493,8 +493,12 @@ def launch_modeler_with_spaceclaim_and_pimlight(
     )
 
 
-@deprecated_argument(arg="log_level", alternative="server_log_level")
-@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
+@deprecated_argument(
+    arg="log_level", alternative="server_log_level", version="0.6.2", remove="0.10.0"
+)
+@deprecated_argument(
+    arg="logs_folder", alternative="server_logs_folder", version="0.6.2", remove="0.10.0"
+)
 def launch_modeler_with_geometry_service(
     product_version: int = None,
     host: str = "localhost",
@@ -627,7 +631,9 @@ def launch_modeler_with_geometry_service(
     )
 
 
-@deprecated_argument(arg="log_level", alternative="server_log_level")
+@deprecated_argument(
+    arg="log_level", alternative="server_log_level", version="0.6.2", remove="0.10.0"
+)
 def launch_modeler_with_discovery(
     product_version: int = None,
     host: str = "localhost",
@@ -754,7 +760,9 @@ def launch_modeler_with_discovery(
     )
 
 
-@deprecated_argument(arg="log_level", alternative="server_log_level")
+@deprecated_argument(
+    arg="log_level", alternative="server_log_level", version="0.6.2", remove="0.10.0"
+)
 def launch_modeler_with_spaceclaim(
     product_version: int = None,
     host: str = "localhost",
