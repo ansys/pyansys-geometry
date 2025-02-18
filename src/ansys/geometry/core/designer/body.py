@@ -1223,9 +1223,12 @@ class MasterBody(IBody):
         # cache tessellation
         if not self._tessellation:
             resp = self._bodies_stub.GetTessellation(self._grpc_id)
-            self._tessellation = resp.face_tessellation.values()
+            self._tessellation = {
+                str(face_id): tess_to_pd(face_tess)
+                for face_id, face_tess in resp.face_tessellation.items()
+            }
 
-        pdata = [tess_to_pd(tess).transform(transform) for tess in self._tessellation]
+        pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
         comp = pv.MultiBlock(pdata)
 
         if merge:
