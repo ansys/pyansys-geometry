@@ -78,6 +78,11 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.auxiliary import (
+    get_bodies_from_ids, 
+    get_faces_from_ids,
+    get_edges_from_ids,
+)
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.misc.options import ImportOptions
@@ -1141,7 +1146,19 @@ class Design(Component):
 
         # Create NamedSelections
         for ns in response.named_selections:
-            new_ns = NamedSelection(ns.name, self._grpc_client, preexisting_id=ns.id)
+            bodies = [body for body in get_bodies_from_ids(self, ns.selection)]
+            faces = [face for face in get_faces_from_ids(self, ns.selection)]
+            edges = [edge for edge in get_edges_from_ids(self, ns.selection)]            
+
+            new_ns = NamedSelection(
+                ns.name, 
+                self._grpc_client, 
+                preexisting_id=ns.id, 
+                bodies=bodies, 
+                faces=faces, 
+                edges=edges
+                )
+            print("called constructor")
             self._named_selections[new_ns.name] = new_ns
 
         # Create CoordinateSystems

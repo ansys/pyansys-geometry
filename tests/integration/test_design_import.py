@@ -346,3 +346,17 @@ def test_design_insert_with_import(modeler: Modeler):
     assert design.is_active is True
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "Wheel1"
+
+
+def test_design_import_with_named_selections(modeler: Modeler):
+    """Test importing a design with named selections."""
+    # Open the design
+    design = modeler.open_file(Path(FILES_DIR, "combustor_fluid_volume.scdocx"))
+
+    # Check that there are 29 Named Selections
+    assert len(design.named_selections) == 29
+    
+    # Get named selection nozzle1
+    nozzle1 = design._named_selections["nozzle1"]
+    print(design)
+    print(nozzle1)

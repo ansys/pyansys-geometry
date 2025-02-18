@@ -80,8 +80,13 @@ class NamedSelection:
         if preexisting_id:
             self._id = preexisting_id
             self._name = name
+            self._bodies = bodies if bodies else []
+            self._faces = faces if faces else []
+            self._edges = edges if edges else []
+            self._beams = beams if beams else []
+            self._design_points = design_points if design_points else []
             return
-
+    
         # All ids should be unique - no duplicated values
         ids = set()
 
@@ -110,6 +115,7 @@ class NamedSelection:
         self._name = new_named_selection.name
 
         self._bodies = bodies
+        print("made bodies")
         self._faces = faces
         self._edges = edges
         self._beams = beams
@@ -149,3 +155,15 @@ class NamedSelection:
     def design_points(self) -> list[DesignPoint]:
         """All design points in the named selection."""
         return self._design_points
+    
+    def __repr__(self) -> str:
+        """Represent the ``NamedSelection`` as a string."""
+        lines = [f"ansys.geometry.core.designer.selection.NamedSelection {hex(id(self))}"]
+        lines.append(f"  Name                 : {self._name}")
+        lines.append(f"  Id?                  : {self._id}")
+        lines.append(f"  N Bodies             : {len(self.bodies)}")
+        lines.append(f"  N Faces              : {len(self.faces)}")
+        lines.append(f"  N Edges              : {len(self.edges)}")
+        lines.append(f"  N Beams              : {len(self.beams)}")
+        lines.append(f"  N Design Points      : {len(self.design_points)}")
+        return "\n".join(lines)

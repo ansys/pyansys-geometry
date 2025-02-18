@@ -24,7 +24,7 @@
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from enum import Enum, unique
-from functools import wraps
+from functools import cached_property, wraps
 from typing import TYPE_CHECKING, Union
 
 from beartype import beartype as check_input_types
@@ -1428,7 +1428,7 @@ class Body(IBody):
     def parent_component(self) -> "Component":  # noqa: D102
         return self._parent_component
 
-    @property
+    @cached_property
     @protect_grpc
     @ensure_design_is_active
     def faces(self) -> list[Face]:  # noqa: D102
@@ -1445,7 +1445,7 @@ class Body(IBody):
             for grpc_face in grpc_faces.faces
         ]
 
-    @property
+    @cached_property
     @protect_grpc
     @ensure_design_is_active
     def edges(self) -> list[Edge]:  # noqa: D102
