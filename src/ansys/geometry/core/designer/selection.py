@@ -109,6 +109,12 @@ class NamedSelection:
         self._id = new_named_selection.id
         self._name = new_named_selection.name
 
+        self._bodies = bodies
+        self._faces = faces
+        self._edges = edges
+        self._beams = beams
+        self._design_points = design_points
+
     @property
     def id(self) -> str:
         """ID of the named selection."""
@@ -118,3 +124,28 @@ class NamedSelection:
     def name(self) -> str:
         """Name of the named selection."""
         return self._name
+
+    @property
+    def bodies(self) -> list[Body]:
+        """All bodies in the named selection."""
+        return self._bodies
+    
+    @property
+    def faces(self) -> list[Face]:
+        """All faces in the named selection."""
+        return self._faces
+
+    @property
+    def edges(self) -> list[Edge]:
+        """All edges in the named selection."""
+        return self._edges
+
+    @property
+    def beams(self) -> list[Beam]:
+        """All beams in the named selection."""
+        return self._beams
+    
+    @property
+    def design_points(self) -> list[DesignPoint]:
+        """All design points in the named selection."""
+        return self._design_points

@@ -456,6 +456,40 @@ def test_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 3
 
 
+def test_named_selection_contents(modeler: Modeler):
+    """Test for verifying the correct contents of a ``NamedSelection``."""
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelection_Test")
+
+    # Create objects to add to the named selection
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    box_2 = design.extrude_sketch("box_2", Sketch().box(Point2D([0, 0]), 5, 5), 5)
+    face = box_2.faces[2]
+    edge = box_2.edges[0]
+
+    # Create the NamedSelection
+    ns = design.create_named_selection(
+        "MyNamedSelection", 
+        bodies=[box, box_2], 
+        faces=[face], 
+        edges=[edge]
+        )
+    
+    # Check that the named selection has everything
+    assert len(ns.bodies) == 2
+    assert ns.bodies[0].id == box.id
+    assert ns.bodies[1].id == box_2.id
+
+    assert len(ns.faces) == 1
+    assert ns.faces[0].id == face.id
+
+    assert len(ns.edges) == 1
+    assert ns.edges[0].id == edge.id
+
+    assert len(ns.beams) == 0
+    assert len(ns.design_points) == 0
+
+
 def test_add_component_with_instance_name(modeler: Modeler):
     design = modeler.create_design("DesignHierarchyExample")
     circle_sketch = Sketch()
