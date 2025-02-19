@@ -358,5 +358,5 @@ def test_design_import_with_named_selections(modeler: Modeler):
     
     # Get named selection nozzle1
     nozzle1 = design._named_selections["nozzle1"]
-    print(design)
-    print(nozzle1)
+    assert len(nozzle1.bodies) == 0
+    assert len(nozzle1.faces) == 12

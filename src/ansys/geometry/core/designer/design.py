@@ -1145,20 +1145,19 @@ class Design(Component):
             self.materials.append(m)
 
         # Create NamedSelections
-        for ns in response.named_selections:
-            bodies = [body for body in get_bodies_from_ids(self, ns.selection)]
-            faces = [face for face in get_faces_from_ids(self, ns.selection)]
-            edges = [edge for edge in get_edges_from_ids(self, ns.selection)]            
-
+        for ns in response.named_selections:        
+            result = self._named_selections_stub.Get(EntityIdentifier(id=ns.id))
+            print(result.faces)
             new_ns = NamedSelection(
                 ns.name, 
                 self._grpc_client, 
                 preexisting_id=ns.id, 
-                bodies=bodies, 
-                faces=faces, 
-                edges=edges
-                )
-            print("called constructor")
+                bodies=[body.id for body in result.bodies], 
+                faces=[face.id for face in result.faces], 
+                edges=[edge.id for edge in result.edges],
+                beams=[beam.id for beam in result.beams],
+                design_points=[design_point.id for design_point in result.design_points]
+            )
             self._named_selections[new_ns.name] = new_ns
 
         # Create CoordinateSystems

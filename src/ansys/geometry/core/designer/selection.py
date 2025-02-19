@@ -66,25 +66,25 @@ class NamedSelection:
         self,
         name: str,
         grpc_client: GrpcClient,
-        bodies: list[Body] | None = None,
-        faces: list[Face] | None = None,
-        edges: list[Edge] | None = None,
-        beams: list[Beam] | None = None,
-        design_points: list[DesignPoint] | None = None,
+        bodies: list[str] | None = None,
+        faces: list[str] | None = None,
+        edges: list[str] | None = None,
+        beams: list[str] | None = None,
+        design_points: list[str] | None = None,
         preexisting_id: str | None = None,
     ):
         """Initialize the ``NamedSelection`` class."""
         self._grpc_client = grpc_client
-        self._named_selections_stub = NamedSelectionsStub(grpc_client.channel)
+        self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
         if preexisting_id:
             self._id = preexisting_id
             self._name = name
-            self._bodies = bodies if bodies else []
-            self._faces = faces if faces else []
-            self._edges = edges if edges else []
-            self._beams = beams if beams else []
-            self._design_points = design_points if design_points else []
+            self._bodies = bodies
+            self._faces = faces
+            self._edges = edges
+            self._beams = beams
+            self._design_points = design_points
             return
     
         # All ids should be unique - no duplicated values
@@ -113,13 +113,11 @@ class NamedSelection:
         new_named_selection = self._named_selections_stub.Create(named_selection_request)
         self._id = new_named_selection.id
         self._name = new_named_selection.name
-
-        self._bodies = bodies
-        print("made bodies")
-        self._faces = faces
-        self._edges = edges
-        self._beams = beams
-        self._design_points = design_points
+        self._bodies = new_named_selection.bodies
+        self._faces = new_named_selection.faces
+        self._edges = new_named_selection.edges
+        self._beams = new_named_selection.beams
+        self._design_points = new_named_selection.design_points
 
     @property
     def id(self) -> str:
@@ -160,7 +158,7 @@ class NamedSelection:
         """Represent the ``NamedSelection`` as a string."""
         lines = [f"ansys.geometry.core.designer.selection.NamedSelection {hex(id(self))}"]
         lines.append(f"  Name                 : {self._name}")
-        lines.append(f"  Id?                  : {self._id}")
+        lines.append(f"  Id                   : {self._id}")
         lines.append(f"  N Bodies             : {len(self.bodies)}")
         lines.append(f"  N Faces              : {len(self.faces)}")
         lines.append(f"  N Edges              : {len(self.edges)}")

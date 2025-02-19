@@ -473,7 +473,7 @@ def test_named_selection_contents(modeler: Modeler):
         bodies=[box, box_2], 
         faces=[face], 
         edges=[edge]
-        )
+    )
     
     # Check that the named selection has everything
     assert len(ns.bodies) == 2
