@@ -1,0 +1,1190 @@
+:py:mod:`ansys.geometry.core.sketch.sketch`
+===========================================
+
+.. py:module:: ansys.geometry.core.sketch.sketch
+
+.. autoapi-nested-parse::
+
+   Provides the ``Sketch`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.sketch.sketch.Sketch
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.sketch.sketch.SketchObject
+
+
+.. py:data:: SketchObject
+
+   
+   Type used to refer to both ``SketchEdge`` and ``SketchFace`` as possible values.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: Sketch(plane: beartype.typing.Optional[ansys.geometry.core.math.Plane] = Plane())
+
+
+   
+   Provides for building 2D sketch elements.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: plane
+      :type: ansys.geometry.core.math.Plane
+
+      
+      Sketch plane configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: edges
+      :type: beartype.typing.List[ansys.geometry.core.sketch.edge.SketchEdge]
+
+      
+      List all independently sketched edges.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Those that are not assigned to a face. Face edges are not
+      included in this list.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: faces
+      :type: beartype.typing.List[ansys.geometry.core.sketch.face.SketchFace]
+
+      
+      List of all independently sketched faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: translate_sketch_plane(translation: ansys.geometry.core.math.Vector3D) -> Sketch
+
+      
+      Translate the origin location of the active sketch plane.
+
+
+      :Parameters:
+
+          **translation** : :obj:`Vector3D`
+              Vector defining the translation. Meters is the expected unit.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: translate_sketch_plane_by_offset(x: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance] = Quantity(0, DEFAULT_UNITS.LENGTH), y: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance] = Quantity(0, DEFAULT_UNITS.LENGTH), z: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance] = Quantity(0, DEFAULT_UNITS.LENGTH)) -> Sketch
+
+      
+      Translate the origin location of the active sketch plane by offsets.
+
+
+      :Parameters:
+
+          **x** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`], default: :obj:`Quantity`\(0, :obj:`DEFAULT_UNITS.LENGTH`)
+              Amount to translate the origin the x-direction.
+
+          **y** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`], default: :obj:`Quantity`\(0, :obj:`DEFAULT_UNITS.LENGTH`)
+              Amount to translate the origin the y-direction.
+
+          **z** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`], default: :obj:`Quantity`\(0, :obj:`DEFAULT_UNITS.LENGTH`)
+              Amount to translate the origin the z-direction.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: translate_sketch_plane_by_distance(direction: ansys.geometry.core.math.UnitVector3D, distance: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance]) -> Sketch
+
+      
+      Translate the origin location active sketch plane by distance.
+
+
+      :Parameters:
+
+          **direction** : :obj:`UnitVector3D`
+              Direction to translate the origin.
+
+          **distance** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`]
+              Distance to translate the origin.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get(tag: str) -> beartype.typing.List[SketchObject]
+
+      
+      Get a list of shapes with a given tag.
+
+
+      :Parameters:
+
+          **tag** : :class:`python:str`
+              Tag to query against.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: face(face: ansys.geometry.core.sketch.face.SketchFace, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Add a sketch face to the sketch.
+
+
+      :Parameters:
+
+          **face** : :obj:`SketchFace`
+              Face to add.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this face.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: edge(edge: ansys.geometry.core.sketch.edge.SketchEdge, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Add a sketch edge to the sketch.
+
+
+      :Parameters:
+
+          **edge** : :obj:`SketchEdge`
+              Edge to add.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this edge.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: select(*tags: str) -> Sketch
+
+      
+      Add all objects to the current context that match provided tags.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: segment(start: ansys.geometry.core.math.Point2D, end: ansys.geometry.core.math.Point2D, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Add a segment sketch object to the sketch plane.
+
+
+      :Parameters:
+
+          **start** : :obj:`Point2D`
+              Point that is the start of the line segment.
+
+          **end** : :obj:`Point2D`
+              Point that is the end of the line segment.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this edge.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: segment_to_point(end: ansys.geometry.core.math.Point2D, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Add a segment to the sketch plane starting from the previous edge end point.
+
+
+      :Parameters:
+
+          **end** : :obj:`Point2D`
+              Point that is the end of the line segment.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this edge.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The starting point of the created edge is based upon the current context
+      of the sketch, such as the end point of a previously added edge.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: segment_from_point_and_vector(start: ansys.geometry.core.math.Point2D, vector: ansys.geometry.core.math.Vector2D, tag: beartype.typing.Optional[str] = None)
+
+      
+      Add a segment to the sketch starting from a given starting point.
+
+
+      :Parameters:
+
+          **start** : :obj:`Point2D`
+              Point that is the start of the line segment.
+
+          **vector** : :obj:`Vector2D`
+              Vector defining the line segment. Vector magnitude determines
+              the segment endpoint. Vector magnitude is assumed to be in the
+              same unit as the starting point.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this edge.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Vector magnitude determines the segment endpoint.
+      Vector magnitude is assumed to use the same unit as the starting point.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: segment_from_vector(vector: ansys.geometry.core.math.Vector2D, tag: beartype.typing.Optional[str] = None)
+
+      
+      Add a segment to the sketch starting from the end point of the previous edge.
+
+
+      :Parameters:
+
+          **vector** : :obj:`Vector2D`
+              Vector defining the line segment.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this edge.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The starting point of the created edge is based upon the current context
+      of the sketch, such as the end point of a previously added edge.
+
+      Vector magnitude determines the segment endpoint.
+      Vector magnitude is assumed to use the same unit as the starting point
+      in the previous context.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: arc(start: ansys.geometry.core.math.Point2D, end: ansys.geometry.core.math.Point2D, center: ansys.geometry.core.math.Point2D, clockwise: beartype.typing.Optional[bool] = False, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Add an arc to the sketch plane.
+
+
+      :Parameters:
+
+          **start** : :obj:`Point2D`
+              Point that is the start of the arc.
+
+          **end** : :obj:`Point2D`
+              Point that is the end of the arc.
+
+          **center** : :obj:`Point2D`
+              Point that is the center of the arc.
+
+          **clockwise** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether the arc spans the angle clockwise between the start
+              and end points. By default, the arc spans the angle
+              counter-clockwise. When ``True``, the arc spans the angle
+              clockwise.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this edge.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: arc_to_point(end: ansys.geometry.core.math.Point2D, center: ansys.geometry.core.math.Point2D, clockwise: beartype.typing.Optional[bool] = False, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Add an arc to the sketch starting from the end point of the previous edge.
+
+
+      :Parameters:
+
+          **end** : :obj:`Point2D`
+              Point that is the end of the arc.
+
+          **center** : :obj:`Point2D`
+              Point that is the center of the arc.
+
+          **clockwise** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Whether the arc spans the angle clockwise between the start
+              and end points. By default, the arc spans the angle
+              counter-clockwise. When ``True``, the arc spans the angle
+              clockwise.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this edge.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The starting point of the created edge is based upon the current context
+      of the sketch, such as the end point of a previously added edge.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: arc_from_three_points(start: ansys.geometry.core.math.Point2D, inter: ansys.geometry.core.math.Point2D, end: ansys.geometry.core.math.Point2D, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Add an arc to the sketch plane from three given points.
+
+
+      :Parameters:
+
+          **start** : :obj:`Point2D`
+              Point that is the start of the arc.
+
+          **inter** : :obj:`Point2D`
+              Point that is at an intermediate location of the arc.
+
+          **end** : :obj:`Point2D`
+              Point that is the end of the arc.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this edge.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: triangle(point1: ansys.geometry.core.math.Point2D, point2: ansys.geometry.core.math.Point2D, point3: ansys.geometry.core.math.Point2D, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Add a triangle to the sketch using given vertex points.
+
+
+      :Parameters:
+
+          **point1** : :obj:`Point2D`
+              Point that represents a vertex of the triangle.
+
+          **point2** : :obj:`Point2D`
+              Point that represents a vertex of the triangle.
+
+          **point3** : :obj:`Point2D`
+              Point that represents a vertex of the triangle.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this face.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: trapezoid(width: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], height: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], slant_angle: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real], nonsymmetrical_slant_angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real]] = None, center: beartype.typing.Optional[ansys.geometry.core.math.Point2D] = ZERO_POINT2D, angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real]] = 0, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Add a triangle to the sketch using given vertex points.
+
+
+      :Parameters:
+
+          **width** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Width of the slot main body.
+
+          **height** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Height of the slot.
+
+          **slant_angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`]
+              Angle for trapezoid generation.
+
+          **nonsymmetrical_slant_angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`], default: :data:`python:None`
+              Asymmetrical slant angles on each side of the trapezoid.
+              By default, the trapezoid is symmetrical.
+
+          **center** : :obj:`Point2D`, default: (0, 0)
+              Point that represents the center of the trapezoid.
+
+          **angle** : :obj:`Optional`\[:obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`]], default: 0
+              Placement angle for orientation alignment.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this face.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: circle(center: ansys.geometry.core.math.Point2D, radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Add a circle to the plane at a given center.
+
+
+      :Parameters:
+
+          **center: Point2D**
+              Point that represents the center of the circle.
+
+          **radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Radius of the circle.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this face.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: box(center: ansys.geometry.core.math.Point2D, width: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], height: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real]] = 0, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Create a box on the sketch.
+
+
+      :Parameters:
+
+          **center: Point2D**
+              Point that represents the center of the box.
+
+          **width** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Width of the box.
+
+          **height** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Height of the box.
+
+          **angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Real`], default: 0
+              Placement angle for orientation alignment.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this face.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: slot(center: ansys.geometry.core.math.Point2D, width: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], height: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real]] = 0, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Create a slot on the sketch.
+
+
+      :Parameters:
+
+          **center: Point2D**
+              Point that represents the center of the slot.
+
+          **width** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Width of the slot.
+
+          **height** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Height of the slot.
+
+          **angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`], default: 0
+              Placement angle for orientation alignment.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this face.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: ellipse(center: ansys.geometry.core.math.Point2D, major_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], minor_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real]] = 0, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Create an ellipse on the sketch.
+
+
+      :Parameters:
+
+          **center: Point2D**
+              Point that represents the center of the ellipse.
+
+          **major_radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Semi-major axis of the ellipse.
+
+          **minor_radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Semi-minor axis of the ellipse.
+
+          **angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`], default: 0
+              Placement angle for orientation alignment.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this face.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: polygon(center: ansys.geometry.core.math.Point2D, inner_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], sides: int, angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real]] = 0, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Create a polygon on the sketch.
+
+
+      :Parameters:
+
+          **center: Point2D**
+              Point that represents the center of the polygon.
+
+          **inner_radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Inner radius (apothem) of the polygon.
+
+          **sides** : :class:`python:int`
+              Number of sides of the polygon.
+
+          **angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`], default: 0
+              Placement angle for orientation alignment.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this face.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: dummy_gear(origin: ansys.geometry.core.math.Point2D, outer_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], inner_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], n_teeth: int, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Create a dummy gear on the sketch.
+
+
+      :Parameters:
+
+          **origin** : :obj:`Point2D`
+              Origin of the gear.
+
+          **outer_radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Outer radius of the gear.
+
+          **inner_radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+              Inner radius of the gear.
+
+          **n_teeth** : :class:`python:int`
+              Number of teeth of the gear.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this face.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: spur_gear(origin: ansys.geometry.core.math.Point2D, module: ansys.geometry.core.typing.Real, pressure_angle: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real], n_teeth: int, tag: beartype.typing.Optional[str] = None) -> Sketch
+
+      
+      Create a spur gear on the sketch.
+
+
+      :Parameters:
+
+          **origin** : :obj:`Point2D`
+              Origin of the spur gear.
+
+          **module** : :obj:`Real`
+              Module of the spur gear. This is also the ratio between the pitch circle
+              diameter in millimeters and the number of teeth.
+
+          **pressure_angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`]
+              Pressure angle of the spur gear.
+
+          **n_teeth** : :class:`python:int`
+              Number of teeth of the spur gear.
+
+          **tag** : :class:`python:str`, default: :data:`python:None`
+              User-defined label for identifying this face.
+
+      :Returns:
+
+          :obj:`Sketch`
+              Revised sketch state ready for further sketch actions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: tag(tag: str) -> None
+
+      
+      Add a tag to the active selection of sketch objects.
+
+
+      :Parameters:
+
+          **tag** : :class:`python:str`
+              Tag to assign the sketch objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: plot(view_2d: beartype.typing.Optional[bool] = False, screenshot: beartype.typing.Optional[str] = None, use_trame: beartype.typing.Optional[bool] = None, **plotting_options: beartype.typing.Optional[dict])
+
+      
+      Plot all objects of the sketch to the scene.
+
+
+      :Parameters:
+
+          **view_2d** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Specifies whether the plot should be represented in a 2D format.
+              By default, this is set to ``False``.
+
+          **screenshot** : :class:`python:str`, :obj:`optional`
+              Save a screenshot of the image being represented. The image is
+              stored in the path provided as an argument.
+
+          **use_trame** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+              Enables/disables the usage of the trame web visualizer. Defaults to the
+              global setting ``USE_TRAME``.
+
+          **\*\*plotting_options** : :class:`python:dict`, :obj:`optional`
+              Keyword arguments. For allowable keyword arguments,
+              see the :func:`pyvista.Plotter.add_mesh` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: plot_selection(view_2d: beartype.typing.Optional[bool] = False, screenshot: beartype.typing.Optional[str] = None, use_trame: beartype.typing.Optional[bool] = None, **plotting_options: beartype.typing.Optional[dict])
+
+      
+      Plot the current selection to the scene.
+
+
+      :Parameters:
+
+          **view_2d** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+              Specifies whether the plot should be represented in a 2D format.
+              By default, this is set to ``False``.
+
+          **screenshot** : :class:`python:str`, :obj:`optional`
+              Save a screenshot of the image being represented. The image is
+              stored in the path provided as an argument.
+
+          **use_trame** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+              Enables/disables the usage of the trame web visualizer. Defaults to the
+              global setting ``USE_TRAME``.
+
+          **\*\*plotting_options** : :class:`python:dict`, :obj:`optional`
+              Keyword arguments. For allowable keyword arguments,
+              see the :func:`pyvista.Plotter.add_mesh` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: sketch_polydata() -> beartype.typing.List[pyvista.PolyData]
+
+      
+      Get polydata configuration for all objects of the sketch to the scene.
+
+
+
+      :Returns:
+
+          :obj:`List`\[:obj:`PolyData`]
+              Set of PolyData configuration for all edges and faces in the sketch.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
