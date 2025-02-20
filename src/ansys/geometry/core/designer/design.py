@@ -71,6 +71,7 @@ from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
+from ansys.geometry.core.designer.datum_planes import DatumPlanes
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
@@ -684,6 +685,31 @@ class Design(Component):
         )
 
         return self._named_selections[named_selection.name]
+    
+    def create_datum_plane(
+        self,
+        name: str,
+        parent_component: "Component",
+        bodies: list[Body] | None = None,
+        faces: list[Face] | None = None,
+        edges: list[Edge] | None = None,
+        preexisting_id: str | None = None,) -> DatumPlanes:
+        """Create a datum plane on the active Geometry server instance."""
+        
+        datum_planes = DatumPlanes(
+            name, 
+            parent_component, 
+            self._grpc_client, 
+            bodies, 
+            faces, 
+            edges, 
+            preexisting_id
+        )
+        
+        self._grpc_client.log.debug(
+            f"Datum planes {datum_planes.name} is successfully created."
+        )
+        return datum_planes
 
     @protect_grpc
     @check_input_types

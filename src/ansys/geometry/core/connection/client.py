@@ -168,6 +168,7 @@ class GrpcClient:
         logging_level: int = logging.INFO,
         logging_file: Path | str | None = None,
         backend_type: BackendType | None = None,
+        ignore_healtcheck: bool = False,
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
@@ -188,8 +189,9 @@ class GrpcClient:
             )
 
         # do not finish initialization until channel is healthy
-        self._grpc_health_timeout = timeout
-        wait_until_healthy(self._channel, self._grpc_health_timeout)
+        if not ignore_healtcheck:
+            self._grpc_health_timeout = timeout
+            wait_until_healthy(self._channel, self._grpc_health_timeout)
 
         # once connection with the client is established, create a logger
         self._log = LOG.add_instance_logger(

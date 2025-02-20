@@ -102,6 +102,7 @@ class Modeler:
         logging_level: int = logging.INFO,
         logging_file: Path | str | None = None,
         backend_type: BackendType | None = None,
+        ignore_healtcheck: bool = False,
     ):
         """Initialize the ``Modeler`` class."""
         from ansys.geometry.core.designer.geometry_commands import GeometryCommands
@@ -117,6 +118,7 @@ class Modeler:
             logging_level=logging_level,
             logging_file=logging_file,
             backend_type=backend_type,
+            ignore_healtcheck=ignore_healtcheck,
         )
 
         # Single design for the Modeler

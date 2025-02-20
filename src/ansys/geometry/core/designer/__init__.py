@@ -30,3 +30,4 @@ from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.designer.geometry_commands import ExtrudeType, OffsetMode
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
+from ansys.geometry.core.designer.datum_planes import DatumPlanes
