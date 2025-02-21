@@ -52,6 +52,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
 )
+from ansys.api.geometry.v0.namedselections_pb2 import CreateRequest
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
@@ -59,6 +60,7 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
     grpc_frame_to_frame,
     grpc_matrix_to_matrix,
+    grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
 )
@@ -636,6 +638,7 @@ class Design(Component):
         return file_location
 
     @check_input_types
+    @protect_grpc
     @ensure_design_is_active
     def create_named_selection(
         self,
@@ -679,6 +682,14 @@ class Design(Component):
         )
         self._named_selections[named_selection.name] = named_selection
 
+        members = []
+        members.extend([body.id for body in named_selection.bodies])
+        members.extend([face.id for face in named_selection.faces])
+        members.extend([edge.id for edge in named_selection.edges])
+        members.extend([beam.id for beam in named_selection.beams])
+        members.extend([design_point.id for design_point in named_selection.design_points])
+
+        self._named_selections_stub.Create(CreateRequest(name=name, members=members))
         self._grpc_client.log.debug(
             f"Named selection {named_selection.name} is successfully created."
         )
@@ -1141,7 +1152,28 @@ class Design(Component):
 
         # Create NamedSelections
         for ns in response.named_selections:
-            new_ns = NamedSelection(ns.name, self._grpc_client, preexisting_id=ns.id)
+            result = self._named_selections_stub.Get(EntityIdentifier(id=ns.id))
+            new_ns = NamedSelection(
+                ns.name,
+                self._grpc_client,
+                preexisting_id=ns.id,
+                bodies=[
+                    Body(body.id, body.name, body.parent, body.master) for body in result.bodies
+                ],
+                faces=[
+                    Face(face.id, face.surface_type, face.parent, self._grpc_client)
+                    for face in result.faces
+                ],
+                edges=[
+                    Edge(edge.id, edge.curve_type, edge.parent, self._grpc_client)
+                    for edge in result.edges
+                ],
+                beams=[beam.id for beam in result.beams],
+                design_points=[
+                    DesignPoint(dp.id, "dp: " + dp.id, grpc_point_to_point3d(dp.points[0]), self)
+                    for dp in result.design_points
+                ],
+            )
             self._named_selections[new_ns.name] = new_ns
 
         # Create CoordinateSystems
