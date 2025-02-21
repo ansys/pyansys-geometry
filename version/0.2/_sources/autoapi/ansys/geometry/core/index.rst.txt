@@ -1,0 +1,107 @@
+:py:mod:`ansys.geometry.core`
+=============================
+
+.. py:module:: ansys.geometry.core
+
+.. autoapi-nested-parse::
+
+   
+   PyGeometry is a Python wrapper for the Ansys Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   connection/index.rst
+   designer/index.rst
+   materials/index.rst
+   math/index.rst
+   misc/index.rst
+   plotting/index.rst
+   primitives/index.rst
+   sketch/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   errors/index.rst
+   logger/index.rst
+   modeler/index.rst
+   typing/index.rst
+
+
+Package Contents
+----------------
+
+.. py:data:: __version__
+
+   
+   PyGeometry version.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: USE_TRAME
+   :value: False
+
+   
+   Global constant for checking the use of trame or not.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

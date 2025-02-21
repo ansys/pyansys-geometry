@@ -1,0 +1,1182 @@
+:py:mod:`ansys.geometry.core.math.vector`
+=========================================
+
+.. py:module:: ansys.geometry.core.math.vector
+
+.. autoapi-nested-parse::
+
+   Provides ``Vector`` classes.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.math.vector.Vector3D
+   ansys.geometry.core.math.vector.Vector2D
+   ansys.geometry.core.math.vector.UnitVector3D
+   ansys.geometry.core.math.vector.UnitVector2D
+
+
+
+
+.. py:class:: Vector3D(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+
+   Bases: :py:obj:`numpy.ndarray`
+
+   
+   Provides a 3D vector class.
+
+
+   :Parameters:
+
+       **input** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`]
+           3D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: x
+      :type: ansys.geometry.core.typing.Real
+
+      
+      X coordinate of the ``Vector3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: y
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Y coordinate of the ``Vector3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: z
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Z coordinate of the ``Vector3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: norm
+      :type: float
+
+      
+      Norm of the vector.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: magnitude
+      :type: float
+
+      
+      Norm of the vector.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: is_zero
+      :type: bool
+
+      
+      Check if all components of the 3D vector are zero.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_perpendicular_to(other_vector: Vector3D) -> bool
+
+      
+      Check if this vector and another vector are perpendicular.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_parallel_to(other_vector: Vector3D) -> bool
+
+      
+      Check if this vector and another vector are parallel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_opposite(other_vector: Vector3D) -> bool
+
+      
+      Check if this vector and another vector are opposite.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: normalize() -> Vector3D
+
+      
+      Return a normalized version of the 3D vector.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: transform(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Vector3D
+
+      
+      Transform the current Vector3D with a transformation matrix.
+
+
+      :Parameters:
+
+          **matrix** : :obj:`Matrix44`
+              The 4x4 transformation matrix to apply to the vector.
+
+      :Returns:
+
+          :obj:`Vector3D`
+              A new Vector3D object that is the transformed copy of the original vector after applying
+              the transformation matrix.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Transform the current Vector3D object by applying the specified 4x4
+      transformation matrix and returns a new Vector3D object representing the
+      transformed vector.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_angle_between(v: Vector3D) -> pint.Quantity
+
+      
+      Get the angle between this 3D vector and another 3D vector.
+
+
+      :Parameters:
+
+          **v** : :obj:`Vector3D`
+              Other 3D vector for computing the angle.
+
+      :Returns:
+
+          :obj:`Quantity`
+              Angle between the two 3D vectors.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: cross(v: Vector3D) -> Vector3D
+
+      
+      Return the cross product of ``Vector3D`` objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: Vector3D) -> bool
+
+      
+      Equals operator for the ``Vector3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __ne__(other: Vector3D) -> bool
+
+      
+      Not equals operator for the ``Vector3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __mul__(other: beartype.typing.Union[Vector3D, ansys.geometry.core.typing.Real]) -> beartype.typing.Union[Vector3D, ansys.geometry.core.typing.Real]
+
+      
+      Overload * operator with dot product.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Also admits scalar multiplication.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __mod__(other: Vector3D) -> Vector3D
+
+      
+      Overload % operator with cross product.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __add__(other: beartype.typing.Union[Vector3D, ansys.geometry.core.math.point.Point3D]) -> beartype.typing.Union[Vector3D, ansys.geometry.core.math.point.Point3D]
+
+      
+      Addition operation overload for 3D vectors.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __sub__(other: Vector3D) -> Vector3D
+
+      
+      Subtraction operation overload for 3D vectors.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: from_points(point_a: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point3D], point_b: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point3D])
+      :classmethod:
+
+      
+      Create a 3D vector from two distinct 3D points.
+
+
+      :Parameters:
+
+          **point_a** : :obj:`Point3D`
+              :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+              class representing the first point.
+
+          **point_b** : :obj:`Point3D`
+              :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+              class representing the second point.
+
+      :Returns:
+
+          :obj:`Vector3D`
+              3D vector from ``point_a`` to ``point_b``.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The resulting 3D vector is always expressed in ``Point3D``
+      base units.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: Vector2D(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+
+   Bases: :py:obj:`numpy.ndarray`
+
+   
+   Proves a 2D vector class.
+
+
+   :Parameters:
+
+       **input** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`]
+           2D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: x
+      :type: ansys.geometry.core.typing.Real
+
+      
+      X coordinate of the 2D vector.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: y
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Y coordinate of the 2D vector.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: norm
+      :type: float
+
+      
+      Norm of the 2D vector.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: magnitude
+      :type: float
+
+      
+      Norm of the 2D vector.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: is_zero
+      :type: bool
+
+      
+      Check if values for all components of the 2D vector are zero.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: cross(v: Vector2D)
+
+      
+      Return the cross product of ``Vector2D`` objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_perpendicular_to(other_vector: Vector2D) -> bool
+
+      
+      Check if this 2D vector and another 2D vector are perpendicular.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_parallel_to(other_vector: Vector2D) -> bool
+
+      
+      Check if this vector and another vector are parallel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_opposite(other_vector: Vector2D) -> bool
+
+      
+      Check if this vector and another vector are opposite.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: normalize() -> Vector2D
+
+      
+      Return a normalized version of the 2D vector.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_angle_between(v: Vector2D) -> pint.Quantity
+
+      
+      Get the angle between this 2D vector and another 2D vector.
+
+
+      :Parameters:
+
+          **v** : :obj:`Vector2D`
+              Other 2D vector to compute the angle with.
+
+      :Returns:
+
+          :obj:`Quantity`
+              Angle between both 2D vectors.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: Vector2D) -> bool
+
+      
+      Equals operator for the ``Vector2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __ne__(other: Vector2D) -> bool
+
+      
+      Not equals operator for the ``Vector2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __mul__(other: beartype.typing.Union[Vector2D, ansys.geometry.core.typing.Real]) -> beartype.typing.Union[Vector2D, ansys.geometry.core.typing.Real]
+
+      
+      Overload * operator with dot product.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Also admits scalar multiplication.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __add__(other: beartype.typing.Union[Vector2D, ansys.geometry.core.math.point.Point2D]) -> beartype.typing.Union[Vector2D, ansys.geometry.core.math.point.Point2D]
+
+      
+      Addition operation overload for 2D vectors.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __sub__(other: Vector2D) -> Vector2D
+
+      
+      Subtraction operation overload for 2D vectors.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __mod__(other: Vector2D) -> Vector2D
+
+      
+      Overload % operator with cross product.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: from_points(point_a: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point2D], point_b: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point2D])
+      :classmethod:
+
+      
+      Create a 2D vector from two distinct 2D points.
+
+
+      :Parameters:
+
+          **point_a** : :obj:`Point2D`
+              :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+              class representing the first point.
+
+          **point_b** : :obj:`Point2D`
+              :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+              class representing the second point.
+
+      :Returns:
+
+          :obj:`Vector2D`
+              2D vector from ``point_a`` to ``point_b``.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The resulting 2D vector is always expressed in ``Point2D``
+      base units.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: UnitVector3D(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+
+   Bases: :py:obj:`Vector3D`
+
+   
+   Provdes the 3D unit vector class.
+
+
+   :Parameters:
+
+       **input** : :obj:`~numpy.ndarray`, ``Vector3D``
+           * 1D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,)
+           * Vector3D
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: from_points(point_a: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point3D], point_b: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point3D])
+      :classmethod:
+
+      
+      Create a 3D unit vector from two distinct 3D points.
+
+
+      :Parameters:
+
+          **point_a** : :obj:`Point3D`
+              :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+              class representing the first point.
+
+          **point_b** : :obj:`Point3D`
+              :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+              class representing the second point.
+
+      :Returns:
+
+          :obj:`UnitVector3D`
+              A 3D unit vector from ``point_a`` to ``point_b``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: UnitVector2D(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+
+   Bases: :py:obj:`Vector2D`
+
+   
+   Provides the 2D unit vector class.
+
+
+   :Parameters:
+
+       **input** : :obj:`~numpy.ndarray`, ``Vector2D``
+           * 1D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,)
+           * Vector2D
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: from_points(point_a: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point2D], point_b: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point2D])
+      :classmethod:
+
+      
+      Create a 2D unit vector from two distinct 2D points.
+
+
+      :Parameters:
+
+          **point_a** : :obj:`Point2D`
+              :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+              class representing the first point.
+
+          **point_b** : :obj:`Point2D`
+              :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+              class representing the second point.
+
+      :Returns:
+
+          :obj:`UnitVector2D`
+              A 2D unit vector from ``point_a`` to ``point_b``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

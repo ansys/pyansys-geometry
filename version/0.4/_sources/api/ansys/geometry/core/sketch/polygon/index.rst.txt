@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``polygon.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.sketch.polygon
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: polygon
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Polygon`
+            - Provides for modeling regular polygons.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Polygon<Polygon>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a polygon.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
