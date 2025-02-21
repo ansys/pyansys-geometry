@@ -475,6 +475,7 @@ def test_named_selection_contents(modeler: Modeler):
         edges=[edge]
     )
     
+    print(ns.bodies)
     # Check that the named selection has everything
     assert len(ns.bodies) == 2
     assert ns.bodies[0].id == box.id
@@ -1549,7 +1550,7 @@ def test_named_selections_design_points(modeler: Modeler):
     design points.
     """
     # Create your design on the server side
-    design = modeler.create_design("NamedSelectionBeams_Test")
+    design = modeler.create_design("NamedSelectionDesignPoints_Test")
 
     # Test creating a named selection out of design_points
     point_set_1 = Point3D([10, 10, 0], UNITS.m)

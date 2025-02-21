@@ -24,6 +24,7 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
     CreateCircularPatternRequest,
@@ -37,6 +38,8 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FullFilletRequest,
     ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
+    MoveRotateRequest,
+    MoveTranslateRequest,
     PatternRequest,
     RenameObjectRequest,
     ReplaceFaceRequest,
@@ -54,6 +57,7 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
+from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
@@ -70,6 +74,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.typing import Real
 
@@ -1212,3 +1217,75 @@ class GeometryCommands:
         result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))
 
         return (result.along_u, result.radius)
+    
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def move_translate(self, 
+                       selection: NamedSelection, 
+                       direction: UnitVector3D, 
+                       distance: Distance | Real
+                       ) -> bool:
+        """Move a selection by a distance in a direction.
+
+        Parameters
+        ----------
+        selection : NamedSelection
+            Named selection to move.
+        direction : UnitVector3D
+            Direction to move in.
+        distance : Distance | Real
+            Distance to move. Default units are meters.
+        
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+
+        result = self._commands_stub.MoveTranslate(
+            MoveTranslateRequest(
+                selection=[EntityIdentifier(id=selection.id)],
+                direction=unit_vector_to_grpc_direction(direction),
+                distance=translation_magnitude,
+            )
+        )
+
+        return result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def move_rotate(self, 
+                    selection: NamedSelection, 
+                    axis: Line,
+                    angle: Angle | Real, 
+                    ) -> bool:
+        """Rotate a selection by an angle about a given axis.
+
+        Parameters
+        ----------
+        selection : NamedSelection
+            Named selection to move.
+        axis : Line
+            Direction to move in.
+        Angle : Angle | Real
+            Angle to rotate by. Default units are radians.
+        
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        rotation_angle = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
+
+        result = self._commands_stub.MoveRotate(
+            MoveRotateRequest(
+                selection=[EntityIdentifier(id=selection.id)],
+                axis=line_to_grpc_line(axis),
+                angle=rotation_angle,
+            )
+        )
+
+        return result.success

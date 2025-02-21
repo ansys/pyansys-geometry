@@ -23,6 +23,7 @@
 
 from pathlib import Path
 
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, DefaultUnitsClass
 import numpy as np
 from pint import Quantity
 import pytest
@@ -360,3 +361,13 @@ def test_design_import_with_named_selections(modeler: Modeler):
     nozzle1 = design._named_selections["nozzle1"]
     assert len(nozzle1.bodies) == 0
     assert len(nozzle1.faces) == 12
+
+    # Get named selection p1
+    p1 = design._named_selections["p1"]
+    assert len(p1.bodies) == 0
+    assert len(p1.design_points) == 1
+
+
+    assert p1.design_points[0].value.x.m == pytest.approx(Quantity(8.601, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3)
+    assert p1.design_points[0].value.y.m == pytest.approx(Quantity(11.024, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3)
+    assert p1.design_points[0].value.z.m == pytest.approx(0.0, abs=1e-3)

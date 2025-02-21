@@ -32,6 +32,8 @@ from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.typing import Real
 
 
 class NamedSelection:
@@ -66,11 +68,11 @@ class NamedSelection:
         self,
         name: str,
         grpc_client: GrpcClient,
-        bodies: list[str] | None = None,
-        faces: list[str] | None = None,
-        edges: list[str] | None = None,
+        bodies: list[Body] | None = None,
+        faces: list[Face] | None = None,
+        edges: list[Edge] | None = None,
         beams: list[str] | None = None,
-        design_points: list[str] | None = None,
+        design_points: list[DesignPoint] | None = None,
         preexisting_id: str | None = None,
     ):
         """Initialize the ``NamedSelection`` class."""
@@ -153,7 +155,7 @@ class NamedSelection:
     def design_points(self) -> list[DesignPoint]:
         """All design points in the named selection."""
         return self._design_points
-    
+
     def __repr__(self) -> str:
         """Represent the ``NamedSelection`` as a string."""
         lines = [f"ansys.geometry.core.designer.selection.NamedSelection {hex(id(self))}"]
