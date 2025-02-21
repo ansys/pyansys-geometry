@@ -469,12 +469,9 @@ def test_named_selection_contents(modeler: Modeler):
 
     # Create the NamedSelection
     ns = design.create_named_selection(
-        "MyNamedSelection", 
-        bodies=[box, box_2], 
-        faces=[face], 
-        edges=[edge]
+        "MyNamedSelection", bodies=[box, box_2], faces=[face], edges=[edge]
     )
-    
+
     print(ns.bodies)
     # Check that the named selection has everything
     assert len(ns.bodies) == 2

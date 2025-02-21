@@ -1217,14 +1217,12 @@ class GeometryCommands:
         result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))
 
         return (result.along_u, result.radius)
-    
+
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def move_translate(self, 
-                       selection: NamedSelection, 
-                       direction: UnitVector3D, 
-                       distance: Distance | Real
-                       ) -> bool:
+    def move_translate(
+        self, selection: NamedSelection, direction: UnitVector3D, distance: Distance | Real
+    ) -> bool:
         """Move a selection by a distance in a direction.
 
         Parameters
@@ -1235,7 +1233,7 @@ class GeometryCommands:
             Direction to move in.
         distance : Distance | Real
             Distance to move. Default units are meters.
-        
+
         Returns
         -------
         bool
@@ -1256,11 +1254,12 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def move_rotate(self, 
-                    selection: NamedSelection, 
-                    axis: Line,
-                    angle: Angle | Real, 
-                    ) -> bool:
+    def move_rotate(
+        self,
+        selection: NamedSelection,
+        axis: Line,
+        angle: Angle | Real,
+    ) -> bool:
         """Rotate a selection by an angle about a given axis.
 
         Parameters
@@ -1271,7 +1270,7 @@ class GeometryCommands:
             Direction to move in.
         Angle : Angle | Real
             Angle to rotate by. Default units are radians.
-        
+
         Returns
         -------
         bool

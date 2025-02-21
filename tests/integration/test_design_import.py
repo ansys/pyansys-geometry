@@ -23,7 +23,6 @@
 
 from pathlib import Path
 
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, DefaultUnitsClass
 import numpy as np
 from pint import Quantity
 import pytest
@@ -34,6 +33,7 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import PersistentIdType
 
@@ -356,7 +356,7 @@ def test_design_import_with_named_selections(modeler: Modeler):
 
     # Check that there are 29 Named Selections
     assert len(design.named_selections) == 29
-    
+
     # Get named selection nozzle1
     nozzle1 = design._named_selections["nozzle1"]
     assert len(nozzle1.bodies) == 0
@@ -367,7 +367,10 @@ def test_design_import_with_named_selections(modeler: Modeler):
     assert len(p1.bodies) == 0
     assert len(p1.design_points) == 1
 
-
-    assert p1.design_points[0].value.x.m == pytest.approx(Quantity(8.601, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3)
-    assert p1.design_points[0].value.y.m == pytest.approx(Quantity(11.024, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3)
+    assert p1.design_points[0].value.x.m == pytest.approx(
+        Quantity(8.601, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
+    )
+    assert p1.design_points[0].value.y.m == pytest.approx(
+        Quantity(11.024, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
+    )
     assert p1.design_points[0].value.z.m == pytest.approx(0.0, abs=1e-3)

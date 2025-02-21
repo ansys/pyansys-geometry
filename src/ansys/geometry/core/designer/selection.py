@@ -32,8 +32,6 @@ from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.typing import Real
 
 
 class NamedSelection:
@@ -88,7 +86,7 @@ class NamedSelection:
             self._beams = beams
             self._design_points = design_points
             return
-    
+
         # All ids should be unique - no duplicated values
         ids = set()
 
@@ -135,7 +133,7 @@ class NamedSelection:
     def bodies(self) -> list[Body]:
         """All bodies in the named selection."""
         return self._bodies
-    
+
     @property
     def faces(self) -> list[Face]:
         """All faces in the named selection."""
@@ -150,7 +148,7 @@ class NamedSelection:
     def beams(self) -> list[Beam]:
         """All beams in the named selection."""
         return self._beams
-    
+
     @property
     def design_points(self) -> list[DesignPoint]:
         """All design points in the named selection."""

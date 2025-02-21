@@ -21,8 +21,6 @@
 # SOFTWARE.
 """Testing of geometry commands."""
 
-from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
-from ansys.geometry.core.misc.measurements import Angle, Distance
 import numpy as np
 from pint import Quantity
 import pytest
@@ -33,7 +31,9 @@ from ansys.geometry.core.designer.geometry_commands import (
     OffsetMode,
 )
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
 from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.sketch.sketch import Sketch
@@ -1001,7 +1001,7 @@ def test_move_translate(modeler: Modeler):
     # Create a named selection of 2 faces
     ns = design.create_named_selection("ns1", faces=[body.faces[0], body.faces[1]])
     assert len(ns.faces) == 2
-    
+
     # Verify the original vertices
     expected_vertices = [
         Point3D([-1.0, -1.0, 0.0]),
@@ -1064,9 +1064,7 @@ def test_move_rotate(modeler: Modeler):
 
     # Rotate the named selection
     success = modeler.geometry_commands.move_rotate(
-        ns, 
-        Line([0, 1, 2], [1, 0, 0]), 
-        Angle(np.pi / 2, UNITS.rad)
+        ns, Line([0, 1, 2], [1, 0, 0]), Angle(np.pi / 2, UNITS.rad)
     )
     assert success
 
