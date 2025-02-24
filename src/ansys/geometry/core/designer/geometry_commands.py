@@ -1244,7 +1244,7 @@ class GeometryCommands:
 
         result = self._commands_stub.MoveTranslate(
             MoveTranslateRequest(
-                selection=[EntityIdentifier(id=selection.id)],
+                named_selection=EntityIdentifier(id=selection.id),
                 direction=unit_vector_to_grpc_direction(direction),
                 distance=translation_magnitude,
             )
@@ -1281,7 +1281,7 @@ class GeometryCommands:
 
         result = self._commands_stub.MoveRotate(
             MoveRotateRequest(
-                selection=[EntityIdentifier(id=selection.id)],
+                named_selection=EntityIdentifier(id=selection.id),
                 axis=line_to_grpc_line(axis),
                 angle=rotation_angle,
             )
