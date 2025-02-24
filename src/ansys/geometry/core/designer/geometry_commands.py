@@ -1217,13 +1217,13 @@ class GeometryCommands:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def offset_faces_set_radius(
-        self, 
-        faces: Union["Face", list["Face"]], 
-        radius: Real, 
+        self,
+        faces: Union["Face", list["Face"]],
+        radius: Real,
         copy: bool = False,
         offset_mode: OffsetMode = OffsetMode.IGNORE_RELATIONSHIPS,
         extrude_type: ExtrudeType = ExtrudeType.FORCE_INDEPENDENT,
-        ) -> bool:
+    ) -> bool:
         """Offset faces with a radius.
 
         Parameters

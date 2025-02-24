@@ -1009,4 +1009,3 @@ def test_offset_face_set_radius(modeler: Modeler):
     assert success
 
     assert box.volume.m == pytest.approx(Quantity(7.6073, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-    
