@@ -67,6 +67,7 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
+    trimmed_curve_to_grpc_trimmed_curve,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.edge import CurveType, Edge
@@ -1561,6 +1562,77 @@ class Body(IBody):
                 curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
                 faces=[face._id for face in faces],
                 plane=plane_to_grpc_plane(sketch.plane),
+            )
+        )
+
+        new_edges = [
+            Edge(
+                grpc_edge.id,
+                CurveType(grpc_edge.curve_type),
+                self,
+                self._template._grpc_client,
+            )
+            for grpc_edge in imprint_response.edges
+        ]
+
+        new_faces = [
+            Face(
+                grpc_face.id,
+                SurfaceType(grpc_face.surface_type),
+                self,
+                self._template._grpc_client,
+            )
+            for grpc_face in imprint_response.faces
+        ]
+
+        return (new_edges, new_faces)
+
+    @protect_grpc
+    @ensure_design_is_active
+    def imprint_curves_with_edges(  # noqa: D102
+        self, faces: list[Face], edges: list[Edge]
+    ) -> tuple[list[Edge], list[Face]]:
+        """Imprint curves onto the specified faces.
+
+        Parameters
+        ----------
+        faces : list[Face]
+            The list of faces to imprint the curves onto.
+        edges : list[Edge]
+            The list of edges to be imprinted.
+
+        Returns
+        -------
+        tuple[list[Edge], list[Face]]
+            A tuple containing the list of new edges and faces created by the imprint operation.
+        """
+        # Verify that each of the faces provided are part of this body
+        body_faces = self.faces
+        for provided_face in faces:
+            is_found = False
+            for body_face in body_faces:
+                if provided_face.id == body_face.id:
+                    is_found = True
+                    break
+            if not is_found:
+                raise ValueError(f"Face with ID {provided_face.id} is not part of this body.")
+
+        self._template._grpc_client.log.debug(
+            f"Imprinting curves provided on {self.id} "
+            + f"for faces {[face.id for face in faces]}."
+        )
+
+        trimmed_curves_list = [trimmed_curve_to_grpc_trimmed_curve(edge.shape) for edge in edges]
+
+        # Print the contents of the list for inspection
+        for trimmed_curve in trimmed_curves_list:
+            print(trimmed_curve)
+
+        imprint_response = self._template._commands_stub.ImprintCurves(
+            ImprintCurvesRequest(
+                body=self._id,
+                trimmed_curves=trimmed_curves_list,
+                faces=[face._id for face in faces],
             )
         )
 
