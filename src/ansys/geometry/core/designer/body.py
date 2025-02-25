@@ -1635,8 +1635,8 @@ class Body(IBody):
             ImprintCurvesRequest(
                 curves=None,
                 body=self._id,
-                trimmed_curves=trimmed_curves_list,
                 faces=[face._id for face in faces],
+                trimmed_curves=trimmed_curves_list,
             )
         )
 
@@ -1659,7 +1659,6 @@ class Body(IBody):
             )
             for grpc_face in imprint_response.faces
         ]
-
         return (new_edges, new_faces)
 
     @protect_grpc
