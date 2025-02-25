@@ -347,13 +347,17 @@ class Modeler:
 
         c_stub = CommandsStub(self.client.channel)
 
-        response = c_stub.StreamFileUpload(self._generate_file_chunks(file_path, open_file, import_options))
+        response = c_stub.StreamFileUpload(
+            self._generate_file_chunks(file_path, open_file, import_options)
+        )
         return response.file_path
 
     @protect_grpc
-    def _generate_file_chunks(self,file_path: Path,open_file: bool,import_options: ImportOptions):
+    def _generate_file_chunks(
+        self, file_path: Path, open_file: bool, import_options: ImportOptions
+    ):
         """Utility method to generate streaming messages.
-        
+
         Parameters
         ----------
         file_path : Path
@@ -362,23 +366,22 @@ class Modeler:
             Whether to open the file in the Geometry service.
         import_options : ImportOptions
             Import options that toggle certain features when opening a file.
-        
+
         Returns
         -------
-        Chunked UploadFileRequest 
+        Chunked UploadFileRequest
 
         """
-        
-        chunk_size = 1024*64 #64KB - gRPC recommended chunk size
-        with open(file_path, 'rb') as file:
+        chunk_size = 1024 * 64  # 64KB - gRPC recommended chunk size
+        with open(file_path, "rb") as file:
             while chunk := file.read(chunk_size):
                 yield UploadFileRequest(
-                data=chunk,
-                file_name=file_path.name,
-                open=open_file,
-                import_options=import_options.to_dict(),
-            )
-                
+                    data=chunk,
+                    file_name=file_path.name,
+                    open=open_file,
+                    import_options=import_options.to_dict(),
+                )
+
     @protect_grpc
     def open_file(
         self,
