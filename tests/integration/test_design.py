@@ -1140,6 +1140,40 @@ def test_project_and_imprint_curves(modeler: Modeler):
     assert len(body_copy.faces) == 8
 
 
+def test_imprint_trimmed_curves(modeler: Modeler):
+    unit = DEFAULT_UNITS.LENGTH
+
+    wx = 1
+    wy = 1
+    wz = 1
+    design = modeler.create_design("test imprint")
+
+    # create box
+    start_at = Point3D([wx / 2, wy / 2, 0.0], unit=unit)
+
+    plane = Plane(
+        start_at,
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0], unit=unit), width=wx, height=wy)
+
+    box = design.extrude_sketch("box", box_plane, wz)
+
+    # create cylinder
+    point = Point3D([0.5, 0.5, 0.5])
+    ortho_1, ortho_2 = UNITVECTOR3D_X, UNITVECTOR3D_Y
+    plane = Plane(point, ortho_1, ortho_2)
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([0.0, 0.0], unit=unit), radius=0.1)
+    cylinder = design.extrude_sketch("cylinder", sketch_cylinder, 0.5)
+    design.plot(show_edges=True)
+    box.imprint_curves_with_edges(faces=[box.faces[1]], edges=[cylinder.faces[1].edges[0]])
+
+    assert True
+
+
 def test_project_and_imprint_curves_with_edges(modeler: Modeler):
     """Test the projection of a set of curves on a body."""
     # Create your design on the server side

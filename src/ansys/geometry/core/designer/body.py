@@ -1621,15 +1621,19 @@ class Body(IBody):
             f"Imprinting curves provided on {self.id} "
             + f"for faces {[face.id for face in faces]}."
         )
-
         trimmed_curves_list = [trimmed_curve_to_grpc_trimmed_curve(edge.shape) for edge in edges]
 
         # Print the contents of the list for inspection
         for trimmed_curve in trimmed_curves_list:
             print(trimmed_curve)
 
+        print(type(trimmed_curves_list))  # Should be <class 'list'>
+        if trimmed_curves_list:
+            print(type(trimmed_curves_list[0]))  # Should be <class 'TrimmedCurve'>
+
         imprint_response = self._template._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
+                curves=None,
                 body=self._id,
                 trimmed_curves=trimmed_curves_list,
                 faces=[face._id for face in faces],
