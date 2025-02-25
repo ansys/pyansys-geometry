@@ -363,7 +363,8 @@ def test_design_import_with_named_selections(modeler: Modeler):
     assert len(nozzle1.faces) == 12
 
     assert nozzle1.faces[0].area.m == pytest.approx(
-        Quantity(1.55183312719e-05, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3)
+        Quantity(1.55183312719e-05, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
+    )
 
     # Get named selection p1
     p1 = design._named_selections["p1"]

@@ -25,7 +25,6 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
-from ansys.geometry.core.misc.auxiliary import get_bodies_from_ids, get_edges_from_ids, get_faces_from_ids
 from beartype import beartype as check_input_types
 from google.protobuf.empty_pb2 import Empty
 import numpy as np
@@ -80,6 +79,11 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.auxiliary import (
+    get_bodies_from_ids,
+    get_edges_from_ids,
+    get_faces_from_ids,
+)
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.misc.options import ImportOptions
@@ -1145,7 +1149,7 @@ class Design(Component):
         # Create NamedSelections
         for ns in response.named_selections:
             result = self._named_selections_stub.Get(EntityIdentifier(id=ns.id))
-            
+
             # This works but is slow -- can use improvement for designs with many named selections
             bodies = get_bodies_from_ids(self, [body.id for body in result.bodies])
             faces = get_faces_from_ids(self, [face.id for face in result.faces])

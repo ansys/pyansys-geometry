@@ -1285,7 +1285,7 @@ class GeometryCommands:
                 selection=[EntityIdentifier(id=selection.id)],
                 axis=line_to_grpc_line(axis),
                 angle=rotation_angle,
-    
+
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def offset_faces_set_radius(
@@ -1310,11 +1310,11 @@ class GeometryCommands:
             Mode of how to handle offset relationships.
         extrude_type : ExtrudeType, default: ExtrudeType.FORCE_INDEPENDENT
             Type of extrusion to be performed.
-           
+
         Returns
         -------
         bool
-            ``True`` when successful, ``False`` when failed.        
+            ``True`` when successful, ``False`` when failed.
         """
         from ansys.geometry.core.designer.face import Face
 

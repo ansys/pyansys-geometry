@@ -1087,7 +1087,7 @@ def test_move_rotate(modeler: Modeler):
     # Check that the faces have been rotated
     assert np.isin(expected_vertices, rotated_vertices).all()
 
-    
+
 def test_offset_face_set_radius(modeler: Modeler):
     """Test offsetting a face with a set radius"""
     design = modeler.create_design("offset_face_set_radius")
