@@ -1043,6 +1043,20 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     path_on_server = modeler._upload_file(file)
     assert path_on_server is not None
 
+def test_stream_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test uploading a file to the server."""
+    file = tmp_path_factory.mktemp("test_design") / "upload_stream_example.scdocx"
+    file_size = 1024*64*20 # 64KB is the recommended chunk size, so we'll send 20 chunks. 
+
+    # Write random bytes
+    with file.open(mode="wb") as fout:
+        fout.write(os.urandom(file_size))
+
+    assert file.exists()
+
+    # Upload file
+    path_on_server = modeler._upload_file_stream(file)
+    assert path_on_server is not None
 
 def test_slot_extrusion(modeler: Modeler):
     """Test the extrusion of a slot."""
