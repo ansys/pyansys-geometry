@@ -475,8 +475,7 @@ def test_named_selection_contents(modeler: Modeler):
     print(ns.bodies)
     # Check that the named selection has everything
     assert len(ns.bodies) == 2
-    assert ns.bodies[0].id == box.id
-    assert ns.bodies[1].id == box_2.id
+    assert np.isin([box.id, box_2.id], [body.id for body in ns.bodies]).all()
 
     assert len(ns.faces) == 1
     assert ns.faces[0].id == face.id
