@@ -25,6 +25,7 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
+from ansys.geometry.core.misc.auxiliary import get_bodies_from_ids, get_edges_from_ids, get_faces_from_ids
 from beartype import beartype as check_input_types
 from google.protobuf.empty_pb2 import Empty
 import numpy as np
@@ -1144,26 +1145,27 @@ class Design(Component):
         # Create NamedSelections
         for ns in response.named_selections:
             result = self._named_selections_stub.Get(EntityIdentifier(id=ns.id))
+            
+            # This works but is slow -- can use improvement for designs with many named selections
+            bodies = get_bodies_from_ids(self, [body.id for body in result.bodies])
+            faces = get_faces_from_ids(self, [face.id for face in result.faces])
+            edges = get_edges_from_ids(self, [edge.id for edge in result.edges])
+
+            design_points = []
+            for dp in result.design_points:
+                design_points.append(
+                    DesignPoint(dp.id, "dp: " + dp.id, grpc_point_to_point3d(dp.points[0]), self)
+                )
+
             new_ns = NamedSelection(
                 ns.name,
                 self._grpc_client,
                 preexisting_id=ns.id,
-                bodies=[
-                    Body(body.id, body.name, body.parent, body.master) for body in result.bodies
-                ],
-                faces=[
-                    Face(face.id, face.surface_type, face.parent, self._grpc_client)
-                    for face in result.faces
-                ],
-                edges=[
-                    Edge(edge.id, edge.curve_type, edge.parent, self._grpc_client)
-                    for edge in result.edges
-                ],
+                bodies=bodies,
+                faces=faces,
+                edges=edges,
                 beams=[beam.id for beam in result.beams],
-                design_points=[
-                    DesignPoint(dp.id, "dp: " + dp.id, grpc_point_to_point3d(dp.points[0]), self)
-                    for dp in result.design_points
-                ],
+                design_points=design_points,
             )
             self._named_selections[new_ns.name] = new_ns
 

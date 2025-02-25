@@ -355,12 +355,15 @@ def test_design_import_with_named_selections(modeler: Modeler):
     design = modeler.open_file(Path(FILES_DIR, "combustor_fluid_volume.scdocx"))
 
     # Check that there are 29 Named Selections
-    assert len(design.named_selections) == 29
+    assert len(design.named_selections) == 13
 
     # Get named selection nozzle1
     nozzle1 = design._named_selections["nozzle1"]
     assert len(nozzle1.bodies) == 0
     assert len(nozzle1.faces) == 12
+
+    assert nozzle1.faces[0].area.m == pytest.approx(
+        Quantity(1.55183312719e-05, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3)
 
     # Get named selection p1
     p1 = design._named_selections["p1"]
