@@ -1295,7 +1295,7 @@ class GeometryCommands:
     def offset_faces_set_radius(
         self,
         faces: Union["Face", list["Face"]],
-        radius: Real,
+        radius: Distance | Real,
         copy: bool = False,
         offset_mode: OffsetMode = OffsetMode.IGNORE_RELATIONSHIPS,
         extrude_type: ExtrudeType = ExtrudeType.FORCE_INDEPENDENT,
@@ -1330,10 +1330,12 @@ class GeometryCommands:
         for face in faces:
             face.body._reset_tessellation_cache()
 
+        radius = radius if isinstance(radius, Distance) else Distance(radius)
+        radius_magnitude = radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
         result = self._commands_stub.OffsetFacesSetRadius(
             OffsetFacesSetRadiusRequest(
                 faces=[face._grpc_id for face in faces],
-                radius=radius,
+                radius=radius_magnitude,
                 copy=copy,
                 offset_mode=offset_mode.value,
                 extrude_type=extrude_type.value,
