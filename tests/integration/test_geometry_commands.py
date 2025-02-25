@@ -1086,3 +1086,22 @@ def test_move_rotate(modeler: Modeler):
 
     # Check that the faces have been rotated
     assert np.isin(expected_vertices, rotated_vertices).all()
+
+    
+def test_offset_face_set_radius(modeler: Modeler):
+    """Test offsetting a face with a set radius"""
+    design = modeler.create_design("offset_face_set_radius")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    assert len(box.faces) == 6
+    assert box.volume.m == pytest.approx(Quantity(8, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # Add a hole to a box
+    hole = design.extrude_sketch("hole", Sketch().circle(Point2D([0, 0]), 0.5), 2)
+    box.subtract(hole)
+    assert box.volume.m == pytest.approx(Quantity(6.4292, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # Change radius of hole
+    success = modeler.geometry_commands.offset_faces_set_radius(box.faces[6], 0.25)
+    assert success
+
+    assert box.volume.m == pytest.approx(Quantity(7.6073, UNITS.m**3).m, rel=1e-6, abs=1e-8)
