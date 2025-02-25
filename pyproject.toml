@@ -26,7 +26,6 @@ classifiers = [
 dependencies = [
     "ansys-api-geometry==0.4.42",
     "ansys-tools-path>=0.3,<1",
-    "ansys-tools-visualization-interface>=0.2.6,<1",
     "attrs!=24.3.0",
     "beartype>=0.11.0,<0.20",
     "geomdl>=5,<6",
@@ -35,20 +34,26 @@ dependencies = [
     "numpy>=1.20.3,<3",
     "Pint>=0.18,<1",
     "protobuf>=3.20.2,<6",
-    "pygltflib>=1.16,<2",
-    "pyvista>=0.37.0,<1",
     "requests>=2,<3",
     "scipy>=1.7.3,<2",
     "semver>=3,<4",
     "six>=1.16.0,<2",
-    "vtk>=9,<10",
 ]
 
 [project.optional-dependencies]
+graphics = [
+    "ansys-tools-visualization-interface>=0.2.6,<1",
+    "pygltflib>=1.16,<2",
+    "pyvista[jupyter]>=0.38.1,<1",
+    "vtk>=9,<10",
+]
 all = [
     "ansys-platform-instancemanagement>=1.0.3,<2",
+    "ansys-tools-visualization-interface>=0.2.6,<1",
     "docker>=6.0.1,<8",
+    "pygltflib>=1.16,<2",
     "pyvista[jupyter]>=0.38.1,<1",
+    "vtk>=9,<10",
 ]
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
