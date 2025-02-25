@@ -52,7 +52,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
 )
-from ansys.api.geometry.v0.namedselections_pb2 import CreateRequest
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
@@ -680,7 +679,7 @@ class Design(Component):
             beams=beams,
             design_points=design_points,
         )
-        
+
         self._named_selections[named_selection.name] = named_selection
         self._grpc_client.log.debug(
             f"Named selection {named_selection.name} is successfully created."

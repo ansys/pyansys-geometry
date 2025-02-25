@@ -1221,10 +1221,7 @@ class GeometryCommands:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def move_translate(
-        self,
-        selection: NamedSelection,
-        direction: UnitVector3D,
-        distance: Distance | Real
+        self, selection: NamedSelection, direction: UnitVector3D, distance: Distance | Real
     ) -> bool:
         """Move a selection by a distance in a direction.
 
