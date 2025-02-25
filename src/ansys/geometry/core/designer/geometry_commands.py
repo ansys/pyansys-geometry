@@ -37,6 +37,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FullFilletRequest,
     ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
+    OffsetFacesSetRadiusRequest,
     PatternRequest,
     RenameObjectRequest,
     ReplaceFaceRequest,
@@ -1212,3 +1213,55 @@ class GeometryCommands:
         result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))
 
         return (result.along_u, result.radius)
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def offset_faces_set_radius(
+        self,
+        faces: Union["Face", list["Face"]],
+        radius: Real,
+        copy: bool = False,
+        offset_mode: OffsetMode = OffsetMode.IGNORE_RELATIONSHIPS,
+        extrude_type: ExtrudeType = ExtrudeType.FORCE_INDEPENDENT,
+    ) -> bool:
+        """Offset faces with a radius.
+
+        Parameters
+        ----------
+        faces : Face | list[Face]
+            Faces to offset.
+        radius : Real
+            Radius of the offset.
+        copy : bool, default: False
+            Copy the face and move it instead of offsetting the original face if ``True``.
+        offset_mode : OffsetMode, default: OffsetMode.MOVE_FACES_TOGETHER
+            Mode of how to handle offset relationships.
+        extrude_type : ExtrudeType, default: ExtrudeType.FORCE_INDEPENDENT
+            Type of extrusion to be performed.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        faces: list[Face] = faces if isinstance(faces, list) else [faces]
+
+        check_type_all_elements_in_iterable(faces, Face)
+        check_is_float_int(radius, "radius")
+
+        for face in faces:
+            face.body._reset_tessellation_cache()
+
+        result = self._commands_stub.OffsetFacesSetRadius(
+            OffsetFacesSetRadiusRequest(
+                faces=[face._grpc_id for face in faces],
+                radius=radius,
+                copy=copy,
+                offset_mode=offset_mode.value,
+                extrude_type=extrude_type.value,
+            )
+        )
+
+        return result.success
