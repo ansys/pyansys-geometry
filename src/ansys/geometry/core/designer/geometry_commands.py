@@ -1306,7 +1306,7 @@ class GeometryCommands:
         ----------
         faces : Face | list[Face]
             Faces to offset.
-        radius : Distance | Real 
+        radius : Distance | Real
             Radius of the offset.
         copy : bool, default: False
             Copy the face and move it instead of offsetting the original face if ``True``.
