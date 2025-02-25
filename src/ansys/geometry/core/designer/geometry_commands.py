@@ -1306,7 +1306,7 @@ class GeometryCommands:
         ----------
         faces : Face | list[Face]
             Faces to offset.
-        radius : Real
+        radius : Distance | Real 
             Radius of the offset.
         copy : bool, default: False
             Copy the face and move it instead of offsetting the original face if ``True``.
@@ -1323,9 +1323,7 @@ class GeometryCommands:
         from ansys.geometry.core.designer.face import Face
 
         faces: list[Face] = faces if isinstance(faces, list) else [faces]
-
         check_type_all_elements_in_iterable(faces, Face)
-        check_is_float_int(radius, "radius")
 
         for face in faces:
             face.body._reset_tessellation_cache()
