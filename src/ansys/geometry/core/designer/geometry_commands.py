@@ -1288,6 +1288,8 @@ class GeometryCommands:
             )
         )
 
+        return result.success
+
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def offset_faces_set_radius(
