@@ -1221,7 +1221,10 @@ class GeometryCommands:
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def move_translate(
-        self, selection: NamedSelection, direction: UnitVector3D, distance: Distance | Real
+        self,
+        selection: NamedSelection,
+        direction: UnitVector3D,
+        distance: Distance | Real
     ) -> bool:
         """Move a selection by a distance in a direction.
 
@@ -1244,7 +1247,7 @@ class GeometryCommands:
 
         result = self._commands_stub.MoveTranslate(
             MoveTranslateRequest(
-                named_selection=EntityIdentifier(id=selection.id),
+                selection=[EntityIdentifier(id=selection.id)],
                 direction=unit_vector_to_grpc_direction(direction),
                 distance=translation_magnitude,
             )
@@ -1281,7 +1284,7 @@ class GeometryCommands:
 
         result = self._commands_stub.MoveRotate(
             MoveRotateRequest(
-                named_selection=EntityIdentifier(id=selection.id),
+                selection=[EntityIdentifier(id=selection.id)],
                 axis=line_to_grpc_line(axis),
                 angle=rotation_angle,
             )

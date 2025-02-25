@@ -680,16 +680,8 @@ class Design(Component):
             beams=beams,
             design_points=design_points,
         )
+        
         self._named_selections[named_selection.name] = named_selection
-
-        members = []
-        members.extend([body.id for body in named_selection.bodies])
-        members.extend([face.id for face in named_selection.faces])
-        members.extend([edge.id for edge in named_selection.edges])
-        members.extend([beam.id for beam in named_selection.beams])
-        members.extend([design_point.id for design_point in named_selection.design_points])
-
-        self._named_selections_stub.Create(CreateRequest(name=name, members=members))
         self._grpc_client.log.debug(
             f"Named selection {named_selection.name} is successfully created."
         )
