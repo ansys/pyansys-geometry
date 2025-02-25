@@ -1285,6 +1285,8 @@ class GeometryCommands:
                 selection=[EntityIdentifier(id=selection.id)],
                 axis=line_to_grpc_line(axis),
                 angle=rotation_angle,
+            )
+        )
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
