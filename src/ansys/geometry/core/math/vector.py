@@ -163,6 +163,31 @@ class Vector3D(np.ndarray):
         result_vector = Vector3D(result_4x1[0:3])
         return result_vector
 
+    def rotate(self, axis, angle):
+        """Rotate the 3D vector around an axis by a specified angle.
+
+        Parameters
+        ----------
+        axis : Vector3D
+            3D vector representing the axis of rotation.
+        angle : ~pint.Quantity
+            Angle of rotation.
+
+        Returns
+        -------
+        Vector3D
+            A new 3D vector that is the rotated copy of the original 3D vector.
+
+        Notes
+        -----
+        Rotate the ``Vector3D`` object around the specified axis by the specified angle
+        and return a new ``Vector3D`` object representing the rotated vector.
+        """
+        from ansys.geometry.core.math.matrix import rotation_matrix
+
+        rot_matrix = rotation_matrix(axis, angle)
+        return self.transform(rot_matrix)
+
     @check_input_types
     def get_angle_between(self, v: "Vector3D") -> Quantity:
         """Get the angle between this 3D vector and another 3D vector.
