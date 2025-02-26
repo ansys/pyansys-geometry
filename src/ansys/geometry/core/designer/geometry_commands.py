@@ -1260,7 +1260,7 @@ class GeometryCommands:
         selection: NamedSelection,
         axis: Line,
         angle: Angle | Real,
-    ) -> bool:
+    ) -> dict[str, Union[bool, Real]]:
         """Rotate a selection by an angle about a given axis.
 
         Parameters
@@ -1274,13 +1274,14 @@ class GeometryCommands:
 
         Returns
         -------
-        bool
-            ``True`` when successful, ``False`` when failed.
+        dict[str, Union[bool, Real]]
+            Dictionary containing the useful output from the command result.
+            Keys are success, modified_bodies, modified_faces, modified_edges.
         """
         angle = angle if isinstance(angle, Angle) else Angle(angle)
         rotation_angle = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
 
-        result = self._commands_stub.MoveRotate(
+        response = self._commands_stub.MoveRotate(
             MoveRotateRequest(
                 selection=[EntityIdentifier(id=selection.id)],
                 axis=line_to_grpc_line(axis),
@@ -1288,7 +1289,13 @@ class GeometryCommands:
             )
         )
 
-        return result.success
+        result = {}
+        result["success"] = response.success
+        result["modified_bodies"] = response.modified_bodies
+        result["modified_faces"] = response.modified_faces
+        result["modified_edges"] = response.modified_edges
+
+        return result
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
