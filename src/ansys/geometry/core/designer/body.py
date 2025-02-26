@@ -1538,7 +1538,7 @@ class Body(IBody):
 
     @protect_grpc
     @ensure_design_is_active
-    def imprint_curves(
+    def imprint_curves(  # noqa: D102
         self, faces: list[Face], sketch: Sketch = None, trimmed_curves: list[TrimmedCurve] = None
     ) -> tuple[list[Edge], list[Face]]:
         """Imprint curves onto the specified faces using a sketch or edges.
