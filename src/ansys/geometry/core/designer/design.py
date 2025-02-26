@@ -395,7 +395,7 @@ class Design(Component):
             return
 
         return received_bytes
-    
+
     def __export_and_download_stream(
         self,
         format: DesignFileFormat = DesignFileFormat.SCDOCX,
