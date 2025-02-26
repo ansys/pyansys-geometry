@@ -24,11 +24,13 @@
 from typing import TYPE_CHECKING
 
 from pint import Quantity
-import pyvista as pv
 
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.sketch.edge import SketchEdge
 
 if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
+
     from ansys.geometry.core.math.plane import Plane
 
 
@@ -55,7 +57,8 @@ class SketchFace:
         return perimeter
 
     @property
-    def visualization_polydata(self) -> pv.PolyData:
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
         """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
@@ -66,6 +69,8 @@ class SketchFace:
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
+        import pyvista as pv
+
         meshes = [edge.visualization_polydata for edge in self.edges]
         return pv.merge(meshes)
 

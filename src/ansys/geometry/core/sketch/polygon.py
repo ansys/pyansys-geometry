@@ -21,18 +21,23 @@
 # SOFTWARE.
 """Provides for creating and managing a polygon."""
 
+from typing import TYPE_CHECKING
+
 from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
-import pyvista as pv
 from scipy.spatial.transform import Rotation as SpatialRotation
 
 from ansys.geometry.core.math.matrix import Matrix33, Matrix44
 from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
 
 
 class Polygon(SketchFace):
@@ -117,7 +122,8 @@ class Polygon(SketchFace):
         return (self.inner_radius * self.perimeter) / 2
 
     @property
-    def visualization_polydata(self) -> pv.PolyData:
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
         """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
@@ -128,6 +134,8 @@ class Polygon(SketchFace):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
+        import pyvista as pv
+
         # Compensate z orientation by -np.pi / 2 to match Geometry service polygon processing
         rotation = Matrix33(
             SpatialRotation.from_euler(

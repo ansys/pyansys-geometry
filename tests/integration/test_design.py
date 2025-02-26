@@ -27,8 +27,6 @@ import matplotlib.colors as mcolors
 import numpy as np
 from pint import Quantity
 import pytest
-import pyvista as pv
-from pyvista.plotting.utilities.regression import compare_images as pv_compare_images
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
@@ -56,6 +54,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
+from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
@@ -70,8 +69,8 @@ from ansys.geometry.core.shapes import (
 )
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.sketch import Sketch
-from ansys.tools.visualization_interface.utils.color import Color
 
+from ..conftest import are_graphics_available
 from .conftest import FILES_DIR, skip_if_core_service
 
 
@@ -1353,7 +1352,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : None" in surf_repr
     assert "Surface offset       : None" in surf_repr
-    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
+    assert f"Color                : {DEFAULT_COLOR}" in surf_repr
 
     # Let's assign a thickness to both bodies
     design.add_midsurface_thickness(
@@ -1386,7 +1385,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 10 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.TOP" in surf_repr
-    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
+    assert f"Color                : {DEFAULT_COLOR}" in surf_repr
 
     # Let's try reassigning values directly to slot_body - this shouldn't do anything
     slot_body.add_midsurface_thickness(Quantity(10, UNITS.mm))
@@ -1398,7 +1397,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Exists               : True" in body_repr
     assert "Parent component     : MidSurfaceProperties" in body_repr
     assert "Surface body         : False" in body_repr
-    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
+    assert f"Color                : {DEFAULT_COLOR}" in surf_repr
     assert slot_body.surface_thickness is None
     assert slot_body.surface_offset is None
 
@@ -1417,7 +1416,7 @@ def test_midsurface_properties(modeler: Modeler):
         assert "Surface body         : True" in surf_repr
         assert "Surface thickness    : 30 millimeter" in surf_repr
         assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
-        assert f"Color                : {Color.DEFAULT.value}" in surf_repr
+        assert f"Color                : {DEFAULT_COLOR}" in surf_repr
     except GeometryExitedError:
         pass
 
@@ -1435,7 +1434,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 30 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
-    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
+    assert f"Color                : {DEFAULT_COLOR}" in surf_repr
 
 
 def test_design_points(modeler: Modeler):
@@ -1479,9 +1478,14 @@ def test_design_points(modeler: Modeler):
     assert "  Name                 : SecondPointSet" in design_point_2_str
     assert "  Design Point         : [20. 20. 20.]" in design_point_2_str
 
-    # make sure it can create polydata
-    pd = design_points_1._to_polydata()
-    assert isinstance(pd, pv.PolyData)
+    # SKIPPING IF GRAPHICS REQUIRED
+    if are_graphics_available():
+        # make sure it can create polydata
+        pd = design_points_1._to_polydata()
+
+        import pyvista as pv
+
+        assert isinstance(pd, pv.PolyData)
 
 
 def test_named_selections_beams(modeler: Modeler):
@@ -2018,8 +2022,10 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     # Extrude the sketch to create a body
     design1.extrude_sketch("MySlot", sketch1, Quantity(10, UNITS.mm))
 
-    # Request plotting and store images
-    design1.plot(screenshot=scshot_1)
+    # SKIPPING IF GRAPHICS REQUIRED
+    if are_graphics_available():
+        # Request plotting and store images
+        design1.plot(screenshot=scshot_1)
 
     # Create a second design
     design2 = modeler.create_design("Design2")
@@ -2031,14 +2037,19 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     # Extrude the sketch to create a body
     design2.extrude_sketch("MyRectangle", sketch2, Quantity(10, UNITS.mm))
 
-    # Request plotting and store images
-    design2.plot(screenshot=scshot_2)
+    # SKIPPING IF GRAPHICS REQUIRED
+    if are_graphics_available():
+        # Request plotting and store images
+        design2.plot(screenshot=scshot_2)
 
-    # Check that the images are different
-    assert scshot_1.exists()
-    assert scshot_2.exists()
-    err = pv_compare_images(str(scshot_1), str(scshot_2))
-    assert not err < 0.1
+        # Check that the images are different
+        assert scshot_1.exists()
+        assert scshot_2.exists()
+
+        from pyvista.plotting.utilities.regression import compare_images as pv_compare_images
+
+        err = pv_compare_images(str(scshot_1), str(scshot_2))
+        assert not err < 0.1
 
     # Check that design1 is not active and design2 is active
     assert not design1.is_active
@@ -2144,7 +2155,7 @@ def test_set_body_color(modeler: Modeler):
     box = design.extrude_sketch("Block", box_plane, 1 * unit)
 
     # Default body color is if it is not set on server side.
-    assert box.color == Color.DEFAULT.value
+    assert box.color == DEFAULT_COLOR
 
     # Set the color of the body using hex code.
     box.color = "#0000ff"
@@ -3043,7 +3054,7 @@ def test_set_face_color(modeler: Modeler):
     assert len(faces) == 6
 
     # Default body color is if it is not set on server side.
-    assert faces[0].color == Color.DEFAULT.value
+    assert faces[0].color == DEFAULT_COLOR
 
     # Set the color of the body using hex code.
     faces[0].color = "#0000ff"
