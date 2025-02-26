@@ -395,6 +395,51 @@ class Design(Component):
             return
 
         return received_bytes
+    
+    def __export_and_download_stream(
+        self,
+        format: DesignFileFormat = DesignFileFormat.SCDOCX,
+    ) -> bytes:
+        """Export and download the design from the server via streaming.
+
+        Parameters
+        ----------
+        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
+            Format for the file to save to.
+
+        Returns
+        -------
+        bytes
+            The raw data from the exported and downloaded file.
+        """
+        # Process response
+        self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
+        received_bytes = bytes()
+
+        if format in [
+            DesignFileFormat.PARASOLID_TEXT,
+            DesignFileFormat.PARASOLID_BIN,
+            DesignFileFormat.FMD,
+            DesignFileFormat.STEP,
+            DesignFileFormat.IGES,
+            DesignFileFormat.PMDB,
+            DesignFileFormat.DISCO,
+            DesignFileFormat.SCDOCX,
+            DesignFileFormat.STRIDE,
+        ]:
+            responses = self._design_stub.StreamDownloadExportFile(
+                DownloadExportFileRequest(format=format.value[1])
+            )
+
+            for response in responses:
+                received_bytes += response.data
+        else:
+            self._grpc_client.log.warning(
+                f"{format.value[0]} format requested is not supported. Ignoring download request."
+            )
+            return
+
+        return received_bytes
 
     def __build_export_file_location(self, location: Path | str | None, ext: str) -> Path:
         """Build the file location for export functions.
