@@ -1141,6 +1141,9 @@ def test_project_and_imprint_curves(modeler: Modeler):
 
 
 def test_imprint_trimmed_curves(modeler: Modeler):
+    """
+    Test the imprinting of trimmed curves onto a specified face of a body.
+    """
     unit = DEFAULT_UNITS.LENGTH
 
     wx = 1
@@ -1156,9 +1159,9 @@ def test_imprint_trimmed_curves(modeler: Modeler):
         UNITVECTOR3D_X,
         UNITVECTOR3D_Y,
     )
+
     box_plane = Sketch(plane)
     box_plane.box(Point2D([0.0, 0.0], unit=unit), width=wx, height=wy)
-
     box = design.extrude_sketch("box", box_plane, wz)
 
     # create cylinder
@@ -1168,80 +1171,17 @@ def test_imprint_trimmed_curves(modeler: Modeler):
     sketch_cylinder = Sketch(plane)
     sketch_cylinder.circle(Point2D([0.0, 0.0], unit=unit), radius=0.1)
     cylinder = design.extrude_sketch("cylinder", sketch_cylinder, 0.5)
-    design.plot(show_edges=True)
-    box.imprint_curves_with_edges(faces=[box.faces[1]], edges=[cylinder.faces[1].edges[0]])
 
-    assert True
-
-
-def test_project_and_imprint_curves_with_edges(modeler: Modeler):
-    """Test the projection of a set of curves on a body."""
-    # Create your design on the server side
-    design = modeler.create_design("ExtrudeSlot")
-    comp = design.add_component("Comp1")
-
-    # Create a Sketch object and draw a couple of slots
-    imprint_sketch = Sketch()
-    imprint_sketch.slot(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
-    imprint_sketch.slot(Point2D([50, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm))
-
-    # Extrude the sketch
-    sketch = Sketch()
-    sketch.box(Point2D([0, 0], UNITS.mm), Quantity(150, UNITS.mm), Quantity(150, UNITS.mm))
-    body = comp.extrude_sketch(name="MyBox", sketch=sketch, distance=Quantity(50, UNITS.mm))
-    body_faces = body.faces
-
-    # Project the curves on the box
-    faces = body.project_curves(direction=UNITVECTOR3D_Z, sketch=imprint_sketch, closest_face=True)
-    assert len(faces) == 1
-    # With the previous dir, the curves will be imprinted on the
-    # bottom face (closest one), i.e. the first one.
-    assert faces[0].id == body_faces[0].id
-
-    # If we now draw our curves on a higher plane, the upper face should be selected
-    imprint_sketch_2 = Sketch(plane=Plane(Point3D([0, 0, 50], UNITS.mm)))
-    imprint_sketch_2.slot(
-        Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
+    new_edges, new_faces = box.imprint_curves(
+        faces=[box.faces[1]], edges=[cylinder.faces[1].edges[0]]
     )
-    imprint_sketch_2.slot(
-        Point2D([50, 50], UNITS.mm), Quantity(10, UNITS.mm), Quantity(5, UNITS.mm)
-    )
-    faces = body.project_curves(
-        direction=UNITVECTOR3D_Z, sketch=imprint_sketch_2, closest_face=True
-    )
-    assert len(faces) == 1
-    # With the previous dir, the curves will be imprinted on the
-    # top face (closest one), i.e. the first one.
-    assert faces[0].id == body_faces[1].id
 
-    # Now, let's try projecting only a single curve (i.e. one of the slots only)
-    faces = body.project_curves(
-        direction=UNITVECTOR3D_Z, sketch=imprint_sketch_2, closest_face=True, only_one_curve=True
-    )
-    assert len(faces) == 1
-    # With the previous dir, the curves will be imprinted on the
-    # top face (closest one), i.e. the first one.
-    assert faces[0].id == body_faces[1].id
-
-    # Verify that the surface and curve types are of the correct type - related to PR
-    # https://github.com/ansys/pyansys-geometry/pull/1096
-    assert isinstance(faces[0].surface_type, SurfaceType)
-
-    # Now once the previous curves have been projected, let's try imprinting our sketch
-    #
-    # It should generate two additional faces to our box = 6 + 2
-    edges = [edge for edge in imprint_sketch_2.edges]
-    new_edges, new_faces = body.imprint_curves_with_edges(faces=faces, edges=edges)
-
-    assert len(new_faces) == 2
-    assert len(body.faces) == 8
-
-    # Verify that the surface and curve types are of the correct type - related to PR
-    # https://github.com/ansys/pyansys-geometry/pull/1096
-    assert isinstance(new_faces[0].surface_type, SurfaceType)
-    assert isinstance(new_edges[0].curve_type, CurveType)
-
-    # Make sure we have occurrence faces, not master
+    # verify that there is one new edge coming from the circle.
+    assert len(new_faces) == 1
+    # verify that there is one new face coming from the circle.
+    assert len(new_edges) == 1
+    # verify that there are 7 faces in total.
+    assert len(box.faces) == 7
 
 
 def test_copy_body(modeler: Modeler):

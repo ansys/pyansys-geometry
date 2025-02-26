@@ -1537,68 +1537,18 @@ class Body(IBody):
 
     @protect_grpc
     @ensure_design_is_active
-    def imprint_curves(  # noqa: D102
-        self, faces: list[Face], sketch: Sketch
+    def imprint_curves(
+        self, faces: list[Face], sketch: Sketch = None, edges: list[Edge] = None
     ) -> tuple[list[Edge], list[Face]]:
-        # Verify that each of the faces provided are part of this body
-        body_faces = self.faces
-        for provided_face in faces:
-            is_found = False
-            for body_face in body_faces:
-                if provided_face.id == body_face.id:
-                    is_found = True
-                    break
-            if not is_found:
-                raise ValueError(f"Face with ID {provided_face.id} is not part of this body.")
-
-        self._template._grpc_client.log.debug(
-            f"Imprinting curves provided on {self.id} "
-            + f"for faces {[face.id for face in faces]}."
-        )
-
-        imprint_response = self._template._commands_stub.ImprintCurves(
-            ImprintCurvesRequest(
-                body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
-                faces=[face._id for face in faces],
-                plane=plane_to_grpc_plane(sketch.plane),
-            )
-        )
-
-        new_edges = [
-            Edge(
-                grpc_edge.id,
-                CurveType(grpc_edge.curve_type),
-                self,
-                self._template._grpc_client,
-            )
-            for grpc_edge in imprint_response.edges
-        ]
-
-        new_faces = [
-            Face(
-                grpc_face.id,
-                SurfaceType(grpc_face.surface_type),
-                self,
-                self._template._grpc_client,
-            )
-            for grpc_face in imprint_response.faces
-        ]
-
-        return (new_edges, new_faces)
-
-    @protect_grpc
-    @ensure_design_is_active
-    def imprint_curves_with_edges(  # noqa: D102
-        self, faces: list[Face], edges: list[Edge]
-    ) -> tuple[list[Edge], list[Face]]:
-        """Imprint curves onto the specified faces.
+        """Imprint curves onto the specified faces using a sketch or edges.
 
         Parameters
         ----------
         faces : list[Face]
             The list of faces to imprint the curves onto.
-        edges : list[Edge]
+        sketch : Sketch, optional
+            The sketch containing curves to imprint.
+        edges : list[Edge], optional
             The list of edges to be imprinted.
 
         Returns
@@ -1606,37 +1556,35 @@ class Body(IBody):
         tuple[list[Edge], list[Face]]
             A tuple containing the list of new edges and faces created by the imprint operation.
         """
+        if sketch is None and edges is None:
+            raise ValueError("Either a sketch or edges must be provided for imprinting.")
+
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
         for provided_face in faces:
-            is_found = False
-            for body_face in body_faces:
-                if provided_face.id == body_face.id:
-                    is_found = True
-                    break
-            if not is_found:
+            if not any(provided_face.id == body_face.id for body_face in body_faces):
                 raise ValueError(f"Face with ID {provided_face.id} is not part of this body.")
 
         self._template._grpc_client.log.debug(
-            f"Imprinting curves provided on {self.id} "
-            + f"for faces {[face.id for face in faces]}."
+            f"Imprinting curves on {self.id} for faces {[face.id for face in faces]}."
         )
-        trimmed_curves_list = [trimmed_curve_to_grpc_trimmed_curve(edge.shape) for edge in edges]
 
-        # Print the contents of the list for inspection
-        for trimmed_curve in trimmed_curves_list:
-            print(trimmed_curve)
+        curves = None
+        trimmed_curves = None
 
-        print(type(trimmed_curves_list))  # Should be <class 'list'>
-        if trimmed_curves_list:
-            print(type(trimmed_curves_list[0]))  # Should be <class 'TrimmedCurve'>
+        if sketch:
+            curves = sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces)
+
+        if edges:
+            trimmed_curves = [trimmed_curve_to_grpc_trimmed_curve(edge.shape) for edge in edges]
 
         imprint_response = self._template._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
-                curves=None,
                 body=self._id,
+                curves=curves,
                 faces=[face._id for face in faces],
-                trimmed_curves=trimmed_curves_list,
+                plane=plane_to_grpc_plane(sketch.plane) if sketch else None,
+                trimmed_curves=trimmed_curves,
             )
         )
 
@@ -1659,6 +1607,7 @@ class Body(IBody):
             )
             for grpc_face in imprint_response.faces
         ]
+
         return (new_edges, new_faces)
 
     @protect_grpc
