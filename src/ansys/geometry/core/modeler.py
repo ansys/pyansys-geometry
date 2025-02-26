@@ -35,7 +35,7 @@ from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
+from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
@@ -372,9 +372,8 @@ class Modeler:
         Chunked UploadFileRequest
 
         """
-        chunk_size = 1024 * 64  # 64KB - gRPC recommended chunk size
         with open(file_path, "rb") as file:
-            while chunk := file.read(chunk_size):
+            while chunk := file.read(MAX_MESSAGE_LENGTH):
                 yield UploadFileRequest(
                     data=chunk,
                     file_name=file_path.name,
