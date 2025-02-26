@@ -1172,9 +1172,9 @@ def test_imprint_trimmed_curves(modeler: Modeler):
     sketch_cylinder.circle(Point2D([0.0, 0.0], unit=unit), radius=0.1)
     cylinder = design.extrude_sketch("cylinder", sketch_cylinder, 0.5)
 
-    new_edges, new_faces = box.imprint_curves(
-        faces=[box.faces[1]], edges=[cylinder.faces[1].edges[0]]
-    )
+    edges = cylinder.faces[1].edges
+    trimmed_curves = [edges[0].shape]
+    new_edges, new_faces = box.imprint_curves(faces=[box.faces[1]], trimmed_curves=trimmed_curves)
 
     # verify that there is one new edge coming from the circle.
     assert len(new_faces) == 1
