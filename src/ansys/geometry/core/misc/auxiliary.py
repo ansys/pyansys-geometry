@@ -33,7 +33,7 @@ if TYPE_CHECKING:  # pragma: no cover
 try:
     from ansys.tools.visualization_interface.utils.color import Color
 
-    DEFAULT_COLOR = Color.DEFAULT_COLOR.value
+    DEFAULT_COLOR = Color.DEFAULT.value
 except ModuleNotFoundError:
     DEFAULT_COLOR = "#D6F7D1"
 
