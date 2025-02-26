@@ -69,7 +69,7 @@ class NamedSelection:
         bodies: list[Body] | None = None,
         faces: list[Face] | None = None,
         edges: list[Edge] | None = None,
-        beams: list[str] | None = None,
+        beams: list[Beam] | None = None,
         design_points: list[DesignPoint] | None = None,
         preexisting_id: str | None = None,
     ):
