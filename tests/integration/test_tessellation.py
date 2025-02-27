@@ -29,7 +29,12 @@ from ansys.geometry.core.math import Plane, Point2D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc.units import UNITS, Quantity
 from ansys.geometry.core.sketch import Sketch
 
+from ..conftest import are_graphics_available
 
+
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_body_tessellate(modeler: Modeler):
     """Test the body tessellation."""
     sketch_1 = Sketch()
@@ -112,6 +117,9 @@ def test_body_tessellate(modeler: Modeler):
     assert comp_1.bodies[0]._template._tessellation is None
 
 
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_component_tessellate(modeler: Modeler):
     """Test the component tessellation."""
     # Create a sketch

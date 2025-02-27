@@ -56,6 +56,7 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, UNITS
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.curve import Curve
@@ -404,6 +405,7 @@ def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLin
     )
 
 
+@graphics_required
 def tess_to_pd(tess: Tessellation) -> "PolyData":
     """Convert an ``ansys.api.geometry.Tessellation`` to ``pyvista.PolyData``."""
     # lazy imports here to improve initial load

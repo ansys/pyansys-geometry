@@ -80,6 +80,7 @@ from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.auxiliary import (
+    DEFAULT_COLOR,
     convert_color_to_hex,
     get_design_from_body,
 )
@@ -87,12 +88,12 @@ from ansys.geometry.core.misc.checks import (
     check_type,
     check_type_all_elements_in_iterable,
     ensure_design_is_active,
+    graphics_required,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
-from ansys.tools.visualization_interface.utils.color import Color
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
@@ -865,7 +866,7 @@ class MasterBody(IBody):
         """Get the current color of the body."""
         if self._color is None and self.is_alive:
             # Assigning default value first
-            self._color = Color.DEFAULT.value
+            self._color = DEFAULT_COLOR
 
             if self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
                 # Server does not support color retrieval before version 25.1.0
@@ -1209,6 +1210,7 @@ class MasterBody(IBody):
         return Body(body_id, response.name, parent, tb)
 
     @protect_grpc
+    @graphics_required
     def tessellate(  # noqa: D102
         self, merge: bool = False, transform: Matrix44 = IDENTITY_MATRIX44
     ) -> Union["PolyData", "MultiBlock"]:
@@ -1724,6 +1726,7 @@ class Body(IBody):
     def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
         return self._template.remove_faces(selection, offset)
 
+    @graphics_required
     def plot(  # noqa: D102
         self,
         merge: bool = True,

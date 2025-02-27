@@ -75,7 +75,11 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
+from ansys.geometry.core.misc.checks import (
+    ensure_design_is_active,
+    graphics_required,
+    min_backend_version,
+)
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
@@ -1448,6 +1452,7 @@ class Component:
         # Kill itself
         self._is_alive = False
 
+    @graphics_required
     def tessellate(self, _recursive_call: bool = False) -> Union["PolyData", list["MultiBlock"]]:
         """Tessellate the component.
 
@@ -1485,6 +1490,7 @@ class Component:
             ugrid = pv.MultiBlock(datasets).combine()
             return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
 
+    @graphics_required
     def plot(
         self,
         merge_component: bool = True,
