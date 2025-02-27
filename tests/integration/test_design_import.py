@@ -352,15 +352,15 @@ def test_design_insert_with_import(modeler: Modeler):
 def test_design_import_with_named_selections(modeler: Modeler):
     """Test importing a design with named selections."""
     # Open the design
-    design = modeler.open_file(Path(FILES_DIR, "combustor_fluid_volume.scdocx"))
+    design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
 
     # Check that there are 29 Named Selections
-    assert len(design.named_selections) == 13
+    assert len(design.named_selections) == 6
 
     # Get named selection nozzle1
-    nozzle1 = design._named_selections["nozzle1"]
+    nozzle1 = design._named_selections["n1"]
     assert len(nozzle1.bodies) == 0
-    assert len(nozzle1.faces) == 12
+    assert len(nozzle1.faces) == 11
 
     assert nozzle1.faces[0].area.m == pytest.approx(
         Quantity(1.55183312719e-05, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3

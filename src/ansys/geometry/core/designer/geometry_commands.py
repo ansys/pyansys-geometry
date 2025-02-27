@@ -24,6 +24,9 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
+from beartype import beartype as check_input_types
+from pint import Quantity
+
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
@@ -1220,9 +1223,13 @@ class GeometryCommands:
         return (result.along_u, result.radius)
 
     @protect_grpc
+    @check_input_types
     @min_backend_version(25, 2, 0)
     def move_translate(
-        self, selection: NamedSelection, direction: UnitVector3D, distance: Distance | Real
+        self,
+        selection: NamedSelection,
+        direction: UnitVector3D,
+        distance: Distance | Quantity | Real,
     ) -> bool:
         """Move a selection by a distance in a direction.
 
@@ -1232,7 +1239,7 @@ class GeometryCommands:
             Named selection to move.
         direction : UnitVector3D
             Direction to move in.
-        distance : Distance | Real
+        distance : Distance | Quantity | Real
             Distance to move. Default units are meters.
 
         Returns
@@ -1254,12 +1261,13 @@ class GeometryCommands:
         return result.success
 
     @protect_grpc
+    @check_input_types
     @min_backend_version(25, 2, 0)
     def move_rotate(
         self,
         selection: NamedSelection,
         axis: Line,
-        angle: Angle | Real,
+        angle: Angle | Quantity | Real,
     ) -> dict[str, Union[bool, Real]]:
         """Rotate a selection by an angle about a given axis.
 
@@ -1269,7 +1277,7 @@ class GeometryCommands:
             Named selection to move.
         axis : Line
             Direction to move in.
-        Angle : Angle | Real
+        Angle : Angle | Quantity | Real
             Angle to rotate by. Default units are radians.
 
         Returns
@@ -1298,11 +1306,12 @@ class GeometryCommands:
         return result
 
     @protect_grpc
+    @check_input_types
     @min_backend_version(25, 2, 0)
     def offset_faces_set_radius(
         self,
         faces: Union["Face", list["Face"]],
-        radius: Distance | Real,
+        radius: Distance | Quantity | Real,
         copy: bool = False,
         offset_mode: OffsetMode = OffsetMode.IGNORE_RELATIONSHIPS,
         extrude_type: ExtrudeType = ExtrudeType.FORCE_INDEPENDENT,
@@ -1313,7 +1322,7 @@ class GeometryCommands:
         ----------
         faces : Face | list[Face]
             Faces to offset.
-        radius : Distance | Real
+        radius : Distance | Quantity | Real
             Radius of the offset.
         copy : bool, default: False
             Copy the face and move it instead of offsetting the original face if ``True``.
@@ -1337,6 +1346,7 @@ class GeometryCommands:
 
         radius = radius if isinstance(radius, Distance) else Distance(radius)
         radius_magnitude = radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+
         result = self._commands_stub.OffsetFacesSetRadius(
             OffsetFacesSetRadiusRequest(
                 faces=[face._grpc_id for face in faces],
