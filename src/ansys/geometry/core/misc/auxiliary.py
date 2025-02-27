@@ -30,6 +30,13 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
 
+try:
+    from ansys.tools.visualization_interface.utils.color import Color
+
+    DEFAULT_COLOR = Color.DEFAULT.value
+except ModuleNotFoundError:
+    DEFAULT_COLOR = "#D6F7D1"
+
 
 def get_design_from_component(component: "Component") -> "Design":
     """Get the ``Design`` of the given ``Component`` object.

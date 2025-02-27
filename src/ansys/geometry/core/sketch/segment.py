@@ -21,18 +21,22 @@
 # SOFTWARE.
 """Provides for creating and managing a segment."""
 
+from typing import TYPE_CHECKING
+
 from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
-import pyvista as pv
 
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.checks import check_ndarray_is_all_nan
+from ansys.geometry.core.misc.checks import check_ndarray_is_all_nan, graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.sketch.edge import SketchEdge
+
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
 
 
 class SketchSegment(SketchEdge, Line):
@@ -122,7 +126,8 @@ class SketchSegment(SketchEdge, Line):
         )
 
     @property
-    def visualization_polydata(self) -> pv.PolyData:
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
         """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
@@ -134,6 +139,7 @@ class SketchSegment(SketchEdge, Line):
             VTK pyvista.Polydata configuration.
         """
         import numpy as np
+        import pyvista as pv
 
         return pv.Line(
             np.array(
