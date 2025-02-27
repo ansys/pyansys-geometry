@@ -90,7 +90,7 @@ class NamedSelection:
         if design_points is None:
             design_points = []
 
-        # Instantiate 
+        # Instantiate
         self._bodies = bodies
         self._faces = faces
         self._edges = edges
