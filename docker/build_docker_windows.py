@@ -29,7 +29,7 @@ import tempfile
 import urllib.request
 
 # First, get all environment variables that start with AWP_ROOT
-awp_root = {}
+awp_root: dict[int, str] = {}
 for env_key, env_val in os.environ.items():
     if env_key.startswith("AWP_ROOT"):
         # There is an Ansys installation... Check that the version is at
@@ -37,8 +37,8 @@ for env_key, env_val in os.environ.items():
         # AWP_ROOT241=/path/to/2024R1
         #
         # Get the version number
-        version = env_key.split("AWP_ROOT")[1]
-        if version < "241":
+        version = int(env_key.split("AWP_ROOT")[1])
+        if version < 241:
             # This version is too old, so we will ignore it
             continue
         else:
@@ -70,7 +70,7 @@ print(f">>> Using {ANSYS_VER}")
 ANSYS_PATH = Path(awp_root[ANSYS_VER])
 
 # Starting on 2025R2, the user can select between DMS and Core Services
-if ANSYS_VER > "252":
+if ANSYS_VER > 252:
     print("Select between DMS and Core Services")
     print("1: DMS")
     print("2: Core Services")
@@ -146,7 +146,7 @@ if backend_selection == 1:
     line = dockerfile.find("ENV AWP_ROOT")
     if line != -1:
         # Get the environment variable name
-        env_var = dockerfile[line : LENGTH_NO_VER + line] + ANSYS_VER
+        env_var = f"{dockerfile[line : LENGTH_NO_VER + line]}{ANSYS_VER}"
         # Replace the environment variable with the correct value
         dockerfile = dockerfile.replace(
             dockerfile[line : LENGTH_VER + line],
