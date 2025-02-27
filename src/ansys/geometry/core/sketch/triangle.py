@@ -21,13 +21,18 @@
 # SOFTWARE.
 """Provides for creating and managing a triangle."""
 
+from typing import TYPE_CHECKING
+
 from beartype import beartype as check_input_types
-import pyvista as pv
 
 from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
+
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
 
 
 class Triangle(SketchFace):
@@ -74,7 +79,8 @@ class Triangle(SketchFace):
         return self._point3
 
     @property
-    def visualization_polydata(self) -> pv.PolyData:
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
         """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
@@ -86,6 +92,7 @@ class Triangle(SketchFace):
             VTK pyvista.Polydata configuration.
         """
         import numpy as np
+        import pyvista as pv
 
         return pv.Triangle(
             np.array(

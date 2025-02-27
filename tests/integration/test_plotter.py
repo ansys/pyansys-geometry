@@ -20,13 +20,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+try:
+    from ansys.geometry.core.misc.checks import run_if_graphics_required
+
+    run_if_graphics_required()
+
+    import pyvista as pv
+    from pyvista.plotting import system_supports_plotting
+
+except ImportError:
+    import pytest
+
+    pytest.skip(
+        "Skipping test_plotter module due to graphics requirements missing.",
+        allow_module_level=True,
+    )
+
 from pathlib import Path
 
 import numpy as np
 from pint import Quantity
 import pytest
-import pyvista as pv
-from pyvista.plotting import system_supports_plotting
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D, Point3D

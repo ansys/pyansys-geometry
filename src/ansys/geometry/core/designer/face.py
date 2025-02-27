@@ -48,10 +48,11 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.bbox import BoundingBox2D
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.auxiliary import convert_color_to_hex
+from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR, convert_color_to_hex
 from ansys.geometry.core.misc.checks import (
     deprecated_method,
     ensure_design_is_active,
+    graphics_required,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
@@ -62,7 +63,6 @@ from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
     ReversedTrimmedSurface,
     TrimmedSurface,
 )
-from ansys.tools.visualization_interface.utils.color import Color
 
 if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
@@ -304,7 +304,7 @@ class Face:
         """Get the current color of the face."""
         if self._color is None and self.body.is_alive:
             # Assigning default value first
-            self._color = Color.DEFAULT.value
+            self._color = DEFAULT_COLOR
 
             # If color is not cached, retrieve from the server
             response = self._faces_stub.GetColor(EntityIdentifier(id=self.id))
@@ -313,7 +313,7 @@ class Face:
             if response.color:
                 self._color = mcolors.to_hex(response.color)
             else:
-                self._color = Color.DEFAULT.value
+                self._color = DEFAULT_COLOR
 
         return self._color
 
@@ -567,6 +567,7 @@ class Face:
 
         return result.success
 
+    @graphics_required
     def tessellate(self) -> "pv.PolyData":
         """Tessellate the face and return the geometry as triangles.
 
@@ -590,6 +591,7 @@ class Face:
         # Return the stored PolyData
         return mb_pdata.transform(self.body.parent_component.get_world_transform(), inplace=False)
 
+    @graphics_required
     def plot(
         self,
         screenshot: str | None = None,
