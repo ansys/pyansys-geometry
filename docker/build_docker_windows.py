@@ -70,7 +70,7 @@ print(f">>> Using {ANSYS_VER}")
 ANSYS_PATH = Path(awp_root[ANSYS_VER])
 
 # Starting on 2025R2, the user can select between DMS and Core Services
-if ANSYS_VER > 252:
+if ANSYS_VER > "252":
     print("Select between DMS and Core Services")
     print("1: DMS")
     print("2: Core Services")
@@ -95,9 +95,9 @@ TMP_DIR = Path(tempfile.mkdtemp(prefix="docker_geometry_service_"))
 # Copy the Geometry Service files to the temporary directory
 print(f">>> Copying Geometry Service files to temporary directory to {TMP_DIR}")
 if backend_selection == 1:
-    BIN_DIR = TMP_DIR / "bins" / "DockerWindows" / "bin" / "x64" / "Release_Headless" / "net472"
+    BIN_DIR = TMP_DIR / "archive" / "bin" / "x64" / "Release_Headless" / "net472"
 else:
-    BIN_DIR = TMP_DIR / "bins" / "DockerWindows" / "bin" / "x64" / "Release_Core_Windows" / "net8.0"
+    BIN_DIR = TMP_DIR / "archive" / "bin" / "x64" / "Release_Core_Windows" / "net8.0"
 
 # Create the directory structure
 shutil.copytree(
@@ -110,7 +110,7 @@ print(">>> Zipping temporary directory. This might take some time...")
 zip_file = shutil.make_archive(
     "windows-dms-binaries" if backend_selection == 1 else "windows-core-binaries",
     "zip",
-    root_dir=TMP_DIR / "bins",
+    root_dir=TMP_DIR / "archive",
 )
 
 # Move the ZIP file to the docker directory
@@ -119,7 +119,7 @@ shutil.move(zip_file, TMP_DIR)
 
 # Remove the temporary directory
 print(">>> Removing Geometry Service files")
-shutil.rmtree(TMP_DIR / "bins")
+shutil.rmtree(TMP_DIR / "archive")
 
 # Download the Dockerfile from the repository
 print(">>> Downloading Dockerfile")
@@ -152,6 +152,9 @@ if backend_selection == 1:
             dockerfile[line : LENGTH_VER + line],
             env_var,
         )
+        # Write the updated Dockerfile
+        with Path.open(TMP_DIR / "Dockerfile", "w") as f:
+            f.write(dockerfile)
     else:
         print(
             "XXXXXXX No AWP_ROOT environment variable found in Dockerfile.. exiting process. XXXXXXX"  # noqa: E501
