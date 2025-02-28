@@ -21,6 +21,14 @@
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
 
+# First, verify graphics are available
+try:
+    from ansys.geometry.core.misc.checks import run_if_graphics_required
+
+    run_if_graphics_required()
+except ImportError as err:  # pragma: no cover
+    raise err
+
 from itertools import cycle
 from pathlib import Path
 from typing import Any
@@ -39,6 +47,7 @@ from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.tools.visualization_interface import (
@@ -248,7 +257,7 @@ class GeometryPlotter(PlotterInterface):
             if not merge:
                 for face in faces:
                     face_color = face.color
-                    if face_color != Color.DEFAULT.value:
+                    if face_color != DEFAULT_COLOR:
                         plotting_options["color"] = face_color
                     else:
                         plotting_options["color"] = body_color
@@ -294,7 +303,7 @@ class GeometryPlotter(PlotterInterface):
         dataset = face.tessellate()
         if self.use_service_colors:
             face_color = face.color
-            if face_color != Color.DEFAULT.value:
+            if face_color != DEFAULT_COLOR:
                 plotting_options["color"] = face_color
             else:
                 plotting_options["color"] = face.body.color

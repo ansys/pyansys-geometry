@@ -21,6 +21,14 @@
 # SOFTWARE.
 """Provides the ruler widget for the PyAnsys Geometry plotter."""
 
+# First, verify graphics are available
+try:
+    from ansys.geometry.core.misc.checks import run_if_graphics_required
+
+    run_if_graphics_required()
+except ImportError as err:  # pragma: no cover
+    raise err
+
 from pathlib import Path
 
 from vtk import vtkButtonWidget, vtkPNGReader

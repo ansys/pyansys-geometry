@@ -21,18 +21,23 @@
 # SOFTWARE.
 """Module for creating and managing gears."""
 
+from typing import TYPE_CHECKING
+
 from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
-import pyvista as pv
 
 from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
 
 
 class Gear(SketchFace):
@@ -43,7 +48,8 @@ class Gear(SketchFace):
         super().__init__()
 
     @property
-    def visualization_polydata(self) -> pv.PolyData:
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
         """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
@@ -54,6 +60,8 @@ class Gear(SketchFace):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
+        import pyvista as pv
+
         return pv.merge([edge.visualization_polydata for edge in self._edges])
 
 
