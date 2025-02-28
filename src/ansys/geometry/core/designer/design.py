@@ -642,7 +642,6 @@ class Design(Component):
         return file_location
 
     @check_input_types
-    @protect_grpc
     @ensure_design_is_active
     def create_named_selection(
         self,
@@ -1168,7 +1167,7 @@ class Design(Component):
                 bodies=bodies,
                 faces=faces,
                 edges=edges,
-                beams=[beam.id for beam in result.beams],
+                beams=[],   # BEAM IMPORT NOT SUPPORTED FOR NAMED SELECTIONS
                 design_points=design_points,
             )
             self._named_selections[new_ns.name] = new_ns
