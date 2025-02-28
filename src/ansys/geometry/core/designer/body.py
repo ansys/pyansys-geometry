@@ -1222,11 +1222,19 @@ class MasterBody(IBody):
 
         # cache tessellation
         if not self._tessellation:
-            resp = self._bodies_stub.GetTessellation(self._grpc_id)
-            self._tessellation = {
-                str(face_id): tess_to_pd(face_tess)
-                for face_id, face_tess in resp.face_tessellation.items()
-            }
+            if(False): # tessellation streaming 
+                tessellationMap = {}
+                for response in self._bodies_stub.GetTessellationStream(self._grpc_id):
+                    for key, value in response.face_tessellation.items():
+                        tessellationMap[key] = tess_to_pd(value)
+                
+                self._tessellation = tessellationMap
+            else:
+                resp = self._bodies_stub.GetTessellation(self._grpc_id)
+                self._tessellation = {
+                    str(face_id): tess_to_pd(face_tess)
+                    for face_id, face_tess in resp.face_tessellation.items()
+                }
 
         pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
         comp = pv.MultiBlock(pdata)
