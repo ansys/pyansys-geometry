@@ -1110,9 +1110,9 @@ def test_plot_with_body_opacity(modeler: Modeler, verify_image_cache):
 
     # Test the plotting of the body
     box_body.plot(
-        screenshot=Path(IMAGE_RESULTS_DIR, "plot_box_with_opacity.png"),
-        use_service_colors=True
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_box_with_opacity.png"), use_service_colors=True
     )
+
 
 @skip_no_xserver
 def test_plot_with_face_opacity(modeler: Modeler, verify_image_cache):
@@ -1134,6 +1134,5 @@ def test_plot_with_face_opacity(modeler: Modeler, verify_image_cache):
 
     # Test the plotting of the body
     box_body.plot(
-        screenshot=Path(IMAGE_RESULTS_DIR, "plot_face_with_opacity.png"),
-        use_service_colors=True
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_face_with_opacity.png"), use_service_colors=True
     )

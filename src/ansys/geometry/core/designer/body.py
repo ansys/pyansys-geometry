@@ -190,7 +190,7 @@ class IBody(ABC):
     def color(self) -> str:
         """Get the color of the body."""
         return
-    
+
     @abstractmethod
     def opacity(self) -> float:
         """Get the float value of the opacity for the body."""
@@ -885,7 +885,7 @@ class MasterBody(IBody):
                     self._color = mcolors.to_hex(color_response.color, keep_alpha=True)
 
         return self._color
-    
+
     @property
     def opacity(self) -> float:  # noqa: D102
         opacity_hex = self._color[7:]
@@ -1123,8 +1123,7 @@ class MasterBody(IBody):
     @check_input_types
     @min_backend_version(25, 1, 0)
     def set_color(
-        self,
-        color: str | tuple[float, float, float] | tuple[float, float, float, float]
+        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
     ) -> None:
         """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
@@ -1437,7 +1436,7 @@ class Body(IBody):
     @property
     def color(self) -> str:  # noqa: D102
         return self._template.color
-    
+
     @property
     def opacity(self) -> float:  # noqa: D102
         return self._template.opacity

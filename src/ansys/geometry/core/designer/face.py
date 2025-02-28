@@ -316,7 +316,7 @@ class Face:
                 self._color = DEFAULT_COLOR
 
         return self._color
-    
+
     @property
     def opacity(self) -> float:
         """Get the opacity of the face."""
