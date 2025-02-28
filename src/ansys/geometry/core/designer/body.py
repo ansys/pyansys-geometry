@@ -889,10 +889,7 @@ class MasterBody(IBody):
     @property
     def opacity(self) -> float:  # noqa: D102
         opacity_hex = self._color[7:]
-        if opacity_hex == "":
-            return 1
-        else:
-            return int(opacity_hex, 16) / 255
+        return int(opacity_hex, 16) / 255 if opacity_hex else 1
 
     @color.setter
     def color(self, value: str | tuple[float, float, float]):  # noqa: D102
