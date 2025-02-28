@@ -1167,7 +1167,7 @@ class Design(Component):
                 bodies=bodies,
                 faces=faces,
                 edges=edges,
-                beams=[],   # BEAM IMPORT NOT SUPPORTED FOR NAMED SELECTIONS
+                beams=[],  # BEAM IMPORT NOT SUPPORTED FOR NAMED SELECTIONS
                 design_points=design_points,
             )
             self._named_selections[new_ns.name] = new_ns
