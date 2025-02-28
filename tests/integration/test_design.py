@@ -32,6 +32,7 @@ from pyvista.plotting.utilities.regression import compare_images as pv_compare_i
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
+from ansys.geometry.core.connection.defaults import MAX_MESSAGE_LENGTH
 from ansys.geometry.core.designer import (
     CurveType,
     DesignFileFormat,
@@ -1047,7 +1048,7 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
 def test_stream_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test uploading a file to the server."""
     file = tmp_path_factory.mktemp("test_design") / "upload_stream_example.scdocx"
-    file_size = 1024 * 64 * 20  # 64KB is the recommended chunk size, so we'll send 20 chunks.
+    file_size = MAX_MESSAGE_LENGTH * 5 # stream five messages 
 
     # Write random bytes
     with file.open(mode="wb") as fout:

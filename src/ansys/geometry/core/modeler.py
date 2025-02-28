@@ -372,8 +372,10 @@ class Modeler:
         Chunked UploadFileRequest
 
         """
+        chunk_size = MAX_MESSAGE_LENGTH - 1024*1024 # reserve a MB for the gRPC message
+
         with open(file_path, "rb") as file:
-            while chunk := file.read(MAX_MESSAGE_LENGTH):
+            while chunk := file.read(chunk_size):
                 yield UploadFileRequest(
                     data=chunk,
                     file_name=file_path.name,
