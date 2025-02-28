@@ -1550,13 +1550,18 @@ class Body(IBody):
         sketch : Sketch, optional
             The sketch containing curves to imprint.
         trimmed_curves : list[TrimmedCurve], optional
-            The list of curves to be imprinted.
+            The list of curves to be imprinted. If sketch is provided, this parameter is ignored.
 
         Returns
         -------
         tuple[list[Edge], list[Face]]
             A tuple containing the list of new edges and faces created by the imprint operation.
         """
+        if sketch is None and self._template._grpc_client.backend_version < (25, 2, 0):
+            raise ValueError(
+                "A sketch must be provided for imprinting when using API versions below 25.2.0."
+            )
+
         if sketch is None and trimmed_curves is None:
             raise ValueError("Either a sketch or edges must be provided for imprinting.")
 
