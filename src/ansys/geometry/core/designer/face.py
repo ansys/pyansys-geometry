@@ -311,11 +311,20 @@ class Face:
 
             # Return if valid color returned
             if response.color:
-                self._color = mcolors.to_hex(response.color)
+                self._color = mcolors.to_hex(response.color, keep_alpha=True)
             else:
                 self._color = DEFAULT_COLOR
 
         return self._color
+    
+    @property
+    def opacity(self) -> float:
+        """Get the opacity of the face."""
+        opacity_hex = self._color[7:]
+        if opacity_hex == "":
+            return 1
+        else:
+            return int(opacity_hex, 16) / 255
 
     @color.setter
     def color(self, color: str | tuple[float, float, float]) -> None:

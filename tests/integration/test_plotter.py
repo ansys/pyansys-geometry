@@ -1090,3 +1090,50 @@ def test_plot_single_face_with_service_color(
     box_body.faces[1].plot(
         screenshot=Path(IMAGE_RESULTS_DIR, "plot_single_face_with_service_color.png")
     )
+
+
+@skip_no_xserver
+def test_plot_with_body_opacity(modeler: Modeler, verify_image_cache):
+    """Test plotting a body with decreased opacity."""
+    # Create your design on the server side
+    design = modeler.create_design("BoxWithOpacity")
+
+    # Create a sketch of a box
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+
+    # Assign color to the body
+    box_body.color = (255, 0, 0, 80)
+
+    # Test the plotting of the body
+    box_body.plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_box_with_opacity.png"),
+        use_service_colors=True
+    )
+
+@skip_no_xserver
+def test_plot_with_face_opacity(modeler: Modeler, verify_image_cache):
+    """Test plotting a body with decreased opacity."""
+    # Create your design on the server side
+    design = modeler.create_design("BoxWithOpacity")
+
+    # Create a sketch of a box
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+
+    # Assign color to the body
+    box_body.faces[0].color = (255, 0, 0, 80)
+    box_body.faces[1].color = (255, 0, 0, 80)
+    box_body.faces[2].color = (255, 0, 0, 80)
+
+    # Test the plotting of the body
+    box_body.plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_face_with_opacity.png"),
+        use_service_colors=True
+    )

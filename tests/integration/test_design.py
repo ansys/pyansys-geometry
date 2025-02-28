@@ -2159,27 +2159,31 @@ def test_set_body_color(modeler: Modeler):
 
     # Set the color of the body using hex code.
     box.color = "#0000ff"
-    assert box.color == "#0000ff"
+    assert box.color[0:7] == "#0000ff"
 
     box.color = "#ffc000"
-    assert box.color == "#ffc000"
+    assert box.color[0:7] == "#ffc000"
 
     # Set the color of the body using color name.
     box.set_color("green")
-    box.color == "#008000"
+    box.color[0:7] == "#008000"
 
     # Set the color of the body using RGB values between (0,1) as floats.
     box.set_color((1.0, 0.0, 0.0))
-    box.color == "#ff0000"
+    box.color[0:7] == "#ff0000"
 
     # Set the color of the body using RGB values between (0,255) as integers).
     box.set_color((0, 255, 0))
-    box.color == "#00ff00"
+    box.color[0:7] == "#00ff00"
 
     # Assigning color object directly
     blue_color = mcolors.to_rgba("#0000FF")
     box.color = blue_color
-    assert box.color == "#0000ff"
+    assert box.color[0:7] == "#0000ff"
+
+    # Test an RGBA color
+    box.color = "#ff00003c"
+    assert box.color == "#ff00003c"
 
 
 def test_body_scale(modeler: Modeler):
@@ -3057,25 +3061,29 @@ def test_set_face_color(modeler: Modeler):
     assert faces[0].color == DEFAULT_COLOR
 
     # Set the color of the body using hex code.
-    faces[0].color = "#0000ff"
-    assert faces[0].color == "#0000ff"
+    faces[0].color = "#0000ffff"
+    assert faces[0].color == "#0000ffff"
 
-    faces[1].color = "#ffc000"
-    assert faces[1].color == "#ffc000"
+    faces[1].color = "#ffc000ff"
+    assert faces[1].color == "#ffc000ff"
 
     # Set the color of the body using color name.
     faces[2].set_color("green")
-    assert faces[2].color == "#008000"
+    assert faces[2].color == "#008000ff"
 
     # Set the color of the body using RGB values between (0,1) as floats.
     faces[0].set_color((1.0, 0.0, 0.0))
-    assert faces[0].color == "#ff0000"
+    assert faces[0].color == "#ff0000ff"
 
     # Set the color of the body using RGB values between (0,255) as integers).
     faces[1].set_color((0, 255, 0))
-    assert faces[1].color == "#00ff00"
+    assert faces[1].color == "#00ff00ff"
 
     # Assigning color object directly
     blue_color = mcolors.to_rgba("#0000FF")
     faces[2].color = blue_color
-    assert faces[2].color == "#0000ff"
+    assert faces[2].color == "#0000ffff"
+
+    # Assign a color with opacity
+    faces[3].color = (255, 0, 0, 80)
+    assert faces[3].color == "#ff000050"
