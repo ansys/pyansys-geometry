@@ -238,7 +238,7 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
 
 
 def convert_color_to_hex(
-        color: str | tuple[float, float, float] | tuple[float, float, float, float]
+    color: str | tuple[float, float, float] | tuple[float, float, float, float],
 ) -> str:
     """Get the hex string color from input formats.
 
