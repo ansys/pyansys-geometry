@@ -1048,7 +1048,7 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
 def test_stream_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test uploading a file to the server."""
     file = tmp_path_factory.mktemp("test_design") / "upload_stream_example.scdocx"
-    file_size = MAX_MESSAGE_LENGTH * 5 # stream five messages 
+    file_size = MAX_MESSAGE_LENGTH * 5  # stream five messages
 
     # Write random bytes
     with file.open(mode="wb") as fout:
