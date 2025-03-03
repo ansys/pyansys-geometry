@@ -278,3 +278,25 @@ def convert_color_to_hex(
         raise ValueError(f"Invalid color value: {err}")
 
     return color
+
+
+def convert_opacity_to_hex(opacity: float) -> str:
+    """Get the hex string from an opacity value.
+
+    Parameters
+    ----------
+    opacity : float
+        Opacity to set body to. Must be in the range [0, 1].
+
+    Returns
+    -------
+    The hex code for the opacity formatted #aa
+    """
+    try:
+        # Ensure that the value is within 0-1 range
+        if 0 <= opacity <= 1:
+            return hex(int(opacity * 255))[2:]
+        else:
+            raise ValueError("Opacity value must be between 0 and 1.")
+    except ValueError as err:
+        raise ValueError(f"Invalid color value: {err}")

@@ -82,6 +82,7 @@ from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.auxiliary import (
     DEFAULT_COLOR,
     convert_color_to_hex,
+    convert_opacity_to_hex,
     get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
@@ -892,8 +893,12 @@ class MasterBody(IBody):
         return int(opacity_hex, 16) / 255 if opacity_hex else 1
 
     @color.setter
-    def color(self, value: str | tuple[float, float, float]):  # noqa: D102
+    def color(self, value: str | tuple[float, float, float]) -> None:  # noqa: D102
         self.set_color(value)
+
+    @opacity.setter
+    def opacity(self, value: float) -> None:  # noqa: D102
+        self.set_opacity(value)
 
     @property
     def is_surface(self) -> bool:  # noqa: D102
@@ -1133,6 +1138,16 @@ class MasterBody(IBody):
             )
         )
         self._color = color
+
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def set_opacity(self, opacity: float) -> None:
+        """Set the opacity of the body."""
+        self._grpc_client.log.debug(f"Setting body opacity of {self.id} to {opacity}.")
+        opacity = convert_opacity_to_hex(opacity)
+
+        new_color = self._color[0:7] + opacity
+        self.set_color(new_color)
 
     @protect_grpc
     @check_input_types
@@ -1441,6 +1456,10 @@ class Body(IBody):
     @color.setter
     def color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
         return self._template.set_color(color)
+    
+    @opacity.setter
+    def opacity(self, opacity: float) -> None:  # noqa: D102
+        return self._template.set_opacity(opacity)
 
     @property
     def parent_component(self) -> "Component":  # noqa: D102

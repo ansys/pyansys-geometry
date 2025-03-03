@@ -2216,6 +2216,17 @@ def test_set_body_color(modeler: Modeler):
     box.color = "#ff00003c"
     assert box.color == "#ff00003c"
 
+    # Test setting the opacity separately
+    box.opacity = 0.8
+    assert box.color == "#ff0000cc"
+
+    # Try setting the opacity to an invalid value
+    with pytest.raises(
+        ValueError, 
+        match="Invalid color value: Opacity value must be between 0 and 1."
+    ):
+        box.opacity = 255
+
 
 def test_body_scale(modeler: Modeler):
     """Verify the correct scaling of a body."""
@@ -3118,3 +3129,14 @@ def test_set_face_color(modeler: Modeler):
     # Assign a color with opacity
     faces[3].color = (255, 0, 0, 80)
     assert faces[3].color == "#ff000050"
+
+    # Test setting the opacity separately
+    faces[3].opacity = 0.8
+    assert faces[3].color == "#ff0000cc"
+
+    # Try setting the opacity to an invalid value
+    with pytest.raises(
+        ValueError, 
+        match="Invalid color value: Opacity value must be between 0 and 1."
+    ):
+        faces[3].opacity = 255
