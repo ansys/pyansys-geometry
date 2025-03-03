@@ -1456,7 +1456,7 @@ class Body(IBody):
     @color.setter
     def color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
         return self._template.set_color(color)
-    
+
     @opacity.setter
     def opacity(self, opacity: float) -> None:  # noqa: D102
         return self._template.set_opacity(opacity)
