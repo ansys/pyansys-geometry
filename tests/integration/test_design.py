@@ -2222,8 +2222,7 @@ def test_set_body_color(modeler: Modeler):
 
     # Try setting the opacity to an invalid value
     with pytest.raises(
-        ValueError, 
-        match="Invalid color value: Opacity value must be between 0 and 1."
+        ValueError, match="Invalid color value: Opacity value must be between 0 and 1."
     ):
         box.opacity = 255
 
@@ -3136,7 +3135,6 @@ def test_set_face_color(modeler: Modeler):
 
     # Try setting the opacity to an invalid value
     with pytest.raises(
-        ValueError, 
-        match="Invalid color value: Opacity value must be between 0 and 1."
+        ValueError, match="Invalid color value: Opacity value must be between 0 and 1."
     ):
         faces[3].opacity = 255

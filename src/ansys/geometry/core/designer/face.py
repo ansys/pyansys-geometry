@@ -48,7 +48,11 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.bbox import BoundingBox2D
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR, convert_color_to_hex, convert_opacity_to_hex
+from ansys.geometry.core.misc.auxiliary import (
+    DEFAULT_COLOR,
+    convert_color_to_hex,
+    convert_opacity_to_hex,
+)
 from ansys.geometry.core.misc.checks import (
     deprecated_method,
     ensure_design_is_active,
