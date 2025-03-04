@@ -1037,13 +1037,16 @@ def test_plot_face_colors_from_service(modeler: Modeler, verify_image_cache):
 
     # Extrude the sketch to create a body
     box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
-    # Let's assign colors to the faces...
-    # 1) Box at large
+    # Box at large - Red
     box_body.set_color((255, 0, 0))
-    # 2) +Z face
-    box_body.faces[1].set_color((0, 255, 0))
-    # 3) +X face
-    box_body.faces[2].set_color((0, 0, 255))
+
+    for face in box_body.faces:
+        # A) +Z face - Green
+        if face.normal() == UNITVECTOR3D_Z:
+            face.set_color((0, 255, 0))
+        # B) +X face - Blue
+        elif face.normal() == UNITVECTOR3D_X:
+            face.set_color((0, 0, 255))
 
     box_body.plot(
         screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_face_colors_from_service.png"),
@@ -1089,4 +1092,51 @@ def test_plot_single_face_with_service_color(
     # Test the plotting of the body
     box_body.faces[1].plot(
         screenshot=Path(IMAGE_RESULTS_DIR, "plot_single_face_with_service_color.png")
+    )
+
+
+@skip_no_xserver
+def test_plot_with_body_opacity(modeler: Modeler, verify_image_cache):
+    """Test plotting a body with decreased opacity."""
+    # Create your design on the server side
+    design = modeler.create_design("BoxWithOpacity")
+
+    # Create a sketch of a box
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+
+    # Assign color to the body
+    box_body.color = (255, 0, 0, 80)
+
+    # Test the plotting of the body
+    box_body.plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_box_with_opacity.png"), use_service_colors=True
+    )
+
+
+@skip_no_xserver
+def test_plot_with_face_opacity(modeler: Modeler, verify_image_cache):
+    """Test plotting a body with decreased opacity."""
+    # Create your design on the server side
+    design = modeler.create_design("BoxWithOpacity")
+
+    # Create a sketch of a box
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+
+    # Assign color to the body - On all + X, Y, Z faces
+    for face in box_body.faces:
+        normal = face.normal()
+        if normal == UNITVECTOR3D_X or normal == UNITVECTOR3D_Y or normal == UNITVECTOR3D_Z:
+            face.color = (255, 0, 0, 80)
+
+    # Test the plotting of the body
+    box_body.plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_face_with_opacity.png"), use_service_colors=True
     )
