@@ -48,7 +48,11 @@ from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.bbox import BoundingBox2D
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR, convert_color_to_hex
+from ansys.geometry.core.misc.auxiliary import (
+    DEFAULT_COLOR,
+    convert_color_to_hex,
+    convert_opacity_to_hex,
+)
 from ansys.geometry.core.misc.checks import (
     deprecated_method,
     ensure_design_is_active,
@@ -311,15 +315,25 @@ class Face:
 
             # Return if valid color returned
             if response.color:
-                self._color = mcolors.to_hex(response.color)
+                self._color = mcolors.to_hex(response.color, keep_alpha=True)
             else:
                 self._color = DEFAULT_COLOR
 
         return self._color
 
+    @property
+    def opacity(self) -> float:
+        """Get the opacity of the face."""
+        opacity_hex = self._color[7:]
+        return int(opacity_hex, 16) / 255 if opacity_hex else 1
+
     @color.setter
     def color(self, color: str | tuple[float, float, float]) -> None:
         self.set_color(color)
+
+    @opacity.setter
+    def opacity(self, opacity: float) -> None:
+        self.set_opacity(opacity)
 
     @cached_property
     @protect_grpc
@@ -347,6 +361,16 @@ class Face:
             )
         )
         self._color = color
+
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def set_opacity(self, opacity: float) -> None:
+        """Set the opacity of the face."""
+        self._grpc_client.log.debug(f"Setting face color of {self.id} to {opacity}.")
+        opacity = convert_opacity_to_hex(opacity)
+
+        new_color = self._color[0:7] + opacity
+        self.set_color(new_color)
 
     @protect_grpc
     @ensure_design_is_active

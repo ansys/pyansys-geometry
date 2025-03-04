@@ -257,15 +257,18 @@ class GeometryPlotter(PlotterInterface):
             if not merge:
                 for face in faces:
                     face_color = face.color
-                    if face_color != DEFAULT_COLOR:
-                        plotting_options["color"] = face_color
-                    else:
+                    if face_color == DEFAULT_COLOR or face_color[0:7] == DEFAULT_COLOR.lower():
                         plotting_options["color"] = body_color
+                        plotting_options["opacity"] = body.opacity
+                    else:
+                        plotting_options["color"] = face_color
+                        plotting_options["opacity"] = face.opacity
                     self._backend.pv_interface.plot(face.tessellate(), **plotting_options)
                 return
             else:
                 dataset = body.tessellate(merge=True)
                 plotting_options["color"] = body_color
+                plotting_options["opacity"] = body.opacity
                 self._backend.pv_interface.plot(dataset, **plotting_options)
                 return
         # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
@@ -305,8 +308,10 @@ class GeometryPlotter(PlotterInterface):
             face_color = face.color
             if face_color != DEFAULT_COLOR:
                 plotting_options["color"] = face_color
+                plotting_options["opacity"] = face.opacity
             else:
                 plotting_options["color"] = face.body.color
+                plotting_options["opacity"] = face.body.opacity
             self._backend.pv_interface.plot(dataset, **plotting_options)
             return
 
