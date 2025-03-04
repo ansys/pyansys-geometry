@@ -1135,6 +1135,7 @@ def test_plot_with_face_opacity(modeler: Modeler, verify_image_cache):
         normal = face.normal()
         if normal == UNITVECTOR3D_X or normal == UNITVECTOR3D_Y or normal == UNITVECTOR3D_Z:
             face.color = (255, 0, 0, 80)
+
     # Test the plotting of the body
     box_body.plot(
         screenshot=Path(IMAGE_RESULTS_DIR, "plot_face_with_opacity.png"), use_service_colors=True
