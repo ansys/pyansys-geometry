@@ -1037,16 +1037,14 @@ def test_plot_face_colors_from_service(modeler: Modeler, verify_image_cache):
 
     # Extrude the sketch to create a body
     box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
-    # Let's assign colors to the faces...
-    faces = box_body.faces
-    # Box at large
+    # Box at large - Red
     box_body.set_color((255, 0, 0))
 
-    for face in faces:
-        # A) +Z face
+    for face in box_body.faces:
+        # A) +Z face - Green
         if face.normal() == UNITVECTOR3D_Z:
             face.set_color((0, 255, 0))
-        # B) +X face
+        # B) +X face - Blue
         elif face.normal() == UNITVECTOR3D_X:
             face.set_color((0, 0, 255))
 
