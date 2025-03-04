@@ -295,7 +295,7 @@ def convert_opacity_to_hex(opacity: float) -> str:
     try:
         # Ensure that the value is within 0-1 range
         if 0 <= opacity <= 1:
-            return hex(int(opacity * 255))[2:]
+            return "{:02x}".format(int(opacity * 255))
         else:
             raise ValueError("Opacity value must be between 0 and 1.")
     except ValueError as err:
