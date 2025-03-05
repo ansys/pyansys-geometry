@@ -281,7 +281,7 @@ class IBody(ABC):
             Material assigned to the body.
         """
         return
-    
+
     @abstractmethod
     def bounding_box(self) -> BoundingBox:
         """Get the bounding box of the body.

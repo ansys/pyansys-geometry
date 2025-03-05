@@ -3144,7 +3144,7 @@ def test_get_body_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a body."""
     design = modeler.create_design("body_bounding_box")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    
+
     bounding_box = body.bounding_box
     assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -1
     assert bounding_box.min_corner.z.m == 0
@@ -3172,7 +3172,7 @@ def test_get_edge_bounding_box(modeler: Modeler):
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
     # Edge 0 goes from (-0.5, -0.5, 1) to (0.5, -0.5, 1)
-    bounding_box = body.edges[0].bounding_box 
+    bounding_box = body.edges[0].bounding_box
     assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
     assert bounding_box.min_corner.z.m == 1
     assert bounding_box.max_corner.x.m == 0.5

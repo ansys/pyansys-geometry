@@ -24,7 +24,6 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
-from ansys.geometry.core.math.bbox import BoundingBox
 from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
@@ -32,6 +31,7 @@ from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_point_to_point3d
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
