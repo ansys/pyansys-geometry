@@ -24,12 +24,13 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
+from ansys.geometry.core.math.bbox import BoundingBox
 from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import grpc_curve_to_curve
+from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_point_to_point3d
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
@@ -206,3 +207,17 @@ class Edge:
             self._grpc_client.log.debug("Requesting edge end point from server.")
             response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
             return Point3D([response.end.x, response.end.y, response.end.z])
+
+    @property
+    @protect_grpc
+    @ensure_design_is_active
+    def bounding_box(self) -> BoundingBox:
+        """Bounding box of the edge."""
+        self._grpc_client.log.debug("Requesting bounding box from server.")
+
+        result = self._edges_stub.GetBoundingBox(self._grpc_id)
+
+        min_corner = grpc_point_to_point3d(result.min)
+        max_corner = grpc_point_to_point3d(result.max)
+        center = grpc_point_to_point3d(result.center)
+        return BoundingBox(min_corner, max_corner, center)

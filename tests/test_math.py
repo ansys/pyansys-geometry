@@ -34,7 +34,7 @@ from ansys.geometry.core.math import (
     UNITVECTOR3D_Z,
     ZERO_VECTOR2D,
     ZERO_VECTOR3D,
-    BoundingBox2D,
+    BoundingBox,
     Frame,
     Matrix,
     Matrix33,
@@ -1066,54 +1066,19 @@ def test_add_sub_point():
         vector_3d + "a"
 
 
-def test_bounding_box_expands_and_evaluates_bounds_comparisons():
-    bounding_box = BoundingBox2D()
-    point1x = 1
-    point1y = 5
-    point2x = -4
-    point2y = -2
-    point3x = 7
-    point3y = 8
-    point4x = -100
-    point4y = 100
+def test_bounding_box_evaluates_bounds_comparisons():
+    min_point = Point3D([0, 0, 0])
+    max_point = Point3D([10, 10, 0])
+    bounding_box = BoundingBox(min_point, max_point)
+    assert bounding_box.contains_point_components(5, 5, 0)
+    assert not bounding_box.contains_point_components(100, 100, 0)
+    assert bounding_box.contains_point(Point3D([3, 4, 0]))
+    assert not bounding_box.contains_point(Point3D([3, 14, 0]))
 
-    bounding_box.add_point_components(point1x, point1y)
-    assert 1 == bounding_box.x_min
-    assert 1 == bounding_box.x_max
-    assert 5 == bounding_box.y_min
-    assert 5 == bounding_box.y_max
-
-    bounding_box.add_point_components(point2x, point2y)
-    assert -4 == bounding_box.x_min
-    assert 1 == bounding_box.x_max
-    assert -2 == bounding_box.y_min
-    assert 5 == bounding_box.y_max
-
-    bounding_box.add_point_components(point3x, point3y)
-    assert -4 == bounding_box.x_min
-    assert 7 == bounding_box.x_max
-    assert -2 == bounding_box.y_min
-    assert 8 == bounding_box.y_max
-
-    bounding_box.add_point(Point2D([point4x, point4y]))
-    assert -100 == bounding_box.x_min
-    assert 7 == bounding_box.x_max
-    assert -2 == bounding_box.y_min
-    assert 100 == bounding_box.y_max
-
-    bounding_box2 = BoundingBox2D(0, 10, 0, 10)
-    assert bounding_box2.contains_point_components(5, 5)
-    assert not bounding_box2.contains_point_components(100, 100)
-    assert bounding_box2.contains_point(Point2D([3, 4]))
-    assert not bounding_box2.contains_point(Point2D([3, 14]))
-
-    bounding_box2.add_points([Point2D([-100, -100]), Point2D([100, 100])])
-    assert bounding_box2.contains_point(Point2D([100, -100]))
-    assert bounding_box2.contains_point(Point2D([-100, 100]))
-
-    copy_bbox_1 = BoundingBox2D(x_min=-100, x_max=7, y_min=-2, y_max=100)
+    copy_bbox_1 = BoundingBox(min_point, max_point)
+    copy_bbox_2 = BoundingBox(Point3D([5, 5, 5]), Point3D([10, 10, 10]))
     assert copy_bbox_1 == bounding_box
-    assert copy_bbox_1 != bounding_box2
+    assert copy_bbox_2 != bounding_box
 
 
 @pytest.mark.parametrize(
@@ -1224,21 +1189,22 @@ def test_circle_intersections_coincident():
 def test_bounding_box_intersection():
     """Test the intersection of two bounding boxes"""
     # Create the two boxes
-    box1 = BoundingBox2D(0, 1, 0, 1)
-    box2 = BoundingBox2D(0.5, 1.5, 0, 1)
+    box1 = BoundingBox(Point3D([0, 0, 0]), Point3D([1, 1, 0]))
+    box2 = BoundingBox(Point3D([0.5, 0, 0]), Point3D([1.5, 1, 0]))
 
     # Get intersection and check
-    intersection = BoundingBox2D.intersect_bboxes(box1, box2)
+    intersection = BoundingBox.intersect_bboxes(box1, box2)
     assert intersection is not None
-    assert intersection == BoundingBox2D(0.5, 1, 0, 1)
+    assert intersection == BoundingBox(Point3D([0.5, 0, 0]), Point3D([1, 1, 0]))
 
 
 def test_bounding_box_no_intersection():
     """Test that the bounding box intersection returns None in the case of no overlap"""
     # Create the two boxes
-    box1 = BoundingBox2D(0, 1, 0, 1)
-    box2 = BoundingBox2D(2, 3, 0, 1)
+    box1 = BoundingBox(Point3D([0, 0, 0]), Point3D([1, 1, 0]))
+    box2 = BoundingBox(Point3D([2, 0, 0]), Point3D([3, 1, 0]))
+
 
     # Get intersection and check
-    intersection = BoundingBox2D.intersect_bboxes(box1, box2)
+    intersection = BoundingBox.intersect_bboxes(box1, box2)
     assert intersection is None
