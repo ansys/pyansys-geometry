@@ -565,7 +565,7 @@ def test_faces_edges(modeler: Modeler):
 
 def test_coordinate_system_creation(modeler: Modeler):
     """Test for verifying the correct creation of ``CoordinateSystem``."""
-    pytest.skip(reason='Name issue in SC code')
+    pytest.skip(reason="Name issue in SC code")
     # Create your design on the server side
     design = modeler.create_design("CoordinateSystem_Test")
 
