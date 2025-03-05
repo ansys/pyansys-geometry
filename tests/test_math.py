@@ -1204,7 +1204,6 @@ def test_bounding_box_no_intersection():
     box1 = BoundingBox(Point3D([0, 0, 0]), Point3D([1, 1, 0]))
     box2 = BoundingBox(Point3D([2, 0, 0]), Point3D([3, 1, 0]))
 
-
     # Get intersection and check
     intersection = BoundingBox.intersect_bboxes(box1, box2)
     assert intersection is None

@@ -48,12 +48,7 @@ class BoundingBox:
     """
 
     @check_input_types
-    def __init__(
-        self,
-        min_corner: Point3D,
-        max_corner: Point3D,
-        center: Point3D = None
-    ):
+    def __init__(self, min_corner: Point3D, max_corner: Point3D, center: Point3D = None):
         """Initialize the ``BoundingBox`` class."""
         self._min_corner = min_corner
         self._max_corner = max_corner
@@ -87,7 +82,7 @@ class BoundingBox:
             Maximum corner of the bounding box.
         """
         return self._max_corner
-    
+
     @property
     def center(self) -> Point3D:
         """Center of the bounding box.
@@ -164,9 +159,7 @@ class BoundingBox:
         return not self == other
 
     @staticmethod
-    def intersect_bboxes(
-        box_1: "BoundingBox", box_2: "BoundingBox"
-    ) -> Union[None, "BoundingBox"]:
+    def intersect_bboxes(box_1: "BoundingBox", box_2: "BoundingBox") -> Union[None, "BoundingBox"]:
         """Find the intersection of 2 BoundingBox objects.
 
         Parameters
@@ -185,7 +178,7 @@ class BoundingBox:
             box_1._min_corner.x.m,
             box_2._min_corner.x.m,
             box_1._max_corner.x.m,
-            box_2._max_corner.x.m
+            box_2._max_corner.x.m,
         )
         if not intersect:
             return None
@@ -194,16 +187,16 @@ class BoundingBox:
             box_1._min_corner.y.m,
             box_2._min_corner.y.m,
             box_1._max_corner.y.m,
-            box_2._max_corner.y.m
+            box_2._max_corner.y.m,
         )
         if not intersect:
             return None
-        
+
         intersect, min_z, max_z = intersect_interval(
             box_1._min_corner.z.m,
             box_2._min_corner.z.m,
             box_1._max_corner.z.m,
-            box_2._max_corner.z.m
+            box_2._max_corner.z.m,
         )
         if not intersect:
             return None
