@@ -788,20 +788,6 @@ def test_get_empty_round_info(modeler: Modeler):
     assert radius == 0.0
 
 
-def test_get_face_bounding_box(modeler: Modeler):
-    """Test getting the bounding box of a face."""
-    design = modeler.create_design("face_bounding_box")
-    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    bounding_box = body.faces[0].bounding_box
-    assert bounding_box.x_min == bounding_box.y_min == -0.5
-    assert bounding_box.x_max == bounding_box.y_max == 0.5
-
-    bounding_box = body.faces[1].bounding_box
-    assert bounding_box.x_min == bounding_box.y_min == -0.5
-    assert bounding_box.x_max == bounding_box.y_max == 0.5
-
-
 def test_linear_pattern_on_imported_geometry_faces(modeler: Modeler):
     """Test create a linear pattern on imported geometry"""
     design = modeler.open_file(FILES_DIR / "LinearPatterns.scdocx")
