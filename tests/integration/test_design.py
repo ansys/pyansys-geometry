@@ -3146,9 +3146,9 @@ def test_get_body_bounding_box(modeler: Modeler):
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     
     bounding_box = body.bounding_box
-    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -1
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
     assert bounding_box.min_corner.z.m == 0
-    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 1
+    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
     assert bounding_box.max_corner.z.m == 1
 
 
