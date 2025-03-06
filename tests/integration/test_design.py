@@ -1171,6 +1171,57 @@ def test_project_and_imprint_curves(modeler: Modeler):
     assert len(body_copy.faces) == 8
 
 
+def test_imprint_trimmed_curves(modeler: Modeler):
+    """
+    Test the imprinting of trimmed curves onto a specified face of a body.
+    """
+    unit = DEFAULT_UNITS.LENGTH
+
+    wx = 1
+    wy = 1
+    wz = 1
+    design = modeler.create_design("test imprint")
+
+    # create box
+    start_at = Point3D([wx / 2, wy / 2, 0.0], unit=unit)
+
+    plane = Plane(
+        start_at,
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0], unit=unit), width=wx, height=wy)
+    box = design.extrude_sketch("box", box_plane, wz)
+
+    assert len(box.faces) == 6
+    assert len(box.edges) == 12
+
+    # create cylinder
+    point = Point3D([0.5, 0.5, 0.5])
+    ortho_1, ortho_2 = UNITVECTOR3D_X, UNITVECTOR3D_Y
+    plane = Plane(point, ortho_1, ortho_2)
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([0.0, 0.0], unit=unit), radius=0.1)
+    cylinder = design.extrude_sketch("cylinder", sketch_cylinder, 0.5)
+
+    edges = cylinder.faces[1].edges
+    trimmed_curves = [edges[0].shape]
+    new_edges, new_faces = box.imprint_curves(faces=[box.faces[1]], trimmed_curves=trimmed_curves)
+
+    # the new edge is coming from the circular top edge of the cylinder.
+    assert new_edges[0].start == new_edges[0].end
+    # verify that there is one new edge coming from the circle.
+    assert len(new_faces) == 1
+    # verify that there is one new face coming from the circle.
+    assert len(new_edges) == 1
+    # verify that there are 7 faces in total.
+    assert len(box.faces) == 7
+    # verify that there are 14 edges in total.
+    assert len(box.edges) == 13
+
+
 def test_copy_body(modeler: Modeler):
     """Test copying a body."""
     # Create your design on the server side
