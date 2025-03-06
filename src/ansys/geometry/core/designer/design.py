@@ -504,11 +504,7 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = (
-            "x_t"
-            if self._grpc_client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX)
-            else "xmt_txt"
-        )
+        ext = "xmt_txt" if BackendType.is_linux_service(self._grpc_client.backend_type) else "x_t"
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)
@@ -534,11 +530,7 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = (
-            "x_b"
-            if self._grpc_client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX)
-            else "xmt_bin"
-        )
+        ext = "xmt_bin" if BackendType.is_linux_service(self._grpc_client.backend_type) else "x_b"
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)

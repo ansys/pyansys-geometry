@@ -1016,7 +1016,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     assert file.exists()
 
     # Check that we can also save it (even if it is not accessible on the server)
-    if modeler.client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX):
+    if BackendType.is_linux_service(modeler.client.backend_type):
         file_save = "/tmp/cylinder-temp.scdocx"
     else:
         file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
