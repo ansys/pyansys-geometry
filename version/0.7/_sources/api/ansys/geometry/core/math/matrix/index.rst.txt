@@ -1,0 +1,159 @@
+
+
+
+
+
+
+The ``matrix.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.math.matrix
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: matrix
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.math.matrix.Matrix`
+            - Provides matrix representation.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.matrix.Matrix33`
+            - Provides 3x3 matrix representation.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.matrix.Matrix44`
+            - Provides 4x4 matrix representation.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~DEFAULT_MATRIX33`
+            - Default value of the 3x3 identity matrix for the ``Matrix33`` class.
+
+
+          * - :py:obj:`~DEFAULT_MATRIX44`
+            - Default value of the 4x4 identity matrix for the ``Matrix44`` class.
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Matrix</api/ansys/geometry/core/math/matrix/Matrix>
+    <span class="nf nf-cod-symbol_class"></span> Matrix33</api/ansys/geometry/core/math/matrix/Matrix33>
+    <span class="nf nf-cod-symbol_class"></span> Matrix44</api/ansys/geometry/core/math/matrix/Matrix44>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides matrix primitive representations.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: DEFAULT_MATRIX33
+
+   
+   Default value of the 3x3 identity matrix for the ``Matrix33`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DEFAULT_MATRIX44
+
+   
+   Default value of the 4x4 identity matrix for the ``Matrix44`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
