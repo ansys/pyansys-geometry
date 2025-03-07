@@ -35,7 +35,7 @@ from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
+from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
@@ -308,6 +308,80 @@ class Modeler:
             )
         )
         return response.file_path
+
+    def _upload_file_stream(
+        self,
+        file_path: str,
+        open_file: bool = False,
+        import_options: ImportOptions = ImportOptions(),
+    ) -> str:
+        """Upload a file from the client to the server via streaming.
+
+        Parameters
+        ----------
+        file_path : str
+            Path of the file to upload. The extension of the file must be included.
+        open_file : bool, default: False
+            Whether to open the file in the Geometry service.
+        import_options : ImportOptions
+            Import options that toggle certain features when opening a file.
+
+        Returns
+        -------
+        file_path : str
+            Full path of the file uploaded to the server.
+
+        Notes
+        -----
+        This method creates a file on the server that has the same name and extension
+        as the file on the client.
+        """
+        from pathlib import Path
+
+        fp_path = Path(file_path).resolve()
+
+        if not fp_path.exists():
+            raise ValueError(f"Could not find file: {file_path}")
+        if fp_path.is_dir():
+            raise ValueError("File path must lead to a file, not a directory.")
+
+        c_stub = CommandsStub(self.client.channel)
+
+        response = c_stub.StreamFileUpload(
+            self._generate_file_chunks(file_path, open_file, import_options)
+        )
+        return response.file_path
+
+    @protect_grpc
+    def _generate_file_chunks(
+        self, file_path: Path, open_file: bool, import_options: ImportOptions
+    ):
+        """Utility method to generate streaming messages.
+
+        Parameters
+        ----------
+        file_path : Path
+            Path of the file to upload. The extension of the file must be included.
+        open_file : bool
+            Whether to open the file in the Geometry service.
+        import_options : ImportOptions
+            Import options that toggle certain features when opening a file.
+
+        Returns
+        -------
+        Chunked UploadFileRequest
+
+        """
+        chunk_size = MAX_MESSAGE_LENGTH - 1024 * 1024  # reserve a MB for the gRPC message
+
+        with open(file_path, "rb") as file:
+            while chunk := file.read(chunk_size):
+                yield UploadFileRequest(
+                    data=chunk,
+                    file_name=file_path.name,
+                    open=open_file,
+                    import_options=import_options.to_dict(),
+                )
 
     @protect_grpc
     def open_file(
