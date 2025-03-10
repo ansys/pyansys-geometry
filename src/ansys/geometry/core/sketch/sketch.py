@@ -28,7 +28,7 @@ from pint import Quantity
 
 from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector2D, Vector3D
 from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
@@ -121,16 +121,22 @@ class Sketch:
         Parameters
         ----------
         translation : Vector3D
-            Vector defining the translation. Meters is the expected unit.
+            Vector defining the translation. Default units are the expected
+            units, otherwise it will be inconsistent.
 
         Returns
         -------
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        self.plane = Plane(
-            self.plane.origin + translation, self.plane.direction_x, self.plane.direction_y
+        new_origin = Point3D(
+            [
+                self.plane.origin.x.m_as(DEFAULT_UNITS.LENGTH) + translation.x,
+                self.plane.origin.y.m_as(DEFAULT_UNITS.LENGTH) + translation.y,
+                self.plane.origin.z.m_as(DEFAULT_UNITS.LENGTH) + translation.z,
+            ]
         )
+        self.plane = Plane(new_origin, self.plane.direction_x, self.plane.direction_y)
         return self
 
     @check_input_types
