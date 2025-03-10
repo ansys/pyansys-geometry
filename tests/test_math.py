@@ -827,6 +827,30 @@ def test_create_rotation_matrix():
     assert np.array_equal(expected_matrix, rotation_matrix)
 
 
+def test_create_matrix_from_mapping():
+    """Test the create_matrix_from_mapping method."""
+    # Define the frame with origin and direction vectors
+    origin = Vector3D([1.0, 2.0, 3.0])
+    direction_x = Vector3D([1.0, 0.0, 0.0])
+    direction_y = Vector3D([0.0, 1.0, 0.0])
+    frame = Frame(origin, direction_x, direction_y)
+
+    # Create the expected translation matrix
+    expected_translation_matrix = Matrix44.create_translation(origin)
+
+    # Create the expected rotation matrix
+    expected_rotation_matrix = Matrix44.create_rotation(direction_x, direction_y)
+
+    # Create the expected result by multiplying the translation and rotation matrices
+    expected_matrix = expected_translation_matrix * expected_rotation_matrix
+
+    # Call the method under test
+    result_matrix = Matrix44.create_matrix_from_mapping(frame)
+
+    # Assert that the result matches the expected matrix
+    assert np.allclose(result_matrix, expected_matrix)
+
+
 def test_frame():
     """``Frame`` construction and equivalency."""
     origin = Point3D([42, 99, 13])
