@@ -253,12 +253,10 @@ class BoundingBox:
 
     Parameters
     ----------
-    max_corner : Point3D
-        Maximum corner for the box.
     min_corner : Point3D
         Minimum corner for the box.
-    corners : list[Point3D]
-        List of all corners of the box.
+    max_corner : Point3D
+        Maximum corner for the box.
     center : Point3D
         Center of the box.
     """
