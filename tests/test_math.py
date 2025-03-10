@@ -858,8 +858,6 @@ def test_create_matrix_from_rotation_about_axis_x():
     print(result_matrix)
     assert np.allclose(result_matrix, expected_matrix)
 
-    # assert np.allclose(result_matrix.to_numpy(), expected_matrix.to_numpy())
-
 
 def test_create_matrix_from_rotation_about_axis_y():
     """Test the create_matrix_from_rotation_about_axis method for rotation about the y-axis."""

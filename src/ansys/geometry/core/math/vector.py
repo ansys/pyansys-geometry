@@ -170,23 +170,13 @@ class Vector3D(np.ndarray):
         if self.is_zero:
             raise Exception("Invalid vector operation: rotation axis cannot be zero.")
 
-        # Normalize the axis to ensure correct scaling
         axis = self.normalize()
-
-        # Compute the parallel component (projection onto the axis)
         parallel = axis * (vector.dot(axis))
-
-        # Compute the perpendicular component (part of the vector that is orthogonal to the axis)
         perpendicular1 = vector - parallel
-
-        # Compute the secondary perpendicular component using cross product
         perpendicular2 = axis.cross(perpendicular1)
-
-        # Compute the rotated vector using trigonometry
         rotated_vector = (
             parallel + perpendicular1 * math.cos(angle) + perpendicular2 * math.sin(angle)
         )
-
         return rotated_vector
 
     @check_input_types
