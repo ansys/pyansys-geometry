@@ -163,65 +163,31 @@ class Vector3D(np.ndarray):
         result_vector = Vector3D(result_4x1[0:3])
         return result_vector
 
-    def rotate(self, axis, angle):
-        """Rotate the 3D vector around an axis by a specified angle.
-
-        Parameters
-        ----------
-        axis : Vector3D
-            3D vector representing the axis of rotation.
-        angle : ~pint.Quantity
-            Angle of rotation.
-
-        Returns
-        -------
-        Vector3D
-            A new 3D vector that is the rotated copy of the original 3D vector.
-
-        Notes
-        -----
-        Rotate the ``Vector3D`` object around the specified axis by the specified angle
-        and return a new ``Vector3D`` object representing the rotated vector.
-        """
-        from ansys.geometry.core.math.matrix import Matrix44
-
-        rot_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
-        return self.transform(rot_matrix)
-
-    def rotate_vector(self, vector: "Vector3D", angle: Quantity) -> "Vector3D":
-        """
-        Rotates the given vector around the current vector by the specified angle.
-
-        Parameters
-        ----------
-        vector : Vector3D
-            The vector to be rotated.
-        angle : Quantity
-            The angle by which to rotate the vector.
-
-        Returns
-        -------
-        Vector3D
-            The rotated vector.
-
-        Raises
-        ------
-        Exception
-            If the current vector is a zero vector.
-        """
+    def rotate_vector(self, vector: "Vector3D", angle: float) -> "Vector3D":
+        """Rotate a vector around a given axis by a specified angle."""
         import math
 
         if self.is_zero:
-            raise Exception("Invalid vector operation.")
+            raise Exception("Invalid vector operation: rotation axis cannot be zero.")
 
-        angle_between = vector.get_angle_between(self)
-        parallel = Vector3D(
-            [vector[0] * angle_between, vector[1] * angle_between, vector[2] * angle_between]
+        # Normalize the axis to ensure correct scaling
+        axis = self.normalize()
+
+        # Compute the parallel component (projection onto the axis)
+        parallel = axis * (vector.dot(axis))
+
+        # Compute the perpendicular component (part of the vector that is orthogonal to the axis)
+        perpendicular1 = vector - parallel
+
+        # Compute the secondary perpendicular component using cross product
+        perpendicular2 = axis.cross(perpendicular1)
+
+        # Compute the rotated vector using trigonometry
+        rotated_vector = (
+            parallel + perpendicular1 * math.cos(angle) + perpendicular2 * math.sin(angle)
         )
 
-        perpendicular1 = vector - parallel
-        perpendicular2 = self.cross(perpendicular1)
-        return parallel + perpendicular1 * math.cos(angle) + perpendicular2 * math.sin(angle)
+        return rotated_vector
 
     @check_input_types
     def get_angle_between(self, v: "Vector3D") -> Quantity:
