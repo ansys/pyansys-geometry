@@ -1,0 +1,150 @@
+
+
+
+
+
+
+The ``docker_instance.py`` module
+=================================
+
+.. py:module:: ansys.geometry.core.connection.docker_instance
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: docker_instance
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.docker_instance.LocalDockerInstance`
+            - Instantiates a Geometry service as a local Docker container.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.docker_instance.GeometryContainers`
+            - Provides an enum holding the available Geometry services.
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~get_geometry_container_type`
+            - Provide back the ``GeometryContainers`` value.
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> LocalDockerInstance</api/ansys/geometry/core/connection/docker_instance/LocalDockerInstance>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> GeometryContainers</api/ansys/geometry/core/connection/docker_instance/GeometryContainers>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for connecting to a local Geometry Service Docker container.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: get_geometry_container_type(instance: LocalDockerInstance) -> GeometryContainers | None
+
+   
+   Provide back the ``GeometryContainers`` value.
+
+
+   :Parameters:
+
+       **instance** : :obj:`LocalDockerInstance`
+           The LocalDockerInstance object.
+
+
+
+   :Returns:
+
+       :obj:`GeometryContainers` or :data:`python:None`
+           The GeometryContainer value corresponding to the previous image or None
+           if not match.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method returns the first hit on the available tags.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
