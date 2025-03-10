@@ -250,7 +250,7 @@ class BoundingBox2D:
 
 class BoundingBox:
     """Maintains the box structure for Bounding Boxes.
-    
+
     Parameters
     ----------
     max_corner : Point3D
@@ -280,7 +280,7 @@ class BoundingBox:
     @property
     def min_corner(self) -> Point3D:
         """Minimum corner of the bounding box.
-        
+
         Returns
         -------
         Point3D

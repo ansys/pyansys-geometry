@@ -3174,6 +3174,7 @@ def test_get_edge_bounding_box(modeler: Modeler):
     assert center.y.m == -0.5
     assert center.z.m == 1
 
+
 def test_get_body_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a body."""
     design = modeler.create_design("body_bounding_box")

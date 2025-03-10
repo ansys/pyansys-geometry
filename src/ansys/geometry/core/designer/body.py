@@ -27,7 +27,6 @@ from enum import Enum, unique
 from functools import wraps
 from typing import TYPE_CHECKING, Union
 
-from ansys.geometry.core.math.bbox import BoundingBox
 from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
@@ -75,6 +74,7 @@ from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
+from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
@@ -281,7 +281,7 @@ class IBody(ABC):
             Material assigned to the body.
         """
         return
-    
+
     @abstractmethod
     def bounding_box(self) -> BoundingBox:
         """Get the bounding box of the body.

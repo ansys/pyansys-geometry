@@ -22,7 +22,6 @@
 """Module for managing a face."""
 
 from enum import Enum, unique
-from functools import cached_property
 from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
@@ -42,10 +41,14 @@ from ansys.api.geometry.v0.faces_pb2 import (
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_point_to_point3d, grpc_surface_to_surface
+from ansys.geometry.core.connection.conversions import (
+    grpc_curve_to_curve,
+    grpc_point_to_point3d,
+    grpc_surface_to_surface,
+)
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
-from ansys.geometry.core.math.bbox import BoundingBox, BoundingBox2D
+from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.auxiliary import (
