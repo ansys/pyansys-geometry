@@ -30,6 +30,7 @@ from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector2D, Vector3D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
@@ -874,6 +875,7 @@ class Sketch:
         """
         self._tags[tag] = sketch_collection
 
+    @graphics_required
     def plot(
         self,
         view_2d: bool = False,
@@ -926,6 +928,7 @@ class Sketch:
             pl.plot(self.sketch_polydata_edges(), **plotting_options)
             pl.show(screenshot=screenshot, view_2d=view_2d_dict, **plotting_options)
 
+    @graphics_required
     def plot_selection(
         self,
         view_2d: bool = False,

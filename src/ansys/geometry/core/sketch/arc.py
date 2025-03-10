@@ -21,18 +21,23 @@
 # SOFTWARE.
 """Provides for creating and managing an arc."""
 
+from typing import TYPE_CHECKING
+
 from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
-import pyvista as pv
 
 from ansys.geometry.core.math.matrix import Matrix
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.math.vector import Vector2D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
 
 
 class Arc(SketchEdge):
@@ -145,7 +150,8 @@ class Arc(SketchEdge):
         return self.radius**2 * self.angle.m / 2
 
     @property
-    def visualization_polydata(self) -> pv.PolyData:
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
         """VTK polydata representation for PyVista visualization.
 
         Returns
@@ -158,6 +164,8 @@ class Arc(SketchEdge):
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
         """
+        import pyvista as pv
+
         if np.isclose(self.angle, np.pi):
             # PyVista hack... Maybe worth implementing something in PyVista...
             # A user should be able to define clockwise/counterclockwise sense of
@@ -215,6 +223,8 @@ class Arc(SketchEdge):
         This means that the arc must be divided in two so that it is properly
         defined based on the known sense of rotation.
         """
+        import pyvista as pv
+
         # Define the arc mid point
         if not self.is_clockwise:
             rot_matrix = np.array([[0, -1], [1, 0]])  # 90 degs rot matrix

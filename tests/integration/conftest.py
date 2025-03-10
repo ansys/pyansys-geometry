@@ -28,21 +28,31 @@ If you want to override these defaults, set the following environment variables.
 - export ANSRV_GEO_PORT=50051
 """
 
+try:
+    from ansys.geometry.core.misc.checks import run_if_graphics_required
+
+    run_if_graphics_required()
+
+    import pyvista as pv
+
+    import ansys.tools.visualization_interface as viz_interface
+
+    pv.OFF_SCREEN = True
+    viz_interface.TESTING_MODE = True
+    pv.global_theme.window_size = [600, 600]
+
+except ImportError:
+    pass
+
 import logging
 from pathlib import Path
 
 import pytest
-import pyvista as pv
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAGE
 from ansys.geometry.core.connection.docker_instance import GeometryContainers, LocalDockerInstance
-import ansys.tools.visualization_interface as viz_interface
-
-pv.OFF_SCREEN = True
-viz_interface.TESTING_MODE = True
-pv.global_theme.window_size = [600, 600]
 
 IMPORT_FILES_DIR = Path(Path(__file__).parent, "files", "import")
 DSCOSCRIPTS_FILES_DIR = Path(Path(__file__).parent, "files", "disco_scripts")

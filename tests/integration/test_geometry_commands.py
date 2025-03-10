@@ -31,7 +31,9 @@ from ansys.geometry.core.designer.geometry_commands import (
     OffsetMode,
 )
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
 from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.sketch.sketch import Sketch
@@ -990,6 +992,100 @@ def test_update_fill_pattern_on_imported_geometry_faces(modeler: Modeler):
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(4.70663693e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_move_translate(modeler: Modeler):
+    design = modeler.create_design("move_translate_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Create a named selection of 2 faces
+    ns = design.create_named_selection("ns1", faces=[body.faces[0], body.faces[1]])
+    assert len(ns.faces) == 2
+
+    # Verify the original vertices
+    expected_vertices = [
+        Point3D([-1.0, -1.0, 0.0]),
+        Point3D([1.0, -1.0, 0.0]),
+        Point3D([-1.0, 1.0, 0.0]),
+        Point3D([1.0, 1.0, 0.0]),
+    ]
+
+    original_vertices = []
+    for edge in body.faces[0].edges:
+        original_vertices.extend([edge.start, edge.end])
+
+    assert np.isin(expected_vertices, original_vertices).all()
+
+    # Translate the named selection
+    success = modeler.geometry_commands.move_translate(ns, UNITVECTOR3D_Z, Distance(2, UNITS.m))
+    assert success
+
+    # Verify the translation
+    expected_vertices = [
+        Point3D([-1.0, -1.0, 2.0]),
+        Point3D([1.0, -1.0, 2.0]),
+        Point3D([-1.0, 1.0, 2.0]),
+        Point3D([1.0, 1.0, 2.0]),
+    ]
+
+    translated_vertices = []
+    for edge in body.faces[0].edges:
+        translated_vertices.extend([edge.start, edge.end])
+
+    # Check that the faces have been translated
+    assert np.isin(expected_vertices, translated_vertices).all()
+
+
+def test_move_rotate(modeler: Modeler):
+    design = modeler.create_design("move_rotate_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Create a named selection of 2 faces
+    ns = design.create_named_selection("ns1", bodies=[body])
+    assert len(ns.bodies) == 1
+
+    # Verify the original vertices
+    expected_vertices = [
+        Point3D([-1.0, -1.0, 0.0]),
+        Point3D([1.0, -1.0, 0.0]),
+        Point3D([-1.0, 1.0, 0.0]),
+        Point3D([1.0, 1.0, 0.0]),
+        Point3D([-1.0, -1.0, 2.0]),
+        Point3D([1.0, -1.0, 2.0]),
+        Point3D([-1.0, 1.0, 2.0]),
+        Point3D([1.0, 1.0, 2.0]),
+    ]
+
+    original_vertices = []
+    for edge in body.edges:
+        original_vertices.extend([edge.start, edge.end])
+
+    assert np.isin(expected_vertices, original_vertices).all()
+
+    # Rotate the named selection
+    success = modeler.geometry_commands.move_rotate(
+        ns, Line([0, 1, 2], [1, 0, 0]), Angle(np.pi / 2, UNITS.rad)
+    )
+    assert success
+
+    # Verify the rotation
+    expected_vertices = [
+        Point3D([-1.0, 1.0, 0.0]),
+        Point3D([1.0, 1.0, 0.0]),
+        Point3D([-1.0, 1.0, 2.0]),
+        Point3D([1.0, 1.0, 2.0]),
+        Point3D([-1.0, 3.0, 0.0]),
+        Point3D([1.0, 3.0, 0.0]),
+        Point3D([-1.0, 3.0, 2.0]),
+        Point3D([1.0, 3.0, 2.0]),
+    ]
+
+    rotated_vertices = []
+    for edge in body.edges:
+        rotated_vertices.extend([edge.start, edge.end])
+
+    # Check that the faces have been rotated
+    assert np.isin(expected_vertices, rotated_vertices).all()
 
 
 def test_offset_face_set_radius(modeler: Modeler):
