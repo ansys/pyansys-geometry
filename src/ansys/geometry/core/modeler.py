@@ -372,7 +372,7 @@ class Modeler:
         Chunked UploadFileRequest
 
         """
-        chunk_size = MAX_MESSAGE_LENGTH - 1024 * 1024  # reserve a MB for the gRPC message
+        chunk_size = MAX_MESSAGE_LENGTH - (1024 * 1024)  # reserve a MB for the gRPC message
 
         with open(file_path, "rb") as file:
             while chunk := file.read(chunk_size):
@@ -424,16 +424,23 @@ class Modeler:
 
         # Format-specific logic - upload the whole containing folder for assemblies
         if upload_to_server:
+            fp_path = Path(file_path)
+            file_size_mb = file_path.stat().st_size / (1024*1024)
             if any(
                 ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
             ):
-                fp_path = Path(file_path)
                 dir = fp_path.parent
                 for file in dir.iterdir():
                     full_path = file.resolve()
                     if full_path != fp_path:
-                        self._upload_file(full_path)
-            self._upload_file(file_path, True, import_options)
+                        if(file_size_mb < MAX_MESSAGE_LENGTH):
+                            self._upload_file(full_path)
+                        else:
+                            self._upload_file_stream(full_path)
+            if(file_size_mb < MAX_MESSAGE_LENGTH):
+                self._upload_file(file_path, True, import_options)
+            else:
+                self._upload_file_stream(file_path, True, import_options)
         else:
             DesignsStub(self.client.channel).Open(
                 OpenRequest(filepath=file_path, import_options=import_options.to_dict())
