@@ -310,9 +310,11 @@ jobs:
         if: github.ref != 'refs/heads/blitz'
         run: |
           git fetch origin blitz
-          # git diff --name-only origin/blitz doc/source/ | grep -q .
-          # Set the output variable to true if modifications are made to the docs folder
-          echo "build_docs=$(test $? -eq 0 && echo true || echo false)" >> $GITHUB_ENV
+          if [ -n "$(git diff --name-only origin/blitz doc/source/)" ]; then
+            echo "build_docs=true" >> $GITHUB_ENV
+          else
+            echo "build_docs=false" >> $GITHUB_ENV
+          fi
 
       - name: Always run on the blitz branch
         if: github.ref == 'refs/heads/blitz'
