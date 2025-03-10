@@ -286,8 +286,13 @@ def test_deprecated_method_decorator():
             return True
 
         @staticmethod
-        @deprecated_method(info="This is some extra info.", alternative="new_method")
-        def deprecated_method_with_info_and_alternate():
+        @deprecated_method(
+            info="This is some extra info.",
+            alternative="new_method",
+            version="1.0.0",
+            remove="2.0.0",
+        )
+        def deprecated_method_with_info_and_alternate_and_versions():
             return True
 
     mock_object = MockObject()
@@ -302,10 +307,12 @@ def test_deprecated_method_decorator():
         mock_object.deprecated_method_with_info()
 
     with pytest.deprecated_call(
-        match="The method 'deprecated_method_with_info_and_alternate' is deprecated."
+        match="The method 'deprecated_method_with_info_and_alternate_and_versions' is deprecated."
         " Use 'new_method' instead. This is some extra info."
+        " This method was deprecated in version 1.0.0."
+        " This method will be removed in version 2.0.0."
     ):
-        mock_object.deprecated_method_with_info_and_alternate()
+        mock_object.deprecated_method_with_info_and_alternate_and_versions()
 
 
 def test_deprecated_argument_decorator():
@@ -326,8 +333,16 @@ def test_deprecated_argument_decorator():
             return True
 
         @staticmethod
-        @deprecated_argument("dep_arg", info="This is some extra info.", alternative="alt_arg")
-        def deprecated_argument_with_info_and_alternate(dep_arg: str = None, alt_arg: str = None):
+        @deprecated_argument(
+            "dep_arg",
+            info="This is some extra info.",
+            alternative="alt_arg",
+            version="1.0.0",
+            remove="2.0.0",
+        )
+        def deprecated_argument_with_info_and_alternate_and_versions(
+            dep_arg: str = None, alt_arg: str = None
+        ):
             return True
 
     mock_object = MockObject()
@@ -345,12 +360,14 @@ def test_deprecated_argument_decorator():
         mock_object.deprecated_argument_with_info(dep_arg="test")
 
     with pytest.deprecated_call(
-        match="The argument 'dep_arg' in 'deprecated_argument_with_info_and_alternate'"
+        match="The argument 'dep_arg' in 'deprecated_argument_with_info_and_alternate_and_versions'"
         " is deprecated. Use 'alt_arg' instead. This is some extra info."
+        " This argument was deprecated in version 1.0.0."
+        " This argument will be removed in version 2.0.0."
     ):
-        mock_object.deprecated_argument_with_info_and_alternate(dep_arg="test")
+        mock_object.deprecated_argument_with_info_and_alternate_and_versions(dep_arg="test")
 
     # Check that if we use the alternative argument, no warning is raised
     with warnings.catch_warnings():
         warnings.simplefilter("error")
-        mock_object.deprecated_argument_with_info_and_alternate(alt_arg="test")
+        mock_object.deprecated_argument_with_info_and_alternate_and_versions(alt_arg="test")

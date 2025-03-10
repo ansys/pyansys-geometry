@@ -33,10 +33,51 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import PersistentIdType
 
-from .conftest import FILES_DIR, IMPORT_FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR, IMPORT_FILES_DIR
+
+
+def _create_flat_design(modeler: Modeler) -> Design:
+    """Create a demo design for the tests."""
+    modeler.create_design("Demo")
+
+    design_name = "DemoFlatDesign"
+    design = modeler.create_design(design_name)
+
+    # Create a car
+    comp1 = design.add_component("A")
+    wheel1 = design.add_component("Wheel1")
+
+    # Create car base frame
+    sketch = Sketch().box(Point2D([5, 10]), 10, 20)
+    design.add_component("Base").extrude_sketch("BaseBody", sketch, 5)
+
+    # Create first wheel
+    sketch = Sketch(Plane(direction_x=Vector3D([0, 1, 0]), direction_y=Vector3D([0, 0, 1])))
+    sketch.circle(Point2D([0, 0]), 5)
+    wheel1.extrude_sketch("Wheel", sketch, -5)
+
+    # Create 3 other wheels and move them into position
+    rotation_origin = Point3D([0, 0, 0])
+    rotation_direction = UnitVector3D([0, 0, 1])
+
+    wheel2 = design.add_component("Wheel2", wheel1)
+    wheel2.modify_placement(Vector3D([0, 20, 0]))
+
+    wheel3 = design.add_component("Wheel3", wheel1)
+    wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_origin, rotation_direction, np.pi)
+
+    wheel4 = design.add_component("Wheel4", wheel1)
+    wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_origin, rotation_direction, np.pi)
+
+    # Create top of car - applies to BOTH cars
+    sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
+    comp1.extrude_sketch("Top", sketch, 5)
+
+    return design
 
 
 def _create_flat_design(modeler: Modeler) -> Design:
@@ -241,6 +282,15 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
     design.download(str(file))
 
+    # Pre-download the STEP file for comparison... once the design is closed, the
+    # file is no longer available for download from the original design
+    if not BackendType.is_core_service(modeler.client.backend_type):
+        file_step = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
+        design.download(file_step, DesignFileFormat.STEP)
+        #
+        # file_iges = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
+        # design.download(file_iges, DesignFileFormat.IGES)
+
     design2 = modeler.open_file(file)
 
     # assert the two cars are the same, excepted for the ID, which should be different
@@ -251,18 +301,13 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         # IGES
         #
         # TODO: Something has gone wrong with IGES
-        # https://github.com/ansys/pyansys-geometry/issues/801
-
-        # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
-        # design.download(file, DesignFileFormat.IGES)
-        # design2 = modeler.open_file(file)
+        # https://github.com/ansys/pyansys-geometry/issues/1146
+        # design2 = modeler.open_file(file_iges)
         # design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.igs")
         # _checker_method(design2, design3, False)
 
         # STEP
-        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
-        design.download(file, DesignFileFormat.STEP)
-        design2 = modeler.open_file(file)
+        design2 = modeler.open_file(file_step)
         design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.stp"))
         _checker_method(design2, design3, False)
 
@@ -306,9 +351,6 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
 def test_design_insert(modeler: Modeler):
     """Test inserting a file into the design."""
-    # Skip for CoreService
-    skip_if_core_service(modeler, test_design_insert.__name__, "insert_file")
-
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
     sketch = Sketch()
@@ -321,6 +363,7 @@ def test_design_insert(modeler: Modeler):
 
     # Check that there are two components
     assert len(design.components) == 2
+    assert design.is_active is True
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "DuplicatesDesign"
 
@@ -329,9 +372,6 @@ def test_design_insert_with_import(modeler: Modeler):
     """Test inserting a file into the design through the external format import
     process.
     """
-    # Skip for CoreService
-    skip_if_core_service(modeler, test_design_insert_with_import.__name__, "insert_file")
-
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
     sketch = Sketch()
@@ -344,5 +384,37 @@ def test_design_insert_with_import(modeler: Modeler):
 
     # Check that there are two components
     assert len(design.components) == 2
+    assert design.is_active is True
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "Wheel1"
+
+
+def test_design_import_with_named_selections(modeler: Modeler):
+    """Test importing a design with named selections."""
+    # Open the design
+    design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
+
+    # Check that there are 29 Named Selections
+    assert len(design.named_selections) == 6
+
+    # Get named selection nozzle1
+    nozzle1 = design._named_selections["n1"]
+    assert len(nozzle1.bodies) == 0
+    assert len(nozzle1.faces) == 11
+
+    assert nozzle1.faces[0].area.m == pytest.approx(
+        Quantity(1.55183312719e-05, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
+    )
+
+    # Get named selection p1
+    p1 = design._named_selections["p1"]
+    assert len(p1.bodies) == 0
+    assert len(p1.design_points) == 1
+
+    assert p1.design_points[0].value.x.m == pytest.approx(
+        Quantity(8.601, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
+    )
+    assert p1.design_points[0].value.y.m == pytest.approx(
+        Quantity(11.024, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
+    )
+    assert p1.design_points[0].value.z.m == pytest.approx(0.0, abs=1e-3)

@@ -155,7 +155,7 @@ Build the Docker image from available binaries
 
 Prior to building your image, follow these steps:
 
-* Download the `latest Windows Dockerfile <https://github.com/ansys/pyansys-geometry/blob/main/docker/windows/Dockerfile>`_.
+* Download the `latest Windows Dockerfile <https://github.com/ansys/pyansys-geometry/blob/main/docker/windows/dms/Dockerfile>`_.
 
 * Download the `latest release artifacts for the Windows
   Docker container (ZIP file) for your version <https://github.com/ansys/pyansys-geometry-binaries>`_.

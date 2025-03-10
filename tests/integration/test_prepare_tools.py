@@ -21,9 +21,14 @@
 # SOFTWARE.
 """Testing of prepare tools."""
 
-from ansys.geometry.core.modeler import Modeler
+from pint import Quantity
 
-from .conftest import FILES_DIR, skip_if_core_service
+from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.measurements import UNITS
+from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.sketch import Sketch
+
+from .conftest import FILES_DIR
 
 
 def test_volume_extract_from_faces(modeler: Modeler):
@@ -53,8 +58,41 @@ def test_volume_extract_from_edge_loops(modeler: Modeler):
 
 def test_share_topology(modeler: Modeler):
     """Test share topology operation is between two bodies."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_share_topology.__name__, "prepare_tools")
-    design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
+    design = Modeler.create_design(modeler, "ShareTopoDoc")
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+    design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
+    sketch = Sketch()
+    sketch.box(Point2D([20, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+    design.extrude_sketch("JustABox", sketch, Quantity(5, UNITS.mm))
+    faces = 0
+    edges = 0
+    for body in design.bodies:
+        faces += len(body.faces)
+        edges += len(body.edges)
+    assert faces == 12
+    assert edges == 24
+    modeler.prepare_tools.share_topology(design.bodies)
+    faces = 0
+    edges = 0
+    for body in design.bodies:
+        faces += len(body.faces)
+        edges += len(body.edges)
+    assert faces == 13
+    assert edges == 27
 
-    assert modeler.prepare_tools.share_topology(design.bodies)
+
+def test_enhanced_share_topology(modeler: Modeler):
+    """Test enhanced share topology operation is between two bodies."""
+    design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
+    face_count = (
+        len(design.bodies[0].faces) + len(design.bodies[1].faces) + len(design.bodies[2].faces)
+    )
+    edge_count = (
+        len(design.bodies[0].edges) + len(design.bodies[1].edges) + len(design.bodies[2].edges)
+    )
+    assert face_count == 127
+    assert edge_count == 284
+    result = modeler.prepare_tools.enhanced_share_topology(design.bodies, 0.000554167, True)
+    assert result.found == 14
+    assert result.repaired == 14

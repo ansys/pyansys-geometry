@@ -37,7 +37,7 @@ from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_issue_834_design_import_with_surfaces(modeler: Modeler):
@@ -46,10 +46,6 @@ def test_issue_834_design_import_with_surfaces(modeler: Modeler):
     For more info see
     https://github.com/ansys/pyansys-geometry/issues/834
     """
-    # TODO: to be reactivated
-    # https://github.com/ansys/pyansys-geometry/issues/799
-    skip_if_core_service(modeler, test_issue_834_design_import_with_surfaces.__name__, "open_file")
-
     # Open the design
     design = modeler.open_file(Path(FILES_DIR, "DuplicateFacesDesignBefore.scdocx"))
 
@@ -86,9 +82,6 @@ def test_issue_1184_sphere_creation_crashes(modeler: Modeler):
     For more info see
     https://github.com/ansys/pyansys-geometry/issues/1184
     """
-    # Skip this test on CoreService since it is not implemented yet
-    skip_if_core_service(modeler, test_issue_1184_sphere_creation_crashes.__name__, "create_sphere")
-
     design = modeler.create_design("SphereCreationIssue")
 
     plane = Plane(
@@ -139,6 +132,51 @@ def test_issue_1304_arc_sketch_creation():
         DEFAULT_UNITS.LENGTH = UNITS.meter
 
 
+def test_issue_1192_temp_body_on_empty_intersect(modeler: Modeler):
+    """Test demonstrating the issue when intersecting two bodies that do not intersect
+    and the empty temporal body that gets created."""
+    # When attempting to intersect two bodies that do not intersect, no body should be
+    # created. However, in the past, a temporary body was created and added to the
+    # component. This test checks if this issue has been resolved.
+    design = modeler.create_design("temp-body-intersect-issue")
+
+    # Create two bodies that do not intersect
+    plane = Plane(
+        Point3D([1 / 2, 1 / 2, 0.0]),
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+    matrix_plane = Sketch(plane)
+    matrix_plane.box(Point2D([0.0, 0.0]), width=1, height=1)
+    matrix = design.extrude_sketch("Matrix", matrix_plane, 1)
+
+    p = Point3D([1.0, 1.0, 1.5])
+    plane = Plane(p, UNITVECTOR3D_X, UNITVECTOR3D_Y)
+    sketch_fibres = Sketch(plane)
+    sketch_fibres.circle(Point2D([0.0, 0.0]), radius=0.5)
+    fibre = design.extrude_sketch("fibre", sketch_fibres, 1)
+
+    # Attempt intersection - which fails and thus deletes copy
+    matrix_copy = matrix.copy(design)
+    try:
+        fibre.intersect(matrix_copy)
+    except Exception:
+        design.delete_body(matrix_copy)
+
+    # No intersection took place... so no body should be created
+    # Let's read the design and check that only the two bodies are present
+    read_design = modeler.read_existing_design()
+
+    # Verify the design
+    assert len(read_design.bodies) == 2
+    assert len(read_design.bodies) == 2
+    assert len(read_design.bodies[0].faces) == 6
+    assert len(read_design.bodies[1].faces) == 3
+    assert read_design.bodies[0].name == "Matrix"
+    assert read_design.bodies[1].name == "fibre"
+    assert len(read_design.components) == 0
+
+
 def test_issue_1309_revolve_operation_with_coincident_origins(modeler: Modeler):
     """Test that revolving a sketch with coincident origins (sketch and rotation origin)
     does not crash the program.
@@ -179,3 +217,46 @@ def test_issue_1309_revolve_operation_with_coincident_origins(modeler: Modeler):
     )
 
     assert revolved_body.name == "toroid"
+
+
+def test_issue_1724_intersect_failures(modeler: Modeler):
+    """Test that intersecting two bodies that overlap does not crash the program.
+
+    For more info see
+    https://github.com/ansys/pyansys-geometry/issues/1724
+    """
+    wx = 10
+    wy = 10
+    wz = 2
+    radius = 1
+    unit = DEFAULT_UNITS.LENGTH
+
+    design = modeler.create_design("Test")
+
+    start_at = Point3D([wx / 2, wy / 2, 0.0], unit=unit)
+
+    plane = Plane(
+        start_at,
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0], unit=unit), width=wx, height=wy)
+
+    box = design.extrude_sketch("box", box_plane, wz)
+
+    point = Point3D([wx / 2, wx / 2, 0.0], unit=unit)
+    plane = Plane(point, UNITVECTOR3D_X, UNITVECTOR3D_Y)
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([0.0, 0.0], unit=unit), radius=radius)
+    cylinder = design.extrude_sketch("cylinder", sketch_cylinder, wz - 0.1)
+
+    # Request the intersection
+    cylinder.intersect(box)
+
+    # Only the cylinder should be present
+    assert len(design.bodies) == 1
+    assert design.bodies[0].name == "cylinder"
+
+    # Verify that the volume of the cylinder is the same (the intersect is the same as the cylinder)
+    assert np.isclose(design.bodies[0].volume.m, np.pi * radius**2 * (wz - 0.1))

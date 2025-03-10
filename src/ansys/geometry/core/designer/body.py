@@ -79,22 +79,34 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.auxiliary import get_design_from_body
+from ansys.geometry.core.misc.auxiliary import (
+    DEFAULT_COLOR,
+    convert_color_to_hex,
+    convert_opacity_to_hex,
+    get_design_from_body,
+)
 from ansys.geometry.core.misc.checks import (
     check_type,
     check_type_all_elements_in_iterable,
     ensure_design_is_active,
+    graphics_required,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
-from ansys.tools.visualization_interface.utils.color import Color
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
     from ansys.geometry.core.designer.component import Component
+
+# TODO: Temporary fix for boolean operations
+# This is a temporary fix for the boolean operations issue. The issue is that the
+# boolean operations are not working as expected with command-based operations. The
+# goal is to fix this issue in the future.
+# https://github.com/ansys/pyansys-geometry/issues/1733
+__TEMPORARY_BOOL_OPS_FIX__ = (99, 0, 0)
 
 
 @unique
@@ -178,6 +190,11 @@ class IBody(ABC):
     @abstractmethod
     def color(self) -> str:
         """Get the color of the body."""
+        return
+
+    @abstractmethod
+    def opacity(self) -> float:
+        """Get the float value of the opacity for the body."""
         return
 
     @abstractmethod
@@ -855,7 +872,7 @@ class MasterBody(IBody):
         """Get the current color of the body."""
         if self._color is None and self.is_alive:
             # Assigning default value first
-            self._color = Color.DEFAULT.value
+            self._color = DEFAULT_COLOR
 
             if self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
                 # Server does not support color retrieval before version 25.1.0
@@ -866,13 +883,22 @@ class MasterBody(IBody):
                 # Fetch color from the server if it's not cached
                 color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
                 if color_response.color:
-                    self._color = mcolors.to_hex(color_response.color)
+                    self._color = mcolors.to_hex(color_response.color, keep_alpha=True)
 
         return self._color
 
+    @property
+    def opacity(self) -> float:  # noqa: D102
+        opacity_hex = self._color[7:]
+        return int(opacity_hex, 16) / 255 if opacity_hex else 1
+
     @color.setter
-    def color(self, value: str | tuple[float, float, float]):  # noqa: D102
+    def color(self, value: str | tuple[float, float, float]) -> None:  # noqa: D102
         self.set_color(value)
+
+    @opacity.setter
+    def opacity(self, value: float) -> None:  # noqa: D102
+        self.set_opacity(value)
 
     @property
     def is_surface(self) -> bool:  # noqa: D102
@@ -1098,31 +1124,12 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
-    def set_color(self, color: str | tuple[float, float, float]) -> None:
+    def set_color(
+        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+    ) -> None:
         """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
-
-        try:
-            if isinstance(color, tuple):
-                # Ensure that all elements are within 0-1 or 0-255 range
-                if all(0 <= c <= 1 for c in color):
-                    # Ensure they are floats if in 0-1 range
-                    if not all(isinstance(c, float) for c in color):
-                        raise ValueError("RGB values in the 0-1 range must be floats.")
-                elif all(0 <= c <= 255 for c in color):
-                    # Ensure they are integers if in 0-255 range
-                    if not all(isinstance(c, int) for c in color):
-                        raise ValueError("RGB values in the 0-255 range must be integers.")
-                    # Normalize the 0-255 range to 0-1
-                    color = tuple(c / 255.0 for c in color)
-                else:
-                    raise ValueError("RGB tuple contains mixed ranges or invalid values.")
-
-                color = mcolors.to_hex(color)
-            elif isinstance(color, str):
-                color = mcolors.to_hex(color)
-        except ValueError as err:
-            raise ValueError(f"Invalid color value: {err}")
+        color = convert_color_to_hex(color)
 
         self._bodies_stub.SetColor(
             SetColorRequest(
@@ -1131,6 +1138,16 @@ class MasterBody(IBody):
             )
         )
         self._color = color
+
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def set_opacity(self, opacity: float) -> None:
+        """Set the opacity of the body."""
+        self._grpc_client.log.debug(f"Setting body opacity of {self.id} to {opacity}.")
+        opacity = convert_opacity_to_hex(opacity)
+
+        new_color = self._color[0:7] + opacity
+        self.set_color(new_color)
 
     @protect_grpc
     @check_input_types
@@ -1220,6 +1237,7 @@ class MasterBody(IBody):
         return Body(body_id, response.name, parent, tb)
 
     @protect_grpc
+    @graphics_required
     def tessellate(  # noqa: D102
         self, merge: bool = False, transform: Matrix44 = IDENTITY_MATRIX44
     ) -> Union["PolyData", "MultiBlock"]:
@@ -1234,9 +1252,12 @@ class MasterBody(IBody):
         # cache tessellation
         if not self._tessellation:
             resp = self._bodies_stub.GetTessellation(self._grpc_id)
-            self._tessellation = resp.face_tessellation.values()
+            self._tessellation = {
+                str(face_id): tess_to_pd(face_tess)
+                for face_id, face_tess in resp.face_tessellation.items()
+            }
 
-        pdata = [tess_to_pd(tess).transform(transform) for tess in self._tessellation]
+        pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
         comp = pv.MultiBlock(pdata)
 
         if merge:
@@ -1428,9 +1449,17 @@ class Body(IBody):
     def color(self) -> str:  # noqa: D102
         return self._template.color
 
+    @property
+    def opacity(self) -> float:  # noqa: D102
+        return self._template.opacity
+
     @color.setter
     def color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
         return self._template.set_color(color)
+
+    @opacity.setter
+    def opacity(self, opacity: float) -> None:  # noqa: D102
+        return self._template.set_opacity(opacity)
 
     @property
     def parent_component(self) -> "Component":  # noqa: D102
@@ -1568,6 +1597,7 @@ class Body(IBody):
                 body=self._id,
                 curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
                 faces=[face._id for face in faces],
+                plane=plane_to_grpc_plane(sketch.plane),
             )
         )
 
@@ -1613,6 +1643,7 @@ class Body(IBody):
                 curves=curves,
                 direction=unit_vector_to_grpc_direction(direction),
                 closest_face=closest_face,
+                plane=plane_to_grpc_plane(sketch.plane),
             )
         )
 
@@ -1649,6 +1680,7 @@ class Body(IBody):
                 curves=curves,
                 direction=unit_vector_to_grpc_direction(direction),
                 closest_face=closest_face,
+                plane=plane_to_grpc_plane(sketch.plane),
             )
         )
 
@@ -1729,6 +1761,7 @@ class Body(IBody):
     def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
         return self._template.remove_faces(selection, offset)
 
+    @graphics_required
     def plot(  # noqa: D102
         self,
         merge: bool = True,
@@ -1753,6 +1786,14 @@ class Body(IBody):
         # Add to plotting options as well... to be used by the plotter if necessary
         plotting_options["merge_bodies"] = merge
 
+        # In case that service colors are requested, merge will be ignored.
+        # An info message will be issued to the user.
+        if use_service_colors and merge:
+            self._template._grpc_client.log.info(
+                "Ignoring 'merge' option since 'use_service_colors' is set to True."
+            )
+            plotting_options["merge_bodies"] = False
+
         mesh_object = (
             self if use_service_colors else MeshObjectPlot(self, self.tessellate(merge=merge))
         )
@@ -1761,7 +1802,7 @@ class Body(IBody):
         pl.show(screenshot=screenshot, **plotting_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        if self._template._grpc_client.backend_version < (25, 2, 0):
+        if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
         else:
             self.__generic_boolean_command(
@@ -1769,7 +1810,7 @@ class Body(IBody):
             )
 
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        if self._template._grpc_client.backend_version < (25, 2, 0):
+        if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
         else:
             self.__generic_boolean_command(
@@ -1777,7 +1818,7 @@ class Body(IBody):
             )
 
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        if self._template._grpc_client.backend_version < (25, 2, 0):
+        if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
         else:
             self.__generic_boolean_command(other, False, "unite", "union operation failed")

@@ -20,13 +20,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+try:
+    from ansys.geometry.core.misc.checks import run_if_graphics_required
+
+    run_if_graphics_required()
+
+    import pyvista as pv
+    from pyvista.plotting import system_supports_plotting
+
+except ImportError:
+    import pytest
+
+    pytest.skip(
+        "Skipping test_plotter module due to graphics requirements missing.",
+        allow_module_level=True,
+    )
+
 from pathlib import Path
 
 import numpy as np
 from pint import Quantity
 import pytest
-import pyvista as pv
-from pyvista.plotting import system_supports_plotting
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D, Point3D
@@ -902,4 +916,227 @@ def test_plot_design_multi_colors(modeler: Modeler, verify_image_cache):
     design.plot(
         screenshot=Path(IMAGE_RESULTS_DIR, "plot_design_multi_colors_single_color.png"),
         multi_colors=False,
+    )
+
+
+@skip_no_xserver
+def test_plot_design_face_colors(modeler: Modeler, verify_image_cache):
+    """Test plotting of design with/without multi_colors."""
+    design = modeler.create_design("DesignFaceColors")
+    # Create a sketch of a box
+    sketch_box = Sketch().box(
+        Point2D([0, 0], unit=UNITS.m), width=10 * UNITS.m, height=10 * UNITS.m
+    )
+
+    # Extrude both sketches to get a prism and change face colors
+    design.extrude_sketch("Prism", sketch_box, 10 * UNITS.m)
+    design.bodies[0].faces[0].set_color((255, 0, 0))
+    design.bodies[0].faces[1].set_color((0, 255, 0))
+    design.bodies[0].faces[2].set_color((0, 0, 255))
+
+    # Design plotting
+    design.bodies[0].plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_design_face_colors.png"),
+        merge=False,
+        multi_colors=True,
+    )
+
+
+@skip_no_xserver
+def test_export_glb(modeler: Modeler, verify_image_cache):
+    """Test exporting a box to glb."""
+    # Create a Sketch
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create your design on the server side
+    design = modeler.create_design("GLBBox")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
+
+    pl = GeometryPlotter()
+    pl.plot(box_body)
+
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb")
+    pl.export_glb(filename=output_glb_path)
+
+
+@skip_no_xserver
+def test_export_glb_with_color(modeler: Modeler, verify_image_cache):
+    """Test exporting a box to glb."""
+    # Create a Sketch
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create your design on the server side
+    design = modeler.create_design("GLBBoxWithColor")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
+    box_body.set_color((255, 0, 0))
+
+    pl = GeometryPlotter(use_service_colors=True)
+    pl.plot(box_body)
+
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_colored")
+    pl.export_glb(filename=output_glb_path)
+
+
+@skip_no_xserver
+def test_export_glb_with_face_color(modeler: Modeler):
+    """Test exporting a box to glb."""
+    # Create a Sketch
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Create your design on the server side
+    design = modeler.create_design("GLBBoxWithFaceColors")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+    box_body.set_color((255, 0, 0))
+    box_body.faces[0].set_color((0, 0, 255))
+    box_body.faces[1].set_color((0, 255, 0))
+
+    pl = GeometryPlotter(use_service_colors=True)
+
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_face_colored")
+    pl.export_glb(box_body, filename=output_glb_path)
+
+
+@skip_no_xserver
+def test_export_glb_cylinder_with_face_color(modeler: Modeler, verify_image_cache):
+    """Test exporting a cylinder to glb."""
+    # Create your design on the server side
+    design = modeler.create_design("GLBCylinderWithFaceColors")
+
+    # Create a sketch of a circle (overlapping the box slightly)
+    sketch_circle = Sketch().circle(Point2D([20, 0], unit=UNITS.m), radius=3 * UNITS.m)
+    cyl = design.extrude_sketch("Cylinder", sketch_circle, 50 * UNITS.m)
+
+    cyl.set_color((255, 0, 0))
+    cyl.faces[0].set_color((0, 0, 255))
+    cyl.faces[1].set_color((0, 255, 0))
+
+    pl = GeometryPlotter(use_service_colors=True)
+
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_glb_face_colored")
+    pl.export_glb(cyl, filename=output_glb_path)
+
+
+@skip_no_xserver
+def test_plot_face_colors_from_service(modeler: Modeler, verify_image_cache):
+    """Test exporting a box to glb."""
+    # Create a Sketch
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Create your design on the server side
+    design = modeler.create_design("BoxWithColors")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+    # Box at large - Red
+    box_body.set_color((255, 0, 0))
+
+    for face in box_body.faces:
+        # A) +Z face - Green
+        if face.normal() == UNITVECTOR3D_Z:
+            face.set_color((0, 255, 0))
+        # B) +X face - Blue
+        elif face.normal() == UNITVECTOR3D_X:
+            face.set_color((0, 0, 255))
+
+    box_body.plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_face_colors_from_service.png"),
+        use_service_colors=True,
+    )
+
+
+@skip_no_xserver
+def test_plot_single_face(modeler: Modeler, verify_image_cache):
+    """Test plotting a single face."""
+    # Create your design on the server side
+    design = modeler.create_design("SingleFace")
+
+    # Create a sketch of a box
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+
+    # Test the plotting of the body
+    box_body.faces[1].plot(screenshot=Path(IMAGE_RESULTS_DIR, "plot_single_face.png"))
+
+
+@skip_no_xserver
+def test_plot_single_face_with_service_color(
+    modeler: Modeler, use_service_colors: None, verify_image_cache
+):
+    """Test plotting a single face with service colors."""
+    # Create your design on the server side
+    design = modeler.create_design("SingleFaceWithServiceColor")
+
+    # Create a sketch of a box
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+
+    # Assign color to the body
+    box_body.color = "red"
+
+    # Test the plotting of the body
+    box_body.faces[1].plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_single_face_with_service_color.png")
+    )
+
+
+@skip_no_xserver
+def test_plot_with_body_opacity(modeler: Modeler, verify_image_cache):
+    """Test plotting a body with decreased opacity."""
+    # Create your design on the server side
+    design = modeler.create_design("BoxWithOpacity")
+
+    # Create a sketch of a box
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+
+    # Assign color to the body
+    box_body.color = (255, 0, 0, 80)
+
+    # Test the plotting of the body
+    box_body.plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_box_with_opacity.png"), use_service_colors=True
+    )
+
+
+@skip_no_xserver
+def test_plot_with_face_opacity(modeler: Modeler, verify_image_cache):
+    """Test plotting a body with decreased opacity."""
+    # Create your design on the server side
+    design = modeler.create_design("BoxWithOpacity")
+
+    # Create a sketch of a box
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), Quantity(10, UNITS.m))
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.m))
+
+    # Assign color to the body - On all + X, Y, Z faces
+    for face in box_body.faces:
+        normal = face.normal()
+        if normal == UNITVECTOR3D_X or normal == UNITVECTOR3D_Y or normal == UNITVECTOR3D_Z:
+            face.color = (255, 0, 0, 80)
+
+    # Test the plotting of the body
+    box_body.plot(
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_face_with_opacity.png"), use_service_colors=True
     )

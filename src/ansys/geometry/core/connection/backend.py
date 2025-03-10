@@ -57,6 +57,25 @@ class BackendType(Enum):
             BackendType.CORE_LINUX,
         )
 
+    @staticmethod
+    def is_linux_service(backend_type: "BackendType") -> bool:
+        """Determine whether the backend is a Linux service or not.
+
+        Parameters
+        ----------
+        backend_type : BackendType
+            The backend type to check whether or not it's running on Linux.
+
+        Returns
+        -------
+        bool
+            True if the backend is running on Linux, False otherwise.
+        """
+        return backend_type in (
+            BackendType.LINUX_SERVICE,
+            BackendType.CORE_LINUX,
+        )
+
 
 class ApiVersions(Enum):
     """Provides an enum for all the compatibles API versions."""

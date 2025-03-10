@@ -31,12 +31,14 @@ from ansys.geometry.core.designer.geometry_commands import (
     OffsetMode,
 )
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
 from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.sketch.sketch import Sketch
 
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_chamfer(modeler: Modeler):
@@ -696,12 +698,7 @@ def test_split_body_by_slicer_face(modeler: Modeler):
 
 def test_split_body_by_slicer_edge(modeler: Modeler):
     """Test split body by slicer edge"""
-    # Skip for Core service
-    skip_if_core_service(
-        modeler, test_split_body_by_slicer_edge.__name__, "split_body_by_slicer_edge"
-    )
-
-    design = modeler.open_file(FILES_DIR / "Edge_Slice_test.dsco")
+    design = modeler.open_file(FILES_DIR / "Edge_Slice_Test.dsco")
 
     assert len(design.bodies) == 1
     body = design.bodies[0]
@@ -756,3 +753,355 @@ def test_split_body_by_face(modeler: Modeler):
     assert design.bodies[2].volume.m == pytest.approx(
         Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_get_round_info(modeler: Modeler):
+    """Test getting the round info from a face"""
+    design = modeler.create_design("full_fillet")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+    assert len(body.edges) == 12
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    modeler.geometry_commands.fillet(body.edges[0], 0.1)
+    assert len(body.faces) == 7
+    assert len(body.edges) == 15
+    assert body.volume.m == pytest.approx(
+        Quantity(0.9978539816339744, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+    _, radius = modeler.geometry_commands.get_round_info(body.faces[6])
+    assert radius == pytest.approx(Quantity(0.1, UNITS.m).m, rel=1e-6, abs=1e-8)
+
+
+def test_get_empty_round_info(modeler: Modeler):
+    """Test getting the round info from a face that does not have any rounding"""
+    design = modeler.create_design("full_fillet")
+
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+    assert len(body.edges) == 12
+    assert body.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    _, radius = modeler.geometry_commands.get_round_info(body.faces[5])
+    assert radius == 0.0
+
+
+def test_get_face_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a face."""
+    design = modeler.create_design("face_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    bounding_box = body.faces[0].bounding_box
+    assert bounding_box.x_min == bounding_box.y_min == -0.5
+    assert bounding_box.x_max == bounding_box.y_max == 0.5
+
+    bounding_box = body.faces[1].bounding_box
+    assert bounding_box.x_min == bounding_box.y_min == -0.5
+    assert bounding_box.x_max == bounding_box.y_max == 0.5
+
+
+def test_linear_pattern_on_imported_geometry_faces(modeler: Modeler):
+    """Test create a linear pattern on imported geometry"""
+    design = modeler.open_file(FILES_DIR / "LinearPatterns.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 11
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(7.227e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.create_linear_pattern(
+        [
+            design.bodies[0].faces[1],
+            design.bodies[0].faces[2],
+            design.bodies[0].faces[0],
+            design.bodies[0].faces[4],
+            design.bodies[0].faces[3],
+        ],
+        design.bodies[0].edges[12],
+        13,
+        0.004,
+        True,
+        7,
+        0.007,
+    )
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 266
+    assert success
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(1.08992e-5, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_modify_linear_pattern_on_imported_geometry_faces(modeler: Modeler):
+    """Test modifying a linear pattern on an imported geometry"""
+    design = modeler.open_file(FILES_DIR / "LinearPatternsModify.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 266
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(1.08992e-5, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.modify_linear_pattern(
+        [
+            design.bodies[0].faces[1],
+            design.bodies[0].faces[2],
+            design.bodies[0].faces[0],
+            design.bodies[0].faces[4],
+            design.bodies[0].faces[3],
+        ],
+        10,
+        0.004,
+        3,
+        0.0105,
+        0,
+        0,
+    )
+    assert success
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 156
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(9.3152e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_circular_pattern_on_imported_geometry_faces(modeler: Modeler):
+    """Test creating a circular pattern out of imported geometry"""
+    design = modeler.open_file(FILES_DIR / "Fan_OneBlade_CircularPatter.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 13
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(0.00019496, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.create_circular_pattern(
+        [
+            design.bodies[0].faces[10],
+            design.bodies[0].faces[11],
+            design.bodies[0].faces[7],
+            design.bodies[0].faces[9],
+            design.bodies[0].faces[8],
+            design.bodies[0].faces[12],
+        ],
+        design.bodies[0].edges[3],
+        8,
+        np.pi * 2,
+        False,
+        None,
+        None,
+        None,
+    )
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 55
+    assert success
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(0.0002373, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_circular_pattern_on_imported_geometry_faces_modify(modeler: Modeler):
+    """Test creating a circular pattern out of imported geometry and modifying it"""
+    design = modeler.open_file(FILES_DIR / "Fan_OneBlade_CircularPatter.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 13
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(0.00019496, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.create_circular_pattern(
+        [
+            design.bodies[0].faces[10],
+            design.bodies[0].faces[11],
+            design.bodies[0].faces[7],
+            design.bodies[0].faces[9],
+            design.bodies[0].faces[8],
+            design.bodies[0].faces[12],
+        ],
+        design.bodies[0].edges[3],
+        8,
+        np.pi * 2,
+        False,
+        None,
+        None,
+        None,
+    )
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 55
+    assert success
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(0.0002373, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.modify_circular_pattern(
+        [design.bodies[0].faces[30]], 12, 0, 0.523598775598, None
+    )
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 79
+    assert success
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(0.0002615594337, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_fill_pattern_on_imported_geometry_faces(modeler: Modeler):
+    """Test create a fill pattern on imported geometry"""
+    design = modeler.open_file(FILES_DIR / "FillPattern.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 12
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(8.267e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.create_fill_pattern(
+        [
+            design.bodies[0].faces[3],
+            design.bodies[0].faces[4],
+            design.bodies[0].faces[2],
+            design.bodies[0].faces[5],
+            design.bodies[0].faces[1],
+            design.bodies[0].faces[0],
+        ],
+        design.bodies[0].edges[0],
+        FillPatternType.GRID,
+        0.0005,
+        0.00075,
+        0.001,
+    )
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 294
+    assert success
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(4.40535e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_update_fill_pattern_on_imported_geometry_faces(modeler: Modeler):
+    """Test modify a fill pattern on imported geometry"""
+    design = modeler.open_file(FILES_DIR / "FillPatternUpdate.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 294
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(4.40535e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    face = design.bodies[0].faces[3]
+    modeler.geometry_commands.extrude_faces(face, 0.001, face.normal(0, 0))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 294
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(5.2270374e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    success = modeler.geometry_commands.update_fill_pattern(design.bodies[0].faces[3])
+    assert success
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 342
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(4.70663693e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_move_translate(modeler: Modeler):
+    design = modeler.create_design("move_translate_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Create a named selection of 2 faces
+    ns = design.create_named_selection("ns1", faces=[body.faces[0], body.faces[1]])
+    assert len(ns.faces) == 2
+
+    # Verify the original vertices
+    expected_vertices = [
+        Point3D([-1.0, -1.0, 0.0]),
+        Point3D([1.0, -1.0, 0.0]),
+        Point3D([-1.0, 1.0, 0.0]),
+        Point3D([1.0, 1.0, 0.0]),
+    ]
+
+    original_vertices = []
+    for edge in body.faces[0].edges:
+        original_vertices.extend([edge.start, edge.end])
+
+    assert np.isin(expected_vertices, original_vertices).all()
+
+    # Translate the named selection
+    success = modeler.geometry_commands.move_translate(ns, UNITVECTOR3D_Z, Distance(2, UNITS.m))
+    assert success
+
+    # Verify the translation
+    expected_vertices = [
+        Point3D([-1.0, -1.0, 2.0]),
+        Point3D([1.0, -1.0, 2.0]),
+        Point3D([-1.0, 1.0, 2.0]),
+        Point3D([1.0, 1.0, 2.0]),
+    ]
+
+    translated_vertices = []
+    for edge in body.faces[0].edges:
+        translated_vertices.extend([edge.start, edge.end])
+
+    # Check that the faces have been translated
+    assert np.isin(expected_vertices, translated_vertices).all()
+
+
+def test_move_rotate(modeler: Modeler):
+    design = modeler.create_design("move_rotate_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Create a named selection of 2 faces
+    ns = design.create_named_selection("ns1", bodies=[body])
+    assert len(ns.bodies) == 1
+
+    # Verify the original vertices
+    expected_vertices = [
+        Point3D([-1.0, -1.0, 0.0]),
+        Point3D([1.0, -1.0, 0.0]),
+        Point3D([-1.0, 1.0, 0.0]),
+        Point3D([1.0, 1.0, 0.0]),
+        Point3D([-1.0, -1.0, 2.0]),
+        Point3D([1.0, -1.0, 2.0]),
+        Point3D([-1.0, 1.0, 2.0]),
+        Point3D([1.0, 1.0, 2.0]),
+    ]
+
+    original_vertices = []
+    for edge in body.edges:
+        original_vertices.extend([edge.start, edge.end])
+
+    assert np.isin(expected_vertices, original_vertices).all()
+
+    # Rotate the named selection
+    success = modeler.geometry_commands.move_rotate(
+        ns, Line([0, 1, 2], [1, 0, 0]), Angle(np.pi / 2, UNITS.rad)
+    )
+    assert success
+
+    # Verify the rotation
+    expected_vertices = [
+        Point3D([-1.0, 1.0, 0.0]),
+        Point3D([1.0, 1.0, 0.0]),
+        Point3D([-1.0, 1.0, 2.0]),
+        Point3D([1.0, 1.0, 2.0]),
+        Point3D([-1.0, 3.0, 0.0]),
+        Point3D([1.0, 3.0, 0.0]),
+        Point3D([-1.0, 3.0, 2.0]),
+        Point3D([1.0, 3.0, 2.0]),
+    ]
+
+    rotated_vertices = []
+    for edge in body.edges:
+        rotated_vertices.extend([edge.start, edge.end])
+
+    # Check that the faces have been rotated
+    assert np.isin(expected_vertices, rotated_vertices).all()
+
+
+def test_offset_face_set_radius(modeler: Modeler):
+    """Test offsetting a face with a set radius"""
+    design = modeler.create_design("offset_face_set_radius")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    assert len(box.faces) == 6
+    assert box.volume.m == pytest.approx(Quantity(8, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # Add a hole to a box
+    hole = design.extrude_sketch("hole", Sketch().circle(Point2D([0, 0]), 0.5), 2)
+    box.subtract(hole)
+    assert box.volume.m == pytest.approx(Quantity(6.4292, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # Change radius of hole
+    success = modeler.geometry_commands.offset_faces_set_radius(box.faces[6], 0.25)
+    assert success
+
+    assert box.volume.m == pytest.approx(Quantity(7.6073, UNITS.m**3).m, rel=1e-6, abs=1e-8)

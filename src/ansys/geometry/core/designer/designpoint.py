@@ -24,7 +24,7 @@
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.checks import check_type, graphics_required
 from ansys.geometry.core.misc.units import UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -89,6 +89,7 @@ class DesignPoint:
         lines.append(f"  Design Point         : {self.value}")
         return "\n".join(lines)
 
+    @graphics_required
     def _to_polydata(self) -> "pv.PolyData":
         """Get polydata from DesignPoint object."""
         import pyvista as pv

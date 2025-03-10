@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Provides tools for measurement."""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from ansys.api.geometry.v0.measuretools_pb2 import (
     MinDistanceBetweenObjectsRequest,
@@ -35,6 +35,8 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.edge import Edge
+    from ansys.geometry.core.designer.face import Face
 
 
 class Gap:
@@ -90,22 +92,29 @@ class MeasurementTools:
 
     @protect_grpc
     @min_backend_version(24, 2, 0)
-    def min_distance_between_objects(self, body1: "Body", body2: "Body") -> Gap:
+    def min_distance_between_objects(
+        self, object1: Union["Body", "Face", "Edge"], object2: Union["Body", "Face", "Edge"]
+    ) -> Gap:
         """Find the gap between two bodies.
 
         Parameters
         ----------
-        body1 : Body
-            First body to measure the gap.
-        body2 : Body
-            Second body to measure the gap.
+        object1 : Union[Body, Face, Edge]
+            First object to measure the gap.
+        object2 : Union[Body, Face, Edge]
+            Second object to measure the gap.
 
         Returns
         -------
         Gap
             Gap between two bodies.
         """
-        response = self._measure_stub.MinDistanceBetweenObjects(
-            MinDistanceBetweenObjectsRequest(bodies=[body1.id, body2.id])
-        )
+        if self._grpc_client.backend_version < (25, 2, 0):
+            response = self._measure_stub.MinDistanceBetweenObjects(
+                MinDistanceBetweenObjectsRequest(bodies=[object1.id, object2.id])
+            )
+        else:
+            response = self._measure_stub.MinDistanceBetweenSelectionObjects(
+                MinDistanceBetweenObjectsRequest(selection=[object1._grpc_id, object2._grpc_id])
+            )
         return Gap._from_distance_response(response)

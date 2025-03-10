@@ -9,6 +9,194 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.9.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.9.1>`_ - 2025-02-28
+=====================================================================================
+
+Added
+^^^^^
+
+- offset faces set radius implementation + testing `#1769 <https://github.com/ansys/pyansys-geometry/pull/1769>`_
+- separate graphics target `#1782 <https://github.com/ansys/pyansys-geometry/pull/1782>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump the docs-deps group with 2 updates `#1762 <https://github.com/ansys/pyansys-geometry/pull/1762>`_
+- bump ansys-api-geometry from 0.4.38 to 0.4.40 `#1763 <https://github.com/ansys/pyansys-geometry/pull/1763>`_
+- bump ansys-sphinx-theme[autoapi] from 1.3.1 to 1.3.2 in the docs-deps group `#1766 <https://github.com/ansys/pyansys-geometry/pull/1766>`_
+- bump ansys-tools-visualization-interface from 0.8.1 to 0.8.3 `#1767 <https://github.com/ansys/pyansys-geometry/pull/1767>`_
+- bump sphinx from 8.2.0 to 8.2.1 in the docs-deps group `#1772 <https://github.com/ansys/pyansys-geometry/pull/1772>`_
+- bump ansys-api-geometry from 0.4.40 to 0.4.42 `#1773 <https://github.com/ansys/pyansys-geometry/pull/1773>`_
+- temporary workaround for using trusted publisher approach `#1783 <https://github.com/ansys/pyansys-geometry/pull/1783>`_
+
+
+Fixed
+^^^^^
+
+- allow setting max message length for send operations `#1775 <https://github.com/ansys/pyansys-geometry/pull/1775>`_
+- typo in labeler.yml file `#1776 <https://github.com/ansys/pyansys-geometry/pull/1776>`_
+- docker build process failing on helper script `#1785 <https://github.com/ansys/pyansys-geometry/pull/1785>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- bump dev version to 0.10.dev0 `#1752 <https://github.com/ansys/pyansys-geometry/pull/1752>`_
+- update CHANGELOG for v0.9.0 `#1760 <https://github.com/ansys/pyansys-geometry/pull/1760>`_
+- pre-commit automatic update `#1770 <https://github.com/ansys/pyansys-geometry/pull/1770>`_
+
+`0.9.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.9.0>`_ - 2025-02-18
+=====================================================================================
+
+Added
+^^^^^
+
+- design activation changes `#1707 <https://github.com/ansys/pyansys-geometry/pull/1707>`_
+- add contributors `#1708 <https://github.com/ansys/pyansys-geometry/pull/1708>`_
+- Implementation of inspect & repair geometry `#1712 <https://github.com/ansys/pyansys-geometry/pull/1712>`_
+- launch core service from envar `#1716 <https://github.com/ansys/pyansys-geometry/pull/1716>`_
+- workflow enhancements for better tool results `#1723 <https://github.com/ansys/pyansys-geometry/pull/1723>`_
+- add face color, round info, bring measure tools to linux `#1732 <https://github.com/ansys/pyansys-geometry/pull/1732>`_
+- conservative approach to single design per modeler `#1740 <https://github.com/ansys/pyansys-geometry/pull/1740>`_
+- export glb `#1741 <https://github.com/ansys/pyansys-geometry/pull/1741>`_
+- allow plotting of individual faces `#1757 <https://github.com/ansys/pyansys-geometry/pull/1757>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump ansys-api-geometry from 0.4.33 to 0.4.34 `#1709 <https://github.com/ansys/pyansys-geometry/pull/1709>`_
+- bump ansys-sphinx-theme[autoapi] from 1.2.6 to 1.2.7 in the docs-deps group `#1719 <https://github.com/ansys/pyansys-geometry/pull/1719>`_
+- bump ansys-api-geometry from 0.4.34 to 0.4.35 `#1720 <https://github.com/ansys/pyansys-geometry/pull/1720>`_
+- bump ansys-sphinx-theme[autoapi] from 1.2.7 to 1.3.0 in the docs-deps group `#1726 <https://github.com/ansys/pyansys-geometry/pull/1726>`_
+- bump ansys-sphinx-theme[autoapi] from 1.3.0 to 1.3.1 in the docs-deps group `#1728 <https://github.com/ansys/pyansys-geometry/pull/1728>`_
+- bump ansys-api-geometry from 0.4.35 to 0.4.36 `#1729 <https://github.com/ansys/pyansys-geometry/pull/1729>`_
+- bump trame-vtk from 2.8.14 to 2.8.15 `#1736 <https://github.com/ansys/pyansys-geometry/pull/1736>`_
+- bump jupytext from 1.16.6 to 1.16.7 in the docs-deps group `#1742 <https://github.com/ansys/pyansys-geometry/pull/1742>`_
+- bump ansys-api-geometry from 0.4.36 to 0.4.37 `#1743 <https://github.com/ansys/pyansys-geometry/pull/1743>`_
+- bump myst-parser from 4.0.0 to 4.0.1 in the docs-deps group `#1744 <https://github.com/ansys/pyansys-geometry/pull/1744>`_
+- bump ansys-api-geometry from 0.4.37 to 0.4.38 `#1746 <https://github.com/ansys/pyansys-geometry/pull/1746>`_
+- bump numpy from 2.2.2 to 2.2.3 `#1747 <https://github.com/ansys/pyansys-geometry/pull/1747>`_
+- bump panel from 1.6.0 to 1.6.1 `#1749 <https://github.com/ansys/pyansys-geometry/pull/1749>`_
+- bump scipy from 1.15.1 to 1.15.2 `#1756 <https://github.com/ansys/pyansys-geometry/pull/1756>`_
+
+
+Documentation
+^^^^^^^^^^^^^
+
+- update CONTRIBUTING.md `#1730 <https://github.com/ansys/pyansys-geometry/pull/1730>`_
+
+
+Fixed
+^^^^^
+
+- re enable fmd tests `#1711 <https://github.com/ansys/pyansys-geometry/pull/1711>`_
+- support body mirror on linux `#1714 <https://github.com/ansys/pyansys-geometry/pull/1714>`_
+- use sketch plane for imprint/project curves `#1715 <https://github.com/ansys/pyansys-geometry/pull/1715>`_
+- revert boolean ops logic and hold-off on commands-based implementation (temporarily) `#1725 <https://github.com/ansys/pyansys-geometry/pull/1725>`_
+- Linux Core Service docker file was missing a dependency `#1758 <https://github.com/ansys/pyansys-geometry/pull/1758>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- update CHANGELOG for v0.8.2 `#1706 <https://github.com/ansys/pyansys-geometry/pull/1706>`_
+- pre-commit automatic update `#1717 <https://github.com/ansys/pyansys-geometry/pull/1717>`_, `#1737 <https://github.com/ansys/pyansys-geometry/pull/1737>`_
+- update SECURITY.md versions supported `#1722 <https://github.com/ansys/pyansys-geometry/pull/1722>`_
+- keep simba-plugin-geometry tag `#1739 <https://github.com/ansys/pyansys-geometry/pull/1739>`_
+- enhancements to GLB export and object ``plot()`` methods `#1750 <https://github.com/ansys/pyansys-geometry/pull/1750>`_
+- clean up deprecation warning for trapezoid class and add more info on deprecation `#1754 <https://github.com/ansys/pyansys-geometry/pull/1754>`_
+
+
+Test
+^^^^
+
+- verifying issue with empty intersect and temporal body creation `#1258 <https://github.com/ansys/pyansys-geometry/pull/1258>`_
+- Expand pattern tests `#1713 <https://github.com/ansys/pyansys-geometry/pull/1713>`_
+- set body name `#1727 <https://github.com/ansys/pyansys-geometry/pull/1727>`_
+- activate 8 linux tests `#1745 <https://github.com/ansys/pyansys-geometry/pull/1745>`_
+
+`0.8.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.8.2>`_ - 2025-01-29
+=====================================================================================
+
+Added
+^^^^^
+
+- create a fillet on an edge/face `#1621 <https://github.com/ansys/pyansys-geometry/pull/1621>`_
+- create a full fillet between multiple faces `#1623 <https://github.com/ansys/pyansys-geometry/pull/1623>`_
+- extrude existing faces, setup face offset relationships `#1628 <https://github.com/ansys/pyansys-geometry/pull/1628>`_
+- interference repair tool `#1633 <https://github.com/ansys/pyansys-geometry/pull/1633>`_
+- extrude existing edges to create surface bodies `#1638 <https://github.com/ansys/pyansys-geometry/pull/1638>`_
+- create and modify linear patterns `#1641 <https://github.com/ansys/pyansys-geometry/pull/1641>`_
+- body suppression state `#1643 <https://github.com/ansys/pyansys-geometry/pull/1643>`_
+- parameters refurbished `#1647 <https://github.com/ansys/pyansys-geometry/pull/1647>`_
+- rename object `#1648 <https://github.com/ansys/pyansys-geometry/pull/1648>`_
+- surface body from trimmed curves `#1650 <https://github.com/ansys/pyansys-geometry/pull/1650>`_
+- create circular and fill patterns `#1653 <https://github.com/ansys/pyansys-geometry/pull/1653>`_
+- find fix simplify `#1661 <https://github.com/ansys/pyansys-geometry/pull/1661>`_
+- replace face `#1664 <https://github.com/ansys/pyansys-geometry/pull/1664>`_
+- commands for merge and intersect `#1665 <https://github.com/ansys/pyansys-geometry/pull/1665>`_
+- revolve faces a set distance, up to another object, or by a helix `#1666 <https://github.com/ansys/pyansys-geometry/pull/1666>`_
+- add split body and tests `#1669 <https://github.com/ansys/pyansys-geometry/pull/1669>`_
+- enable get/set persistent ids for stride import/export `#1671 <https://github.com/ansys/pyansys-geometry/pull/1671>`_
+- find and fix edge methods `#1672 <https://github.com/ansys/pyansys-geometry/pull/1672>`_
+- shell methods `#1673 <https://github.com/ansys/pyansys-geometry/pull/1673>`_
+- implementation of NURBS curves `#1675 <https://github.com/ansys/pyansys-geometry/pull/1675>`_
+- get assigned material `#1684 <https://github.com/ansys/pyansys-geometry/pull/1684>`_
+- matrix rotation and translation `#1689 <https://github.com/ansys/pyansys-geometry/pull/1689>`_
+- is_core_service BackendType static method `#1692 <https://github.com/ansys/pyansys-geometry/pull/1692>`_
+- export and download stride format `#1698 <https://github.com/ansys/pyansys-geometry/pull/1698>`_
+- blitz development `#1701 <https://github.com/ansys/pyansys-geometry/pull/1701>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump ansys-tools-visualization-interface from 0.7.0 to 0.8.1 `#1640 <https://github.com/ansys/pyansys-geometry/pull/1640>`_
+- bump ansys-api-geometry from 0.4.27 to 0.4.28 `#1644 <https://github.com/ansys/pyansys-geometry/pull/1644>`_
+- bump sphinx-autodoc-typehints from 3.0.0 to 3.0.1 in the docs-deps group `#1651 <https://github.com/ansys/pyansys-geometry/pull/1651>`_
+- bump ansys-api-geometry from 0.4.28 to 0.4.30 `#1652 <https://github.com/ansys/pyansys-geometry/pull/1652>`_
+- bump protobuf from 5.28.3 to 5.29.3 in the grpc-deps group across 1 directory `#1656 <https://github.com/ansys/pyansys-geometry/pull/1656>`_
+- bump numpy from 2.2.1 to 2.2.2 `#1662 <https://github.com/ansys/pyansys-geometry/pull/1662>`_
+- bump ansys-api-geometry from 0.4.30 to 0.4.31 `#1663 <https://github.com/ansys/pyansys-geometry/pull/1663>`_
+- bump ansys api geometry from 0.4.30 to 0.4.32 `#1677 <https://github.com/ansys/pyansys-geometry/pull/1677>`_
+- bump ansys-api-geometry from 0.4.31 to 0.4.32 `#1681 <https://github.com/ansys/pyansys-geometry/pull/1681>`_
+- bump panel from 1.5.5 to 1.6.0 `#1682 <https://github.com/ansys/pyansys-geometry/pull/1682>`_
+- bump semver from 3.0.2 to 3.0.4 `#1687 <https://github.com/ansys/pyansys-geometry/pull/1687>`_
+- bump ansys-api-geometry from 0.4.32 to 0.4.33 `#1695 <https://github.com/ansys/pyansys-geometry/pull/1695>`_
+- bump nbconvert from 7.16.5 to 7.16.6 in the docs-deps group `#1700 <https://github.com/ansys/pyansys-geometry/pull/1700>`_
+
+
+Fixed
+^^^^^
+
+- reactivate test on failing extra edges test `#1396 <https://github.com/ansys/pyansys-geometry/pull/1396>`_
+- filter set export id to only CoreService based backends `#1685 <https://github.com/ansys/pyansys-geometry/pull/1685>`_
+- cleanup unsupported module `#1690 <https://github.com/ansys/pyansys-geometry/pull/1690>`_
+- disable unimplemented tests `#1691 <https://github.com/ansys/pyansys-geometry/pull/1691>`_
+- tech review fixes for blitz branch `#1703 <https://github.com/ansys/pyansys-geometry/pull/1703>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- update CHANGELOG for v0.8.1 `#1639 <https://github.com/ansys/pyansys-geometry/pull/1639>`_
+- whitelist semver package temporarily `#1657 <https://github.com/ansys/pyansys-geometry/pull/1657>`_
+- reverting semver package whitelist since problematic version is yanked `#1659 <https://github.com/ansys/pyansys-geometry/pull/1659>`_
+- pre-commit automatic update `#1667 <https://github.com/ansys/pyansys-geometry/pull/1667>`_, `#1696 <https://github.com/ansys/pyansys-geometry/pull/1696>`_
+- ensure design is closed on test exit `#1680 <https://github.com/ansys/pyansys-geometry/pull/1680>`_
+- use dedicate pygeometry-ci-2 runner `#1693 <https://github.com/ansys/pyansys-geometry/pull/1693>`_
+- remove towncrier info duplicates `#1702 <https://github.com/ansys/pyansys-geometry/pull/1702>`_
+
+
+Test
+^^^^
+
+- add more find and fix tests for repair tools `#1645 <https://github.com/ansys/pyansys-geometry/pull/1645>`_
+- Add some new tests `#1670 <https://github.com/ansys/pyansys-geometry/pull/1670>`_
+- add unit tests for 3 repair tools `#1683 <https://github.com/ansys/pyansys-geometry/pull/1683>`_
+
 `0.8.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.8.1>`_ - 2025-01-15
 =====================================================================================
 
