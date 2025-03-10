@@ -63,6 +63,7 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
     grpc_material_to_material,
+    grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
@@ -74,6 +75,7 @@ from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
+from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
@@ -279,6 +281,17 @@ class IBody(ABC):
         -------
         Material
             Material assigned to the body.
+        """
+        return
+
+    @abstractmethod
+    def bounding_box(self) -> BoundingBox:
+        """Get the bounding box of the body.
+
+        Returns
+        -------
+        BoundingBox
+            Bounding box of the body.
         """
         return
 
@@ -969,6 +982,18 @@ class MasterBody(IBody):
     def material(self, value: Material):  # noqa: D102
         self.assign_material(value)
 
+    @property
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def bounding_box(self) -> BoundingBox:  # noqa: D102
+        self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
+        result = self._bodies_stub.GetBoundingBox(self._grpc_id).box
+
+        min_corner = grpc_point_to_point3d(result.min)
+        max_corner = grpc_point_to_point3d(result.max)
+        center = grpc_point_to_point3d(result.center)
+        return BoundingBox(min_corner, max_corner, center)
+
     @protect_grpc
     @check_input_types
     def assign_material(self, material: Material) -> None:  # noqa: D102
@@ -1554,6 +1579,10 @@ class Body(IBody):
     @material.setter
     def material(self, value: Material):  # noqa: D102
         self._template.material = value
+
+    @property
+    def bounding_box(self) -> BoundingBox:  # noqa: D102
+        return self._template.bounding_box
 
     @ensure_design_is_active
     def assign_material(self, material: Material) -> None:  # noqa: D102
