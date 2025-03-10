@@ -861,11 +861,11 @@ def test_create_matrix_from_rotation_about_axis_z():
     assert np.allclose(result_matrix, expected_matrix)
 
 
-def test_create_matrix_from_rotation_about_arbitrary_axis(self):
+def test_create_matrix_from_rotation_about_arbitrary_axis():
     """Test the create_matrix_from_rotation_about_axis method for
     rotation about an arbitrary axis.
     """
-    axis = Vector3D(1.0, 1.0, 1.0).normalized()
+    axis = Vector3D([1.0, 1.0, 1.0]).normalize()
     angle = np.pi / 3  # 60 degrees
     # Expected matrix calculated using external tools or libraries
     expected_matrix = Matrix44(
