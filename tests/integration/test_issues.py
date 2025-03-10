@@ -33,6 +33,7 @@ from ansys.geometry.core.math import (
     Point2D,
     Point3D,
 )
+from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
@@ -260,3 +261,31 @@ def test_issue_1724_intersect_failures(modeler: Modeler):
 
     # Verify that the volume of the cylinder is the same (the intersect is the same as the cylinder)
     assert np.isclose(design.bodies[0].volume.m, np.pi * radius**2 * (wz - 0.1))
+
+
+def test_issue_1807_translate_sketch_non_default_units():
+    """Test that translating a sketch with non-default units is handled properly.
+
+    For more info see
+    https://github.com/ansys/pyansys-geometry/issues/1807
+    """
+    try:
+        # Set the default units to mm
+        DEFAULT_UNITS.LENGTH = UNITS.mm
+
+        # Draw a box sketch
+        sketch = Sketch()
+        sketch.box(Point2D([0, 0]), 10, 10)
+
+        # Verify the sketch plane origin
+        assert sketch.plane.origin == Point3D([0, 0, 0])
+
+        # Translate the sketch
+        sketch.translate_sketch_plane_by_distance(UnitVector3D([0, 0, 1]), Distance(10, UNITS.mm))
+
+        # Verify the new sketch plane origin
+        assert sketch.plane.origin == Point3D([0, 0, 10], unit=UNITS.mm)
+
+    finally:
+        # Reset the default units to meters
+        DEFAULT_UNITS.LENGTH = UNITS.meter
