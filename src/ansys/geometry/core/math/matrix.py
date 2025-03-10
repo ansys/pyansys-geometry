@@ -309,7 +309,7 @@ class Matrix44(Matrix):
         )
         return matrix
 
-    def create_matrix_from_rotation_about_axis(self, axis: Vector3D, angle: float) -> "Matrix44":
+    def create_matrix_from_rotation_about_axis(self, axis: "Vector3D", angle: float) -> "Matrix44":
         """Create a matrix representing a rotation about a given axis.
 
         Parameters
@@ -335,13 +335,15 @@ class Matrix44(Matrix):
         [ 0.          0.          1.          0.        ]
         [ 0.          0.          0.          1.        ]]
         """
+        from ansys.geometry.core.math.vector import Vector3D
+
         axis_dir = axis.normalized()
         dir_x = Vector3D.rotate_vector(axis_dir, Vector3D(1.0, 0.0, 0.0), angle)
         dir_y = Vector3D.rotate_vector(axis_dir, Vector3D(0.0, 1.0, 0.0), angle)
 
         return Matrix44.create_rotation(dir_x, dir_y)
 
-    def create_matrix_from_mapping(self, axis: Vector3D, angle: float) -> "Matrix44":
+    def create_matrix_from_mapping(self, axis: "Vector3D", angle: float) -> "Matrix44":
         """Create a matrix representing a rotation about a given axis.
 
         Parameters
@@ -367,6 +369,8 @@ class Matrix44(Matrix):
         [ 0.          0.          1.          0.        ]
         [ 0.          0.          0.          1.        ]]
         """
+        from ansys.geometry.core.math.vector import Vector3D
+
         axis_dir = axis.normalized()
         dir_x = Vector3D.rotate_vector(axis_dir, Vector3D(1.0, 0.0, 0.0), angle)
         dir_y = Vector3D.rotate_vector(axis_dir, Vector3D(0.0, 1.0, 0.0), angle)
