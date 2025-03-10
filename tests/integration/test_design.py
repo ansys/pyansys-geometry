@@ -3190,3 +3190,55 @@ def test_set_face_color(modeler: Modeler):
         ValueError, match="Invalid color value: Opacity value must be between 0 and 1."
     ):
         faces[3].opacity = 255
+
+
+def test_get_face_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a face."""
+    design = modeler.create_design("face_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    bounding_box = body.faces[0].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
+
+    bounding_box = body.faces[1].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
+
+
+def test_get_edge_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of an edge."""
+    design = modeler.create_design("edge_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # Edge 0 goes from (-0.5, -0.5, 1) to (0.5, -0.5, 1)
+    bounding_box = body.edges[0].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.min_corner.z.m == 1
+    assert bounding_box.max_corner.x.m == 0.5
+    assert bounding_box.max_corner.y.m == -0.5
+    assert bounding_box.max_corner.z.m == 1
+
+    # Test center
+    center = bounding_box.center
+    assert center.x.m == 0
+    assert center.y.m == -0.5
+    assert center.z.m == 1
+
+
+def test_get_body_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a body."""
+    design = modeler.create_design("body_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    bounding_box = body.bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.min_corner.z.m == 0
+    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
+    assert bounding_box.max_corner.z.m == 1
+
+    # Test center
+    center = bounding_box.center
+    assert center.x.m == 0
+    assert center.y.m == 0
+    assert center.z.m == 0.5
