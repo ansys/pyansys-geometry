@@ -136,6 +136,8 @@ class Sketch:
                 self.plane.origin.z.m_as(DEFAULT_UNITS.LENGTH) + translation.z,
             ]
         )
+        # Set the same unit system as the plane origin
+        new_origin.unit = self.plane.origin.unit
         self.plane = Plane(new_origin, self.plane.direction_x, self.plane.direction_y)
         return self
 
