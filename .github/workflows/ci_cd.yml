@@ -13,7 +13,7 @@ env:
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
-  ANSRV_GEO_IMAGE_DOCS_TAG: ghcr.io/ansys/geometry:windows-latest
+  ANSRV_GEO_IMAGE_DOCS_TAG: ghcr.io/ansys/geometry:core-windows-latest
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
@@ -108,16 +108,11 @@ jobs:
     name: Check Docker manifests
     runs-on: ubuntu-latest
     outputs:
-      skip_dms: ${{ steps.services.outputs.skip_dms }}
       skip_core_windows: ${{ steps.services.outputs.skip_core_windows }}
       skip_core_linux: ${{ steps.services.outputs.skip_core_linux }}
     strategy:
       matrix:
         include:
-          - container-stable: "windows-latest"
-            container-unstable: "windows-latest-unstable"
-            service: "dms"
-            service-name: "Windows DMS"
           - container-stable: "core-windows-latest"
             container-unstable: "core-windows-latest-unstable"
             service: "core_windows"
@@ -171,10 +166,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - docker-image: "windows-latest"
-            experimental: false
-          - docker-image: "windows-latest-unstable"
-            experimental: true
           - docker-image: "core-windows-latest"
             experimental: false
           - docker-image: "core-windows-latest-unstable"
@@ -184,11 +175,8 @@ jobs:
       - name: Calculate SKIP_UNSTABLE
         if: matrix.experimental
         run: |
-          # Choose the manifests output to consider (for DMS or Core service)
-          # based on the matrix value
-          if ("${{ matrix.docker-image }}" -eq "windows-latest-unstable") {
-            $ImagesAreEqual = ${{ needs.manifests.outputs.skip_dms }}
-          } elseif ("${{ matrix.docker-image }}" -eq "core-windows-latest-unstable") {
+          # Choose the manifests output to consider based on the matrix value
+          if ("${{ matrix.docker-image }}" -eq "core-windows-latest-unstable") {
             $ImagesAreEqual = ${{ needs.manifests.outputs.skip_core_windows }}
           } else {
             Write-Output "Unknown docker image"
@@ -307,7 +295,7 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
-        if: matrix.docker-image == 'windows-latest'
+        if: matrix.docker-image == 'core-windows-latest'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -335,14 +323,12 @@ jobs:
   docs:
     name: Documentation
     needs: [docs-style]
-    runs-on: [self-hosted, Windows, pygeometry]
+    runs-on: ubuntu-latest
     env:
       PYVISTA_OFF_SCREEN: true
     steps:
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@v3
-        with:
-          pyvista: false
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -351,24 +337,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download Geometry service container (if needed)
-        run: docker pull ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
-
-      - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-2'
-        run:
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-      - name: Stop any running containers
+      - name: Pull and launch geometry service
         run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
-
-      - name: Start Geometry service and verify start
-        run: docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
+          docker pull ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
 
       - name: Run Ansys documentation building action
         uses: ansys/actions/doc-build@v8
@@ -383,15 +355,6 @@ jobs:
           docker stop ${{ env.GEO_CONT_NAME }}
           docker logs ${{ env.GEO_CONT_NAME }}
           docker rm ${{ env.GEO_CONT_NAME }}
-
-      - name: Stop any remaining containers
-        if: always()
-        run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
 
 
 # =================================================================================================
@@ -633,7 +596,6 @@ jobs:
       - name: Download binaries (if conditions met)
         if: env.REUSE_LAST_ARTIFACTS == 'false'
         run: |
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerWindows.zip --output windows-dms-binaries.zip
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerCoreWindows.zip --output windows-core-binaries.zip
           curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerCoreLinux.zip --output linux-core-binaries.zip
 
@@ -654,16 +616,8 @@ jobs:
           git lfs fetch origin --include="$env:PREVIOUS_VERSION/*"
           git lfs checkout $env:PREVIOUS_VERSION
           # Copy the binaries from the previous version
-          cp ./$env:PREVIOUS_VERSION/windows-dms-binaries.zip windows-dms-binaries.zip
           cp ./$env:PREVIOUS_VERSION/windows-core-binaries.zip windows-core-binaries.zip
           cp ./$env:PREVIOUS_VERSION/linux-core-binaries.zip linux-core-binaries.zip
-
-      - name: Upload DMS Windows binaries as workflow artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-dms-binaries.zip
-          path: windows-dms-binaries.zip
-          retention-days: 1
 
       - name: Upload Linux Core service binaries as workflow artifacts
         uses: actions/upload-artifact@v4
@@ -686,7 +640,6 @@ jobs:
           $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
           mkdir $env:VERSION -ErrorAction SilentlyContinue
           Remove-Item -Recurse -Force .\$env:VERSION\*
-          mv windows-dms-binaries.zip .\$env:VERSION\
           mv windows-core-binaries.zip .\$env:VERSION\
           mv linux-core-binaries.zip .\$env:VERSION\
           git config user.email ${{ secrets.BINARIES_EMAIL }}
@@ -703,9 +656,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - mode: "dms"
-            docker-file: "windows-dms-dockerfile.zip"
-            zip-file: "windows-dms-binaries.zip"
           - mode: "coreservice"
             docker-file: "windows-core-dockerfile.zip"
             zip-file: "windows-core-binaries.zip"
@@ -890,7 +840,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
-          additional-artifacts: windows-dms-dockerfile.zip windows-core-dockerfile.zip linux-core-dockerfile.zip
+          additional-artifacts: windows-core-dockerfile.zip linux-core-dockerfile.zip
 
   upload_dev_docs:
     name: Upload dev documentation
