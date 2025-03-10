@@ -888,6 +888,7 @@ jobs:
       - name: Release to GitHub
         uses: ansys/actions/release-github@v8
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
           additional-artifacts: windows-dms-dockerfile.zip windows-core-dockerfile.zip linux-core-dockerfile.zip
 
