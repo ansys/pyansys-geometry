@@ -42,10 +42,10 @@ from ansys.api.geometry.v0.faces_pb2 import (
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_surface_to_surface
+from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_point_to_point3d, grpc_surface_to_surface
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
-from ansys.geometry.core.math.bbox import BoundingBox2D
+from ansys.geometry.core.math.bbox import BoundingBox, BoundingBox2D
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.auxiliary import (
@@ -335,16 +335,19 @@ class Face:
     def opacity(self, opacity: float) -> None:
         self.set_opacity(opacity)
 
-    @cached_property
+    @property
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def bounding_box(self) -> BoundingBox2D:
+    def bounding_box(self) -> BoundingBox:
         """Get the bounding box for the face."""
         self._grpc_client.log.debug(f"Getting bounding box for {self.id}.")
 
         result = self._faces_stub.GetBoundingBox(request=self._grpc_id)
+        min_point = grpc_point_to_point3d(result.min)
+        max_point = grpc_point_to_point3d(result.max)
+        center = grpc_point_to_point3d(result.center)
 
-        return BoundingBox2D(result.min.x, result.max.x, result.min.y, result.max.y)
+        return BoundingBox(min_point, max_point, center)
 
     @protect_grpc
     @check_input_types
