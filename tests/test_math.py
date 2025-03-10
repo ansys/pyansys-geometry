@@ -634,7 +634,7 @@ def test_rotate_vector():
     axis = Vector3D([0.0, 0.0, 1.0])
     vector = Vector3D([1.0, 0.0, 0.0])
 
-    angle = Quantity(np.math.pi / 2)  # 90 degrees
+    angle = Quantity(np.pi / 2)  # 90 degrees
 
     # Expected result after rotating vector around axis by 90 degrees
     expected_vector = Vector3D([0.0, 1.0, 0.0])
