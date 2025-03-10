@@ -107,6 +107,7 @@ doc = [
     "numpydoc==1.8.0",
     "numpy==2.2.3",
     "panel==1.6.1",
+    "pdf2image==1.17.0",
     "Pint==0.24.4",
     "protobuf==5.29.3",
     "pygltflib==1.16.3",
