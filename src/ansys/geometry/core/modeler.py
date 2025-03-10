@@ -356,7 +356,7 @@ class Modeler:
     def _generate_file_chunks(
         self, file_path: Path, open_file: bool, import_options: ImportOptions
     ):
-        """Utility method to generate streaming messages.
+        """Generate appropriate chunk sizes for uploading files.
 
         Parameters
         ----------
@@ -374,7 +374,7 @@ class Modeler:
         """
         chunk_size = MAX_MESSAGE_LENGTH - (1024 * 1024)  # reserve a MB for the gRPC message
 
-        with open(file_path, "rb") as file:
+        with Path.open(file_path, "rb") as file:
             while chunk := file.read(chunk_size):
                 yield UploadFileRequest(
                     data=chunk,

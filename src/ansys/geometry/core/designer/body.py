@@ -1252,12 +1252,12 @@ class MasterBody(IBody):
         # cache tessellation
         if not self._tessellation:
             if False:  # tessellation streaming
-                tessellationMap = {}
+                tessellation_map = {}
                 for response in self._bodies_stub.GetTessellationStream(self._grpc_id):
                     for key, value in response.face_tessellation.items():
-                        tessellationMap[key] = tess_to_pd(value)
+                        tessellation_map[key] = tess_to_pd(value)
 
-                self._tessellation = tessellationMap
+                self._tessellation = tessellation_map
             else:
                 resp = self._bodies_stub.GetTessellation(self._grpc_id)
                 self._tessellation = {
