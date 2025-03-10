@@ -312,7 +312,21 @@ class Matrix44(Matrix):
 
     @classmethod
     def create_matrix_from_rotation_about_axis(cls, axis: "Vector3D", angle: float) -> "Matrix44":
-        """Create a matrix representing a rotation about a given axis."""
+        """
+        Create a matrix representing a rotation about a given axis.
+
+        Parameters
+        ----------
+        axis : Vector3D
+            The axis of rotation.
+        angle : float
+            The angle of rotation in radians.
+
+        Returns
+        -------
+        Matrix44
+            A 4x4 matrix representing the rotation.
+        """
         axis_dir = axis.normalize()
         x, y, z = axis_dir[0], axis_dir[1], axis_dir[2]
 
@@ -329,11 +343,23 @@ class Matrix44(Matrix):
         rotation_matrix = np.eye(4)
         rotation_matrix[:3, :3] = rotation_3x3
 
-        return cls(rotation_matrix)  # Assuming Matrix44 can be initialized this way
+        return cls(rotation_matrix)
 
     @classmethod
     def create_matrix_from_mapping(cls, frame: "Frame") -> "Matrix44":
-        """Create a matrix representing the specified mapping."""
+        """
+        Create a matrix representing the specified mapping.
+
+        Parameters
+        ----------
+        frame : Frame
+            The frame containing the origin and direction vectors.
+
+        Returns
+        -------
+        Matrix44
+            A 4x4 matrix representing the translation and rotation defined by the frame.
+        """
         from ansys.geometry.core.math.vector import Vector3D
 
         translation_matrix = Matrix44.create_translation(
