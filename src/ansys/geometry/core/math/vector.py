@@ -165,8 +165,6 @@ class Vector3D(np.ndarray):
 
     def rotate_vector(self, vector: "Vector3D", angle: float) -> "Vector3D":
         """Rotate a vector around a given axis by a specified angle."""
-        import math
-
         if self.is_zero:
             raise Exception("Invalid vector operation: rotation axis cannot be zero.")
 
@@ -175,7 +173,7 @@ class Vector3D(np.ndarray):
         perpendicular1 = vector - parallel
         perpendicular2 = axis.cross(perpendicular1)
         rotated_vector = (
-            parallel + perpendicular1 * math.cos(angle) + perpendicular2 * math.sin(angle)
+            parallel + perpendicular1 * np.math.cos(angle) + perpendicular2 * np.math.sin(angle)
         )
         return rotated_vector
 
