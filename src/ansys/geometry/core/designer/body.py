@@ -1251,7 +1251,6 @@ class MasterBody(IBody):
 
         # cache tessellation
         if not self._tessellation:
-            
             try:
                 resp = self._bodies_stub.GetTessellation(self._grpc_id)
                 self._tessellation = {
