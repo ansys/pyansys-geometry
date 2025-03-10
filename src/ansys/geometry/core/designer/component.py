@@ -44,7 +44,11 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
-from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest, CreateDesignPointsRequest
+from ansys.api.geometry.v0.commands_pb2 import (
+    CreateBeamLineSegmentsRequest,
+    CreateBeamSegmentsRequest,
+    CreateDesignPointsRequest,
+)
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.components_pb2 import (
     CreateRequest,
@@ -1128,10 +1132,40 @@ class Component:
         profile : BeamProfile
             Beam profile to use to create the beams.
 
+        Returns
+        -------
+        list[Beam]
+            A list of the created Beams.
+
         Notes
         -----
         The newly created beams synchronize to a design within a supporting
         Geometry service instance.
+        """
+        if self._grpc_client.backend_version < (25, 2, 0):
+            return self.__create_beams_legacy(segments, profile)
+        else:
+            return self.__create_beams(segments, profile)
+        
+    def __create_beams_legacy(self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
+    ) -> list[Beam]:
+        """Create beams under the component.
+
+        Notes
+        -----
+        This is a legacy method, which is used in versions up to Ansys 25.1.1 products.
+
+        Parameters
+        ----------
+        segments : list[tuple[Point3D, Point3D]]
+            list of start and end pairs, each specifying a single line segment.
+        profile : BeamProfile
+            Beam profile to use to create the beams.
+
+        Returns
+        -------
+        list[Beam]
+            A list of the created Beams. 
         """
         request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
 
@@ -1156,6 +1190,50 @@ class Component:
 
         self._beams.extend(new_beams)
         return self._beams[-n_beams:]
+    
+    def __create_beams(self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
+    ) -> list[Beam]:
+        """Create beams under the component.
+
+        Parameters
+        ----------
+        segments : list[tuple[Point3D, Point3D]]
+            list of start and end pairs, each specifying a single line segment.
+        profile : BeamProfile
+            Beam profile to use to create the beams.
+
+        Returns
+        -------
+        list[Beam]
+            A list of the created Beams. 
+        """
+        request = CreateBeamLineSegmentsRequest(
+            profile=profile.id,
+            parent=self.id,
+        )
+
+        for segment in segments:
+            request.lines.append(
+                Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
+            )
+
+        self._grpc_client.log.debug(f"Creating beams on {self.id}...")
+        response = self._commands_stub.CreateBeamSegments(request)
+        self._grpc_client.log.debug("Beams successfully created.")
+
+        beams = []
+        for beam in response.created_beams:
+            beams.append(
+                Beam(
+                    id = beam.id,
+                    start = ,
+                    end = ,
+                    profile=profile,
+                    parent_component=self,
+                )
+            )
+
+        return beams
 
     def create_beam(self, start: Point3D, end: Point3D, profile: BeamProfile) -> Beam:
         """Create a beam under the component.
