@@ -173,7 +173,7 @@ class Vector3D(np.ndarray):
         perpendicular1 = vector - parallel
         perpendicular2 = axis.cross(perpendicular1)
         rotated_vector = (
-            parallel + perpendicular1 * np.math.cos(angle) + perpendicular2 * np.math.sin(angle)
+            parallel + perpendicular1 * np.cos(angle) + perpendicular2 * np.sin(angle)
         )
         return rotated_vector
 
