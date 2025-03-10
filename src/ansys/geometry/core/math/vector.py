@@ -172,9 +172,7 @@ class Vector3D(np.ndarray):
         parallel = axis * (vector.dot(axis))
         perpendicular1 = vector - parallel
         perpendicular2 = axis.cross(perpendicular1)
-        rotated_vector = (
-            parallel + perpendicular1 * np.cos(angle) + perpendicular2 * np.sin(angle)
-        )
+        rotated_vector = parallel + perpendicular1 * np.cos(angle) + perpendicular2 * np.sin(angle)
         return rotated_vector
 
     @check_input_types
