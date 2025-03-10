@@ -348,7 +348,7 @@ class Modeler:
         c_stub = CommandsStub(self.client.channel)
 
         response = c_stub.StreamFileUpload(
-            self._generate_file_chunks(file_path, open_file, import_options)
+            self._generate_file_chunks(fp_path, open_file, import_options)
         )
         return response.file_path
 
@@ -425,7 +425,7 @@ class Modeler:
         # Format-specific logic - upload the whole containing folder for assemblies
         if upload_to_server:
             fp_path = Path(file_path)
-            file_size_mb = fp_path.stat().st_size / (1024 * 1024)
+            file_size_kb = fp_path.stat().st_size
             if any(
                 ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
             ):
@@ -433,11 +433,11 @@ class Modeler:
                 for file in dir.iterdir():
                     full_path = file.resolve()
                     if full_path != fp_path:
-                        if file_size_mb < MAX_MESSAGE_LENGTH:
+                        if file_size_kb < MAX_MESSAGE_LENGTH:
                             self._upload_file(full_path)
                         else:
                             self._upload_file_stream(full_path)
-            if file_size_mb < MAX_MESSAGE_LENGTH:
+            if file_size_kb < MAX_MESSAGE_LENGTH:
                 self._upload_file(file_path, True, import_options)
             else:
                 self._upload_file_stream(file_path, True, import_options)
