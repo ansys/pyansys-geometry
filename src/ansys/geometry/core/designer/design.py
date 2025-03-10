@@ -59,6 +59,7 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
     grpc_frame_to_frame,
     grpc_matrix_to_matrix,
+    grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
 )
@@ -78,6 +79,11 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.auxiliary import (
+    get_bodies_from_ids,
+    get_edges_from_ids,
+    get_faces_from_ids,
+)
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.misc.options import ImportOptions
@@ -543,11 +549,7 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = (
-            "x_t"
-            if self._grpc_client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX)
-            else "xmt_txt"
-        )
+        ext = "xmt_txt" if BackendType.is_linux_service(self._grpc_client.backend_type) else "x_t"
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)
@@ -573,11 +575,7 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = (
-            "x_b"
-            if self._grpc_client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX)
-            else "xmt_bin"
-        )
+        ext = "xmt_bin" if BackendType.is_linux_service(self._grpc_client.backend_type) else "x_b"
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)
@@ -722,8 +720,8 @@ class Design(Component):
             beams=beams,
             design_points=design_points,
         )
-        self._named_selections[named_selection.name] = named_selection
 
+        self._named_selections[named_selection.name] = named_selection
         self._grpc_client.log.debug(
             f"Named selection {named_selection.name} is successfully created."
         )
@@ -1186,7 +1184,29 @@ class Design(Component):
 
         # Create NamedSelections
         for ns in response.named_selections:
-            new_ns = NamedSelection(ns.name, self._grpc_client, preexisting_id=ns.id)
+            result = self._named_selections_stub.Get(EntityIdentifier(id=ns.id))
+
+            # This works but is slow -- can use improvement for designs with many named selections
+            bodies = get_bodies_from_ids(self, [body.id for body in result.bodies])
+            faces = get_faces_from_ids(self, [face.id for face in result.faces])
+            edges = get_edges_from_ids(self, [edge.id for edge in result.edges])
+
+            design_points = []
+            for dp in result.design_points:
+                design_points.append(
+                    DesignPoint(dp.id, "dp: " + dp.id, grpc_point_to_point3d(dp.points[0]), self)
+                )
+
+            new_ns = NamedSelection(
+                ns.name,
+                self._grpc_client,
+                preexisting_id=ns.id,
+                bodies=bodies,
+                faces=faces,
+                edges=edges,
+                beams=[],  # BEAM IMPORT NOT SUPPORTED FOR NAMED SELECTIONS
+                design_points=design_points,
+            )
             self._named_selections[new_ns.name] = new_ns
 
         # Create CoordinateSystems

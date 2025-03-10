@@ -226,10 +226,10 @@ def test_export_to_parasolid_text(modeler: Modeler, tmp_path_factory: pytest.Tem
     # Define the location and expected file location
     location = tmp_path_factory.mktemp("test_export_to_parasolid_text")
 
-    if BackendType.is_core_service(modeler.client.backend_type):
-        file_location = location / f"{design.name}.x_t"
-    else:
+    if BackendType.is_linux_service(modeler.client.backend_type):
         file_location = location / f"{design.name}.xmt_txt"
+    else:
+        file_location = location / f"{design.name}.x_t"
 
     # Export to parasolid text
     design.export_to_parasolid_text(location)
@@ -249,10 +249,10 @@ def test_export_to_parasolid_binary(modeler: Modeler, tmp_path_factory: pytest.T
     # Define the location and expected file location
     location = tmp_path_factory.mktemp("test_export_to_parasolid_binary")
 
-    if BackendType.is_core_service(modeler.client.backend_type):
-        file_location = location / f"{design.name}.x_b"
-    else:
+    if BackendType.is_linux_service(modeler.client.backend_type):
         file_location = location / f"{design.name}.xmt_bin"
+    else:
+        file_location = location / f"{design.name}.x_b"
 
     # Export to parasolid binary
     design.export_to_parasolid_bin(location)

@@ -21,7 +21,12 @@
 # SOFTWARE.
 """Testing of prepare tools."""
 
+from pint import Quantity
+
+from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.measurements import UNITS
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.sketch import Sketch
 
 from .conftest import FILES_DIR
 
@@ -53,8 +58,28 @@ def test_volume_extract_from_edge_loops(modeler: Modeler):
 
 def test_share_topology(modeler: Modeler):
     """Test share topology operation is between two bodies."""
-    design = modeler.open_file(FILES_DIR / "MixingTank.scdocx")
-    assert modeler.prepare_tools.share_topology(design.bodies)
+    design = Modeler.create_design(modeler, "ShareTopoDoc")
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+    design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
+    sketch = Sketch()
+    sketch.box(Point2D([20, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+    design.extrude_sketch("JustABox", sketch, Quantity(5, UNITS.mm))
+    faces = 0
+    edges = 0
+    for body in design.bodies:
+        faces += len(body.faces)
+        edges += len(body.edges)
+    assert faces == 12
+    assert edges == 24
+    modeler.prepare_tools.share_topology(design.bodies)
+    faces = 0
+    edges = 0
+    for body in design.bodies:
+        faces += len(body.faces)
+        edges += len(body.edges)
+    assert faces == 13
+    assert edges == 27
 
 
 def test_enhanced_share_topology(modeler: Modeler):
