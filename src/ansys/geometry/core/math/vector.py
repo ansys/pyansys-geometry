@@ -183,10 +183,45 @@ class Vector3D(np.ndarray):
         Rotate the ``Vector3D`` object around the specified axis by the specified angle
         and return a new ``Vector3D`` object representing the rotated vector.
         """
-        from ansys.geometry.core.math.matrix import rotation_matrix
+        from ansys.geometry.core.math.matrix import Matrix44
 
-        rot_matrix = rotation_matrix(axis, angle)
+        rot_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
         return self.transform(rot_matrix)
+
+    def rotate_vector(self, vector: "Vector3D", angle: Quantity) -> "Vector3D":
+        """
+        Rotates the given vector around the current vector by the specified angle.
+
+        Parameters
+        ----------
+        vector : Vector3D
+            The vector to be rotated.
+        angle : Quantity
+            The angle by which to rotate the vector.
+
+        Returns
+        -------
+        Vector3D
+            The rotated vector.
+
+        Raises
+        ------
+        Exception
+            If the current vector is a zero vector.
+        """
+        import math
+
+        if self.is_zero:
+            raise Exception("Invalid vector operation.")
+
+        angle_between = vector.get_angle_between(self)
+        parallel = Vector3D(
+            [vector[0] * angle_between, vector[1] * angle_between, vector[2] * angle_between]
+        )
+
+        perpendicular1 = vector - parallel
+        perpendicular2 = self.cross(perpendicular1)
+        return parallel + perpendicular1 * math.cos(angle) + perpendicular2 * math.sin(angle)
 
     @check_input_types
     def get_angle_between(self, v: "Vector3D") -> Quantity:
