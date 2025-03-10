@@ -24,6 +24,7 @@ from io import UnsupportedOperation
 
 from beartype.roar import BeartypeCallHintParamViolation
 import numpy as np
+from pint import Quantity
 import pytest
 
 from ansys.geometry.core.math import (
@@ -625,6 +626,25 @@ def test_vector2d_errors():
     with pytest.raises(ValueError, match="Vectors cannot be zero-valued."):
         v2 = ZERO_VECTOR2D
         v1.get_angle_between(v2)
+
+
+def test_rotate_vector():
+    """Test the rotate_vector method."""
+    # Define the vectors and angle
+    axis = Vector3D([0.0, 0.0, 1.0])
+    vector = Vector3D([1.0, 0.0, 0.0])
+    import math
+
+    angle = Quantity(math.pi / 2)  # 90 degrees
+
+    # Expected result after rotating vector around axis by 90 degrees
+    expected_vector = Vector3D([0.0, 1.0, 0.0])
+
+    # Call the method under test
+    result_vector = axis.rotate_vector(vector, angle)
+
+    # Assert that the result matches the expected vector
+    assert np.allclose(result_vector, expected_vector)
 
 
 def test_matrix():
