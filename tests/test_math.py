@@ -1244,6 +1244,7 @@ def test_bounding_box2d_no_intersection():
     intersection = BoundingBox2D.intersect_bboxes(box1, box2)
     assert intersection is None
 
+
 def test_bounding_box_evaluates_bounds_comparisons():
     min_point = Point3D([0, 0, 0])
     max_point = Point3D([10, 10, 0])
