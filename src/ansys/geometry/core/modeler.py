@@ -425,7 +425,7 @@ class Modeler:
         # Format-specific logic - upload the whole containing folder for assemblies
         if upload_to_server:
             fp_path = Path(file_path)
-            file_size_mb = file_path.stat().st_size / (1024*1024)
+            file_size_mb = file_path.stat().st_size / (1024 * 1024)
             if any(
                 ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
             ):
@@ -433,11 +433,11 @@ class Modeler:
                 for file in dir.iterdir():
                     full_path = file.resolve()
                     if full_path != fp_path:
-                        if(file_size_mb < MAX_MESSAGE_LENGTH):
+                        if file_size_mb < MAX_MESSAGE_LENGTH:
                             self._upload_file(full_path)
                         else:
                             self._upload_file_stream(full_path)
-            if(file_size_mb < MAX_MESSAGE_LENGTH):
+            if file_size_mb < MAX_MESSAGE_LENGTH:
                 self._upload_file(file_path, True, import_options)
             else:
                 self._upload_file_stream(file_path, True, import_options)
