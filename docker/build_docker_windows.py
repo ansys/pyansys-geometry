@@ -29,7 +29,7 @@ import tempfile
 import urllib.request
 
 # First, get all environment variables that start with AWP_ROOT
-awp_root = {}
+awp_root: dict[int, str] = {}
 for env_key, env_val in os.environ.items():
     if env_key.startswith("AWP_ROOT"):
         # There is an Ansys installation... Check that the version is at
@@ -37,8 +37,8 @@ for env_key, env_val in os.environ.items():
         # AWP_ROOT241=/path/to/2024R1
         #
         # Get the version number
-        version = env_key.split("AWP_ROOT")[1]
-        if version < "241":
+        version = int(env_key.split("AWP_ROOT")[1])
+        if version < 241:
             # This version is too old, so we will ignore it
             continue
         else:
@@ -95,9 +95,9 @@ TMP_DIR = Path(tempfile.mkdtemp(prefix="docker_geometry_service_"))
 # Copy the Geometry Service files to the temporary directory
 print(f">>> Copying Geometry Service files to temporary directory to {TMP_DIR}")
 if backend_selection == 1:
-    BIN_DIR = TMP_DIR / "bins" / "DockerWindows" / "bin" / "x64" / "Release_Headless" / "net472"
+    BIN_DIR = TMP_DIR / "archive" / "bin" / "x64" / "Release_Headless" / "net472"
 else:
-    BIN_DIR = TMP_DIR / "bins" / "DockerWindows" / "bin" / "x64" / "Release_Core_Windows" / "net8.0"
+    BIN_DIR = TMP_DIR / "archive" / "bin" / "x64" / "Release_Core_Windows" / "net8.0"
 
 # Create the directory structure
 shutil.copytree(
@@ -110,7 +110,7 @@ print(">>> Zipping temporary directory. This might take some time...")
 zip_file = shutil.make_archive(
     "windows-dms-binaries" if backend_selection == 1 else "windows-core-binaries",
     "zip",
-    root_dir=TMP_DIR / "bins",
+    root_dir=TMP_DIR / "archive",
 )
 
 # Move the ZIP file to the docker directory
@@ -119,7 +119,7 @@ shutil.move(zip_file, TMP_DIR)
 
 # Remove the temporary directory
 print(">>> Removing Geometry Service files")
-shutil.rmtree(TMP_DIR / "bins")
+shutil.rmtree(TMP_DIR / "archive")
 
 # Download the Dockerfile from the repository
 print(">>> Downloading Dockerfile")
@@ -146,12 +146,15 @@ if backend_selection == 1:
     line = dockerfile.find("ENV AWP_ROOT")
     if line != -1:
         # Get the environment variable name
-        env_var = dockerfile[line : LENGTH_NO_VER + line] + ANSYS_VER
+        env_var = f"{dockerfile[line : LENGTH_NO_VER + line]}{ANSYS_VER}"
         # Replace the environment variable with the correct value
         dockerfile = dockerfile.replace(
             dockerfile[line : LENGTH_VER + line],
             env_var,
         )
+        # Write the updated Dockerfile
+        with Path.open(TMP_DIR / "Dockerfile", "w") as f:
+            f.write(dockerfile)
     else:
         print(
             "XXXXXXX No AWP_ROOT environment variable found in Dockerfile.. exiting process. XXXXXXX"  # noqa: E501

@@ -119,3 +119,16 @@ def fake_record():
         return handler.format(record)
 
     return inner_fake_record
+
+
+def are_graphics_available() -> bool:
+    """Determine whether graphics are available."""
+    from ansys.geometry.core.misc.checks import run_if_graphics_required
+
+    # If the imports are successful, then graphics can be handled...
+    # ...otherwise, graphics are not available.
+    try:
+        run_if_graphics_required()
+        return True
+    except ImportError:
+        return False

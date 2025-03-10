@@ -24,6 +24,10 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
+from beartype import beartype as check_input_types
+from pint import Quantity
+
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
     CreateCircularPatternRequest,
@@ -37,6 +41,8 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FullFilletRequest,
     ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
+    MoveRotateRequest,
+    MoveTranslateRequest,
     OffsetFacesSetRadiusRequest,
     PatternRequest,
     RenameObjectRequest,
@@ -55,6 +61,7 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
+from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
@@ -71,6 +78,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.typing import Real
 
@@ -1215,11 +1223,95 @@ class GeometryCommands:
         return (result.along_u, result.radius)
 
     @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def move_translate(
+        self,
+        selection: NamedSelection,
+        direction: UnitVector3D,
+        distance: Distance | Quantity | Real,
+    ) -> bool:
+        """Move a selection by a distance in a direction.
+
+        Parameters
+        ----------
+        selection : NamedSelection
+            Named selection to move.
+        direction : UnitVector3D
+            Direction to move in.
+        distance : Distance | Quantity | Real
+            Distance to move. Default units are meters.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+
+        result = self._commands_stub.MoveTranslate(
+            MoveTranslateRequest(
+                selection=[EntityIdentifier(id=selection.id)],
+                direction=unit_vector_to_grpc_direction(direction),
+                distance=translation_magnitude,
+            )
+        )
+
+        return result.success
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def move_rotate(
+        self,
+        selection: NamedSelection,
+        axis: Line,
+        angle: Angle | Quantity | Real,
+    ) -> dict[str, Union[bool, Real]]:
+        """Rotate a selection by an angle about a given axis.
+
+        Parameters
+        ----------
+        selection : NamedSelection
+            Named selection to move.
+        axis : Line
+            Direction to move in.
+        Angle : Angle | Quantity | Real
+            Angle to rotate by. Default units are radians.
+
+        Returns
+        -------
+        dict[str, Union[bool, Real]]
+            Dictionary containing the useful output from the command result.
+            Keys are success, modified_bodies, modified_faces, modified_edges.
+        """
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        rotation_angle = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
+
+        response = self._commands_stub.MoveRotate(
+            MoveRotateRequest(
+                selection=[EntityIdentifier(id=selection.id)],
+                axis=line_to_grpc_line(axis),
+                angle=rotation_angle,
+            )
+        )
+
+        result = {}
+        result["success"] = response.success
+        result["modified_bodies"] = response.modified_bodies
+        result["modified_faces"] = response.modified_faces
+        result["modified_edges"] = response.modified_edges
+
+        return result
+
+    @protect_grpc
+    @check_input_types
     @min_backend_version(25, 2, 0)
     def offset_faces_set_radius(
         self,
         faces: Union["Face", list["Face"]],
-        radius: Real,
+        radius: Distance | Quantity | Real,
         copy: bool = False,
         offset_mode: OffsetMode = OffsetMode.IGNORE_RELATIONSHIPS,
         extrude_type: ExtrudeType = ExtrudeType.FORCE_INDEPENDENT,
@@ -1230,7 +1322,7 @@ class GeometryCommands:
         ----------
         faces : Face | list[Face]
             Faces to offset.
-        radius : Real
+        radius : Distance | Quantity | Real
             Radius of the offset.
         copy : bool, default: False
             Copy the face and move it instead of offsetting the original face if ``True``.
@@ -1247,17 +1339,18 @@ class GeometryCommands:
         from ansys.geometry.core.designer.face import Face
 
         faces: list[Face] = faces if isinstance(faces, list) else [faces]
-
         check_type_all_elements_in_iterable(faces, Face)
-        check_is_float_int(radius, "radius")
 
         for face in faces:
             face.body._reset_tessellation_cache()
 
+        radius = radius if isinstance(radius, Distance) else Distance(radius)
+        radius_magnitude = radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+
         result = self._commands_stub.OffsetFacesSetRadius(
             OffsetFacesSetRadiusRequest(
                 faces=[face._grpc_id for face in faces],
-                radius=radius,
+                radius=radius_magnitude,
                 copy=copy,
                 offset_mode=offset_mode.value,
                 extrude_type=extrude_type.value,
