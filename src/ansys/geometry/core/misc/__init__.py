@@ -23,6 +23,7 @@
 
 from ansys.geometry.core.misc.accuracy import ANGLE_ACCURACY, LENGTH_ACCURACY, Accuracy
 from ansys.geometry.core.misc.auxiliary import (
+    DEFAULT_COLOR,
     get_bodies_from_ids,
     get_design_from_body,
     get_design_from_component,
@@ -43,7 +44,9 @@ from ansys.geometry.core.misc.checks import (
     check_type_equivalence,
     deprecated_argument,
     deprecated_method,
+    graphics_required,
     min_backend_version,
+    run_if_graphics_required,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.options import ImportOptions

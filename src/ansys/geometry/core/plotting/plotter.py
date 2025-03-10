@@ -21,6 +21,14 @@
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
 
+# First, verify graphics are available
+try:
+    from ansys.geometry.core.misc.checks import run_if_graphics_required
+
+    run_if_graphics_required()
+except ImportError as err:  # pragma: no cover
+    raise err
+
 from itertools import cycle
 from pathlib import Path
 from typing import Any
@@ -39,6 +47,7 @@ from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.tools.visualization_interface import (
@@ -248,15 +257,18 @@ class GeometryPlotter(PlotterInterface):
             if not merge:
                 for face in faces:
                     face_color = face.color
-                    if face_color != Color.DEFAULT.value:
-                        plotting_options["color"] = face_color
-                    else:
+                    if face_color == DEFAULT_COLOR or face_color[0:7] == DEFAULT_COLOR.lower():
                         plotting_options["color"] = body_color
+                        plotting_options["opacity"] = body.opacity
+                    else:
+                        plotting_options["color"] = face_color
+                        plotting_options["opacity"] = face.opacity
                     self._backend.pv_interface.plot(face.tessellate(), **plotting_options)
                 return
             else:
                 dataset = body.tessellate(merge=True)
                 plotting_options["color"] = body_color
+                plotting_options["opacity"] = body.opacity
                 self._backend.pv_interface.plot(dataset, **plotting_options)
                 return
         # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
@@ -294,10 +306,12 @@ class GeometryPlotter(PlotterInterface):
         dataset = face.tessellate()
         if self.use_service_colors:
             face_color = face.color
-            if face_color != Color.DEFAULT.value:
+            if face_color != DEFAULT_COLOR:
                 plotting_options["color"] = face_color
+                plotting_options["opacity"] = face.opacity
             else:
                 plotting_options["color"] = face.body.color
+                plotting_options["opacity"] = face.body.opacity
             self._backend.pv_interface.plot(dataset, **plotting_options)
             return
 

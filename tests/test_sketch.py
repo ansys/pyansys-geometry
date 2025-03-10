@@ -46,6 +46,8 @@ from ansys.geometry.core.sketch import (
     Slot,
 )
 
+from .conftest import are_graphics_available
+
 DOUBLE_EPS = np.finfo(float).eps
 
 
@@ -578,6 +580,9 @@ def test_sketch_plane_translation():
     assert sketch.plane.origin.unit == UNITS.cm
 
 
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_validate_arc():
     """Test for performing Arc rotation-sense validation when using PyVista.
 
@@ -688,6 +693,9 @@ def test_validate_arc():
             assert point[1] > 0
 
 
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_arc():
     """Test arc generation and errors."""
     # Test errors first
@@ -750,6 +758,9 @@ def test_arc():
         assert point[0] > 0 or np.isclose(point[0], 0)
 
 
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_arc_from_three_points():
     """Test arc generation from three points."""
     # Fixing start and end points
@@ -774,6 +785,9 @@ def test_arc_from_three_points():
             assert point[0] < 0 or np.isclose(point[0], 0)
 
 
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_polydata_methods():
     sketch = Sketch()
     sketch.polygon(Point2D([10, 10], UNITS.m), Quantity(10, UNITS.m), sides=5, tag="Polygon1")

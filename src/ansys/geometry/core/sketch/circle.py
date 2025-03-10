@@ -21,16 +21,21 @@
 # SOFTWARE.
 """Provides for creating and managing a circle."""
 
+from typing import TYPE_CHECKING
+
 from beartype import beartype as check_input_types
 from pint import Quantity
-import pyvista as pv
 
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
 
 
 class SketchCircle(SketchFace, Circle):
@@ -102,7 +107,8 @@ class SketchCircle(SketchFace, Circle):
         return Circle.perimeter.fget(self)
 
     @property
-    def visualization_polydata(self) -> pv.PolyData:
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
         """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
@@ -113,6 +119,8 @@ class SketchCircle(SketchFace, Circle):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
+        import pyvista as pv
+
         circle = pv.Circle(self.radius.m_as(DEFAULT_UNITS.LENGTH))
         return circle.translate(
             [

@@ -74,17 +74,11 @@ class NamedSelection:
         preexisting_id: str | None = None,
     ):
         """Initialize the ``NamedSelection`` class."""
+        self._name = name
         self._grpc_client = grpc_client
-        self._named_selections_stub = NamedSelectionsStub(grpc_client.channel)
+        self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
-        if preexisting_id:
-            self._id = preexisting_id
-            self._name = name
-            return
-
-        # All ids should be unique - no duplicated values
-        ids = set()
-
+        # Create empty arrays if there are none of a type
         if bodies is None:
             bodies = []
         if faces is None:
@@ -95,6 +89,20 @@ class NamedSelection:
             beams = []
         if design_points is None:
             design_points = []
+
+        # Instantiate
+        self._bodies = bodies
+        self._faces = faces
+        self._edges = edges
+        self._beams = beams
+        self._design_points = design_points
+
+        if preexisting_id:
+            self._id = preexisting_id
+            return
+
+        # All ids should be unique - no duplicated values
+        ids = set()
 
         # Loop over bodies, faces and edges
         [ids.add(body.id) for body in bodies]
@@ -107,7 +115,6 @@ class NamedSelection:
         self._grpc_client.log.debug("Requesting creation of named selection.")
         new_named_selection = self._named_selections_stub.Create(named_selection_request)
         self._id = new_named_selection.id
-        self._name = new_named_selection.name
 
     @property
     def id(self) -> str:
@@ -118,3 +125,40 @@ class NamedSelection:
     def name(self) -> str:
         """Name of the named selection."""
         return self._name
+
+    @property
+    def bodies(self) -> list[Body]:
+        """All bodies in the named selection."""
+        return self._bodies
+
+    @property
+    def faces(self) -> list[Face]:
+        """All faces in the named selection."""
+        return self._faces
+
+    @property
+    def edges(self) -> list[Edge]:
+        """All edges in the named selection."""
+        return self._edges
+
+    @property
+    def beams(self) -> list[Beam]:
+        """All beams in the named selection."""
+        return self._beams
+
+    @property
+    def design_points(self) -> list[DesignPoint]:
+        """All design points in the named selection."""
+        return self._design_points
+
+    def __repr__(self) -> str:
+        """Represent the ``NamedSelection`` as a string."""
+        lines = [f"ansys.geometry.core.designer.selection.NamedSelection {hex(id(self))}"]
+        lines.append(f"  Name                 : {self._name}")
+        lines.append(f"  Id                   : {self._id}")
+        lines.append(f"  N Bodies             : {len(self.bodies)}")
+        lines.append(f"  N Faces              : {len(self.faces)}")
+        lines.append(f"  N Edges              : {len(self.edges)}")
+        lines.append(f"  N Beams              : {len(self.beams)}")
+        lines.append(f"  N Design Points      : {len(self.design_points)}")
+        return "\n".join(lines)

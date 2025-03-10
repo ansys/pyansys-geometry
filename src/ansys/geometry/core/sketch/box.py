@@ -21,18 +21,23 @@
 # SOFTWARE.
 """Provides for creating and managing a box (quadrilateral)."""
 
+from typing import TYPE_CHECKING
+
 from beartype import beartype as check_input_types
 from pint import Quantity
-import pyvista as pv
 from scipy.spatial.transform import Rotation as SpatialRotation
 
 from ansys.geometry.core.math.matrix import Matrix33
 from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
 
 
 class Box(SketchFace):
@@ -132,7 +137,8 @@ class Box(SketchFace):
         return self.width * self.height
 
     @property
-    def visualization_polydata(self) -> pv.PolyData:
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
         """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
@@ -144,6 +150,7 @@ class Box(SketchFace):
             VTK pyvista.Polydata configuration.
         """
         import numpy as np
+        import pyvista as pv
 
         return pv.Quadrilateral(
             np.array(
