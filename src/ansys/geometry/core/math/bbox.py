@@ -50,7 +50,7 @@ class BoundingBox2D:
     """
 
     @check_input_types
-    @deprecated_method(alternative="BoundingBox")
+    @deprecated_method(alternative="BoundingBox", version="0.9.0", version_removed="0.11.0")
     def __init__(
         self,
         x_min: Real = sys.float_info.max,
@@ -250,7 +250,7 @@ class BoundingBox2D:
 
 class BoundingBox:
     """Maintains the box structure for Bounding Boxes.
-    
+
     Parameters
     ----------
     max_corner : Point3D
@@ -279,35 +279,17 @@ class BoundingBox:
 
     @property
     def min_corner(self) -> Point3D:
-        """Minimum corner of the bounding box.
-        
-        Returns
-        -------
-        Point3D
-            Minimum corner of the bounding box.
-        """
+        """Minimum corner of the bounding box."""
         return self._min_corner
 
     @property
     def max_corner(self) -> Point3D:
-        """Maximum corner of the bounding box.
-
-        Returns
-        -------
-        Point3D
-            Maximum corner of the bounding box.
-        """
+        """Maximum corner of the bounding box."""
         return self._max_corner
 
     @property
     def center(self) -> Point3D:
-        """Center of the bounding box.
-
-        Returns
-        -------
-        Point3D
-            Center of the bounding box.
-        """
+        """Center of the bounding box."""
         return self._center
 
     @check_input_types

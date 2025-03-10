@@ -27,7 +27,6 @@ from enum import Enum, unique
 from functools import wraps
 from typing import TYPE_CHECKING, Union
 
-from ansys.geometry.core.math.bbox import BoundingBox
 from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
@@ -76,6 +75,7 @@ from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
+from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
@@ -984,6 +984,7 @@ class MasterBody(IBody):
 
     @property
     @protect_grpc
+    @min_backend_version(25, 2, 0)
     def bounding_box(self) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
         result = self._bodies_stub.GetBoundingBox(self._grpc_id).box
@@ -1580,7 +1581,7 @@ class Body(IBody):
         self._template.material = value
 
     @property
-    def bounding_box(self):  # noqa: D102
+    def bounding_box(self) -> BoundingBox:  # noqa: D102
         return self._template.bounding_box
 
     @ensure_design_is_active
