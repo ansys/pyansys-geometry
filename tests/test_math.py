@@ -827,6 +827,60 @@ def test_create_rotation_matrix():
     assert np.array_equal(expected_matrix, rotation_matrix)
 
 
+def test_create_matrix_from_rotation_about_axis_x():
+    """Test the create_matrix_from_rotation_about_axis method for rotation about the x-axis."""
+    axis = Vector3D([1.0, 0.0, 0.0])
+    angle = np.pi / 2  # 90 degrees
+    expected_matrix = Matrix44([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+
+    print(result_matrix)
+    assert np.allclose(result_matrix, expected_matrix)
+
+    # assert np.allclose(result_matrix.to_numpy(), expected_matrix.to_numpy())
+
+
+def test_create_matrix_from_rotation_about_axis_y():
+    """Test the create_matrix_from_rotation_about_axis method for rotation about the y-axis."""
+    axis = Vector3D([0.0, 1.0, 0.0])
+    angle = np.pi / 2  # 90 degrees
+    expected_matrix = Matrix44([[0, 0, 1, 0], [0, 1, 0, 0], [-1, 0, 0, 0], [0, 0, 0, 1]])
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+    assert np.allclose(result_matrix, expected_matrix)
+
+
+def test_create_matrix_from_rotation_about_axis_z():
+    """Test the create_matrix_from_rotation_about_axis method for rotation about the z-axis."""
+    axis = Vector3D([0.0, 0.0, 1.0])
+    angle = np.pi / 2  # 90 degrees
+    expected_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+    assert np.allclose(result_matrix, expected_matrix)
+
+
+def test_create_matrix_from_rotation_about_arbitrary_axis(self):
+    """Test the create_matrix_from_rotation_about_axis method for
+    rotation about an arbitrary axis.
+    """
+    axis = Vector3D(1.0, 1.0, 1.0).normalized()
+    angle = np.pi / 3  # 60 degrees
+    # Expected matrix calculated using external tools or libraries
+    expected_matrix = Matrix44(
+        [
+            [0.66666667, -0.33333333, 0.66666667, 0],
+            [0.66666667, 0.66666667, -0.33333333, 0],
+            [-0.33333333, 0.66666667, 0.66666667, 0],
+            [0, 0, 0, 1],
+        ]
+    )
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+    assert np.allclose(result_matrix, expected_matrix)
+
+
 def test_create_matrix_from_mapping():
     """Test the create_matrix_from_mapping method."""
     # Define the frame with origin and direction vectors

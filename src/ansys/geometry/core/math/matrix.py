@@ -312,38 +312,24 @@ class Matrix44(Matrix):
 
     @classmethod
     def create_matrix_from_rotation_about_axis(cls, axis: "Vector3D", angle: float) -> "Matrix44":
-        """Create a matrix representing a rotation about a given axis.
-
-        Parameters
-        ----------
-        axis : Vector3D
-            The axis of rotation.
-        angle : float
-            The angle of rotation in radians.
-
-        Returns
-        -------
-        Matrix44
-            A 4x4 matrix representing the rotation.
-
-        Examples
-        --------
-        >>> axis = Vector3D(0.0, 0.0, 1.0)
-        >>> angle = np.pi / 4  # 45 degrees
-        >>> rotation_matrix = create_matrix_from_rotation_about_axis(axis, angle)
-        >>> print(rotation_matrix)
-        [[ 0.70710678 -0.70710678  0.          0.        ]
-        [ 0.70710678  0.70710678  0.          0.        ]
-        [ 0.          0.          1.          0.        ]
-        [ 0.          0.          0.          1.        ]]
-        """
-        from ansys.geometry.core.math.vector import Vector3D
-
+        """Create a matrix representing a rotation about a given axis."""
         axis_dir = axis.normalize()
-        dir_x = Vector3D.rotate_vector(axis_dir, Vector3D([1.0, 0.0, 0.0]), angle)
-        dir_y = Vector3D.rotate_vector(axis_dir, Vector3D([0.0, 1.0, 0.0]), angle)
+        x, y, z = axis_dir[0], axis_dir[1], axis_dir[2]
 
-        return Matrix44.create_rotation(dir_x, dir_y)
+        k = np.array([[0, -z, y], [z, 0, -x], [-y, x, 0]])
+
+        identity = np.eye(3)
+        cos_theta = np.cos(angle)
+        sin_theta = np.sin(angle)
+
+        # Rodrigues' rotation formula
+        rotation_3x3 = identity + sin_theta * k + (1 - cos_theta) * (k @ k)
+
+        # Convert to a 4x4 homogeneous matrix
+        rotation_matrix = np.eye(4)
+        rotation_matrix[:3, :3] = rotation_3x3
+
+        return cls(rotation_matrix)  # Assuming Matrix44 can be initialized this way
 
     @classmethod
     def create_matrix_from_mapping(cls, frame: "Frame") -> "Matrix44":
