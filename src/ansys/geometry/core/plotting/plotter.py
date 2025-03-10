@@ -21,6 +21,14 @@
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
 
+# First, verify graphics are available
+try:
+    from ansys.geometry.core.misc.checks import run_if_graphics_required
+
+    run_if_graphics_required()
+except ImportError as err:  # pragma: no cover
+    raise err
+
 from itertools import cycle
 from pathlib import Path
 from typing import Any
@@ -35,9 +43,11 @@ from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.designpoint import DesignPoint
+from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.tools.visualization_interface import (
@@ -243,22 +253,22 @@ class GeometryPlotter(PlotterInterface):
 
         if self.use_service_colors:
             faces = body.faces
-            dataset = body.tessellate(merge=merge)
             body_color = body.color
             if not merge:
-                # ASSUMPTION: the faces returned by the service are in the same order
-                # as the tessellation information returned by the service...
-                elems = [elem for elem in dataset]
-                for face, block in zip(faces, elems):
+                for face in faces:
                     face_color = face.color
-                    if face_color != Color.DEFAULT.value:
-                        plotting_options["color"] = face_color
-                    else:
+                    if face_color == DEFAULT_COLOR or face_color[0:7] == DEFAULT_COLOR.lower():
                         plotting_options["color"] = body_color
-                    self._backend.pv_interface.plot(block, **plotting_options)
+                        plotting_options["opacity"] = body.opacity
+                    else:
+                        plotting_options["color"] = face_color
+                        plotting_options["opacity"] = face.opacity
+                    self._backend.pv_interface.plot(face.tessellate(), **plotting_options)
                 return
             else:
+                dataset = body.tessellate(merge=True)
                 plotting_options["color"] = body_color
+                plotting_options["opacity"] = body.opacity
                 self._backend.pv_interface.plot(dataset, **plotting_options)
                 return
         # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
@@ -280,6 +290,34 @@ class GeometryPlotter(PlotterInterface):
         # Edges should ONLY be plotted individually if picking is enabled
         if self._backend._allow_picking:
             self.add_body_edges(body_plot)
+
+    def add_face(self, face: Face, **plotting_options: dict | None) -> None:
+        """Add a face to the scene.
+
+        Parameters
+        ----------
+        face : Face
+            Face to add.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+        """
+        self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
+        dataset = face.tessellate()
+        if self.use_service_colors:
+            face_color = face.color
+            if face_color != DEFAULT_COLOR:
+                plotting_options["color"] = face_color
+                plotting_options["opacity"] = face.opacity
+            else:
+                plotting_options["color"] = face.body.color
+                plotting_options["opacity"] = face.body.opacity
+            self._backend.pv_interface.plot(dataset, **plotting_options)
+            return
+
+        # Otherwise...
+        face_plot = MeshObjectPlot(custom_object=face, mesh=dataset)
+        self._backend.pv_interface.plot(face_plot, **plotting_options)
 
     def add_component(
         self,
@@ -438,6 +476,8 @@ class GeometryPlotter(PlotterInterface):
             self.add_sketch(plottable_object, **plotting_options)
         elif isinstance(plottable_object, (Body, MasterBody)):
             self.add_body(plottable_object, merge_bodies, **plotting_options)
+        elif isinstance(plottable_object, Face):
+            self.add_face(plottable_object, **plotting_options)
         elif isinstance(plottable_object, (Design, Component)):
             self.add_component(plottable_object, merge_component, merge_bodies, **plotting_options)
         elif (
@@ -492,7 +532,7 @@ class GeometryPlotter(PlotterInterface):
 
     def export_glb(
         self, plotting_object: Any = None, filename: str | Path | None = None, **plotting_options
-    ) -> None:
+    ) -> Path:
         """Export the design to a glb file. Does not support picked objects.
 
         Parameters

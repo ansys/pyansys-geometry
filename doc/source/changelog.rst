@@ -9,7 +9,44 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
-`0.9.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.9.0>`_ - 2025-02-17
+`0.9.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.9.1>`_ - 2025-02-28
+=====================================================================================
+
+Added
+^^^^^
+
+- offset faces set radius implementation + testing `#1769 <https://github.com/ansys/pyansys-geometry/pull/1769>`_
+- separate graphics target `#1782 <https://github.com/ansys/pyansys-geometry/pull/1782>`_
+
+
+Dependencies
+^^^^^^^^^^^^
+
+- bump the docs-deps group with 2 updates `#1762 <https://github.com/ansys/pyansys-geometry/pull/1762>`_
+- bump ansys-api-geometry from 0.4.38 to 0.4.40 `#1763 <https://github.com/ansys/pyansys-geometry/pull/1763>`_
+- bump ansys-sphinx-theme[autoapi] from 1.3.1 to 1.3.2 in the docs-deps group `#1766 <https://github.com/ansys/pyansys-geometry/pull/1766>`_
+- bump ansys-tools-visualization-interface from 0.8.1 to 0.8.3 `#1767 <https://github.com/ansys/pyansys-geometry/pull/1767>`_
+- bump sphinx from 8.2.0 to 8.2.1 in the docs-deps group `#1772 <https://github.com/ansys/pyansys-geometry/pull/1772>`_
+- bump ansys-api-geometry from 0.4.40 to 0.4.42 `#1773 <https://github.com/ansys/pyansys-geometry/pull/1773>`_
+- temporary workaround for using trusted publisher approach `#1783 <https://github.com/ansys/pyansys-geometry/pull/1783>`_
+
+
+Fixed
+^^^^^
+
+- allow setting max message length for send operations `#1775 <https://github.com/ansys/pyansys-geometry/pull/1775>`_
+- typo in labeler.yml file `#1776 <https://github.com/ansys/pyansys-geometry/pull/1776>`_
+- docker build process failing on helper script `#1785 <https://github.com/ansys/pyansys-geometry/pull/1785>`_
+
+
+Maintenance
+^^^^^^^^^^^
+
+- bump dev version to 0.10.dev0 `#1752 <https://github.com/ansys/pyansys-geometry/pull/1752>`_
+- update CHANGELOG for v0.9.0 `#1760 <https://github.com/ansys/pyansys-geometry/pull/1760>`_
+- pre-commit automatic update `#1770 <https://github.com/ansys/pyansys-geometry/pull/1770>`_
+
+`0.9.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.9.0>`_ - 2025-02-18
 =====================================================================================
 
 Added
@@ -23,6 +60,7 @@ Added
 - add face color, round info, bring measure tools to linux `#1732 <https://github.com/ansys/pyansys-geometry/pull/1732>`_
 - conservative approach to single design per modeler `#1740 <https://github.com/ansys/pyansys-geometry/pull/1740>`_
 - export glb `#1741 <https://github.com/ansys/pyansys-geometry/pull/1741>`_
+- allow plotting of individual faces `#1757 <https://github.com/ansys/pyansys-geometry/pull/1757>`_
 
 
 Dependencies
@@ -41,6 +79,7 @@ Dependencies
 - bump ansys-api-geometry from 0.4.37 to 0.4.38 `#1746 <https://github.com/ansys/pyansys-geometry/pull/1746>`_
 - bump numpy from 2.2.2 to 2.2.3 `#1747 <https://github.com/ansys/pyansys-geometry/pull/1747>`_
 - bump panel from 1.6.0 to 1.6.1 `#1749 <https://github.com/ansys/pyansys-geometry/pull/1749>`_
+- bump scipy from 1.15.1 to 1.15.2 `#1756 <https://github.com/ansys/pyansys-geometry/pull/1756>`_
 
 
 Documentation
@@ -56,6 +95,7 @@ Fixed
 - support body mirror on linux `#1714 <https://github.com/ansys/pyansys-geometry/pull/1714>`_
 - use sketch plane for imprint/project curves `#1715 <https://github.com/ansys/pyansys-geometry/pull/1715>`_
 - revert boolean ops logic and hold-off on commands-based implementation (temporarily) `#1725 <https://github.com/ansys/pyansys-geometry/pull/1725>`_
+- Linux Core Service docker file was missing a dependency `#1758 <https://github.com/ansys/pyansys-geometry/pull/1758>`_
 
 
 Maintenance
@@ -66,6 +106,7 @@ Maintenance
 - update SECURITY.md versions supported `#1722 <https://github.com/ansys/pyansys-geometry/pull/1722>`_
 - keep simba-plugin-geometry tag `#1739 <https://github.com/ansys/pyansys-geometry/pull/1739>`_
 - enhancements to GLB export and object ``plot()`` methods `#1750 <https://github.com/ansys/pyansys-geometry/pull/1750>`_
+- clean up deprecation warning for trapezoid class and add more info on deprecation `#1754 <https://github.com/ansys/pyansys-geometry/pull/1754>`_
 
 
 Test

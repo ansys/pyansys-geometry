@@ -30,6 +30,13 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
 
+try:
+    from ansys.tools.visualization_interface.utils.color import Color
+
+    DEFAULT_COLOR = Color.DEFAULT.value
+except ModuleNotFoundError:
+    DEFAULT_COLOR = "#D6F7D1"
+
 
 def get_design_from_component(component: "Component") -> "Design":
     """Get the ``Design`` of the given ``Component`` object.
@@ -230,19 +237,21 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     ]  # noqa: E501
 
 
-def convert_color_to_hex(color: str | tuple[float, float, float]) -> str:
+def convert_color_to_hex(
+    color: str | tuple[float, float, float] | tuple[float, float, float, float],
+) -> str:
     """Get the hex string color from input formats.
 
     Parameters
     ----------
-    color : str | tuple[float, float, float]
+    color : str | tuple[float, float, float] | tuple[float, float, float, float]
         Color to set the body to. This can be a string representing a color name
         or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
 
     Returns
     -------
     str
-        The hex code string for the color.
+        The hex code string for the color, formatted #rrggbbaa.
     """
     import matplotlib.colors as mcolors
 
@@ -262,10 +271,32 @@ def convert_color_to_hex(color: str | tuple[float, float, float]) -> str:
             else:
                 raise ValueError("RGB tuple contains mixed ranges or invalid values.")
 
-            color = mcolors.to_hex(color)
+            color = mcolors.to_hex(color, keep_alpha=True)
         elif isinstance(color, str):
-            color = mcolors.to_hex(color)
+            color = mcolors.to_hex(color, keep_alpha=True)
     except ValueError as err:
         raise ValueError(f"Invalid color value: {err}")
 
     return color
+
+
+def convert_opacity_to_hex(opacity: float) -> str:
+    """Get the hex string from an opacity value.
+
+    Parameters
+    ----------
+    opacity : float
+        Opacity to set body to. Must be in the range [0, 1].
+
+    Returns
+    -------
+    The hex code for the opacity formatted #aa
+    """
+    try:
+        # Ensure that the value is within 0-1 range
+        if 0 <= opacity <= 1:
+            return "{:02x}".format(int(opacity * 255))
+        else:
+            raise ValueError("Opacity value must be between 0 and 1.")
+    except ValueError as err:
+        raise ValueError(f"Invalid color value: {err}")

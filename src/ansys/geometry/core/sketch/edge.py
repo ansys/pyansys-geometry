@@ -24,11 +24,12 @@
 from typing import TYPE_CHECKING
 
 from pint import Quantity
-import pyvista as pv
 
 from ansys.geometry.core.math.point import Point2D
 
 if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
+
     from ansys.geometry.core.math.plane import Plane
 
 
@@ -51,7 +52,7 @@ class SketchEdge:
         raise NotImplementedError("Each edge must provide the length definition.")
 
     @property
-    def visualization_polydata(self) -> pv.PolyData:
+    def visualization_polydata(self) -> "pv.PolyData":
         """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
