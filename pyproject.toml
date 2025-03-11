@@ -111,6 +111,7 @@ doc = [
     "Pint==0.24.4",
     "protobuf==5.29.3",
     "pygltflib==1.16.3",
+    "pypandoc-binary==1.15",
     "pyvista[jupyter]==0.44.2",
     "quarto-cli==1.6.42",
     "requests==2.32.3",
