@@ -348,6 +348,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
           needs-quarto: true
+          dependencies: 'pandoc'
 
       - name: Stop the Geometry service
         if: always()
