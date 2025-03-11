@@ -197,7 +197,10 @@ class Edge:
             # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug("Requesting edge start point from server.")
             response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
-            return Point3D([response.start.x, response.start.y, response.start.z])
+            return Point3D(
+                [response.start.x, response.start.y, response.start.z],
+                unit=DEFAULT_UNITS.SERVER_LENGTH,
+            )
 
     @property
     @protect_grpc
@@ -210,4 +213,6 @@ class Edge:
             # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug("Requesting edge end point from server.")
             response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
-            return Point3D([response.end.x, response.end.y, response.end.z])
+            return Point3D(
+                [response.end.x, response.end.y, response.end.z], unit=DEFAULT_UNITS.SERVER_LENGTH
+            )
