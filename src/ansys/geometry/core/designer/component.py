@@ -45,7 +45,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
-    CreateBeamLineSegmentsRequest,
+    CreateBeamSegmentRequest,
     CreateBeamSegmentsRequest,
     CreateDesignPointsRequest,
 )
@@ -1191,6 +1191,7 @@ class Component:
         self._beams.extend(new_beams)
         return self._beams[-n_beams:]
     
+    beams = []
     def __create_beams(self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
     ) -> list[Beam]:
         """Create beams under the component.
@@ -1207,31 +1208,31 @@ class Component:
         list[Beam]
             A list of the created Beams. 
         """
-        request = CreateBeamLineSegmentsRequest(
-            profile=profile.id,
-            parent=self.id,
-        )
-
         for segment in segments:
-            request.lines.append(
-                Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
+            request = CreateBeamSegmentRequest(
+                profile=profile.id,
+                parent=self.id,
             )
 
-        self._grpc_client.log.debug(f"Creating beams on {self.id}...")
-        response = self._commands_stub.CreateBeamSegments(request)
-        self._grpc_client.log.debug("Beams successfully created.")
-
-        beams = []
-        for beam in response.created_beams:
-            beams.append(
-                Beam(
-                    id = beam.id,
-                    start = ,
-                    end = ,
-                    profile=profile,
-                    parent_component=self,
+            for segment in segments:
+                request.lines.append(
+                    Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
                 )
-            )
+
+            self._grpc_client.log.debug(f"Creating beams on {self.id}...")
+            response = self._commands_stub.CreateBeamSegments(request)
+            self._grpc_client.log.debug("Beams successfully created.")
+
+            for beam in response.created_beams:
+                beams.append(
+                    Beam(
+                        id = beam.id,
+                        start = ,
+                        end = ,
+                        profile=profile,
+                        parent_component=self,
+                    )
+                )
 
         return beams
 
