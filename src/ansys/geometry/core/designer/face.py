@@ -548,8 +548,8 @@ class Face:
         trimmed_curves = []
         for c in curves:
             geometry = grpc_curve_to_curve(c.curve)
-            start = Point3D([c.start.x, c.start.y, c.start.z])
-            end = Point3D([c.end.x, c.end.y, c.end.z])
+            start = Point3D([c.start.x, c.start.y, c.start.z], unit=DEFAULT_UNITS.SERVER_LENGTH)
+            end = Point3D([c.end.x, c.end.y, c.end.z], unit=DEFAULT_UNITS.SERVER_LENGTH)
             interval = Interval(c.interval_start, c.interval_end)
             length = Quantity(c.length, DEFAULT_UNITS.SERVER_LENGTH)
 
