@@ -1221,3 +1221,6 @@ class Design(Component):
 
         # Read the existing design
         self.__read_existing_design()
+
+    def _update_from_delta():
+        return True
