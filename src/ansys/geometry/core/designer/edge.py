@@ -127,8 +127,13 @@ class Edge:
             geometry = grpc_curve_to_curve(response)
 
             response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
-            start = Point3D([response.start.x, response.start.y, response.start.z])
-            end = Point3D([response.end.x, response.end.y, response.end.z])
+            start = Point3D(
+                [response.start.x, response.start.y, response.start.z],
+                unit=DEFAULT_UNITS.SERVER_LENGTH,
+            )
+            end = Point3D(
+                [response.end.x, response.end.y, response.end.z], unit=DEFAULT_UNITS.SERVER_LENGTH
+            )
 
             response = self._edges_stub.GetLength(self._grpc_id)
             length = Quantity(response.length, DEFAULT_UNITS.SERVER_LENGTH)
