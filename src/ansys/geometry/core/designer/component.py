@@ -265,6 +265,11 @@ class Component:
     def name(self) -> str:
         """Name of the component."""
         return self._name
+    
+    @name.setter
+    def name(self, value: str):
+        """Set the name of the component."""
+        self._name = value
 
     @property
     def instance_name(self) -> str:

@@ -3139,3 +3139,24 @@ def test_set_face_color(modeler: Modeler):
         ValueError, match="Invalid color value: Opacity value must be between 0 and 1."
     ):
         faces[3].opacity = 255
+
+
+def test_set_design_name(modeler: Modeler):
+    """Test the setting of design names."""
+
+    design = modeler.create_design("ComponentNameTest")
+    assert design.name == "ComponentNameTest"
+
+    design.name = "ChangedDesignName"
+    assert design.name == "ChangedDesignName"
+
+
+def test_set_component_name(modeler: Modeler):
+    """Test the setting of component names."""
+
+    design = modeler.create_design("ComponentNameTest")
+    component = design.add_component("Component1")
+    assert component.name == "Component1"
+
+    component.name = "ChangedComponentName"
+    assert component.name == "ChangedComponentName"
