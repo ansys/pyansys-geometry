@@ -1908,7 +1908,7 @@ class Body(IBody):
     def tessellate(  # noqa: D102
         self, merge: bool = False
     ) -> Union["PolyData", "MultiBlock"]:
-        return self._template.tessellate(merge, self.parent_component.get_world_transform()) 
+        return self._template.tessellate(merge, self.parent_component.get_world_transform())
 
     @ensure_design_is_active
     def tessellate_with_options(  # noqa: D102
