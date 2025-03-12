@@ -75,7 +75,7 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
-from ansys.geometry.core.errors import GeometryExitedError, protect_grpc
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
@@ -1372,7 +1372,7 @@ class MasterBody(IBody):
                     str(face_id): tess_to_pd(face_tess)
                     for face_id, face_tess in resp.face_tessellation.items()
                 }
-            except GeometryExitedError:
+            except Exception:
                 tessellation_map = {}
                 for response in self._bodies_stub.GetTessellationStream(request):
                     for key, value in response.face_tessellation.items():
