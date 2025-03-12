@@ -80,6 +80,7 @@ from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import (
+    get_beams_from_ids,
     get_bodies_from_ids,
     get_edges_from_ids,
     get_faces_from_ids,
@@ -1145,6 +1146,7 @@ class Design(Component):
             bodies = get_bodies_from_ids(self, [body.id for body in result.bodies])
             faces = get_faces_from_ids(self, [face.id for face in result.faces])
             edges = get_edges_from_ids(self, [edge.id for edge in result.edges])
+            beams = get_beams_from_ids(self, [beam.id for beam in result.beams])
 
             design_points = []
             for dp in result.design_points:
@@ -1159,7 +1161,7 @@ class Design(Component):
                 bodies=bodies,
                 faces=faces,
                 edges=edges,
-                beams=[],  # BEAM IMPORT NOT SUPPORTED FOR NAMED SELECTIONS
+                beams=beams,
                 design_points=design_points,
             )
             self._named_selections[new_ns.name] = new_ns

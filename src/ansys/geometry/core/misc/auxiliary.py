@@ -24,6 +24,7 @@
 from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.beam import Beam
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.design import Design
@@ -234,6 +235,30 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     """
     return [
         edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids
+    ]  # noqa: E501
+
+
+def get_beams_from_ids(design: "Design", beam_ids: list[str]) -> list["Beam"]:
+    """Find the ``Beam`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the beams.
+    beam_ids : list[str]
+        List of beam ids.
+
+    Returns
+    -------
+    list[Beam]
+        List of Beam objects.
+
+    Notes
+    -----
+    This method takes a design and beam ids, and gets their corresponding ``Beam`` objects.
+    """
+    return [
+        beam for beam in design.beams if beam.id in beam_ids
     ]  # noqa: E501
 
 

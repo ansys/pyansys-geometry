@@ -466,12 +466,18 @@ def test_named_selection_contents(modeler: Modeler):
     face = box_2.faces[2]
     edge = box_2.edges[0]
 
-    # Create the NamedSelection
-    ns = design.create_named_selection(
-        "MyNamedSelection", bodies=[box, box_2], faces=[face], edges=[edge]
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    beam = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
     )
 
-    print(ns.bodies)
+    # Create the NamedSelection
+    ns = design.create_named_selection(
+        "MyNamedSelection", bodies=[box, box_2], faces=[face], edges=[edge], beams=[beam]
+    )
+
     # Check that the named selection has everything
     assert len(ns.bodies) == 2
     assert np.isin([box.id, box_2.id], [body.id for body in ns.bodies]).all()
@@ -482,7 +488,7 @@ def test_named_selection_contents(modeler: Modeler):
     assert len(ns.edges) == 1
     assert ns.edges[0].id == edge.id
 
-    assert len(ns.beams) == 0
+    assert len(ns.beams) == 1
     assert len(ns.design_points) == 0
 
 
