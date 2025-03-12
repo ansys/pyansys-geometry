@@ -35,7 +35,6 @@ from ansys.api.geometry.v0.preparetools_pb2 import (
 )
 from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.designer.face import SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
@@ -280,8 +279,9 @@ class PrepareTools:
             Problem area with logo faces.
         """
         from ansys.geometry.core.designer.body import Body
+
         # Verify inputs
-        if (bodies):
+        if bodies:
             if len(bodies) > 0:
                 check_type_all_elements_in_iterable(bodies, Body)
 
@@ -296,15 +296,10 @@ class PrepareTools:
             FindLogosRequest(bodies=body_ids, options=find_logo_options)
         )
 
-        face_ids=[]
+        face_ids = []
         for grpc_face in response.logo_faces:
             face_ids.append(grpc_face.id)
-        return LogoProblemArea(
-                id = response.id,
-                grpc_client = self._grpc_client,
-                face_ids = face_ids
-            )
-        
+        return LogoProblemArea(id=response.id, grpc_client=self._grpc_client, face_ids=face_ids)
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
@@ -328,10 +323,10 @@ class PrepareTools:
         -------
         Boolean value indicating whether the operation was successful.
         """
-
         from ansys.geometry.core.designer.body import Body
+
         # Verify inputs
-        if (bodies):
+        if bodies:
             if len(bodies) > 0:
                 check_type_all_elements_in_iterable(bodies, Body)
 
