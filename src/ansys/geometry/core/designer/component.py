@@ -274,9 +274,10 @@ class Component:
     @protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
-    def set_name(  # noqa: D102
+    def set_name(
         self, name: str
     ) -> None:
+        """Set the name of the component."""
         self._grpc_client.log.debug(f"Renaming component {self.id} from '{self.name}' to '{name}'.")
         self._component_stub.SetName(
             SetObjectNameRequest(id=self._grpc_id, name=name)
