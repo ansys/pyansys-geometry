@@ -279,9 +279,7 @@ class Component:
     ) -> None:
         """Set the name of the component."""
         self._grpc_client.log.debug(f"Renaming component {self.id} from '{self.name}' to '{name}'.")
-        self._component_stub.SetName(
-            SetObjectNameRequest(id=self._grpc_id, name=name)
-        )
+        self._component_stub.SetName(SetObjectNameRequest(id=self._grpc_id, name=name))
         self._name = name
 
     @property
