@@ -147,8 +147,7 @@ pmdb_path = design.export_to_pmdb()
 para_txt_path = design.export_to_parasolid_text()
 para_bin_path = design.export_to_parasolid_bin()
 fmd_path = design.export_to_fmd()
-step_path = design.export_to_step()
-iges_path = design.export_to_iges()
+disco_path = design.export_to_disco()
 ```
 
 # Extra: Product scripting
