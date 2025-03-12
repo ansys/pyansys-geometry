@@ -45,7 +45,6 @@ from ansys.api.geometry.v0.bodies_pb2 import (
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
-    CreateBeamSegmentRequest,
     CreateBeamSegmentsRequest,
     CreateDesignPointsRequest,
 )
@@ -59,9 +58,9 @@ from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import Direction, Line, TrimmedCurveList
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
-    grpc_beam_to_beam,
     grpc_material_to_material,
     grpc_matrix_to_matrix,
+    grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
@@ -1223,7 +1222,7 @@ class Component:
         list[Beam]
             A list of the created Beams. 
         """
-        request = CreateBeamSegmentRequest(
+        request = CreateBeamSegmentsRequest(
             profile=profile.id,
             parent=self.id,
         )
@@ -1241,22 +1240,26 @@ class Component:
         for beam in response.created_beams:
             beams.append( 
                 Beam(
+                    beam.id.id,
+                    grpc_point_to_point3d(beam.shape.start),
+                    grpc_point_to_point3d(beam.shape.end),
+                    profile,
+                    self,
                     beam.name,
-                    beam.can_suppress,
                     beam.is_deleted,
                     beam.is_reversed,
                     beam.is_rigid,
                     grpc_material_to_material(beam.material),
-                    beam.id,
-                    self,
-                    grpc_cross_section_to_cross_section(beam.cross_section),
-                    grpc_beam_properties_to_beam_properties(beam.properties),
+                    None,
+                    None,
+                    # grpc_cross_section_to_cross_section(beam.cross_section),
+                    # grpc_beam_properties_to_beam_properties(beam.properties),
                     beam.shape,
                     beam.type,
-                    beams.append(grpc_beam_to_beam(beam))
                 )
             )
-
+            
+        self._beams.extend(beams)
         return beams
 
     def create_beam(self, start: Point3D, end: Point3D, profile: BeamProfile) -> Beam:

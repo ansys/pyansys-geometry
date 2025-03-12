@@ -24,18 +24,17 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
+from ansys.geometry.core.materials.material import Material
+from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import check_type
 from ansys.geometry.core.misc.measurements import Distance
+from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+from ansys.geometry.core.shapes.parameterization import ParamUV
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
-    from ansys.geometry.core.designer.part import Part
-    from ansys.geometry.core.materials.material import Material
-    from ansys.geometry.core.math.frame import Frame
-    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
-    from ansys.geometry.core.shapes.parameterization import ParamUV
 
 
 class BeamType(Enum):
@@ -353,7 +352,7 @@ class Beam:
         start: Point3D,
         end: Point3D,
         profile: BeamProfile,
-        parent_component: Component,
+        parent_component: "Component",
         name: str = None,
         is_deleted: bool = False,
         is_reversed: bool = False,
