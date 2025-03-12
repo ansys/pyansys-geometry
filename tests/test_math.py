@@ -35,6 +35,7 @@ from ansys.geometry.core.math import (
     UNITVECTOR3D_Z,
     ZERO_VECTOR2D,
     ZERO_VECTOR3D,
+    BoundingBox,
     BoundingBox2D,
     Frame,
     Matrix,
@@ -1316,7 +1317,7 @@ def test_circle_intersections_coincident():
     assert intersections is None
 
 
-def test_bounding_box_intersection():
+def test_bounding_box2d_intersection():
     """Test the intersection of two bounding boxes"""
     # Create the two boxes
     box1 = BoundingBox2D(0, 1, 0, 1)
@@ -1328,7 +1329,7 @@ def test_bounding_box_intersection():
     assert intersection == BoundingBox2D(0.5, 1, 0, 1)
 
 
-def test_bounding_box_no_intersection():
+def test_bounding_box2d_no_intersection():
     """Test that the bounding box intersection returns None in the case of no overlap"""
     # Create the two boxes
     box1 = BoundingBox2D(0, 1, 0, 1)
@@ -1336,4 +1337,42 @@ def test_bounding_box_no_intersection():
 
     # Get intersection and check
     intersection = BoundingBox2D.intersect_bboxes(box1, box2)
+    assert intersection is None
+
+
+def test_bounding_box_evaluates_bounds_comparisons():
+    min_point = Point3D([0, 0, 0])
+    max_point = Point3D([10, 10, 0])
+    bounding_box = BoundingBox(min_point, max_point)
+    assert bounding_box.contains_point_components(5, 5, 0)
+    assert not bounding_box.contains_point_components(100, 100, 0)
+    assert bounding_box.contains_point(Point3D([3, 4, 0]))
+    assert not bounding_box.contains_point(Point3D([3, 14, 0]))
+
+    copy_bbox_1 = BoundingBox(min_point, max_point)
+    copy_bbox_2 = BoundingBox(Point3D([5, 5, 5]), Point3D([10, 10, 10]))
+    assert copy_bbox_1 == bounding_box
+    assert copy_bbox_2 != bounding_box
+
+
+def test_bounding_box_intersection():
+    """Test the intersection of two bounding boxes"""
+    # Create the two boxes
+    box1 = BoundingBox(Point3D([0, 0, 0]), Point3D([1, 1, 0]))
+    box2 = BoundingBox(Point3D([0.5, 0, 0]), Point3D([1.5, 1, 0]))
+
+    # Get intersection and check
+    intersection = BoundingBox.intersect_bboxes(box1, box2)
+    assert intersection is not None
+    assert intersection == BoundingBox(Point3D([0.5, 0, 0]), Point3D([1, 1, 0]))
+
+
+def test_bounding_box_no_intersection():
+    """Test that the bounding box intersection returns None in the case of no overlap"""
+    # Create the two boxes
+    box1 = BoundingBox(Point3D([0, 0, 0]), Point3D([1, 1, 0]))
+    box2 = BoundingBox(Point3D([2, 0, 0]), Point3D([3, 1, 0]))
+
+    # Get intersection and check
+    intersection = BoundingBox.intersect_bboxes(box1, box2)
     assert intersection is None
