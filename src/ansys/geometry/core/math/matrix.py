@@ -30,6 +30,7 @@ from ansys.geometry.core.misc.checks import check_ndarray_is_float_int, check_ty
 from ansys.geometry.core.typing import Real, RealSequence
 
 if TYPE_CHECKING:
+    from ansys.geometry.core.math.frame import Frame
     from ansys.geometry.core.math.vector import Vector3D  # For type hints
 
 DEFAULT_MATRIX33 = np.identity(3)
@@ -308,3 +309,61 @@ class Matrix44(Matrix):
             ]
         )
         return matrix
+
+    @classmethod
+    def create_matrix_from_rotation_about_axis(cls, axis: "Vector3D", angle: float) -> "Matrix44":
+        """
+        Create a matrix representing a rotation about a given axis.
+
+        Parameters
+        ----------
+        axis : Vector3D
+            The axis of rotation.
+        angle : float
+            The angle of rotation in radians.
+
+        Returns
+        -------
+        Matrix44
+            A 4x4 matrix representing the rotation.
+        """
+        axis_dir = axis.normalize()
+        x, y, z = axis_dir[0], axis_dir[1], axis_dir[2]
+
+        k = np.array([[0, -z, y], [z, 0, -x], [-y, x, 0]])
+
+        identity = np.eye(3)
+        cos_theta = np.cos(angle)
+        sin_theta = np.sin(angle)
+
+        # Rodrigues' rotation formula
+        rotation_3x3 = identity + sin_theta * k + (1 - cos_theta) * (k @ k)
+
+        # Convert to a 4x4 homogeneous matrix
+        rotation_matrix = np.eye(4)
+        rotation_matrix[:3, :3] = rotation_3x3
+
+        return cls(rotation_matrix)
+
+    @classmethod
+    def create_matrix_from_mapping(cls, frame: "Frame") -> "Matrix44":
+        """
+        Create a matrix representing the specified mapping.
+
+        Parameters
+        ----------
+        frame : Frame
+            The frame containing the origin and direction vectors.
+
+        Returns
+        -------
+        Matrix44
+            A 4x4 matrix representing the translation and rotation defined by the frame.
+        """
+        from ansys.geometry.core.math.vector import Vector3D
+
+        translation_matrix = Matrix44.create_translation(
+            Vector3D([frame.origin[0], frame.origin[1], frame.origin[2]])
+        )
+        rotation_matrix = Matrix44.create_rotation(frame.direction_x, frame.direction_y)
+        return translation_matrix * rotation_matrix
