@@ -3192,7 +3192,6 @@ def test_set_face_color(modeler: Modeler):
         faces[3].opacity = 255
 
 
-
 def test_set_design_name(modeler: Modeler):
     """Test the setting of design names."""
 
@@ -3212,6 +3211,7 @@ def test_set_component_name(modeler: Modeler):
 
     component.name = "ChangedComponentName"
     assert component.name == "ChangedComponentName"
+
 
 def test_get_face_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a face."""
@@ -3263,4 +3263,3 @@ def test_get_body_bounding_box(modeler: Modeler):
     assert center.x.m == 0
     assert center.y.m == 0
     assert center.z.m == 0.5
-
