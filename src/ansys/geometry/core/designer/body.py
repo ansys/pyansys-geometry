@@ -36,6 +36,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
     GetCollisionRequest,
+    GetTessellationRequest,
     MapRequest,
     MirrorRequest,
     RotateRequest,
@@ -59,6 +60,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ShellRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from ansys.api.geometry.v0.models_pb2 import TessellationOptions
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
@@ -1251,15 +1253,59 @@ class MasterBody(IBody):
 
         # cache tessellation
         if not self._tessellation:
+            resp = self._bodies_stub.GetTessellation(self._grpc_id)
+            self._tessellation = {
+                str(face_id): tess_to_pd(face_tess)
+                for face_id, face_tess in resp.face_tessellation.items()
+            }
+
+        pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
+        comp = pv.MultiBlock(pdata)
+
+        if merge:
+            ugrid = comp.combine()
+            return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
+        else:
+            return comp
+            
+    @protect_grpc
+    @graphics_required
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def tessellate_with_options(  # noqa: D102
+        self, surf_deviation: Real, ang_deviation: Real, aspect_ratio: Real, edge_length: Real, watertight: bool,
+        merge: bool = False, transform: Matrix44 = IDENTITY_MATRIX44
+    ) -> Union["PolyData", "MultiBlock"]:
+        # lazy import here to improve initial module load time
+        import pyvista as pv
+
+        if not self.is_alive:
+            return pv.PolyData() if merge else pv.MultiBlock()
+
+        self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
+
+        request = GetTessellationRequest(
+            id=self._grpc_id,
+            options=TessellationOptions(
+                surface_deviation=surf_deviation,
+                angle_deviation=ang_deviation,
+                maximum_aspect_ratio=aspect_ratio,
+                maximum_edge_length=edge_length,
+                watertight=watertight,
+            )
+        )
+
+        # cache tessellation
+        if not self._tessellation:
             try:
-                resp = self._bodies_stub.GetTessellation(self._grpc_id)
+                resp = self._bodies_stub.GetTessellationWithOptions(request)
                 self._tessellation = {
                     str(face_id): tess_to_pd(face_tess)
                     for face_id, face_tess in resp.face_tessellation.items()
                 }
             except GeometryExitedError:
                 tessellation_map = {}
-                for response in self._bodies_stub.GetTessellationStream(self._grpc_id):
+                for response in self._bodies_stub.GetTessellationStream(request):
                     for key, value in response.face_tessellation.items():
                         tessellation_map[key] = tess_to_pd(value)
 
