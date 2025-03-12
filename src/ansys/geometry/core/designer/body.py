@@ -604,6 +604,37 @@ class IBody(ABC):
           N Arrays:	0
         """
         return
+    
+    @abstractmethod
+    def tessellate_with_options(
+        self, surf_deviation: Real, ang_deviation: Real, 
+        aspect_ratio: Real = 0.0, edge_length: Real = 0.0, watertight: bool = False, merge: bool = False
+        ) -> Union["PolyData", "MultiBlock"]:
+        """Tessellate the body and return the geometry as triangles.
+
+        Parameters
+        ----------
+        surf_deviation : Real
+            The maximum deviation from the true surface position.
+        ang_deviation : Real
+            The maximum deviation from the true surface normal.
+        aspect_ratio : Real, default: 0.0
+            The maximum aspect ratio of facets.
+        edge_length : Real, default: 0.0
+            The maximum facet edge length.
+        watertight : bool, default: False
+            Whether triangles on opposite sides of an edge match.
+        merge : bool, default: False
+            Whether to merge the body into a single mesh. When ``False`` (default), the
+            number of triangles are preserved and only the topology is merged.
+            When ``True``, the individual faces of the tessellation are merged.
+
+        Returns
+        -------
+        ~pyvista.PolyData, ~pyvista.MultiBlock
+            Merged :class:`pyvista.PolyData` if ``merge=True`` or a composite dataset.
+        """
+        return
 
     @abstractmethod
     def shell_body(self, offset: Real) -> bool:
@@ -1273,7 +1304,7 @@ class MasterBody(IBody):
     @check_input_types
     @min_backend_version(25, 2, 0)
     def tessellate_with_options(  # noqa: D102
-        self, surf_deviation: Real, ang_deviation: Real, aspect_ratio: Real, edge_length: Real, watertight: bool,
+        self, surf_deviation: Real, ang_deviation: Real, aspect_ratio: Real = 0.0, edge_length: Real = 0.0, watertight: bool = False,
         merge: bool = False, transform: Matrix44 = IDENTITY_MATRIX44
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
@@ -1806,6 +1837,14 @@ class Body(IBody):
         self, merge: bool = False
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate(merge, self.parent_component.get_world_transform())
+    
+    @ensure_design_is_active
+    def tessellate_with_options(  # noqa: D102
+        self, surf_deviation: Real, ang_deviation: Real, 
+        aspect_ratio: Real = 0.0, edge_length: Real = 0.0, watertight: bool = False, merge: bool = False
+    ) -> Union["PolyData", "MultiBlock"]:
+        return self._template.tessellate_with_options(surf_deviation, ang_deviation, aspect_ratio, 
+                                                      edge_length, watertight, merge, self.parent_component.get_world_transform())
 
     @ensure_design_is_active
     def shell_body(self, offset: Real) -> bool:  # noqa: D102
