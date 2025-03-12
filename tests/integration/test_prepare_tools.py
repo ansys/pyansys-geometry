@@ -97,6 +97,7 @@ def test_enhanced_share_topology(modeler: Modeler):
     assert result.found == 14
     assert result.repaired == 14
 
+
 def test_detect_logos(modeler: Modeler):
     """Test logos are detected and deleted."""
     design = modeler.open_file(FILES_DIR / "Part1.SLDPRT")
@@ -110,11 +111,12 @@ def test_detect_logos(modeler: Modeler):
     assert success == True
     assert len(design.components[0].bodies[2].faces) == 42
 
+
 def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
     """Test logos are detected and deleted as problem area"""
     design = modeler.open_file(FILES_DIR / "Part1.SLDPRT")
     bodies = []
-    #test that no issue occurs when no logos are found
+    # test that no issue occurs when no logos are found
     bodies.append(design.components[0].bodies[0])
     result = modeler.prepare_tools.find_logos(max_height=0.005)
     assert len(result.face_ids) == 0

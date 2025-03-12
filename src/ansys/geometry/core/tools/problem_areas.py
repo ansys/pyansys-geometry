@@ -25,10 +25,12 @@ from abc import abstractmethod
 from typing import TYPE_CHECKING
 
 from google.protobuf.wrappers_pb2 import Int32Value
+
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.preparetools_pb2 import (
     RemoveLogoRequest,
 )
+from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FixAdjustSimplifyRequest,
     FixDuplicateFacesRequest,
@@ -42,7 +44,6 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
@@ -661,8 +662,8 @@ class LogoProblemArea(ProblemArea):
         """
         if len(self._face_ids) == 0:
             return False
-        
-        entity_ids=[EntityIdentifier(id=face_id) for face_id in self._face_ids]
+
+        entity_ids = [EntityIdentifier(id=face_id) for face_id in self._face_ids]
         response = self._prepare_stub.RemoveLogo(RemoveLogoRequest(face_ids=entity_ids))
 
         return response.success
