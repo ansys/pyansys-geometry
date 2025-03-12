@@ -22,7 +22,7 @@ Launch the modeler and create a block.
 ```{code-cell} ipython3
 from ansys.geometry.core import launch_modeler, Modeler
 
-modeler = Modeler()
+modeler = launch_modeler()
 print(modeler)
 ```
 
@@ -60,4 +60,15 @@ body.plot()
 modeler.geometry_commands.chamfer(body.faces[-1], distance=0.3)
 
 body.plot()
+```
+
+## Close session
+
+When you finish interacting with your modeling service, you should close the active
+server session. This frees resources wherever the service is running.
+
+Close the server session.
+
+```{code-cell} ipython3
+modeler.close()
 ```
