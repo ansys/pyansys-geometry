@@ -73,7 +73,7 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
-from ansys.geometry.core.errors import protect_grpc, GeometryExitedError
+from ansys.geometry.core.errors import GeometryExitedError, protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.frame import Frame
