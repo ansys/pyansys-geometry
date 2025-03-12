@@ -3136,5 +3136,3 @@ def test_set_face_color(modeler: Modeler):
         ValueError, match="Invalid color value: Opacity value must be between 0 and 1."
     ):
         faces[3].opacity = 255
-
-
