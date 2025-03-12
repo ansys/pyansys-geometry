@@ -10,7 +10,7 @@ env:
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
-  ANSRV_GEO_IMAGE_DOCS_TAG: ghcr.io/ansys/geometry:windows-latest
+  ANSRV_GEO_IMAGE_DOCS_TAG: ghcr.io/ansys/geometry:core-linux-latest
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
@@ -68,16 +68,11 @@ jobs:
     name: Check Docker manifests
     runs-on: ubuntu-latest
     outputs:
-      skip_dms: ${{ steps.services.outputs.skip_dms }}
       skip_core_windows: ${{ steps.services.outputs.skip_core_windows }}
       skip_core_linux: ${{ steps.services.outputs.skip_core_linux }}
     strategy:
       matrix:
         include:
-          - container-stable: "windows-latest"
-            container-unstable: "windows-latest-unstable"
-            service: "dms"
-            service-name: "Windows DMS"
           - container-stable: "core-windows-latest"
             container-unstable: "core-windows-latest-unstable"
             service: "core_windows"
@@ -131,10 +126,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - docker-image: "windows-latest"
-            experimental: false
-          - docker-image: "windows-latest-unstable"
-            experimental: true
           - docker-image: "core-windows-latest"
             experimental: false
           - docker-image: "core-windows-latest-unstable"
@@ -144,11 +135,8 @@ jobs:
       - name: Calculate SKIP_UNSTABLE
         if: matrix.experimental
         run: |
-          # Choose the manifests output to consider (for DMS or Core service)
-          # based on the matrix value
-          if ("${{ matrix.docker-image }}" -eq "windows-latest-unstable") {
-            $ImagesAreEqual = ${{ needs.manifests.outputs.skip_dms }}
-          } elseif ("${{ matrix.docker-image }}" -eq "core-windows-latest-unstable") {
+          # Choose the manifests output to consider based on the matrix value
+          if ("${{ matrix.docker-image }}" -eq "core-windows-latest-unstable") {
             $ImagesAreEqual = ${{ needs.manifests.outputs.skip_core_windows }}
           } else {
             Write-Output "Unknown docker image"
@@ -267,7 +255,7 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
-        if: matrix.docker-image == 'windows-latest'
+        if: matrix.docker-image == 'core-windows-latest'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -324,10 +312,14 @@ jobs:
         id: docs-build-required
         run: echo "build_required=${{ env.build_docs }}" >> $GITHUB_OUTPUT
 
+# =================================================================================================
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# =================================================================================================
+
   docs:
     name: Documentation
     needs: [is_docs_pr]
-    runs-on: [self-hosted, Windows, pygeometry]
+    runs-on: ubuntu-latest
     # Only run if docs build is required
     if: ${{ needs.is_docs_pr.outputs.build_required == 'true' }}
     env:
@@ -335,8 +327,6 @@ jobs:
     steps:
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@v3
-        with:
-          pyvista: false
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -345,24 +335,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download Geometry service container (if needed)
-        run: docker pull ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
-
-      - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-2'
-        run:
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
-
-      - name: Stop any running containers
+      - name: Pull and launch geometry service
         run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
-
-      - name: Start Geometry service and verify start
-        run: docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
+          docker pull ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
 
       - name: Run Ansys documentation building action
         uses: ansys/actions/doc-build@v8
@@ -370,6 +346,8 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
           needs-quarto: true
+          dependencies: 'pandoc'
+          sphinxopts: '-j 1 -W --color'
 
       - name: Stop the Geometry service
         if: always()
@@ -377,23 +355,6 @@ jobs:
           docker stop ${{ env.GEO_CONT_NAME }}
           docker logs ${{ env.GEO_CONT_NAME }}
           docker rm ${{ env.GEO_CONT_NAME }}
-
-      - name: Stop any remaining containers
-        if: always()
-        run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
-
-      - name: Clean all Docker dangling images
-        if: always()
-        run: docker image prune -f
-
-# =================================================================================================
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# =================================================================================================
 
   testing-linux:
     name: Testing and coverage (Linux)
