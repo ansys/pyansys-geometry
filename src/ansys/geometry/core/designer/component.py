@@ -59,6 +59,8 @@ from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import Direction, Line, TrimmedCurveList
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    grpc_beam_to_beam,
+    grpc_material_to_material,
     grpc_matrix_to_matrix,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
@@ -89,6 +91,7 @@ from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
+from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -1121,7 +1124,11 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def create_beams(
-        self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
+        self,
+        segments: list[tuple[Point3D, Point3D]],
+        profile: BeamProfile,
+        arcs: list[Arc] = None,
+        circles: list[Circle] = None,
     ) -> list[Beam]:
         """Create beams under the component.
 
@@ -1131,6 +1138,10 @@ class Component:
             list of start and end pairs, each specifying a single line segment.
         profile : BeamProfile
             Beam profile to use to create the beams.
+        arcs : list[Curve], default: None
+            list of arcs to create beams from.
+        circles : list[Curve], default: None
+            list of circles to create beams from.
 
         Returns
         -------
@@ -1145,7 +1156,7 @@ class Component:
         if self._grpc_client.backend_version < (25, 2, 0):
             return self.__create_beams_legacy(segments, profile)
         else:
-            return self.__create_beams(segments, profile)
+            return self.__create_beams(segments, profile, arcs, circles)
         
     def __create_beams_legacy(self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
     ) -> list[Beam]:
@@ -1191,8 +1202,12 @@ class Component:
         self._beams.extend(new_beams)
         return self._beams[-n_beams:]
     
-    beams = []
-    def __create_beams(self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
+    def __create_beams(
+            self,
+            segments: list[tuple[Point3D, Point3D]],
+            profile: BeamProfile,
+            arcs: list[Arc] = None,
+            circles: list[Circle] = None,
     ) -> list[Beam]:
         """Create beams under the component.
 
@@ -1208,31 +1223,39 @@ class Component:
         list[Beam]
             A list of the created Beams. 
         """
+        request = CreateBeamSegmentRequest(
+            profile=profile.id,
+            parent=self.id,
+        )
+
         for segment in segments:
-            request = CreateBeamSegmentRequest(
-                profile=profile.id,
-                parent=self.id,
+            request.lines.append(
+                Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
             )
 
-            for segment in segments:
-                request.lines.append(
-                    Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
-                )
+        self._grpc_client.log.debug(f"Creating beams on {self.id}...")
+        response = self._commands_stub.CreateDescriptiveBeamSegments(request)
+        self._grpc_client.log.debug("Beams successfully created.")
 
-            self._grpc_client.log.debug(f"Creating beams on {self.id}...")
-            response = self._commands_stub.CreateBeamSegments(request)
-            self._grpc_client.log.debug("Beams successfully created.")
-
-            for beam in response.created_beams:
-                beams.append(
-                    Beam(
-                        id = beam.id,
-                        start = ,
-                        end = ,
-                        profile=profile,
-                        parent_component=self,
-                    )
+        beams = []
+        for beam in response.created_beams:
+            beams.append( 
+                Beam(
+                    beam.name,
+                    beam.can_suppress,
+                    beam.is_deleted,
+                    beam.is_reversed,
+                    beam.is_rigid,
+                    grpc_material_to_material(beam.material),
+                    beam.id,
+                    self,
+                    grpc_cross_section_to_cross_section(beam.cross_section),
+                    grpc_beam_properties_to_beam_properties(beam.properties),
+                    beam.shape,
+                    beam.type,
+                    beams.append(grpc_beam_to_beam(beam))
                 )
+            )
 
         return beams
 

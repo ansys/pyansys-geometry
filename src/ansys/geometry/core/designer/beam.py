@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Provides for creating and managing a beam."""
 
+from enum import Enum
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.math.point import Point3D
@@ -30,6 +31,31 @@ from ansys.geometry.core.misc.measurements import Distance
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.part import Part
+    from ansys.geometry.core.materials.material import Material
+    from ansys.geometry.core.math.frame import Frame
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+    from ansys.geometry.core.shapes.parameterization import ParamUV
+
+
+class BeamType(Enum):
+    """Provides values for the beam types supported."""
+
+    BEAM = 0
+    SPRING = 1
+    LINK_TRUSS = 2
+    CABLE = 3
+    PIPE = 4
+    THERMALFLUID = 5
+    UNKNOWN = 6 
+
+
+class SectionAnchorType(Enum):
+    """Provides values for the section anchor types supported."""
+
+    CENTROID = 0
+    SHEAR_CENTER = 1
+    ANCHOR_LOCATION = 2
 
 
 class BeamProfile:
@@ -65,7 +91,6 @@ class BeamProfile:
     def name(self) -> str:
         """Name of the beam profile."""
         return self._name
-
 
 class BeamCircularProfile(BeamProfile):
     """Represents a single circular beam profile.
@@ -145,6 +170,162 @@ class BeamCircularProfile(BeamProfile):
         return "\n".join(lines)
 
 
+class BeamCrossSectionInfo:
+    """Represents the cross-section information for a beam.
+
+    Parameters
+    ----------
+    section_anchor : SectionAnchorType
+        Specifies how the beam section is anchored to the beam path.
+    section_angle : float
+        The rotation angle of the cross section clockwise from the default perpendicular of the 
+        beam path.
+    section_frame : Frame
+        The section frame at the start of the beam.
+    section_profile : BeamProfile
+        The section profile in the XY plane.
+    """
+
+    def __init__(
+        self,
+        section_anchor: SectionAnchorType,
+        section_angle: float,
+        section_frame: Frame,
+        section_profile: BeamProfile,
+    ):
+        """Initialize ``BeamCrossSectionInfo`` class."""
+        check_type(section_anchor, SectionAnchorType)
+        check_type(section_angle, float)
+        check_type(section_frame, Frame)
+        check_type(section_profile, BeamProfile)
+
+        self._section_anchor = section_anchor
+        self._section_angle = section_angle
+        self._section_frame = section_frame
+        self._section_profile = section_profile
+
+    @property
+    def section_anchor(self) -> SectionAnchorType:
+        """Specifies how the beam section is anchored to the beam path."""
+        return self._section_anchor
+
+    @property
+    def section_angle(self) -> float:
+        """The rotation angle of the cross section clockwise from the default perpendicular of the beam path."""
+        return self._section_angle
+
+    @property
+    def section_frame(self) -> Frame:
+        """The section frame at the start of the beam."""
+        return self._section_frame
+
+    @property
+    def section_profile(self) -> BeamProfile:
+        """The section profile in the XY plane."""
+        return self._section_profile
+
+    def __repr__(self) -> str:
+        """Represent the ``BeamCrossSectionInfo`` as a string."""
+        lines = [f"ansys.geometry.core.designer.BeamCrossSectionInfo {hex(id(self))}"]
+        lines.append(f"  Section Anchor       : {self.section_anchor.name}")
+        lines.append(f"  Section Angle        : {self.section_angle}")
+        lines.append(f"  Section Frame        : {self.section_frame}")
+        lines.extend(["\n", "  Section Profile info", "  -------------------", str(self.section_profile)])
+        return "\n".join(lines)
+
+class BeamProperties:
+    """Represents the properties of a beam.
+    
+    Parameters
+    ----------
+    area : float
+        The cross-sectional area of the beam.
+    centroid : ParamUV
+        The centroid of the beam section.
+    warping_constant : float
+        The warping constant of the beam.
+    ixx : float
+        The moment of inertia about the x-axis.
+    ixy : float
+        The product of inertia.
+    iyy : float
+        The moment of inertia about the y-axis.
+    shear_center : ParamUV
+        The shear center of the beam.
+    torsion_constant : float
+        The torsion constant of the beam.
+    """
+
+    def __init__(
+        self,
+        area: float,
+        centroid: ParamUV,
+        warping_constant: float,
+        ixx: float,
+        ixy: float,
+        iyy: float,
+        shear_center: ParamUV,
+        torsion_constant: float,
+    ):
+        """Initialize ``BeamProperties`` class."""
+        check_type(area, float)
+        check_type(centroid, ParamUV)
+        check_type(warping_constant, float)
+        check_type(ixx, float)
+        check_type(ixy, float)
+        check_type(iyy, float)
+        check_type(shear_center, ParamUV)
+        check_type(torsion_constant, float)
+
+        self._area = area
+        self._centroid = centroid
+        self._warping_constant = warping_constant
+        self._ixx = ixx
+        self._ixy = ixy
+        self._iyy = iyy
+        self._shear_center = shear_center
+        self._torsion_constant = torsion_constant
+
+    @property
+    def area(self) -> float:
+        """The cross-sectional area of the beam."""
+        return self._area
+
+    @property
+    def centroid(self) -> ParamUV:
+        """The centroid of the beam section."""
+        return self._centroid
+
+    @property
+    def warping_constant(self) -> float:
+        """The warping constant of the beam."""
+        return self._warping_constant
+
+    @property
+    def ixx(self) -> float:
+        """The moment of inertia about the x-axis."""
+        return self._ixx
+
+    @property
+    def ixy(self) -> float:
+        """The product of inertia."""
+        return self._ixy
+
+    @property
+    def iyy(self) -> float:
+        """The moment of inertia about the y-axis."""
+        return self._iyy
+
+    @property
+    def shear_center(self) -> ParamUV:
+        """The shear center of the beam."""
+        return self._shear_center
+
+    @property
+    def torsion_constant(self) -> float:
+        """The torsion constant of the beam."""
+        return self._torsion_constant
+
 class Beam:
     """Represents a simplified solid body with an assigned 2D cross-section.
 
@@ -172,7 +353,17 @@ class Beam:
         start: Point3D,
         end: Point3D,
         profile: BeamProfile,
-        parent_component: "Component",
+        parent_component: Component,
+        name: str = None,
+        is_deleted: bool = False,
+        is_reversed: bool = False,
+        is_rigid: bool = False,
+        material: Material = None,
+        cross_section: BeamCrossSectionInfo = None,
+        properties: BeamProperties = None,
+        shape: TrimmedCurve = None,
+        type: BeamType = None,
+        
     ):
         """Initialize ``Beam`` class."""
         from ansys.geometry.core.designer.component import Component
@@ -189,6 +380,16 @@ class Beam:
         self._profile = profile
         self._parent_component = parent_component
         self._is_alive = True
+        self._name = name
+        self._id = id
+        self._is_deleted = is_deleted
+        self._is_reversed = is_reversed
+        self._is_rigid = is_rigid
+        self._material = material
+        self._cross_section = cross_section
+        self._properties = properties
+        self._shape = shape
+        self._type = type
 
     @property
     def id(self) -> str:

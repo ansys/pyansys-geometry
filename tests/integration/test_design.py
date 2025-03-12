@@ -71,7 +71,7 @@ from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -1216,9 +1216,6 @@ def test_copy_body(modeler: Modeler):
 
 def test_beams(modeler: Modeler):
     """Test beam creation."""
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_beams.__name__, "create_beam")
-
     # Create your design on the server side
     design = modeler.create_design("BeamCreation")
 
@@ -1524,9 +1521,6 @@ def test_named_selections_beams(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with
     beams.
     """
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_named_selections_beams.__name__, "create_beam")
-
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
 
@@ -2665,9 +2659,6 @@ def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
 
 def test_component_tree_print(modeler: Modeler):
     """Test for verifying the tree print for ``Component`` objects."""
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_component_tree_print.__name__, "create_beam")
-
     def check_list_equality(lines, expected_lines):
         # By doing "a in b" rather than "a == b", we can check for substrings
         # which, in the case of beam ids, is necessary since they are unique
@@ -3139,3 +3130,5 @@ def test_set_face_color(modeler: Modeler):
         ValueError, match="Invalid color value: Opacity value must be between 0 and 1."
     ):
         faces[3].opacity = 255
+
+
