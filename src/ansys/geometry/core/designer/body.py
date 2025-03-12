@@ -607,8 +607,13 @@ class IBody(ABC):
     
     @abstractmethod
     def tessellate_with_options(
-        self, surf_deviation: Real, ang_deviation: Real, 
-        aspect_ratio: Real = 0.0, edge_length: Real = 0.0, watertight: bool = False, merge: bool = False
+        self, 
+        surf_deviation: Real, 
+        ang_deviation: Real, 
+        aspect_ratio: Real = 0.0, 
+        edge_length: Real = 0.0, 
+        watertight: bool = False, 
+        merge: bool = False
         ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
@@ -1304,8 +1309,14 @@ class MasterBody(IBody):
     @check_input_types
     @min_backend_version(25, 2, 0)
     def tessellate_with_options(  # noqa: D102
-        self, surf_deviation: Real, ang_deviation: Real, aspect_ratio: Real = 0.0, edge_length: Real = 0.0, watertight: bool = False,
-        merge: bool = False, transform: Matrix44 = IDENTITY_MATRIX44
+        self,
+        surf_deviation: Real, 
+        ang_deviation: Real, 
+        aspect_ratio: Real = 0.0, 
+        edge_length: Real = 0.0, 
+        watertight: bool = False,
+        merge: bool = False, 
+        transform: Matrix44 = IDENTITY_MATRIX44
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1323,7 +1334,7 @@ class MasterBody(IBody):
                 maximum_aspect_ratio=aspect_ratio,
                 maximum_edge_length=edge_length,
                 watertight=watertight,
-            )
+            ),
         )
 
         # cache tessellation
@@ -1831,17 +1842,16 @@ class Body(IBody):
     @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         return self._template.copy(parent, name)
-
-    @ensure_design_is_active
-    def tessellate(  # noqa: D102
-        self, merge: bool = False
-    ) -> Union["PolyData", "MultiBlock"]:
-        return self._template.tessellate(merge, self.parent_component.get_world_transform())
     
     @ensure_design_is_active
     def tessellate_with_options(  # noqa: D102
-        self, surf_deviation: Real, ang_deviation: Real, 
-        aspect_ratio: Real = 0.0, edge_length: Real = 0.0, watertight: bool = False, merge: bool = False
+        self, 
+        surf_deviation: Real, 
+        ang_deviation: Real, 
+        aspect_ratio: Real = 0.0, 
+        edge_length: Real = 0.0, 
+        watertight: bool = False, 
+        merge: bool = False
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate_with_options(surf_deviation, ang_deviation, aspect_ratio, 
                                                       edge_length, watertight, merge, self.parent_component.get_world_transform())

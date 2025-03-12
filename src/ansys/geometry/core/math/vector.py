@@ -32,6 +32,7 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
+from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.typing import Real, RealSequence
 
@@ -162,6 +163,22 @@ class Vector3D(np.ndarray):
         result_4x1 = matrix * vector_4x1
         result_vector = Vector3D(result_4x1[0:3])
         return result_vector
+
+    @check_input_types
+    def rotate_vector(self, vector: "Vector3D", angle: Real | Quantity | Angle) -> "Vector3D":
+        """Rotate a vector around a given axis by a specified angle."""
+        if self.is_zero:
+            raise Exception("Invalid vector operation: rotation axis cannot be zero.")
+
+        # Convert angle to Angle object and get its value in radians
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        angle_m = angle.value.m_as(UNITS.radian)
+
+        axis = self.normalize()
+        parallel = axis * (vector.dot(axis))
+        perpendicular1 = vector - parallel
+        perpendicular2 = axis.cross(perpendicular1)
+        return parallel + perpendicular1 * np.cos(angle_m) + perpendicular2 * np.sin(angle_m)
 
     @check_input_types
     def get_angle_between(self, v: "Vector3D") -> Quantity:
