@@ -349,6 +349,7 @@ jobs:
           add-pdf-html-docs-as-assets: true
           needs-quarto: true
           dependencies: 'pandoc'
+          sphinxopts: '-j 1 -W --color'
 
       - name: Stop the Geometry service
         if: always()
