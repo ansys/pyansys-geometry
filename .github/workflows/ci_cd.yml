@@ -312,10 +312,14 @@ jobs:
         id: docs-build-required
         run: echo "build_required=${{ env.build_docs }}" >> $GITHUB_OUTPUT
 
+# =================================================================================================
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# =================================================================================================
+
   docs:
     name: Documentation
     needs: [is_docs_pr]
-    runs-on: [self-hosted, Windows, pygeometry]
+    runs-on: ubuntu-latest
     # Only run if docs build is required
     if: ${{ needs.is_docs_pr.outputs.build_required == 'true' }}
     env:
@@ -351,11 +355,6 @@ jobs:
           docker stop ${{ env.GEO_CONT_NAME }}
           docker logs ${{ env.GEO_CONT_NAME }}
           docker rm ${{ env.GEO_CONT_NAME }}
-
-
-# =================================================================================================
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# =================================================================================================
 
   testing-linux:
     name: Testing and coverage (Linux)
