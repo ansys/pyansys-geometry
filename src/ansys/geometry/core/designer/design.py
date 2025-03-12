@@ -1147,6 +1147,7 @@ class Design(Component):
             faces = get_faces_from_ids(self, [face.id for face in result.faces])
             edges = get_edges_from_ids(self, [edge.id for edge in result.edges])
             beams = get_beams_from_ids(self, [beam.id for beam in result.beams])
+            print(result.beams)
 
             design_points = []
             for dp in result.design_points:
@@ -1165,6 +1166,15 @@ class Design(Component):
                 design_points=design_points,
             )
             self._named_selections[new_ns.name] = new_ns
+
+        # Create Beams
+        # for beam in response.beams:
+        #     new_beam = Beam(
+        #         beam.id,
+
+        #     )
+
+        #     self._beams.append(new_beam)
 
         # Create CoordinateSystems
         num_created_coord_systems = 0

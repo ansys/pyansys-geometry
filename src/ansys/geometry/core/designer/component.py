@@ -58,6 +58,8 @@ from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
 from ansys.api.geometry.v0.models_pb2 import Direction, Line, TrimmedCurveList
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    grpc_curve_to_curve,
+    grpc_frame_to_frame,
     grpc_material_to_material,
     grpc_matrix_to_matrix,
     grpc_point_to_point3d,
@@ -68,7 +70,13 @@ from ansys.geometry.core.connection.conversions import (
     trimmed_surface_to_grpc_trimmed_surface,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.designer.beam import Beam, BeamProfile
+from ansys.geometry.core.designer.beam import (
+    Beam,
+    BeamCrossSectionInfo,
+    BeamProfile,
+    BeamProperties,
+    SectionAnchorType,
+)
 from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
@@ -88,7 +96,7 @@ from ansys.geometry.core.misc.checks import (
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
-from ansys.geometry.core.shapes.parameterization import Interval
+from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.sketch import Sketch
@@ -1238,6 +1246,31 @@ class Component:
 
         beams = []
         for beam in response.created_beams:
+            print(beam.cross_section.section_profile)
+            cross_section = BeamCrossSectionInfo(
+                SectionAnchorType(beam.cross_section.section_anchor),
+                beam.cross_section.section_angle,
+                grpc_frame_to_frame(beam.cross_section.section_frame),
+                [
+                    [TrimmedCurve(
+                        grpc_curve_to_curve(curve.geometry),
+                        grpc_point_to_point3d(curve.start),
+                        grpc_point_to_point3d(curve.end),
+                        Interval(curve.interval_start, curve.interval_end),
+                        curve.length) for curve in curve_list] 
+                    for curve_list in beam.cross_section.section_profile],
+                )  
+            properties = BeamProperties(
+                beam.properties.area,
+                ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
+                beam.properties.warping_constant,
+                beam.properties.ixx,
+                beam.properties.ixy,
+                beam.properties.iyy,
+                ParamUV(beam.properties.shear_center_x, beam.properties.shear_center_y),
+                beam.properties.torsional_constant,
+            )
+
             beams.append( 
                 Beam(
                     beam.id.id,
@@ -1250,10 +1283,8 @@ class Component:
                     beam.is_reversed,
                     beam.is_rigid,
                     grpc_material_to_material(beam.material),
-                    None,
-                    None,
-                    # grpc_cross_section_to_cross_section(beam.cross_section),
-                    # grpc_beam_properties_to_beam_properties(beam.properties),
+                    cross_section,
+                    properties,
                     beam.shape,
                     beam.type,
                 )

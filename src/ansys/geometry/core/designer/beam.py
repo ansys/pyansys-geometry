@@ -24,6 +24,8 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
+from beartype import beartype as check_input_types
+
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.point import Point3D
@@ -185,19 +187,15 @@ class BeamCrossSectionInfo:
         The section profile in the XY plane.
     """
 
+    @check_input_types
     def __init__(
         self,
         section_anchor: SectionAnchorType,
         section_angle: float,
         section_frame: Frame,
-        section_profile: BeamProfile,
+        section_profile: list[list[TrimmedCurve]] | None,
     ):
         """Initialize ``BeamCrossSectionInfo`` class."""
-        check_type(section_anchor, SectionAnchorType)
-        check_type(section_angle, float)
-        check_type(section_frame, Frame)
-        check_type(section_profile, BeamProfile)
-
         self._section_anchor = section_anchor
         self._section_angle = section_angle
         self._section_frame = section_frame
