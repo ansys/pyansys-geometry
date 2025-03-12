@@ -154,13 +154,9 @@ print(f"Does the file exist? {Path(file_location).exists()}")
 
 ### Export to PMDB format
 
-```{code-cell} ipython3
+```python
 # Export the design to a file in the requested directory
 file_location = design.export_to_pmdb(download_dir)
-
-# Print the file location
-print(f"Design exported to {file_location}")
-print(f"Does the file exist? {Path(file_location).exists()}")
 ```
 
 ### Export to Discovery format
