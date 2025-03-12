@@ -886,7 +886,7 @@ jobs:
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
-      
+
       - name: If pre-commit PR, add assignee
         if: startsWith(github.head_ref, 'pre-commit-ci-update-config')
         run: gh pr edit --add-assignee pyansys-ci-bot "$PR_URL"
