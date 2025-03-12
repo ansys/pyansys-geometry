@@ -267,7 +267,7 @@ class Component:
         return self._name
 
     @name.setter
-    def name(self, value: str):
+    def name(self, value: str) -> None:
         """Set the name of the component."""
         self.set_name(value)
 
