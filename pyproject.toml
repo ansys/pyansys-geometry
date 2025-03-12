@@ -102,7 +102,7 @@ doc = [
     "matplotlib==3.10.1",
     "myst-parser==4.0.1",
     "nbconvert==7.16.6",
-    "nbsphinx==0.9.6",
+    "nbsphinx==0.9.7",
     "notebook==7.3.2",
     "numpydoc==1.8.0",
     "numpy==2.2.3",
