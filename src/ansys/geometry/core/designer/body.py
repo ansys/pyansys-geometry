@@ -1267,14 +1267,20 @@ class MasterBody(IBody):
             return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
         else:
             return comp
-            
+
     @protect_grpc
     @graphics_required
     @check_input_types
     @min_backend_version(25, 2, 0)
     def tessellate_with_options(  # noqa: D102
-        self, surf_deviation: Real, ang_deviation: Real, aspect_ratio: Real, edge_length: Real, watertight: bool,
-        merge: bool = False, transform: Matrix44 = IDENTITY_MATRIX44
+        self,
+        surf_deviation: Real,
+        ang_deviation: Real,
+        aspect_ratio: Real,
+        edge_length: Real,
+        watertight: bool,
+        merge: bool = False,
+        transform: Matrix44 = IDENTITY_MATRIX44,
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1292,7 +1298,7 @@ class MasterBody(IBody):
                 maximum_aspect_ratio=aspect_ratio,
                 maximum_edge_length=edge_length,
                 watertight=watertight,
-            )
+            ),
         )
 
         # cache tessellation
