@@ -24,7 +24,7 @@
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from enum import Enum, unique
-from functools import wraps
+from functools import cached_property, wraps
 from typing import TYPE_CHECKING, Union
 
 from beartype import beartype as check_input_types
@@ -889,7 +889,7 @@ class MasterBody(IBody):
     def id(self) -> str:  # noqa: D102
         return self._id
 
-    @property
+    @cached_property
     def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
         return EntityIdentifier(id=self._id)
 
@@ -912,7 +912,7 @@ class MasterBody(IBody):
     @property
     @protect_grpc
     def is_suppressed(self) -> bool:  # noqa: D102
-        response = self._bodies_stub.IsSuppressed(EntityIdentifier(id=self._id))
+        response = self._bodies_stub.IsSuppressed(self._grpc_id)
         return response.result
 
     @is_suppressed.setter
@@ -934,7 +934,7 @@ class MasterBody(IBody):
                 )
             else:
                 # Fetch color from the server if it's not cached
-                color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
+                color_response = self._bodies_stub.GetColor(self._grpc_id)
                 if color_response.color:
                     self._color = mcolors.to_hex(color_response.color, keep_alpha=True)
 
@@ -1181,7 +1181,7 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Setting body {self.id}, as suppressed: {suppressed}.")
         self._bodies_stub.SetSuppressed(
             SetSuppressedRequest(
-                bodies=[EntityIdentifier(id=self.id)],
+                bodies=[self._grpc_id],
                 is_suppressed=suppressed,
             )
         )
@@ -1540,7 +1540,7 @@ class Body(IBody):
     def id(self) -> str:  # noqa: D102
         return self._id
 
-    @property
+    @cached_property
     def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
         return EntityIdentifier(id=self._id)
 
@@ -1593,7 +1593,7 @@ class Body(IBody):
     @ensure_design_is_active
     def faces(self) -> list[Face]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
-        grpc_faces = self._template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
+        grpc_faces = self._template._bodies_stub.GetFaces(self._grpc_id)
         return [
             Face(
                 grpc_face.id,
@@ -1610,7 +1610,7 @@ class Body(IBody):
     @ensure_design_is_active
     def edges(self) -> list[Edge]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
-        grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
+        grpc_edges = self._template._bodies_stub.GetEdges(self._grpc_id)
         return [
             Edge(
                 grpc_edge.id,
