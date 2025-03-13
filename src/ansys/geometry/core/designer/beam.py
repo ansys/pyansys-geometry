@@ -208,7 +208,7 @@ class BeamCrossSectionInfo:
 
     @property
     def section_angle(self) -> float:
-        """The rotation angle of the cross section clockwise from the default perpendicular of the beam path."""
+        """Rotation angle of the cross section clockwise from the perpendicular of the beam path."""
         return self._section_angle
 
     @property
