@@ -217,7 +217,7 @@ class BeamCrossSectionInfo:
         return self._section_frame
 
     @property
-    def section_profile(self) -> BeamProfile:
+    def section_profile(self) -> list[list[TrimmedCurve]] | None:
         """The section profile in the XY plane."""
         return self._section_profile
 
@@ -349,7 +349,9 @@ class Beam:
         id: str,
         start: Point3D,
         end: Point3D,
-        profile: BeamProfile,
+        profile: BeamProfile | None,
+        # TODO: Beams need BeamProfiles imported from existing design
+        # https://github.com/ansys/pyansys-geometry/issues/1825
         parent_component: "Component",
         name: str = None,
         is_deleted: bool = False,
@@ -359,7 +361,7 @@ class Beam:
         cross_section: BeamCrossSectionInfo = None,
         properties: BeamProperties = None,
         shape: TrimmedCurve = None,
-        type: BeamType = None,
+        beam_type: BeamType = None,
         
     ):
         """Initialize ``Beam`` class."""
@@ -368,7 +370,7 @@ class Beam:
         check_type(id, str)
         check_type(start, Point3D)
         check_type(end, Point3D)
-        check_type(profile, BeamProfile)
+        check_type(profile, (type(None), BeamProfile))
         check_type(parent_component, Component)
 
         self._id = id
@@ -378,7 +380,6 @@ class Beam:
         self._parent_component = parent_component
         self._is_alive = True
         self._name = name
-        self._id = id
         self._is_deleted = is_deleted
         self._is_reversed = is_reversed
         self._is_rigid = is_rigid
@@ -386,7 +387,7 @@ class Beam:
         self._cross_section = cross_section
         self._properties = properties
         self._shape = shape
-        self._type = type
+        self._type = beam_type
 
     @property
     def id(self) -> str:

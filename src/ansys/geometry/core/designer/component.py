@@ -1246,7 +1246,6 @@ class Component:
 
         beams = []
         for beam in response.created_beams:
-            print(beam.cross_section.section_profile)
             cross_section = BeamCrossSectionInfo(
                 SectionAnchorType(beam.cross_section.section_anchor),
                 beam.cross_section.section_angle,
@@ -1259,7 +1258,7 @@ class Component:
                         Interval(curve.interval_start, curve.interval_end),
                         curve.length) for curve in curve_list] 
                     for curve_list in beam.cross_section.section_profile],
-                )  
+            )  
             properties = BeamProperties(
                 beam.properties.area,
                 ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
