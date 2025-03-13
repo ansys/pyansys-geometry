@@ -308,7 +308,10 @@ class Design(Component):
         if self._modeler.client.backend_version < (25, 2, 0):
             received_bytes = self.__export_and_download_legacy(format=format)
         else:
-            received_bytes = self.__export_and_download(format=format)
+            try:
+                received_bytes = self.__export_and_download(format=format)
+            except Exception:
+                received_bytes = self.__export_and_download_stream(format=format)
 
         # Write to file
         file_location.write_bytes(received_bytes)

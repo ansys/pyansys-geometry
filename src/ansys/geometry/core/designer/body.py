@@ -566,7 +566,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def tessellate(self, merge: bool = False) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(self, merge: bool = False, tessellationOptions: TessellationOptions = None) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -575,6 +575,8 @@ class IBody(ABC):
             Whether to merge the body into a single mesh. When ``False`` (default), the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
+        tessellationOptions : TessellationOptions, default: None
+            A set of options to determine the tessellation quality.
 
         Returns
         -------
@@ -617,42 +619,6 @@ class IBody(ABC):
           Y Bounds:	-1.000e+00, 0.000e+00
           Z Bounds:	-5.000e-01, 4.500e+00
           N Arrays:	0
-        """
-        return
-
-    @abstractmethod
-    def tessellate_with_options(
-        self,
-        surf_deviation: Real,
-        ang_deviation: Real,
-        aspect_ratio: Real = 0.0,
-        edge_length: Real = 0.0,
-        watertight: bool = False,
-        merge: bool = False,
-    ) -> Union["PolyData", "MultiBlock"]:
-        """Tessellate the body and return the geometry as triangles.
-
-        Parameters
-        ----------
-        surf_deviation : Real
-            The maximum deviation from the true surface position.
-        ang_deviation : Real
-            The maximum deviation from the true surface normal.
-        aspect_ratio : Real, default: 0.0
-            The maximum aspect ratio of facets.
-        edge_length : Real, default: 0.0
-            The maximum facet edge length.
-        watertight : bool, default: False
-            Whether triangles on opposite sides of an edge match.
-        merge : bool, default: False
-            Whether to merge the body into a single mesh. When ``False`` (default), the
-            number of triangles are preserved and only the topology is merged.
-            When ``True``, the individual faces of the tessellation are merged.
-
-        Returns
-        -------
-        ~pyvista.PolyData, ~pyvista.MultiBlock
-            Merged :class:`pyvista.PolyData` if ``merge=True`` or a composite dataset.
         """
         return
 
@@ -1304,7 +1270,7 @@ class MasterBody(IBody):
     @protect_grpc
     @graphics_required
     def tessellate(  # noqa: D102
-        self, merge: bool = False, transform: Matrix44 = IDENTITY_MATRIX44
+        self, merge: bool = False, tessellationOptions: TessellationOptions = None, transform: Matrix44 = IDENTITY_MATRIX44
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1316,69 +1282,45 @@ class MasterBody(IBody):
 
         # cache tessellation
         if not self._tessellation:
-            resp = self._bodies_stub.GetTessellation(self._grpc_id)
-            self._tessellation = {
-                str(face_id): tess_to_pd(face_tess)
-                for face_id, face_tess in resp.face_tessellation.items()
-            }
-
-        pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
-        comp = pv.MultiBlock(pdata)
-
-        if merge:
-            ugrid = comp.combine()
-            return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
-        else:
-            return comp
-
-    @protect_grpc
-    @graphics_required
-    @check_input_types
-    @min_backend_version(25, 2, 0)
-    def tessellate_with_options(  # noqa: D102
-        self,
-        surf_deviation: Real,
-        ang_deviation: Real,
-        aspect_ratio: Real = 0.0,
-        edge_length: Real = 0.0,
-        watertight: bool = False,
-        merge: bool = False,
-        transform: Matrix44 = IDENTITY_MATRIX44,
-    ) -> Union["PolyData", "MultiBlock"]:
-        # lazy import here to improve initial module load time
-        import pyvista as pv
-
-        if not self.is_alive:
-            return pv.PolyData() if merge else pv.MultiBlock()
-
-        self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
-
-        request = GetTessellationRequest(
-            id=self._grpc_id,
-            options=TessellationOptions(
-                surface_deviation=surf_deviation,
-                angle_deviation=ang_deviation,
-                maximum_aspect_ratio=aspect_ratio,
-                maximum_edge_length=edge_length,
-                watertight=watertight,
-            ),
-        )
-
-        # cache tessellation
-        if not self._tessellation:
-            try:
-                resp = self._bodies_stub.GetTessellationWithOptions(request)
-                self._tessellation = {
-                    str(face_id): tess_to_pd(face_tess)
-                    for face_id, face_tess in resp.face_tessellation.items()
-                }
-            except Exception:
-                tessellation_map = {}
-                for response in self._bodies_stub.GetTessellationStream(request):
-                    for key, value in response.face_tessellation.items():
-                        tessellation_map[key] = tess_to_pd(value)
+            if tessellationOptions is not None:
+                request = GetTessellationRequest(
+                    id=self._grpc_id,
+                    options=TessellationOptions(
+                        surface_deviation=tessellationOptions.surface_deviation,
+                        angle_deviation=tessellationOptions.angle_deviation,
+                        maximum_aspect_ratio=tessellationOptions.maximum_aspect_ratio,
+                        maximum_edge_length=tessellationOptions.maximum_edge_length,
+                        watertight=tessellationOptions.watertight,
+                    ),
+                )
+                try:
+                    resp = self._bodies_stub.GetTessellationWithOptions(request)
+                    self._tessellation = {
+                        str(face_id): tess_to_pd(face_tess)
+                        for face_id, face_tess in resp.face_tessellation.items()
+                    }
+                except Exception:
+                    tessellation_map = {}
+                    for response in self._bodies_stub.GetTessellationStream(request):
+                        for key, value in response.face_tessellation.items():
+                            tessellation_map[key] = tess_to_pd(value)
 
                 self._tessellation = tessellation_map
+            else:
+                try:
+                    resp = self._bodies_stub.GetTessellation(self._grpc_id)
+                    self._tessellation = {
+                        str(face_id): tess_to_pd(face_tess)
+                        for face_id, face_tess in resp.face_tessellation.items()
+                    }
+                except Exception:
+                    tessellation_map = {}
+                    request = GetTessellationRequest(self._grpc_id)
+                    for response in self._bodies_stub.GetTessellationStream(request):
+                        for key, value in response.face_tessellation.items():
+                            tessellation_map[key] = tess_to_pd(value)
+
+                    self._tessellation = tessellation_map
 
         pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
         comp = pv.MultiBlock(pdata)
@@ -1906,29 +1848,9 @@ class Body(IBody):
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
-        self, merge: bool = False
+        self, merge: bool = False, tessellationOptions: TessellationOptions = None
     ) -> Union["PolyData", "MultiBlock"]:
-        return self._template.tessellate(merge, self.parent_component.get_world_transform())
-
-    @ensure_design_is_active
-    def tessellate_with_options(  # noqa: D102
-        self,
-        surf_deviation: Real,
-        ang_deviation: Real,
-        aspect_ratio: Real = 0.0,
-        edge_length: Real = 0.0,
-        watertight: bool = False,
-        merge: bool = False,
-    ) -> Union["PolyData", "MultiBlock"]:
-        return self._template.tessellate_with_options(
-            surf_deviation,
-            ang_deviation,
-            aspect_ratio,
-            edge_length,
-            watertight,
-            merge,
-            self.parent_component.get_world_transform(),
-        )
+        return self._template.tessellate(merge, tessellationOptions, self.parent_component.get_world_transform())
 
     @ensure_design_is_active
     def shell_body(self, offset: Real) -> bool:  # noqa: D102
