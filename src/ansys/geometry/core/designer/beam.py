@@ -48,7 +48,7 @@ class BeamType(Enum):
     CABLE = 3
     PIPE = 4
     THERMALFLUID = 5
-    UNKNOWN = 6 
+    UNKNOWN = 6
 
 
 class SectionAnchorType(Enum):
@@ -92,6 +92,7 @@ class BeamProfile:
     def name(self) -> str:
         """Name of the beam profile."""
         return self._name
+
 
 class BeamCircularProfile(BeamProfile):
     """Represents a single circular beam profile.
@@ -179,7 +180,7 @@ class BeamCrossSectionInfo:
     section_anchor : SectionAnchorType
         Specifies how the beam section is anchored to the beam path.
     section_angle : float
-        The rotation angle of the cross section clockwise from the default perpendicular of the 
+        The rotation angle of the cross section clockwise from the default perpendicular of the
         beam path.
     section_frame : Frame
         The section frame at the start of the beam.
@@ -227,12 +228,15 @@ class BeamCrossSectionInfo:
         lines.append(f"  Section Anchor       : {self.section_anchor.name}")
         lines.append(f"  Section Angle        : {self.section_angle}")
         lines.append(f"  Section Frame        : {self.section_frame}")
-        lines.extend(["\n", "  Section Profile info", "  -------------------", str(self.section_profile)])
+        lines.extend(
+            ["\n", "  Section Profile info", "  -------------------", str(self.section_profile)]
+        )
         return "\n".join(lines)
+
 
 class BeamProperties:
     """Represents the properties of a beam.
-    
+
     Parameters
     ----------
     area : float
@@ -323,6 +327,7 @@ class BeamProperties:
         """The torsion constant of the beam."""
         return self._torsion_constant
 
+
 class Beam:
     """Represents a simplified solid body with an assigned 2D cross-section.
 
@@ -362,7 +367,6 @@ class Beam:
         properties: BeamProperties = None,
         shape: TrimmedCurve = None,
         beam_type: BeamType = None,
-        
     ):
         """Initialize ``Beam`` class."""
         from ansys.geometry.core.designer.component import Component

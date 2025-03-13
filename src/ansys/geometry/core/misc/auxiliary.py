@@ -257,9 +257,7 @@ def get_beams_from_ids(design: "Design", beam_ids: list[str]) -> list["Beam"]:
     -----
     This method takes a design and beam ids, and gets their corresponding ``Beam`` objects.
     """
-    return [
-        beam for beam in design.beams if beam.id in beam_ids
-    ]  # noqa: E501
+    return [beam for beam in design.beams if beam.id in beam_ids]  # noqa: E501
 
 
 def convert_color_to_hex(
