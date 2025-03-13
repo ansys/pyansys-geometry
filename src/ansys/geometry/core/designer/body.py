@@ -566,7 +566,9 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def tessellate(self, merge: bool = False, tessellationOptions: TessellationOptions = None) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(
+        self, merge: bool = False, tessellationOptions: TessellationOptions = None
+    ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -1270,7 +1272,10 @@ class MasterBody(IBody):
     @protect_grpc
     @graphics_required
     def tessellate(  # noqa: D102
-        self, merge: bool = False, tessellationOptions: TessellationOptions = None, transform: Matrix44 = IDENTITY_MATRIX44
+        self,
+        merge: bool = False,
+        tessellationOptions: TessellationOptions = None,
+        transform: Matrix44 = IDENTITY_MATRIX44,
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1850,7 +1855,9 @@ class Body(IBody):
     def tessellate(  # noqa: D102
         self, merge: bool = False, tessellationOptions: TessellationOptions = None
     ) -> Union["PolyData", "MultiBlock"]:
-        return self._template.tessellate(merge, tessellationOptions, self.parent_component.get_world_transform())
+        return self._template.tessellate(
+            merge, tessellationOptions, self.parent_component.get_world_transform()
+        )
 
     @ensure_design_is_active
     def shell_body(self, offset: Real) -> bool:  # noqa: D102
