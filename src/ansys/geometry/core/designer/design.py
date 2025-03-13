@@ -1222,5 +1222,36 @@ class Design(Component):
         # Read the existing design
         self.__read_existing_design()
 
-    def _update_from_delta():
-        return True
+    def update_from_tracker(self, changed_bodies):
+        """
+        Update the design with the changed bodies while preserving unchanged ones.
+
+        Parameters
+        ----------
+        changed_bodies : list[dict]
+            A list of dictionaries representing changed body information. Each dictionary
+            should contain 'id', 'name', and 'is_surface' keys.
+        """
+        print("Updating design using the tracker...")
+        # Create a mapping of existing bodies for quick lookup
+        existing_body_map = {body.id: body for body in self.bodies}
+
+        # Process changed bodies
+        for body_info in changed_bodies.modified_bodies:
+            body_id = body_info.id
+            body_name = body_info.name
+            is_surface = body_info.is_surface
+
+            if body_id in existing_body_map:
+                # Update existing body
+                existing_body = existing_body_map[body_id]
+                existing_body.name = body_name
+                existing_body._template._is_surface = is_surface
+                print(f"Updated body: {body_name} (ID: {body_id})")
+            else:
+                # Create and add new body
+                new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
+                self.bodies.append(new_body)
+                print(f"Added new body: {body_name} (ID: {body_id})")
+
+        print("Design update completed.")
