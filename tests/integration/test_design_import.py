@@ -383,6 +383,6 @@ def test_design_import_with_named_selections(modeler: Modeler):
     beam1 = design._named_selections["Beam1"]
     assert len(beam1.bodies) == 0
     assert len(beam1.beams) == 1
-     
+
     beam = beam1.beams[0]
     assert beam._name == "B1"

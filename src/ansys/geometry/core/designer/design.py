@@ -25,8 +25,6 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
-from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
-from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from beartype import beartype as check_input_types
 from google.protobuf.empty_pb2 import Empty
 import numpy as np
@@ -67,7 +65,14 @@ from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
     point3d_to_grpc_point,
 )
-from ansys.geometry.core.designer.beam import Beam, BeamCircularProfile, BeamCrossSectionInfo, BeamProfile, BeamProperties, SectionAnchorType
+from ansys.geometry.core.designer.beam import (
+    Beam,
+    BeamCircularProfile,
+    BeamCrossSectionInfo,
+    BeamProfile,
+    BeamProperties,
+    SectionAnchorType,
+)
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
@@ -94,6 +99,8 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
+from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -1149,14 +1156,19 @@ class Design(Component):
                 beam.cross_section.section_angle,
                 grpc_frame_to_frame(beam.cross_section.section_frame),
                 [
-                    [TrimmedCurve(
-                        grpc_curve_to_curve(curve.curve),
-                        grpc_point_to_point3d(curve.start),
-                        grpc_point_to_point3d(curve.end),
-                        Interval(curve.interval_start, curve.interval_end),
-                        curve.length) for curve in curve_list.curves] 
-                    for curve_list in beam.cross_section.section_profile],
-                )  
+                    [
+                        TrimmedCurve(
+                            grpc_curve_to_curve(curve.curve),
+                            grpc_point_to_point3d(curve.start),
+                            grpc_point_to_point3d(curve.end),
+                            Interval(curve.interval_start, curve.interval_end),
+                            curve.length,
+                        )
+                        for curve in curve_list.curves
+                    ]
+                    for curve_list in beam.cross_section.section_profile
+                ],
+            )
             properties = BeamProperties(
                 beam.properties.area,
                 ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),

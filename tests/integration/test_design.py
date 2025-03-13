@@ -2665,6 +2665,7 @@ def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
 
 def test_component_tree_print(modeler: Modeler):
     """Test for verifying the tree print for ``Component`` objects."""
+
     def check_list_equality(lines, expected_lines):
         # By doing "a in b" rather than "a == b", we can check for substrings
         # which, in the case of beam ids, is necessary since they are unique

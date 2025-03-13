@@ -1164,8 +1164,9 @@ class Component:
             return self.__create_beams_legacy(segments, profile)
         else:
             return self.__create_beams(segments, profile, arcs, circles)
-        
-    def __create_beams_legacy(self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
+
+    def __create_beams_legacy(
+        self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
     ) -> list[Beam]:
         """Create beams under the component.
 
@@ -1183,7 +1184,7 @@ class Component:
         Returns
         -------
         list[Beam]
-            A list of the created Beams. 
+            A list of the created Beams.
         """
         request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
 
@@ -1208,13 +1209,13 @@ class Component:
 
         self._beams.extend(new_beams)
         return self._beams[-n_beams:]
-    
+
     def __create_beams(
-            self,
-            segments: list[tuple[Point3D, Point3D]],
-            profile: BeamProfile,
-            arcs: list[Arc] = None,
-            circles: list[Circle] = None,
+        self,
+        segments: list[tuple[Point3D, Point3D]],
+        profile: BeamProfile,
+        arcs: list[Arc] = None,
+        circles: list[Circle] = None,
     ) -> list[Beam]:
         """Create beams under the component.
 
@@ -1228,7 +1229,7 @@ class Component:
         Returns
         -------
         list[Beam]
-            A list of the created Beams. 
+            A list of the created Beams.
         """
         request = CreateBeamSegmentsRequest(
             profile=profile.id,
@@ -1251,14 +1252,19 @@ class Component:
                 beam.cross_section.section_angle,
                 grpc_frame_to_frame(beam.cross_section.section_frame),
                 [
-                    [TrimmedCurve(
-                        grpc_curve_to_curve(curve.geometry),
-                        grpc_point_to_point3d(curve.start),
-                        grpc_point_to_point3d(curve.end),
-                        Interval(curve.interval_start, curve.interval_end),
-                        curve.length) for curve in curve_list] 
-                    for curve_list in beam.cross_section.section_profile],
-            )  
+                    [
+                        TrimmedCurve(
+                            grpc_curve_to_curve(curve.geometry),
+                            grpc_point_to_point3d(curve.start),
+                            grpc_point_to_point3d(curve.end),
+                            Interval(curve.interval_start, curve.interval_end),
+                            curve.length,
+                        )
+                        for curve in curve_list
+                    ]
+                    for curve_list in beam.cross_section.section_profile
+                ],
+            )
             properties = BeamProperties(
                 beam.properties.area,
                 ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
@@ -1270,7 +1276,7 @@ class Component:
                 beam.properties.torsional_constant,
             )
 
-            beams.append( 
+            beams.append(
                 Beam(
                     beam.id.id,
                     grpc_point_to_point3d(beam.shape.start),
@@ -1288,7 +1294,7 @@ class Component:
                     beam.type,
                 )
             )
-            
+
         self._beams.extend(beams)
         return beams
 
