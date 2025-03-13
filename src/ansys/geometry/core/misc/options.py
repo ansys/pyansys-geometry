@@ -53,7 +53,13 @@ class ImportOptions:
     import_names: bool = False
     import_planes: bool = False
     import_points: bool = False
+    import_named_selections: bool = False
+    import_named_selections_keys: str = ""
 
     def to_dict(self):
         """Provide the dictionary representation of the ImportOptions class."""
-        return {k: bool(v) for k, v in asdict(self).items()}
+        import_options_dict = {k: bool(v) for k, v in asdict(self).items() if isinstance(v, bool)}
+        import_options_definitions_dict = {
+            k: v for k, v in asdict(self).items() if isinstance(v, str)
+        }
+        return import_options_dict, import_options_definitions_dict

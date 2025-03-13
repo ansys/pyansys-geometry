@@ -299,12 +299,13 @@ class Modeler:
 
         c_stub = CommandsStub(self.client.channel)
 
+        import_options_dict, import_options_definitions_dict = import_options.to_dict()
         response = c_stub.UploadFile(
             UploadFileRequest(
                 data=data,
                 file_name=file_name,
                 open=open_file,
-                import_options=import_options.to_dict(),
+                import_options=import_options_dict,
             )
         )
         return response.file_path
@@ -361,8 +362,9 @@ class Modeler:
                         self._upload_file(full_path)
             self._upload_file(file_path, True, import_options)
         else:
+            import_options_dict, import_options_definitions_dict = import_options.to_dict()
             DesignsStub(self.client.channel).Open(
-                OpenRequest(filepath=file_path, import_options=import_options.to_dict())
+                OpenRequest(filepath=file_path, import_options=import_options_dict)
             )
 
         return self.read_existing_design()
