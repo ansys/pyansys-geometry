@@ -1228,8 +1228,8 @@ class Component:
         self,
         segments: list[tuple[Point3D, Point3D]],
         profile: BeamProfile,
-        arcs: list[Arc] = None,
-        circles: list[Circle] = None,
+        arcs: list[Arc],
+        circles: list[Circle],
     ) -> list[Beam]:
         """Create beams under the component.
 
