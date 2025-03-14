@@ -185,12 +185,12 @@ class MissingFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixMissingFaces(
             FixMissingFacesRequest(missing_face_problem_area_id=self._grpc_id)
         )
-        parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
         )
+        parent_design._update_from_tracker(response.result.complete_command_response)
         return message
 
 
