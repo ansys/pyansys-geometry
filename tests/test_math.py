@@ -24,6 +24,7 @@ from io import UnsupportedOperation
 
 from beartype.roar import BeartypeCallHintParamViolation
 import numpy as np
+from pint import Quantity
 import pytest
 
 from ansys.geometry.core.math import (
@@ -628,6 +629,24 @@ def test_vector2d_errors():
         v1.get_angle_between(v2)
 
 
+def test_rotate_vector():
+    """Test the rotate_vector method."""
+    # Define the vectors and angle
+    axis = Vector3D([0.0, 0.0, 1.0])
+    vector = Vector3D([1.0, 0.0, 0.0])
+
+    angle = Quantity(np.pi / 2)  # 90 degrees
+
+    # Expected result after rotating vector around axis by 90 degrees
+    expected_vector = Vector3D([0.0, 1.0, 0.0])
+
+    # Call the method under test
+    result_vector = axis.rotate_vector(vector, angle)
+
+    # Assert that the result matches the expected vector
+    assert np.allclose(result_vector, expected_vector)
+
+
 def test_matrix():
     """Simple test to create a ``Matrix``."""
     # Create two matrix objects
@@ -826,6 +845,82 @@ def test_create_rotation_matrix():
     expected_matrix = Matrix44([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
     rotation_matrix = Matrix44.create_rotation(direction_x, direction_y, direction_z)
     assert np.array_equal(expected_matrix, rotation_matrix)
+
+
+def test_create_matrix_from_rotation_about_axis_x():
+    """Test the create_matrix_from_rotation_about_axis method for rotation about the x-axis."""
+    axis = Vector3D([1.0, 0.0, 0.0])
+    angle = np.pi / 2  # 90 degrees
+    expected_matrix = Matrix44([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+
+    print(result_matrix)
+    assert np.allclose(result_matrix, expected_matrix)
+
+
+def test_create_matrix_from_rotation_about_axis_y():
+    """Test the create_matrix_from_rotation_about_axis method for rotation about the y-axis."""
+    axis = Vector3D([0.0, 1.0, 0.0])
+    angle = np.pi / 2  # 90 degrees
+    expected_matrix = Matrix44([[0, 0, 1, 0], [0, 1, 0, 0], [-1, 0, 0, 0], [0, 0, 0, 1]])
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+    assert np.allclose(result_matrix, expected_matrix)
+
+
+def test_create_matrix_from_rotation_about_axis_z():
+    """Test the create_matrix_from_rotation_about_axis method for rotation about the z-axis."""
+    axis = Vector3D([0.0, 0.0, 1.0])
+    angle = np.pi / 2  # 90 degrees
+    expected_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+    assert np.allclose(result_matrix, expected_matrix)
+
+
+def test_create_matrix_from_rotation_about_arbitrary_axis():
+    """Test the create_matrix_from_rotation_about_axis method for
+    rotation about an arbitrary axis.
+    """
+    axis = Vector3D([1.0, 1.0, 1.0]).normalize()
+    angle = np.pi / 3  # 60 degrees
+    # Expected matrix calculated using external tools or libraries
+    expected_matrix = Matrix44(
+        [
+            [0.66666667, -0.33333333, 0.66666667, 0],
+            [0.66666667, 0.66666667, -0.33333333, 0],
+            [-0.33333333, 0.66666667, 0.66666667, 0],
+            [0, 0, 0, 1],
+        ]
+    )
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+    assert np.allclose(result_matrix, expected_matrix)
+
+
+def test_create_matrix_from_mapping():
+    """Test the create_matrix_from_mapping method."""
+    # Define the frame with origin and direction vectors
+    origin = Vector3D([1.0, 2.0, 3.0])
+    direction_x = Vector3D([1.0, 0.0, 0.0])
+    direction_y = Vector3D([0.0, 1.0, 0.0])
+    frame = Frame(origin, direction_x, direction_y)
+
+    # Create the expected translation matrix
+    expected_translation_matrix = Matrix44.create_translation(origin)
+
+    # Create the expected rotation matrix
+    expected_rotation_matrix = Matrix44.create_rotation(direction_x, direction_y)
+
+    # Create the expected result by multiplying the translation and rotation matrices
+    expected_matrix = expected_translation_matrix * expected_rotation_matrix
+
+    # Call the method under test
+    result_matrix = Matrix44.create_matrix_from_mapping(frame)
+
+    # Assert that the result matches the expected matrix
+    assert np.allclose(result_matrix, expected_matrix)
 
 
 def test_frame():
