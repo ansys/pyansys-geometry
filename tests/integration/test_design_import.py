@@ -355,7 +355,7 @@ def test_design_import_with_named_selections(modeler: Modeler):
     design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
 
     # Check that there are 29 Named Selections
-    assert len(design.named_selections) == 6
+    assert len(design.named_selections) == 7
 
     # Get named selection nozzle1
     nozzle1 = design._named_selections["n1"]
@@ -378,3 +378,11 @@ def test_design_import_with_named_selections(modeler: Modeler):
         Quantity(11.024, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
     )
     assert p1.design_points[0].value.z.m == pytest.approx(0.0, abs=1e-3)
+
+    # Get named selection Beam1
+    beam1 = design._named_selections["Beam1"]
+    assert len(beam1.bodies) == 0
+    assert len(beam1.beams) == 1
+
+    beam = beam1.beams[0]
+    assert beam._name == "B1"
