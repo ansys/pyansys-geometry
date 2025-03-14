@@ -145,14 +145,15 @@ class FillStyle(Enum):
     OPAQUE = 1
     TRANSPARENT = 2
 
+
 class GetTessellationOptions:
     """Provides options for getting tessellation.
-    
+
     Parameters
     ----------
     surface_deviation : Real
         The maximum deviation from the true surface position.
-    angle_deviation : Real 
+    angle_deviation : Real
         The maximum deviation from the true surface normal, in radians.
     max_aspect_ratio : Real, default=0.0
         The maximum aspect ratio of facets.
@@ -161,20 +162,22 @@ class GetTessellationOptions:
     watertight : bool, default=False
         Whether triangles on opposite sides of an edge should match.
     """
+
     @check_input_types
-    def __init__(self, 
-                 surface_deviation: Real, 
-                 angle_deviation: Real, 
-                 max_aspect_ratio: Real = 0.0, 
-                 max_edge_length: Real = 0.0, 
-                 watertight: bool = False
+    def __init__(
+        self,
+        surface_deviation: Real,
+        angle_deviation: Real,
+        max_aspect_ratio: Real = 0.0,
+        max_edge_length: Real = 0.0,
+        watertight: bool = False,
     ):
         """Initialize ``GetTessellationOptions`` class."""
-        self._surface_deviation=surface_deviation
-        self._angle_deviation=angle_deviation
-        self._max_aspect_ratio=max_aspect_ratio
-        self._max_edge_length=max_edge_length
-        self._watertight=watertight
+        self._surface_deviation = surface_deviation
+        self._angle_deviation = angle_deviation
+        self._max_aspect_ratio = max_aspect_ratio
+        self._max_edge_length = max_edge_length
+        self._watertight = watertight
 
     @property
     def surface_deviation(self) -> Real:
@@ -210,6 +213,7 @@ class GetTessellationOptions:
         
         Whether triangles on opposite sides of an edge should match."""
         return self._watertight
+
 
 class IBody(ABC):
     """Defines the common methods for a body, providing the abstract body interface.
