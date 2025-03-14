@@ -57,13 +57,22 @@ from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
+    grpc_curve_to_curve,
     grpc_frame_to_frame,
+    grpc_material_to_material,
     grpc_matrix_to_matrix,
     grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
 )
-from ansys.geometry.core.designer.beam import Beam, BeamCircularProfile, BeamProfile
+from ansys.geometry.core.designer.beam import (
+    Beam,
+    BeamCircularProfile,
+    BeamCrossSectionInfo,
+    BeamProfile,
+    BeamProperties,
+    SectionAnchorType,
+)
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
@@ -80,6 +89,7 @@ from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import (
+    get_beams_from_ids,
     get_bodies_from_ids,
     get_edges_from_ids,
     get_faces_from_ids,
@@ -89,6 +99,8 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
+from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -1185,6 +1197,58 @@ class Design(Component):
             m = Material(material.name, density, properties)
             self.materials.append(m)
 
+        # Create Beams
+        for beam in response.beams:
+            cross_section = BeamCrossSectionInfo(
+                SectionAnchorType(beam.cross_section.section_anchor),
+                beam.cross_section.section_angle,
+                grpc_frame_to_frame(beam.cross_section.section_frame),
+                [
+                    [
+                        TrimmedCurve(
+                            grpc_curve_to_curve(curve.curve),
+                            grpc_point_to_point3d(curve.start),
+                            grpc_point_to_point3d(curve.end),
+                            Interval(curve.interval_start, curve.interval_end),
+                            curve.length,
+                        )
+                        for curve in curve_list.curves
+                    ]
+                    for curve_list in beam.cross_section.section_profile
+                ],
+            )
+            properties = BeamProperties(
+                beam.properties.area,
+                ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
+                beam.properties.warping_constant,
+                beam.properties.ixx,
+                beam.properties.ixy,
+                beam.properties.iyy,
+                ParamUV(beam.properties.shear_center_x, beam.properties.shear_center_y),
+                beam.properties.torsional_constant,
+            )
+
+            new_beam = Beam(
+                beam.id.id,
+                grpc_point_to_point3d(beam.shape.start),
+                grpc_point_to_point3d(beam.shape.end),
+                None,
+                # TODO: Beams need BeamProfiles imported from existing design
+                # https://github.com/ansys/pyansys-geometry/issues/1825
+                self,
+                beam.name,
+                beam.is_deleted,
+                beam.is_reversed,
+                beam.is_rigid,
+                grpc_material_to_material(beam.material),
+                cross_section,
+                properties,
+                beam.shape,
+                beam.type,
+            )
+
+            self._beams.append(new_beam)
+
         # Create NamedSelections
         for ns in response.named_selections:
             result = self._named_selections_stub.Get(EntityIdentifier(id=ns.id))
@@ -1193,6 +1257,7 @@ class Design(Component):
             bodies = get_bodies_from_ids(self, [body.id for body in result.bodies])
             faces = get_faces_from_ids(self, [face.id for face in result.faces])
             edges = get_edges_from_ids(self, [edge.id for edge in result.edges])
+            beams = get_beams_from_ids(self, [beam.id.id for beam in result.beams])
 
             design_points = []
             for dp in result.design_points:
@@ -1207,7 +1272,7 @@ class Design(Component):
                 bodies=bodies,
                 faces=faces,
                 edges=edges,
-                beams=[],  # BEAM IMPORT NOT SUPPORTED FOR NAMED SELECTIONS
+                beams=beams,
                 design_points=design_points,
             )
             self._named_selections[new_ns.name] = new_ns
