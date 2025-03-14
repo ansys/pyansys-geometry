@@ -98,6 +98,7 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
@@ -144,7 +145,6 @@ class FillStyle(Enum):
     DEFAULT = 0
     OPAQUE = 1
     TRANSPARENT = 2
-
 
 class IBody(ABC):
     """Defines the common methods for a body, providing the abstract body interface.
