@@ -3111,6 +3111,12 @@ def test_shell_body(modeler: Modeler):
     assert base.volume.m == pytest.approx(Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 12
 
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    success = base.shell_body(-0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.488, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 12
+
 
 def test_shell_faces(modeler: Modeler):
     """Test shell commands for a single face."""
