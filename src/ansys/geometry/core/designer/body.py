@@ -146,6 +146,7 @@ class FillStyle(Enum):
     OPAQUE = 1
     TRANSPARENT = 2
 
+
 class IBody(ABC):
     """Defines the common methods for a body, providing the abstract body interface.
 
