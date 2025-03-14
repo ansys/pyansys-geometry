@@ -182,36 +182,41 @@ class GetTessellationOptions:
     @property
     def surface_deviation(self) -> Real:
         """Surface Deviation.
-        
-        The maximum deviation from the true surface position."""
+
+        The maximum deviation from the true surface position.
+        """
         return self._surface_deviation
-    
+
     @property
     def angle_deviation(self) -> Real:
         """Angle deviation.
-        
-        The maximum deviation from the true surface normal, in radians."""
+
+        The maximum deviation from the true surface normal, in radians.
+        """
         return self._angle_deviation
-    
+
     @property
     def max_aspect_ratio(self) -> Real:
         """Maximum aspect ratio.
-        
-        The maximum aspect ratio of facets."""
+
+        The maximum aspect ratio of facets.
+        """
         return self._max_aspect_ratio
-    
+
     @property
     def max_edge_length(self) -> Real:
         """Maximum edge length.
-        
-        The maximum facet edge length."""
+
+        The maximum facet edge length.
+        """
         return self._max_edge_length
-    
+
     @property
     def watertight(self) -> bool:
         """Watertight.
-        
-        Whether triangles on opposite sides of an edge should match."""
+
+        Whether triangles on opposite sides of an edge should match.
+        """
         return self._watertight
 
 
@@ -635,7 +640,9 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def tessellate(self, merge: bool = False, tessellation_options: GetTessellationOptions = None) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(
+        self, merge: bool = False, tessellation_options: GetTessellationOptions = None
+    ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -1339,7 +1346,10 @@ class MasterBody(IBody):
     @protect_grpc
     @graphics_required
     def tessellate(  # noqa: D102
-        self, merge: bool = False, tess_options: GetTessellationOptions = None, transform: Matrix44 = IDENTITY_MATRIX44
+        self,
+        merge: bool = False,
+        tess_options: GetTessellationOptions = None,
+        transform: Matrix44 = IDENTITY_MATRIX44,
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1919,7 +1929,9 @@ class Body(IBody):
     def tessellate(  # noqa: D102
         self, merge: bool = False, tess_options: GetTessellationOptions = None
     ) -> Union["PolyData", "MultiBlock"]:
-        return self._template.tessellate(merge, tess_options, self.parent_component.get_world_transform())
+        return self._template.tessellate(
+            merge, tess_options, self.parent_component.get_world_transform()
+        )
 
     @ensure_design_is_active
     def shell_body(self, offset: Real) -> bool:  # noqa: D102
