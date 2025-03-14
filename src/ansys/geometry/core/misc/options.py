@@ -21,9 +21,12 @@
 # SOFTWARE.
 """Provides various option classes."""
 
-from ansys.geometry.core.typing import Real
-from beartype import beartype as check_input_types
 from dataclasses import asdict, dataclass
+
+from beartype import beartype as check_input_types
+
+from ansys.geometry.core.typing import Real
+
 
 @dataclass
 class ImportOptions:
@@ -58,6 +61,7 @@ class ImportOptions:
     def to_dict(self):
         """Provide the dictionary representation of the ImportOptions class."""
         return {k: bool(v) for k, v in asdict(self).items()}
+
 
 class TessellationOptions:
     """Provides options for getting tessellation.
