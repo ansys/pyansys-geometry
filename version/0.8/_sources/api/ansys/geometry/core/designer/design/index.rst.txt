@@ -1,0 +1,100 @@
+
+
+
+
+
+
+The ``design.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.designer.design
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: design
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.design.Design`
+            - Provides for organizing geometry assemblies.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.design.DesignFileFormat`
+            - Provides supported file formats that can be downloaded for designs.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Design</api/ansys/geometry/core/designer/design/Design>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> DesignFileFormat</api/ansys/geometry/core/designer/design/DesignFileFormat>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for managing designs.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
