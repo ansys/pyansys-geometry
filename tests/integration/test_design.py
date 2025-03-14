@@ -71,7 +71,7 @@ from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -466,12 +466,18 @@ def test_named_selection_contents(modeler: Modeler):
     face = box_2.faces[2]
     edge = box_2.edges[0]
 
-    # Create the NamedSelection
-    ns = design.create_named_selection(
-        "MyNamedSelection", bodies=[box, box_2], faces=[face], edges=[edge]
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    beam = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
     )
 
-    print(ns.bodies)
+    # Create the NamedSelection
+    ns = design.create_named_selection(
+        "MyNamedSelection", bodies=[box, box_2], faces=[face], edges=[edge], beams=[beam]
+    )
+
     # Check that the named selection has everything
     assert len(ns.bodies) == 2
     assert np.isin([box.id, box_2.id], [body.id for body in ns.bodies]).all()
@@ -482,7 +488,7 @@ def test_named_selection_contents(modeler: Modeler):
     assert len(ns.edges) == 1
     assert ns.edges[0].id == edge.id
 
-    assert len(ns.beams) == 0
+    assert len(ns.beams) == 1
     assert len(ns.design_points) == 0
 
 
@@ -1267,9 +1273,6 @@ def test_copy_body(modeler: Modeler):
 
 def test_beams(modeler: Modeler):
     """Test beam creation."""
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_beams.__name__, "create_beam")
-
     # Create your design on the server side
     design = modeler.create_design("BeamCreation")
 
@@ -1575,9 +1578,6 @@ def test_named_selections_beams(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with
     beams.
     """
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_named_selections_beams.__name__, "create_beam")
-
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
 
@@ -2716,8 +2716,6 @@ def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
 
 def test_component_tree_print(modeler: Modeler):
     """Test for verifying the tree print for ``Component`` objects."""
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_component_tree_print.__name__, "create_beam")
 
     def check_list_equality(lines, expected_lines):
         # By doing "a in b" rather than "a == b", we can check for substrings
