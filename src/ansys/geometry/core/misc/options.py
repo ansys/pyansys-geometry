@@ -21,8 +21,9 @@
 # SOFTWARE.
 """Provides various option classes."""
 
+from ansys.geometry.core.typing import Real
+from beartype import beartype as check_input_types
 from dataclasses import asdict, dataclass
-
 
 @dataclass
 class ImportOptions:
@@ -57,3 +58,76 @@ class ImportOptions:
     def to_dict(self):
         """Provide the dictionary representation of the ImportOptions class."""
         return {k: bool(v) for k, v in asdict(self).items()}
+
+class TessellationOptions:
+    """Provides options for getting tessellation.
+
+    Parameters
+    ----------
+    surface_deviation : Real
+        The maximum deviation from the true surface position.
+    angle_deviation : Real
+        The maximum deviation from the true surface normal, in radians.
+    max_aspect_ratio : Real, default=0.0
+        The maximum aspect ratio of facets.
+    max_edge_length : Real, default=0.0
+        The maximum facet edge length.
+    watertight : bool, default=False
+        Whether triangles on opposite sides of an edge should match.
+    """
+
+    @check_input_types
+    def __init__(
+        self,
+        surface_deviation: Real,
+        angle_deviation: Real,
+        max_aspect_ratio: Real = 0.0,
+        max_edge_length: Real = 0.0,
+        watertight: bool = False,
+    ):
+        """Initialize ``TessellationOptions`` class."""
+        self._surface_deviation = surface_deviation
+        self._angle_deviation = angle_deviation
+        self._max_aspect_ratio = max_aspect_ratio
+        self._max_edge_length = max_edge_length
+        self._watertight = watertight
+
+    @property
+    def surface_deviation(self) -> Real:
+        """Surface Deviation.
+
+        The maximum deviation from the true surface position.
+        """
+        return self._surface_deviation
+
+    @property
+    def angle_deviation(self) -> Real:
+        """Angle deviation.
+
+        The maximum deviation from the true surface normal, in radians.
+        """
+        return self._angle_deviation
+
+    @property
+    def max_aspect_ratio(self) -> Real:
+        """Maximum aspect ratio.
+
+        The maximum aspect ratio of facets.
+        """
+        return self._max_aspect_ratio
+
+    @property
+    def max_edge_length(self) -> Real:
+        """Maximum edge length.
+
+        The maximum facet edge length.
+        """
+        return self._max_edge_length
+
+    @property
+    def watertight(self) -> bool:
+        """Watertight.
+
+        Whether triangles on opposite sides of an edge should match.
+        """
+        return self._watertight

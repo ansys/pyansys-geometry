@@ -60,7 +60,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ShellRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.models_pb2 import TessellationOptions
+from ansys.api.geometry.v0.models_pb2 import TessellationOptions as GRPCTessellationOptions
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
@@ -144,81 +144,6 @@ class FillStyle(Enum):
     DEFAULT = 0
     OPAQUE = 1
     TRANSPARENT = 2
-
-
-class GetTessellationOptions:
-    """Provides options for getting tessellation.
-
-    Parameters
-    ----------
-    surface_deviation : Real
-        The maximum deviation from the true surface position.
-    angle_deviation : Real
-        The maximum deviation from the true surface normal, in radians.
-    max_aspect_ratio : Real, default=0.0
-        The maximum aspect ratio of facets.
-    max_edge_length : Real, default=0.0
-        The maximum facet edge length.
-    watertight : bool, default=False
-        Whether triangles on opposite sides of an edge should match.
-    """
-
-    @check_input_types
-    def __init__(
-        self,
-        surface_deviation: Real,
-        angle_deviation: Real,
-        max_aspect_ratio: Real = 0.0,
-        max_edge_length: Real = 0.0,
-        watertight: bool = False,
-    ):
-        """Initialize ``GetTessellationOptions`` class."""
-        self._surface_deviation = surface_deviation
-        self._angle_deviation = angle_deviation
-        self._max_aspect_ratio = max_aspect_ratio
-        self._max_edge_length = max_edge_length
-        self._watertight = watertight
-
-    @property
-    def surface_deviation(self) -> Real:
-        """Surface Deviation.
-
-        The maximum deviation from the true surface position.
-        """
-        return self._surface_deviation
-
-    @property
-    def angle_deviation(self) -> Real:
-        """Angle deviation.
-
-        The maximum deviation from the true surface normal, in radians.
-        """
-        return self._angle_deviation
-
-    @property
-    def max_aspect_ratio(self) -> Real:
-        """Maximum aspect ratio.
-
-        The maximum aspect ratio of facets.
-        """
-        return self._max_aspect_ratio
-
-    @property
-    def max_edge_length(self) -> Real:
-        """Maximum edge length.
-
-        The maximum facet edge length.
-        """
-        return self._max_edge_length
-
-    @property
-    def watertight(self) -> bool:
-        """Watertight.
-
-        Whether triangles on opposite sides of an edge should match.
-        """
-        return self._watertight
-
 
 class IBody(ABC):
     """Defines the common methods for a body, providing the abstract body interface.
@@ -641,7 +566,7 @@ class IBody(ABC):
 
     @abstractmethod
     def tessellate(
-        self, merge: bool = False, tessellation_options: GetTessellationOptions = None
+        self, merge: bool = False, tessellation_options: TessellationOptions = None
     ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
@@ -651,7 +576,7 @@ class IBody(ABC):
             Whether to merge the body into a single mesh. When ``False`` (default), the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
-        tessellation_options : GetTessellationOptions, default: None
+        tessellation_options : TessellationOptions, default: None
             A set of options to determine the tessellation quality.
 
         Returns
@@ -1348,8 +1273,8 @@ class MasterBody(IBody):
     def tessellate(  # noqa: D102
         self,
         merge: bool = False,
-        tess_options: GetTessellationOptions = None,
         transform: Matrix44 = IDENTITY_MATRIX44,
+        tess_options: TessellationOptions = None,
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1364,7 +1289,7 @@ class MasterBody(IBody):
             if tess_options is not None:
                 request = GetTessellationRequest(
                     id=self._grpc_id,
-                    options=TessellationOptions(
+                    options=GRPCTessellationOptions(
                         surface_deviation=tess_options.surface_deviation,
                         angle_deviation=tess_options.angle_deviation,
                         maximum_aspect_ratio=tess_options.max_aspect_ratio,
@@ -1927,10 +1852,10 @@ class Body(IBody):
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
-        self, merge: bool = False, tess_options: GetTessellationOptions = None
+        self, merge: bool = False, tess_options: TessellationOptions = None
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate(
-            merge, tess_options, self.parent_component.get_world_transform()
+            merge, self.parent_component.get_world_transform(), tess_options
         )
 
     @ensure_design_is_active
