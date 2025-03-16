@@ -36,6 +36,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
     GetCollisionRequest,
+    GetTessellationRequest,
     MapRequest,
     MirrorRequest,
     RotateRequest,
@@ -59,6 +60,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ShellRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from ansys.api.geometry.v0.models_pb2 import TessellationOptions as GRPCTessellationOptions
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
@@ -96,6 +98,7 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
@@ -564,7 +567,9 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def tessellate(self, merge: bool = False) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(
+        self, merge: bool = False, tessellation_options: TessellationOptions = None
+    ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -573,6 +578,8 @@ class IBody(ABC):
             Whether to merge the body into a single mesh. When ``False`` (default), the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
+        tessellation_options : TessellationOptions, default: None
+            A set of options to determine the tessellation quality.
 
         Returns
         -------
@@ -1266,7 +1273,10 @@ class MasterBody(IBody):
     @protect_grpc
     @graphics_required
     def tessellate(  # noqa: D102
-        self, merge: bool = False, transform: Matrix44 = IDENTITY_MATRIX44
+        self,
+        merge: bool = False,
+        transform: Matrix44 = IDENTITY_MATRIX44,
+        tess_options: TessellationOptions = None,
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1278,11 +1288,45 @@ class MasterBody(IBody):
 
         # cache tessellation
         if not self._tessellation:
-            resp = self._bodies_stub.GetTessellation(self._grpc_id)
-            self._tessellation = {
-                str(face_id): tess_to_pd(face_tess)
-                for face_id, face_tess in resp.face_tessellation.items()
-            }
+            if tess_options is not None:
+                request = GetTessellationRequest(
+                    id=self._grpc_id,
+                    options=GRPCTessellationOptions(
+                        surface_deviation=tess_options.surface_deviation,
+                        angle_deviation=tess_options.angle_deviation,
+                        maximum_aspect_ratio=tess_options.max_aspect_ratio,
+                        maximum_edge_length=tess_options.max_edge_length,
+                        watertight=tess_options.watertight,
+                    ),
+                )
+                try:
+                    resp = self._bodies_stub.GetTessellationWithOptions(request)
+                    self._tessellation = {
+                        str(face_id): tess_to_pd(face_tess)
+                        for face_id, face_tess in resp.face_tessellation.items()
+                    }
+                except Exception:
+                    tessellation_map = {}
+                    for response in self._bodies_stub.GetTessellationStream(request):
+                        for key, value in response.face_tessellation.items():
+                            tessellation_map[key] = tess_to_pd(value)
+
+                    self._tessellation = tessellation_map
+            else:
+                try:
+                    resp = self._bodies_stub.GetTessellation(self._grpc_id)
+                    self._tessellation = {
+                        str(face_id): tess_to_pd(face_tess)
+                        for face_id, face_tess in resp.face_tessellation.items()
+                    }
+                except Exception:
+                    tessellation_map = {}
+                    request = GetTessellationRequest(self._grpc_id)
+                    for response in self._bodies_stub.GetTessellationStream(request):
+                        for key, value in response.face_tessellation.items():
+                            tessellation_map[key] = tess_to_pd(value)
+
+                    self._tessellation = tessellation_map
 
         pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
         comp = pv.MultiBlock(pdata)
@@ -1810,9 +1854,11 @@ class Body(IBody):
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
-        self, merge: bool = False
+        self, merge: bool = False, tess_options: TessellationOptions = None
     ) -> Union["PolyData", "MultiBlock"]:
-        return self._template.tessellate(merge, self.parent_component.get_world_transform())
+        return self._template.tessellate(
+            merge, self.parent_component.get_world_transform(), tess_options
+        )
 
     @ensure_design_is_active
     def shell_body(self, offset: Real) -> bool:  # noqa: D102

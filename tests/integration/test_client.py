@@ -27,7 +27,8 @@ from grpc import insecure_channel
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.connection import DEFAULT_HOST, DEFAULT_PORT, GrpcClient
+from ansys.geometry.core.connection.client import GrpcClient
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 
 
 @pytest.fixture(scope="function")
@@ -49,7 +50,7 @@ def test_client_init(client: GrpcClient):
 
 def test_client_through_channel(modeler: Modeler):
     """Test the instantiation of a client from a gRPC channel."""
-    target = f"{DEFAULT_HOST}:{DEFAULT_PORT}"
+    target = f"{pygeom_defaults.DEFAULT_HOST}:{pygeom_defaults.DEFAULT_PORT}"
     channel = insecure_channel(target)
     client = GrpcClient(channel=channel)
     assert client.healthy is True

@@ -326,10 +326,7 @@ class Design(Component):
         file_location.write_bytes(received_bytes)
         self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
 
-    def __export_and_download_legacy(
-        self,
-        format: DesignFileFormat = DesignFileFormat.SCDOCX,
-    ) -> bytes:
+    def __export_and_download_legacy(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
 
         Notes
@@ -339,7 +336,7 @@ class Design(Component):
 
         Parameters
         ----------
-        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
+        format : DesignFileFormat
             Format for the file to save to.
 
         Returns
@@ -371,15 +368,12 @@ class Design(Component):
 
         return received_bytes
 
-    def __export_and_download(
-        self,
-        format: DesignFileFormat = DesignFileFormat.SCDOCX,
-    ) -> bytes:
+    def __export_and_download(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
 
         Parameters
         ----------
-        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
+        format : DesignFileFormat
             Format for the file to save to.
 
         Returns
@@ -402,10 +396,23 @@ class Design(Component):
             DesignFileFormat.SCDOCX,
             DesignFileFormat.STRIDE,
         ]:
-            response = self._design_stub.DownloadExportFile(
-                DownloadExportFileRequest(format=format.value[1])
-            )
-            received_bytes += response.data
+            try:
+                response = self._design_stub.DownloadExportFile(
+                    DownloadExportFileRequest(format=format.value[1])
+                )
+                received_bytes += response.data
+            except Exception:
+                self._grpc_client.log.warning(
+                    f"Failed to download the file in {format.value[0]} format."
+                    " Attempting to stream download."
+                )
+                # Attempt to download the file via streaming
+                received_bytes = bytes()
+                responses = self._design_stub.StreamDownloadExportFile(
+                    DownloadExportFileRequest(format=format.value[1])
+                )
+                for response in responses:
+                    received_bytes += response.data
         else:
             self._grpc_client.log.warning(
                 f"{format.value[0]} format requested is not supported. Ignoring download request."
