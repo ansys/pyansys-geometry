@@ -256,6 +256,7 @@ class Modeler:
         """
         self.close(close_design=close_design)
 
+    @protect_grpc
     def _upload_file(
         self,
         file_path: str,
@@ -309,6 +310,7 @@ class Modeler:
         )
         return response.file_path
 
+    @protect_grpc
     def _upload_file_stream(
         self,
         file_path: str,
@@ -352,7 +354,6 @@ class Modeler:
         )
         return response.file_path
 
-    @protect_grpc
     def _generate_file_chunks(
         self, file_path: Path, open_file: bool, import_options: ImportOptions
     ):
@@ -386,7 +387,6 @@ class Modeler:
                     import_options=import_options.to_dict(),
                 )
 
-    @protect_grpc
     def open_file(
         self,
         file_path: str | Path,
