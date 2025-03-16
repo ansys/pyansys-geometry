@@ -35,7 +35,7 @@ from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
@@ -92,8 +92,8 @@ class Modeler:
 
     def __init__(
         self,
-        host: str = DEFAULT_HOST,
-        port: str | int = DEFAULT_PORT,
+        host: str = pygeom_defaults.DEFAULT_HOST,
+        port: str | int = pygeom_defaults.DEFAULT_PORT,
         channel: Channel | None = None,
         remote_instance: Optional["Instance"] = None,
         docker_instance: Optional["LocalDockerInstance"] = None,
@@ -372,8 +372,11 @@ class Modeler:
         Chunked UploadFileRequest
 
         """
-        chunk_size = MAX_MESSAGE_LENGTH - (1024 * 1024)  # reserve a MB for the gRPC message
+        msg_buffer = 5 * 1024  # 5KB - for additional message data
+        if pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer < 0:  # pragma: no cover
+            raise ValueError("MAX_MESSAGE_LENGTH is too small for file upload.")
 
+        chunk_size = pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer
         with Path.open(file_path, "rb") as file:
             while chunk := file.read(chunk_size):
                 yield UploadFileRequest(
@@ -433,11 +436,11 @@ class Modeler:
                 for file in dir.iterdir():
                     full_path = file.resolve()
                     if full_path != fp_path:
-                        if file_size_kb < MAX_MESSAGE_LENGTH:
+                        if file_size_kb < pygeom_defaults.MAX_MESSAGE_LENGTH:
                             self._upload_file(full_path)
                         else:
                             self._upload_file_stream(full_path)
-            if file_size_kb < MAX_MESSAGE_LENGTH:
+            if file_size_kb < pygeom_defaults.MAX_MESSAGE_LENGTH:
                 self._upload_file(file_path, True, import_options)
             else:
                 self._upload_file_stream(file_path, True, import_options)

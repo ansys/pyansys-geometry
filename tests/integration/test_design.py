@@ -30,7 +30,6 @@ import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
-from ansys.geometry.core.connection.defaults import MAX_MESSAGE_LENGTH
 from ansys.geometry.core.designer import (
     CurveType,
     DesignFileFormat,
@@ -1082,20 +1081,32 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     assert path_on_server is not None
 
 
-def test_stream_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory):
     """Test uploading a file to the server."""
-    file = tmp_path_factory.mktemp("test_design") / "upload_stream_example.scdocx"
-    file_size = MAX_MESSAGE_LENGTH * 5  # stream five messages
+    # Define a new maximum message length
+    import ansys.geometry.core.connection.defaults as pygeom_defaults
 
-    # Write random bytes
-    with file.open(mode="wb") as fout:
-        fout.write(os.urandom(file_size))
+    old_value = pygeom_defaults.MAX_MESSAGE_LENGTH
+    try:
+        # Set the new maximum message length
+        pygeom_defaults.MAX_MESSAGE_LENGTH = 1024**2  # 1 MB
 
-    assert file.exists()
+        file = tmp_path_factory.mktemp("test_design") / "upload_stream_example.scdocx"
+        file_size = 5 * 1024**2  # stream five messages
 
-    # Upload file
-    path_on_server = modeler._upload_file_stream(file)
-    assert path_on_server is not None
+        # Write random bytes
+        with file.open(mode="wb") as fout:
+            fout.write(os.urandom(file_size))
+        assert file.exists()
+
+        # Upload file - necessary to import the Modeler class and create an instance
+        from ansys.geometry.core import Modeler
+
+        modeler = Modeler()
+        path_on_server = modeler._upload_file_stream(file)
+        assert path_on_server is not None
+    finally:
+        pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
 
 
 def test_slot_extrusion(modeler: Modeler):
