@@ -1311,7 +1311,7 @@ class MasterBody(IBody):
                         for key, value in response.face_tessellation.items():
                             tessellation_map[key] = tess_to_pd(value)
 
-                self._tessellation = tessellation_map
+                    self._tessellation = tessellation_map
             else:
                 try:
                     resp = self._bodies_stub.GetTessellation(self._grpc_id)
