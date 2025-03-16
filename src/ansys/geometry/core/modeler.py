@@ -436,7 +436,7 @@ class Modeler:
                 for file in dir.iterdir():
                     full_path = file.resolve()
                     if full_path != fp_path:
-                        if file_size_kb < pygeom_defaults.MAX_MESSAGE_LENGTH:
+                        if full_path.stat().st_size < pygeom_defaults.MAX_MESSAGE_LENGTH:
                             self._upload_file(full_path)
                         else:
                             self._upload_file_stream(full_path)
