@@ -329,10 +329,7 @@ class Design(Component):
         file_location.write_bytes(received_bytes)
         self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
 
-    def __export_and_download_legacy(
-        self,
-        format: DesignFileFormat = DesignFileFormat.SCDOCX,
-    ) -> bytes:
+    def __export_and_download_legacy(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
 
         Notes
@@ -342,7 +339,7 @@ class Design(Component):
 
         Parameters
         ----------
-        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
+        format : DesignFileFormat
             Format for the file to save to.
 
         Returns
@@ -374,15 +371,12 @@ class Design(Component):
 
         return received_bytes
 
-    def __export_and_download(
-        self,
-        format: DesignFileFormat = DesignFileFormat.SCDOCX,
-    ) -> bytes:
+    def __export_and_download(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
 
         Parameters
         ----------
-        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
+        format : DesignFileFormat
             Format for the file to save to.
 
         Returns
@@ -417,10 +411,7 @@ class Design(Component):
 
         return received_bytes
 
-    def __export_and_download_stream(
-        self,
-        format: DesignFileFormat = DesignFileFormat.SCDOCX,
-    ) -> bytes:
+    def __export_and_download_stream(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server via streaming.
 
         Parameters
