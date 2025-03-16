@@ -67,7 +67,7 @@ To be used only for local start of Ansys Discovery or Ansys SpaceClaim.
 GEOMETRY_SERVICE_EXE = "Presentation.ApiServerDMS.exe"
 """The Windows Geometry Service's filename (DMS)."""
 
-CORE_GEOMETRY_SERVICE_EXE = "Presentation.ApiServerLinux.exe"
+CORE_GEOMETRY_SERVICE_EXE = "Presentation.ApiServerCoreService.exe"
 """The Windows Geometry Service's filename (Core Service)."""
 
 DISCOVERY_EXE = "Discovery.exe"
@@ -315,6 +315,15 @@ def prepare_and_start_backend(
 
         # Verify that the minimum version is installed.
         _check_minimal_versions(product_version, specific_minimum_version)
+
+    # If Windows Service is requested, BUT version is not 2025R1 or earlier, we will have
+    # to change the backend type to CORE_WINDOWS and throw a warning.
+    if backend_type == BackendType.WINDOWS_SERVICE and product_version > 251:
+        LOG.warning(
+            "DMS Windows Service is not available for Ansys versions 2025R2 and later. "
+            "Switching to Core Windows Service."
+        )
+        backend_type = BackendType.CORE_WINDOWS
 
     if server_logs_folder is not None:
         # Verify that the user has write permissions to the folder and that it exists.
