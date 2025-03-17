@@ -36,7 +36,6 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateExtrudedBodyFromLoftProfilesRequest,
     CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
-    CreateSphereBodyRequest,
     CreateSurfaceBodyFromTrimmedCurvesRequest,
     CreateSurfaceBodyRequest,
     CreateSweepingChainRequest,
@@ -831,18 +830,14 @@ class Component:
         Body
             Sphere body object.
         """
-        request = CreateSphereBodyRequest(
-            name=name,
-            parent=self.id,
-            center=point3d_to_grpc_point(center),
-            radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        )
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id} .")
-        response = self._bodies_stub.CreateSphereBody(request)
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        resp = self._grpc_client.services.body_service.create_sphere_body(
+            name=name, parent=self.id, center=center, radius=radius
+        )
+        tb = MasterBody(resp["master_id"], resp["name"], self._grpc_client, is_surface=False)
         self._master_component.part.bodies.append(tb)
         self._clear_cached_bodies()
-        return Body(response.id, response.name, self, tb)
+        return Body(resp["id"], resp["name"], self, tb)
 
     @protect_grpc
     @check_input_types

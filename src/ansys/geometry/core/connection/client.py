@@ -53,6 +53,7 @@ from ansys.api.dbu.v0.admin_pb2 import (
     PeriodType,
 )
 from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
+from ansys.geometry.core._grpc._services._service import _GRPCServices
 from ansys.geometry.core.connection.backend import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
@@ -153,6 +154,8 @@ class GrpcClient:
     backend_type: BackendType, default: None
         Type of the backend that PyAnsys Geometry is communicating with. By default, this
         value is unknown, which results in ``None`` being the default value.
+    proto_version: str or None, default: None
+        Version of the gRPC protocol to use. If ``None``, the latest version is used.
     """
 
     @check_input_types
@@ -168,6 +171,7 @@ class GrpcClient:
         logging_level: int = logging.INFO,
         logging_file: Path | str | None = None,
         backend_type: BackendType | None = None,
+        proto_version: str | None = None,
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
@@ -191,6 +195,9 @@ class GrpcClient:
         # do not finish initialization until channel is healthy
         self._grpc_health_timeout = timeout
         wait_until_healthy(self._channel, self._grpc_health_timeout)
+
+        # Initialize the gRPC services
+        self._services = _GRPCServices(self._channel, version=proto_version)
 
         # once connection with the client is established, create a logger
         self._log = LOG.add_instance_logger(
@@ -286,6 +293,11 @@ class GrpcClient:
     def channel(self) -> grpc.Channel:
         """Client gRPC channel."""
         return self._channel
+
+    @property
+    def services(self) -> _GRPCServices:
+        """GRPC services."""
+        return self._services
 
     @property
     def log(self) -> PyGeometryCustomAdapter:

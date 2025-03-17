@@ -45,6 +45,6 @@ class GRPCBodyServiceV1(GRPCBodyService):
 
         self.stub = BodiesStub(channel)
 
-    def create_sphere_body(self, **kwargs):
+    def create_sphere_body(self, **kwargs) -> dict:
         """Create a sphere body."""
         pass

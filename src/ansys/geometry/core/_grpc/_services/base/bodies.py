@@ -40,6 +40,6 @@ class GRPCBodyService(ABC):
         pass
 
     @abstractmethod
-    def create_sphere_body(self, **kwargs):
+    def create_sphere_body(self, **kwargs) -> dict:
         """Create a sphere body."""
         pass
