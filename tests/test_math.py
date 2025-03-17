@@ -24,6 +24,7 @@ from io import UnsupportedOperation
 
 from beartype.roar import BeartypeCallHintParamViolation
 import numpy as np
+from pint import Quantity
 import pytest
 
 from ansys.geometry.core.math import (
@@ -34,6 +35,7 @@ from ansys.geometry.core.math import (
     UNITVECTOR3D_Z,
     ZERO_VECTOR2D,
     ZERO_VECTOR3D,
+    BoundingBox,
     BoundingBox2D,
     Frame,
     Matrix,
@@ -627,6 +629,24 @@ def test_vector2d_errors():
         v1.get_angle_between(v2)
 
 
+def test_rotate_vector():
+    """Test the rotate_vector method."""
+    # Define the vectors and angle
+    axis = Vector3D([0.0, 0.0, 1.0])
+    vector = Vector3D([1.0, 0.0, 0.0])
+
+    angle = Quantity(np.pi / 2)  # 90 degrees
+
+    # Expected result after rotating vector around axis by 90 degrees
+    expected_vector = Vector3D([0.0, 1.0, 0.0])
+
+    # Call the method under test
+    result_vector = axis.rotate_vector(vector, angle)
+
+    # Assert that the result matches the expected vector
+    assert np.allclose(result_vector, expected_vector)
+
+
 def test_matrix():
     """Simple test to create a ``Matrix``."""
     # Create two matrix objects
@@ -825,6 +845,82 @@ def test_create_rotation_matrix():
     expected_matrix = Matrix44([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
     rotation_matrix = Matrix44.create_rotation(direction_x, direction_y, direction_z)
     assert np.array_equal(expected_matrix, rotation_matrix)
+
+
+def test_create_matrix_from_rotation_about_axis_x():
+    """Test the create_matrix_from_rotation_about_axis method for rotation about the x-axis."""
+    axis = Vector3D([1.0, 0.0, 0.0])
+    angle = np.pi / 2  # 90 degrees
+    expected_matrix = Matrix44([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+
+    print(result_matrix)
+    assert np.allclose(result_matrix, expected_matrix)
+
+
+def test_create_matrix_from_rotation_about_axis_y():
+    """Test the create_matrix_from_rotation_about_axis method for rotation about the y-axis."""
+    axis = Vector3D([0.0, 1.0, 0.0])
+    angle = np.pi / 2  # 90 degrees
+    expected_matrix = Matrix44([[0, 0, 1, 0], [0, 1, 0, 0], [-1, 0, 0, 0], [0, 0, 0, 1]])
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+    assert np.allclose(result_matrix, expected_matrix)
+
+
+def test_create_matrix_from_rotation_about_axis_z():
+    """Test the create_matrix_from_rotation_about_axis method for rotation about the z-axis."""
+    axis = Vector3D([0.0, 0.0, 1.0])
+    angle = np.pi / 2  # 90 degrees
+    expected_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+    assert np.allclose(result_matrix, expected_matrix)
+
+
+def test_create_matrix_from_rotation_about_arbitrary_axis():
+    """Test the create_matrix_from_rotation_about_axis method for
+    rotation about an arbitrary axis.
+    """
+    axis = Vector3D([1.0, 1.0, 1.0]).normalize()
+    angle = np.pi / 3  # 60 degrees
+    # Expected matrix calculated using external tools or libraries
+    expected_matrix = Matrix44(
+        [
+            [0.66666667, -0.33333333, 0.66666667, 0],
+            [0.66666667, 0.66666667, -0.33333333, 0],
+            [-0.33333333, 0.66666667, 0.66666667, 0],
+            [0, 0, 0, 1],
+        ]
+    )
+
+    result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
+    assert np.allclose(result_matrix, expected_matrix)
+
+
+def test_create_matrix_from_mapping():
+    """Test the create_matrix_from_mapping method."""
+    # Define the frame with origin and direction vectors
+    origin = Vector3D([1.0, 2.0, 3.0])
+    direction_x = Vector3D([1.0, 0.0, 0.0])
+    direction_y = Vector3D([0.0, 1.0, 0.0])
+    frame = Frame(origin, direction_x, direction_y)
+
+    # Create the expected translation matrix
+    expected_translation_matrix = Matrix44.create_translation(origin)
+
+    # Create the expected rotation matrix
+    expected_rotation_matrix = Matrix44.create_rotation(direction_x, direction_y)
+
+    # Create the expected result by multiplying the translation and rotation matrices
+    expected_matrix = expected_translation_matrix * expected_rotation_matrix
+
+    # Call the method under test
+    result_matrix = Matrix44.create_matrix_from_mapping(frame)
+
+    # Assert that the result matches the expected matrix
+    assert np.allclose(result_matrix, expected_matrix)
 
 
 def test_frame():
@@ -1219,3 +1315,64 @@ def test_circle_intersections_coincident():
     intersections = get_two_circle_intersections(x0, y0, r0, x1, y1, r1)
 
     assert intersections is None
+
+
+def test_bounding_box2d_intersection():
+    """Test the intersection of two bounding boxes"""
+    # Create the two boxes
+    box1 = BoundingBox2D(0, 1, 0, 1)
+    box2 = BoundingBox2D(0.5, 1.5, 0, 1)
+
+    # Get intersection and check
+    intersection = BoundingBox2D.intersect_bboxes(box1, box2)
+    assert intersection is not None
+    assert intersection == BoundingBox2D(0.5, 1, 0, 1)
+
+
+def test_bounding_box2d_no_intersection():
+    """Test that the bounding box intersection returns None in the case of no overlap"""
+    # Create the two boxes
+    box1 = BoundingBox2D(0, 1, 0, 1)
+    box2 = BoundingBox2D(2, 3, 0, 1)
+
+    # Get intersection and check
+    intersection = BoundingBox2D.intersect_bboxes(box1, box2)
+    assert intersection is None
+
+
+def test_bounding_box_evaluates_bounds_comparisons():
+    min_point = Point3D([0, 0, 0])
+    max_point = Point3D([10, 10, 0])
+    bounding_box = BoundingBox(min_point, max_point)
+    assert bounding_box.contains_point_components(5, 5, 0)
+    assert not bounding_box.contains_point_components(100, 100, 0)
+    assert bounding_box.contains_point(Point3D([3, 4, 0]))
+    assert not bounding_box.contains_point(Point3D([3, 14, 0]))
+
+    copy_bbox_1 = BoundingBox(min_point, max_point)
+    copy_bbox_2 = BoundingBox(Point3D([5, 5, 5]), Point3D([10, 10, 10]))
+    assert copy_bbox_1 == bounding_box
+    assert copy_bbox_2 != bounding_box
+
+
+def test_bounding_box_intersection():
+    """Test the intersection of two bounding boxes"""
+    # Create the two boxes
+    box1 = BoundingBox(Point3D([0, 0, 0]), Point3D([1, 1, 0]))
+    box2 = BoundingBox(Point3D([0.5, 0, 0]), Point3D([1.5, 1, 0]))
+
+    # Get intersection and check
+    intersection = BoundingBox.intersect_bboxes(box1, box2)
+    assert intersection is not None
+    assert intersection == BoundingBox(Point3D([0.5, 0, 0]), Point3D([1, 1, 0]))
+
+
+def test_bounding_box_no_intersection():
+    """Test that the bounding box intersection returns None in the case of no overlap"""
+    # Create the two boxes
+    box1 = BoundingBox(Point3D([0, 0, 0]), Point3D([1, 1, 0]))
+    box2 = BoundingBox(Point3D([2, 0, 0]), Point3D([3, 1, 0]))
+
+    # Get intersection and check
+    intersection = BoundingBox.intersect_bboxes(box1, box2)
+    assert intersection is None

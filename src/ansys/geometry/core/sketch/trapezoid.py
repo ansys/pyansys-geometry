@@ -21,21 +21,25 @@
 # SOFTWARE.
 """Provides for creating and managing a trapezoid."""
 
+from typing import TYPE_CHECKING
+
 from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
-import pyvista as pv
 from scipy.spatial.transform import Rotation as SpatialRotation
 
-from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.matrix import Matrix33
 from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
 
 
 class Trapezoid(SketchFace):
@@ -79,13 +83,6 @@ class Trapezoid(SketchFace):
     ):
         """Initialize the trapezoid."""
         super().__init__()
-
-        # TODO: Remove this warning in the next major release (v0.8.0)
-        # https://github.com/ansys/pyansys-geometry/issues/1359
-        LOG.warning(
-            "The signature of the Trapezoid class has changed starting on "
-            "version 0.7.X. Please refer to the documentation for more information."
-        )
 
         self._center = center
         self._base_width = (
@@ -196,7 +193,8 @@ class Trapezoid(SketchFace):
         return self._height.value
 
     @property
-    def visualization_polydata(self) -> pv.PolyData:
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
         """VTK polydata representation for PyVista visualization.
 
         The representation lies in the X/Y plane within
@@ -207,6 +205,8 @@ class Trapezoid(SketchFace):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
+        import pyvista as pv
+
         return pv.Quadrilateral(
             np.array(
                 [

@@ -35,10 +35,9 @@ from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
-from ansys.geometry.core.logger import LOG
-from ansys.geometry.core.misc.checks import check_type, min_backend_version
+from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
@@ -93,8 +92,8 @@ class Modeler:
 
     def __init__(
         self,
-        host: str = DEFAULT_HOST,
-        port: str | int = DEFAULT_PORT,
+        host: str = pygeom_defaults.DEFAULT_HOST,
+        port: str | int = pygeom_defaults.DEFAULT_PORT,
         channel: Channel | None = None,
         remote_instance: Optional["Instance"] = None,
         docker_instance: Optional["LocalDockerInstance"] = None,
@@ -120,31 +119,15 @@ class Modeler:
             backend_type=backend_type,
         )
 
-        # Maintaining references to all designs within the modeler workspace
-        self._designs: dict[str, "Design"] = {}
-
-        # Initialize the RepairTools - Not available on Linux
-        # TODO: delete "if" when Linux service is able to use repair tools
-        # https://github.com/ansys/pyansys-geometry/issues/1319
-        if BackendType.is_core_service(self.client.backend_type):
-            self._measurement_tools = None
-            LOG.warning("CoreService backend does not support measurement tools.")
-        else:
-            self._measurement_tools = MeasurementTools(self._grpc_client)
+        # Single design for the Modeler
+        self._design: Optional["Design"] = None
 
         # Enabling tools/commands for all: repair and prepare tools, geometry commands
-        self._repair_tools = RepairTools(self._grpc_client)
+        self._measurement_tools = MeasurementTools(self._grpc_client)
+        self._repair_tools = RepairTools(self._grpc_client, self)
         self._prepare_tools = PrepareTools(self._grpc_client)
         self._geometry_commands = GeometryCommands(self._grpc_client)
         self._unsupported = UnsupportedCommands(self._grpc_client, self)
-
-        # Check if the backend allows for multiple designs and throw warning if needed
-        if not self.client.multiple_designs_allowed:
-            LOG.warning(
-                "Linux and Ansys Discovery backends do not support multiple "
-                "designs open in the same session. Only the last design created "
-                "will be available to perform modeling operations."
-            )
 
     @property
     def client(self) -> GrpcClient:
@@ -152,14 +135,20 @@ class Modeler:
         return self._grpc_client
 
     @property
+    def design(self) -> "Design":
+        """Retrieve the design within the modeler workspace."""
+        return self._design
+
+    @property
+    @deprecated_method(alternative="design", version="0.9.0", remove="0.11.0")
     def designs(self) -> dict[str, "Design"]:
-        """All designs within the modeler workspace.
+        """Retrieve the design within the modeler workspace.
 
         Notes
         -----
-        This property is read-only. **DO NOT** modify the dictionary.
+        This method is deprecated. Use the :func:`design` property instead.
         """
-        return self._designs
+        return {self._design.id: self._design}
 
     def create_design(self, name: str) -> "Design":
         """Initialize a new design with the connected client.
@@ -177,14 +166,20 @@ class Modeler:
         from ansys.geometry.core.designer.design import Design
 
         check_type(name, str)
+
+        # If a previous design was available... inform the user that it will be deleted
+        # when creating a new design.
+        if self._design is not None and self._design.is_active:
+            self.client.log.warning("Closing previous design before creating a new one.")
+            self._design.close()
+
+        # Create the new design
         design = Design(name, self)
-        self._designs[design.design_id] = design
-        if len(self._designs) > 1:
-            LOG.warning(
-                "Some backends only support one design. "
-                + "Previous designs may be deleted (on the service) when creating a new one."
-            )
-        return self._designs[design.design_id]
+
+        # Update the design stored in the modeler
+        self._design = design
+
+        return self._design
 
     def get_active_design(self, sync_with_backend: bool = True) -> "Design":
         """Get the active design on the modeler object.
@@ -201,14 +196,13 @@ class Modeler:
         Design
             Design object already existing on the modeler.
         """
-        for _, design in self._designs.items():
-            if design._is_active:
-                # Check if sync_with_backend is requested
-                if sync_with_backend:
-                    design._update_design_inplace()
-
-                # Return the active design
-                return design
+        if self._design is not None and self._design.is_active:
+            # Check if sync_with_backend is requested
+            if sync_with_backend:
+                self._design._update_design_inplace()
+            return self._design
+        else:
+            self.client.log.warning("No active design available.")
 
         return None
 
@@ -222,44 +216,47 @@ class Modeler:
         """
         from ansys.geometry.core.designer.design import Design
 
-        design = Design("", self, read_existing_design=True)
-        self._designs[design.design_id] = design
-        if len(self._designs) > 1:
-            LOG.warning(
-                "Some backends only support one design. "
-                + "Previous designs may be deleted (on the service) when reading a new one."
-            )
-        return self._designs[design.design_id]
+        # Simply deactivate the existing design in case it is active...
+        # - If it is the same design, it will be re-read (but we should not close it on the server)
+        # - If it is a different design, it was closed previously (via open_file or create_design)
+        if self._design is not None and self._design.is_active:
+            self._design._is_active = False
 
-    def close(self, close_designs: bool = True) -> None:
+        self._design = Design("", self, read_existing_design=True)
+
+        return self._design
+
+    def close(self, close_design: bool = True) -> None:
         """Access the client's close method.
 
         Parameters
         ----------
-        close_designs : bool, default: True
-            Whether to close all designs before closing the client.
+        close_design : bool, default: True
+            Whether to close the design before closing the client.
         """
-        # Close all designs (if requested)
-        [design.close() for design in self._designs.values() if close_designs]
+        # Close design (if requested)
+        if close_design and self._design is not None:
+            self._design.close()
 
         # Close the client
         self.client.close()
 
-    def exit(self, close_designs: bool = True) -> None:
+    def exit(self, close_design: bool = True) -> None:
         """Access the client's close method.
 
         Parameters
         ----------
-        close_designs : bool, default: True
-            Whether to close all designs before closing the client.
+        close_design : bool, default: True
+            Whether to close the design before closing the client.
 
         Notes
         -----
         This method is calling the same method as
         :func:`close() <ansys.geometry.core.modeler.Modeler.close>`.
         """
-        self.close(close_designs=close_designs)
+        self.close(close_design=close_design)
 
+    @protect_grpc
     def _upload_file(
         self,
         file_path: str,
@@ -301,7 +298,7 @@ class Modeler:
         with fp_path.open(mode="rb") as file:
             data = file.read()
 
-        c_stub = CommandsStub(self._grpc_client.channel)
+        c_stub = CommandsStub(self.client.channel)
 
         response = c_stub.UploadFile(
             UploadFileRequest(
@@ -314,6 +311,82 @@ class Modeler:
         return response.file_path
 
     @protect_grpc
+    def _upload_file_stream(
+        self,
+        file_path: str,
+        open_file: bool = False,
+        import_options: ImportOptions = ImportOptions(),
+    ) -> str:
+        """Upload a file from the client to the server via streaming.
+
+        Parameters
+        ----------
+        file_path : str
+            Path of the file to upload. The extension of the file must be included.
+        open_file : bool, default: False
+            Whether to open the file in the Geometry service.
+        import_options : ImportOptions
+            Import options that toggle certain features when opening a file.
+
+        Returns
+        -------
+        file_path : str
+            Full path of the file uploaded to the server.
+
+        Notes
+        -----
+        This method creates a file on the server that has the same name and extension
+        as the file on the client.
+        """
+        from pathlib import Path
+
+        fp_path = Path(file_path).resolve()
+
+        if not fp_path.exists():
+            raise ValueError(f"Could not find file: {file_path}")
+        if fp_path.is_dir():
+            raise ValueError("File path must lead to a file, not a directory.")
+
+        c_stub = CommandsStub(self.client.channel)
+
+        response = c_stub.StreamFileUpload(
+            self._generate_file_chunks(fp_path, open_file, import_options)
+        )
+        return response.file_path
+
+    def _generate_file_chunks(
+        self, file_path: Path, open_file: bool, import_options: ImportOptions
+    ):
+        """Generate appropriate chunk sizes for uploading files.
+
+        Parameters
+        ----------
+        file_path : Path
+            Path of the file to upload. The extension of the file must be included.
+        open_file : bool
+            Whether to open the file in the Geometry service.
+        import_options : ImportOptions
+            Import options that toggle certain features when opening a file.
+
+        Returns
+        -------
+        Chunked UploadFileRequest
+
+        """
+        msg_buffer = 5 * 1024  # 5KB - for additional message data
+        if pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer < 0:  # pragma: no cover
+            raise ValueError("MAX_MESSAGE_LENGTH is too small for file upload.")
+
+        chunk_size = pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer
+        with Path.open(file_path, "rb") as file:
+            while chunk := file.read(chunk_size):
+                yield UploadFileRequest(
+                    data=chunk,
+                    file_name=file_path.name,
+                    open=open_file,
+                    import_options=import_options.to_dict(),
+                )
+
     def open_file(
         self,
         file_path: str | Path,
@@ -348,20 +421,31 @@ class Modeler:
         # Use str format of Path object here
         file_path = str(file_path) if isinstance(file_path, Path) else file_path
 
+        # Close the existing design if it is active
+        if self._design is not None and self._design.is_active:
+            self._design.close()
+
         # Format-specific logic - upload the whole containing folder for assemblies
         if upload_to_server:
+            fp_path = Path(file_path)
+            file_size_kb = fp_path.stat().st_size
             if any(
                 ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
             ):
-                fp_path = Path(file_path)
                 dir = fp_path.parent
                 for file in dir.iterdir():
                     full_path = file.resolve()
                     if full_path != fp_path:
-                        self._upload_file(full_path)
-            self._upload_file(file_path, True, import_options)
+                        if full_path.stat().st_size < pygeom_defaults.MAX_MESSAGE_LENGTH:
+                            self._upload_file(full_path)
+                        else:
+                            self._upload_file_stream(full_path)
+            if file_size_kb < pygeom_defaults.MAX_MESSAGE_LENGTH:
+                self._upload_file(file_path, True, import_options)
+            else:
+                self._upload_file_stream(file_path, True, import_options)
         else:
-            DesignsStub(self._grpc_client.channel).Open(
+            DesignsStub(self.client.channel).Open(
                 OpenRequest(filepath=file_path, import_options=import_options.to_dict())
             )
 
@@ -372,7 +456,7 @@ class Modeler:
         lines = []
         lines.append(f"Ansys Geometry Modeler ({hex(id(self))})")
         lines.append("")
-        lines.append(str(self._grpc_client))
+        lines.append(str(self.client))
         return "\n".join(lines)
 
     @protect_grpc
@@ -455,7 +539,11 @@ class Modeler:
 
         # Check if API version is specified... if so, validate it
         if api_version is not None:
-            if self.client.backend_type == BackendType.WINDOWS_SERVICE:
+            if self.client.backend_type in (
+                BackendType.WINDOWS_SERVICE,
+                BackendType.CORE_WINDOWS,
+                BackendType.CORE_LINUX,
+            ):
                 self.client.log.warning(
                     "The Ansys Geometry Service only supports "
                     "scripts that are of its same API version."
@@ -468,7 +556,7 @@ class Modeler:
                 api_version = ApiVersions.parse_input(api_version)
 
         serv_path = self._upload_file(file_path)
-        ga_stub = DbuApplicationStub(self._grpc_client.channel)
+        ga_stub = DbuApplicationStub(self.client.channel)
         request = RunScriptFileRequest(
             script_path=serv_path,
             script_args=script_args,

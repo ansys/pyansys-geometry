@@ -33,6 +33,7 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import PersistentIdType
 
@@ -241,6 +242,15 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
     design.download(str(file))
 
+    # Pre-download the STEP file for comparison... once the design is closed, the
+    # file is no longer available for download from the original design
+    if not BackendType.is_core_service(modeler.client.backend_type):
+        file_step = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
+        design.download(file_step, DesignFileFormat.STEP)
+        #
+        # file_iges = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
+        # design.download(file_iges, DesignFileFormat.IGES)
+
     design2 = modeler.open_file(file)
 
     # assert the two cars are the same, excepted for the ID, which should be different
@@ -252,17 +262,12 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         #
         # TODO: Something has gone wrong with IGES
         # https://github.com/ansys/pyansys-geometry/issues/1146
-        #
-        # file = tmp_path_factory.mktemp("test_design_import") / "two_cars.igs"
-        # design.download(file, DesignFileFormat.IGES)
-        # design2 = modeler.open_file(file)
+        # design2 = modeler.open_file(file_iges)
         # design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.igs")
         # _checker_method(design2, design3, False)
 
         # STEP
-        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.step"
-        design.download(file, DesignFileFormat.STEP)
-        design2 = modeler.open_file(file)
+        design2 = modeler.open_file(file_step)
         design3 = modeler.open_file(Path(IMPORT_FILES_DIR, "twoCars.stp"))
         _checker_method(design2, design3, False)
 
@@ -318,7 +323,7 @@ def test_design_insert(modeler: Modeler):
 
     # Check that there are two components
     assert len(design.components) == 2
-    assert design._is_active
+    assert design.is_active is True
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "DuplicatesDesign"
 
@@ -339,6 +344,45 @@ def test_design_insert_with_import(modeler: Modeler):
 
     # Check that there are two components
     assert len(design.components) == 2
-    assert design._is_active
+    assert design.is_active is True
     assert design.components[0].name == "Component_Cylinder"
     assert design.components[1].name == "Wheel1"
+
+
+def test_design_import_with_named_selections(modeler: Modeler):
+    """Test importing a design with named selections."""
+    # Open the design
+    design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
+
+    # Check that there are 29 Named Selections
+    assert len(design.named_selections) == 7
+
+    # Get named selection nozzle1
+    nozzle1 = design._named_selections["n1"]
+    assert len(nozzle1.bodies) == 0
+    assert len(nozzle1.faces) == 11
+
+    assert nozzle1.faces[0].area.m == pytest.approx(
+        Quantity(1.55183312719e-05, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
+    )
+
+    # Get named selection p1
+    p1 = design._named_selections["p1"]
+    assert len(p1.bodies) == 0
+    assert len(p1.design_points) == 1
+
+    assert p1.design_points[0].value.x.m == pytest.approx(
+        Quantity(8.601, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
+    )
+    assert p1.design_points[0].value.y.m == pytest.approx(
+        Quantity(11.024, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
+    )
+    assert p1.design_points[0].value.z.m == pytest.approx(0.0, abs=1e-3)
+
+    # Get named selection Beam1
+    beam1 = design._named_selections["Beam1"]
+    assert len(beam1.bodies) == 0
+    assert len(beam1.beams) == 1
+
+    beam = beam1.beams[0]
+    assert beam._name == "B1"

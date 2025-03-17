@@ -27,8 +27,6 @@ import matplotlib.colors as mcolors
 import numpy as np
 from pint import Quantity
 import pytest
-import pyvista as pv
-from pyvista.plotting.utilities.regression import compare_images as pv_compare_images
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
@@ -56,6 +54,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
+from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
@@ -70,9 +69,9 @@ from ansys.geometry.core.shapes import (
 )
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.sketch import Sketch
-from ansys.tools.visualization_interface.utils.color import Color
 
-from .conftest import FILES_DIR, skip_if_core_service
+from ..conftest import are_graphics_available
+from .conftest import FILES_DIR
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -197,6 +196,27 @@ def test_assigning_and_getting_material(modeler: Modeler):
     assert (
         mat_service.properties[MaterialPropertyType.TENSILE_STRENGTH].quantity == tensile_strength
     )
+
+
+def test_get_empty_material(modeler: Modeler):
+    # Create a Sketch and draw a circle (all client side)
+    sketch = Sketch()
+    sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create your design on the server side
+    design_name = "ExtrudeProfile"
+    design = modeler.create_design(design_name)
+
+    # Extrude the sketch to create a Body
+    body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
+
+    # Assign a material to a Body
+    mat_service = body.material
+    assert mat_service.name == ""
+    assert mat_service.properties[MaterialPropertyType.DENSITY].quantity == Quantity(
+        0, UNITS.kg / (UNITS.m**3)
+    )
+    assert len(mat_service.properties) == 1
 
 
 def test_face_to_body_creation(modeler: Modeler):
@@ -435,6 +455,43 @@ def test_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 3
 
 
+def test_named_selection_contents(modeler: Modeler):
+    """Test for verifying the correct contents of a ``NamedSelection``."""
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelection_Test")
+
+    # Create objects to add to the named selection
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    box_2 = design.extrude_sketch("box_2", Sketch().box(Point2D([0, 0]), 5, 5), 5)
+    face = box_2.faces[2]
+    edge = box_2.edges[0]
+
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    beam = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+
+    # Create the NamedSelection
+    ns = design.create_named_selection(
+        "MyNamedSelection", bodies=[box, box_2], faces=[face], edges=[edge], beams=[beam]
+    )
+
+    # Check that the named selection has everything
+    assert len(ns.bodies) == 2
+    assert np.isin([box.id, box_2.id], [body.id for body in ns.bodies]).all()
+
+    assert len(ns.faces) == 1
+    assert ns.faces[0].id == face.id
+
+    assert len(ns.edges) == 1
+    assert ns.edges[0].id == edge.id
+
+    assert len(ns.beams) == 1
+    assert len(ns.design_points) == 0
+
+
 def test_add_component_with_instance_name(modeler: Modeler):
     design = modeler.create_design("DesignHierarchyExample")
     circle_sketch = Sketch()
@@ -514,6 +571,7 @@ def test_faces_edges(modeler: Modeler):
 
 def test_coordinate_system_creation(modeler: Modeler):
     """Test for verifying the correct creation of ``CoordinateSystem``."""
+    pytest.skip(reason="Name issue in SC code")
     # Create your design on the server side
     design = modeler.create_design("CoordinateSystem_Test")
 
@@ -964,7 +1022,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     assert file.exists()
 
     # Check that we can also save it (even if it is not accessible on the server)
-    if modeler.client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX):
+    if BackendType.is_linux_service(modeler.client.backend_type):
         file_save = "/tmp/cylinder-temp.scdocx"
     else:
         file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
@@ -985,15 +1043,15 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         design.download(iges_file, format=DesignFileFormat.IGES)
         assert iges_file.exists()
 
-        # FMD
-        fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
-        design.download(fmd_file, format=DesignFileFormat.FMD)
-        assert fmd_file.exists()
-
     # Linux backend...
     else:
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
+
+    # FMD
+    fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
+    design.download(fmd_file, format=DesignFileFormat.FMD)
+    assert fmd_file.exists()
 
     # PMDB
     pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
@@ -1021,6 +1079,34 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     # Upload file
     path_on_server = modeler._upload_file(file)
     assert path_on_server is not None
+
+
+def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory):
+    """Test uploading a file to the server."""
+    # Define a new maximum message length
+    import ansys.geometry.core.connection.defaults as pygeom_defaults
+
+    old_value = pygeom_defaults.MAX_MESSAGE_LENGTH
+    try:
+        # Set the new maximum message length
+        pygeom_defaults.MAX_MESSAGE_LENGTH = 1024**2  # 1 MB
+
+        file = tmp_path_factory.mktemp("test_design") / "upload_stream_example.scdocx"
+        file_size = 5 * 1024**2  # stream five messages
+
+        # Write random bytes
+        with file.open(mode="wb") as fout:
+            fout.write(os.urandom(file_size))
+        assert file.exists()
+
+        # Upload file - necessary to import the Modeler class and create an instance
+        from ansys.geometry.core import Modeler
+
+        modeler = Modeler()
+        path_on_server = modeler._upload_file_stream(file)
+        assert path_on_server is not None
+    finally:
+        pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
 
 
 def test_slot_extrusion(modeler: Modeler):
@@ -1119,6 +1205,57 @@ def test_project_and_imprint_curves(modeler: Modeler):
     assert len(body_copy.faces) == 8
 
 
+def test_imprint_trimmed_curves(modeler: Modeler):
+    """
+    Test the imprinting of trimmed curves onto a specified face of a body.
+    """
+    unit = DEFAULT_UNITS.LENGTH
+
+    wx = 1
+    wy = 1
+    wz = 1
+    design = modeler.create_design("test imprint")
+
+    # create box
+    start_at = Point3D([wx / 2, wy / 2, 0.0], unit=unit)
+
+    plane = Plane(
+        start_at,
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0], unit=unit), width=wx, height=wy)
+    box = design.extrude_sketch("box", box_plane, wz)
+
+    assert len(box.faces) == 6
+    assert len(box.edges) == 12
+
+    # create cylinder
+    point = Point3D([0.5, 0.5, 0.5])
+    ortho_1, ortho_2 = UNITVECTOR3D_X, UNITVECTOR3D_Y
+    plane = Plane(point, ortho_1, ortho_2)
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([0.0, 0.0], unit=unit), radius=0.1)
+    cylinder = design.extrude_sketch("cylinder", sketch_cylinder, 0.5)
+
+    edges = cylinder.faces[1].edges
+    trimmed_curves = [edges[0].shape]
+    new_edges, new_faces = box.imprint_curves(faces=[box.faces[1]], trimmed_curves=trimmed_curves)
+
+    # the new edge is coming from the circular top edge of the cylinder.
+    assert new_edges[0].start == new_edges[0].end
+    # verify that there is one new edge coming from the circle.
+    assert len(new_faces) == 1
+    # verify that there is one new face coming from the circle.
+    assert len(new_edges) == 1
+    # verify that there are 7 faces in total.
+    assert len(box.faces) == 7
+    # verify that there are 14 edges in total.
+    assert len(box.edges) == 13
+
+
 def test_copy_body(modeler: Modeler):
     """Test copying a body."""
     # Create your design on the server side
@@ -1164,9 +1301,6 @@ def test_copy_body(modeler: Modeler):
 
 def test_beams(modeler: Modeler):
     """Test beam creation."""
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_beams.__name__, "create_beam")
-
     # Create your design on the server side
     design = modeler.create_design("BeamCreation")
 
@@ -1332,7 +1466,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : None" in surf_repr
     assert "Surface offset       : None" in surf_repr
-    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
+    assert f"Color                : {DEFAULT_COLOR}" in surf_repr
 
     # Let's assign a thickness to both bodies
     design.add_midsurface_thickness(
@@ -1365,7 +1499,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 10 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.TOP" in surf_repr
-    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
+    assert f"Color                : {DEFAULT_COLOR}" in surf_repr
 
     # Let's try reassigning values directly to slot_body - this shouldn't do anything
     slot_body.add_midsurface_thickness(Quantity(10, UNITS.mm))
@@ -1377,7 +1511,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Exists               : True" in body_repr
     assert "Parent component     : MidSurfaceProperties" in body_repr
     assert "Surface body         : False" in body_repr
-    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
+    assert f"Color                : {DEFAULT_COLOR}" in surf_repr
     assert slot_body.surface_thickness is None
     assert slot_body.surface_offset is None
 
@@ -1396,7 +1530,7 @@ def test_midsurface_properties(modeler: Modeler):
         assert "Surface body         : True" in surf_repr
         assert "Surface thickness    : 30 millimeter" in surf_repr
         assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
-        assert f"Color                : {Color.DEFAULT.value}" in surf_repr
+        assert f"Color                : {DEFAULT_COLOR}" in surf_repr
     except GeometryExitedError:
         pass
 
@@ -1414,7 +1548,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Surface body         : True" in surf_repr
     assert "Surface thickness    : 30 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
-    assert f"Color                : {Color.DEFAULT.value}" in surf_repr
+    assert f"Color                : {DEFAULT_COLOR}" in surf_repr
 
 
 def test_design_points(modeler: Modeler):
@@ -1458,18 +1592,20 @@ def test_design_points(modeler: Modeler):
     assert "  Name                 : SecondPointSet" in design_point_2_str
     assert "  Design Point         : [20. 20. 20.]" in design_point_2_str
 
-    # make sure it can create polydata
-    pd = design_points_1._to_polydata()
-    assert isinstance(pd, pv.PolyData)
+    # SKIPPING IF GRAPHICS REQUIRED
+    if are_graphics_available():
+        # make sure it can create polydata
+        pd = design_points_1._to_polydata()
+
+        import pyvista as pv
+
+        assert isinstance(pd, pv.PolyData)
 
 
 def test_named_selections_beams(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with
     beams.
     """
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_named_selections_beams.__name__, "create_beam")
-
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
 
@@ -1494,7 +1630,7 @@ def test_named_selections_design_points(modeler: Modeler):
     design points.
     """
     # Create your design on the server side
-    design = modeler.create_design("NamedSelectionBeams_Test")
+    design = modeler.create_design("NamedSelectionDesignPoints_Test")
 
     # Test creating a named selection out of design_points
     point_set_1 = Point3D([10, 10, 0], UNITS.m)
@@ -1979,18 +2115,13 @@ def test_child_component_instances(modeler: Modeler):
 
 
 def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    """Generate multiple designs, make sure they are all separate, and activate
-    them when needed.
+    """Generate multiple designs, make sure they are all separate, and once
+    a design is deactivated, the next one is activated.
     """
-    # Check backend first
-    if modeler.client.backend_type in (
-        BackendType.SPACECLAIM,
-        BackendType.WINDOWS_SERVICE,
-    ):
-        pass
-    else:
-        # Test is only available for DMS and SpaceClaim
-        pytest.skip("Test only available on DMS and SpaceClaim")
+    # Initiate expected output images
+    scshot_dir = tmp_path_factory.mktemp("test_multiple_designs")
+    scshot_1 = scshot_dir / "design1.png"
+    scshot_2 = scshot_dir / "design2.png"
 
     # Create your design on the server side
     design1 = modeler.create_design("Design1")
@@ -2002,6 +2133,11 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     # Extrude the sketch to create a body
     design1.extrude_sketch("MySlot", sketch1, Quantity(10, UNITS.mm))
 
+    # SKIPPING IF GRAPHICS REQUIRED
+    if are_graphics_available():
+        # Request plotting and store images
+        design1.plot(screenshot=scshot_1)
+
     # Create a second design
     design2 = modeler.create_design("Design2")
 
@@ -2012,28 +2148,23 @@ def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     # Extrude the sketch to create a body
     design2.extrude_sketch("MyRectangle", sketch2, Quantity(10, UNITS.mm))
 
-    # Initiate expected output images
-    scshot_dir = tmp_path_factory.mktemp("test_multiple_designs")
-    scshot_1 = scshot_dir / "design1.png"
-    scshot_2 = scshot_dir / "design2.png"
+    # SKIPPING IF GRAPHICS REQUIRED
+    if are_graphics_available():
+        # Request plotting and store images
+        design2.plot(screenshot=scshot_2)
 
-    # Request plotting and store images
-    design2.plot(screenshot=scshot_1)
-    design1.plot(screenshot=scshot_2)
+        # Check that the images are different
+        assert scshot_1.exists()
+        assert scshot_2.exists()
 
-    # Check that the images are different
-    assert scshot_1.exists()
-    assert scshot_2.exists()
-    err = pv_compare_images(str(scshot_1), str(scshot_2))
-    assert not err < 0.1
+        from pyvista.plotting.utilities.regression import compare_images as pv_compare_images
 
-    # Check that design2 is not active
-    assert not design2.is_active
-    assert design1.is_active
+        err = pv_compare_images(str(scshot_1), str(scshot_2))
+        assert not err < 0.1
 
-    # Check the same thing inside the modeler
-    assert not modeler.designs[design2.design_id].is_active
-    assert modeler.designs[design1.design_id].is_active
+    # Check that design1 is not active and design2 is active
+    assert not design1.is_active
+    assert design2.is_active
 
 
 def test_get_active_design(modeler: Modeler):
@@ -2057,9 +2188,6 @@ def test_get_collision(modeler: Modeler):
 
 def test_set_body_name(modeler: Modeler):
     """Test the setting the name of a body."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_set_body_name.__name__, "set_name")
-
     design = modeler.create_design("simple_cube")
     unit = DEFAULT_UNITS.LENGTH
     plane = Plane(
@@ -2079,9 +2207,6 @@ def test_set_body_name(modeler: Modeler):
 
 def test_set_fill_style(modeler: Modeler):
     """Test the setting the fill style of a body."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_set_fill_style.__name__, "set_fill_style")
-
     design = modeler.create_design("RVE")
     unit = DEFAULT_UNITS.LENGTH
 
@@ -2141,31 +2266,45 @@ def test_set_body_color(modeler: Modeler):
     box = design.extrude_sketch("Block", box_plane, 1 * unit)
 
     # Default body color is if it is not set on server side.
-    assert box.color == Color.DEFAULT.value
+    assert box.color == DEFAULT_COLOR
 
     # Set the color of the body using hex code.
     box.color = "#0000ff"
-    assert box.color == "#0000ff"
+    assert box.color[0:7] == "#0000ff"
 
     box.color = "#ffc000"
-    assert box.color == "#ffc000"
+    assert box.color[0:7] == "#ffc000"
 
     # Set the color of the body using color name.
     box.set_color("green")
-    box.color == "#008000"
+    box.color[0:7] == "#008000"
 
     # Set the color of the body using RGB values between (0,1) as floats.
     box.set_color((1.0, 0.0, 0.0))
-    box.color == "#ff0000"
+    box.color[0:7] == "#ff0000"
 
     # Set the color of the body using RGB values between (0,255) as integers).
     box.set_color((0, 255, 0))
-    box.color == "#00ff00"
+    box.color[0:7] == "#00ff00"
 
     # Assigning color object directly
     blue_color = mcolors.to_rgba("#0000FF")
     box.color = blue_color
-    assert box.color == "#0000ff"
+    assert box.color[0:7] == "#0000ff"
+
+    # Test an RGBA color
+    box.color = "#ff00003c"
+    assert box.color == "#ff00003c"
+
+    # Test setting the opacity separately
+    box.opacity = 0.8
+    assert box.color == "#ff0000cc"
+
+    # Try setting the opacity to an invalid value
+    with pytest.raises(
+        ValueError, match="Invalid color value: Opacity value must be between 0 and 1."
+    ):
+        box.opacity = 255
 
 
 def test_body_scale(modeler: Modeler):
@@ -2276,9 +2415,6 @@ def test_body_mapping(modeler: Modeler):
 
 def test_sphere_creation(modeler: Modeler):
     """Test the creation of a sphere body with a given radius."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_sphere_creation.__name__, "create_sphere")
-
     design = modeler.create_design("Spheretest")
     center_point = Point3D([10, 10, 10], UNITS.m)
     radius = Distance(1, UNITS.m)
@@ -2495,10 +2631,6 @@ def test_create_body_from_loft_profile(modeler: Modeler):
     """Test the ``create_body_from_loft_profile()`` method to create a vase
     shape.
     """
-    # Skip test on CoreService
-    skip_if_core_service(
-        modeler, test_create_body_from_loft_profile.__name__, "'create_body_from_loft_profile'"
-    )
     design_sketch = modeler.create_design("loftprofile")
 
     profile1 = Circle(origin=[0, 0, 0], radius=8).trim(Interval(0, 2 * np.pi))
@@ -2612,8 +2744,6 @@ def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
 
 def test_component_tree_print(modeler: Modeler):
     """Test for verifying the tree print for ``Component`` objects."""
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_component_tree_print.__name__, "create_beam")
 
     def check_list_equality(lines, expected_lines):
         # By doing "a in b" rather than "a == b", we can check for substrings
@@ -3036,3 +3166,116 @@ def test_shell_multiple_faces(modeler: Modeler):
     assert success
     assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 10
+
+
+def test_set_face_color(modeler: Modeler):
+    """Test the getting and setting of face colors."""
+
+    design = modeler.create_design("FaceColorTest")
+    box = design.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    faces = box.faces
+    assert len(faces) == 6
+
+    # Default body color is if it is not set on server side.
+    assert faces[0].color == DEFAULT_COLOR
+
+    # Set the color of the body using hex code.
+    faces[0].color = "#0000ffff"
+    assert faces[0].color == "#0000ffff"
+
+    faces[1].color = "#ffc000ff"
+    assert faces[1].color == "#ffc000ff"
+
+    # Set the color of the body using color name.
+    faces[2].set_color("green")
+    assert faces[2].color == "#008000ff"
+
+    # Set the color of the body using RGB values between (0,1) as floats.
+    faces[0].set_color((1.0, 0.0, 0.0))
+    assert faces[0].color == "#ff0000ff"
+
+    # Set the color of the body using RGB values between (0,255) as integers).
+    faces[1].set_color((0, 255, 0))
+    assert faces[1].color == "#00ff00ff"
+
+    # Assigning color object directly
+    blue_color = mcolors.to_rgba("#0000FF")
+    faces[2].color = blue_color
+    assert faces[2].color == "#0000ffff"
+
+    # Assign a color with opacity
+    faces[3].color = (255, 0, 0, 80)
+    assert faces[3].color == "#ff000050"
+
+    # Test setting the opacity separately
+    faces[3].opacity = 0.8
+    assert faces[3].color == "#ff0000cc"
+
+    # Try setting the opacity to an invalid value
+    with pytest.raises(
+        ValueError, match="Invalid color value: Opacity value must be between 0 and 1."
+    ):
+        faces[3].opacity = 255
+
+
+def test_set_component_name(modeler: Modeler):
+    """Test the setting of component names."""
+
+    design = modeler.create_design("ComponentNameTest")
+    component = design.add_component("Component1")
+    assert component.name == "Component1"
+
+    component.name = "ChangedComponentName"
+    assert component.name == "ChangedComponentName"
+
+
+def test_get_face_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a face."""
+    design = modeler.create_design("face_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    bounding_box = body.faces[0].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
+
+    bounding_box = body.faces[1].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
+
+
+def test_get_edge_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of an edge."""
+    design = modeler.create_design("edge_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # Edge 0 goes from (-0.5, -0.5, 1) to (0.5, -0.5, 1)
+    bounding_box = body.edges[0].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.min_corner.z.m == 1
+    assert bounding_box.max_corner.x.m == 0.5
+    assert bounding_box.max_corner.y.m == -0.5
+    assert bounding_box.max_corner.z.m == 1
+
+    # Test center
+    center = bounding_box.center
+    assert center.x.m == 0
+    assert center.y.m == -0.5
+    assert center.z.m == 1
+
+
+def test_get_body_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a body."""
+    design = modeler.create_design("body_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    bounding_box = body.bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.min_corner.z.m == 0
+    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
+    assert bounding_box.max_corner.z.m == 1
+
+    # Test center
+    center = bounding_box.center
+    assert center.x.m == 0
+    assert center.y.m == 0
+    assert center.z.m == 0.5

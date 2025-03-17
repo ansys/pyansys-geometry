@@ -57,12 +57,22 @@ from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
+    grpc_curve_to_curve,
     grpc_frame_to_frame,
+    grpc_material_to_material,
     grpc_matrix_to_matrix,
+    grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
 )
-from ansys.geometry.core.designer.beam import Beam, BeamCircularProfile, BeamProfile
+from ansys.geometry.core.designer.beam import (
+    Beam,
+    BeamCircularProfile,
+    BeamCrossSectionInfo,
+    BeamProfile,
+    BeamProperties,
+    SectionAnchorType,
+)
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
@@ -78,10 +88,19 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.auxiliary import (
+    get_beams_from_ids,
+    get_bodies_from_ids,
+    get_edges_from_ids,
+    get_faces_from_ids,
+)
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
+from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
+from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -143,7 +162,6 @@ class Design(Component):
         self._beam_profiles = {}
         self._design_id = ""
         self._is_active = False
-        self._is_closed = False
         self._modeler = modeler
 
         # Check whether we want to process an existing design or create a new one.
@@ -189,13 +207,13 @@ class Design(Component):
 
     @property
     def is_closed(self) -> bool:
-        """Whether the design is closed."""
-        return self._is_closed
+        """Whether the design is closed (i.e. not active)."""
+        return not self._is_active
 
     def close(self) -> None:
         """Close the design."""
         # Check if the design is already closed
-        if self._is_closed:
+        if self.is_closed:
             self._grpc_client.log.warning(f"Design {self.name} is already closed.")
             return
 
@@ -207,15 +225,11 @@ class Design(Component):
             self._grpc_client.log.warning("Ignoring response and assuming the design is closed.")
 
         # Consider the design closed (even if the close request failed)
-        self._is_closed = True
+        self._is_active = False
 
     @protect_grpc
     def _activate(self, called_after_design_creation: bool = False) -> None:
         """Activate the design."""
-        # Deactivate all designs first
-        for design in self._modeler._designs.values():
-            design._is_active = False
-
         # Activate the current design
         if not called_after_design_creation:
             self._design_stub.PutActive(EntityIdentifier(id=self._design_id))
@@ -312,10 +326,7 @@ class Design(Component):
         file_location.write_bytes(received_bytes)
         self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
 
-    def __export_and_download_legacy(
-        self,
-        format: DesignFileFormat = DesignFileFormat.SCDOCX,
-    ) -> bytes:
+    def __export_and_download_legacy(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
 
         Notes
@@ -325,7 +336,7 @@ class Design(Component):
 
         Parameters
         ----------
-        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
+        format : DesignFileFormat
             Format for the file to save to.
 
         Returns
@@ -357,15 +368,12 @@ class Design(Component):
 
         return received_bytes
 
-    def __export_and_download(
-        self,
-        format: DesignFileFormat = DesignFileFormat.SCDOCX,
-    ) -> bytes:
+    def __export_and_download(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
 
         Parameters
         ----------
-        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
+        format : DesignFileFormat
             Format for the file to save to.
 
         Returns
@@ -388,10 +396,23 @@ class Design(Component):
             DesignFileFormat.SCDOCX,
             DesignFileFormat.STRIDE,
         ]:
-            response = self._design_stub.DownloadExportFile(
-                DownloadExportFileRequest(format=format.value[1])
-            )
-            received_bytes += response.data
+            try:
+                response = self._design_stub.DownloadExportFile(
+                    DownloadExportFileRequest(format=format.value[1])
+                )
+                received_bytes += response.data
+            except Exception:
+                self._grpc_client.log.warning(
+                    f"Failed to download the file in {format.value[0]} format."
+                    " Attempting to stream download."
+                )
+                # Attempt to download the file via streaming
+                received_bytes = bytes()
+                responses = self._design_stub.StreamDownloadExportFile(
+                    DownloadExportFileRequest(format=format.value[1])
+                )
+                for response in responses:
+                    received_bytes += response.data
         else:
             self._grpc_client.log.warning(
                 f"{format.value[0]} format requested is not supported. Ignoring download request."
@@ -502,11 +523,7 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = (
-            "x_t"
-            if self._grpc_client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX)
-            else "xmt_txt"
-        )
+        ext = "xmt_txt" if BackendType.is_linux_service(self._grpc_client.backend_type) else "x_t"
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)
@@ -532,11 +549,7 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = (
-            "x_b"
-            if self._grpc_client.backend_type in (BackendType.LINUX_SERVICE, BackendType.CORE_LINUX)
-            else "xmt_bin"
-        )
+        ext = "xmt_bin" if BackendType.is_linux_service(self._grpc_client.backend_type) else "x_b"
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)
@@ -681,8 +694,8 @@ class Design(Component):
             beams=beams,
             design_points=design_points,
         )
-        self._named_selections[named_selection.name] = named_selection
 
+        self._named_selections[named_selection.name] = named_selection
         self._grpc_client.log.debug(
             f"Named selection {named_selection.name} is successfully created."
         )
@@ -963,13 +976,17 @@ class Design(Component):
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
-    def insert_file(self, file_location: Path | str) -> Component:
+    def insert_file(
+        self, file_location: Path | str, import_options: ImportOptions = ImportOptions()
+    ) -> Component:
         """Insert a file into the design.
 
         Parameters
         ----------
         file_location : ~pathlib.Path | str
             Location on disk where the file is located.
+        import_options : ImportOptions
+            The options to pass into upload file
 
         Returns
         -------
@@ -977,7 +994,7 @@ class Design(Component):
             The newly inserted component.
         """
         # Upload the file to the server
-        filepath_server = self._modeler._upload_file(file_location)
+        filepath_server = self._modeler._upload_file(file_location, import_options=import_options)
 
         # Insert the file into the design
         self._design_stub.Insert(InsertRequest(filepath=filepath_server))
@@ -1139,9 +1156,84 @@ class Design(Component):
             m = Material(material.name, density, properties)
             self.materials.append(m)
 
+        # Create Beams
+        for beam in response.beams:
+            cross_section = BeamCrossSectionInfo(
+                SectionAnchorType(beam.cross_section.section_anchor),
+                beam.cross_section.section_angle,
+                grpc_frame_to_frame(beam.cross_section.section_frame),
+                [
+                    [
+                        TrimmedCurve(
+                            grpc_curve_to_curve(curve.curve),
+                            grpc_point_to_point3d(curve.start),
+                            grpc_point_to_point3d(curve.end),
+                            Interval(curve.interval_start, curve.interval_end),
+                            curve.length,
+                        )
+                        for curve in curve_list.curves
+                    ]
+                    for curve_list in beam.cross_section.section_profile
+                ],
+            )
+            properties = BeamProperties(
+                beam.properties.area,
+                ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
+                beam.properties.warping_constant,
+                beam.properties.ixx,
+                beam.properties.ixy,
+                beam.properties.iyy,
+                ParamUV(beam.properties.shear_center_x, beam.properties.shear_center_y),
+                beam.properties.torsional_constant,
+            )
+
+            new_beam = Beam(
+                beam.id.id,
+                grpc_point_to_point3d(beam.shape.start),
+                grpc_point_to_point3d(beam.shape.end),
+                None,
+                # TODO: Beams need BeamProfiles imported from existing design
+                # https://github.com/ansys/pyansys-geometry/issues/1825
+                self,
+                beam.name,
+                beam.is_deleted,
+                beam.is_reversed,
+                beam.is_rigid,
+                grpc_material_to_material(beam.material),
+                cross_section,
+                properties,
+                beam.shape,
+                beam.type,
+            )
+
+            self._beams.append(new_beam)
+
         # Create NamedSelections
         for ns in response.named_selections:
-            new_ns = NamedSelection(ns.name, self._grpc_client, preexisting_id=ns.id)
+            result = self._named_selections_stub.Get(EntityIdentifier(id=ns.id))
+
+            # This works but is slow -- can use improvement for designs with many named selections
+            bodies = get_bodies_from_ids(self, [body.id for body in result.bodies])
+            faces = get_faces_from_ids(self, [face.id for face in result.faces])
+            edges = get_edges_from_ids(self, [edge.id for edge in result.edges])
+            beams = get_beams_from_ids(self, [beam.id.id for beam in result.beams])
+
+            design_points = []
+            for dp in result.design_points:
+                design_points.append(
+                    DesignPoint(dp.id, "dp: " + dp.id, grpc_point_to_point3d(dp.points[0]), self)
+                )
+
+            new_ns = NamedSelection(
+                ns.name,
+                self._grpc_client,
+                preexisting_id=ns.id,
+                bodies=bodies,
+                faces=faces,
+                edges=edges,
+                beams=beams,
+                design_points=design_points,
+            )
             self._named_selections[new_ns.name] = new_ns
 
         # Create CoordinateSystems
@@ -1199,13 +1291,5 @@ class Design(Component):
         self._named_selections = {}
         self._coordinate_systems = {}
 
-        # Get the previous design id
-        previous_design_id = self._design_id
-
         # Read the existing design
         self.__read_existing_design()
-
-        # If the design id has changed, update the design id in the Modeler
-        if previous_design_id != self._design_id:
-            self._modeler._designs[self._design_id] = self
-            self._modeler._designs.pop(previous_design_id)

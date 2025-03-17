@@ -21,10 +21,20 @@
 # SOFTWARE.
 """Provides plotting for various PyAnsys Geometry objects."""
 
+# First, verify graphics are available
+try:
+    from ansys.geometry.core.misc.checks import run_if_graphics_required
+
+    run_if_graphics_required()
+except ImportError as err:  # pragma: no cover
+    raise err
+
 from itertools import cycle
+from pathlib import Path
 from typing import Any
 
 import numpy as np
+from pygltflib.utils import gltf2glb
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
@@ -33,9 +43,11 @@ from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.designpoint import DesignPoint
+from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
+from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.tools.visualization_interface import (
@@ -236,8 +248,29 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
+        if body.is_suppressed:
+            return
+
         if self.use_service_colors:
-            plotting_options["color"] = body.color
+            faces = body.faces
+            body_color = body.color
+            if not merge:
+                for face in faces:
+                    face_color = face.color
+                    if face_color == DEFAULT_COLOR or face_color[0:7] == DEFAULT_COLOR.lower():
+                        plotting_options["color"] = body_color
+                        plotting_options["opacity"] = body.opacity
+                    else:
+                        plotting_options["color"] = face_color
+                        plotting_options["opacity"] = face.opacity
+                    self._backend.pv_interface.plot(face.tessellate(), **plotting_options)
+                return
+            else:
+                dataset = body.tessellate(merge=True)
+                plotting_options["color"] = body_color
+                plotting_options["opacity"] = body.opacity
+                self._backend.pv_interface.plot(dataset, **plotting_options)
+                return
         # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
         # so if multi_colors is True and merge is True (returns PolyData) then
         # we need to set the color manually
@@ -257,6 +290,34 @@ class GeometryPlotter(PlotterInterface):
         # Edges should ONLY be plotted individually if picking is enabled
         if self._backend._allow_picking:
             self.add_body_edges(body_plot)
+
+    def add_face(self, face: Face, **plotting_options: dict | None) -> None:
+        """Add a face to the scene.
+
+        Parameters
+        ----------
+        face : Face
+            Face to add.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+        """
+        self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
+        dataset = face.tessellate()
+        if self.use_service_colors:
+            face_color = face.color
+            if face_color != DEFAULT_COLOR:
+                plotting_options["color"] = face_color
+                plotting_options["opacity"] = face.opacity
+            else:
+                plotting_options["color"] = face.body.color
+                plotting_options["opacity"] = face.body.opacity
+            self._backend.pv_interface.plot(dataset, **plotting_options)
+            return
+
+        # Otherwise...
+        face_plot = MeshObjectPlot(custom_object=face, mesh=dataset)
+        self._backend.pv_interface.plot(face_plot, **plotting_options)
 
     def add_component(
         self,
@@ -415,6 +476,8 @@ class GeometryPlotter(PlotterInterface):
             self.add_sketch(plottable_object, **plotting_options)
         elif isinstance(plottable_object, (Body, MasterBody)):
             self.add_body(plottable_object, merge_bodies, **plotting_options)
+        elif isinstance(plottable_object, Face):
+            self.add_face(plottable_object, **plotting_options)
         elif isinstance(plottable_object, (Design, Component)):
             self.add_component(plottable_object, merge_component, merge_bodies, **plotting_options)
         elif (
@@ -466,3 +529,57 @@ class GeometryPlotter(PlotterInterface):
                 else:  # Either a PyAnsys Geometry object or a PyVista object
                     lib_objects.append(element)
             return lib_objects
+
+    def export_glb(
+        self, plotting_object: Any = None, filename: str | Path | None = None, **plotting_options
+    ) -> Path:
+        """Export the design to a glb file. Does not support picked objects.
+
+        Parameters
+        ----------
+        plotting_object : Any, default: None
+            Object you can add to the plotter.
+        filename : str | ~pathlib.Path, default: None
+            Path to save a GLB file of the plotter. If None, the file will be saved as
+            temp_glb.glb.
+        **plotting_options : dict, default: None
+            Keyword arguments for the plotter. Arguments depend of the backend implementation
+            you are using.
+
+        Returns
+        -------
+        ~pathlib.Path
+            Path to the exported glb file.
+        """
+        if plotting_object is not None:
+            self.plot(plotting_object, **plotting_options)
+
+        # Depending on whether a name is provided, the file will be saved with the name
+        # provided or with a default name (temp_glb). If a name is provided, the file will
+        # be saved in the current working directory. If a path is provided, the file will be
+        # saved in the provided path. We will also make sure that the file has the .glb extension,
+        # and if not, we will add it.
+        if filename is None:
+            glb_filepath = Path("temp_glb.glb")
+        else:
+            glb_filepath = filename if isinstance(filename, Path) else Path(filename)
+            if glb_filepath.suffix != ".glb":
+                glb_filepath = glb_filepath.with_suffix(".glb")
+
+        # Temporary gltf file to export the scene
+        gltf_filepath = glb_filepath.with_suffix(".gltf")
+
+        # Hide the axes before exporting the gltf and then export it
+        self.backend._pl._scene.hide_axes()
+        self.backend._pl._scene.export_gltf(gltf_filepath)
+
+        # Convert the gltf to glb and remove the gltf file
+        gltf2glb(gltf_filepath)
+        Path.unlink(gltf_filepath)
+
+        # Check if the file was exported correctly
+        if not glb_filepath.exists():  # pragma: no cover
+            raise FileNotFoundError(f"GLB file not found at {glb_filepath}. Export failed.")
+
+        # Finally, return the path to the exported glb file
+        return glb_filepath

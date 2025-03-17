@@ -24,11 +24,19 @@
 from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.beam import Beam
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+
+try:
+    from ansys.tools.visualization_interface.utils.color import Color
+
+    DEFAULT_COLOR = Color.DEFAULT.value
+except ModuleNotFoundError:
+    DEFAULT_COLOR = "#D6F7D1"
 
 
 def get_design_from_component(component: "Component") -> "Design":
@@ -228,3 +236,90 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     return [
         edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids
     ]  # noqa: E501
+
+
+def get_beams_from_ids(design: "Design", beam_ids: list[str]) -> list["Beam"]:
+    """Find the ``Beam`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the beams.
+    beam_ids : list[str]
+        List of beam ids.
+
+    Returns
+    -------
+    list[Beam]
+        List of Beam objects.
+
+    Notes
+    -----
+    This method takes a design and beam ids, and gets their corresponding ``Beam`` objects.
+    """
+    return [beam for beam in design.beams if beam.id in beam_ids]  # noqa: E501
+
+
+def convert_color_to_hex(
+    color: str | tuple[float, float, float] | tuple[float, float, float, float],
+) -> str:
+    """Get the hex string color from input formats.
+
+    Parameters
+    ----------
+    color : str | tuple[float, float, float] | tuple[float, float, float, float]
+        Color to set the body to. This can be a string representing a color name
+        or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
+
+    Returns
+    -------
+    str
+        The hex code string for the color, formatted #rrggbbaa.
+    """
+    import matplotlib.colors as mcolors
+
+    try:
+        if isinstance(color, tuple):
+            # Ensure that all elements are within 0-1 or 0-255 range
+            if all(0 <= c <= 1 for c in color):
+                # Ensure they are floats if in 0-1 range
+                if not all(isinstance(c, float) for c in color):
+                    raise ValueError("RGB values in the 0-1 range must be floats.")
+            elif all(0 <= c <= 255 for c in color):
+                # Ensure they are integers if in 0-255 range
+                if not all(isinstance(c, int) for c in color):
+                    raise ValueError("RGB values in the 0-255 range must be integers.")
+                # Normalize the 0-255 range to 0-1
+                color = tuple(c / 255.0 for c in color)
+            else:
+                raise ValueError("RGB tuple contains mixed ranges or invalid values.")
+
+            color = mcolors.to_hex(color, keep_alpha=True)
+        elif isinstance(color, str):
+            color = mcolors.to_hex(color, keep_alpha=True)
+    except ValueError as err:
+        raise ValueError(f"Invalid color value: {err}")
+
+    return color
+
+
+def convert_opacity_to_hex(opacity: float) -> str:
+    """Get the hex string from an opacity value.
+
+    Parameters
+    ----------
+    opacity : float
+        Opacity to set body to. Must be in the range [0, 1].
+
+    Returns
+    -------
+    The hex code for the opacity formatted #aa
+    """
+    try:
+        # Ensure that the value is within 0-1 range
+        if 0 <= opacity <= 1:
+            return "{:02x}".format(int(opacity * 255))
+        else:
+            raise ValueError("Opacity value must be between 0 and 1.")
+    except ValueError as err:
+        raise ValueError(f"Invalid color value: {err}")

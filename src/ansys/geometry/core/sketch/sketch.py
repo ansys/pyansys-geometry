@@ -28,8 +28,9 @@ from pint import Quantity
 
 from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector2D, Vector3D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
@@ -120,16 +121,24 @@ class Sketch:
         Parameters
         ----------
         translation : Vector3D
-            Vector defining the translation. Meters is the expected unit.
+            Vector defining the translation. Default units are the expected
+            units, otherwise it will be inconsistent.
 
         Returns
         -------
         Sketch
             Revised sketch state ready for further sketch actions.
         """
-        self.plane = Plane(
-            self.plane.origin + translation, self.plane.direction_x, self.plane.direction_y
+        new_origin = Point3D(
+            [
+                self.plane.origin.x.m_as(DEFAULT_UNITS.LENGTH) + translation.x,
+                self.plane.origin.y.m_as(DEFAULT_UNITS.LENGTH) + translation.y,
+                self.plane.origin.z.m_as(DEFAULT_UNITS.LENGTH) + translation.z,
+            ]
         )
+        # Set the same unit system as the plane origin
+        new_origin.unit = self.plane.origin.unit
+        self.plane = Plane(new_origin, self.plane.direction_x, self.plane.direction_y)
         return self
 
     @check_input_types
@@ -874,6 +883,7 @@ class Sketch:
         """
         self._tags[tag] = sketch_collection
 
+    @graphics_required
     def plot(
         self,
         view_2d: bool = False,
@@ -926,6 +936,7 @@ class Sketch:
             pl.plot(self.sketch_polydata_edges(), **plotting_options)
             pl.show(screenshot=screenshot, view_2d=view_2d_dict, **plotting_options)
 
+    @graphics_required
     def plot_selection(
         self,
         view_2d: bool = False,

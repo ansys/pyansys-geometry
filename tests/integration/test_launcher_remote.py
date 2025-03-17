@@ -28,11 +28,15 @@ from grpc import insecure_channel
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.launcher import launch_modeler
-import ansys.platform.instancemanagement as pypim
 import ansys.tools.path.path as atpp
+
+try:
+    import ansys.platform.instancemanagement as pypim
+except ModuleNotFoundError:
+    pytest.skip("PyPIM is not installed", allow_module_level=True)
 
 
 def test_launch_remote_instance(monkeypatch, modeler: Modeler):
@@ -56,7 +60,7 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
     pim_channel = insecure_channel(
         modeler.client._target,
         options=[
-            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+            ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
         ],
     )
     mock_instance.wait_for_ready = create_autospec(mock_instance.wait_for_ready)
@@ -86,7 +90,7 @@ def test_launch_remote_instance(monkeypatch, modeler: Modeler):
     assert mock_instance.wait_for_ready.called
     mock_instance.build_grpc_channel.assert_called_with(
         options=[
-            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+            ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
         ]
     )
 

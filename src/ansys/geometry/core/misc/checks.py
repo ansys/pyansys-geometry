@@ -45,7 +45,7 @@ def ensure_design_is_active(method):
         import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.errors import GeometryRuntimeError
 
-        if pyansys_geometry.DISABLE_MULTIPLE_DESIGN_CHECK:
+        if pyansys_geometry.DISABLE_ACTIVE_DESIGN_CHECK:
             # If the user has disabled the check, then we can skip it
             return method(self, *args, **kwargs)
 
@@ -72,17 +72,6 @@ def ensure_design_is_active(method):
             raise GeometryRuntimeError(
                 "The design has been closed on the backend. Cannot perform any operations on it."
             )
-
-        # Activate the design if it is not active
-        if not design.is_active:
-            # First, check the backend allows for multiple documents
-            if not design._grpc_client.multiple_designs_allowed:
-                raise GeometryRuntimeError(
-                    "The design is not active and multiple designs are "
-                    "not allowed with the current backend."
-                )
-            else:
-                design._activate()
 
         # Finally, call method
         return method(self, *args, **kwargs)
@@ -354,7 +343,12 @@ def min_backend_version(major: int, minor: int, service_pack: int):
     return backend_version_decorator
 
 
-def deprecated_method(alternative: str | None = None, info: str | None = None):
+def deprecated_method(
+    alternative: str | None = None,
+    info: str | None = None,
+    version: str | None = None,
+    remove: str | None = None,
+):
     """Decorate a method as deprecated.
 
     Parameters
@@ -364,6 +358,10 @@ def deprecated_method(alternative: str | None = None, info: str | None = None):
         include the alternative method.
     info : str, default: None
         Additional information to include in the warning message.
+    version : str, default: None
+        Version where the method was deprecated.
+    remove : str, default: None
+        Version where the method will be removed.
     """
 
     def deprecated_decorator(method):
@@ -373,6 +371,10 @@ def deprecated_method(alternative: str | None = None, info: str | None = None):
                 msg += f" Use '{alternative}' instead."
             if info:
                 msg += f" {info}"
+            if version:
+                msg += f" This method was deprecated in version {version}."
+            if remove:
+                msg += f" This method will be removed in version {remove}."
             warnings.warn(msg, DeprecationWarning)
             return method(*args, **kwargs)
 
@@ -381,7 +383,13 @@ def deprecated_method(alternative: str | None = None, info: str | None = None):
     return deprecated_decorator
 
 
-def deprecated_argument(arg: str, alternative: str | None = None, info: str | None = None):
+def deprecated_argument(
+    arg: str,
+    alternative: str | None = None,
+    info: str | None = None,
+    version: str | None = None,
+    remove: str | None = None,
+):
     """Decorate a method argument as deprecated.
 
     Parameters
@@ -393,6 +401,10 @@ def deprecated_argument(arg: str, alternative: str | None = None, info: str | No
         include the alternative argument.
     info : str, default: None
         Additional information to include in the warning message.
+    version : str, default: None
+        Version where the method was deprecated.
+    remove : str, default: None
+        Version where the method will be removed.
     """
 
     def deprecated_decorator(method):
@@ -403,6 +415,10 @@ def deprecated_argument(arg: str, alternative: str | None = None, info: str | No
                     msg += f" Use '{alternative}' instead."
                 if info:
                     msg += f" {info}"
+                if version:
+                    msg += f" This argument was deprecated in version {version}."
+                if remove:
+                    msg += f" This argument will be removed in version {remove}."
                 warnings.warn(msg, DeprecationWarning)
 
             return method(*args, **kwargs)
@@ -410,3 +426,56 @@ def deprecated_argument(arg: str, alternative: str | None = None, info: str | No
         return wrapper
 
     return deprecated_decorator
+
+
+ERROR_GRAPHICS_REQUIRED = (
+    "Graphics are required for this method. Please install the ``graphics`` target "
+    " to use this method. You can install it by running `pip install ansys-geometry-core[graphics]`"
+    " or `pip install ansys-geometry-core[all]`."
+)
+"""Message to display when graphics are required for a method."""
+
+__GRAPHICS_AVAILABLE = None
+"""Global variable to store the result of the graphics imports."""
+
+
+def run_if_graphics_required():
+    """Check if graphics are available."""
+    global __GRAPHICS_AVAILABLE
+    if __GRAPHICS_AVAILABLE is None:
+        try:
+            # Attempt to perform the imports
+            import pygltflib  # noqa: F401
+            import pyvista  # noqa: F401
+            import trame  # noqa: F401
+            import vtk  # noqa: F401
+
+            import ansys.tools.visualization_interface  # noqa: F401
+
+            __GRAPHICS_AVAILABLE = True
+        except (ModuleNotFoundError, ImportError):
+            __GRAPHICS_AVAILABLE = False
+
+    if __GRAPHICS_AVAILABLE is False:
+        raise ImportError(ERROR_GRAPHICS_REQUIRED)
+
+
+def graphics_required(method):
+    """Decorate a method as requiring graphics.
+
+    Parameters
+    ----------
+    method : callable
+        Method to decorate.
+
+    Returns
+    -------
+    callable
+        Decorated method.
+    """
+
+    def wrapper(*args, **kwargs):
+        run_if_graphics_required()
+        return method(*args, **kwargs)
+
+    return wrapper

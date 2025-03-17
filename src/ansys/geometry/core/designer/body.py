@@ -24,7 +24,7 @@
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from enum import Enum, unique
-from functools import wraps
+from functools import cached_property, wraps
 from typing import TYPE_CHECKING, Union
 
 from beartype import beartype as check_input_types
@@ -36,6 +36,7 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
     CopyRequest,
     GetCollisionRequest,
+    GetTessellationRequest,
     MapRequest,
     MirrorRequest,
     RotateRequest,
@@ -51,47 +52,68 @@ from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
+    CombineIntersectBodiesRequest,
+    CombineMergeBodiesRequest,
     ImprintCurvesRequest,
     ProjectCurvesRequest,
     RemoveFacesRequest,
     ShellRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from ansys.api.geometry.v0.models_pb2 import TessellationOptions as GRPCTessellationOptions
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
     grpc_material_to_material,
+    grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
+    trimmed_curve_to_grpc_trimmed_curve,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
+from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.auxiliary import (
+    DEFAULT_COLOR,
+    convert_color_to_hex,
+    convert_opacity_to_hex,
+    get_design_from_body,
+)
 from ansys.geometry.core.misc.checks import (
     check_type,
     check_type_all_elements_in_iterable,
     ensure_design_is_active,
+    graphics_required,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.options import TessellationOptions
+from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
-from ansys.tools.visualization_interface.utils.color import Color
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
     from ansys.geometry.core.designer.component import Component
+
+# TODO: Temporary fix for boolean operations
+# This is a temporary fix for the boolean operations issue. The issue is that the
+# boolean operations are not working as expected with command-based operations. The
+# goal is to fix this issue in the future.
+# https://github.com/ansys/pyansys-geometry/issues/1733
+__TEMPORARY_BOOL_OPS_FIX__ = (99, 0, 0)
 
 
 @unique
@@ -178,6 +200,11 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def opacity(self) -> float:
+        """Get the float value of the opacity for the body."""
+        return
+
+    @abstractmethod
     def set_color(self, color: str | tuple[float, float, float]) -> None:
         """Set the color of the body.
 
@@ -257,6 +284,17 @@ class IBody(ABC):
         -------
         Material
             Material assigned to the body.
+        """
+        return
+
+    @abstractmethod
+    def bounding_box(self) -> BoundingBox:
+        """Get the bounding box of the body.
+
+        Returns
+        -------
+        BoundingBox
+            Bounding box of the body.
         """
         return
 
@@ -529,7 +567,9 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def tessellate(self, merge: bool = False) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(
+        self, merge: bool = False, tessellation_options: TessellationOptions = None
+    ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
         Parameters
@@ -538,6 +578,8 @@ class IBody(ABC):
             Whether to merge the body into a single mesh. When ``False`` (default), the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
+        tessellation_options : TessellationOptions, default: None
+            A set of options to determine the tessellation quality.
 
         Returns
         -------
@@ -816,7 +858,7 @@ class MasterBody(IBody):
     def id(self) -> str:  # noqa: D102
         return self._id
 
-    @property
+    @cached_property
     def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
         return EntityIdentifier(id=self._id)
 
@@ -839,7 +881,7 @@ class MasterBody(IBody):
     @property
     @protect_grpc
     def is_suppressed(self) -> bool:  # noqa: D102
-        response = self._bodies_stub.IsSuppressed(EntityIdentifier(id=self._id))
+        response = self._bodies_stub.IsSuppressed(self._grpc_id)
         return response.result
 
     @is_suppressed.setter
@@ -852,7 +894,7 @@ class MasterBody(IBody):
         """Get the current color of the body."""
         if self._color is None and self.is_alive:
             # Assigning default value first
-            self._color = Color.DEFAULT.value
+            self._color = DEFAULT_COLOR
 
             if self._grpc_client.backend_version < (25, 1, 0):  # pragma: no cover
                 # Server does not support color retrieval before version 25.1.0
@@ -861,15 +903,24 @@ class MasterBody(IBody):
                 )
             else:
                 # Fetch color from the server if it's not cached
-                color_response = self._bodies_stub.GetColor(EntityIdentifier(id=self._id))
+                color_response = self._bodies_stub.GetColor(self._grpc_id)
                 if color_response.color:
-                    self._color = mcolors.to_hex(color_response.color)
+                    self._color = mcolors.to_hex(color_response.color, keep_alpha=True)
 
         return self._color
 
+    @property
+    def opacity(self) -> float:  # noqa: D102
+        opacity_hex = self._color[7:]
+        return int(opacity_hex, 16) / 255 if opacity_hex else 1
+
     @color.setter
-    def color(self, value: str | tuple[float, float, float]):  # noqa: D102
+    def color(self, value: str | tuple[float, float, float]) -> None:  # noqa: D102
         self.set_color(value)
+
+    @opacity.setter
+    def opacity(self, value: float) -> None:  # noqa: D102
+        self.set_opacity(value)
 
     @property
     def is_surface(self) -> bool:  # noqa: D102
@@ -937,6 +988,18 @@ class MasterBody(IBody):
     @material.setter
     def material(self, value: Material):  # noqa: D102
         self.assign_material(value)
+
+    @property
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def bounding_box(self) -> BoundingBox:  # noqa: D102
+        self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
+        result = self._bodies_stub.GetBoundingBox(self._grpc_id).box
+
+        min_corner = grpc_point_to_point3d(result.min)
+        max_corner = grpc_point_to_point3d(result.max)
+        center = grpc_point_to_point3d(result.center)
+        return BoundingBox(min_corner, max_corner, center)
 
     @protect_grpc
     @check_input_types
@@ -1087,7 +1150,7 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Setting body {self.id}, as suppressed: {suppressed}.")
         self._bodies_stub.SetSuppressed(
             SetSuppressedRequest(
-                bodies=[EntityIdentifier(id=self.id)],
+                bodies=[self._grpc_id],
                 is_suppressed=suppressed,
             )
         )
@@ -1095,31 +1158,12 @@ class MasterBody(IBody):
     @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
-    def set_color(self, color: str | tuple[float, float, float]) -> None:
+    def set_color(
+        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+    ) -> None:
         """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
-
-        try:
-            if isinstance(color, tuple):
-                # Ensure that all elements are within 0-1 or 0-255 range
-                if all(0 <= c <= 1 for c in color):
-                    # Ensure they are floats if in 0-1 range
-                    if not all(isinstance(c, float) for c in color):
-                        raise ValueError("RGB values in the 0-1 range must be floats.")
-                elif all(0 <= c <= 255 for c in color):
-                    # Ensure they are integers if in 0-255 range
-                    if not all(isinstance(c, int) for c in color):
-                        raise ValueError("RGB values in the 0-255 range must be integers.")
-                    # Normalize the 0-255 range to 0-1
-                    color = tuple(c / 255.0 for c in color)
-                else:
-                    raise ValueError("RGB tuple contains mixed ranges or invalid values.")
-
-                color = mcolors.to_hex(color)
-            elif isinstance(color, str):
-                color = mcolors.to_hex(color)
-        except ValueError as err:
-            raise ValueError(f"Invalid color value: {err}")
+        color = convert_color_to_hex(color)
 
         self._bodies_stub.SetColor(
             SetColorRequest(
@@ -1128,6 +1172,16 @@ class MasterBody(IBody):
             )
         )
         self._color = color
+
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def set_opacity(self, opacity: float) -> None:
+        """Set the opacity of the body."""
+        self._grpc_client.log.debug(f"Setting body opacity of {self.id} to {opacity}.")
+        opacity = convert_opacity_to_hex(opacity)
+
+        new_color = self._color[0:7] + opacity
+        self.set_color(new_color)
 
     @protect_grpc
     @check_input_types
@@ -1217,8 +1271,12 @@ class MasterBody(IBody):
         return Body(body_id, response.name, parent, tb)
 
     @protect_grpc
+    @graphics_required
     def tessellate(  # noqa: D102
-        self, merge: bool = False, transform: Matrix44 = IDENTITY_MATRIX44
+        self,
+        merge: bool = False,
+        transform: Matrix44 = IDENTITY_MATRIX44,
+        tess_options: TessellationOptions = None,
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1230,10 +1288,47 @@ class MasterBody(IBody):
 
         # cache tessellation
         if not self._tessellation:
-            resp = self._bodies_stub.GetTessellation(self._grpc_id)
-            self._tessellation = resp.face_tessellation.values()
+            if tess_options is not None:
+                request = GetTessellationRequest(
+                    id=self._grpc_id,
+                    options=GRPCTessellationOptions(
+                        surface_deviation=tess_options.surface_deviation,
+                        angle_deviation=tess_options.angle_deviation,
+                        maximum_aspect_ratio=tess_options.max_aspect_ratio,
+                        maximum_edge_length=tess_options.max_edge_length,
+                        watertight=tess_options.watertight,
+                    ),
+                )
+                try:
+                    resp = self._bodies_stub.GetTessellationWithOptions(request)
+                    self._tessellation = {
+                        str(face_id): tess_to_pd(face_tess)
+                        for face_id, face_tess in resp.face_tessellation.items()
+                    }
+                except Exception:
+                    tessellation_map = {}
+                    for response in self._bodies_stub.GetTessellationStream(request):
+                        for key, value in response.face_tessellation.items():
+                            tessellation_map[key] = tess_to_pd(value)
 
-        pdata = [tess_to_pd(tess).transform(transform) for tess in self._tessellation]
+                    self._tessellation = tessellation_map
+            else:
+                try:
+                    resp = self._bodies_stub.GetTessellation(self._grpc_id)
+                    self._tessellation = {
+                        str(face_id): tess_to_pd(face_tess)
+                        for face_id, face_tess in resp.face_tessellation.items()
+                    }
+                except Exception:
+                    tessellation_map = {}
+                    request = GetTessellationRequest(self._grpc_id)
+                    for response in self._bodies_stub.GetTessellationStream(request):
+                        for key, value in response.face_tessellation.items():
+                            tessellation_map[key] = tess_to_pd(value)
+
+                    self._tessellation = tessellation_map
+
+        pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
         comp = pv.MultiBlock(pdata)
 
         if merge:
@@ -1393,7 +1488,7 @@ class Body(IBody):
     def id(self) -> str:  # noqa: D102
         return self._id
 
-    @property
+    @cached_property
     def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
         return EntityIdentifier(id=self._id)
 
@@ -1425,9 +1520,17 @@ class Body(IBody):
     def color(self) -> str:  # noqa: D102
         return self._template.color
 
+    @property
+    def opacity(self) -> float:  # noqa: D102
+        return self._template.opacity
+
     @color.setter
     def color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
         return self._template.set_color(color)
+
+    @opacity.setter
+    def opacity(self, opacity: float) -> None:  # noqa: D102
+        return self._template.set_opacity(opacity)
 
     @property
     def parent_component(self) -> "Component":  # noqa: D102
@@ -1438,7 +1541,7 @@ class Body(IBody):
     @ensure_design_is_active
     def faces(self) -> list[Face]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
-        grpc_faces = self._template._bodies_stub.GetFaces(EntityIdentifier(id=self.id))
+        grpc_faces = self._template._bodies_stub.GetFaces(self._grpc_id)
         return [
             Face(
                 grpc_face.id,
@@ -1455,7 +1558,7 @@ class Body(IBody):
     @ensure_design_is_active
     def edges(self) -> list[Edge]:  # noqa: D102
         self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
-        grpc_edges = self._template._bodies_stub.GetEdges(EntityIdentifier(id=self.id))
+        grpc_edges = self._template._bodies_stub.GetEdges(self._grpc_id)
         return [
             Edge(
                 grpc_edge.id,
@@ -1521,6 +1624,10 @@ class Body(IBody):
     def material(self, value: Material):  # noqa: D102
         self._template.material = value
 
+    @property
+    def bounding_box(self) -> BoundingBox:  # noqa: D102
+        return self._template.bounding_box
+
     @ensure_design_is_active
     def assign_material(self, material: Material) -> None:  # noqa: D102
         self._template.assign_material(material)
@@ -1542,30 +1649,60 @@ class Body(IBody):
     @protect_grpc
     @ensure_design_is_active
     def imprint_curves(  # noqa: D102
-        self, faces: list[Face], sketch: Sketch
+        self, faces: list[Face], sketch: Sketch = None, trimmed_curves: list[TrimmedCurve] = None
     ) -> tuple[list[Edge], list[Face]]:
+        """Imprint curves onto the specified faces using a sketch or edges.
+
+        Parameters
+        ----------
+        faces : list[Face]
+            The list of faces to imprint the curves onto.
+        sketch : Sketch, optional
+            The sketch containing curves to imprint.
+        trimmed_curves : list[TrimmedCurve], optional
+            The list of curves to be imprinted. If sketch is provided, this parameter is ignored.
+
+        Returns
+        -------
+        tuple[list[Edge], list[Face]]
+            A tuple containing the list of new edges and faces created by the imprint operation.
+        """
+        if sketch is None and self._template._grpc_client.backend_version < (25, 2, 0):
+            raise ValueError(
+                "A sketch must be provided for imprinting when using API versions below 25.2.0."
+            )
+
+        if sketch is None and trimmed_curves is None:
+            raise ValueError("Either a sketch or edges must be provided for imprinting.")
+
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
         for provided_face in faces:
-            is_found = False
-            for body_face in body_faces:
-                if provided_face.id == body_face.id:
-                    is_found = True
-                    break
-            if not is_found:
+            if not any(provided_face.id == body_face.id for body_face in body_faces):
                 raise ValueError(f"Face with ID {provided_face.id} is not part of this body.")
 
         self._template._grpc_client.log.debug(
-            f"Imprinting curves provided on {self.id} "
-            + f"for faces {[face.id for face in faces]}."
+            f"Imprinting curves on {self.id} for faces {[face.id for face in faces]}."
         )
+
+        curves = None
+        grpc_trimmed_curves = None
+
+        if sketch:
+            curves = sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces)
+
+        if trimmed_curves:
+            grpc_trimmed_curves = [
+                trimmed_curve_to_grpc_trimmed_curve(curve) for curve in trimmed_curves
+            ]
 
         imprint_response = self._template._commands_stub.ImprintCurves(
             ImprintCurvesRequest(
                 body=self._id,
-                curves=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
+                curves=curves,
                 faces=[face._id for face in faces],
-                plane=plane_to_grpc_plane(sketch.plane),
+                plane=plane_to_grpc_plane(sketch.plane) if sketch else None,
+                trimmed_curves=grpc_trimmed_curves,
             )
         )
 
@@ -1717,9 +1854,11 @@ class Body(IBody):
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
-        self, merge: bool = False
+        self, merge: bool = False, tess_options: TessellationOptions = None
     ) -> Union["PolyData", "MultiBlock"]:
-        return self._template.tessellate(merge, self.parent_component.get_world_transform())
+        return self._template.tessellate(
+            merge, self.parent_component.get_world_transform(), tess_options
+        )
 
     @ensure_design_is_active
     def shell_body(self, offset: Real) -> bool:  # noqa: D102
@@ -1729,6 +1868,7 @@ class Body(IBody):
     def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
         return self._template.remove_faces(selection, offset)
 
+    @graphics_required
     def plot(  # noqa: D102
         self,
         merge: bool = True,
@@ -1753,6 +1893,14 @@ class Body(IBody):
         # Add to plotting options as well... to be used by the plotter if necessary
         plotting_options["merge_bodies"] = merge
 
+        # In case that service colors are requested, merge will be ignored.
+        # An info message will be issued to the user.
+        if use_service_colors and merge:
+            self._template._grpc_client.log.info(
+                "Ignoring 'merge' option since 'use_service_colors' is set to True."
+            )
+            plotting_options["merge_bodies"] = False
+
         mesh_object = (
             self if use_service_colors else MeshObjectPlot(self, self.tessellate(merge=merge))
         )
@@ -1761,13 +1909,79 @@ class Body(IBody):
         pl.show(screenshot=screenshot, **plotting_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
+        if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
+            self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
+        else:
+            self.__generic_boolean_command(
+                other, keep_other, "intersect", "bodies do not intersect"
+            )
 
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
+        if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
+            self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
+        else:
+            self.__generic_boolean_command(
+                other, keep_other, "subtract", "empty (complete) subtraction"
+            )
 
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
-        self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
+        if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
+            self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
+        else:
+            self.__generic_boolean_command(other, False, "unite", "union operation failed")
+
+    @protect_grpc
+    @reset_tessellation_cache
+    @ensure_design_is_active
+    @check_input_types
+    def __generic_boolean_command(
+        self,
+        other: Union["Body", Iterable["Body"]],
+        keep_other: bool,
+        type_bool_op: str,
+        err_bool_op: str,
+    ) -> None:
+        parent_design = get_design_from_body(self)
+        other_bodies = other if isinstance(other, Iterable) else [other]
+        if type_bool_op == "intersect":
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [self._grpc_id]
+            request = CombineIntersectBodiesRequest(
+                target_selection=target_ids,
+                tool_selection=body_ids,
+                subtract_from_target=False,
+                keep_cutter=keep_other,
+            )
+            response = self._template._commands_stub.CombineIntersectBodies(request)
+        elif type_bool_op == "subtract":
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [self._grpc_id]
+            request = CombineIntersectBodiesRequest(
+                target_selection=target_ids,
+                tool_selection=body_ids,
+                subtract_from_target=True,
+                keep_cutter=keep_other,
+            )
+            response = self._template._commands_stub.CombineIntersectBodies(request)
+        elif type_bool_op == "unite":
+            bodies = [self]
+            bodies.extend(other_bodies)
+            body_ids = [body._grpc_id for body in bodies]
+            request = CombineMergeBodiesRequest(target_selection=body_ids)
+            response = self._template._commands_stub.CombineMergeBodies(request)
+        else:
+            raise ValueError("Unknown operation requested")
+        if not response.success:
+            raise ValueError(
+                f"Operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
+                f"Involving bodies:{self}, {other_bodies}"
+            )
+
+        if not keep_other:
+            for b in other_bodies:
+                b.parent_component.delete_body(b)
+
+        parent_design._update_design_inplace()
 
     @protect_grpc
     @reset_tessellation_cache

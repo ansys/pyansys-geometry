@@ -29,6 +29,7 @@ from typing import Optional
 import warnings
 
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.checks import deprecated_method
 
 # TODO: Remove this context and filter once the protobuf UserWarning issue is downgraded to INFO
 # https://github.com/grpc/grpc/issues/37609
@@ -53,7 +54,7 @@ from ansys.api.dbu.v0.admin_pb2 import (
 )
 from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from ansys.geometry.core.connection.backend import BackendType
-from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG, PyGeometryCustomAdapter
@@ -157,8 +158,8 @@ class GrpcClient:
     @check_input_types
     def __init__(
         self,
-        host: str = DEFAULT_HOST,
-        port: str | int = DEFAULT_PORT,
+        host: str = pygeom_defaults.DEFAULT_HOST,
+        port: str | int = pygeom_defaults.DEFAULT_PORT,
         channel: grpc.Channel | None = None,
         remote_instance: Optional["Instance"] = None,
         docker_instance: LocalDockerInstance | None = None,
@@ -182,7 +183,8 @@ class GrpcClient:
             self._channel = grpc.insecure_channel(
                 self._target,
                 options=[
-                    ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+                    ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
+                    ("grpc.max_send_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
                 ],
             )
 
@@ -224,18 +226,6 @@ class GrpcClient:
 
         # Store the backend type
         self._backend_type = backend_type
-        self._multiple_designs_allowed = (
-            False
-            if backend_type
-            in (
-                BackendType.DISCOVERY,
-                BackendType.LINUX_SERVICE,
-                BackendType.CORE_LINUX,
-                BackendType.CORE_WINDOWS,
-                BackendType.DISCOVERY_HEADLESS,
-            )
-            else True
-        )
 
         # retrieve the backend version
         if hasattr(grpc_backend_response, "version"):
@@ -277,15 +267,20 @@ class GrpcClient:
         return self._backend_version
 
     @property
+    @deprecated_method(
+        info="Multiple designs for the same service are no longer supported.",
+        version="0.9.0",
+        remove="0.11.0",
+    )
     def multiple_designs_allowed(self) -> bool:
         """Flag indicating whether multiple designs are allowed.
 
         Notes
         -----
-        This method will return ``False`` if the backend type is ``Discovery`` or
-        ``Linux Service``. Otherwise, it will return ``True``.
+        Currently, only one design is allowed per service. This method will always
+        return ``False``.
         """
-        return self._multiple_designs_allowed
+        return False
 
     @property
     def channel(self) -> grpc.Channel:

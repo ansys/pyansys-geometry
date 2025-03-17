@@ -24,6 +24,10 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Iterable, Union
 
+from beartype import beartype as check_input_types
+from pint import Quantity
+
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
     CombineIntersectBodiesRequest,
@@ -37,13 +41,18 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ExtrudeFacesUpToRequest,
     FilletRequest,
     FullFilletRequest,
+    ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
+    MoveRotateRequest,
+    MoveTranslateRequest,
+    OffsetFacesSetRadiusRequest,
     PatternRequest,
     RenameObjectRequest,
     ReplaceFaceRequest,
     RevolveFacesByHelixRequest,
     RevolveFacesRequest,
     RevolveFacesUpToRequest,
+    RoundInfoRequest,
     SplitBodyRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
@@ -54,6 +63,7 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
+from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
@@ -70,6 +80,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.typing import Real
 
@@ -747,6 +758,58 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
+    def modify_circular_pattern(
+        self,
+        selection: Union["Face", list["Face"]],
+        circular_count: int = 0,
+        linear_count: int = 0,
+        step_angle: Real = 0.0,
+        step_linear: Real = 0.0,
+    ) -> bool:
+        """Modify a circular pattern. Leave an argument at 0 for it to remain unchanged.
+
+        Parameters
+        ----------
+        selection : Face | list[Face]
+            Faces that belong to the pattern.
+        circular_count : int, default: 0
+            How many members are in the circular pattern.
+        linear_count : int, default: 0
+            How many times the circular pattern repeats along the radial lines for a
+            two-dimensional pattern.
+        step_angle : Real, default: 0.0
+            Defines the circular angle.
+        step_linear : Real, default: 0.0
+            Defines the step, along the radial lines, for a pattern dimension greater than 1.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face] = selection if isinstance(selection, list) else [selection]
+
+        check_type_all_elements_in_iterable(selection, Face)
+
+        for object in selection:
+            object.body._reset_tessellation_cache()
+
+        result = self._commands_stub.ModifyCircularPattern(
+            ModifyCircularPatternRequest(
+                selection=[object._grpc_id for object in selection],
+                circular_count=circular_count,
+                linear_count=linear_count,
+                step_angle=step_angle,
+                step_linear=step_linear,
+            )
+        )
+
+        return result.result.success
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
     def create_fill_pattern(
         self,
         selection: Union["Face", list["Face"]],
@@ -1092,15 +1155,15 @@ class GeometryCommands:
         Parameters
         ----------
         bodies : list[Body]
-            Bodies to split
+            Bodies to split.
         plane : Plane
             Plane to split with
         slicers : Edge | list[Edge] | Face | list[Face]
-            Slicers to split with
+            Slicers to split with.
         faces : list[Face]
-            Faces to split with
+            Faces to split with.
         extendFaces : bool
-            Extend faces if split with faces
+            Extend faces if split with faces.
 
         Returns
         -------
@@ -1149,129 +1212,159 @@ class GeometryCommands:
 
         return result.success
 
-    def intersect_bodies(
-        self,
-        main_body: "Body",
-        other_bodies: Union["Body", Iterable["Body"]],
-        keep_other: bool = False,
-    ) -> bool:
-        """Intersect a body with other bodies.
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def get_round_info(self, face: "Face") -> tuple[bool, Real]:
+        """Get info on the rounding of a face.
 
         Parameters
         ----------
-        main_body : Body
-            Main body to intersect with.
-        other_bodies : Body | list[Body]
-            Other bodies to intersect with.
-        keep_other : bool, default: False
-            Keep the other bodies if ``True``.
+        Face
+            The design face to get round info on.
+
+        Returns
+        -------
+        tuple[bool, Real]
+            ``True`` if round is aligned with face's U-parameter direction, ``False`` otherwise.
+            Radius of the round.
+        """
+        result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))
+
+        return (result.along_u, result.radius)
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def move_translate(
+        self,
+        selection: NamedSelection,
+        direction: UnitVector3D,
+        distance: Distance | Quantity | Real,
+    ) -> bool:
+        """Move a selection by a distance in a direction.
+
+        Parameters
+        ----------
+        selection : NamedSelection
+            Named selection to move.
+        direction : UnitVector3D
+            Direction to move in.
+        distance : Distance | Quantity | Real
+            Distance to move. Default units are meters.
 
         Returns
         -------
         bool
             ``True`` when successful, ``False`` when failed.
         """
-        self.__generic_boolean_command(
-            main_body, other_bodies, keep_other, "intersect", "Intersecting bodies failed."
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+
+        result = self._commands_stub.MoveTranslate(
+            MoveTranslateRequest(
+                selection=[EntityIdentifier(id=selection.id)],
+                direction=unit_vector_to_grpc_direction(direction),
+                distance=translation_magnitude,
+            )
         )
-        return True
 
-    def subtract_bodies(
-        self,
-        main_body: "Body",
-        other_bodies: Union["Body", Iterable["Body"]],
-        keep_other: bool = False,
-    ) -> bool:
-        """Subtract a body from other bodies.
-
-        Parameters
-        ----------
-        main_body : Body
-            Main body to subtract from.
-        other_bodies : Body | list[Body]
-            Other bodies to subtract.
-        keep_other : bool, default: False
-            Keep the other bodies if ``True``.
-
-        Returns
-        -------
-        bool
-            ``True`` when successful.
-        """
-        self.__generic_boolean_command(
-            main_body, other_bodies, keep_other, "subtract", "Subtracting bodies failed."
-        )
-        return True
-
-    def unite(self, main_body: "Body", other_bodies: Union["Body", Iterable["Body"]]) -> bool:
-        """Unite a body with other bodies.
-
-        Parameters
-        ----------
-        main_body : Body
-            Main body to unite with.
-        other_bodies : Body | list[Body]
-            Other bodies to unite.
-
-        Returns
-        -------
-        bool
-            ``True`` when successful.
-        """
-        self.__generic_boolean_command(
-            main_body, other_bodies, False, "unite", "Uniting bodies failed."
-        )
-        return True
+        return result.success
 
     @protect_grpc
+    @check_input_types
     @min_backend_version(25, 2, 0)
-    def __generic_boolean_command(
+    def move_rotate(
         self,
-        main: "Body",
-        other: Union["Body", Iterable["Body"]],
-        keep_other: bool,
-        type_bool_op: str,
-        err_bool_op: str,
-    ) -> None:
-        parent_design = get_design_from_body(main)
-        other_bodies = other if isinstance(other, Iterable) else [other]
-        if type_bool_op == "intersect":
-            body_ids = [body._grpc_id for body in other_bodies]
-            target_ids = [main._grpc_id]
-            request = CombineIntersectBodiesRequest(
-                target_selection=target_ids,
-                tool_selection=body_ids,
-                subtract_from_target=False,
-                keep_cutter=keep_other,
-            )
-            response = self._commands_stub.CombineIntersectBodies(request)
-        elif type_bool_op == "subtract":
-            body_ids = [body._grpc_id for body in other_bodies]
-            target_ids = [main._grpc_id]
-            request = CombineIntersectBodiesRequest(
-                target_selection=target_ids,
-                tool_selection=body_ids,
-                subtract_from_target=True,
-                keep_cutter=keep_other,
-            )
-            response = self._commands_stub.CombineIntersectBodies(request)
-        elif type_bool_op == "unite":
-            bodies = [main]
-            bodies.extend(other_bodies)
-            body_ids = [body._grpc_id for body in bodies]
-            request = CombineMergeBodiesRequest(target_selection=body_ids)
-            response = self._commands_stub.CombineMergeBodies(request)
-        else:
-            raise ValueError("Unknown operation requested")
+        selection: NamedSelection,
+        axis: Line,
+        angle: Angle | Quantity | Real,
+    ) -> dict[str, Union[bool, Real]]:
+        """Rotate a selection by an angle about a given axis.
 
-        if not response.success:
-            raise ValueError(
-                f"Operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
-                f"Involving bodies:{main}, {other_bodies}"
+        Parameters
+        ----------
+        selection : NamedSelection
+            Named selection to move.
+        axis : Line
+            Direction to move in.
+        Angle : Angle | Quantity | Real
+            Angle to rotate by. Default units are radians.
+
+        Returns
+        -------
+        dict[str, Union[bool, Real]]
+            Dictionary containing the useful output from the command result.
+            Keys are success, modified_bodies, modified_faces, modified_edges.
+        """
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        rotation_angle = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
+
+        response = self._commands_stub.MoveRotate(
+            MoveRotateRequest(
+                selection=[EntityIdentifier(id=selection.id)],
+                axis=line_to_grpc_line(axis),
+                angle=rotation_angle,
             )
+        )
 
-        if not keep_other:
-            for b in other_bodies:
-                b.parent_component.delete_body(b)
+        result = {}
+        result["success"] = response.success
+        result["modified_bodies"] = response.modified_bodies
+        result["modified_faces"] = response.modified_faces
+        result["modified_edges"] = response.modified_edges
 
-        parent_design._update_design_inplace()
+        return result
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def offset_faces_set_radius(
+        self,
+        faces: Union["Face", list["Face"]],
+        radius: Distance | Quantity | Real,
+        copy: bool = False,
+        offset_mode: OffsetMode = OffsetMode.IGNORE_RELATIONSHIPS,
+        extrude_type: ExtrudeType = ExtrudeType.FORCE_INDEPENDENT,
+    ) -> bool:
+        """Offset faces with a radius.
+
+        Parameters
+        ----------
+        faces : Face | list[Face]
+            Faces to offset.
+        radius : Distance | Quantity | Real
+            Radius of the offset.
+        copy : bool, default: False
+            Copy the face and move it instead of offsetting the original face if ``True``.
+        offset_mode : OffsetMode, default: OffsetMode.MOVE_FACES_TOGETHER
+            Mode of how to handle offset relationships.
+        extrude_type : ExtrudeType, default: ExtrudeType.FORCE_INDEPENDENT
+            Type of extrusion to be performed.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        faces: list[Face] = faces if isinstance(faces, list) else [faces]
+        check_type_all_elements_in_iterable(faces, Face)
+
+        for face in faces:
+            face.body._reset_tessellation_cache()
+
+        radius = radius if isinstance(radius, Distance) else Distance(radius)
+        radius_magnitude = radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+
+        result = self._commands_stub.OffsetFacesSetRadius(
+            OffsetFacesSetRadiusRequest(
+                faces=[face._grpc_id for face in faces],
+                radius=radius_magnitude,
+                copy=copy,
+                offset_mode=offset_mode.value,
+                extrude_type=extrude_type.value,
+            )
+        )
+
+        return result.success

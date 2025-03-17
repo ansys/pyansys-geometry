@@ -38,11 +38,7 @@ from ansys.geometry.core.connection.conversions import (
     trimmed_curve_to_grpc_trimmed_curve,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.connection.defaults import (
-    DEFAULT_HOST,
-    DEFAULT_PORT,
-    GEOMETRY_SERVICE_DOCKER_IMAGE,
-)
+import ansys.geometry.core.connection.defaults as defaults
 from ansys.geometry.core.connection.docker_instance import (
     GeometryContainers,
     LocalDockerInstance,

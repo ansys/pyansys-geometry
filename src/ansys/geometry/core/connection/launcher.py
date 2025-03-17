@@ -27,8 +27,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
-from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
-from ansys.geometry.core.connection.defaults import DEFAULT_PIM_CONFIG, DEFAULT_PORT
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import (
     _HAS_DOCKER,
     GeometryContainers,
@@ -290,7 +289,7 @@ def launch_remote_modeler(
 
 
 def launch_docker_modeler(
-    port: int = DEFAULT_PORT,
+    port: int = pygeom_defaults.DEFAULT_PORT,
     connect_to_existing_service: bool = True,
     restart_if_existing_service: bool = False,
     name: str | None = None,
@@ -493,8 +492,12 @@ def launch_modeler_with_spaceclaim_and_pimlight(
     )
 
 
-@deprecated_argument(arg="log_level", alternative="server_log_level")
-@deprecated_argument(arg="logs_folder", alternative="server_logs_folder")
+@deprecated_argument(
+    arg="log_level", alternative="server_log_level", version="0.6.2", remove="0.10.0"
+)
+@deprecated_argument(
+    arg="logs_folder", alternative="server_logs_folder", version="0.6.2", remove="0.10.0"
+)
 def launch_modeler_with_geometry_service(
     product_version: int = None,
     host: str = "localhost",
@@ -627,7 +630,9 @@ def launch_modeler_with_geometry_service(
     )
 
 
-@deprecated_argument(arg="log_level", alternative="server_log_level")
+@deprecated_argument(
+    arg="log_level", alternative="server_log_level", version="0.6.2", remove="0.10.0"
+)
 def launch_modeler_with_discovery(
     product_version: int = None,
     host: str = "localhost",
@@ -754,7 +759,9 @@ def launch_modeler_with_discovery(
     )
 
 
-@deprecated_argument(arg="log_level", alternative="server_log_level")
+@deprecated_argument(
+    arg="log_level", alternative="server_log_level", version="0.6.2", remove="0.10.0"
+)
 def launch_modeler_with_spaceclaim(
     product_version: int = None,
     host: str = "localhost",
@@ -950,7 +957,7 @@ def _launch_pim_instance(
 
     # If PIM Light is being used and PyPIM configuration is not defined... use defaults.
     if is_pim_light and not os.environ.get("ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG", None):
-        os.environ["ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG"] = DEFAULT_PIM_CONFIG
+        os.environ["ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG"] = pygeom_defaults.DEFAULT_PIM_CONFIG
         pop_out = True
     else:
         pop_out = False
@@ -961,7 +968,7 @@ def _launch_pim_instance(
     instance.wait_for_ready()
     channel = instance.build_grpc_channel(
         options=[
-            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+            ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
         ]
     )
 

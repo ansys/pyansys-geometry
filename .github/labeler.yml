@@ -1,10 +1,10 @@
 documentation:
 - changed-files:
-  - any-glob-to-any-file: 'docs/source/**/*'
+  - any-glob-to-any-file: 'doc/source/**/*'
+  - any-glob-to-any-file: 'README.rst'
 maintenance:
 - changed-files:
   - any-glob-to-any-file: '.github/**/*'
-  - any-glob-to-any-file: '.flake8'
   - any-glob-to-any-file: 'pyproject.toml'
 testing:
 - changed-files:
