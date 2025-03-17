@@ -861,6 +861,7 @@ class GeometryCommands:
         selection: Union["Face", list["Face"]],
         axis: Line,
         angle: Real,
+        extrude_type: ExtrudeType = ExtrudeType.ADD,
     ) -> list["Body"]:
         """Revolve face around an axis.
 
@@ -872,6 +873,8 @@ class GeometryCommands:
             Axis of revolution.
         angle : Real
             Angular distance to revolve.
+        extrude_type : ExtrudeType, default: ExtrudeType.ADD
+            Type of extrusion to be performed.
 
         Returns
         -------
@@ -891,6 +894,7 @@ class GeometryCommands:
                 selection=[object._grpc_id for object in selection],
                 axis=line_to_grpc_line(axis),
                 angle=angle,
+                extrude_type=extrude_type.value,
             )
         )
 
@@ -974,6 +978,7 @@ class GeometryCommands:
         taper_angle: Real,
         right_handed: bool,
         both_sides: bool,
+        extrude_type: ExtrudeType = ExtrudeType.ADD,
     ) -> list["Body"]:
         """Revolve face around an axis in a helix shape.
 
@@ -995,6 +1000,8 @@ class GeometryCommands:
             Right-handed helix if ``True``, left-handed if ``False``.
         both_sides : bool,
             Create on both sides if ``True``, one side if ``False``.
+        extrude_type : ExtrudeType, default: ExtrudeType.ADD
+            Type of extrusion to be performed.
 
         Returns
         -------
@@ -1019,6 +1026,7 @@ class GeometryCommands:
                 taper_angle=taper_angle,
                 right_handed=right_handed,
                 both_sides=both_sides,
+                extrude_type=extrude_type.value,
             )
         )
 
