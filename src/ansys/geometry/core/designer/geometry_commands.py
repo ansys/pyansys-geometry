@@ -22,7 +22,7 @@
 """Provides tools for pulling geometry."""
 
 from enum import Enum, unique
-from typing import TYPE_CHECKING, Iterable, Union
+from typing import TYPE_CHECKING, Union
 
 from beartype import beartype as check_input_types
 from pint import Quantity
@@ -30,8 +30,6 @@ from pint import Quantity
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
-    CombineIntersectBodiesRequest,
-    CombineMergeBodiesRequest,
     CreateCircularPatternRequest,
     CreateFillPatternRequest,
     CreateLinearPatternRequest,

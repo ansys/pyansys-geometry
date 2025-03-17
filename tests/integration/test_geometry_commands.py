@@ -38,7 +38,7 @@ from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.sketch.sketch import Sketch
 
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_chamfer(modeler: Modeler):
@@ -572,37 +572,39 @@ def test_revolve_faces(modeler: Modeler):
 def test_revolve_faces_with_options(modeler: Modeler):
     # Parameters
     pitch = 0.7
-    inner_diameter = 4 
+    inner_diameter = 4
     width = 7
     height = 3.2
 
     # Cylinder Creation
     design = modeler.create_design("SquareNut")
     sketch = Sketch()
-    sketch.circle(Point2D([0, 0], UNITS.mm), Quantity(inner_diameter/2, UNITS.mm))
+    sketch.circle(Point2D([0, 0], UNITS.mm), Quantity(inner_diameter / 2, UNITS.mm))
     cylinder0 = design.extrude_sketch("SquareNut", sketch, Quantity(height, UNITS.mm))
 
     # Create HexNut
     sketch1 = Sketch()
-    sketch1.polygon(Point2D([0,0]), Distance(width/2,UNITS.mm), 4, Angle(45))
+    sketch1.polygon(Point2D([0, 0]), Distance(width / 2, UNITS.mm), 4, Angle(45))
     hex_nut = design.extrude_sketch("HexNut", sketch1, Quantity(height, UNITS.mm), "+", False)
 
-    copy1 = cylinder0.copy(design, "SquareNut") 
+    copy1 = cylinder0.copy(design, "SquareNut")
     copy2 = hex_nut.copy(design, "SquareNut")
     copy2.subtract(copy1, False)
     design.delete_body(design.bodies[0].id)
     design.delete_body(design.bodies[0].id)
 
     plane2 = Plane(
-        Point3D([0, (width)/2, height], UNITS.mm),
-        direction_x = UnitVector3D([0, 1, 0]),
-        direction_y = UnitVector3D([0, 0, 1])
+        Point3D([0, (width) / 2, height], UNITS.mm),
+        direction_x=UnitVector3D([0, 1, 0]),
+        direction_y=UnitVector3D([0, 0, 1]),
     )
     sketch2 = Sketch(plane2)
-    sketch2.segment(Point2D([-2*pitch, pitch], UNITS.mm), Point2D([3*pitch, 0], UNITS.mm))
-    sketch2.segment(Point2D([3*pitch, 0], UNITS.mm), Point2D([3*pitch, -3*pitch], UNITS.mm))
-    sketch2.segment(Point2D([3*pitch, -3*pitch], UNITS.mm), Point2D([-2*pitch, pitch], UNITS.mm))
-    cut_surface = design.create_surface('Cut', sketch2)
+    sketch2.segment(Point2D([-2 * pitch, pitch], UNITS.mm), Point2D([3 * pitch, 0], UNITS.mm))
+    sketch2.segment(Point2D([3 * pitch, 0], UNITS.mm), Point2D([3 * pitch, -3 * pitch], UNITS.mm))
+    sketch2.segment(
+        Point2D([3 * pitch, -3 * pitch], UNITS.mm), Point2D([-2 * pitch, pitch], UNITS.mm)
+    )
+    cut_surface = design.create_surface("Cut", sketch2)
 
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(1.16587614e-7, UNITS.m**3).m, rel=1e-6, abs=1e-8
@@ -611,8 +613,8 @@ def test_revolve_faces_with_options(modeler: Modeler):
     modeler.geometry_commands.revolve_faces(
         cut_surface.faces,
         Line(Point3D([0, 0, 0], UNITS.mm), UNITVECTOR3D_Z),
-        np.pi*2,
-        ExtrudeType.CUT
+        np.pi * 2,
+        ExtrudeType.CUT,
     )
 
     assert design.bodies[0].volume.m == pytest.approx(
@@ -668,39 +670,41 @@ def test_revolve_faces_by_helix(modeler: Modeler):
 def test_revolve_faces_by_helix_with_options(modeler: Modeler):
     # Parameters
     pitch = 0.7
-    inner_diameter = 4 
+    inner_diameter = 4
     width = 7
     height = 3.2
 
-    thread_length = height - pitch/2
+    thread_length = height - pitch / 2
 
     # Cylinder Creation
     design = modeler.create_design("SquareNut")
     sketch = Sketch()
-    sketch.circle(Point2D([0, 0], UNITS.mm), Quantity(inner_diameter/2, UNITS.mm))
+    sketch.circle(Point2D([0, 0], UNITS.mm), Quantity(inner_diameter / 2, UNITS.mm))
     cylinder0 = design.extrude_sketch("SquareNut", sketch, Quantity(height, UNITS.mm))
 
     # Create HexNut
     sketch1 = Sketch()
-    sketch1.polygon(Point2D([0,0]), Distance(width/2,UNITS.mm), 4, Angle(45))
+    sketch1.polygon(Point2D([0, 0]), Distance(width / 2, UNITS.mm), 4, Angle(45))
     hex_nut = design.extrude_sketch("HexNut", sketch1, Quantity(height, UNITS.mm), "+", False)
 
-    copy1 = cylinder0.copy(design, "SquareNut") 
+    copy1 = cylinder0.copy(design, "SquareNut")
     copy2 = hex_nut.copy(design, "SquareNut")
     copy2.subtract(copy1, False)
     design.delete_body(design.bodies[0].id)
     design.delete_body(design.bodies[0].id)
 
     plane2 = Plane(
-        Point3D([0, (width)/2, height], UNITS.mm),
-        direction_x = UnitVector3D([0, 1, 0]),
-        direction_y = UnitVector3D([0, 0, 1])
+        Point3D([0, (width) / 2, height], UNITS.mm),
+        direction_x=UnitVector3D([0, 1, 0]),
+        direction_y=UnitVector3D([0, 0, 1]),
     )
     sketch2 = Sketch(plane2)
-    sketch2.segment(Point2D([-2*pitch,pitch], UNITS.mm), Point2D([3*pitch, 0], UNITS.mm))
-    sketch2.segment(Point2D([3*pitch, 0], UNITS.mm), Point2D([3*pitch, -3*pitch], UNITS.mm))
-    sketch2.segment(Point2D([3*pitch, -3*pitch], UNITS.mm), Point2D([-2*pitch,pitch], UNITS.mm))
-    cut_surface = design.create_surface('Cut', sketch2)
+    sketch2.segment(Point2D([-2 * pitch, pitch], UNITS.mm), Point2D([3 * pitch, 0], UNITS.mm))
+    sketch2.segment(Point2D([3 * pitch, 0], UNITS.mm), Point2D([3 * pitch, -3 * pitch], UNITS.mm))
+    sketch2.segment(
+        Point2D([3 * pitch, -3 * pitch], UNITS.mm), Point2D([-2 * pitch, pitch], UNITS.mm)
+    )
+    cut_surface = design.create_surface("Cut", sketch2)
 
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(1.16587614e-7, UNITS.m**3).m, rel=1e-6, abs=1e-8
@@ -709,8 +713,8 @@ def test_revolve_faces_by_helix_with_options(modeler: Modeler):
     modeler.geometry_commands.revolve_faces(
         cut_surface.faces,
         Line(Point3D([0, 0, 0], UNITS.mm), UNITVECTOR3D_Z),
-        np.pi*2,
-        ExtrudeType.CUT
+        np.pi * 2,
+        ExtrudeType.CUT,
     )
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(1.06173048542e-07, UNITS.m**3).m, rel=1e-6, abs=1e-8
@@ -722,42 +726,44 @@ def test_revolve_faces_by_helix_with_options(modeler: Modeler):
     while starting_face_count == current_face_count:
         if x > 1000:
             break
-        modeler.geometry_commands.extrude_faces(design.bodies[0].faces[-1], (0.05)/1000)
+        modeler.geometry_commands.extrude_faces(design.bodies[0].faces[-1], (0.05) / 1000)
         current_face_count = len(design.bodies[0].faces)
         x += 1
 
-    thread_height = pitch * ((3**0.5/2))
+    thread_height = pitch * (3**0.5 / 2)
     thread_plane = Plane(
-        Point3D([0, (inner_diameter)/2, 0], UNITS.mm),
+        Point3D([0, (inner_diameter) / 2, 0], UNITS.mm),
         direction_x=UNITVECTOR3D_Y,
-        direction_y=UNITVECTOR3D_Z
+        direction_y=UNITVECTOR3D_Z,
     )
     thread_sketch = Sketch(thread_plane)
-    thread_sketch.segment(Point2D([0,0], UNITS.mm), Point2D([0, pitch/2], UNITS.mm))
+    thread_sketch.segment(Point2D([0, 0], UNITS.mm), Point2D([0, pitch / 2], UNITS.mm))
     thread_sketch.segment(
-        Point2D([0, pitch/2], UNITS.mm), Point2D([thread_height*(3/8), (pitch/2-pitch/8)], UNITS.mm)
+        Point2D([0, pitch / 2], UNITS.mm),
+        Point2D([thread_height * (3 / 8), (pitch / 2 - pitch / 8)], UNITS.mm),
     )
     thread_sketch.segment(
-        Point2D([thread_height*(3/8), (pitch/2-pitch/8)], UNITS.mm),
-        Point2D([thread_height*(3/8), ((pitch/4)/2)], UNITS.mm)
+        Point2D([thread_height * (3 / 8), (pitch / 2 - pitch / 8)], UNITS.mm),
+        Point2D([thread_height * (3 / 8), ((pitch / 4) / 2)], UNITS.mm),
     )
     thread_sketch.segment(
-        Point2D([0,0], UNITS.mm), Point2D([thread_height*(3/8), ((pitch/4)/2)], UNITS.mm)
+        Point2D([0, 0], UNITS.mm), Point2D([thread_height * (3 / 8), ((pitch / 4) / 2)], UNITS.mm)
     )
-    thread_surface = design.create_surface('Thread', thread_sketch)
+    thread_surface = design.create_surface("Thread", thread_sketch)
     dir = UNITVECTOR3D_Z
     axs = UNITVECTOR3D_Z
     modeler.geometry_commands.revolve_faces_by_helix(
         thread_surface.faces[0],
         Line(Point3D([0, 0, 0], UNITS.mm), axs),
         dir,
-        2*thread_length/1000,
-        pitch/1000,0,
+        2 * thread_length / 1000,
+        pitch / 1000,
+        0,
         True,
         True,
-        ExtrudeType.CUT
+        ExtrudeType.CUT,
     )
-    
+
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(1.06173048542e-07, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
@@ -786,7 +792,6 @@ def test_replace_face(modeler: Modeler):
         Quantity(0.992146018366, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
     assert len(base.faces) == 7
-    
 
 
 def test_split_body_by_plane(modeler: Modeler):
