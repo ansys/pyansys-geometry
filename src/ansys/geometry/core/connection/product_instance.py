@@ -427,7 +427,7 @@ def prepare_and_start_backend(
 
         # License server - for Core Geometry Service. If not defined, it will use the default one.
         if "LICENSE_SERVER" in os.environ:
-            pass # Do nothing... the user has defined the license server.
+            pass  # Do nothing... the user has defined the license server.
         elif "ANSRV_GEO_LICENSE_SERVER" in os.environ:
             env_copy["LICENSE_SERVER"] = os.getenv("ANSRV_GEO_LICENSE_SERVER")
         else:
