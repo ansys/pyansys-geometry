@@ -26,7 +26,7 @@ from .._version import GeometryApiProtos, set_proto_version
 from .base.bodies import GRPCBodyService
 
 
-class GRPCServices:
+class _GRPCServices:
     """
     Placeholder for the gRPC services (i.e. stubs).
 
@@ -79,12 +79,12 @@ class GRPCServices:
         if not self._body_service:
             # Import the appropriate body service based on the version
             from .v0.bodies import GRPCBodyServiceV0
-            from .v1.bodies import BodyServiceV1
+            from .v1.bodies import GRPCBodyServiceV1
 
             if self.version == GeometryApiProtos.V0:
                 self._body_service = GRPCBodyServiceV0(self.channel)
             elif self.version == GeometryApiProtos.V1:
-                self._body_service = BodyServiceV1(self.channel)
+                self._body_service = GRPCBodyServiceV1(self.channel)
             else:
                 raise ValueError(f"Unsupported version: {self.version}")
 

@@ -49,8 +49,16 @@ class GeometryApiProtos(Enum):
     @staticmethod
     def get_latest_version() -> "GeometryApiProtos":
         """Get the latest version of the gRPC API protocol."""
-        max_val = max(version.value[0] for version in GeometryApiProtos)
-        return GeometryApiProtos(max_val)
+        val = max(version.value[0] for version in GeometryApiProtos)
+        return GeometryApiProtos.from_int_value(val)
+
+    @staticmethod
+    def from_int_value(version_int: int) -> "GeometryApiProtos":
+        """Get the enumeration value from an integer."""
+        for version in GeometryApiProtos:
+            if version.value[0] == version_int:
+                return version
+        raise ValueError(f"Invalid version integer: {version_int}")
 
     @staticmethod
     def from_string(version_string: str) -> "GeometryApiProtos":
@@ -120,7 +128,7 @@ def set_proto_version(
     if version is None:
         version = GeometryApiProtos.get_latest_version()
         while not version.verify_supported(channel):
-            version = GeometryApiProtos(version.value[0] - 1)
+            version = GeometryApiProtos.from_int_value(version.value[0] - 1)
 
     # Return the version
     return version

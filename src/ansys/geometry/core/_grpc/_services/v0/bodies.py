@@ -24,6 +24,7 @@
 import grpc
 
 from ..base.bodies import GRPCBodyService
+from .conversions import from_measurement_to_server_length, from_point3d_to_point
 
 
 class GRPCBodyServiceV0(GRPCBodyService):
@@ -45,8 +46,30 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         self.stub = BodiesStub(channel)
 
-    def create_sphere_body(self, **kwargs):
+    def create_sphere_body(self, **kwargs) -> dict:
         """Create a sphere body."""
-        # Validate all my inputs are correct
-        self.stub.CreateSphereBody()
-        pass
+        from ansys.api.geometry.v0.bodies_pb2 import CreateSphereBodyRequest
+
+        # Ensure all inputs are passed
+        required_keys = ["name", "parent", "center", "radius"]
+        missing_keys = [key for key in required_keys if key not in kwargs]
+        if missing_keys:
+            raise ValueError(f"Missing required keys: {missing_keys}")
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateSphereBodyRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent"],
+            center=from_point3d_to_point(kwargs["center"]),
+            radius=from_measurement_to_server_length(kwargs["radius"]),
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateSphereBody(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+        }
