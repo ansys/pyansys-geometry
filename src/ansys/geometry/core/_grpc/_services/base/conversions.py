@@ -19,49 +19,38 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing v0 related conversions from PyAnsys Geometry objects to gRPC messages."""
+"""Module containing server-version agnostic conversions."""
 
-from typing import Any
-
-from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
-from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Measurement
 
 
-def from_point3d_to_point(point: Point3D) -> Any:
-    """Convert a ``Point3D`` class to a point gRPC message.
+def from_measurement_to_server_length(input: Measurement) -> float:
+    """Convert a measurement to a length value.
 
     Parameters
     ----------
-    point : Point3D
-        Source point data.
+    value : Measurement
+        Measurement value.
 
     Returns
     -------
-    GRPCPoint
-        Geometry service gRPC point message. The unit is meters.
+    float
+        Length value in server-defined units. By default, meters.
     """
-    return GRPCPoint(
-        x=point.x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        y=point.y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        z=point.z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-    )
+    return input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
 
-def grpc_point_to_point3d(point: GRPCPoint) -> Point3D:
-    """Convert a point gRPC message class to a ``Point3D`` class.
+def from_measurement_to_server_angle(input: Measurement) -> float:
+    """Convert a measurement to an angle value.
 
     Parameters
     ----------
-    point : GRPCPoint
-        Source point data.
+    value : Measurement
+        Measurement value.
 
     Returns
     -------
-    Point3D
-        Converted point.
+    float
+        Angle value in server-defined units. By default, radians.
     """
-    return Point3D(
-        [point.x, point.y, point.z],
-        DEFAULT_UNITS.SERVER_LENGTH,
-    )
+    return input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
