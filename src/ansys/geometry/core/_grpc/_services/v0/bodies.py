@@ -24,7 +24,8 @@
 import grpc
 
 from ..base.bodies import GRPCBodyService
-from .conversions import from_measurement_to_server_length, from_point3d_to_point
+from ..base.conversions import from_measurement_to_server_length
+from .conversions import from_point3d_to_point
 
 
 class GRPCBodyServiceV0(GRPCBodyService):
