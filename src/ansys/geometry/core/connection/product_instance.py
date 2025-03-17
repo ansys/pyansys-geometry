@@ -425,6 +425,14 @@ def prepare_and_start_backend(
                     root_service_folder / "licensingclient"
                 ).as_posix()
 
+        # License server - for Core Geometry Service. If not defined, it will use the default one.
+        if "LICENSE_SERVER" in os.environ:
+            pass # Do nothing... the user has defined the license server.
+        elif "ANSRV_GEO_LICENSE_SERVER" in os.environ:
+            env_copy["LICENSE_SERVER"] = os.getenv("ANSRV_GEO_LICENSE_SERVER")
+        else:
+            env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE", "1055@localhost")
+
         if os.name == "nt":
             # Modify the PATH variable to include the path to the Ansys Geometry Core Service
             env_copy["PATH"] = (
