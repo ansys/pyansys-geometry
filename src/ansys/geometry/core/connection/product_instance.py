@@ -411,9 +411,19 @@ def prepare_and_start_backend(
         env_copy["ANS_DSCO_REMOTE_LOGS_CONFIG"] = "linux"
         env_copy["P_SCHEMA"] = schema_folder.as_posix()
         env_copy["ANSYS_CI_INSTALL"] = cad_integration_folder.as_posix()
-        env_copy[f"ANSYSCL{product_version}_DIR"] = (
-            root_service_folder / "licensingclient"
-        ).as_posix()
+        if product_version:
+            env_copy[f"ANSYSCL{product_version}_DIR"] = (
+                root_service_folder / "licensingclient"
+            ).as_posix()
+        else:
+            # Env var is passed... but no product version is defined. We define all of them.
+            # Starting on 251... We can use the values in the enum ApiVersions.
+            for version in ApiVersions:
+                if version.value < 251:
+                    continue
+                env_copy[f"ANSYSCL{version.value}_DIR"] = (
+                    root_service_folder / "licensingclient"
+                ).as_posix()
 
         if os.name == "nt":
             # Modify the PATH variable to include the path to the Ansys Geometry Core Service
