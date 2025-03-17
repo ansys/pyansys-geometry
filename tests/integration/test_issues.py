@@ -24,7 +24,6 @@
 from pathlib import Path
 
 import numpy as np
-import pytest
 
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
@@ -134,7 +133,6 @@ def test_issue_1304_arc_sketch_creation():
         DEFAULT_UNITS.LENGTH = UNITS.meter
 
 
-@pytest.mark.skip(reason="This test is not working as expected")
 def test_issue_1192_temp_body_on_empty_intersect(modeler: Modeler):
     """Test demonstrating the issue when intersecting two bodies that do not intersect
     and the empty temporal body that gets created."""
