@@ -42,154 +42,154 @@ class GRPCBodyService(ABC):
     @abstractmethod
     def create_sphere_body(self, **kwargs) -> dict:
         """Create a sphere body."""
-        raise NotImplementedError("create_sphere_body method not implemented")
+        pass
 
     @abstractmethod
     def create_extruded_body(self, **kwargs) -> dict:
         """Create an extruded body."""
-        raise NotImplementedError("create_extruded_body method not implemented")
+        pass
 
     @abstractmethod
     def create_sweeping_profile_body(self, **kwargs) -> dict:
         """Create a sweeping profile body."""
-        raise NotImplementedError("create_sweeping_profile_body method not implemented")
+        pass
 
     @abstractmethod
     def create_sweeping_chain(self, **kwargs) -> dict:
         """Create a sweeping chain."""
-        raise NotImplementedError("create_sweeping_chain method not implemented")
+        pass
 
     @abstractmethod
     def create_extruded_body_from_face_profile(self, **kwargs) -> dict:
         """Create an extruded body from a face profile."""
-        raise NotImplementedError("create_extruded_body_from_face_profile method not implemented")
+        pass
 
     @abstractmethod
     def create_extruded_body_from_loft_profiles(self, **kwargs) -> dict:
         """Create an extruded body from loft profiles."""
-        raise NotImplementedError("create_extruded_body_from_loft_profiles method not implemented")
+        pass
 
     @abstractmethod
     def create_planar_body(self, **kwargs) -> dict:
         """Create a planar body."""
-        raise NotImplementedError("create_planar_body method not implemented")
+        pass
 
     @abstractmethod
     def create_body_from_face(self, **kwargs) -> dict:
         """Create a body from a face."""
-        raise NotImplementedError("create_body_from_face method not implemented")
+        pass
 
     @abstractmethod
     def create_surface_body(self, **kwargs) -> dict:
         """Create a surface body."""
-        raise NotImplementedError("create_surface_body method not implemented")
+        pass
 
     @abstractmethod
     def create_surface_body_from_trimmed_curves(self, **kwargs) -> dict:
         """Create a surface body from trimmed curves."""
-        raise NotImplementedError("create_surface_body_from_trimmed_curves method not implemented")
+        pass
 
     @abstractmethod
     def translate(self, **kwargs) -> dict:
         """Translate a body."""
-        raise NotImplementedError("translate method not implemented")
+        pass
 
     @abstractmethod
     def delete(self, **kwargs) -> dict:
         """Delete a body."""
-        raise NotImplementedError("delete method not implemented")
+        pass
 
     @abstractmethod
     def is_suppressed(self, **kwargs) -> dict:
         """Check if a body is suppressed."""
-        raise NotImplementedError("is_suppressed method not implemented")
+        pass
 
     @abstractmethod
     def get_color(self, **kwargs) -> dict:
         """Get the color of a body."""
-        raise NotImplementedError("get_color method not implemented")
+        pass
 
     @abstractmethod
     def get_faces(self, **kwargs) -> dict:
         """Get the faces of a body."""
-        raise NotImplementedError("get_faces method not implemented")
+        pass
 
     @abstractmethod
     def get_edges(self, **kwargs) -> dict:
         """Get the edges of a body."""
-        raise NotImplementedError("get_edges method not implemented")
+        pass
 
     @abstractmethod
     def get_volume(self, **kwargs) -> dict:
         """Get the volume of a body."""
-        raise NotImplementedError("get_volume method not implemented")
+        pass
 
     @abstractmethod
     def get_bounding_box(self, **kwargs) -> dict:
         """Get the bounding box of a body."""
-        raise NotImplementedError("get_bounding_box method not implemented")
+        pass
 
     @abstractmethod
     def set_assigned_material(self, **kwargs) -> dict:
         """Set the assigned material of a body."""
-        raise NotImplementedError("set_assigned_material method not implemented")
+        pass
 
     @abstractmethod
     def get_assigned_material(self, **kwargs) -> dict:
         """Get the assigned material of a body."""
-        raise NotImplementedError("get_assigned_material method not implemented")
+        pass
 
     @abstractmethod
     def set_name(self, **kwargs) -> dict:
         """Set the name of a body."""
-        raise NotImplementedError("set_name method not implemented")
+        pass
 
     @abstractmethod
     def set_fill_style(self, **kwargs) -> dict:
         """Set the fill style of a body."""
-        raise NotImplementedError("set_fill_style method not implemented")
+        pass
 
     @abstractmethod
     def set_color(self, **kwargs) -> dict:
         """Set the color of a body."""
-        raise NotImplementedError("set_color method not implemented")
+        pass
 
     @abstractmethod
     def rotate(self, **kwargs) -> dict:
         """Rotate a body."""
-        raise NotImplementedError("rotate method not implemented")
+        pass
 
     @abstractmethod
     def scale(self, **kwargs) -> dict:
         """Scale a body."""
-        raise NotImplementedError("scale method not implemented")
+        pass
 
     @abstractmethod
     def mirror(self, **kwargs) -> dict:
         """Mirror a body."""
-        raise NotImplementedError("mirror method not implemented")
+        pass
 
     @abstractmethod
     def map(self, **kwargs) -> dict:
         """Map a body."""
-        raise NotImplementedError("map method not implemented")
+        pass
 
     @abstractmethod
     def get_collision(self, **kwargs) -> dict:
         """Get the collision of a body."""
-        raise NotImplementedError("get_collision method not implemented")
+        pass
 
     @abstractmethod
     def copy(self, **kwargs) -> dict:
         """Copy a body."""
-        raise NotImplementedError("copy method not implemented")
+        pass
 
     @abstractmethod
     def get_tesellation(self, **kwargs) -> dict:
         """Get the tessellation of a body."""
-        raise NotImplementedError("get_tesellation method not implemented")
+        pass
 
     @abstractmethod
     def boolean(self, **kwargs) -> dict:
         """Boolean operation."""
-        raise NotImplementedError("boolean method not implemented")
+        pass
