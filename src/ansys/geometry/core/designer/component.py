@@ -40,7 +40,6 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateSurfaceBodyRequest,
     CreateSweepingChainRequest,
     CreateSweepingProfileRequest,
-    TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -1083,7 +1082,6 @@ class Component:
         self._coordinate_systems.append(CoordinateSystem(name, frame, self, self._grpc_client))
         return self._coordinate_systems[-1]
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def translate_bodies(
@@ -1124,15 +1122,11 @@ class Component:
 
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 
-        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-
         self._grpc_client.log.debug(f"Translating {body_ids_found}...")
-        self._bodies_stub.Translate(
-            TranslateRequest(
-                ids=body_ids_found,
-                direction=unit_vector_to_grpc_direction(direction),
-                distance=translation_magnitude,
-            )
+        self._grpc_client.services.body_service.translate(
+            ids=body_ids_found,
+            direction=direction,
+            distance=distance,
         )
 
     @protect_grpc
@@ -1352,7 +1346,6 @@ class Component:
             )
             pass
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def delete_body(self, body: Body | str) -> None:
@@ -1374,7 +1367,7 @@ class Component:
         if body_requested:
             # If the body belongs to this component (or nested components)
             # call the server deletion mechanism
-            self._bodies_stub.Delete(EntityIdentifier(id=id))
+            self._grpc_client.services.body_service.delete(id=id)
 
             # If the body was deleted from the server side... "kill" it
             # on the client side

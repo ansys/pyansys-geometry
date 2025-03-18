@@ -27,7 +27,8 @@ from ansys.geometry.core.errors import protect_grpc
 
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_length
-from .conversions import from_point3d_to_point
+from ..base.misc import verify_input_keys
+from .conversions import from_point3d_to_grpc_point, from_unit_vector_to_grpc_direction
 
 
 class GRPCBodyServiceV0(GRPCBodyService):
@@ -55,16 +56,13 @@ class GRPCBodyServiceV0(GRPCBodyService):
         from ansys.api.geometry.v0.bodies_pb2 import CreateSphereBodyRequest
 
         # Ensure all inputs are passed
-        required_keys = ["name", "parent", "center", "radius"]
-        missing_keys = [key for key in required_keys if key not in kwargs]
-        if missing_keys:
-            raise ValueError(f"Missing required keys: {missing_keys}")
+        verify_input_keys(kwargs, ["name", "parent", "center", "radius"])
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSphereBodyRequest(
             name=kwargs["name"],
             parent=kwargs["parent"],
-            center=from_point3d_to_point(kwargs["center"]),
+            center=from_point3d_to_grpc_point(kwargs["center"]),
             radius=from_measurement_to_server_length(kwargs["radius"]),
         )
 
@@ -79,121 +77,149 @@ class GRPCBodyServiceV0(GRPCBodyService):
         }
 
     @protect_grpc
-    def create_extruded_body(self, **kwargs):  # noqa: D102
+    def create_extruded_body(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def create_sweeping_profile_body(self, **kwargs):  # noqa: D102
+    def create_sweeping_profile_body(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def create_sweeping_chain(self, **kwargs):  # noqa: D102
+    def create_sweeping_chain(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def create_extruded_body_from_face_profile(self, **kwargs):  # noqa: D102
+    def create_extruded_body_from_face_profile(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def create_extruded_body_from_loft_profiles(self, **kwargs):  # noqa: D102
+    def create_extruded_body_from_loft_profiles(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def create_planar_body(self, **kwargs):  # noqa: D102
+    def create_planar_body(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def create_body_from_face(self, **kwargs):  # noqa: D102
+    def create_body_from_face(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def create_surface_body(self, **kwargs):  # noqa: D102
+    def create_surface_body(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def create_surface_body_from_trimmed_curves(self, **kwargs):  # noqa: D102
+    def create_surface_body_from_trimmed_curves(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def translate(self, **kwargs):  # noqa: D102
+    def translate(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.bodies_pb2 import TranslateRequest
+
+        # Ensure all inputs are passed
+        verify_input_keys(kwargs, ["ids", "direction", "distance"])
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = TranslateRequest(
+            ids=kwargs["ids"],
+            direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+            distance=from_measurement_to_server_length(kwargs["distance"]),
+        )
+
+        # Call the gRPC service
+        self.stub.Translate(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
+    def delete(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+
+        # Ensure all inputs are passed
+        verify_input_keys(kwargs, ["id"])
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = EntityIdentifier(id=kwargs["id"])
+
+        # Call the gRPC service
+        self.stub.Delete(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
+    def is_suppressed(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def delete(self, **kwargs):  # noqa: D102
+    def get_color(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def is_suppressed(self, **kwargs):  # noqa: D102
+    def get_faces(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def get_color(self, **kwargs):  # noqa: D102
+    def get_edges(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def get_faces(self, **kwargs):  # noqa: D102
+    def get_volume(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def get_edges(self, **kwargs):  # noqa: D102
+    def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def get_volume(self, **kwargs):  # noqa: D102
+    def set_assigned_material(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def get_bounding_box(self, **kwargs):  # noqa: D102
+    def get_assigned_material(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def set_assigned_material(self, **kwargs):  # noqa: D102
+    def set_name(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def get_assigned_material(self, **kwargs):  # noqa: D102
+    def set_fill_style(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def set_name(self, **kwargs):  # noqa: D102
+    def set_color(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def set_fill_style(self, **kwargs):  # noqa: D102
+    def rotate(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def set_color(self, **kwargs):  # noqa: D102
+    def scale(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def rotate(self, **kwargs):  # noqa: D102
+    def mirror(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def scale(self, **kwargs):  # noqa: D102
+    def map(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def mirror(self, **kwargs):  # noqa: D102
+    def get_collision(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def map(self, **kwargs):  # noqa: D102
+    def copy(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def get_collision(self, **kwargs):  # noqa: D102
+    def get_tesellation(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def copy(self, **kwargs):  # noqa: D102
-        raise NotImplementedError
-
-    @protect_grpc
-    def get_tesellation(self, **kwargs):  # noqa: D102
-        raise NotImplementedError
-
-    @protect_grpc
-    def boolean(self, **kwargs):  # noqa: D102
+    def boolean(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError

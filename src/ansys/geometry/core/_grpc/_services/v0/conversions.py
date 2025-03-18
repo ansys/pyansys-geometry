@@ -21,14 +21,16 @@
 # SOFTWARE.
 """Module containing v0 related conversions from PyAnsys Geometry objects to gRPC messages."""
 
-from typing import Any
-
-from ansys.api.geometry.v0.models_pb2 import Point as GRPCPoint
+from ansys.api.geometry.v0.models_pb2 import (
+    Direction as GRPCDirection,
+    Point as GRPCPoint,
+)
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 
-def from_point3d_to_point(point: Point3D) -> Any:
+def from_point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
     """Convert a ``Point3D`` class to a point gRPC message.
 
     Parameters
@@ -65,3 +67,19 @@ def grpc_point_to_point3d(point: GRPCPoint) -> Point3D:
         [point.x, point.y, point.z],
         DEFAULT_UNITS.SERVER_LENGTH,
     )
+
+
+def from_unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
+    """Convert a ``UnitVector3D`` class to a unit vector gRPC message.
+
+    Parameters
+    ----------
+    unit_vector : UnitVector3D
+        Source vector data.
+
+    Returns
+    -------
+    GRPCDirection
+        Geometry service gRPC direction message.
+    """
+    return GRPCDirection(x=unit_vector.x, y=unit_vector.y, z=unit_vector.z)
