@@ -23,6 +23,8 @@
 
 import grpc
 
+from ansys.geometry.core.errors import protect_grpc
+
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_length
 from .conversions import from_point3d_to_point
@@ -41,12 +43,14 @@ class GRPCBodyServiceV0(GRPCBodyService):
         The gRPC channel to the server.
     """
 
+    @protect_grpc
     def __init__(self, channel: grpc.Channel):
         """Initialize the BodyService with the gRPC stub."""
         from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 
         self.stub = BodiesStub(channel)
 
+    @protect_grpc
     def create_sphere_body(self, **kwargs) -> dict:
         """Create a sphere body."""
         from ansys.api.geometry.v0.bodies_pb2 import CreateSphereBodyRequest

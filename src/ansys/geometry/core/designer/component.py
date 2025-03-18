@@ -809,7 +809,6 @@ class Component:
         self._clear_cached_bodies()
         return Body(response.id, response.name, self, tb)
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
