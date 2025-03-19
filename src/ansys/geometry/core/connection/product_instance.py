@@ -408,7 +408,6 @@ def prepare_and_start_backend(
         # ANS_DSCO_REMOTE_IP should be variable "host" directly, but not working...
         env_copy["ANS_DSCO_REMOTE_IP"] = "127.0.0.1" if host == "localhost" else host
         env_copy["ANS_DSCO_REMOTE_PORT"] = str(port)
-        env_copy["ANS_DSCO_REMOTE_LOGS_CONFIG"] = "linux"
         env_copy["P_SCHEMA"] = schema_folder.as_posix()
         env_copy["ANSYS_CI_INSTALL"] = cad_integration_folder.as_posix()
         if product_version:
