@@ -568,7 +568,7 @@ class IBody(ABC):
 
     @abstractmethod
     def tessellate(
-        self, merge: bool = False, tessellation_options: TessellationOptions = None
+        self, merge: bool = False, tess_options: TessellationOptions = None
     ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
@@ -578,7 +578,7 @@ class IBody(ABC):
             Whether to merge the body into a single mesh. When ``False`` (default), the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
-        tessellation_options : TessellationOptions, default: None
+        tess_options : TessellationOptions, default: None
             A set of options to determine the tessellation quality.
 
         Returns

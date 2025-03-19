@@ -94,6 +94,7 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
@@ -1608,11 +1609,15 @@ class Component:
         self._is_alive = False
 
     @graphics_required
-    def tessellate(self, _recursive_call: bool = False) -> Union["PolyData", list["MultiBlock"]]:
+    def tessellate(
+        self, tess_options: TessellationOptions = None, _recursive_call: bool = False
+    ) -> Union["PolyData", list["MultiBlock"]]:
         """Tessellate the component.
 
         Parameters
         ----------
+        tess_options : TessellationOptions, default: None
+            A set of options to determine the tessellation quality.
         _recursive_call: bool, default: False
             Internal flag to indicate if this method is being called recursively.
             Not to be used by the user.
@@ -1627,14 +1632,16 @@ class Component:
         import pyvista as pv
 
         # Tessellate the bodies in this component
-        datasets: list["MultiBlock"] = [body.tessellate(merge=False) for body in self.bodies]
+        datasets: list["MultiBlock"] = [
+            body.tessellate(merge=False, tess_options=tess_options) for body in self.bodies
+        ]
 
         # Now, go recursively inside its subcomponents (with no arguments) and
         # merge the PolyData obtained into our blocks
         for comp in self._components:
             if not comp.is_alive:
                 continue
-            datasets.extend(comp.tessellate(_recursive_call=True))
+            datasets.extend(comp.tessellate(tess_options=tess_options, _recursive_call=True))
 
         # Convert to polydata as it's slightly faster than extract surface
         # plus this method is only for visualizing the component as a whole (no
