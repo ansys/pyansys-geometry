@@ -31,7 +31,6 @@ RUN setx Path "%Path%;C:\app;C:\app\Native\Windows;C:\app\CADIntegration\bin"
 ENV ANS_DSCO_REMOTE_PORT=50051
 ENV ANS_DSCO_REMOTE_IP="0.0.0.0"
 ENV LOG_LEVEL=2
-ENV ENABLE_TRACE=0
 ENV ANSYSLMD_LICENSE_FILE=""
 ENV ANSYS_CI_INSTALL=C:/app/CADIntegration
 ENV P_SCHEMA=C:/app/Schema
