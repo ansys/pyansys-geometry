@@ -51,7 +51,7 @@ import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
-from ansys.geometry.core.connection.defaults import GEOMETRY_SERVICE_DOCKER_IMAGE
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import GeometryContainers, LocalDockerInstance
 
 IMPORT_FILES_DIR = Path(Path(__file__).parent, "files", "import")
@@ -116,13 +116,15 @@ def docker_instance(use_existing_service):
         list_containers = []
         for geom_service in GeometryContainers:
             if geom_service.value[1] == docker_os:
-                list_images.append(f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_service.value[2]}")
+                list_images.append(
+                    f"{pygeom_defaults.GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_service.value[2]}"
+                )
                 list_containers.append(geom_service)
 
         # Now, check 2)
         #
         available_images = LocalDockerInstance.docker_client().images.list(
-            name=GEOMETRY_SERVICE_DOCKER_IMAGE
+            name=pygeom_defaults.GEOMETRY_SERVICE_DOCKER_IMAGE
         )
         for image in available_images:
             for geom_image, geom_cont in zip(list_images, list_containers):

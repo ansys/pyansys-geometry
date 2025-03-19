@@ -1,4 +1,6 @@
 # Python Discovery Script
+import math
+
 doc = Document.Create()
 
 sphere = Sphere.Create(

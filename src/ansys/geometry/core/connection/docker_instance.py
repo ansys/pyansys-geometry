@@ -37,7 +37,7 @@ try:
 except ModuleNotFoundError:  # pragma: no cover
     _HAS_DOCKER = False
 
-from ansys.geometry.core.connection.defaults import DEFAULT_PORT, GEOMETRY_SERVICE_DOCKER_IMAGE
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.logger import LOG
 
 
@@ -157,7 +157,7 @@ class LocalDockerInstance:
     @_docker_python_available
     def __init__(
         self,
-        port: int = DEFAULT_PORT,
+        port: int = pygeom_defaults.DEFAULT_PORT,
         connect_to_existing_service: bool = True,
         restart_if_existing_service: bool = False,
         name: str | None = None,
@@ -234,7 +234,10 @@ class LocalDockerInstance:
         # If one of the tags matches a Geometry service tag --> Return True
         for tag in cont.image.tags:
             for geom_services in GeometryContainers:
-                if tag == f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
+                if (
+                    tag
+                    == f"{pygeom_defaults.GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}"
+                ):
                     return True
 
         # If you have reached this point, the image is not a Geometry service
@@ -290,7 +293,7 @@ class LocalDockerInstance:
         # Try to deploy it
         try:
             container: Container = self.docker_client().containers.run(
-                image=f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{image.value[2]}",
+                image=f"{pygeom_defaults.GEOMETRY_SERVICE_DOCKER_IMAGE}:{image.value[2]}",
                 detach=True,
                 auto_remove=True,
                 name=name,
@@ -350,7 +353,7 @@ def get_geometry_container_type(instance: LocalDockerInstance) -> GeometryContai
     """
     for tag in instance.container.image.tags:
         for geom_services in GeometryContainers:
-            if tag == f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
+            if tag == f"{pygeom_defaults.GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
                 return geom_services
 
     return None

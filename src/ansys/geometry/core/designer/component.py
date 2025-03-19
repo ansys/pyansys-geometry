@@ -44,7 +44,10 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
-from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest, CreateDesignPointsRequest
+from ansys.api.geometry.v0.commands_pb2 import (
+    CreateBeamSegmentsRequest,
+    CreateDesignPointsRequest,
+)
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.components_pb2 import (
     CreateRequest,
@@ -52,10 +55,14 @@ from ansys.api.geometry.v0.components_pb2 import (
     SetSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Direction, Line, TrimmedCurveList
+from ansys.api.geometry.v0.models_pb2 import Direction, Line, SetObjectNameRequest, TrimmedCurveList
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
+    grpc_curve_to_curve,
+    grpc_frame_to_frame,
+    grpc_material_to_material,
     grpc_matrix_to_matrix,
+    grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
@@ -63,7 +70,13 @@ from ansys.geometry.core.connection.conversions import (
     trimmed_surface_to_grpc_trimmed_surface,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.designer.beam import Beam, BeamProfile
+from ansys.geometry.core.designer.beam import (
+    Beam,
+    BeamCrossSectionInfo,
+    BeamProfile,
+    BeamProperties,
+    SectionAnchorType,
+)
 from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
@@ -81,10 +94,12 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
-from ansys.geometry.core.shapes.parameterization import Interval
+from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
+from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -265,6 +280,20 @@ class Component:
     def name(self) -> str:
         """Name of the component."""
         return self._name
+
+    @name.setter
+    def name(self, value: str) -> None:
+        """Set the name of the component."""
+        self.set_name(value)
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def set_name(self, name: str) -> None:
+        """Set the name of the component."""
+        self._grpc_client.log.debug(f"Renaming component {self.id} from '{self.name}' to '{name}'.")
+        self._component_stub.SetName(SetObjectNameRequest(id=self._grpc_id, name=name))
+        self._name = name
 
     @property
     def instance_name(self) -> str:
@@ -1117,7 +1146,11 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     def create_beams(
-        self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
+        self,
+        segments: list[tuple[Point3D, Point3D]],
+        profile: BeamProfile,
+        arcs: list[Arc] = None,
+        circles: list[Circle] = None,
     ) -> list[Beam]:
         """Create beams under the component.
 
@@ -1127,11 +1160,46 @@ class Component:
             list of start and end pairs, each specifying a single line segment.
         profile : BeamProfile
             Beam profile to use to create the beams.
+        arcs : list[Curve], default: None
+            list of arcs to create beams from.
+        circles : list[Curve], default: None
+            list of circles to create beams from.
+
+        Returns
+        -------
+        list[Beam]
+            A list of the created Beams.
 
         Notes
         -----
         The newly created beams synchronize to a design within a supporting
         Geometry service instance.
+        """
+        if self._grpc_client.backend_version < (25, 2, 0):
+            return self.__create_beams_legacy(segments, profile)
+        else:
+            return self.__create_beams(segments, profile, arcs, circles)
+
+    def __create_beams_legacy(
+        self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
+    ) -> list[Beam]:
+        """Create beams under the component.
+
+        Notes
+        -----
+        This is a legacy method, which is used in versions up to Ansys 25.1.1 products.
+
+        Parameters
+        ----------
+        segments : list[tuple[Point3D, Point3D]]
+            list of start and end pairs, each specifying a single line segment.
+        profile : BeamProfile
+            Beam profile to use to create the beams.
+
+        Returns
+        -------
+        list[Beam]
+            A list of the created Beams.
         """
         request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
 
@@ -1156,6 +1224,94 @@ class Component:
 
         self._beams.extend(new_beams)
         return self._beams[-n_beams:]
+
+    def __create_beams(
+        self,
+        segments: list[tuple[Point3D, Point3D]],
+        profile: BeamProfile,
+        arcs: list[Arc],
+        circles: list[Circle],
+    ) -> list[Beam]:
+        """Create beams under the component.
+
+        Parameters
+        ----------
+        segments : list[tuple[Point3D, Point3D]]
+            list of start and end pairs, each specifying a single line segment.
+        profile : BeamProfile
+            Beam profile to use to create the beams.
+
+        Returns
+        -------
+        list[Beam]
+            A list of the created Beams.
+        """
+        request = CreateBeamSegmentsRequest(
+            profile=profile.id,
+            parent=self.id,
+        )
+
+        for segment in segments:
+            request.lines.append(
+                Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
+            )
+
+        self._grpc_client.log.debug(f"Creating beams on {self.id}...")
+        response = self._commands_stub.CreateDescriptiveBeamSegments(request)
+        self._grpc_client.log.debug("Beams successfully created.")
+
+        beams = []
+        for beam in response.created_beams:
+            cross_section = BeamCrossSectionInfo(
+                SectionAnchorType(beam.cross_section.section_anchor),
+                beam.cross_section.section_angle,
+                grpc_frame_to_frame(beam.cross_section.section_frame),
+                [
+                    [
+                        TrimmedCurve(
+                            grpc_curve_to_curve(curve.geometry),
+                            grpc_point_to_point3d(curve.start),
+                            grpc_point_to_point3d(curve.end),
+                            Interval(curve.interval_start, curve.interval_end),
+                            curve.length,
+                        )
+                        for curve in curve_list
+                    ]
+                    for curve_list in beam.cross_section.section_profile
+                ],
+            )
+            properties = BeamProperties(
+                beam.properties.area,
+                ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
+                beam.properties.warping_constant,
+                beam.properties.ixx,
+                beam.properties.ixy,
+                beam.properties.iyy,
+                ParamUV(beam.properties.shear_center_x, beam.properties.shear_center_y),
+                beam.properties.torsional_constant,
+            )
+
+            beams.append(
+                Beam(
+                    beam.id.id,
+                    grpc_point_to_point3d(beam.shape.start),
+                    grpc_point_to_point3d(beam.shape.end),
+                    profile,
+                    self,
+                    beam.name,
+                    beam.is_deleted,
+                    beam.is_reversed,
+                    beam.is_rigid,
+                    grpc_material_to_material(beam.material),
+                    cross_section,
+                    properties,
+                    beam.shape,
+                    beam.type,
+                )
+            )
+
+        self._beams.extend(beams)
+        return beams
 
     def create_beam(self, start: Point3D, end: Point3D, profile: BeamProfile) -> Beam:
         """Create a beam under the component.
@@ -1453,11 +1609,15 @@ class Component:
         self._is_alive = False
 
     @graphics_required
-    def tessellate(self, _recursive_call: bool = False) -> Union["PolyData", list["MultiBlock"]]:
+    def tessellate(
+        self, tess_options: TessellationOptions | None = None, _recursive_call: bool = False
+    ) -> Union["PolyData", list["MultiBlock"]]:
         """Tessellate the component.
 
         Parameters
         ----------
+        tess_options : TessellationOptions | None, default: None
+            A set of options to determine the tessellation quality.
         _recursive_call: bool, default: False
             Internal flag to indicate if this method is being called recursively.
             Not to be used by the user.
@@ -1472,14 +1632,16 @@ class Component:
         import pyvista as pv
 
         # Tessellate the bodies in this component
-        datasets: list["MultiBlock"] = [body.tessellate(merge=False) for body in self.bodies]
+        datasets: list["MultiBlock"] = [
+            body.tessellate(merge=False, tess_options=tess_options) for body in self.bodies
+        ]
 
         # Now, go recursively inside its subcomponents (with no arguments) and
         # merge the PolyData obtained into our blocks
         for comp in self._components:
             if not comp.is_alive:
                 continue
-            datasets.extend(comp.tessellate(_recursive_call=True))
+            datasets.extend(comp.tessellate(tess_options=tess_options, _recursive_call=True))
 
         # Convert to polydata as it's slightly faster than extract surface
         # plus this method is only for visualizing the component as a whole (no
