@@ -60,7 +60,7 @@ def test_remove_rounds(modeler: Modeler):
     """Test a round is removed from the geometry."""
     from ansys.geometry.core.designer import SurfaceType
 
-    design = modeler.open_file(r"C:\temp\BoxWithRound.scdocx")
+    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
     assert len(design.bodies[0].faces) == 7
     roundfaces = [
         face
