@@ -34,6 +34,7 @@ ENV ANSYSLMD_LICENSE_FILE=""
 ENV ANSYS_CI_INSTALL=/app/CADIntegration
 ENV P_SCHEMA=/app/Schema/
 ENV ANSYSCL251_DIR=/app/licensingclient/
+ENV ANSYSCL252_DIR=/app/licensingclient/
 
 # Add container labels
 LABEL org.opencontainers.image.authors="ANSYS Inc."
