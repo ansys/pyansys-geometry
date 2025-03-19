@@ -307,7 +307,7 @@ class Modeler:
                 file_name=file_name,
                 open=open_file,
                 import_options=import_options_dict,
-                import_options_definitions=import_options_definitions_dict                
+                import_options_definitions=import_options_definitions_dict,
             )
         )
         return response.file_path
@@ -459,9 +459,10 @@ class Modeler:
         else:
             import_options_dict, import_options_definitions_dict = import_options.to_dict()
             DesignsStub(self.client.channel).Open(
-                OpenRequest(filepath=file_path, 
+                OpenRequest(
+                    filepath=file_path,
                     import_options=import_options_dict,
-                    import_options_definitions=import_options_definitions_dict
+                    import_options_definitions=import_options_definitions_dict,
                 )
             )
 
