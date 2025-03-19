@@ -22,7 +22,6 @@
 """Module for managing a face."""
 
 from enum import Enum, unique
-from functools import cached_property
 from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
@@ -42,10 +41,14 @@ from ansys.api.geometry.v0.faces_pb2 import (
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_surface_to_surface
+from ansys.geometry.core.connection.conversions import (
+    grpc_curve_to_curve,
+    grpc_point_to_point3d,
+    grpc_surface_to_surface,
+)
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
-from ansys.geometry.core.math.bbox import BoundingBox2D
+from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.auxiliary import (
@@ -60,6 +63,7 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -335,16 +339,19 @@ class Face:
     def opacity(self, opacity: float) -> None:
         self.set_opacity(opacity)
 
-    @cached_property
+    @property
     @protect_grpc
     @min_backend_version(25, 2, 0)
-    def bounding_box(self) -> BoundingBox2D:
+    def bounding_box(self) -> BoundingBox:
         """Get the bounding box for the face."""
         self._grpc_client.log.debug(f"Getting bounding box for {self.id}.")
 
         result = self._faces_stub.GetBoundingBox(request=self._grpc_id)
+        min_point = grpc_point_to_point3d(result.min)
+        max_point = grpc_point_to_point3d(result.max)
+        center = grpc_point_to_point3d(result.center)
 
-        return BoundingBox2D(result.min.x, result.max.x, result.min.y, result.max.y)
+        return BoundingBox(min_point, max_point, center)
 
     @protect_grpc
     @check_input_types
@@ -548,8 +555,8 @@ class Face:
         trimmed_curves = []
         for c in curves:
             geometry = grpc_curve_to_curve(c.curve)
-            start = Point3D([c.start.x, c.start.y, c.start.z])
-            end = Point3D([c.end.x, c.end.y, c.end.z])
+            start = Point3D([c.start.x, c.start.y, c.start.z], unit=DEFAULT_UNITS.SERVER_LENGTH)
+            end = Point3D([c.end.x, c.end.y, c.end.z], unit=DEFAULT_UNITS.SERVER_LENGTH)
             interval = Interval(c.interval_start, c.interval_end)
             length = Quantity(c.length, DEFAULT_UNITS.SERVER_LENGTH)
 
@@ -592,8 +599,18 @@ class Face:
         return result.success
 
     @graphics_required
-    def tessellate(self) -> "pv.PolyData":
+    def tessellate(self, tess_options: TessellationOptions | None = None) -> "pv.PolyData":
         """Tessellate the face and return the geometry as triangles.
+
+        Parameters
+        ----------
+        tess_options : TessellationOptions | None, default: None
+            A set of options to determine the tessellation quality.
+
+        Notes
+        -----
+        The tessellation options are ONLY used if the face has not been tessellated before.
+        If the face has been tessellated before, the stored tessellation is returned.
 
         Returns
         -------
@@ -602,7 +619,7 @@ class Face:
         """
         # If tessellation has not been called before... call it
         if self._body._template._tessellation is None:
-            self._body.tessellate()
+            self._body.tessellate(tess_options=tess_options)
 
         # Search the tessellation of the face - if it exists
         # ---> We need to used the last element of the ID since we are looking inside
