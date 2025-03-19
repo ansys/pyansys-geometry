@@ -63,6 +63,7 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -598,8 +599,18 @@ class Face:
         return result.success
 
     @graphics_required
-    def tessellate(self) -> "pv.PolyData":
+    def tessellate(self, tess_options: TessellationOptions | None = None) -> "pv.PolyData":
         """Tessellate the face and return the geometry as triangles.
+
+        Parameters
+        ----------
+        tess_options : TessellationOptions | None, default: None
+            A set of options to determine the tessellation quality.
+
+        Notes
+        -----
+        The tessellation options are ONLY used if the face has not been tessellated before.
+        If the face has been tessellated before, the stored tessellation is returned.
 
         Returns
         -------
@@ -608,7 +619,7 @@ class Face:
         """
         # If tessellation has not been called before... call it
         if self._body._template._tessellation is None:
-            self._body.tessellate()
+            self._body.tessellate(tess_options=tess_options)
 
         # Search the tessellation of the face - if it exists
         # ---> We need to used the last element of the ID since we are looking inside

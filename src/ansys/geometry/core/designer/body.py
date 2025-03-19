@@ -568,7 +568,7 @@ class IBody(ABC):
 
     @abstractmethod
     def tessellate(
-        self, merge: bool = False, tessellation_options: TessellationOptions = None
+        self, merge: bool = False, tess_options: TessellationOptions | None = None
     ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
@@ -578,7 +578,7 @@ class IBody(ABC):
             Whether to merge the body into a single mesh. When ``False`` (default), the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
-        tessellation_options : TessellationOptions, default: None
+        tess_options : TessellationOptions | None, default: None
             A set of options to determine the tessellation quality.
 
         Returns
@@ -1276,13 +1276,21 @@ class MasterBody(IBody):
         self,
         merge: bool = False,
         transform: Matrix44 = IDENTITY_MATRIX44,
-        tess_options: TessellationOptions = None,
+        tess_options: TessellationOptions | None = None,
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
 
         if not self.is_alive:
             return pv.PolyData() if merge else pv.MultiBlock()
+
+        # If the server does not support tessellation options, ignore them
+        if tess_options is not None and self._grpc_client.backend_version < (25, 2, 0):
+            self._grpc_client.log.warning(
+                "Tessellation options are not supported by server"
+                f" version {self._grpc_client.backend_version}. Ignoring options."
+            )
+            tess_options = None
 
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
@@ -1319,7 +1327,11 @@ class MasterBody(IBody):
                         str(face_id): tess_to_pd(face_tess)
                         for face_id, face_tess in resp.face_tessellation.items()
                     }
-                except Exception:
+                except Exception as err:
+                    # Streaming is not supported in older versions...
+                    if self._grpc_client.backend_version < (25, 2, 0):
+                        raise err
+
                     tessellation_map = {}
                     request = GetTessellationRequest(self._grpc_id)
                     for response in self._bodies_stub.GetTessellationStream(request):
@@ -1854,7 +1866,7 @@ class Body(IBody):
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
-        self, merge: bool = False, tess_options: TessellationOptions = None
+        self, merge: bool = False, tess_options: TessellationOptions | None = None
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate(
             merge, self.parent_component.get_world_transform(), tess_options
