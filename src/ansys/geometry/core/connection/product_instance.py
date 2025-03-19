@@ -688,9 +688,15 @@ def _get_common_env(
 
     env_copy[BACKEND_HOST_VARIABLE] = host
     env_copy[BACKEND_PORT_VARIABLE] = f"{port}"
-    env_copy[BACKEND_TRACE_VARIABLE] = f"{enable_trace:d}"
     env_copy[BACKEND_LOG_LEVEL_VARIABLE] = f"{server_log_level}"
+
     if server_logs_folder is not None:
         env_copy[BACKEND_LOGS_FOLDER_VARIABLE] = f"{server_logs_folder}"
+
+    if enable_trace:
+        env_copy[BACKEND_TRACE_VARIABLE] = "1"  # for backward compatibility
+        if server_log_level > 0:
+            LOG.warning("Enabling trace mode will override the log level to 0 (Chatterbox).")
+            env_copy[BACKEND_LOG_LEVEL_VARIABLE] = "0"
 
     return env_copy
