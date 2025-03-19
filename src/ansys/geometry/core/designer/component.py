@@ -1610,13 +1610,13 @@ class Component:
 
     @graphics_required
     def tessellate(
-        self, tess_options: TessellationOptions = None, _recursive_call: bool = False
+        self, tess_options: TessellationOptions | None = None, _recursive_call: bool = False
     ) -> Union["PolyData", list["MultiBlock"]]:
         """Tessellate the component.
 
         Parameters
         ----------
-        tess_options : TessellationOptions, default: None
+        tess_options : TessellationOptions | None, default: None
             A set of options to determine the tessellation quality.
         _recursive_call: bool, default: False
             Internal flag to indicate if this method is being called recursively.

@@ -599,12 +599,12 @@ class Face:
         return result.success
 
     @graphics_required
-    def tessellate(self, tess_options: TessellationOptions = None) -> "pv.PolyData":
+    def tessellate(self, tess_options: TessellationOptions | None = None) -> "pv.PolyData":
         """Tessellate the face and return the geometry as triangles.
 
         Parameters
         ----------
-        tess_options : TessellationOptions, default: None
+        tess_options : TessellationOptions | None, default: None
             A set of options to determine the tessellation quality.
 
         Notes
