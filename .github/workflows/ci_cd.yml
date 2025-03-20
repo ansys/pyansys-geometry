@@ -436,6 +436,7 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           checkout: false
+          randomize: true
 
       - name: Upload integration test logs
         if: always()
@@ -567,12 +568,17 @@ jobs:
     name: Package library
     needs: [testing-windows, testing-linux, testing-min-reqs, testing-no-graphics, docs]
     runs-on: ubuntu-latest
+    permissions:
+      attestations: write
+      contents: read
+      id-token: write
     steps:
       - name: Build library source and wheel artifacts
         uses: ansys/actions/build-library@v8
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          attest-provenance: true
 
 # =================================================================================================
 # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -799,6 +805,7 @@ jobs:
           pytest-extra-args: "--use-existing-service=yes"
           checkout: false
           requires-xvfb: true
+          randomize: true
 
       - name: "Compressing Linux Dockerfile"
         uses: vimtor/action-zip@v1.2
@@ -843,6 +850,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
           additional-artifacts: windows-core-dockerfile.zip linux-core-dockerfile.zip
+          add-artifact-attestation-notes: true
+          generate_release_notes: true
 
   upload_dev_docs:
     name: Upload dev documentation
