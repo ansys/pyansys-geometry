@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
+from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody, Face as GRPCFace
 from ansys.api.geometry.v0.preparetools_pb2 import (
     ExtractVolumeFromEdgeLoopsRequest,
     ExtractVolumeFromFacesRequest,
@@ -170,17 +170,20 @@ class PrepareTools:
             return []
 
     @protect_grpc
-    @min_backend_version(25, 2, 0)
-    def remove_rounds(self, faces: list["Face"]):
+    def remove_rounds(self, faces: list["Face"]) -> bool:
         """Remove rounds from geometry.
 
-        Tries to remove rounds from geometry.  Faces to be removed are input to the method.
+        Tries to remove rounds from geometry. Faces to be removed are input to the method.
 
         Parameters
         ----------
         round_faces : list[Face]
             List of rounds faces to be removed
 
+        Returns
+        -------
+        bool
+            ``True`` if successful, ``False`` if failed.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -192,13 +195,16 @@ class PrepareTools:
         check_type_all_elements_in_iterable(faces, Face)
 
         parent_design = get_design_from_face(faces[0])
-
-        response = self._prepare_stub.RemoveRounds(RemoveRoundsRequest(selection=faces))
+        response = self._prepare_stub.RemoveRounds(
+            RemoveRoundsRequest(selection=[GRPCFace(id=face.id) for face in faces])
+        )
 
         if response.result:
             parent_design._update_design_inplace()
         else:
             self._grpc_client.log.info("Failed to remove rounds...")
+
+        return response.result
 
     @protect_grpc
     @min_backend_version(24, 2, 0)

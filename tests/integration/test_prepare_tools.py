@@ -67,8 +67,9 @@ def test_remove_rounds(modeler: Modeler):
         for face in design.bodies[0].faces
         if face.surface_type == SurfaceType.SURFACETYPE_CYLINDER
     ]
-    modeler.prepare_tools.remove_rounds(roundfaces)
+    result = modeler.prepare_tools.remove_rounds(roundfaces)
     assert len(design.bodies[0].faces) == 6
+    assert result is True
 
 
 def test_share_topology(modeler: Modeler):
