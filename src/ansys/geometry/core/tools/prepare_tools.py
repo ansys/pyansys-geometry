@@ -170,7 +170,7 @@ class PrepareTools:
             return []
 
     @protect_grpc
-    def remove_rounds(self, faces: list["Face"]) -> bool:
+    def remove_rounds(self, faces: list["Face"], auto_shrink: bool = False) -> bool:
         """Remove rounds from geometry.
 
         Tries to remove rounds from geometry. Faces to be removed are input to the method.
@@ -179,6 +179,9 @@ class PrepareTools:
         ----------
         round_faces : list[Face]
             List of rounds faces to be removed
+        auto_shrink : bool, default: False
+            Whether to shrink the geometry after removing rounds. Fills in the gaps
+            left by the removed rounds.
 
         Returns
         -------
@@ -196,7 +199,8 @@ class PrepareTools:
 
         parent_design = get_design_from_face(faces[0])
         response = self._prepare_stub.RemoveRounds(
-            RemoveRoundsRequest(selection=[GRPCFace(id=face.id) for face in faces])
+            RemoveRoundsRequest(selection=[GRPCFace(id=face.id) for face in faces],
+                                auto_shrink=BoolValue(value=auto_shrink))
         )
 
         if response.result:
