@@ -193,7 +193,7 @@ class PrepareTools:
 
         parent_design = get_design_from_face(faces[0])
 
-        response = self._prepare_stub.RemoveRounds(RemoveRoundsRequest(faces=faces))
+        response = self._prepare_stub.RemoveRounds(RemoveRoundsRequest(selection=faces))
 
         if response.result:
             parent_design._update_design_inplace()
