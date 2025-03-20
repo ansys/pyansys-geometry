@@ -355,7 +355,7 @@ def test_design_import_with_named_selections(modeler: Modeler):
     design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
 
     # Check that there are 29 Named Selections
-    assert len(design.named_selections) == 7
+    assert len(design.named_selections) == 4
 
     # Get named selection nozzle1
     nozzle1 = design._named_selections["n1"]

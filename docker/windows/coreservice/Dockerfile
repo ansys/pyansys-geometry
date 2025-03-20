@@ -31,11 +31,9 @@ RUN setx Path "%Path%;C:\app;C:\app\Native\Windows;C:\app\CADIntegration\bin"
 ENV ANS_DSCO_REMOTE_PORT=50051
 ENV ANS_DSCO_REMOTE_IP="0.0.0.0"
 ENV LOG_LEVEL=2
-ENV ENABLE_TRACE=0
 ENV ANSYSLMD_LICENSE_FILE=""
 ENV ANSYS_CI_INSTALL=C:/app/CADIntegration
 ENV P_SCHEMA=C:/app/Schema
-ENV ANS_DSCO_REMOTE_LOGS_CONFIG="linux"
 ENV ANSYSCL251_DIR=C:/app/licensingclient
 ENV ANSYSCL252_DIR=C:/app/licensingclient
 
@@ -48,4 +46,4 @@ EXPOSE 50051
 
 # Define the entrypoint for the Geometry service
 # hadolint ignore=DL3025
-ENTRYPOINT dotnet C:\app\Presentation.ApiServerLinux.dll
+ENTRYPOINT dotnet C:\app\Presentation.ApiServerCoreService.dll

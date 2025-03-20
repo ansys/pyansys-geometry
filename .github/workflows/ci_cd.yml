@@ -429,6 +429,7 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           checkout: false
+          randomize: true
 
       - name: Upload integration test logs
         if: always()
@@ -459,6 +460,10 @@ jobs:
   package:
     name: Package library
     runs-on: ubuntu-latest
+    permissions:
+      attestations: write
+      contents: read
+      id-token: write
     steps:
       - name: Build library source and wheel artifacts
         uses: ansys/actions/build-library@v8
