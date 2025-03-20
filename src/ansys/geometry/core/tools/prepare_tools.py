@@ -199,8 +199,10 @@ class PrepareTools:
 
         parent_design = get_design_from_face(faces[0])
         response = self._prepare_stub.RemoveRounds(
-            RemoveRoundsRequest(selection=[GRPCFace(id=face.id) for face in faces],
-                                auto_shrink=BoolValue(value=auto_shrink))
+            RemoveRoundsRequest(
+                selection=[GRPCFace(id=face.id) for face in faces],
+                auto_shrink=BoolValue(value=auto_shrink),
+            )
         )
 
         if response.result:
