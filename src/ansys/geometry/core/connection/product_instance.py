@@ -189,8 +189,6 @@ def prepare_and_start_backend(
     server_logs_folder: str = None,
     client_log_file: str = None,
     specific_minimum_version: int = None,
-    log_level: int = None,  # DEPRECATED
-    logs_folder: str = None,  # DEPRECATED
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
 
@@ -245,10 +243,6 @@ def prepare_and_start_backend(
     specific_minimum_version : int, optional
         Sets a specific minimum version to be checked. If this is not defined,
         the minimum version will be set to 24.1.0.
-    log_level : int, optional
-        DEPRECATED. Use ``server_log_level`` instead.
-    logs_folder : str, optional
-        DEPRECATED. Use ``server_logs_folder`` instead.
 
     Returns
     -------
@@ -266,23 +260,11 @@ def prepare_and_start_backend(
     """
     from ansys.geometry.core.modeler import Modeler
 
-    if os.name != "nt" and backend_type not in (
-        BackendType.LINUX_SERVICE,
-        BackendType.CORE_LINUX,
-    ):  # pragma: no cover
+    if os.name != "nt" and not BackendType.is_linux_service(backend_type):  # pragma: no cover
         raise RuntimeError(
             "Method 'prepare_and_start_backend' is only available on Windows."
             "A Linux version is only available for the Core Geometry Service."
         )
-
-    # Deprecation behavior... To be removed in release 0.7
-    if log_level is not None:  # pragma: no cover
-        LOG.warning("Overriding 'server_log_level' with 'log_level' value for now...")
-        server_log_level = log_level
-
-    if logs_folder is not None:  # pragma: no cover
-        LOG.warning("Overriding 'server_logs_folder' with 'logs_folder' value for now...")
-        server_logs_folder = logs_folder
 
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
