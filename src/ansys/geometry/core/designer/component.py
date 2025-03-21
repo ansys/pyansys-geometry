@@ -99,7 +99,6 @@ from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
-from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -1279,7 +1278,9 @@ class Component:
                 ixx=beam.properties.ixx,
                 ixy=beam.properties.ixy,
                 iyy=beam.properties.iyy,
-                shear_center=ParamUV(beam.properties.shear_center_x, beam.properties.shear_center_y),
+                shear_center=ParamUV(
+                    beam.properties.shear_center_x, beam.properties.shear_center_y
+                ),
                 torsion_constant=beam.properties.torsional_constant,
             )
 

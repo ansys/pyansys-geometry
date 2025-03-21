@@ -1183,7 +1183,9 @@ class Design(Component):
                 ixx=beam.properties.ixx,
                 ixy=beam.properties.ixy,
                 iyy=beam.properties.iyy,
-                shear_center=ParamUV(beam.properties.shear_center_x, beam.properties.shear_center_y),
+                shear_center=ParamUV(
+                    beam.properties.shear_center_x, beam.properties.shear_center_y
+                ),
                 torsion_constant=beam.properties.torsional_constant,
             )
 

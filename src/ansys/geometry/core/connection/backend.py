@@ -56,7 +56,7 @@ class BackendType(Enum):
             BackendType.CORE_WINDOWS,
             BackendType.CORE_LINUX,
         )
-    
+
     @staticmethod
     def is_headless_service(backend_type: "BackendType") -> bool:
         """Determine whether the backend is a headless service or not.

@@ -119,6 +119,7 @@ def get_design_from_edge(edge: "Edge") -> "Design":
     # Get the design of the body
     return get_design_from_body(body)
 
+
 def __travers_component_elem(elem: str, comp: Union["Design", "Component"]) -> list:
     """Traverses all elements of a component or design, given its name."""
     elems = []
@@ -126,8 +127,9 @@ def __travers_component_elem(elem: str, comp: Union["Design", "Component"]) -> l
     elems.extend(comp_elems)
     for component in comp.components:
         elems.extend(__travers_component_elem(elem, component))
-    
+
     return elems
+
 
 def __traverse_all_bodies(comp: Union["Design", "Component"]) -> list["Body"]:
     """Traverse all bodies in a design/component and all its subcomponents."""
