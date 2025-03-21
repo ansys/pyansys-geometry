@@ -29,6 +29,7 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import trimmed_curve_to_grpc_trimmed_curve
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -148,7 +149,10 @@ class TrimmedCurve:
         )
         if res.intersect is False:
             return []
-        return [Point3D([point.x, point.y, point.z]) for point in res.points]
+        return [
+            Point3D([point.x, point.y, point.z], unit=DEFAULT_UNITS.SERVER_LENGTH)
+            for point in res.points
+        ]
 
     def __repr__(self) -> str:
         """Represent the trimmed curve as a string."""

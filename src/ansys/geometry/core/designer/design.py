@@ -57,13 +57,22 @@ from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
+    grpc_curve_to_curve,
     grpc_frame_to_frame,
+    grpc_material_to_material,
     grpc_matrix_to_matrix,
     grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
 )
-from ansys.geometry.core.designer.beam import Beam, BeamCircularProfile, BeamProfile
+from ansys.geometry.core.designer.beam import (
+    Beam,
+    BeamCircularProfile,
+    BeamCrossSectionInfo,
+    BeamProfile,
+    BeamProperties,
+    SectionAnchorType,
+)
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
@@ -80,6 +89,7 @@ from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import (
+    get_beams_from_ids,
     get_bodies_from_ids,
     get_edges_from_ids,
     get_faces_from_ids,
@@ -89,6 +99,8 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
+from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.typing import RealSequence
 
 
@@ -314,10 +326,7 @@ class Design(Component):
         file_location.write_bytes(received_bytes)
         self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
 
-    def __export_and_download_legacy(
-        self,
-        format: DesignFileFormat = DesignFileFormat.SCDOCX,
-    ) -> bytes:
+    def __export_and_download_legacy(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
 
         Notes
@@ -327,7 +336,7 @@ class Design(Component):
 
         Parameters
         ----------
-        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
+        format : DesignFileFormat
             Format for the file to save to.
 
         Returns
@@ -359,15 +368,12 @@ class Design(Component):
 
         return received_bytes
 
-    def __export_and_download(
-        self,
-        format: DesignFileFormat = DesignFileFormat.SCDOCX,
-    ) -> bytes:
+    def __export_and_download(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
 
         Parameters
         ----------
-        format : DesignFileFormat, default: DesignFileFormat.SCDOCX
+        format : DesignFileFormat
             Format for the file to save to.
 
         Returns
@@ -390,10 +396,23 @@ class Design(Component):
             DesignFileFormat.SCDOCX,
             DesignFileFormat.STRIDE,
         ]:
-            response = self._design_stub.DownloadExportFile(
-                DownloadExportFileRequest(format=format.value[1])
-            )
-            received_bytes += response.data
+            try:
+                response = self._design_stub.DownloadExportFile(
+                    DownloadExportFileRequest(format=format.value[1])
+                )
+                received_bytes += response.data
+            except Exception:
+                self._grpc_client.log.warning(
+                    f"Failed to download the file in {format.value[0]} format."
+                    " Attempting to stream download."
+                )
+                # Attempt to download the file via streaming
+                received_bytes = bytes()
+                responses = self._design_stub.StreamDownloadExportFile(
+                    DownloadExportFileRequest(format=format.value[1])
+                )
+                for response in responses:
+                    received_bytes += response.data
         else:
             self._grpc_client.log.warning(
                 f"{format.value[0]} format requested is not supported. Ignoring download request."
@@ -1137,6 +1156,62 @@ class Design(Component):
             m = Material(material.name, density, properties)
             self.materials.append(m)
 
+        # Create Beams
+        for beam in response.beams:
+            cross_section = BeamCrossSectionInfo(
+                section_anchor=SectionAnchorType(beam.cross_section.section_anchor),
+                section_angle=beam.cross_section.section_angle,
+                section_frame=grpc_frame_to_frame(beam.cross_section.section_frame),
+                section_profile=[
+                    [
+                        TrimmedCurve(
+                            geometry=grpc_curve_to_curve(curve.curve),
+                            start=grpc_point_to_point3d(curve.start),
+                            end=grpc_point_to_point3d(curve.end),
+                            interval=Interval(curve.interval_start, curve.interval_end),
+                            length=curve.length,
+                        )
+                        for curve in curve_list.curves
+                    ]
+                    for curve_list in beam.cross_section.section_profile
+                ],
+            )
+            properties = BeamProperties(
+                area=beam.properties.area,
+                centroid=ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
+                warping_constant=beam.properties.warping_constant,
+                ixx=beam.properties.ixx,
+                ixy=beam.properties.ixy,
+                iyy=beam.properties.iyy,
+                shear_center=ParamUV(
+                    beam.properties.shear_center_x, beam.properties.shear_center_y
+                ),
+                torsion_constant=beam.properties.torsional_constant,
+            )
+
+            new_beam = Beam(
+                id=beam.id.id,
+                start=grpc_point_to_point3d(beam.shape.start),
+                end=grpc_point_to_point3d(beam.shape.end),
+                profile=None,
+                # TODO: Beams need BeamProfiles imported from existing design
+                # https://github.com/ansys/pyansys-geometry/issues/1825
+                parent_component=self,
+                name=beam.name,
+                is_deleted=beam.is_deleted,
+                is_reversed=beam.is_reversed,
+                is_rigid=beam.is_rigid,
+                material=grpc_material_to_material(beam.material),
+                cross_section=cross_section,
+                properties=properties,
+                shape=beam.shape,
+                beam_type=beam.type,
+            )
+
+            # Find the component to which the beam belongs
+            parent = created_components.get(beam.parent.id, self)
+            parent._beams.append(new_beam)
+
         # Create NamedSelections
         for ns in response.named_selections:
             result = self._named_selections_stub.Get(EntityIdentifier(id=ns.id))
@@ -1145,6 +1220,7 @@ class Design(Component):
             bodies = get_bodies_from_ids(self, [body.id for body in result.bodies])
             faces = get_faces_from_ids(self, [face.id for face in result.faces])
             edges = get_edges_from_ids(self, [edge.id for edge in result.edges])
+            beams = get_beams_from_ids(self, [beam.id.id for beam in result.beams])
 
             design_points = []
             for dp in result.design_points:
@@ -1159,7 +1235,7 @@ class Design(Component):
                 bodies=bodies,
                 faces=faces,
                 edges=edges,
-                beams=[],  # BEAM IMPORT NOT SUPPORTED FOR NAMED SELECTIONS
+                beams=beams,
                 design_points=design_points,
             )
             self._named_selections[new_ns.name] = new_ns

@@ -24,6 +24,7 @@
 from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.beam import Beam
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.design import Design
@@ -119,32 +120,25 @@ def get_design_from_edge(edge: "Edge") -> "Design":
     return get_design_from_body(body)
 
 
-def __traverse_all_bodies(comp: Union["Design", "Component"]) -> list["Body"]:
-    """Traverse all bodies in a design and all its subcomponents.
-
-    This is a private method. Do not use it directly.
-
-    Parameters
-    ----------
-    design : Design
-        Design object to traverse.
-
-    Returns
-    -------
-    list[Body]
-        List of all bodies in the design or component.
-
-    Notes
-    -----
-    This method is a recursive helper function to traverse all bodies in a
-    design and all its subcomponents.
-    """
-    bodies = []
-    bodies.extend(comp.bodies)
+def __traverse_component_elem(elem: str, comp: Union["Design", "Component"]) -> list:
+    """Traverses all elements of a component or design, given its name."""
+    elems = []
+    comp_elems = getattr(comp, elem)
+    elems.extend(comp_elems)
     for component in comp.components:
-        bodies.extend(__traverse_all_bodies(component))
+        elems.extend(__traverse_component_elem(elem, component))
 
-    return bodies
+    return elems
+
+
+def __traverse_all_bodies(comp: Union["Design", "Component"]) -> list["Body"]:
+    """Traverse all bodies in a design/component and all its subcomponents."""
+    return __traverse_component_elem("bodies", comp)
+
+
+def __traverse_all_beams(comp: Union["Design", "Component"]) -> list["Body"]:
+    """Traverse all beams in a design/component and all its subcomponents."""
+    return __traverse_component_elem("beams", comp)
 
 
 def get_all_bodies_from_design(design: "Design") -> list["Body"]:
@@ -235,6 +229,28 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     return [
         edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids
     ]  # noqa: E501
+
+
+def get_beams_from_ids(design: "Design", beam_ids: list[str]) -> list["Beam"]:
+    """Find the ``Beam`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the beams.
+    beam_ids : list[str]
+        List of beam ids.
+
+    Returns
+    -------
+    list[Beam]
+        List of Beam objects.
+
+    Notes
+    -----
+    This method takes a design and beam ids, and gets their corresponding ``Beam`` objects.
+    """
+    return [beam for beam in __traverse_all_beams(design) if beam.id in beam_ids]  # noqa: E501
 
 
 def convert_color_to_hex(
