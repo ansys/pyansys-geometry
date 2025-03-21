@@ -1,0 +1,74 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.16.4
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
+# Modeling: Chamfer edges and faces
+A chamfer is an angled cut on an edge. Chamfers can be created using the ``Modeler.geometry_commands`` module.
+
++++
+
+## Create a block
+Launch the modeler and create a block.
+
+```{code-cell} ipython3
+from ansys.geometry.core import launch_modeler, Modeler
+
+modeler = launch_modeler()
+print(modeler)
+```
+
+```{code-cell} ipython3
+from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.math import Point2D
+
+design = modeler.create_design("chamfer_block")
+body = design.extrude_sketch("block", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+body.plot()
+```
+
+## Chamfer edges
+Create a uniform chamfer on all edges of the block.
+
+```{code-cell} ipython3
+modeler.geometry_commands.chamfer(body.edges, distance=0.1)
+
+body.plot()
+```
+
+## Chamfer faces
+The chamfer of a face can also be modified. Create a chamfer on a single edge and then modify the chamfer distance value by providing the newly created face that represents the chamfer.
+
+```{code-cell} ipython3
+body = design.extrude_sketch("box", Sketch().box(Point2D([0,0]), 1, 1), 1)
+
+modeler.geometry_commands.chamfer(body.edges[0], distance=0.1)
+
+body.plot()
+```
+
+```{code-cell} ipython3
+modeler.geometry_commands.chamfer(body.faces[-1], distance=0.3)
+
+body.plot()
+```
+
+## Close session
+
+When you finish interacting with your modeling service, you should close the active
+server session. This frees resources wherever the service is running.
+
+Close the server session.
+
+```{code-cell} ipython3
+modeler.close()
+```
