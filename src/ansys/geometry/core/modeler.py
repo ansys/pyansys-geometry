@@ -23,7 +23,7 @@
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Generator, Optional
 
 from grpc import Channel
 
@@ -356,7 +356,7 @@ class Modeler:
 
     def _generate_file_chunks(
         self, file_path: Path, open_file: bool, import_options: ImportOptions
-    ):
+    ) -> Generator[UploadFileRequest, None, None]:
         """Generate appropriate chunk sizes for uploading files.
 
         Parameters
@@ -368,10 +368,10 @@ class Modeler:
         import_options : ImportOptions
             Import options that toggle certain features when opening a file.
 
-        Returns
-        -------
-        Chunked UploadFileRequest
-
+        Yields
+        ------
+        UploadFileRequest
+            Request object for uploading a file in chunks.
         """
         msg_buffer = 5 * 1024  # 5KB - for additional message data
         if pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer < 0:  # pragma: no cover
@@ -549,11 +549,7 @@ class Modeler:
 
         # Check if API version is specified... if so, validate it
         if api_version is not None:
-            if self.client.backend_type in (
-                BackendType.WINDOWS_SERVICE,
-                BackendType.CORE_WINDOWS,
-                BackendType.CORE_LINUX,
-            ):
+            if BackendType.is_headless_service(self.client.backend_type):
                 self.client.log.warning(
                     "The Ansys Geometry Service only supports "
                     "scripts that are of its same API version."

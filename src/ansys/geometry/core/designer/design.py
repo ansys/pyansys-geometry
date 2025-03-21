@@ -1159,17 +1159,17 @@ class Design(Component):
         # Create Beams
         for beam in response.beams:
             cross_section = BeamCrossSectionInfo(
-                SectionAnchorType(beam.cross_section.section_anchor),
-                beam.cross_section.section_angle,
-                grpc_frame_to_frame(beam.cross_section.section_frame),
-                [
+                section_anchor=SectionAnchorType(beam.cross_section.section_anchor),
+                section_angle=beam.cross_section.section_angle,
+                section_frame=grpc_frame_to_frame(beam.cross_section.section_frame),
+                section_profile=[
                     [
                         TrimmedCurve(
-                            grpc_curve_to_curve(curve.curve),
-                            grpc_point_to_point3d(curve.start),
-                            grpc_point_to_point3d(curve.end),
-                            Interval(curve.interval_start, curve.interval_end),
-                            curve.length,
+                            geometry=grpc_curve_to_curve(curve.curve),
+                            start=grpc_point_to_point3d(curve.start),
+                            end=grpc_point_to_point3d(curve.end),
+                            interval=Interval(curve.interval_start, curve.interval_end),
+                            length=curve.length,
                         )
                         for curve in curve_list.curves
                     ]
@@ -1177,36 +1177,40 @@ class Design(Component):
                 ],
             )
             properties = BeamProperties(
-                beam.properties.area,
-                ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
-                beam.properties.warping_constant,
-                beam.properties.ixx,
-                beam.properties.ixy,
-                beam.properties.iyy,
-                ParamUV(beam.properties.shear_center_x, beam.properties.shear_center_y),
-                beam.properties.torsional_constant,
+                area=beam.properties.area,
+                centroid=ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
+                warping_constant=beam.properties.warping_constant,
+                ixx=beam.properties.ixx,
+                ixy=beam.properties.ixy,
+                iyy=beam.properties.iyy,
+                shear_center=ParamUV(
+                    beam.properties.shear_center_x, beam.properties.shear_center_y
+                ),
+                torsion_constant=beam.properties.torsional_constant,
             )
 
             new_beam = Beam(
-                beam.id.id,
-                grpc_point_to_point3d(beam.shape.start),
-                grpc_point_to_point3d(beam.shape.end),
-                None,
+                id=beam.id.id,
+                start=grpc_point_to_point3d(beam.shape.start),
+                end=grpc_point_to_point3d(beam.shape.end),
+                profile=None,
                 # TODO: Beams need BeamProfiles imported from existing design
                 # https://github.com/ansys/pyansys-geometry/issues/1825
-                self,
-                beam.name,
-                beam.is_deleted,
-                beam.is_reversed,
-                beam.is_rigid,
-                grpc_material_to_material(beam.material),
-                cross_section,
-                properties,
-                beam.shape,
-                beam.type,
+                parent_component=self,
+                name=beam.name,
+                is_deleted=beam.is_deleted,
+                is_reversed=beam.is_reversed,
+                is_rigid=beam.is_rigid,
+                material=grpc_material_to_material(beam.material),
+                cross_section=cross_section,
+                properties=properties,
+                shape=beam.shape,
+                beam_type=beam.type,
             )
 
-            self._beams.append(new_beam)
+            # Find the component to which the beam belongs
+            parent = created_components.get(beam.parent.id, self)
+            parent._beams.append(new_beam)
 
         # Create NamedSelections
         for ns in response.named_selections:

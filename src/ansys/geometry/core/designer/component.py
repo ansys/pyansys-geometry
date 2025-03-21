@@ -99,7 +99,6 @@ from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
-from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -1149,21 +1148,15 @@ class Component:
         self,
         segments: list[tuple[Point3D, Point3D]],
         profile: BeamProfile,
-        arcs: list[Arc] = None,
-        circles: list[Circle] = None,
     ) -> list[Beam]:
         """Create beams under the component.
 
         Parameters
         ----------
         segments : list[tuple[Point3D, Point3D]]
-            list of start and end pairs, each specifying a single line segment.
+            List of start and end pairs, each specifying a single line segment.
         profile : BeamProfile
             Beam profile to use to create the beams.
-        arcs : list[Curve], default: None
-            list of arcs to create beams from.
-        circles : list[Curve], default: None
-            list of circles to create beams from.
 
         Returns
         -------
@@ -1178,7 +1171,7 @@ class Component:
         if self._grpc_client.backend_version < (25, 2, 0):
             return self.__create_beams_legacy(segments, profile)
         else:
-            return self.__create_beams(segments, profile, arcs, circles)
+            return self.__create_beams(segments, profile)
 
     def __create_beams_legacy(
         self, segments: list[tuple[Point3D, Point3D]], profile: BeamProfile
@@ -1192,7 +1185,7 @@ class Component:
         Parameters
         ----------
         segments : list[tuple[Point3D, Point3D]]
-            list of start and end pairs, each specifying a single line segment.
+            List of start and end pairs, each specifying a single line segment.
         profile : BeamProfile
             Beam profile to use to create the beams.
 
@@ -1229,15 +1222,13 @@ class Component:
         self,
         segments: list[tuple[Point3D, Point3D]],
         profile: BeamProfile,
-        arcs: list[Arc],
-        circles: list[Circle],
     ) -> list[Beam]:
         """Create beams under the component.
 
         Parameters
         ----------
         segments : list[tuple[Point3D, Point3D]]
-            list of start and end pairs, each specifying a single line segment.
+            List of start and end pairs, each specifying a single line segment.
         profile : BeamProfile
             Beam profile to use to create the beams.
 
@@ -1263,17 +1254,17 @@ class Component:
         beams = []
         for beam in response.created_beams:
             cross_section = BeamCrossSectionInfo(
-                SectionAnchorType(beam.cross_section.section_anchor),
-                beam.cross_section.section_angle,
-                grpc_frame_to_frame(beam.cross_section.section_frame),
-                [
+                section_anchor=SectionAnchorType(beam.cross_section.section_anchor),
+                section_angle=beam.cross_section.section_angle,
+                section_frame=grpc_frame_to_frame(beam.cross_section.section_frame),
+                section_profile=[
                     [
                         TrimmedCurve(
-                            grpc_curve_to_curve(curve.geometry),
-                            grpc_point_to_point3d(curve.start),
-                            grpc_point_to_point3d(curve.end),
-                            Interval(curve.interval_start, curve.interval_end),
-                            curve.length,
+                            geometry=grpc_curve_to_curve(curve.geometry),
+                            start=grpc_point_to_point3d(curve.start),
+                            end=grpc_point_to_point3d(curve.end),
+                            interval=Interval(curve.interval_start, curve.interval_end),
+                            length=curve.length,
                         )
                         for curve in curve_list
                     ]
@@ -1281,32 +1272,34 @@ class Component:
                 ],
             )
             properties = BeamProperties(
-                beam.properties.area,
-                ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
-                beam.properties.warping_constant,
-                beam.properties.ixx,
-                beam.properties.ixy,
-                beam.properties.iyy,
-                ParamUV(beam.properties.shear_center_x, beam.properties.shear_center_y),
-                beam.properties.torsional_constant,
+                area=beam.properties.area,
+                centroid=ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
+                warping_constant=beam.properties.warping_constant,
+                ixx=beam.properties.ixx,
+                ixy=beam.properties.ixy,
+                iyy=beam.properties.iyy,
+                shear_center=ParamUV(
+                    beam.properties.shear_center_x, beam.properties.shear_center_y
+                ),
+                torsion_constant=beam.properties.torsional_constant,
             )
 
             beams.append(
                 Beam(
-                    beam.id.id,
-                    grpc_point_to_point3d(beam.shape.start),
-                    grpc_point_to_point3d(beam.shape.end),
-                    profile,
-                    self,
-                    beam.name,
-                    beam.is_deleted,
-                    beam.is_reversed,
-                    beam.is_rigid,
-                    grpc_material_to_material(beam.material),
-                    cross_section,
-                    properties,
-                    beam.shape,
-                    beam.type,
+                    id=beam.id.id,
+                    start=grpc_point_to_point3d(beam.shape.start),
+                    end=grpc_point_to_point3d(beam.shape.end),
+                    profile=profile,
+                    parent_component=self,
+                    name=beam.name,
+                    is_deleted=beam.is_deleted,
+                    is_reversed=beam.is_reversed,
+                    is_rigid=beam.is_rigid,
+                    material=grpc_material_to_material(beam.material),
+                    cross_section=cross_section,
+                    properties=properties,
+                    shape=beam.shape,
+                    beam_type=beam.type,
                 )
             )
 
