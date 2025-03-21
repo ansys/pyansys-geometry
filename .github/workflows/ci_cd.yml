@@ -851,7 +851,7 @@ jobs:
           library-name: ${{ env.PACKAGE_NAME }}
           additional-artifacts: windows-core-dockerfile.zip linux-core-dockerfile.zip
           add-artifact-attestation-notes: true
-          generate_release_notes: true
+          changelog-release-notes: true
 
   upload_dev_docs:
     name: Upload dev documentation
