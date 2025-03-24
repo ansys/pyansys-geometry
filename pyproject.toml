@@ -27,7 +27,7 @@ dependencies = [
     "ansys-api-geometry==0.4.50",
     "ansys-tools-path>=0.3,<1",
     "attrs!=24.3.0",
-    "beartype>=0.11.0,<0.20",
+    "beartype>=0.11.0,<0.21",
     "geomdl>=5,<6",
     "grpcio>=1.35.0,<1.68",
     "grpcio-health-checking>=1.45.0,<1.68",
