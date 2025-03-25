@@ -26,12 +26,16 @@ import pint
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.models_pb2 import (
     Direction as GRPCDirection,
+    Frame as GRPCFrame,
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
+    Plane as GRPCPlane,
     Point as GRPCPoint,
 )
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
@@ -181,3 +185,45 @@ def from_grpc_material_property_to_material_property(
         mp_quantity = material_property.value
 
     return MaterialProperty(mp_type, material_property.display_name, mp_quantity)
+
+
+def from_frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
+    """Convert a ``Frame`` class to a frame gRPC message.
+
+    Parameters
+    ----------
+    frame : Frame
+        Source frame data.
+
+    Returns
+    -------
+    GRPCFrame
+        Geometry service gRPC frame message. The unit for the frame origin is meters.
+    """
+    return GRPCFrame(
+        origin=from_point3d_to_grpc_point(frame.origin),
+        dir_x=from_unit_vector_to_grpc_direction(frame.direction_x),
+        dir_y=from_unit_vector_to_grpc_direction(frame.direction_y),
+    )
+
+
+def from_plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
+    """Convert a ``Plane`` class to a plane gRPC message.
+
+    Parameters
+    ----------
+    plane : Plane
+        Source plane data.
+
+    Returns
+    -------
+    GRPCPlane
+        Geometry service gRPC plane message. The unit is meters.
+    """
+    return GRPCPlane(
+        frame=GRPCFrame(
+            origin=from_point3d_to_grpc_point(plane.origin),
+            dir_x=from_unit_vector_to_grpc_direction(plane.direction_x),
+            dir_y=from_unit_vector_to_grpc_direction(plane.direction_y),
+        )
+    )

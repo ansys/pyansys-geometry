@@ -28,11 +28,13 @@ from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
-from ..base.conversions import from_measurement_to_server_length
+from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
 from .conversions import (
     build_grpc_id,
+    from_frame_to_grpc_frame,
     from_grpc_material_to_material,
     from_grpc_point_to_point3d,
+    from_plane_to_grpc_plane,
     from_point3d_to_grpc_point,
     from_unit_vector_to_grpc_direction,
 )
@@ -289,27 +291,102 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def rotate(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import RotateRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RotateRequest(
+            id=kwargs["id"],
+            axis_origin=from_point3d_to_grpc_point(kwargs["axis_origin"]),
+            axis_direction=from_unit_vector_to_grpc_direction(kwargs["axis_direction"]),
+            angle=from_measurement_to_server_angle(kwargs["angle"]),
+        )
+
+        # Call the gRPC service
+        self.stub.Rotate(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def scale(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import ScaleRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ScaleRequest(
+            id=kwargs["id"],
+            scale=kwargs["value"],
+        )
+
+        # Call the gRPC service
+        self.stub.Scale(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def mirror(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import MirrorRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MirrorRequest(
+            id=kwargs["id"],
+            plane=from_plane_to_grpc_plane(kwargs["plane"]),
+        )
+
+        # Call the gRPC service
+        self.stub.Mirror(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def map(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import MapRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MapRequest(
+            id=kwargs["id"],
+            frame=from_frame_to_grpc_frame(kwargs["frame"]),
+        )
+
+        # Call the gRPC service
+        self.stub.Map(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def get_collision(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import GetCollisionRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetCollisionRequest(
+            body_1_id=kwargs["id"],
+            body_2_id=kwargs["other_id"],
+        )
+
+        # Call the gRPC service
+        resp = self.stub.GetCollision(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {"collision_type": resp.collision}
 
     @protect_grpc
     def copy(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import CopyRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CopyRequest(
+            id=kwargs["id"],
+            parent=kwargs["parent_id"],
+            name=kwargs["name"],
+        )
+
+        # Call the gRPC service
+        resp = self.stub.Copy(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {"master_id": resp.master_id, "name": resp.name}
 
     @protect_grpc
     def get_tesellation(self, **kwargs) -> dict:  # noqa: D102

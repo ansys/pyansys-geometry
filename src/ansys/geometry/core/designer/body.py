@@ -34,13 +34,7 @@ from pint import Quantity
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
-    CopyRequest,
-    GetCollisionRequest,
     GetTessellationRequest,
-    MapRequest,
-    MirrorRequest,
-    RotateRequest,
-    ScaleRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -57,9 +51,7 @@ from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.models_pb2 import TessellationOptions as GRPCTessellationOptions
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
-    frame_to_grpc_frame,
     plane_to_grpc_plane,
-    point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
     tess_to_pd,
     trimmed_curve_to_grpc_trimmed_curve,
@@ -926,13 +918,17 @@ class MasterBody(IBody):
 
     @property
     def faces(self) -> list[Face]:  # noqa: D102
-        self._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
-        resp = self._grpc_client.services.body_service.get_faces(id=self.id)
+        return self._get_faces_from_id(self)
+
+    def _get_faces_from_id(self, body: Union["Body", "MasterBody"]) -> list[Face]:
+        """Retrieve faces from a body ID."""
+        self._grpc_client.log.debug(f"Retrieving faces for body {body.id} from server.")
+        resp = self._grpc_client.services.body_service.get_faces(id=body.id)
         return [
             Face(
                 face_resp.get("id"),
                 SurfaceType(face_resp.get("surface_type")),
-                self,
+                body,
                 self._grpc_client,
                 face_resp.get("is_reversed"),
             )
@@ -941,13 +937,17 @@ class MasterBody(IBody):
 
     @property
     def edges(self) -> list[Edge]:  # noqa: D102
-        self._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
-        resp = self._grpc_client.services.body_service.get_edges(id=self.id)
+        return self._get_edges_from_id(self)
+
+    def _get_edges_from_id(self, body: Union["Body", "MasterBody"]) -> list[Edge]:
+        """Retrieve edges from a body ID."""
+        self._grpc_client.log.debug(f"Retrieving edges for body {body.id} from server.")
+        resp = self._grpc_client.services.body_service.get_edges(id=body.id)
         return [
             Edge(
                 edge_resp.get("id"),
                 CurveType(edge_resp.get("curve_type")),
-                self,
+                body,
                 self._grpc_client,
                 edge_resp.get("is_reversed"),
             )
@@ -1129,7 +1129,6 @@ class MasterBody(IBody):
         new_color = self.color[0:7] + opacity
         self.set_color(new_color)
 
-    @protect_grpc
     @check_input_types
     @reset_tessellation_cache
     @min_backend_version(24, 2, 0)
@@ -1140,81 +1139,59 @@ class MasterBody(IBody):
         angle: Quantity | Angle | Real,
     ) -> None:
         angle = angle if isinstance(angle, Angle) else Angle(angle)
-        rotation_magnitude = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
         self._grpc_client.log.debug(f"Rotating body {self.id}.")
-        self._bodies_stub.Rotate(
-            RotateRequest(
-                id=self.id,
-                axis_origin=point3d_to_grpc_point(axis_origin),
-                axis_direction=unit_vector_to_grpc_direction(axis_direction),
-                angle=rotation_magnitude,
-            )
+        self._grpc_client.services.body_service.rotate(
+            id=self.id, axis_origin=axis_origin, axis_direction=axis_direction, angle=angle
         )
 
-    @protect_grpc
     @check_input_types
     @reset_tessellation_cache
     @min_backend_version(24, 2, 0)
     def scale(self, value: Real) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Scaling body {self.id}.")
-        self._bodies_stub.Scale(ScaleRequest(id=self.id, scale=value))
+        self._grpc_client.services.body_service.scale(id=self.id, value=value)
 
-    @protect_grpc
     @check_input_types
     @reset_tessellation_cache
     @min_backend_version(24, 2, 0)
     def map(self, frame: Frame) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Mapping body {self.id}.")
-        self._bodies_stub.Map(MapRequest(id=self.id, frame=frame_to_grpc_frame(frame)))
+        self._grpc_client.services.body_service.map(id=self.id, frame=frame)
 
-    @protect_grpc
     @check_input_types
     @reset_tessellation_cache
     @min_backend_version(24, 2, 0)
     def mirror(self, plane: Plane) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Mirroring body {self.id}.")
-        self._bodies_stub.Mirror(MirrorRequest(id=self.id, plane=plane_to_grpc_plane(plane)))
+        self._grpc_client.services.body_service.mirror(id=self.id, plane=plane)
 
-    @protect_grpc
     @min_backend_version(24, 2, 0)
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
         self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
-        response = self._bodies_stub.GetCollision(
-            GetCollisionRequest(
-                body_1_id=self.id,
-                body_2_id=body.id,
-            )
-        )
-        return CollisionType(response.collision)
+        resp = self._grpc_client.services.body_service.get_collision(id=self.id, other_id=body.id)
+        return CollisionType(resp.get("collision_type"))
 
-    @protect_grpc
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         from ansys.geometry.core.designer.component import Component
 
         # Check input types
         check_type(parent, Component)
-        check_type(name, (type(None), str))
         copy_name = self.name if name is None else name
+        check_type(copy_name, str)
 
         self._grpc_client.log.debug(f"Copying body {self.id}.")
-
-        # Perform copy request to server
-        response = self._bodies_stub.Copy(
-            CopyRequest(
-                id=self.id,
-                parent=parent.id,
-                name=copy_name,
-            )
+        resp = self._grpc_client.services.body_service.copy(
+            id=self.id, parent_id=parent.id, name=copy_name
         )
 
         # Assign the new body to its specified parent (and return the new body)
         tb = MasterBody(
-            response.master_id, copy_name, self._grpc_client, is_surface=self.is_surface
+            resp.get("master_id"), copy_name, self._grpc_client, is_surface=self.is_surface
         )
         parent._master_component.part.bodies.append(tb)
         parent._clear_cached_bodies()
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
-        return Body(body_id, response.name, parent, tb)
+        return Body(body_id, resp.get("name"), parent, tb)
 
     @protect_grpc
     @graphics_required
@@ -1495,38 +1472,14 @@ class Body(IBody):
         return self._parent_component
 
     @property
-    @protect_grpc
     @ensure_design_is_active
     def faces(self) -> list[Face]:  # noqa: D102
-        self._template._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
-        grpc_faces = self._template._bodies_stub.GetFaces(self._grpc_id)
-        return [
-            Face(
-                grpc_face.id,
-                SurfaceType(grpc_face.surface_type),
-                self,
-                self._template._grpc_client,
-                grpc_face.is_reversed,
-            )
-            for grpc_face in grpc_faces.faces
-        ]
+        return self._template._get_faces_from_id(self)
 
     @property
-    @protect_grpc
     @ensure_design_is_active
     def edges(self) -> list[Edge]:  # noqa: D102
-        self._template._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
-        grpc_edges = self._template._bodies_stub.GetEdges(self._grpc_id)
-        return [
-            Edge(
-                grpc_edge.id,
-                CurveType(grpc_edge.curve_type),
-                self,
-                self._template._grpc_client,
-                grpc_edge.is_reversed,
-            )
-            for grpc_edge in grpc_edges.edges
-        ]
+        return self._template._get_edges_from_id(self)
 
     @property
     def _is_alive(self) -> bool:  # noqa: D102
