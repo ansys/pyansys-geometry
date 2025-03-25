@@ -22,13 +22,20 @@
 """Module containing the bodies service implementation for v0."""
 
 import grpc
+import pint
 
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_length
-from ..base.misc import verify_input_keys
-from .conversions import from_point3d_to_grpc_point, from_unit_vector_to_grpc_direction
+from .conversions import (
+    build_grpc_id,
+    from_grpc_material_to_material,
+    from_grpc_point_to_point3d,
+    from_point3d_to_grpc_point,
+    from_unit_vector_to_grpc_direction,
+)
 
 
 class GRPCBodyServiceV0(GRPCBodyService):
@@ -54,9 +61,6 @@ class GRPCBodyServiceV0(GRPCBodyService):
     @protect_grpc
     def create_sphere_body(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.bodies_pb2 import CreateSphereBodyRequest
-
-        # Ensure all inputs are passed
-        verify_input_keys(kwargs, ["name", "parent", "center", "radius"])
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSphereBodyRequest(
@@ -116,9 +120,6 @@ class GRPCBodyServiceV0(GRPCBodyService):
     def translate(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.bodies_pb2 import TranslateRequest
 
-        # Ensure all inputs are passed
-        verify_input_keys(kwargs, ["ids", "direction", "distance"])
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = TranslateRequest(
             ids=kwargs["ids"],
@@ -134,63 +135,157 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def delete(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-
-        # Ensure all inputs are passed
-        verify_input_keys(kwargs, ["id"])
-
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = EntityIdentifier(id=kwargs["id"])
-
         # Call the gRPC service
-        self.stub.Delete(request=request)
+        self.stub.Delete(request=build_grpc_id(kwargs["id"]))
 
         # Return the response - formatted as a dictionary
         return {}
 
     @protect_grpc
     def is_suppressed(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        # Call the gRPC service
+        resp = self.stub.IsSuppressed(request=build_grpc_id(kwargs["id"]))
+
+        # Return the response - formatted as a dictionary
+        return {"result": resp.result}
 
     @protect_grpc
     def get_color(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        # Call the gRPC service
+        resp = self.stub.GetColor(request=build_grpc_id(kwargs["id"]))
+
+        # Return the response - formatted as a dictionary
+        return {"color": resp.color}
 
     @protect_grpc
     def get_faces(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        # Call the gRPC service
+        resp = self.stub.GetFaces(request=build_grpc_id(kwargs["id"]))
+
+        # Return the response - formatted as a dictionary
+        return {
+            "faces": [
+                {
+                    "id": face.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
+                }
+                for face in resp.faces
+            ]
+        }
 
     @protect_grpc
     def get_edges(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        # Call the gRPC service
+        resp = self.stub.GetEdges(request=build_grpc_id(kwargs["id"]))
+
+        # Return the response - formatted as a dictionary
+        return {
+            "edges": [
+                {
+                    "id": edge.id,
+                    "curve_type": edge.curve_type,
+                    "is_reversed": edge.is_reversed,
+                }
+                for edge in resp.edges
+            ]
+        }
 
     @protect_grpc
     def get_volume(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        # Call the gRPC service
+        resp = self.stub.GetVolume(request=build_grpc_id(kwargs["id"]))
+
+        # Return the response - formatted as a dictionary
+        return {"volume": pint.Quantity(resp.volume, DEFAULT_UNITS.SERVER_VOLUME)}
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        # Call the gRPC service
+        resp = self.stub.GetBoundingBox(request=build_grpc_id(kwargs["id"]))
+
+        # Return the response - formatted as a dictionary
+        return {
+            "min": from_grpc_point_to_point3d(resp.box.min),
+            "max": from_grpc_point_to_point3d(resp.box.max),
+            "center": from_grpc_point_to_point3d(resp.box.center),
+        }
 
     @protect_grpc
     def set_assigned_material(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import SetAssignedMaterialRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetAssignedMaterialRequest(id=kwargs["id"], material=kwargs["material"].name)
+
+        # Call the gRPC service
+        self.stub.SetAssignedMaterial(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def get_assigned_material(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        # Call the gRPC service
+        resp = self.stub.GetAssignedMaterial(request=build_grpc_id(kwargs["id"]))
+
+        # Return the response - formatted as a dictionary
+        return {"material": from_grpc_material_to_material(resp)}
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import SetNameRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetNameRequest(body_id=kwargs["id"], name=kwargs["name"])
+
+        # Call the gRPC service
+        self.stub.SetName(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def set_fill_style(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import SetFillStyleRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetFillStyleRequest(body_id=kwargs["id"], fill_style=kwargs["fill_style"].value)
+
+        # Call the gRPC service
+        self.stub.SetFillStyle(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
+    def set_suppressed(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.bodies_pb2 import SetSuppressedRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetSuppressedRequest(
+            bodies=[build_grpc_id(body_id) for body_id in kwargs["bodies"]],
+            is_suppressed=kwargs["is_suppressed"],
+        )
+
+        # Call the gRPC service
+        self.stub.SetSuppressed(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def set_color(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import SetColorRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetColorRequest(body_id=kwargs["id"], color=kwargs["color"])
+
+        # Call the gRPC service
+        self.stub.SetColor(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def rotate(self, **kwargs) -> dict:  # noqa: D102

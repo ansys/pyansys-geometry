@@ -150,6 +150,11 @@ class GRPCBodyService(ABC):
         pass
 
     @abstractmethod
+    def set_suppressed(self, **kwargs) -> dict:
+        """Set the suppressed state of a body."""
+        pass
+
+    @abstractmethod
     def set_color(self, **kwargs) -> dict:
         """Set the color of a body."""
         pass

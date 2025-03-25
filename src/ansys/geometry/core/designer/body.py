@@ -41,12 +41,6 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     MirrorRequest,
     RotateRequest,
     ScaleRequest,
-    SetAssignedMaterialRequest,
-    SetColorRequest,
-    SetFillStyleRequest,
-    SetNameRequest,
-    SetSuppressedRequest,
-    TranslateRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -64,8 +58,6 @@ from ansys.api.geometry.v0.models_pb2 import TessellationOptions as GRPCTessella
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
-    grpc_material_to_material,
-    grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
@@ -879,17 +871,15 @@ class MasterBody(IBody):
         self.set_fill_style(value)
 
     @property
-    @protect_grpc
     def is_suppressed(self) -> bool:  # noqa: D102
-        response = self._bodies_stub.IsSuppressed(self._grpc_id)
-        return response.result
+        response = self._grpc_client.services.body_service.is_suppressed(id=self.id)
+        return response.get("result")
 
     @is_suppressed.setter
     def is_suppressed(self, value: bool):  # noqa: D102
         self.set_suppressed(value)
 
     @property
-    @protect_grpc
     def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
         if self._color is None and self.is_alive:
@@ -903,15 +893,15 @@ class MasterBody(IBody):
                 )
             else:
                 # Fetch color from the server if it's not cached
-                color_response = self._bodies_stub.GetColor(self._grpc_id)
-                if color_response.color:
-                    self._color = mcolors.to_hex(color_response.color, keep_alpha=True)
+                color = self._grpc_client.services.body_service.get_color(id=self.id).get("color")
+                if color:
+                    self._color = mcolors.to_hex(color, keep_alpha=True)
 
         return self._color
 
     @property
     def opacity(self) -> float:  # noqa: D102
-        opacity_hex = self._color[7:]
+        opacity_hex = self.color[7:]
         return int(opacity_hex, 16) / 255 if opacity_hex else 1
 
     @color.setter
@@ -935,35 +925,33 @@ class MasterBody(IBody):
         return self._surface_offset if self.is_surface else None
 
     @property
-    @protect_grpc
     def faces(self) -> list[Face]:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving faces for body {self.id} from server.")
-        grpc_faces = self._bodies_stub.GetFaces(self._grpc_id)
+        resp = self._grpc_client.services.body_service.get_faces(id=self.id)
         return [
             Face(
-                grpc_face.id,
-                SurfaceType(grpc_face.surface_type),
+                face_resp.get("id"),
+                SurfaceType(face_resp.get("surface_type")),
                 self,
                 self._grpc_client,
-                grpc_face.is_reversed,
+                face_resp.get("is_reversed"),
             )
-            for grpc_face in grpc_faces.faces
+            for face_resp in resp.get("faces")
         ]
 
     @property
-    @protect_grpc
     def edges(self) -> list[Edge]:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving edges for body {self.id} from server.")
-        grpc_edges = self._bodies_stub.GetEdges(self._grpc_id)
+        resp = self._grpc_client.services.body_service.get_edges(id=self.id)
         return [
             Edge(
-                grpc_edge.id,
-                CurveType(grpc_edge.curve_type),
+                edge_resp.get("id"),
+                CurveType(edge_resp.get("curve_type")),
                 self,
                 self._grpc_client,
-                grpc_edge.is_reversed,
+                edge_resp.get("is_reversed"),
             )
-            for grpc_edge in grpc_edges.edges
+            for edge_resp in resp.get("edges")
         ]
 
     @property
@@ -971,15 +959,14 @@ class MasterBody(IBody):
         return self._is_alive
 
     @property
-    @protect_grpc
     def volume(self) -> Quantity:  # noqa: D102
         if self.is_surface:
             self._grpc_client.log.debug("Dealing with planar surface. Returning 0 as the volume.")
             return Quantity(0, DEFAULT_UNITS.SERVER_VOLUME)
         else:
             self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
-            volume_response = self._bodies_stub.GetVolume(self._grpc_id)
-            return Quantity(volume_response.volume, DEFAULT_UNITS.SERVER_VOLUME)
+            resp = self._grpc_client.services.body_service.get_volume(id=self.id)
+            return resp.get("volume")
 
     @property
     def material(self) -> Material:  # noqa: D102
@@ -990,30 +977,25 @@ class MasterBody(IBody):
         self.assign_material(value)
 
     @property
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def bounding_box(self) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
-        result = self._bodies_stub.GetBoundingBox(self._grpc_id).box
+        resp = self._grpc_client.services.body_service.get_bounding_box(id=self.id)
+        return BoundingBox(
+            min_corner=resp.get("min"),
+            max_corner=resp.get("max"),
+            center=resp.get("center"),
+        )
 
-        min_corner = grpc_point_to_point3d(result.min)
-        max_corner = grpc_point_to_point3d(result.max)
-        center = grpc_point_to_point3d(result.center)
-        return BoundingBox(min_corner, max_corner, center)
-
-    @protect_grpc
     @check_input_types
     def assign_material(self, material: Material) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Assigning body {self.id} material {material.name}.")
-        self._bodies_stub.SetAssignedMaterial(
-            SetAssignedMaterialRequest(id=self._id, material=material.name)
-        )
+        self._grpc_client.services.body_service.set_assigned_material(id=self.id, material=material)
 
-    @protect_grpc
     def get_assigned_material(self) -> Material:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving assigned material for body {self.id}.")
-        material_response = self._bodies_stub.GetAssignedMaterial(self._grpc_id)
-        return grpc_material_to_material(material_response)
+        resp = self._grpc_client.services.body_service.get_assigned_material(id=self.id)
+        return resp.get("material")
 
     @protect_grpc
     @check_input_types
@@ -1046,7 +1028,6 @@ class MasterBody(IBody):
                 f"Body {self.name} cannot be assigned a mid-surface offset because it is not a surface. Ignoring request."  # noqa : E501
             )
 
-    @protect_grpc
     @check_input_types
     def imprint_curves(  # noqa: D102
         self, faces: list[Face], sketch: Sketch
@@ -1058,7 +1039,6 @@ class MasterBody(IBody):
             """
         )
 
-    @protect_grpc
     @check_input_types
     def project_curves(  # noqa: D102
         self,
@@ -1075,7 +1055,6 @@ class MasterBody(IBody):
         )
 
     @check_input_types
-    @protect_grpc
     def imprint_projected_curves(  # noqa: D102
         self,
         direction: UnitVector3D,
@@ -1090,57 +1069,35 @@ class MasterBody(IBody):
             """
         )
 
-    @protect_grpc
     @check_input_types
     @reset_tessellation_cache
     def translate(  # noqa: D102
         self, direction: UnitVector3D, distance: Quantity | Distance | Real
     ) -> None:
         distance = distance if isinstance(distance, Distance) else Distance(distance)
-
-        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-
         self._grpc_client.log.debug(f"Translating body {self.id}.")
-
-        self._bodies_stub.Translate(
-            TranslateRequest(
-                ids=[self.id],
-                direction=unit_vector_to_grpc_direction(direction),
-                distance=translation_magnitude,
-            )
+        self._grpc_client.services.body_service.translate(
+            ids=[self.id], direction=direction, distance=distance
         )
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
     def set_name(  # noqa: D102
         self, name: str
     ) -> None:
         self._grpc_client.log.debug(f"Renaming body {self.id} from '{self.name}' to '{name}'.")
-        self._bodies_stub.SetName(
-            SetNameRequest(
-                body_id=self.id,
-                name=name,
-            )
-        )
+        self._grpc_client.services.body_service.set_name(id=self.id, name=name)
         self._name = name
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
     def set_fill_style(  # noqa: D102
         self, fill_style: FillStyle
     ) -> None:
         self._grpc_client.log.debug(f"Setting body fill style {self.id}.")
-        self._bodies_stub.SetFillStyle(
-            SetFillStyleRequest(
-                body_id=self.id,
-                fill_style=fill_style.value,
-            )
-        )
+        self._grpc_client.services.body_service.set_fill_style(id=self.id, fill_style=fill_style)
         self._fill_style = fill_style
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
     def set_suppressed(  # noqa: D102
@@ -1148,14 +1105,10 @@ class MasterBody(IBody):
     ) -> None:
         """Set the body suppression state."""
         self._grpc_client.log.debug(f"Setting body {self.id}, as suppressed: {suppressed}.")
-        self._bodies_stub.SetSuppressed(
-            SetSuppressedRequest(
-                bodies=[self._grpc_id],
-                is_suppressed=suppressed,
-            )
+        self._grpc_client.services.body_service.set_suppressed(
+            bodies=[self.id], is_suppressed=suppressed
         )
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
     def set_color(
@@ -1164,13 +1117,7 @@ class MasterBody(IBody):
         """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
         color = convert_color_to_hex(color)
-
-        self._bodies_stub.SetColor(
-            SetColorRequest(
-                body_id=self.id,
-                color=color,
-            )
-        )
+        self._grpc_client.services.body_service.set_color(id=self.id, color=color)
         self._color = color
 
     @check_input_types
@@ -1179,8 +1126,7 @@ class MasterBody(IBody):
         """Set the opacity of the body."""
         self._grpc_client.log.debug(f"Setting body opacity of {self.id} to {opacity}.")
         opacity = convert_opacity_to_hex(opacity)
-
-        new_color = self._color[0:7] + opacity
+        new_color = self.color[0:7] + opacity
         self.set_color(new_color)
 
     @protect_grpc
