@@ -34,7 +34,6 @@ from pint import Quantity
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.bodies_pb2 import (
     BooleanRequest,
-    GetTessellationRequest,
 )
 from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -48,12 +47,10 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ShellRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.models_pb2 import TessellationOptions as GRPCTessellationOptions
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
     sketch_shapes_to_grpc_geometries,
-    tess_to_pd,
     trimmed_curve_to_grpc_trimmed_curve,
     unit_vector_to_grpc_direction,
 )
@@ -1220,48 +1217,17 @@ class MasterBody(IBody):
         # cache tessellation
         if not self._tessellation:
             if tess_options is not None:
-                request = GetTessellationRequest(
-                    id=self._grpc_id,
-                    options=GRPCTessellationOptions(
-                        surface_deviation=tess_options.surface_deviation,
-                        angle_deviation=tess_options.angle_deviation,
-                        maximum_aspect_ratio=tess_options.max_aspect_ratio,
-                        maximum_edge_length=tess_options.max_edge_length,
-                        watertight=tess_options.watertight,
-                    ),
+                resp = self._grpc_client.services.body_service.get_tesellation_with_options(
+                    id=self.id,
+                    options=tess_options,
                 )
-                try:
-                    resp = self._bodies_stub.GetTessellationWithOptions(request)
-                    self._tessellation = {
-                        str(face_id): tess_to_pd(face_tess)
-                        for face_id, face_tess in resp.face_tessellation.items()
-                    }
-                except Exception:
-                    tessellation_map = {}
-                    for response in self._bodies_stub.GetTessellationStream(request):
-                        for key, value in response.face_tessellation.items():
-                            tessellation_map[key] = tess_to_pd(value)
-
-                    self._tessellation = tessellation_map
             else:
-                try:
-                    resp = self._bodies_stub.GetTessellation(self._grpc_id)
-                    self._tessellation = {
-                        str(face_id): tess_to_pd(face_tess)
-                        for face_id, face_tess in resp.face_tessellation.items()
-                    }
-                except Exception as err:
-                    # Streaming is not supported in older versions...
-                    if self._grpc_client.backend_version < (25, 2, 0):
-                        raise err
+                resp = self._grpc_client.services.body_service.get_tesellation(
+                    id=self.id,
+                    backend_version=self._grpc_client.backend_version,
+                )
 
-                    tessellation_map = {}
-                    request = GetTessellationRequest(self._grpc_id)
-                    for response in self._bodies_stub.GetTessellationStream(request):
-                        for key, value in response.face_tessellation.items():
-                            tessellation_map[key] = tess_to_pd(value)
-
-                    self._tessellation = tessellation_map
+            self._tessellation = resp.get("tessellation")
 
         pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
         comp = pv.MultiBlock(pdata)

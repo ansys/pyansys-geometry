@@ -21,6 +21,8 @@
 # SOFTWARE.
 """Module containing v0 related conversions from PyAnsys Geometry objects to gRPC messages."""
 
+from typing import TYPE_CHECKING
+
 import pint
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
@@ -31,6 +33,8 @@ from ansys.api.geometry.v0.models_pb2 import (
     MaterialProperty as GRPCMaterialProperty,
     Plane as GRPCPlane,
     Point as GRPCPoint,
+    Tessellation,
+    TessellationOptions as GRPCTessellationOptions,
 )
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
@@ -38,8 +42,13 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.misc.units import UNITS
+
+if TYPE_CHECKING:
+    import pyvista as pv
 
 
 def from_point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
@@ -226,4 +235,36 @@ def from_plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
             dir_x=from_unit_vector_to_grpc_direction(plane.direction_x),
             dir_y=from_unit_vector_to_grpc_direction(plane.direction_y),
         )
+    )
+
+
+@graphics_required
+def from_grpc_tess_to_pd(tess: Tessellation) -> "pv.PolyData":
+    """Convert an ``ansys.api.geometry.Tessellation`` to ``pyvista.PolyData``."""
+    # lazy imports here to improve initial load
+    import numpy as np
+    import pyvista as pv
+
+    return pv.PolyData(var_inp=np.array(tess.vertices).reshape(-1, 3), faces=tess.faces)
+
+
+def from_tess_options_to_grpc_tess_options(options: TessellationOptions) -> GRPCTessellationOptions:
+    """Convert a ``TessellationOptions`` class to a tessellation options gRPC message.
+
+    Parameters
+    ----------
+    options : TessellationOptions
+        Source tessellation options data.
+
+    Returns
+    -------
+    GRPCTessellationOptions
+        Geometry service gRPC tessellation options message.
+    """
+    return GRPCTessellationOptions(
+        surface_deviation=options.surface_deviation,
+        angle_deviation=options.angle_deviation,
+        maximum_aspect_ratio=options.max_aspect_ratio,
+        maximum_edge_length=options.max_edge_length,
+        watertight=options.watertight,
     )

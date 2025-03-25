@@ -195,6 +195,11 @@ class GRPCBodyService(ABC):
         pass
 
     @abstractmethod
+    def get_tesellation_with_options(self, **kwargs) -> dict:
+        """Get the tessellation of a body with options."""
+        pass
+
+    @abstractmethod
     def boolean(self, **kwargs) -> dict:
         """Boolean operation."""
         pass

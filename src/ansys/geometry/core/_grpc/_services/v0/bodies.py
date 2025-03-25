@@ -34,8 +34,10 @@ from .conversions import (
     from_frame_to_grpc_frame,
     from_grpc_material_to_material,
     from_grpc_point_to_point3d,
+    from_grpc_tess_to_pd,
     from_plane_to_grpc_plane,
     from_point3d_to_grpc_point,
+    from_tess_options_to_grpc_tess_options,
     from_unit_vector_to_grpc_direction,
 )
 
@@ -390,7 +392,48 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def get_tesellation(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import GetTessellationRequest
+
+        tess_map = {}
+        resp = []  # For compatibility with stream response
+        try:
+            resp_single = self.stub.GetTessellation(request=build_grpc_id(kwargs["id"]))
+            resp.append(resp_single)
+        except grpc.RpcError as err:
+            if kwargs["backend_version"] < (25, 2, 0):
+                raise err
+            request = GetTessellationRequest(id=build_grpc_id(kwargs["id"]))
+            resp = self.stub.GetTessellationStream(request=request)
+
+        for elem in resp:
+            for face_id, face_tess in elem.face_tessellation.items():
+                tess_map[face_id] = from_grpc_tess_to_pd(face_tess)
+
+        return {"tessellation": tess_map}
+
+    @protect_grpc
+    def get_tesellation_with_options(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.bodies_pb2 import GetTessellationRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetTessellationRequest(
+            id=build_grpc_id(kwargs["id"]),
+            options=from_tess_options_to_grpc_tess_options(kwargs["options"]),
+        )
+
+        tess_map = {}
+        resp = []  # For compatibility with stream response
+        try:
+            resp_single = self.stub.GetTessellationWithOptions(request)
+            resp.append(resp_single)
+        except grpc.RpcError:
+            resp = self.stub.GetTessellationStream(request)
+
+        for elem in resp:
+            for face_id, face_tess in elem.face_tessellation.items():
+                tess_map[face_id] = from_grpc_tess_to_pd(face_tess)
+
+        return {"tessellation": tess_map}
 
     @protect_grpc
     def boolean(self, **kwargs) -> dict:  # noqa: D102
