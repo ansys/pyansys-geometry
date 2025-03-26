@@ -127,10 +127,11 @@ class NamedSelection:
         # All ids should be unique - no duplicated values
         ids = set()
 
-        # Loop over all entities
+        # Loop over all entities to get their ids
         for value in self._ids_cached.values():
             for entity_id in value:
                 ids.add(entity_id)
+
         named_selection_request = CreateRequest(name=name, members=ids)
         self._grpc_client.log.debug("Requesting creation of named selection.")
         new_named_selection = self._named_selections_stub.Create(named_selection_request)
