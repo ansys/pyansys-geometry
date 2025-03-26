@@ -34,7 +34,6 @@ from ansys.api.geometry.v0.bodies_pb2 import (
     CreateBodyFromFaceRequest,
     CreateExtrudedBodyFromFaceProfileRequest,
     CreateExtrudedBodyFromLoftProfilesRequest,
-    CreateExtrudedBodyRequest,
     CreatePlanarBodyRequest,
     CreateSurfaceBodyFromTrimmedCurvesRequest,
     CreateSurfaceBodyRequest,
@@ -510,7 +509,6 @@ class Component:
         # Store the SharedTopologyType set on the client
         self._shared_topology = share_type
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def extrude_sketch(
@@ -556,25 +554,22 @@ class Component:
             direction = ExtrusionDirection.from_string(direction, use_default_if_error=True)
 
         # Perform extrusion request
-        request = CreateExtrudedBodyRequest(
-            distance=distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-            parent=self.id,
-            plane=plane_to_grpc_plane(sketch._plane),
-            geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
+        self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
+        response = self._grpc_client.services.body_service.create_extruded_body(
             name=name,
+            parent_id=self.id,
+            sketch=sketch,
+            distance=distance,
+            direction=1 if direction is ExtrusionDirection.POSITIVE else -1,
         )
 
-        # Check the direction - if it is -, flip the distance
-        if direction is ExtrusionDirection.NEGATIVE:
-            request.distance = -request.distance
-
-        self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
-        response = self._bodies_stub.CreateExtrudedBody(request)
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
+        tb = MasterBody(
+            response["master_id"], response["name"], self._grpc_client, is_surface=False
+        )
         self._master_component.part.bodies.append(tb)
         self._clear_cached_bodies()
 
-        created_body = Body(response.id, response.name, self, tb)
+        created_body = Body(response["id"], response["master_id"], self, tb)
         if not cut:
             return created_body
         else:

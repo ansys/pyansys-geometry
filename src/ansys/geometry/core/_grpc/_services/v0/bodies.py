@@ -37,6 +37,7 @@ from .conversions import (
     from_grpc_tess_to_pd,
     from_plane_to_grpc_plane,
     from_point3d_to_grpc_point,
+    from_sketch_shapes_to_grpc_geometries,
     from_tess_options_to_grpc_tess_options,
     from_unit_vector_to_grpc_direction,
 )
@@ -86,7 +87,28 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def create_extruded_body(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import CreateExtrudedBodyRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateExtrudedBodyRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent_id"],
+            plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
+            distance=from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"],
+            geometries=from_sketch_shapes_to_grpc_geometries(
+                kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
+            ),
+        )
+
+        # Call the gRPC service
+        response = self.stub.CreateExtrudedBody(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": response.id,
+            "name": response.name,
+            "master_id": response.master_id,
+        }
 
     @protect_grpc
     def create_sweeping_profile_body(self, **kwargs) -> dict:  # noqa: D102

@@ -717,7 +717,6 @@ class IBody(ABC):
         """
         return
 
-    @protect_grpc
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Subtract two (or more) bodies.
 
@@ -742,7 +741,6 @@ class IBody(ABC):
         """
         return
 
-    @protect_grpc
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:
         """Unite two (or more) bodies.
 
@@ -1185,7 +1183,6 @@ class MasterBody(IBody):
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
         return Body(body_id, resp.get("name"), parent, tb)
 
-    @protect_grpc
     @graphics_required
     def tessellate(  # noqa: D102
         self,
