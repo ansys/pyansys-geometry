@@ -21,10 +21,10 @@
 # SOFTWARE.
 """Module for creating and managing design points."""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.misc.checks import check_type, graphics_required
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.units import UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -44,19 +44,15 @@ class DesignPoint:
         User-defined label for the design points.
     points : Point3D
         3D point constituting the design points.
-    parent_component : Component
+    parent_component : Component | None
         Parent component to place the new design point under within the design assembly.
+        Its default value is None.
     """
 
-    def __init__(self, id: str, name: str, point: Point3D, parent_component: "Component"):
+    def __init__(
+        self, id: str, name: str, point: Point3D, parent_component: Union["Component", None] = None
+    ):
         """Initialize the ``DesignPoints`` class."""
-        from ansys.geometry.core.designer.component import Component
-
-        check_type(id, str)
-        check_type(name, str)
-        check_type(point, Point3D)
-        check_type(parent_component, Component)
-
         self._id = id
         self._name = name
         self._value = point

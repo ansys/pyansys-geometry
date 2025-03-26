@@ -21,17 +21,28 @@
 # SOFTWARE.
 """Module for creating a named selection."""
 
-from beartype import beartype as check_input_types
+from typing import TYPE_CHECKING
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.namedselections_pb2 import CreateRequest
 from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.conversions import grpc_point_to_point3d
 from ansys.geometry.core.designer.beam import Beam
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.auxiliary import (
+    get_beams_from_ids,
+    get_bodies_from_ids,
+    get_edges_from_ids,
+    get_faces_from_ids,
+)
+
+if TYPE_CHECKING:
+    from ansys.geometry.core.designer.design import Design
 
 
 class NamedSelection:
@@ -46,6 +57,8 @@ class NamedSelection:
     ----------
     name : str
         User-defined name for the named selection.
+    design : Design
+        Design instance to which the named selection belongs.
     grpc_client : GrpcClient
         Active supporting Geometry service instance for design modeling.
     bodies : list[Body], default: None
@@ -61,10 +74,10 @@ class NamedSelection:
     """
 
     @protect_grpc
-    @check_input_types
     def __init__(
         self,
         name: str,
+        design: "Design",
         grpc_client: GrpcClient,
         bodies: list[Body] | None = None,
         faces: list[Face] | None = None,
@@ -75,6 +88,7 @@ class NamedSelection:
     ):
         """Initialize the ``NamedSelection`` class."""
         self._name = name
+        self._design = design
         self._grpc_client = grpc_client
         self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
@@ -97,6 +111,15 @@ class NamedSelection:
         self._beams = beams
         self._design_points = design_points
 
+        # Store ids for later use... when verifying if the NS changed.
+        self._ids_cached = {
+            "bodies": [body.id for body in bodies],
+            "faces": [face.id for face in faces],
+            "edges": [edge.id for edge in edges],
+            "beams": [beam.id for beam in beams],
+            "design_points": [dp.id for dp in design_points],
+        }
+
         if preexisting_id:
             self._id = preexisting_id
             return
@@ -104,12 +127,10 @@ class NamedSelection:
         # All ids should be unique - no duplicated values
         ids = set()
 
-        # Loop over bodies, faces and edges
-        [ids.add(body.id) for body in bodies]
-        [ids.add(face.id) for face in faces]
-        [ids.add(edge.id) for edge in edges]
-        [ids.add(beam.id) for beam in beams]
-        [ids.add(dp.id) for dp in design_points]
+        # Loop over all entities to get their ids
+        for value in self._ids_cached.values():
+            for entity_id in value:
+                ids.add(entity_id)
 
         named_selection_request = CreateRequest(name=name, members=ids)
         self._grpc_client.log.debug("Requesting creation of named selection.")
@@ -129,27 +150,83 @@ class NamedSelection:
     @property
     def bodies(self) -> list[Body]:
         """All bodies in the named selection."""
+        self.__verify_ns()
+        if self._bodies is None:
+            # Get all bodies from the named selection
+            self._bodies = get_bodies_from_ids(self._design, self._ids_cached["bodies"])
+
         return self._bodies
 
     @property
     def faces(self) -> list[Face]:
         """All faces in the named selection."""
+        self.__verify_ns()
+        if self._faces is None:
+            # Get all faces from the named selection
+            self._faces = get_faces_from_ids(self._design, self._ids_cached["faces"])
+
         return self._faces
 
     @property
     def edges(self) -> list[Edge]:
         """All edges in the named selection."""
+        self.__verify_ns()
+        if self._edges is None:
+            # Get all edges from the named selection
+            self._edges = get_edges_from_ids(self._design, self._ids_cached["edges"])
+
         return self._edges
 
     @property
     def beams(self) -> list[Beam]:
         """All beams in the named selection."""
+        self.__verify_ns()
+        if self._beams is None:
+            # Get all beams from the named selection
+            self._beams = get_beams_from_ids(self._design, self._ids_cached["beams"])
+
         return self._beams
 
     @property
     def design_points(self) -> list[DesignPoint]:
         """All design points in the named selection."""
+        self.__verify_ns()
+        if self._design_points is None:
+            # Get all design points from the named selection
+            self._design_points = [
+                DesignPoint(dp_id, f"dp: {dp_id}", grpc_point_to_point3d(dp_point))
+                for dp_id, dp_point in self._ids_cached["design_points"]
+            ]
+
         return self._design_points
+
+    def __verify_ns(self) -> None:
+        """Verify that the contents of the named selection are up to date."""
+        if self._grpc_client.backend_version < (25, 2, 0):
+            self._grpc_client.log.warning(
+                "Accessing members of named selections is only"
+                " consistent starting in version 2025 R2."
+            )
+            return
+
+        # Get all entities from the named selection
+        resp = self._named_selections_stub.Get(EntityIdentifier(id=self._id))
+
+        # Check if the named selection has changed
+        ids = {
+            "bodies": [body.id for body in resp.bodies],
+            "faces": [face.id for face in resp.faces],
+            "edges": [edge.id for edge in resp.edges],
+            "beams": [beam.id.id for beam in resp.beams],
+            "design_points": [(dp.id, dp.points[0]) for dp in resp.design_points],
+        }
+
+        for key in ids:
+            if ids[key] != self._ids_cached[key]:
+                # Clear the cache for that specific entity
+                setattr(self, f"_{key}", None)
+                # Update the cache
+                self._ids_cached[key] = ids[key]
 
     def __repr__(self) -> str:
         """Represent the ``NamedSelection`` as a string."""
