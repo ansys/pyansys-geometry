@@ -32,10 +32,6 @@ import matplotlib.colors as mcolors
 from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.bodies_pb2 import (
-    BooleanRequest,
-)
-from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
@@ -808,7 +804,6 @@ class MasterBody(IBody):
         self._surface_thickness = None
         self._surface_offset = None
         self._is_alive = True
-        self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
         self._fill_style = FillStyle.DEFAULT
@@ -1860,7 +1855,6 @@ class Body(IBody):
 
         parent_design._update_design_inplace()
 
-    @protect_grpc
     @reset_tessellation_cache
     @ensure_design_is_active
     @check_input_types
@@ -1868,8 +1862,8 @@ class Body(IBody):
         self,
         other: Union["Body", Iterable["Body"]],
         keep_other: bool,
-        type_bool_op: str,
-        err_bool_op: str,
+        method: str,
+        err_msg: str,
     ) -> None:
         grpc_other = other if isinstance(other, Iterable) else [other]
         if keep_other:
@@ -1877,39 +1871,12 @@ class Body(IBody):
             # stored temporarily in the parent component - since it will be deleted
             grpc_other = [b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other]
 
-        try:
-            response = self._template._bodies_stub.Boolean(
-                BooleanRequest(
-                    body1=self.id,
-                    tool_bodies=[b.id for b in grpc_other],
-                    method=type_bool_op,
-                )
-            ).empty_result
-        except Exception:
-            # TODO: to be deleted - old versions did not have "tool_bodies" in the request
-            # This is a temporary fix to support old versions of the server - should be deleted
-            # once the server is no longer supported.
-            # https://github.com/ansys/pyansys-geometry/issues/1319
-            if not isinstance(other, Iterable):
-                response = self._template._bodies_stub.Boolean(
-                    BooleanRequest(body1=self.id, body2=other.id, method=type_bool_op)
-                ).empty_result
-            else:
-                all_response = []
-                for body2 in other:
-                    response = self._template._bodies_stub.Boolean(
-                        BooleanRequest(body1=self.id, body2=body2.id, method=type_bool_op)
-                    ).empty_result
-                    all_response.append(response)
-
-                if all_response.count(1) > 0:
-                    response = 1
-
-        if response == 1:
-            raise ValueError(
-                f"Boolean operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
-                f"Involving bodies:{self}, {grpc_other}"
-            )
+        self._template._grpc_client.services.body_service.boolean(
+            target=self,
+            other=grpc_other,
+            method=method,
+            err_msg=err_msg,
+        )
 
         for b in grpc_other:
             b.parent_component.delete_body(b)

@@ -437,4 +437,53 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def boolean(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import BooleanRequest
+
+        # Call the gRPC service and build the requests accordingly
+        response = 0
+        try:
+            response = self.stub.Boolean(
+                request=BooleanRequest(
+                    body1=kwargs["target"].id,
+                    tool_bodies=[other.id for other in kwargs["other"]],
+                    method=kwargs["method"],
+                )
+            ).empty_result
+        except grpc.RpcError as err:  # pragma: no cover
+            # TODO: to be deleted - old versions did not have "tool_bodies" in the request
+            # This is a temporary fix to support old versions of the server - should be deleted
+            # once the server is no longer supported.
+            # https://github.com/ansys/pyansys-geometry/issues/1319
+            if len(kwargs["other"]) > 1:
+                all_response = []
+                for body2 in kwargs["other"]:
+                    tmp_resp = self.stub.Boolean(
+                        request=BooleanRequest(
+                            body1=kwargs["target"].id,
+                            body2=body2.id,
+                            method=kwargs["method"],
+                        )
+                    ).empty_result
+                    all_response.append(tmp_resp)
+
+                if all_response.count(1) > 0:
+                    response = 1
+            elif len(kwargs["other"]) == 1:
+                response = self.stub.Boolean(
+                    request=BooleanRequest(
+                        body1=kwargs["target"].id,
+                        body2=kwargs["other"][0].id,
+                        method=kwargs["method"],
+                    )
+                ).empty_result
+            else:
+                raise err
+
+        if response == 1:
+            raise ValueError(
+                f"Boolean operation of type '{kwargs['method']}' failed: {kwargs['err_msg']}.\n"
+                f"Involving bodies:{kwargs['target']}, {kwargs['other']}"
+            )
+
+        # Return the response - formatted as a dictionary
+        return {}
