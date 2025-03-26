@@ -9,6 +9,58 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.10.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.2>`_ - March 26, 2025
+===========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - implement lazy loading of members in NamedSelection to speed up loading times when reading model
+          - `#1869 <https://github.com/ansys/pyansys-geometry/pull/1869>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - bump beartype from 0.19.0 to 0.20.1
+          - `#1862 <https://github.com/ansys/pyansys-geometry/pull/1862>`_
+
+        * - bump beartype from 0.20.1 to 0.20.2
+          - `#1864 <https://github.com/ansys/pyansys-geometry/pull/1864>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - update CHANGELOG for v0.10.1
+          - `#1861 <https://github.com/ansys/pyansys-geometry/pull/1861>`_
+
+        * - pre-commit automatic update
+          - `#1866 <https://github.com/ansys/pyansys-geometry/pull/1866>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - issue 1801
+          - `#1865 <https://github.com/ansys/pyansys-geometry/pull/1865>`_
+
+
 `0.10.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.1>`_ - March 21, 2025
 ===========================================================================================
 
