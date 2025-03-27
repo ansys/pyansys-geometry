@@ -108,7 +108,7 @@ def test_detect_logos(modeler: Modeler):
     result = modeler.prepare_tools.find_logos(max_height=0.005)
     assert len(result.face_ids) == 147
     success = modeler.prepare_tools.find_and_remove_logos(max_height=0.005)
-    assert success == True
+    assert success is True
     assert len(design.components[0].bodies[2].faces) == 42
 
 
@@ -121,11 +121,11 @@ def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
     result = modeler.prepare_tools.find_logos(max_height=0.005)
     assert len(result.face_ids) == 0
     success = result.fix()
-    assert success == False
+    assert success is False
     bodies = []
     bodies.append(design.components[0].bodies[2])
     result = modeler.prepare_tools.find_logos(max_height=0.005)
     assert len(result.face_ids) == 147
     result.fix()
-    assert success == True
+    assert success is True
     assert len(design.components[0].bodies[2].faces) == 42
