@@ -29,6 +29,7 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.models_pb2 import (
     Arc as GRPCArc,
     Circle as GRPCCircle,
+    CurveGeometry as GRPCCurveGeometry,
     Direction as GRPCDirection,
     Ellipse as GRPCEllipse,
     Frame as GRPCFrame,
@@ -39,32 +40,39 @@ from ansys.api.geometry.v0.models_pb2 import (
     Plane as GRPCPlane,
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
-    Tessellation,
+    Surface as GRPCSurface,
+    SurfaceType as GRPCSurfaceType,
+    Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
+    TrimmedCurve as GRPCTrimmedCurve,
+    TrimmedSurface as GRPCTrimmedSurface,
 )
-from ansys.geometry.core.materials.material import Material
-from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
-from ansys.geometry.core.math.frame import Frame
-from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.math.point import Point2D, Point3D
-from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.checks import graphics_required
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-from ansys.geometry.core.misc.options import TessellationOptions
-from ansys.geometry.core.misc.units import UNITS
-from ansys.geometry.core.sketch.arc import Arc
-from ansys.geometry.core.sketch.circle import SketchCircle
-from ansys.geometry.core.sketch.edge import SketchEdge
-from ansys.geometry.core.sketch.ellipse import SketchEllipse
-from ansys.geometry.core.sketch.face import SketchFace
-from ansys.geometry.core.sketch.polygon import Polygon
-from ansys.geometry.core.sketch.segment import SketchSegment
 
 if TYPE_CHECKING:
     import pyvista as pv
 
+    from ansys.geometry.core.materials.material import Material
+    from ansys.geometry.core.materials.property import MaterialProperty
+    from ansys.geometry.core.math.frame import Frame
+    from ansys.geometry.core.math.plane import Plane
+    from ansys.geometry.core.math.point import Point2D, Point3D
+    from ansys.geometry.core.math.vector import UnitVector3D
+    from ansys.geometry.core.misc.options import TessellationOptions
+    from ansys.geometry.core.shapes.curves.curve import Curve
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+    from ansys.geometry.core.shapes.surfaces.surface import Surface
+    from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
+    from ansys.geometry.core.sketch.arc import Arc
+    from ansys.geometry.core.sketch.circle import SketchCircle
+    from ansys.geometry.core.sketch.edge import SketchEdge
+    from ansys.geometry.core.sketch.ellipse import SketchEllipse
+    from ansys.geometry.core.sketch.face import SketchFace
+    from ansys.geometry.core.sketch.polygon import Polygon
+    from ansys.geometry.core.sketch.segment import SketchSegment
 
-def from_point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
+
+def from_point3d_to_grpc_point(point: "Point3D") -> GRPCPoint:
     """Convert a ``Point3D`` class to a point gRPC message.
 
     Parameters
@@ -77,6 +85,8 @@ def from_point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
     GRPCPoint
         Geometry service gRPC point message. The unit is meters.
     """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
     return GRPCPoint(
         x=point.x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         y=point.y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
@@ -84,7 +94,7 @@ def from_point3d_to_grpc_point(point: Point3D) -> GRPCPoint:
     )
 
 
-def from_grpc_point_to_point3d(point: GRPCPoint) -> Point3D:
+def from_grpc_point_to_point3d(point: GRPCPoint) -> "Point3D":
     """Convert a point gRPC message class to a ``Point3D`` class.
 
     Parameters
@@ -97,13 +107,16 @@ def from_grpc_point_to_point3d(point: GRPCPoint) -> Point3D:
     Point3D
         Converted point.
     """
+    from ansys.geometry.core.math.point import Point3D
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
     return Point3D(
         [point.x, point.y, point.z],
         DEFAULT_UNITS.SERVER_LENGTH,
     )
 
 
-def from_point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
+def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
     """Convert a ``Point2D`` class to a point gRPC message.
 
     Parameters
@@ -118,6 +131,8 @@ def from_point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
     GRPCPoint
         Geometry service gRPC point message. The unit is meters.
     """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
     point3d = plane.transform_point2d_local_to_global(point2d)
     return GRPCPoint(
         x=point3d.x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
@@ -126,7 +141,7 @@ def from_point2d_to_grpc_point(plane: Plane, point2d: Point2D) -> GRPCPoint:
     )
 
 
-def from_unit_vector_to_grpc_direction(unit_vector: UnitVector3D) -> GRPCDirection:
+def from_unit_vector_to_grpc_direction(unit_vector: "UnitVector3D") -> GRPCDirection:
     """Convert a ``UnitVector3D`` class to a unit vector gRPC message.
 
     Parameters
@@ -158,7 +173,7 @@ def build_grpc_id(id: str) -> EntityIdentifier:
     return EntityIdentifier(id=id)
 
 
-def from_grpc_material_to_material(material: GRPCMaterial) -> Material:
+def from_grpc_material_to_material(material: GRPCMaterial) -> "Material":
     """Convert a material gRPC message to a ``Material`` class.
 
     Parameters
@@ -171,6 +186,10 @@ def from_grpc_material_to_material(material: GRPCMaterial) -> Material:
     Material
         Converted material.
     """
+    from ansys.geometry.core.materials.material import Material
+    from ansys.geometry.core.materials.property import MaterialPropertyType
+    from ansys.geometry.core.misc.units import UNITS
+
     properties = []
     density = pint.Quantity(0, UNITS.kg / UNITS.m**3)
     for property in material.material_properties:
@@ -184,7 +203,7 @@ def from_grpc_material_to_material(material: GRPCMaterial) -> Material:
 
 def from_grpc_material_property_to_material_property(
     material_property: GRPCMaterialProperty,
-) -> MaterialProperty:
+) -> "MaterialProperty":
     """Convert a material property gRPC message to a ``MaterialProperty`` class.
 
     Parameters
@@ -197,6 +216,8 @@ def from_grpc_material_property_to_material_property(
     MaterialProperty
         Converted material property.
     """
+    from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
+
     try:
         mp_type = MaterialPropertyType.from_id(material_property.id)
     except ValueError:
@@ -213,7 +234,7 @@ def from_grpc_material_property_to_material_property(
     return MaterialProperty(mp_type, material_property.display_name, mp_quantity)
 
 
-def from_frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
+def from_frame_to_grpc_frame(frame: "Frame") -> GRPCFrame:
     """Convert a ``Frame`` class to a frame gRPC message.
 
     Parameters
@@ -233,7 +254,7 @@ def from_frame_to_grpc_frame(frame: Frame) -> GRPCFrame:
     )
 
 
-def from_plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
+def from_plane_to_grpc_plane(plane: "Plane") -> GRPCPlane:
     """Convert a ``Plane`` class to a plane gRPC message.
 
     Parameters
@@ -256,8 +277,8 @@ def from_plane_to_grpc_plane(plane: Plane) -> GRPCPlane:
 
 
 @graphics_required
-def from_grpc_tess_to_pd(tess: Tessellation) -> "pv.PolyData":
-    """Convert an ``ansys.api.geometry.Tessellation`` to ``pyvista.PolyData``."""
+def from_grpc_tess_to_pd(tess: GRPCTessellation) -> "pv.PolyData":
+    """Convert a ``Tessellation`` to ``pyvista.PolyData``."""
     # lazy imports here to improve initial load
     import numpy as np
     import pyvista as pv
@@ -265,7 +286,9 @@ def from_grpc_tess_to_pd(tess: Tessellation) -> "pv.PolyData":
     return pv.PolyData(var_inp=np.array(tess.vertices).reshape(-1, 3), faces=tess.faces)
 
 
-def from_tess_options_to_grpc_tess_options(options: TessellationOptions) -> GRPCTessellationOptions:
+def from_tess_options_to_grpc_tess_options(
+    options: "TessellationOptions",
+) -> GRPCTessellationOptions:
     """Convert a ``TessellationOptions`` class to a tessellation options gRPC message.
 
     Parameters
@@ -288,9 +311,9 @@ def from_tess_options_to_grpc_tess_options(options: TessellationOptions) -> GRPC
 
 
 def from_sketch_shapes_to_grpc_geometries(
-    plane: Plane,
-    edges: list[SketchEdge],
-    faces: list[SketchFace],
+    plane: "Plane",
+    edges: list["SketchEdge"],
+    faces: list["SketchFace"],
     only_one_curve: bool = False,
 ) -> GRPCGeometries:
     """Convert lists of ``SketchEdge`` and ``SketchFace`` to a gRPC message.
@@ -312,6 +335,10 @@ def from_sketch_shapes_to_grpc_geometries(
     GRPCGeometries
         Geometry service gRPC geometries message. The unit is meters.
     """
+    from ansys.geometry.core.sketch.circle import SketchCircle
+    from ansys.geometry.core.sketch.ellipse import SketchEllipse
+    from ansys.geometry.core.sketch.polygon import Polygon
+
     geometries = GRPCGeometries()
 
     converted_sketch_edges = from_sketch_edges_to_grpc_geometries(edges, plane)
@@ -349,8 +376,8 @@ def from_sketch_shapes_to_grpc_geometries(
 
 
 def from_sketch_edges_to_grpc_geometries(
-    edges: list[SketchEdge],
-    plane: Plane,
+    edges: list["SketchEdge"],
+    plane: "Plane",
 ) -> tuple[list[GRPCLine], list[GRPCArc]]:
     """Convert a list of ``SketchEdge`` to a gRPC message.
 
@@ -366,6 +393,9 @@ def from_sketch_edges_to_grpc_geometries(
     tuple[list[GRPCLine], list[GRPCArc]]
         Geometry service gRPC line and arc messages. The unit is meters.
     """
+    from ansys.geometry.core.sketch.arc import Arc
+    from ansys.geometry.core.sketch.segment import SketchSegment
+
     arcs = []
     segments = []
     for edge in edges:
@@ -377,7 +407,7 @@ def from_sketch_edges_to_grpc_geometries(
     return (segments, arcs)
 
 
-def from_sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
+def from_sketch_arc_to_grpc_arc(arc: "Arc", plane: "Plane") -> GRPCArc:
     """Convert an ``Arc`` class to an arc gRPC message.
 
     Parameters
@@ -406,7 +436,7 @@ def from_sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
     )
 
 
-def from_sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPCEllipse:
+def from_sketch_ellipse_to_grpc_ellipse(ellipse: "SketchEllipse", plane: "Plane") -> GRPCEllipse:
     """Convert a ``SketchEllipse`` class to an ellipse gRPC message.
 
     Parameters
@@ -419,6 +449,8 @@ def from_sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) ->
     GRPCEllipse
         Geometry service gRPC ellipse message. The unit is meters.
     """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
     return GRPCEllipse(
         center=from_point2d_to_grpc_point(plane, ellipse.center),
         majorradius=ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
@@ -427,7 +459,7 @@ def from_sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) ->
     )
 
 
-def from_sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRPCCircle:
+def from_sketch_circle_to_grpc_circle(circle: "SketchCircle", plane: "Plane") -> GRPCCircle:
     """Convert a ``SketchCircle`` class to a circle gRPC message.
 
     Parameters
@@ -442,13 +474,15 @@ def from_sketch_circle_to_grpc_circle(circle: SketchCircle, plane: Plane) -> GRP
     GRPCCircle
         Geometry service gRPC circle message. The unit is meters.
     """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
     return GRPCCircle(
         center=from_point2d_to_grpc_point(plane, circle.center),
         radius=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
     )
 
 
-def from_sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCPolygon:
+def from_sketch_polygon_to_grpc_polygon(polygon: "Polygon", plane: "Plane") -> GRPCPolygon:
     """Convert a ``Polygon`` class to a polygon gRPC message.
 
     Parameters
@@ -461,6 +495,8 @@ def from_sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCP
     GRPCPolygon
         Geometry service gRPC polygon message. The unit is meters.
     """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
     return GRPCPolygon(
         center=from_point2d_to_grpc_point(plane, polygon.center),
         radius=polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
@@ -469,7 +505,7 @@ def from_sketch_polygon_to_grpc_polygon(polygon: Polygon, plane: Plane) -> GRPCP
     )
 
 
-def from_sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLine:
+def from_sketch_segment_to_grpc_line(segment: "SketchSegment", plane: "Plane") -> GRPCLine:
     """Convert a ``Segment`` class to a line gRPC message.
 
     Parameters
@@ -486,3 +522,162 @@ def from_sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GR
         start=from_point2d_to_grpc_point(plane, segment.start),
         end=from_point2d_to_grpc_point(plane, segment.end),
     )
+
+
+def from_trimmed_curve_to_grpc_trimmed_curve(curve: "TrimmedCurve") -> GRPCTrimmedCurve:
+    """Convert a ``TrimmedCurve`` to a trimmed curve gRPC message.
+
+    Parameters
+    ----------
+    curve : TrimmedCurve
+        Curve to convert.
+
+    Returns
+    -------
+    GRPCTrimmedCurve
+        Geometry service gRPC ``TrimmedCurve`` message.
+    """
+    curve_geometry = from_curve_to_grpc_curve(curve.geometry)
+    i_start = curve.interval.start
+    i_end = curve.interval.end
+
+    return GRPCTrimmedCurve(
+        curve=curve_geometry,
+        interval_start=i_start,
+        interval_end=i_end,
+    )
+
+
+def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
+    """Convert a ``Curve`` object to a curve gRPC message.
+
+    Parameters
+    ----------
+    curve : Curve
+        Curve to convert.
+
+    Returns
+    -------
+    GRPCCurve
+        Return ``Curve`` as a ``ansys.api.geometry.CurveGeometry`` message.
+    """
+    from ansys.geometry.core.shapes.curves.circle import Circle
+    from ansys.geometry.core.shapes.curves.ellipse import Ellipse
+    from ansys.geometry.core.shapes.curves.line import Line
+
+    grpc_curve = None
+
+    if isinstance(curve, Line):
+        origin = from_point3d_to_grpc_point(curve.origin)
+        direction = from_unit_vector_to_grpc_direction(curve.direction)
+        grpc_curve = GRPCCurveGeometry(origin=origin, direction=direction)
+    elif isinstance(curve, (Circle, Ellipse)):
+        origin = from_point3d_to_grpc_point(curve.origin)
+        reference = from_unit_vector_to_grpc_direction(curve.dir_x)
+        axis = from_unit_vector_to_grpc_direction(curve.dir_z)
+
+        if isinstance(curve, Circle):
+            grpc_curve = GRPCCurveGeometry(
+                origin=origin, reference=reference, axis=axis, radius=curve.radius.m
+            )
+        elif isinstance(curve, Ellipse):
+            grpc_curve = GRPCCurveGeometry(
+                origin=origin,
+                reference=reference,
+                axis=axis,
+                major_radius=curve.major_radius.m,
+                minor_radius=curve.minor_radius.m,
+            )
+    else:
+        raise ValueError(f"Unsupported curve type: {type(curve)}")
+
+    return grpc_curve
+
+
+def from_trimmed_surface_to_grpc_trimmed_surface(
+    trimmed_surface: "TrimmedSurface",
+) -> GRPCTrimmedSurface:
+    """Convert a ``TrimmedSurface`` to a trimmed surface gRPC message.
+
+    Parameters
+    ----------
+    trimmed_surface : TrimmedSurface
+        Surface to convert.
+
+    Returns
+    -------
+    GRPCTrimmedSurface
+        Geometry service gRPC ``TrimmedSurface`` message.
+    """
+    surface_geometry, surface_type = from_surface_to_grpc_surface(trimmed_surface.geometry)
+
+    return GRPCTrimmedSurface(
+        surface=surface_geometry,
+        type=surface_type,
+        u_min=trimmed_surface.box_uv.interval_u.start,
+        u_max=trimmed_surface.box_uv.interval_u.end,
+        v_min=trimmed_surface.box_uv.interval_v.start,
+        v_max=trimmed_surface.box_uv.interval_v.end,
+    )
+
+
+def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCSurfaceType]:
+    """Convert a ``Surface`` object to a surface gRPC message.
+
+    Parameters
+    ----------
+    surface : Surface
+        Surface to convert.
+
+    Returns
+    -------
+    GRPCSurface
+        Return ``Surface`` as a ``ansys.api.geometry.Surface`` message.
+    GRPCSurfaceType
+        Return the grpc surface type of ``Surface``.
+    """
+    from ansys.geometry.core.shapes.surfaces.cone import Cone
+    from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder
+    from ansys.geometry.core.shapes.surfaces.plane import PlaneSurface
+    from ansys.geometry.core.shapes.surfaces.sphere import Sphere
+    from ansys.geometry.core.shapes.surfaces.torus import Torus
+
+    grpc_surface = None
+    surface_type = None
+    origin = from_point3d_to_grpc_point(surface.origin)
+    reference = from_unit_vector_to_grpc_direction(surface.dir_x)
+    axis = from_unit_vector_to_grpc_direction(surface.dir_z)
+
+    if isinstance(surface, PlaneSurface):
+        grpc_surface = GRPCSurface(origin=origin, reference=reference, axis=axis)
+        surface_type = GRPCSurfaceType.SURFACETYPE_PLANE
+    elif isinstance(surface, Sphere):
+        grpc_surface = GRPCSurface(
+            origin=origin, reference=reference, axis=axis, radius=surface.radius.m
+        )
+        surface_type = GRPCSurfaceType.SURFACETYPE_SPHERE
+    elif isinstance(surface, Cylinder):
+        grpc_surface = GRPCSurface(
+            origin=origin, reference=reference, axis=axis, radius=surface.radius.m
+        )
+        surface_type = GRPCSurfaceType.SURFACETYPE_CYLINDER
+    elif isinstance(surface, Cone):
+        grpc_surface = GRPCSurface(
+            origin=origin,
+            reference=reference,
+            axis=axis,
+            radius=surface.radius.m,
+            half_angle=surface.half_angle.m,
+        )
+        surface_type = GRPCSurfaceType.SURFACETYPE_CONE
+    elif isinstance(surface, Torus):
+        grpc_surface = GRPCSurface(
+            origin=origin,
+            reference=reference,
+            axis=axis,
+            major_radius=surface.major_radius.m,
+            minor_radius=surface.minor_radius.m,
+        )
+        surface_type = GRPCSurfaceType.SURFACETYPE_TORUS
+
+    return grpc_surface, surface_type

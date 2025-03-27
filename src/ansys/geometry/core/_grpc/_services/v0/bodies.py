@@ -39,6 +39,8 @@ from .conversions import (
     from_point3d_to_grpc_point,
     from_sketch_shapes_to_grpc_geometries,
     from_tess_options_to_grpc_tess_options,
+    from_trimmed_curve_to_grpc_trimmed_curve,
+    from_trimmed_surface_to_grpc_trimmed_surface,
     from_unit_vector_to_grpc_direction,
 )
 
@@ -83,6 +85,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             "id": resp.id,
             "name": resp.name,
             "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
         }
 
     @protect_grpc
@@ -101,46 +104,210 @@ class GRPCBodyServiceV0(GRPCBodyService):
         )
 
         # Call the gRPC service
-        response = self.stub.CreateExtrudedBody(request=request)
+        resp = self.stub.CreateExtrudedBody(request=request)
 
         # Return the response - formatted as a dictionary
         return {
-            "id": response.id,
-            "name": response.name,
-            "master_id": response.master_id,
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
         }
 
     @protect_grpc
     def create_sweeping_profile_body(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import CreateSweepingProfileRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateSweepingProfileRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent_id"],
+            plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
+            geometries=from_sketch_shapes_to_grpc_geometries(
+                kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
+            ),
+            path=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["path"]],
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateSweepingProfile(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }
 
     @protect_grpc
     def create_sweeping_chain(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import CreateSweepingChainRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateSweepingChainRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent_id"],
+            path=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["path"]],
+            chain=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["chain"]],
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateSweepingChain(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }
 
     @protect_grpc
     def create_extruded_body_from_face_profile(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import CreateExtrudedBodyFromFaceProfileRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateExtrudedBodyFromFaceProfileRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent_id"],
+            face=kwargs["face_id"],
+            distance=from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"],
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateExtrudedBodyFromFaceProfile(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }
 
     @protect_grpc
     def create_extruded_body_from_loft_profiles(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import CreateExtrudedBodyFromLoftProfilesRequest
+        from ansys.api.geometry.v0.models_pb2 import TrimmedCurveList
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateExtrudedBodyFromLoftProfilesRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent_id"],
+            profiles=[
+                TrimmedCurveList(
+                    curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile]
+                )
+                for profile in kwargs["profiles"]
+            ],
+            periodic=kwargs["periodic"],
+            ruled=kwargs["ruled"],
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateExtrudedBodyFromLoftProfiles(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }
 
     @protect_grpc
     def create_planar_body(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import CreatePlanarBodyRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreatePlanarBodyRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent_id"],
+            plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
+            geometries=from_sketch_shapes_to_grpc_geometries(
+                kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
+            ),
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreatePlanarBody(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }
 
     @protect_grpc
     def create_body_from_face(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import CreateBodyFromFaceRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateBodyFromFaceRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent_id"],
+            face=kwargs["face_id"],
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateBodyFromFace(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }
 
     @protect_grpc
     def create_surface_body(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import CreateSurfaceBodyRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateSurfaceBodyRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent_id"],
+            trimmed_surface=from_trimmed_surface_to_grpc_trimmed_surface(kwargs["trimmed_surface"]),
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateSurfaceBody(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }
 
     @protect_grpc
     def create_surface_body_from_trimmed_curves(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.geometry.v0.bodies_pb2 import CreateSurfaceBodyFromTrimmedCurvesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateSurfaceBodyFromTrimmedCurvesRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent_id"],
+            trimmed_curves=[
+                from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["trimmed_curves"]
+            ],
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateSurfaceBodyFromTrimmedCurves(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }
 
     @protect_grpc
     def translate(self, **kwargs) -> dict:  # noqa: D102
@@ -462,9 +629,9 @@ class GRPCBodyServiceV0(GRPCBodyService):
         from ansys.api.geometry.v0.bodies_pb2 import BooleanRequest
 
         # Call the gRPC service and build the requests accordingly
-        response = 0
+        resp = 0
         try:
-            response = self.stub.Boolean(
+            resp = self.stub.Boolean(
                 request=BooleanRequest(
                     body1=kwargs["target"].id,
                     tool_bodies=[other.id for other in kwargs["other"]],
@@ -477,7 +644,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             # once the server is no longer supported.
             # https://github.com/ansys/pyansys-geometry/issues/1319
             if len(kwargs["other"]) > 1:
-                all_response = []
+                all_resp = []
                 for body2 in kwargs["other"]:
                     tmp_resp = self.stub.Boolean(
                         request=BooleanRequest(
@@ -486,12 +653,12 @@ class GRPCBodyServiceV0(GRPCBodyService):
                             method=kwargs["method"],
                         )
                     ).empty_result
-                    all_response.append(tmp_resp)
+                    all_resp.append(tmp_resp)
 
-                if all_response.count(1) > 0:
-                    response = 1
+                if all_resp.count(1) > 0:
+                    resp = 1
             elif len(kwargs["other"]) == 1:
-                response = self.stub.Boolean(
+                resp = self.stub.Boolean(
                     request=BooleanRequest(
                         body1=kwargs["target"].id,
                         body2=kwargs["other"][0].id,
@@ -501,7 +668,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             else:
                 raise err
 
-        if response == 1:
+        if resp == 1:
             raise ValueError(
                 f"Boolean operation of type '{kwargs['method']}' failed: {kwargs['err_msg']}.\n"
                 f"Involving bodies:{kwargs['target']}, {kwargs['other']}"
