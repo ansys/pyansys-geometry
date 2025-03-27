@@ -26,10 +26,11 @@ from typing import TYPE_CHECKING
 from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody, Face as GRPCFace
+from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody, Face as GRPCFace, FindLogoOptions
 from ansys.api.geometry.v0.preparetools_pb2 import (
     ExtractVolumeFromEdgeLoopsRequest,
     ExtractVolumeFromFacesRequest,
+    FindLogosRequest,
     RemoveRoundsRequest,
     ShareTopologyRequest,
 )
@@ -42,6 +43,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_face,
 )
 from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
+from ansys.geometry.core.tools.problem_areas import LogoProblemArea
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.typing import Real
 
@@ -295,3 +297,93 @@ class PrepareTools:
             share_topo_response.repaired,
         )
         return message
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def find_logos(
+        self, bodies: list["Body"] = None, min_height: Real = None, max_height: Real = None
+    ) -> "LogoProblemArea":
+        """Detect logos in geometry.
+
+        Detects logos, using a list of bodies if provided.
+        The logos are returned as a list of faces.
+
+        Parameters
+        ----------
+        bodies : list[Body], optional
+            List of bodies where logos should be detected
+        min_height : real, optional
+            The minimum height when searching for logos
+        max_height: real, optional
+            The minimum height when searching for logos
+
+        Returns
+        -------
+        Logo problem area
+
+            Problem area with logo faces.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        # Verify inputs
+        if bodies:
+            if len(bodies) > 0:
+                check_type_all_elements_in_iterable(bodies, Body)
+
+        body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
+        find_logo_options = FindLogoOptions()
+        if min_height:
+            find_logo_options.min_height = min_height
+        if max_height:
+            find_logo_options.max_height = max_height
+
+        response = self._prepare_stub.FindLogos(
+            FindLogosRequest(bodies=body_ids, options=find_logo_options)
+        )
+
+        face_ids = []
+        for grpc_face in response.logo_faces:
+            face_ids.append(grpc_face.id)
+        return LogoProblemArea(id=response.id, grpc_client=self._grpc_client, face_ids=face_ids)
+
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def find_and_remove_logos(
+        self, bodies: list["Body"] = None, min_height: Real = None, max_height: Real = None
+    ) -> bool:
+        """Detect and remove logos in geometry.
+
+        Detects and remove logos, using a list of bodies if provided.
+
+        Parameters
+        ----------
+        bodies : list[Body], optional
+            List of bodies where logos should be detected and removed.
+        min_height : real, optional
+            The minimum height when searching for logos
+        max_height: real, optional
+            The minimum height when searching for logos
+
+        Returns
+        -------
+        Boolean value indicating whether the operation was successful.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        # Verify inputs
+        if bodies:
+            if len(bodies) > 0:
+                check_type_all_elements_in_iterable(bodies, Body)
+
+        body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
+        find_logo_options = FindLogoOptions()
+        if min_height:
+            find_logo_options.min_height = min_height
+        if max_height:
+            find_logo_options.max_height = max_height
+
+        response = self._prepare_stub.FindAndRemoveLogos(
+            FindLogosRequest(bodies=body_ids, options=find_logo_options)
+        )
+
+        return response.success
