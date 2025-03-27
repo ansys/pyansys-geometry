@@ -34,7 +34,6 @@ from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     sketch_shapes_to_grpc_geometries,
-    tess_to_pd,
     trimmed_curve_to_grpc_trimmed_curve,
     unit_vector_to_grpc_direction,
 )
