@@ -1,0 +1,291 @@
+
+
+
+
+
+
+:class:`Beam`
+=============
+
+
+.. py:class:: ansys.geometry.core.designer.beam.Beam(id: str, start: ansys.geometry.core.math.point.Point3D, end: ansys.geometry.core.math.point.Point3D, profile: BeamProfile | None, parent_component: ansys.geometry.core.designer.component.Component, name: str = None, is_deleted: bool = False, is_reversed: bool = False, is_rigid: bool = False, material: ansys.geometry.core.materials.material.Material = None, cross_section: BeamCrossSectionInfo = None, properties: BeamProperties = None, shape: ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve = None, beam_type: BeamType = None)
+
+   
+   Represents a simplified solid body with an assigned 2D cross-section.
+
+   This body synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the body.
+
+       **name** : :class:`python:str`
+           User-defined label for the body.
+
+       **start** : :obj:`Point3D`
+           Start of the beam line segment.
+
+       **end** : :obj:`Point3D`
+           End of the beam line segment.
+
+       **profile** : :obj:`BeamProfile`
+           Beam profile to use to create the beam.
+
+       **parent_component** : :obj:`Component`
+           Parent component to nest the new beam under within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: Beam
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - Service-defined ID of the beam.
+          * - :py:attr:`~start`
+            - Start of the beam line segment.
+          * - :py:attr:`~end`
+            - End of the beam line segment.
+          * - :py:attr:`~profile`
+            - Beam profile of the beam line segment.
+          * - :py:attr:`~parent_component`
+            - Component node that the beam is under.
+          * - :py:attr:`~is_alive`
+            - Flag indicating whether the beam is still alive on the server.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the beam as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.beam import Beam
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   Service-defined ID of the beam.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: start
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Start of the beam line segment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   End of the beam line segment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: profile
+   :type: BeamProfile
+
+
+   
+   Beam profile of the beam line segment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parent_component
+   :type: ansys.geometry.core.designer.component.Component
+
+
+   
+   Component node that the beam is under.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_alive
+   :type: bool
+
+
+   
+   Flag indicating whether the beam is still alive on the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the beam as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

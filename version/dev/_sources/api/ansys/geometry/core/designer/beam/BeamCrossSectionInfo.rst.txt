@@ -1,0 +1,231 @@
+
+
+
+
+
+
+:class:`BeamCrossSectionInfo`
+=============================
+
+
+.. py:class:: ansys.geometry.core.designer.beam.BeamCrossSectionInfo(section_anchor: SectionAnchorType, section_angle: float, section_frame: ansys.geometry.core.math.frame.Frame, section_profile: list[list[ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve]] | None)
+
+   
+   Represents the cross-section information for a beam.
+
+
+   :Parameters:
+
+       **section_anchor** : :obj:`SectionAnchorType`
+           Specifies how the beam section is anchored to the beam path.
+
+       **section_angle** : :class:`python:float`
+           The rotation angle of the cross section clockwise from the default perpendicular of the
+           beam path.
+
+       **section_frame** : :obj:`Frame`
+           The section frame at the start of the beam.
+
+       **section_profile** : :obj:`BeamProfile`
+           The section profile in the XY plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: BeamCrossSectionInfo
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~section_anchor`
+            - Specifies how the beam section is anchored to the beam path.
+          * - :py:attr:`~section_angle`
+            - Rotation angle of the cross section clockwise from the perpendicular of the beam path.
+          * - :py:attr:`~section_frame`
+            - The section frame at the start of the beam.
+          * - :py:attr:`~section_profile`
+            - The section profile in the XY plane.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the ``BeamCrossSectionInfo`` as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.beam import BeamCrossSectionInfo
+
+Property detail
+---------------
+
+.. py:property:: section_anchor
+   :type: SectionAnchorType
+
+
+   
+   Specifies how the beam section is anchored to the beam path.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: section_angle
+   :type: float
+
+
+   
+   Rotation angle of the cross section clockwise from the perpendicular of the beam path.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: section_frame
+   :type: ansys.geometry.core.math.frame.Frame
+
+
+   
+   The section frame at the start of the beam.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: section_profile
+   :type: list[list[ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve]] | None
+
+
+   
+   The section profile in the XY plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the ``BeamCrossSectionInfo`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

@@ -1,0 +1,133 @@
+
+
+
+
+
+
+:class:`PhysicalQuantity`
+=========================
+
+
+.. py:class:: ansys.geometry.core.misc.units.PhysicalQuantity(unit: pint.Unit, expected_dimensions: pint.Unit | None = None)
+
+   
+   Provides the base class for handling units throughout PyAnsys Geometry.
+
+
+   :Parameters:
+
+       **unit** : :obj:`~pint.Unit`
+           Units for the class.
+
+       **expected_dimensions** : :obj:`~pint.Unit`, default: :data:`python:None`
+           Units for the dimensionality of the physical quantity.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PhysicalQuantity
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~unit`
+            - Unit of the object.
+          * - :py:attr:`~base_unit`
+            - Base unit of the object.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.units import PhysicalQuantity
+
+Property detail
+---------------
+
+.. py:property:: unit
+   :type: pint.Unit
+
+
+   
+   Unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: base_unit
+   :type: pint.Unit
+
+
+   
+   Base unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

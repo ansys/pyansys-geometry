@@ -1,0 +1,117 @@
+
+
+
+
+
+
+:class:`ExtrudeType`
+====================
+
+
+.. py:class:: ansys.geometry.core.designer.geometry_commands.ExtrudeType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for extrusion types.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ExtrudeType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~NONE`
+            - 
+          * - :py:attr:`~ADD`
+            - 
+          * - :py:attr:`~CUT`
+            - 
+          * - :py:attr:`~FORCE_ADD`
+            - 
+          * - :py:attr:`~FORCE_CUT`
+            - 
+          * - :py:attr:`~FORCE_INDEPENDENT`
+            - 
+          * - :py:attr:`~FORCE_NEW_SURFACE`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.geometry_commands import ExtrudeType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: NONE
+   :value: 0
+
+
+.. py:attribute:: ADD
+   :value: 1
+
+
+.. py:attribute:: CUT
+   :value: 2
+
+
+.. py:attribute:: FORCE_ADD
+   :value: 3
+
+
+.. py:attribute:: FORCE_CUT
+   :value: 4
+
+
+.. py:attribute:: FORCE_INDEPENDENT
+   :value: 5
+
+
+.. py:attribute:: FORCE_NEW_SURFACE
+   :value: 6
+
+
+
+
+
+

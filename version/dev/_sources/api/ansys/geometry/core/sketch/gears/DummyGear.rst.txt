@@ -1,0 +1,62 @@
+
+
+
+
+
+
+:class:`DummyGear`
+==================
+
+
+.. py:class:: ansys.geometry.core.sketch.gears.DummyGear(origin: ansys.geometry.core.math.point.Point2D, outer_radius: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, inner_radius: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, n_teeth: int)
+
+   Bases: :py:obj:`Gear`
+
+
+   
+   Provides the dummy class for sketching gears.
+
+
+   :Parameters:
+
+       **origin** : :obj:`Point2D`
+           Origin of the gear.
+
+       **outer_radius** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Outer radius of the gear.
+
+       **inner_radius** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Inner radius of the gear.
+
+       **n_teeth** : :class:`python:int`
+           Number of teeth of the gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.gears import DummyGear
+
+
+
+
+

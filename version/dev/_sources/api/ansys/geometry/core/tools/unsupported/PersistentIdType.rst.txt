@@ -1,0 +1,87 @@
+
+
+
+
+
+
+:class:`PersistentIdType`
+=========================
+
+
+.. py:class:: ansys.geometry.core.tools.unsupported.PersistentIdType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Type of persistent id.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PersistentIdType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~PNAME`
+            - 
+          * - :py:attr:`~PRIME_ID`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.unsupported import PersistentIdType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: PNAME
+   :value: 1
+
+
+.. py:attribute:: PRIME_ID
+   :value: 700
+
+
+
+
+
+
