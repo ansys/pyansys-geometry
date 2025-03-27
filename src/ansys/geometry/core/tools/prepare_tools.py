@@ -26,11 +26,12 @@ from typing import TYPE_CHECKING
 from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody, FindLogoOptions
+from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody, Face as GRPCFace, FindLogoOptions
 from ansys.api.geometry.v0.preparetools_pb2 import (
     ExtractVolumeFromEdgeLoopsRequest,
     ExtractVolumeFromFacesRequest,
-    FindLogosRequest,
+    RemoveRoundsRequest,
+    FindLogosReques,
     ShareTopologyRequest,
 )
 from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
@@ -169,6 +170,49 @@ class PrepareTools:
         else:
             self._grpc_client.log.info("Failed to extract volume from edge loops...")
             return []
+
+    @protect_grpc
+    def remove_rounds(self, faces: list["Face"], auto_shrink: bool = False) -> bool:
+        """Remove rounds from geometry.
+
+        Tries to remove rounds from geometry. Faces to be removed are input to the method.
+
+        Parameters
+        ----------
+        round_faces : list[Face]
+            List of rounds faces to be removed
+        auto_shrink : bool, default: False
+            Whether to shrink the geometry after removing rounds. Fills in the gaps
+            left by the removed rounds.
+
+        Returns
+        -------
+        bool
+            ``True`` if successful, ``False`` if failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        if not faces:
+            self._grpc_client.log.info("No faces provided...")
+            return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(faces, Face)
+
+        parent_design = get_design_from_face(faces[0])
+        response = self._prepare_stub.RemoveRounds(
+            RemoveRoundsRequest(
+                selection=[GRPCFace(id=face.id) for face in faces],
+                auto_shrink=BoolValue(value=auto_shrink),
+            )
+        )
+
+        if response.result:
+            parent_design._update_design_inplace()
+        else:
+            self._grpc_client.log.info("Failed to remove rounds...")
+
+        return response.result
 
     @protect_grpc
     @min_backend_version(24, 2, 0)

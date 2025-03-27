@@ -29,12 +29,11 @@ ENV LD_LIBRARY_PATH=/app:/app/CADIntegration/bin:/app/Native/Linux
 ENV ANS_DSCO_REMOTE_PORT=50051
 ENV ANS_DSCO_REMOTE_IP="0.0.0.0"
 ENV LOG_LEVEL=2
-ENV ENABLE_TRACE=0
 ENV ANSYSLMD_LICENSE_FILE=""
-ENV ANS_DSCO_REMOTE_LOGS_CONFIG="linux"
 ENV ANSYS_CI_INSTALL=/app/CADIntegration
 ENV P_SCHEMA=/app/Schema/
 ENV ANSYSCL251_DIR=/app/licensingclient/
+ENV ANSYSCL252_DIR=/app/licensingclient/
 
 # Add container labels
 LABEL org.opencontainers.image.authors="ANSYS Inc."
@@ -44,4 +43,4 @@ LABEL org.opencontainers.image.vendor="ANSYS Inc."
 EXPOSE 50051
 
 # Define the entrypoint for the Geometry service
-ENTRYPOINT ["dotnet", "/app/Presentation.ApiServerLinux.dll"]
+ENTRYPOINT ["dotnet", "/app/Presentation.ApiServerCoreService.dll"]

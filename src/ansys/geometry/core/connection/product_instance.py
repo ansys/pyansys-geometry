@@ -67,7 +67,7 @@ To be used only for local start of Ansys Discovery or Ansys SpaceClaim.
 GEOMETRY_SERVICE_EXE = "Presentation.ApiServerDMS.exe"
 """The Windows Geometry Service's filename (DMS)."""
 
-CORE_GEOMETRY_SERVICE_EXE = "Presentation.ApiServerLinux.exe"
+CORE_GEOMETRY_SERVICE_EXE = "Presentation.ApiServerCoreService.exe"
 """The Windows Geometry Service's filename (Core Service)."""
 
 DISCOVERY_EXE = "Discovery.exe"
@@ -189,8 +189,6 @@ def prepare_and_start_backend(
     server_logs_folder: str = None,
     client_log_file: str = None,
     specific_minimum_version: int = None,
-    log_level: int = None,  # DEPRECATED
-    logs_folder: str = None,  # DEPRECATED
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
 
@@ -245,10 +243,6 @@ def prepare_and_start_backend(
     specific_minimum_version : int, optional
         Sets a specific minimum version to be checked. If this is not defined,
         the minimum version will be set to 24.1.0.
-    log_level : int, optional
-        DEPRECATED. Use ``server_log_level`` instead.
-    logs_folder : str, optional
-        DEPRECATED. Use ``server_logs_folder`` instead.
 
     Returns
     -------
@@ -266,23 +260,11 @@ def prepare_and_start_backend(
     """
     from ansys.geometry.core.modeler import Modeler
 
-    if os.name != "nt" and backend_type not in (
-        BackendType.LINUX_SERVICE,
-        BackendType.CORE_LINUX,
-    ):  # pragma: no cover
+    if os.name != "nt" and not BackendType.is_linux_service(backend_type):  # pragma: no cover
         raise RuntimeError(
             "Method 'prepare_and_start_backend' is only available on Windows."
             "A Linux version is only available for the Core Geometry Service."
         )
-
-    # Deprecation behavior... To be removed in release 0.7
-    if log_level is not None:  # pragma: no cover
-        LOG.warning("Overriding 'server_log_level' with 'log_level' value for now...")
-        server_log_level = log_level
-
-    if logs_folder is not None:  # pragma: no cover
-        LOG.warning("Overriding 'server_logs_folder' with 'logs_folder' value for now...")
-        server_logs_folder = logs_folder
 
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
@@ -315,6 +297,15 @@ def prepare_and_start_backend(
 
         # Verify that the minimum version is installed.
         _check_minimal_versions(product_version, specific_minimum_version)
+
+    # If Windows Service is requested, BUT version is not 2025R1 or earlier, we will have
+    # to change the backend type to CORE_WINDOWS and throw a warning.
+    if backend_type == BackendType.WINDOWS_SERVICE and product_version > 251:
+        LOG.warning(
+            "DMS Windows Service is not available for Ansys versions 2025R2 and later. "
+            "Switching to Core Windows Service."
+        )
+        backend_type = BackendType.CORE_WINDOWS
 
     if server_logs_folder is not None:
         # Verify that the user has write permissions to the folder and that it exists.
@@ -399,12 +390,29 @@ def prepare_and_start_backend(
         # ANS_DSCO_REMOTE_IP should be variable "host" directly, but not working...
         env_copy["ANS_DSCO_REMOTE_IP"] = "127.0.0.1" if host == "localhost" else host
         env_copy["ANS_DSCO_REMOTE_PORT"] = str(port)
-        env_copy["ANS_DSCO_REMOTE_LOGS_CONFIG"] = "linux"
         env_copy["P_SCHEMA"] = schema_folder.as_posix()
         env_copy["ANSYS_CI_INSTALL"] = cad_integration_folder.as_posix()
-        env_copy[f"ANSYSCL{product_version}_DIR"] = (
-            root_service_folder / "licensingclient"
-        ).as_posix()
+        if product_version:
+            env_copy[f"ANSYSCL{product_version}_DIR"] = (
+                root_service_folder / "licensingclient"
+            ).as_posix()
+        else:
+            # Env var is passed... but no product version is defined. We define all of them.
+            # Starting on 251... We can use the values in the enum ApiVersions.
+            for version in ApiVersions:
+                if version.value < 251:
+                    continue
+                env_copy[f"ANSYSCL{version.value}_DIR"] = (
+                    root_service_folder / "licensingclient"
+                ).as_posix()
+
+        # License server - for Core Geometry Service. If not defined, it will use the default one.
+        if "LICENSE_SERVER" in os.environ:
+            pass  # Do nothing... the user has defined the license server.
+        elif "ANSRV_GEO_LICENSE_SERVER" in os.environ:
+            env_copy["LICENSE_SERVER"] = os.getenv("ANSRV_GEO_LICENSE_SERVER")
+        else:
+            env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE", "1055@localhost")
 
         if os.name == "nt":
             # Modify the PATH variable to include the path to the Ansys Geometry Core Service
@@ -662,9 +670,15 @@ def _get_common_env(
 
     env_copy[BACKEND_HOST_VARIABLE] = host
     env_copy[BACKEND_PORT_VARIABLE] = f"{port}"
-    env_copy[BACKEND_TRACE_VARIABLE] = f"{enable_trace:d}"
     env_copy[BACKEND_LOG_LEVEL_VARIABLE] = f"{server_log_level}"
+
     if server_logs_folder is not None:
         env_copy[BACKEND_LOGS_FOLDER_VARIABLE] = f"{server_logs_folder}"
+
+    if enable_trace:
+        env_copy[BACKEND_TRACE_VARIABLE] = "1"  # for backward compatibility
+        if server_log_level > 0:
+            LOG.warning("Enabling trace mode will override the log level to 0 (Chatterbox).")
+            env_copy[BACKEND_LOG_LEVEL_VARIABLE] = "0"
 
     return env_copy

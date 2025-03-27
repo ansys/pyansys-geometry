@@ -57,12 +57,12 @@ from ansys.geometry.core.misc.auxiliary import (
     convert_opacity_to_hex,
 )
 from ansys.geometry.core.misc.checks import (
-    deprecated_method,
     ensure_design_is_active,
     graphics_required,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -413,32 +413,6 @@ class Face:
             response = self._faces_stub.GetNormal(GetNormalRequest(id=self.id, u=u, v=v)).direction
             return UnitVector3D([response.x, response.y, response.z])
 
-    @deprecated_method(alternative="normal", version="0.6.2", remove="0.10.0")
-    def face_normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
-        """Get the normal direction to the face at certain UV coordinates.
-
-        Parameters
-        ----------
-        u : float, default: 0.5
-            First coordinate of the 2D representation of a surface in UV space.
-            The default is ``0.5``, which is the center of the surface.
-        v : float, default: 0.5
-            Second coordinate of the 2D representation of a surface in UV space.
-            The default is ``0.5``, which is the center of the surface.
-
-        Returns
-        -------
-        UnitVector3D
-            :class:`UnitVector3D` object evaluated at the given U and V coordinates.
-            This :class:`UnitVector3D` object is perpendicular to the surface at the
-            given UV coordinates.
-
-        Notes
-        -----
-        This method is deprecated. Use the ``normal`` method instead.
-        """
-        return self.normal(u, v)
-
     @protect_grpc
     @ensure_design_is_active
     def point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
@@ -471,30 +445,6 @@ class Face:
             self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
             response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
             return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
-
-    @deprecated_method(alternative="point", version="0.6.2", remove="0.10.0")
-    def face_point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
-        """Get a point of the face evaluated at certain UV coordinates.
-
-        Parameters
-        ----------
-        u : float, default: 0.5
-            First coordinate of the 2D representation of a surface in UV space.
-            The default is ``0.5``, which is the center of the surface.
-        v : float, default: 0.5
-            Second coordinate of the 2D representation of a surface in UV space.
-            The default is ``0.5``, which is the center of the surface.
-
-        Returns
-        -------
-        Point3D
-            :class:`Point3D` object evaluated at the given UV coordinates.
-
-        Notes
-        -----
-        This method is deprecated. Use the ``point`` method instead.
-        """
-        return self.point(u, v)
 
     def __grpc_edges_to_edges(self, edges_grpc: list[GRPCEdge]) -> list[Edge]:
         """Transform a list of gRPC edge messages into actual ``Edge`` objects.
@@ -598,8 +548,18 @@ class Face:
         return result.success
 
     @graphics_required
-    def tessellate(self) -> "pv.PolyData":
+    def tessellate(self, tess_options: TessellationOptions | None = None) -> "pv.PolyData":
         """Tessellate the face and return the geometry as triangles.
+
+        Parameters
+        ----------
+        tess_options : TessellationOptions | None, default: None
+            A set of options to determine the tessellation quality.
+
+        Notes
+        -----
+        The tessellation options are ONLY used if the face has not been tessellated before.
+        If the face has been tessellated before, the stored tessellation is returned.
 
         Returns
         -------
@@ -608,7 +568,7 @@ class Face:
         """
         # If tessellation has not been called before... call it
         if self._body._template._tessellation is None:
-            self._body.tessellate()
+            self._body.tessellate(tess_options=tess_options)
 
         # Search the tessellation of the face - if it exists
         # ---> We need to used the last element of the ID since we are looking inside
