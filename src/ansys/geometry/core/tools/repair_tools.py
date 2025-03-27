@@ -25,7 +25,6 @@ from typing import TYPE_CHECKING
 
 from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
-from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.models_pb2 import (
     InspectGeometryMessageId,
     InspectGeometryMessageType,
@@ -88,7 +87,6 @@ class RepairTools:
         """Initialize a new instance of the ``RepairTools`` class."""
         self._grpc_client = grpc_client
         self._repair_stub = RepairToolsStub(self._grpc_client.channel)
-        self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._modeler = modeler
 
     @protect_grpc
