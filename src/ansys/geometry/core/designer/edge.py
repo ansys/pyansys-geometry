@@ -29,8 +29,9 @@ from pint import Quantity
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import grpc_curve_to_curve
+from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_point_to_point3d
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
@@ -127,8 +128,13 @@ class Edge:
             geometry = grpc_curve_to_curve(response)
 
             response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
-            start = Point3D([response.start.x, response.start.y, response.start.z])
-            end = Point3D([response.end.x, response.end.y, response.end.z])
+            start = Point3D(
+                [response.start.x, response.start.y, response.start.z],
+                unit=DEFAULT_UNITS.SERVER_LENGTH,
+            )
+            end = Point3D(
+                [response.end.x, response.end.y, response.end.z], unit=DEFAULT_UNITS.SERVER_LENGTH
+            )
 
             response = self._edges_stub.GetLength(self._grpc_id)
             length = Quantity(response.length, DEFAULT_UNITS.SERVER_LENGTH)
@@ -192,7 +198,10 @@ class Edge:
             # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug("Requesting edge start point from server.")
             response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
-            return Point3D([response.start.x, response.start.y, response.start.z])
+            return Point3D(
+                [response.start.x, response.start.y, response.start.z],
+                unit=DEFAULT_UNITS.SERVER_LENGTH,
+            )
 
     @property
     @protect_grpc
@@ -205,4 +214,21 @@ class Edge:
             # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug("Requesting edge end point from server.")
             response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
-            return Point3D([response.end.x, response.end.y, response.end.z])
+            return Point3D(
+                [response.end.x, response.end.y, response.end.z], unit=DEFAULT_UNITS.SERVER_LENGTH
+            )
+
+    @property
+    @protect_grpc
+    @ensure_design_is_active
+    @min_backend_version(25, 2, 0)
+    def bounding_box(self) -> BoundingBox:
+        """Bounding box of the edge."""
+        self._grpc_client.log.debug("Requesting bounding box from server.")
+
+        result = self._edges_stub.GetBoundingBox(self._grpc_id)
+
+        min_corner = grpc_point_to_point3d(result.min)
+        max_corner = grpc_point_to_point3d(result.max)
+        center = grpc_point_to_point3d(result.center)
+        return BoundingBox(min_corner, max_corner, center)

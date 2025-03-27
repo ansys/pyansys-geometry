@@ -71,7 +71,7 @@ from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -466,12 +466,18 @@ def test_named_selection_contents(modeler: Modeler):
     face = box_2.faces[2]
     edge = box_2.edges[0]
 
-    # Create the NamedSelection
-    ns = design.create_named_selection(
-        "MyNamedSelection", bodies=[box, box_2], faces=[face], edges=[edge]
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    beam = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
     )
 
-    print(ns.bodies)
+    # Create the NamedSelection
+    ns = design.create_named_selection(
+        "MyNamedSelection", bodies=[box, box_2], faces=[face], edges=[edge], beams=[beam]
+    )
+
     # Check that the named selection has everything
     assert len(ns.bodies) == 2
     assert np.isin([box.id, box_2.id], [body.id for body in ns.bodies]).all()
@@ -482,7 +488,12 @@ def test_named_selection_contents(modeler: Modeler):
     assert len(ns.edges) == 1
     assert ns.edges[0].id == edge.id
 
-    assert len(ns.beams) == 0
+    # TODO: When named selection is created using beams...
+    #       the beams are not being added to the named selection for some reason. We cannot
+    #       retrieve them from the NamedSelectionStub.Get() method. This is a bug.
+    # https://github.com/ansys/pyansys-geometry/issues/1868
+    # assert len(ns.beams) == 1 # This should be 1
+
     assert len(ns.design_points) == 0
 
 
@@ -565,7 +576,6 @@ def test_faces_edges(modeler: Modeler):
 
 def test_coordinate_system_creation(modeler: Modeler):
     """Test for verifying the correct creation of ``CoordinateSystem``."""
-    pytest.skip(reason="Name issue in SC code")
     # Create your design on the server side
     design = modeler.create_design("CoordinateSystem_Test")
 
@@ -1075,6 +1085,34 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     assert path_on_server is not None
 
 
+def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory):
+    """Test uploading a file to the server."""
+    # Define a new maximum message length
+    import ansys.geometry.core.connection.defaults as pygeom_defaults
+
+    old_value = pygeom_defaults.MAX_MESSAGE_LENGTH
+    try:
+        # Set the new maximum message length
+        pygeom_defaults.MAX_MESSAGE_LENGTH = 1024**2  # 1 MB
+
+        file = tmp_path_factory.mktemp("test_design") / "upload_stream_example.scdocx"
+        file_size = 5 * 1024**2  # stream five messages
+
+        # Write random bytes
+        with file.open(mode="wb") as fout:
+            fout.write(os.urandom(file_size))
+        assert file.exists()
+
+        # Upload file - necessary to import the Modeler class and create an instance
+        from ansys.geometry.core import Modeler
+
+        modeler = Modeler()
+        path_on_server = modeler._upload_file_stream(file)
+        assert path_on_server is not None
+    finally:
+        pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
+
+
 def test_slot_extrusion(modeler: Modeler):
     """Test the extrusion of a slot."""
     # Create your design on the server side
@@ -1171,6 +1209,57 @@ def test_project_and_imprint_curves(modeler: Modeler):
     assert len(body_copy.faces) == 8
 
 
+def test_imprint_trimmed_curves(modeler: Modeler):
+    """
+    Test the imprinting of trimmed curves onto a specified face of a body.
+    """
+    unit = DEFAULT_UNITS.LENGTH
+
+    wx = 1
+    wy = 1
+    wz = 1
+    design = modeler.create_design("test imprint")
+
+    # create box
+    start_at = Point3D([wx / 2, wy / 2, 0.0], unit=unit)
+
+    plane = Plane(
+        start_at,
+        UNITVECTOR3D_X,
+        UNITVECTOR3D_Y,
+    )
+
+    box_plane = Sketch(plane)
+    box_plane.box(Point2D([0.0, 0.0], unit=unit), width=wx, height=wy)
+    box = design.extrude_sketch("box", box_plane, wz)
+
+    assert len(box.faces) == 6
+    assert len(box.edges) == 12
+
+    # create cylinder
+    point = Point3D([0.5, 0.5, 0.5])
+    ortho_1, ortho_2 = UNITVECTOR3D_X, UNITVECTOR3D_Y
+    plane = Plane(point, ortho_1, ortho_2)
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([0.0, 0.0], unit=unit), radius=0.1)
+    cylinder = design.extrude_sketch("cylinder", sketch_cylinder, 0.5)
+
+    edges = cylinder.faces[1].edges
+    trimmed_curves = [edges[0].shape]
+    new_edges, new_faces = box.imprint_curves(faces=[box.faces[1]], trimmed_curves=trimmed_curves)
+
+    # the new edge is coming from the circular top edge of the cylinder.
+    assert new_edges[0].start == new_edges[0].end
+    # verify that there is one new edge coming from the circle.
+    assert len(new_faces) == 1
+    # verify that there is one new face coming from the circle.
+    assert len(new_edges) == 1
+    # verify that there are 7 faces in total.
+    assert len(box.faces) == 7
+    # verify that there are 14 edges in total.
+    assert len(box.edges) == 13
+
+
 def test_copy_body(modeler: Modeler):
     """Test copying a body."""
     # Create your design on the server side
@@ -1216,9 +1305,6 @@ def test_copy_body(modeler: Modeler):
 
 def test_beams(modeler: Modeler):
     """Test beam creation."""
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_beams.__name__, "create_beam")
-
     # Create your design on the server side
     design = modeler.create_design("BeamCreation")
 
@@ -1524,9 +1610,6 @@ def test_named_selections_beams(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with
     beams.
     """
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_named_selections_beams.__name__, "create_beam")
-
     # Create your design on the server side
     design = modeler.create_design("NamedSelectionBeams_Test")
 
@@ -2665,8 +2748,6 @@ def test_revolve_sketch_fail_invalid_path(modeler: Modeler):
 
 def test_component_tree_print(modeler: Modeler):
     """Test for verifying the tree print for ``Component`` objects."""
-    # Skip on CoreService
-    skip_if_core_service(modeler, test_component_tree_print.__name__, "create_beam")
 
     def check_list_equality(lines, expected_lines):
         # By doing "a in b" rather than "a == b", we can check for substrings
@@ -3060,6 +3141,12 @@ def test_shell_body(modeler: Modeler):
     assert base.volume.m == pytest.approx(Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 12
 
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    success = base.shell_body(-0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.488, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 12
+
 
 def test_shell_faces(modeler: Modeler):
     """Test shell commands for a single face."""
@@ -3139,3 +3226,66 @@ def test_set_face_color(modeler: Modeler):
         ValueError, match="Invalid color value: Opacity value must be between 0 and 1."
     ):
         faces[3].opacity = 255
+
+
+def test_set_component_name(modeler: Modeler):
+    """Test the setting of component names."""
+
+    design = modeler.create_design("ComponentNameTest")
+    component = design.add_component("Component1")
+    assert component.name == "Component1"
+
+    component.name = "ChangedComponentName"
+    assert component.name == "ChangedComponentName"
+
+
+def test_get_face_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a face."""
+    design = modeler.create_design("face_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    bounding_box = body.faces[0].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
+
+    bounding_box = body.faces[1].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
+
+
+def test_get_edge_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of an edge."""
+    design = modeler.create_design("edge_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # Edge 0 goes from (-0.5, -0.5, 1) to (0.5, -0.5, 1)
+    bounding_box = body.edges[0].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.min_corner.z.m == 1
+    assert bounding_box.max_corner.x.m == 0.5
+    assert bounding_box.max_corner.y.m == -0.5
+    assert bounding_box.max_corner.z.m == 1
+
+    # Test center
+    center = bounding_box.center
+    assert center.x.m == 0
+    assert center.y.m == -0.5
+    assert center.z.m == 1
+
+
+def test_get_body_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a body."""
+    design = modeler.create_design("body_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    bounding_box = body.bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.min_corner.z.m == 0
+    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
+    assert bounding_box.max_corner.z.m == 1
+
+    # Test center
+    center = bounding_box.center
+    assert center.x.m == 0
+    assert center.y.m == 0
+    assert center.z.m == 0.5

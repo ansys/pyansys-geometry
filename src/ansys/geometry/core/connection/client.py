@@ -54,7 +54,7 @@ from ansys.api.dbu.v0.admin_pb2 import (
 )
 from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 from ansys.geometry.core.connection.backend import BackendType
-from ansys.geometry.core.connection.defaults import DEFAULT_HOST, DEFAULT_PORT, MAX_MESSAGE_LENGTH
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG, PyGeometryCustomAdapter
@@ -158,8 +158,8 @@ class GrpcClient:
     @check_input_types
     def __init__(
         self,
-        host: str = DEFAULT_HOST,
-        port: str | int = DEFAULT_PORT,
+        host: str = pygeom_defaults.DEFAULT_HOST,
+        port: str | int = pygeom_defaults.DEFAULT_PORT,
         channel: grpc.Channel | None = None,
         remote_instance: Optional["Instance"] = None,
         docker_instance: LocalDockerInstance | None = None,
@@ -183,8 +183,8 @@ class GrpcClient:
             self._channel = grpc.insecure_channel(
                 self._target,
                 options=[
-                    ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
-                    ("grpc.max_send_message_length", MAX_MESSAGE_LENGTH),
+                    ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
+                    ("grpc.max_send_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
                 ],
             )
 

@@ -56,6 +56,22 @@ def test_volume_extract_from_edge_loops(modeler: Modeler):
     assert len(created_bodies) == 1
 
 
+def test_remove_rounds(modeler: Modeler):
+    """Test a round is removed from the geometry."""
+    from ansys.geometry.core.designer import SurfaceType
+
+    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
+    assert len(design.bodies[0].faces) == 7
+    roundfaces = [
+        face
+        for face in design.bodies[0].faces
+        if face.surface_type == SurfaceType.SURFACETYPE_CYLINDER
+    ]
+    result = modeler.prepare_tools.remove_rounds(roundfaces)
+    assert len(design.bodies[0].faces) == 6
+    assert result is True
+
+
 def test_share_topology(modeler: Modeler):
     """Test share topology operation is between two bodies."""
     design = Modeler.create_design(modeler, "ShareTopoDoc")

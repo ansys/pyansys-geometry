@@ -27,8 +27,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
-from ansys.geometry.core.connection.client import MAX_MESSAGE_LENGTH
-from ansys.geometry.core.connection.defaults import DEFAULT_PIM_CONFIG, DEFAULT_PORT
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import (
     _HAS_DOCKER,
     GeometryContainers,
@@ -36,7 +35,7 @@ from ansys.geometry.core.connection.docker_instance import (
 )
 from ansys.geometry.core.connection.product_instance import prepare_and_start_backend
 from ansys.geometry.core.logger import LOG
-from ansys.geometry.core.misc.checks import check_type, deprecated_argument
+from ansys.geometry.core.misc.checks import check_type
 
 try:
     import ansys.platform.instancemanagement as pypim
@@ -290,7 +289,7 @@ def launch_remote_modeler(
 
 
 def launch_docker_modeler(
-    port: int = DEFAULT_PORT,
+    port: int = pygeom_defaults.DEFAULT_PORT,
     connect_to_existing_service: bool = True,
     restart_if_existing_service: bool = False,
     name: str | None = None,
@@ -493,12 +492,6 @@ def launch_modeler_with_spaceclaim_and_pimlight(
     )
 
 
-@deprecated_argument(
-    arg="log_level", alternative="server_log_level", version="0.6.2", remove="0.10.0"
-)
-@deprecated_argument(
-    arg="logs_folder", alternative="server_logs_folder", version="0.6.2", remove="0.10.0"
-)
 def launch_modeler_with_geometry_service(
     product_version: int = None,
     host: str = "localhost",
@@ -509,8 +502,6 @@ def launch_modeler_with_geometry_service(
     client_log_level: int = logging.INFO,
     server_logs_folder: str = None,
     client_log_file: str = None,
-    log_level: int = None,  # DEPRECATED
-    logs_folder: str = None,  # DEPRECATED
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using the ``ProductInstance`` class.
@@ -560,10 +551,6 @@ def launch_modeler_with_geometry_service(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
-    log_level : int, optional
-        DEPRECATED. Use ``server_log_level`` instead.
-    logs_folder : str, optional
-        DEPRECATED. Use ``server_logs_folder`` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -626,14 +613,9 @@ def launch_modeler_with_geometry_service(
         client_log_level=client_log_level,
         server_logs_folder=server_logs_folder,
         client_log_file=client_log_file,
-        log_level=log_level,
-        logs_folder=logs_folder,
     )
 
 
-@deprecated_argument(
-    arg="log_level", alternative="server_log_level", version="0.6.2", remove="0.10.0"
-)
 def launch_modeler_with_discovery(
     product_version: int = None,
     host: str = "localhost",
@@ -645,7 +627,6 @@ def launch_modeler_with_discovery(
     server_log_level: int = 2,
     client_log_level: int = logging.INFO,
     client_log_file: str = None,
-    log_level: int = None,  # DEPRECATED
     **kwargs: dict | None,
 ):
     """Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -697,8 +678,6 @@ def launch_modeler_with_discovery(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
-    log_level : int, optional
-        DEPRECATED. Use ``server_log_level`` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -756,13 +735,9 @@ def launch_modeler_with_discovery(
         server_log_level=server_log_level,
         client_log_level=client_log_level,
         client_log_file=client_log_file,
-        log_level=log_level,
     )
 
 
-@deprecated_argument(
-    arg="log_level", alternative="server_log_level", version="0.6.2", remove="0.10.0"
-)
 def launch_modeler_with_spaceclaim(
     product_version: int = None,
     host: str = "localhost",
@@ -774,7 +749,6 @@ def launch_modeler_with_spaceclaim(
     server_log_level: int = 2,
     client_log_level: int = logging.INFO,
     client_log_file: str = None,
-    log_level: int = None,  # DEPRECATED
     **kwargs: dict | None,
 ):
     """Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -826,8 +800,6 @@ def launch_modeler_with_spaceclaim(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
-    log_level : int, optional
-        DEPRECATED. Use ``server_log_level`` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -885,7 +857,6 @@ def launch_modeler_with_spaceclaim(
         server_log_level=server_log_level,
         client_log_level=client_log_level,
         client_log_file=client_log_file,
-        log_level=log_level,
     )
 
 
@@ -958,7 +929,7 @@ def _launch_pim_instance(
 
     # If PIM Light is being used and PyPIM configuration is not defined... use defaults.
     if is_pim_light and not os.environ.get("ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG", None):
-        os.environ["ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG"] = DEFAULT_PIM_CONFIG
+        os.environ["ANSYS_PLATFORM_INSTANCEMANAGEMENT_CONFIG"] = pygeom_defaults.DEFAULT_PIM_CONFIG
         pop_out = True
     else:
         pop_out = False
@@ -969,7 +940,7 @@ def _launch_pim_instance(
     instance.wait_for_ready()
     channel = instance.build_grpc_channel(
         options=[
-            ("grpc.max_receive_message_length", MAX_MESSAGE_LENGTH),
+            ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
         ]
     )
 

@@ -82,7 +82,8 @@ b3 = nested_1_nested_1_comp_1.extrude_sketch(
     name="nested_1_nested_1_comp_1_circle", sketch=sketch, distance=distance
 )
 b3.translate(UNITVECTOR3D_Y, 50)
-
+```
+```python
 # Create beams (in design)
 circle_profile_1 = design.add_beam_circular_profile(
     "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
@@ -90,7 +91,9 @@ circle_profile_1 = design.add_beam_circular_profile(
 beam_1 = nested_1_comp_2.create_beam(
     Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
 )
-
+```
+```{code-cell} ipython3
+# Visualize the design (optional)
 design.plot()
 ```
 
