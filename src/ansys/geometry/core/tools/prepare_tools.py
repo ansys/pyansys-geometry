@@ -31,7 +31,6 @@ from ansys.api.geometry.v0.preparetools_pb2 import (
     ExtractVolumeFromEdgeLoopsRequest,
     ExtractVolumeFromFacesRequest,
     RemoveRoundsRequest,
-    FindLogosReques,
     ShareTopologyRequest,
 )
 from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
