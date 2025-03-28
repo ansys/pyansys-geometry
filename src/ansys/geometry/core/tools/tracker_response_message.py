@@ -77,32 +77,32 @@ class TrackerResponseMessage:
         ):
         """Initialize the TrackerResponseMessage instance from another message."""
         self._success = message.success
-        created_body_list = [str]
+        created_body_list = []
         for body in message.created_bodies:
             created_body_list.append(body.id)
         self._created_bodies = created_body_list
         
-        modified_body_list = [str]
+        modified_body_list = []
         for body in message.modified_bodies:
             modified_body_list.append(body.id)
         self._modified_bodies = modified_body_list
         
-        deleted_body_list = [str]
+        deleted_body_list = []
         for body in message.deleted_bodies:
             deleted_body_list.append(body.id)
         self._deleted_bodies = deleted_body_list
         
-        created_component_list = [str]
+        created_component_list = []
         for component in message.created_components:
             created_component_list.append(component.id)
         self._created_components = created_component_list
         
-        modified_component_list = [str]
+        modified_component_list = []
         for component in message.modified_components:
             modified_component_list.append(component.id)
         self._modified_components = modified_component_list
         
-        deleted_component_list = [str]
+        deleted_component_list = []
         for component in message.deleted_components:
             deleted_component_list.append(component.id)
         self._deleted_components = deleted_component_list    

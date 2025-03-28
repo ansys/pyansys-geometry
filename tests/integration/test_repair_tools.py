@@ -146,7 +146,10 @@ def test_fix_missing_face(modeler: Modeler):
     """
     design = modeler.open_file(FILES_DIR / "MissingFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_missing_faces(design.bodies)
-    assert problem_areas[0].fix().success is True
+    message = problem_areas[0].fix()
+    assert message.success is True
+    assert len(message.tracked_changes.modified_bodies) == 1
+    assert len(message.tracked_changes.modified_components) == 1
 
 
 def test_find_duplicate_faces(modeler: Modeler):
@@ -178,7 +181,8 @@ def test_fix_duplicate_face(modeler: Modeler):
     """
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
-    assert problem_areas[0].fix().success is True
+    message = problem_areas[0].fix()
+    assert message.success is True
 
 
 def test_find_small_faces(modeler: Modeler):
@@ -219,7 +223,6 @@ def test_fix_small_face(modeler: Modeler):
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     result = problem_areas[0].fix()
     assert result.success is True
-    assert len(result.tracked_changes.modified_bodies) == 1
 
 
 def test_find_stitch_faces(modeler: Modeler):
