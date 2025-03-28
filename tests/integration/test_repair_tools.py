@@ -51,7 +51,10 @@ def test_fix_split_edge(modeler: Modeler):
     """Test to find and fix split edge problem areas."""
     design = modeler.open_file(FILES_DIR / "SplitEdgeDesignTest.scdocx")
     problem_areas = modeler.repair_tools.find_split_edges(design.bodies, 25, 150)
-    assert problem_areas[0].fix().success is True
+    message = problem_areas[0].fix()
+    assert message.success is True
+    assert len(message.tracked_changes.modified_bodies) == 1
+    assert len(message.tracked_changes.modified_components) == 1
 
 
 def test_find_extra_edges(modeler: Modeler):
@@ -183,6 +186,8 @@ def test_fix_duplicate_face(modeler: Modeler):
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
     message = problem_areas[0].fix()
     assert message.success is True
+    assert len(message.tracked_changes.deleted_bodies) == 1
+    assert len(message.tracked_changes.modified_components) == 1    
 
 
 def test_find_small_faces(modeler: Modeler):
