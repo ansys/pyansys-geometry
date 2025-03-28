@@ -217,7 +217,9 @@ def test_fix_small_face(modeler: Modeler):
     skip_if_core_service(modeler, test_fix_small_face.__name__, "repair_tools")
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
-    assert problem_areas[0].fix().success is True
+    result = problem_areas[0].fix()
+    assert result.success is True
+    assert len(result.tracked_changes.modified_bodies) == 1
 
 
 def test_find_stitch_faces(modeler: Modeler):

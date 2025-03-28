@@ -48,6 +48,7 @@ from ansys.geometry.core.misc.auxiliary import (
 )
 from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
+from ansys.geometry.core.tools.tracker_response_message import TrackerResponseMessage
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -398,15 +399,18 @@ class SmallFaceProblemAreas(ProblemArea):
         if not self.faces:
             return RepairToolMessage(False, [], [])
 
-        parent_design = get_design_from_face(self.faces[0])
+        # parent_design = get_design_from_face(self.faces[0])
         response = self._repair_stub.FixSmallFaces(
             FixSmallFacesRequest(small_face_problem_area_id=self._grpc_id)
         )
-        parent_design._update_design_inplace()
+        # parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
+            TrackerResponseMessage(
+                response.result.tracker_response
+            ),  
         )
         return message
 

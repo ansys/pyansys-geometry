@@ -21,6 +21,8 @@
 # SOFTWARE.
 """Module for repair tool message."""
 
+from ansys.geometry.core.tools.tracker_response_message import TrackerResponseMessage
+
 
 class RepairToolMessage:
     """Provides return message for the repair tool methods."""
@@ -32,6 +34,7 @@ class RepairToolMessage:
         modified_bodies: list[str],
         found: int = -1,
         repaired: int = -1,
+        tracked_changes: TrackerResponseMessage = None,
     ):
         """Initialize a new instance of the extra edge problem area class.
 
@@ -49,7 +52,8 @@ class RepairToolMessage:
         repaired: int, default: -1
             Number of problem areas repaired during the repair operation.
             If default, the operation does not provide the number of fixed problem areas.
-
+        tracked_changes: TrackerResponseChanges, default: None
+            The tracked changes from the repair operation.
 
         """
         self._success = success
@@ -57,6 +61,7 @@ class RepairToolMessage:
         self._modified_bodies = modified_bodies
         self._found = found
         self._repaired = repaired
+        self._tracked_changes = tracked_changes
 
     @property
     def success(self) -> bool:
@@ -82,3 +87,8 @@ class RepairToolMessage:
     def repaired(self) -> int:
         """Number of problem areas repaired during the repair operation."""
         return self._repaired
+
+    @property
+    def tracked_changes(self) -> TrackerResponseMessage:
+        """"The tracked changes from the repair operation."""
+        return self._tracked_changes
