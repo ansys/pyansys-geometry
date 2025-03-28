@@ -488,11 +488,8 @@ def test_named_selection_contents(modeler: Modeler):
     assert len(ns.edges) == 1
     assert ns.edges[0].id == edge.id
 
-    # TODO: When named selection is created using beams...
-    #       the beams are not being added to the named selection for some reason. We cannot
-    #       retrieve them from the NamedSelectionStub.Get() method. This is a bug.
-    # https://github.com/ansys/pyansys-geometry/issues/1868
-    # assert len(ns.beams) == 1 # This should be 1
+    assert len(ns.beams) == 1
+    assert ns.beams[0].id == beam.id
 
     assert len(ns.design_points) == 0
 
