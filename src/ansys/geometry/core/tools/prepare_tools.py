@@ -335,7 +335,7 @@ class PrepareTools:
 
         # Verify inputs
         if bodies and len(bodies) > 0:
-                check_type_all_elements_in_iterable(bodies, Body)
+            check_type_all_elements_in_iterable(bodies, Body)
 
         body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
         find_logo_options = FindLogoOptions()
@@ -385,7 +385,7 @@ class PrepareTools:
 
         # Verify inputs
         if bodies and len(bodies) > 0:
-                check_type_all_elements_in_iterable(bodies, Body)
+            check_type_all_elements_in_iterable(bodies, Body)
 
         body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
         find_logo_options = FindLogoOptions()
