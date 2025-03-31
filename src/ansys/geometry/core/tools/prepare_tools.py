@@ -323,8 +323,7 @@ class PrepareTools:
 
         Returns
         -------
-        Logo problem area
-
+        LogoProblemArea
             Problem area with logo faces.
         """
         from ansys.geometry.core.designer.body import Body
