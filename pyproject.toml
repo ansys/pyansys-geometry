@@ -79,7 +79,7 @@ tests = [
     "scipy==1.15.2",
     "semver==3.0.4",
     "six==1.17.0",
-    "vtk==9.3.1",
+    "vtk==9.4.2",
 ]
 tests-minimal = [
     "pytest==8.3.5",
@@ -122,7 +122,7 @@ doc = [
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
     "trame-vtk==2.8.15",
-    "vtk==9.3.1",
+    "vtk==9.4.2",
 ]
 
 [project.urls]
