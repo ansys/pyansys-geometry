@@ -349,7 +349,11 @@ class PrepareTools:
             FindLogosRequest(bodies=body_ids, options=find_logo_options)
         )
 
-        return LogoProblemArea(id=response.id, grpc_client=self._grpc_client, face_ids=[grpc_face.id for grpc_face in response.logo_faces])
+        return LogoProblemArea(
+            id=response.id,
+            grpc_client=self._grpc_client,
+            face_ids=[grpc_face.id for grpc_face in response.logo_faces],
+        )
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
