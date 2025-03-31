@@ -36,7 +36,9 @@ from ansys.api.geometry.v0.preparetools_pb2 import (
 )
 from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_edge,
@@ -325,6 +327,11 @@ class PrepareTools:
         """
         from ansys.geometry.core.designer.body import Body
 
+        if BackendType.is_linux_service(self.modeler.client.backend_type):
+            # not yet available in Linux
+            LOG.warning("Logo detection not available on Linux")
+            return
+
         # Verify inputs
         if bodies:
             if len(bodies) > 0:
@@ -369,6 +376,11 @@ class PrepareTools:
         Boolean value indicating whether the operation was successful.
         """
         from ansys.geometry.core.designer.body import Body
+
+        if BackendType.is_linux_service(self.modeler.client.backend_type):
+            # not yet available in Linux
+            LOG.warning("Logo detection not available on Linux")
+            return
 
         # Verify inputs
         if bodies:

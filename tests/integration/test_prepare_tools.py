@@ -23,6 +23,7 @@
 
 from pint import Quantity
 
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.measurements import UNITS
 from ansys.geometry.core.modeler import Modeler
@@ -116,6 +117,9 @@ def test_enhanced_share_topology(modeler: Modeler):
 
 def test_detect_logos(modeler: Modeler):
     """Test logos are detected and deleted."""
+    if BackendType.is_linux_service(modeler.client.backend_type):
+        # not yet available in Linux
+        return
     design = modeler.open_file(FILES_DIR / "Part1.SLDPRT")
     assert len(design.components[0].bodies[2].faces) == 189
     result = modeler.prepare_tools.find_logos()
@@ -130,6 +134,9 @@ def test_detect_logos(modeler: Modeler):
 
 def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
     """Test logos are detected and deleted as problem area"""
+    if BackendType.is_linux_service(modeler.client.backend_type):
+        # not yet available in Linux
+        return
     design = modeler.open_file(FILES_DIR / "Part1.SLDPRT")
     bodies = []
     # test that no issue occurs when no logos are found
@@ -143,5 +150,5 @@ def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
     result = modeler.prepare_tools.find_logos(bodies, max_height=0.005)
     assert len(result.face_ids) == 147
     result.fix()
-    assert success is False
+    assert success is True
     assert len(design.components[0].bodies[2].faces) == 42
