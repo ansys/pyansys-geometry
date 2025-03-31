@@ -379,7 +379,7 @@ class PrepareTools:
         """
         from ansys.geometry.core.designer.body import Body
 
-        if BackendType.is_linux_service(self.modeler.client.backend_type):
+        if BackendType.is_linux_service(self._modeler.client.backend_type):
             # not yet available in Linux
             LOG.warning("Logo detection not available on Linux")
             return
