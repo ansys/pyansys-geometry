@@ -647,7 +647,7 @@ class LogoProblemArea(ProblemArea):
         self._face_ids = face_ids
 
     @property
-    def face_ids(self) -> list["str"]:
+    def face_ids(self) -> list[str]:
         """The ids of the faces defining the logos."""
         return self._face_ids
 
