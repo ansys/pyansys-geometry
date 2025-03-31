@@ -279,7 +279,7 @@ suppress_warnings = [
     "design.grid",
     "config.cache",
     "design.fa-build",
-    "toc.not_included", # Caused by the autoapi extension and the "_grpc" folder
+    "toc.not_included",  # Caused by the autoapi extension and the "_grpc" folder
 ]
 
 # Examples gallery customization
