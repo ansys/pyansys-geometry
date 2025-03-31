@@ -247,6 +247,7 @@ class InexactEdgeProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
+            tracked_changes=TrackerResponseMessage(response.result.complete_command_response),
         )
         return message
 
@@ -300,6 +301,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
+            tracked_changes=TrackerResponseMessage(response.result.complete_command_response),
         )
 
         return message

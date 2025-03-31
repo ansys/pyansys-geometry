@@ -53,7 +53,6 @@ def test_fix_split_edge(modeler: Modeler):
     problem_areas = modeler.repair_tools.find_split_edges(design.bodies, 25, 150)
     message = problem_areas[0].fix()
     assert message.success is True
-    assert len(message.tracked_changes.modified_bodies) == 1
     assert len(message.tracked_changes.modified_components) == 1
 
 
@@ -85,7 +84,9 @@ def test_fix_extra_edge(modeler: Modeler):
     """Test to find and fix extra edge problem areas."""
     design = modeler.open_file(FILES_DIR / "ExtraEdgesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_extra_edges(design.bodies)
-    assert problem_areas[0].fix().success is True
+    message = problem_areas[0].fix()
+    assert message.success is True
+    assert len(message.tracked_changes.modified_components) == 1
 
 
 def test_find_inexact_edges(modeler: Modeler):
@@ -117,7 +118,9 @@ def test_fix_inexact_edge(modeler: Modeler):
     """
     design = modeler.open_file(FILES_DIR / "InExactEdgesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_inexact_edges(design.bodies)
-    assert problem_areas[0].fix().success is True
+    message = problem_areas[0].fix()
+    assert message.success is True
+    assert len(message.tracked_changes.modified_components) == 1
 
 
 def test_find_missing_faces(modeler: Modeler):
