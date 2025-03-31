@@ -41,7 +41,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_faces_from_ids,
 )
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.design import Design
 
 
