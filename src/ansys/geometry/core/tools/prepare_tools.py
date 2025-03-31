@@ -53,6 +53,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.modeler import Modeler
 
 
 class PrepareTools:
@@ -64,10 +65,11 @@ class PrepareTools:
         Active supporting geometry service instance for design modeling.
     """
 
-    def __init__(self, grpc_client: GrpcClient):
+    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize Prepare Tools class."""
         self._grpc_client = grpc_client
         self._prepare_stub = PrepareToolsStub(self._grpc_client.channel)
+        self._modeler = modeler
 
     @protect_grpc
     @min_backend_version(25, 1, 0)
@@ -327,7 +329,7 @@ class PrepareTools:
         """
         from ansys.geometry.core.designer.body import Body
 
-        if BackendType.is_linux_service(self.modeler.client.backend_type):
+        if BackendType.is_linux_service(self._modeler.client.backend_type):
             # not yet available in Linux
             LOG.warning("Logo detection not available on Linux")
             return
