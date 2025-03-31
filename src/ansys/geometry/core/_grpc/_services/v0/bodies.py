@@ -588,7 +588,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         try:
             resp_single = self.stub.GetTessellation(request=build_grpc_id(kwargs["id"]))
             resp.append(resp_single)
-        except grpc.RpcError as err:
+        except grpc.RpcError as err:  # pragma: no cover
             if kwargs["backend_version"] < (25, 2, 0):
                 raise err
             request = GetTessellationRequest(id=build_grpc_id(kwargs["id"]))
@@ -615,7 +615,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         try:
             resp_single = self.stub.GetTessellationWithOptions(request)
             resp.append(resp_single)
-        except grpc.RpcError:
+        except grpc.RpcError:  # pragma: no cover
             resp = self.stub.GetTessellationStream(request)
 
         for elem in resp:
