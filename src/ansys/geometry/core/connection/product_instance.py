@@ -43,7 +43,7 @@ if TYPE_CHECKING:  # pragma: no cover
 WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryService"
 """Default Geometry Service's folder name into the unified installer (DMS)."""
 
-CORE_GEOMETRY_SERVICE_FOLDER = "CoreGeometryService"
+CORE_GEOMETRY_SERVICE_FOLDER = "GeometryService"
 """Default Geometry Service's folder name into the unified installer (Core Service)."""
 
 DISCOVERY_FOLDER = "Discovery"
