@@ -37,169 +37,169 @@ class GRPCBodyService(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the BodyServiceBase class."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def create_sphere_body(self, **kwargs) -> dict:
         """Create a sphere body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def create_extruded_body(self, **kwargs) -> dict:
         """Create an extruded body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def create_sweeping_profile_body(self, **kwargs) -> dict:
         """Create a sweeping profile body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def create_sweeping_chain(self, **kwargs) -> dict:
         """Create a sweeping chain."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def create_extruded_body_from_face_profile(self, **kwargs) -> dict:
         """Create an extruded body from a face profile."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def create_extruded_body_from_loft_profiles(self, **kwargs) -> dict:
         """Create an extruded body from loft profiles."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def create_planar_body(self, **kwargs) -> dict:
         """Create a planar body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def create_body_from_face(self, **kwargs) -> dict:
         """Create a body from a face."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def create_surface_body(self, **kwargs) -> dict:
         """Create a surface body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def create_surface_body_from_trimmed_curves(self, **kwargs) -> dict:
         """Create a surface body from trimmed curves."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def translate(self, **kwargs) -> dict:
         """Translate a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def delete(self, **kwargs) -> dict:
         """Delete a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def is_suppressed(self, **kwargs) -> dict:
         """Check if a body is suppressed."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_color(self, **kwargs) -> dict:
         """Get the color of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_faces(self, **kwargs) -> dict:
         """Get the faces of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_edges(self, **kwargs) -> dict:
         """Get the edges of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_volume(self, **kwargs) -> dict:
         """Get the volume of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_bounding_box(self, **kwargs) -> dict:
         """Get the bounding box of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def set_assigned_material(self, **kwargs) -> dict:
         """Set the assigned material of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_assigned_material(self, **kwargs) -> dict:
         """Get the assigned material of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def set_name(self, **kwargs) -> dict:
         """Set the name of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def set_fill_style(self, **kwargs) -> dict:
         """Set the fill style of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def set_suppressed(self, **kwargs) -> dict:
         """Set the suppressed state of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def set_color(self, **kwargs) -> dict:
         """Set the color of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def rotate(self, **kwargs) -> dict:
         """Rotate a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def scale(self, **kwargs) -> dict:
         """Scale a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def mirror(self, **kwargs) -> dict:
         """Mirror a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def map(self, **kwargs) -> dict:
         """Map a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_collision(self, **kwargs) -> dict:
         """Get the collision of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def copy(self, **kwargs) -> dict:
         """Copy a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_tesellation(self, **kwargs) -> dict:
         """Get the tessellation of a body."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def get_tesellation_with_options(self, **kwargs) -> dict:
         """Get the tessellation of a body with options."""
-        pass
+        pass  # pragma: no cover
 
     @abstractmethod
     def boolean(self, **kwargs) -> dict:
         """Boolean operation."""
-        pass
+        pass  # pragma: no cover
