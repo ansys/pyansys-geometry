@@ -140,7 +140,7 @@ def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
         # not yet available in Linux
         return
     design = modeler.open_file(FILES_DIR / "partWithLogos.scdocx")
-    # Get the component named "Default"
+    #Get the component named "Default"
     component = [c for c in design.components if c.name == "Default"][0]
     # test that no issue occurs when no logos are found on body named Solid1
     bodies = [b for b in component.bodies if b.name == "Solid1"]
@@ -153,5 +153,5 @@ def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
     result = modeler.prepare_tools.find_logos(bodies, max_height=0.005)
     assert len(result.face_ids) == 147
     result.fix()
-    assert success is False
+    assert success is True
     assert len(design.components[0].bodies[2].faces) == 42
