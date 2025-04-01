@@ -190,7 +190,7 @@ def test_fix_duplicate_face(modeler: Modeler):
     message = problem_areas[0].fix()
     assert message.success is True
     assert len(message.tracked_changes.deleted_bodies) == 1
-    assert len(message.tracked_changes.modified_components) == 1    
+    assert len(message.tracked_changes.modified_components) == 1
 
 
 def test_find_small_faces(modeler: Modeler):
