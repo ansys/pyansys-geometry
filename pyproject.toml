@@ -71,7 +71,7 @@ tests = [
     "protobuf==5.29.3",
     "pygltflib==1.16.3",
     "pytest==8.3.5",
-    "pytest-cov==6.0.0",
+    "pytest-cov==6.1.0",
     "pytest-pyvista==0.1.9",
     "pytest-xvfb==3.1.1",
     "pyvista[jupyter]==0.44.2",
@@ -83,7 +83,7 @@ tests = [
 ]
 tests-minimal = [
     "pytest==8.3.5",
-    "pytest-cov==6.0.0",
+    "pytest-cov==6.1.0",
     "pytest-pyvista==0.1.9",
     "pytest-xvfb==3.1.1",
 ]
