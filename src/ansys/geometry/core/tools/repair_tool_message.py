@@ -90,5 +90,5 @@ class RepairToolMessage:
 
     @property
     def tracked_changes(self) -> TrackerResponseMessage:
-        """"The tracked changes from the repair operation."""
+        """The tracked changes from the repair operation."""
         return self._tracked_changes
