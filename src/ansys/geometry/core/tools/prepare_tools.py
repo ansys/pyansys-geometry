@@ -23,6 +23,7 @@
 
 from typing import TYPE_CHECKING
 
+from beartype import beartype as check_input_types
 from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
@@ -302,6 +303,7 @@ class PrepareTools:
         )
         return message
 
+    @check_input_types
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_logos(
@@ -335,14 +337,13 @@ class PrepareTools:
 
         # Verify inputs
         if bodies and len(bodies) > 0:
-                check_type_all_elements_in_iterable(bodies, Body)
+            check_type_all_elements_in_iterable(bodies, Body)
 
         body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
-        find_logo_options = FindLogoOptions()
-        if min_height:
-            find_logo_options.min_height = min_height
-        if max_height:
-            find_logo_options.max_height = max_height
+        find_logo_options = FindLogoOptions(
+            min_height=min_height,
+            max_height=max_height,
+        )
 
         response = self._prepare_stub.FindLogos(
             FindLogosRequest(bodies=body_ids, options=find_logo_options)
@@ -354,6 +355,7 @@ class PrepareTools:
             face_ids=[grpc_face.id for grpc_face in response.logo_faces],
         )
 
+    @check_input_types
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_remove_logos(
@@ -385,14 +387,13 @@ class PrepareTools:
 
         # Verify inputs
         if bodies and len(bodies) > 0:
-                check_type_all_elements_in_iterable(bodies, Body)
+            check_type_all_elements_in_iterable(bodies, Body)
 
         body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
-        find_logo_options = FindLogoOptions()
-        if min_height:
-            find_logo_options.min_height = min_height
-        if max_height:
-            find_logo_options.max_height = max_height
+        find_logo_options = FindLogoOptions(
+            min_height=min_height,
+            max_height=max_height,
+        )
 
         response = self._prepare_stub.FindAndRemoveLogos(
             FindLogosRequest(bodies=body_ids, options=find_logo_options)
