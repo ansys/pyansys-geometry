@@ -140,7 +140,7 @@ def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
         # not yet available in Linux
         return
     design = modeler.open_file(FILES_DIR / "partWithLogos.scdocx")
-    #Get the component named "Default"
+    # Get the component named "Default"
     component = [c for c in design.components if c.name == "Default"][0]
     # test that no issue occurs when no logos are found on body named Solid1
     bodies = [b for b in component.bodies if b.name == "Solid1"]
