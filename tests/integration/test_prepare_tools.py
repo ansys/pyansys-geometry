@@ -120,8 +120,10 @@ def test_detect_logos(modeler: Modeler):
     if BackendType.is_linux_service(modeler.client.backend_type):
         # not yet available in Linux
         return
-    design = modeler.open_file(FILES_DIR / "Part1.SLDPRT")
-    assert len(design.components[0].bodies[2].faces) == 189
+    design = modeler.open_file(FILES_DIR / "partWithLogos.scdocx")
+    component = [c for c in design.components if c.name == "Default"][0]
+    body = [b for b in component.bodies if b.name == "Solid3"][0]
+    assert len(body.faces) == 189
     result = modeler.prepare_tools.find_logos()
     # no logos should be found is max height is not given
     assert len(result.face_ids) == 0
@@ -129,7 +131,7 @@ def test_detect_logos(modeler: Modeler):
     assert len(result.face_ids) == 147
     success = modeler.prepare_tools.find_and_remove_logos(max_height=0.005)
     assert success is True
-    assert len(design.components[0].bodies[2].faces) == 42
+    assert len(body.faces) == 42
 
 
 def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
@@ -137,18 +139,19 @@ def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
     if BackendType.is_linux_service(modeler.client.backend_type):
         # not yet available in Linux
         return
-    design = modeler.open_file(FILES_DIR / "Part1.SLDPRT")
-    bodies = []
-    # test that no issue occurs when no logos are found
-    bodies.append(design.components[0].bodies[0])
+    design = modeler.open_file(FILES_DIR / "partWithLogos.scdocx")
+    # Get the component named "Default"
+    component = [c for c in design.components if c.name == "Default"][0]
+    # test that no issue occurs when no logos are found on body named Solid1
+    bodies = [b for b in component.bodies if b.name == "Solid1"]
     result = modeler.prepare_tools.find_logos(bodies, max_height=0.005)
     assert len(result.face_ids) == 0
     success = result.fix()
-    assert success is True
-    bodies = []
-    bodies.append(design.components[0].bodies[2])
+    assert success is False
+    # Remove logos from body named Solid3
+    bodies = [b for b in component.bodies if b.name == "Solid3"]
     result = modeler.prepare_tools.find_logos(bodies, max_height=0.005)
     assert len(result.face_ids) == 147
     result.fix()
-    assert success is True
+    assert success is False
     assert len(design.components[0].bodies[2].faces) == 42
