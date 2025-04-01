@@ -220,7 +220,10 @@ def test_find_small_face_faces(modeler: Modeler):
     )  # Skip test on CoreService
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
-    assert len(problem_areas[0].faces) > 0
+    assert len(problem_areas[0].faces) == 1
+    assert len(problem_areas[1].faces) == 1
+    assert len(problem_areas[2].faces) == 1
+    assert len(problem_areas[3].faces) == 1
 
 
 def test_fix_small_face(modeler: Modeler):
@@ -231,6 +234,23 @@ def test_fix_small_face(modeler: Modeler):
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     result = problem_areas[0].fix()
     assert result.success is True
+    # There's a potential bug here.  The test model can't remove it's small faces.  Regardless,
+    #   think we need to revisit some of the logic in this tool (and maybe the repair tools in
+    #   general).
+    # assert len(result.tracked_changes.modified_bodies) == 1, "Modified bodies should be 1"
+    # assert len(result.tracked_changes.modified_components) == 1, "Modified components should be 1"
+    # result = problem_areas[1].fix()
+    # assert result.success is True
+    # assert len(result.tracked_changes.modified_bodies) == 1, "Modified bodies should be 1"
+    # assert len(result.tracked_changes.modified_components) == 1, "Modified components should be 1"
+    # result = problem_areas[2].fix()
+    # assert result.success is True
+    # assert len(result.tracked_changes.modified_bodies) == 1, "Modified bodies should be 1"
+    # assert len(result.tracked_changes.modified_components) == 1, "Modified components should be 1"
+    # result = problem_areas[3].fix()
+    # assert result.success is True
+    # assert len(result.tracked_changes.modified_bodies) == 1, "Modified bodies should be 1"
+    # assert len(result.tracked_changes.modified_components) == 1, "Modified components should be 1"
 
 
 def test_find_stitch_faces(modeler: Modeler):
