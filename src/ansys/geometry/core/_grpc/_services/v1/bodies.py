@@ -47,3 +47,102 @@ class GRPCBodyServiceV1(GRPCBodyService):
         from ansys.api.geometry.v1.bodies_pb2_grpc import BodiesStub
 
         self.stub = BodiesStub(channel)
+
+    def create_sphere_body(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def create_extruded_body(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def create_sweeping_profile_body(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def create_sweeping_chain(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def create_extruded_body_from_face_profile(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def create_extruded_body_from_loft_profiles(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def create_planar_body(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def create_body_from_face(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def create_surface_body(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def create_surface_body_from_trimmed_curves(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def translate(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def delete(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def is_suppressed(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def get_color(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def get_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def get_edges(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def get_volume(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def set_assigned_material(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def get_assigned_material(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def set_name(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def set_fill_style(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def set_suppressed(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def set_color(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def rotate(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def scale(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def mirror(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def map(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def get_collision(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def copy(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def get_tesellation(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def get_tesellation_with_options(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    def boolean(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
