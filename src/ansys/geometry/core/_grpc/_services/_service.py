@@ -64,10 +64,11 @@ class _GRPCServices:
         self.channel = channel
 
         # Lazy load all the services
-        self._body_service = None
+        self._admin = None
+        self._bodies = None
 
     @property
-    def body_service(self) -> GRPCBodyService:
+    def bodies(self) -> GRPCBodyService:
         """
         Get the body service for the specified version.
 
@@ -76,16 +77,40 @@ class _GRPCServices:
         BodyServiceBase
             The body service for the specified version.
         """
-        if not self._body_service:
+        if not self._bodies:
             # Import the appropriate body service based on the version
             from .v0.bodies import GRPCBodyServiceV0
             from .v1.bodies import GRPCBodyServiceV1
 
             if self.version == GeometryApiProtos.V0:
-                self._body_service = GRPCBodyServiceV0(self.channel)
+                self._bodies = GRPCBodyServiceV0(self.channel)
             elif self.version == GeometryApiProtos.V1:
-                self._body_service = GRPCBodyServiceV1(self.channel)
+                self._bodies = GRPCBodyServiceV1(self.channel)
             else:
                 raise ValueError(f"Unsupported version: {self.version}")
 
-        return self._body_service
+        return self._bodies
+
+    @property
+    def admin(self):
+        """
+        Get the admin service for the specified version.
+
+        Returns
+        -------
+        AdminServiceBase
+            The admin service for the specified version.
+        """
+        if not self._admin:
+            # Import the appropriate admin service based on the version
+            from .v0.admin import GRPCAdminServiceV0
+            from .v1.admin import GRPCAdminServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._admin = GRPCAdminServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:
+                self._admin = GRPCAdminServiceV1(self.channel)
+            else:
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._admin

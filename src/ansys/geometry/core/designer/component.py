@@ -578,7 +578,7 @@ class Component:
 
         # Perform extrusion request
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
-        response = self._grpc_client.services.body_service.create_extruded_body(
+        response = self._grpc_client.services.bodies.create_extruded_body(
             name=name,
             parent_id=self.id,
             sketch=sketch,
@@ -636,7 +636,7 @@ class Component:
         The newly created body is placed under this component within the design assembly.
         """
         self._grpc_client.log.debug(f"Creating a sweeping profile on {self.id}. Creating body...")
-        response = self._grpc_client.services.body_service.create_sweeping_profile_body(
+        response = self._grpc_client.services.bodies.create_sweeping_profile_body(
             name=name,
             parent_id=self.id,
             sketch=sketch,
@@ -674,7 +674,7 @@ class Component:
         The newly created body is placed under this component within the design assembly.
         """
         self._grpc_client.log.debug(f"Creating a sweeping chain on {self.id}. Creating body...")
-        response = self._grpc_client.services.body_service.create_sweeping_chain(
+        response = self._grpc_client.services.bodies.create_sweeping_chain(
             name=name,
             parent_id=self.id,
             path=path,
@@ -778,7 +778,7 @@ class Component:
             direction = ExtrusionDirection.from_string(direction, use_default_if_error=True)
 
         self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
-        response = self._grpc_client.services.body_service.create_extruded_body_from_face_profile(
+        response = self._grpc_client.services.bodies.create_extruded_body_from_face_profile(
             name=name,
             parent_id=self.id,
             face_id=face.id,
@@ -809,7 +809,7 @@ class Component:
             Sphere body object.
         """
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id}.")
-        response = self._grpc_client.services.body_service.create_sphere_body(
+        response = self._grpc_client.services.bodies.create_sphere_body(
             name=name, parent=self.id, center=center, radius=radius
         )
         return self.__build_body_from_response(response)
@@ -866,7 +866,7 @@ class Component:
         profile, but the surfaces are not periodic.
         """
         self._grpc_client.log.debug(f"Creating a loft profile body on {self.id}.")
-        response = self._grpc_client.services.body_service.create_extruded_body_from_loft_profiles(
+        response = self._grpc_client.services.bodies.create_extruded_body_from_loft_profiles(
             name=name,
             parent_id=self.id,
             profiles=profiles,
@@ -897,7 +897,7 @@ class Component:
         self._grpc_client.log.debug(
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
         )
-        response = self._grpc_client.services.body_service.create_planar_body(
+        response = self._grpc_client.services.bodies.create_planar_body(
             name=name, parent_id=self.id, sketch=sketch
         )
 
@@ -929,7 +929,7 @@ class Component:
         self._grpc_client.log.debug(
             f"Creating planar surface from face provided on {self.id}. Creating body..."
         )
-        response = self._grpc_client.services.body_service.create_body_from_face(
+        response = self._grpc_client.services.bodies.create_body_from_face(
             name=name, parent_id=self.id, face_id=face.id
         )
         return self.__build_body_from_response(response)
@@ -960,7 +960,7 @@ class Component:
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
         )
-        response = self._grpc_client.services.body_service.create_surface_body(
+        response = self._grpc_client.services.bodies.create_surface_body(
             name=name,
             parent_id=self.id,
             trimmed_surface=trimmed_surface,
@@ -989,7 +989,7 @@ class Component:
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed curves provided on {self.id}. Creating body..."
         )
-        response = self._grpc_client.services.body_service.create_surface_body_from_trimmed_curves(
+        response = self._grpc_client.services.bodies.create_surface_body_from_trimmed_curves(
             name=name,
             parent_id=self.id,
             trimmed_curves=trimmed_curves,
@@ -1059,7 +1059,7 @@ class Component:
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 
         self._grpc_client.log.debug(f"Translating {body_ids_found}...")
-        self._grpc_client.services.body_service.translate(
+        self._grpc_client.services.bodies.translate(
             ids=body_ids_found,
             direction=direction,
             distance=distance,
@@ -1303,7 +1303,7 @@ class Component:
         if body_requested:
             # If the body belongs to this component (or nested components)
             # call the server deletion mechanism
-            self._grpc_client.services.body_service.delete(id=id)
+            self._grpc_client.services.bodies.delete(id=id)
 
             # If the body was deleted from the server side... "kill" it
             # on the client side

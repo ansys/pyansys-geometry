@@ -854,7 +854,7 @@ class MasterBody(IBody):
 
     @property
     def is_suppressed(self) -> bool:  # noqa: D102
-        response = self._grpc_client.services.body_service.is_suppressed(id=self.id)
+        response = self._grpc_client.services.bodies.is_suppressed(id=self.id)
         return response.get("result")
 
     @is_suppressed.setter
@@ -875,7 +875,7 @@ class MasterBody(IBody):
                 )
             else:
                 # Fetch color from the server if it's not cached
-                color = self._grpc_client.services.body_service.get_color(id=self.id).get("color")
+                color = self._grpc_client.services.bodies.get_color(id=self.id).get("color")
                 if color:
                     self._color = mcolors.to_hex(color, keep_alpha=True)
 
@@ -913,7 +913,7 @@ class MasterBody(IBody):
     def _get_faces_from_id(self, body: Union["Body", "MasterBody"]) -> list[Face]:
         """Retrieve faces from a body ID."""
         self._grpc_client.log.debug(f"Retrieving faces for body {body.id} from server.")
-        resp = self._grpc_client.services.body_service.get_faces(id=body.id)
+        resp = self._grpc_client.services.bodies.get_faces(id=body.id)
         return [
             Face(
                 face_resp.get("id"),
@@ -932,7 +932,7 @@ class MasterBody(IBody):
     def _get_edges_from_id(self, body: Union["Body", "MasterBody"]) -> list[Edge]:
         """Retrieve edges from a body ID."""
         self._grpc_client.log.debug(f"Retrieving edges for body {body.id} from server.")
-        resp = self._grpc_client.services.body_service.get_edges(id=body.id)
+        resp = self._grpc_client.services.bodies.get_edges(id=body.id)
         return [
             Edge(
                 edge_resp.get("id"),
@@ -955,7 +955,7 @@ class MasterBody(IBody):
             return Quantity(0, DEFAULT_UNITS.SERVER_VOLUME)
         else:
             self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
-            resp = self._grpc_client.services.body_service.get_volume(id=self.id)
+            resp = self._grpc_client.services.bodies.get_volume(id=self.id)
             return resp.get("volume")
 
     @property
@@ -970,7 +970,7 @@ class MasterBody(IBody):
     @min_backend_version(25, 2, 0)
     def bounding_box(self) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
-        resp = self._grpc_client.services.body_service.get_bounding_box(id=self.id)
+        resp = self._grpc_client.services.bodies.get_bounding_box(id=self.id)
         return BoundingBox(
             min_corner=resp.get("min"),
             max_corner=resp.get("max"),
@@ -980,11 +980,11 @@ class MasterBody(IBody):
     @check_input_types
     def assign_material(self, material: Material) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Assigning body {self.id} material {material.name}.")
-        self._grpc_client.services.body_service.set_assigned_material(id=self.id, material=material)
+        self._grpc_client.services.bodies.set_assigned_material(id=self.id, material=material)
 
     def get_assigned_material(self) -> Material:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving assigned material for body {self.id}.")
-        resp = self._grpc_client.services.body_service.get_assigned_material(id=self.id)
+        resp = self._grpc_client.services.bodies.get_assigned_material(id=self.id)
         return resp.get("material")
 
     @protect_grpc
@@ -1066,7 +1066,7 @@ class MasterBody(IBody):
     ) -> None:
         distance = distance if isinstance(distance, Distance) else Distance(distance)
         self._grpc_client.log.debug(f"Translating body {self.id}.")
-        self._grpc_client.services.body_service.translate(
+        self._grpc_client.services.bodies.translate(
             ids=[self.id], direction=direction, distance=distance
         )
 
@@ -1076,7 +1076,7 @@ class MasterBody(IBody):
         self, name: str
     ) -> None:
         self._grpc_client.log.debug(f"Renaming body {self.id} from '{self.name}' to '{name}'.")
-        self._grpc_client.services.body_service.set_name(id=self.id, name=name)
+        self._grpc_client.services.bodies.set_name(id=self.id, name=name)
         self._name = name
 
     @check_input_types
@@ -1085,7 +1085,7 @@ class MasterBody(IBody):
         self, fill_style: FillStyle
     ) -> None:
         self._grpc_client.log.debug(f"Setting body fill style {self.id}.")
-        self._grpc_client.services.body_service.set_fill_style(id=self.id, fill_style=fill_style)
+        self._grpc_client.services.bodies.set_fill_style(id=self.id, fill_style=fill_style)
         self._fill_style = fill_style
 
     @check_input_types
@@ -1095,9 +1095,7 @@ class MasterBody(IBody):
     ) -> None:
         """Set the body suppression state."""
         self._grpc_client.log.debug(f"Setting body {self.id}, as suppressed: {suppressed}.")
-        self._grpc_client.services.body_service.set_suppressed(
-            bodies=[self.id], is_suppressed=suppressed
-        )
+        self._grpc_client.services.bodies.set_suppressed(bodies=[self.id], is_suppressed=suppressed)
 
     @check_input_types
     @min_backend_version(25, 1, 0)
@@ -1107,7 +1105,7 @@ class MasterBody(IBody):
         """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
         color = convert_color_to_hex(color)
-        self._grpc_client.services.body_service.set_color(id=self.id, color=color)
+        self._grpc_client.services.bodies.set_color(id=self.id, color=color)
         self._color = color
 
     @check_input_types
@@ -1130,7 +1128,7 @@ class MasterBody(IBody):
     ) -> None:
         angle = angle if isinstance(angle, Angle) else Angle(angle)
         self._grpc_client.log.debug(f"Rotating body {self.id}.")
-        self._grpc_client.services.body_service.rotate(
+        self._grpc_client.services.bodies.rotate(
             id=self.id, axis_origin=axis_origin, axis_direction=axis_direction, angle=angle
         )
 
@@ -1139,26 +1137,26 @@ class MasterBody(IBody):
     @min_backend_version(24, 2, 0)
     def scale(self, value: Real) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Scaling body {self.id}.")
-        self._grpc_client.services.body_service.scale(id=self.id, value=value)
+        self._grpc_client.services.bodies.scale(id=self.id, value=value)
 
     @check_input_types
     @reset_tessellation_cache
     @min_backend_version(24, 2, 0)
     def map(self, frame: Frame) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Mapping body {self.id}.")
-        self._grpc_client.services.body_service.map(id=self.id, frame=frame)
+        self._grpc_client.services.bodies.map(id=self.id, frame=frame)
 
     @check_input_types
     @reset_tessellation_cache
     @min_backend_version(24, 2, 0)
     def mirror(self, plane: Plane) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Mirroring body {self.id}.")
-        self._grpc_client.services.body_service.mirror(id=self.id, plane=plane)
+        self._grpc_client.services.bodies.mirror(id=self.id, plane=plane)
 
     @min_backend_version(24, 2, 0)
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
         self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
-        resp = self._grpc_client.services.body_service.get_collision(id=self.id, other_id=body.id)
+        resp = self._grpc_client.services.bodies.get_collision(id=self.id, other_id=body.id)
         return CollisionType(resp.get("collision_type"))
 
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
@@ -1170,7 +1168,7 @@ class MasterBody(IBody):
         check_type(copy_name, str)
 
         self._grpc_client.log.debug(f"Copying body {self.id}.")
-        resp = self._grpc_client.services.body_service.copy(
+        resp = self._grpc_client.services.bodies.copy(
             id=self.id, parent_id=parent.id, name=copy_name
         )
 
@@ -1209,12 +1207,12 @@ class MasterBody(IBody):
         # cache tessellation
         if not self._tessellation:
             if tess_options is not None:
-                resp = self._grpc_client.services.body_service.get_tesellation_with_options(
+                resp = self._grpc_client.services.bodies.get_tesellation_with_options(
                     id=self.id,
                     options=tess_options,
                 )
             else:
-                resp = self._grpc_client.services.body_service.get_tesellation(
+                resp = self._grpc_client.services.bodies.get_tesellation(
                     id=self.id,
                     backend_version=self._grpc_client.backend_version,
                 )
@@ -1868,7 +1866,7 @@ class Body(IBody):
             # stored temporarily in the parent component - since it will be deleted
             grpc_other = [b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other]
 
-        self._template._grpc_client.services.body_service.boolean(
+        self._template._grpc_client.services.bodies.boolean(
             target=self,
             other=grpc_other,
             method=method,

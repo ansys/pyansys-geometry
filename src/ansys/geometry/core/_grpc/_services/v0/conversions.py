@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING
 
 import pint
 
+from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.models_pb2 import (
     Arc as GRPCArc,
@@ -52,6 +53,7 @@ from ansys.geometry.core.misc.checks import graphics_required
 if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
 
+    from ansys.geometry.core.connection.backend import BackendType
     from ansys.geometry.core.materials.material import Material
     from ansys.geometry.core.materials.property import MaterialProperty
     from ansys.geometry.core.math.frame import Frame
@@ -681,3 +683,43 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
         surface_type = GRPCSurfaceType.SURFACETYPE_TORUS
 
     return grpc_surface, surface_type
+
+
+def from_grpc_backend_type_to_backend_type(
+    grpc_backend_type: GRPCBackendType,
+) -> "BackendType":
+    """Convert a gRPC backend type to a backend type.
+
+    Parameters
+    ----------
+    backend_type : GRPCBackendType
+        Source backend type.
+
+    Returns
+    -------
+    BackendType
+        Converted backend type.
+    """
+    from ansys.geometry.core.connection.backend import BackendType
+
+    # Map the gRPC backend type to the corresponding BackendType
+    backend_type = None
+
+    if grpc_backend_type == GRPCBackendType.DISCOVERY:
+        backend_type = BackendType.DISCOVERY
+    elif grpc_backend_type == GRPCBackendType.SPACECLAIM:
+        backend_type = BackendType.SPACECLAIM
+    elif grpc_backend_type == GRPCBackendType.WINDOWS_DMS:
+        backend_type = BackendType.WINDOWS_SERVICE
+    elif grpc_backend_type == GRPCBackendType.LINUX_DMS:
+        backend_type = BackendType.LINUX_SERVICE
+    elif grpc_backend_type == GRPCBackendType.CORE_SERVICE_LINUX:
+        backend_type = BackendType.CORE_LINUX
+    elif grpc_backend_type == GRPCBackendType.CORE_SERVICE_WINDOWS:
+        backend_type = BackendType.CORE_WINDOWS
+    elif grpc_backend_type == GRPCBackendType.DISCOVERY_HEADLESS:
+        backend_type = BackendType.DISCOVERY_HEADLESS
+    else:
+        raise ValueError(f"Invalid backend type: {grpc_backend_type}")
+
+    return backend_type

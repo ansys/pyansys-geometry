@@ -28,7 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.bodies import GRPCBodyService
 
 
-class GRPCBodyServiceV1(GRPCBodyService):
+class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     """Body service for gRPC communication with the Geometry server.
 
     This class provides methods to create and manipulate bodies in the

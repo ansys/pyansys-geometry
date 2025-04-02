@@ -282,7 +282,6 @@ def launch_remote_modeler(
         product_name="geometry",
         product_platform=platform,
         product_version=version,
-        backend_type=None,
         client_log_level=client_log_level,
         client_log_file=client_log_file,
     )
@@ -400,7 +399,6 @@ def launch_modeler_with_discovery_and_pimlight(
         is_pim_light=True,
         product_name="discovery",
         product_version=version,
-        backend_type=BackendType.DISCOVERY,
         client_log_level=client_log_level,
         client_log_file=client_log_file,
     )
@@ -443,7 +441,6 @@ def launch_modeler_with_geometry_service_and_pimlight(
         is_pim_light=True,
         product_name="geometryservice",
         product_version=version,
-        backend_type=BackendType.WINDOWS_SERVICE,
         client_log_level=client_log_level,
         client_log_file=client_log_file,
     )
@@ -486,7 +483,6 @@ def launch_modeler_with_spaceclaim_and_pimlight(
         is_pim_light=True,
         product_name="scdm",
         product_version=version,
-        backend_type=BackendType.SPACECLAIM,
         client_log_level=client_log_level,
         client_log_file=client_log_file,
     )
@@ -865,7 +861,6 @@ def _launch_pim_instance(
     product_name: str,
     product_platform: str | None = None,
     product_version: str | None = None,
-    backend_type: BackendType | None = None,
     client_log_level: int = logging.INFO,
     client_log_file: str | None = None,
 ):
@@ -894,9 +889,6 @@ def _launch_pim_instance(
 
     product_version : str, default: None
         Version of the service to run.
-    backend_type : BackendType, default: None
-        Type of backend that PyAnsys Geometry is communicating with. By default, this
-        value is unknown, which results in ``None`` being the default value.
     client_log_level : int, default: logging.INFO
         Log level for the client. The default is ``logging.INFO``.
     client_log_file : str, default: None
@@ -951,7 +943,6 @@ def _launch_pim_instance(
     return Modeler(
         channel=channel,
         remote_instance=instance,
-        backend_type=backend_type,
         logging_level=client_log_level,
         logging_file=client_log_file,
     )
