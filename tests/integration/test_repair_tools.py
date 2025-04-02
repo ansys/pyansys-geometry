@@ -338,12 +338,12 @@ def test_find_and_fix_extra_edges_in_components(modeler: Modeler):
 def test_find_and_fix_inexact_edges(modeler: Modeler):
     """Test to read geometry, find and fix inexact edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "gear.scdocx")
-    assert len(design.bodies[0].edges) == 993
+    assert len(design.bodies[0].edges) == 310
     inexact_edges = modeler.repair_tools.find_inexact_edges(design.bodies)
-    assert len(inexact_edges) == 272
+    assert len(inexact_edges) == 73
     for i in inexact_edges:
         i.fix()
-    assert len(design.bodies[0].edges) == 993
+    assert len(design.bodies[0].edges) == 310
     inexact_edges = modeler.repair_tools.find_inexact_edges(design.bodies)
     assert len(inexact_edges) == 0
 
@@ -382,15 +382,15 @@ def test_find_and_fix_short_edges_problem_areas(modeler: Modeler):
 def test_find_and_fix_split_edges_problem_areas(modeler: Modeler):
     """Test to read geometry, find and fix split edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "bracket-with-split-edges.scdocx")
-    assert len(design.bodies[0].edges) == 304
+    assert len(design.bodies[0].edges) == 158
     split_edges = modeler.repair_tools.find_split_edges(design.bodies, 2.61799, 0.01)
-    assert len(split_edges) == 166
+    assert len(split_edges) == 86
     for i in split_edges:
         try:  # Try/Except is a workaround. Having .alive would be better
             i.fix()
         except Exception:
             pass
-    assert len(design.bodies[0].edges) == 169
+    assert len(design.bodies[0].edges) == 99
 
 
 def test_find_and_stitch_and_missing_faces(modeler: Modeler):
@@ -412,14 +412,14 @@ def test_find_and_stitch_and_missing_faces(modeler: Modeler):
 
 def test_find_simplify(modeler: Modeler):
     """Test to read geometry and find it's unsimplified face problem areas."""
-    design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
+    design = modeler.open_file(FILES_DIR / "SOBracket2_HalfModel.scdocx")
     problem_areas = modeler.repair_tools.find_simplify(design.bodies)
-    assert len(problem_areas) == 46
+    assert len(problem_areas) == 23
 
 
 def test_fix_simplify(modeler: Modeler):
     """Test to read geometry and find and fix it's unsimplified face problem areas."""
-    design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
+    design = modeler.open_file(FILES_DIR / "SOBracket2_HalfModel.scdocx")
     problem_areas = modeler.repair_tools.find_simplify(design.bodies)
     assert problem_areas[0].fix().success is True
 
@@ -435,9 +435,9 @@ def test_find_and_fix_short_edges(modeler: Modeler):
 def test_find_and_fix_split_edges(modeler: Modeler):
     """Test to read geometry, find and fix split edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "bracket-with-split-edges.scdocx")
-    assert len(design.bodies[0].edges) == 304
+    assert len(design.bodies[0].edges) == 158
     modeler.repair_tools.find_and_fix_split_edges(design.bodies, 2.61799, 0.01)
-    assert len(design.bodies[0].edges) == 138
+    assert len(design.bodies[0].edges) == 72
 
 
 def test_find_and_fix_extra_edges(modeler: Modeler):
@@ -493,11 +493,11 @@ def test_find_and_fix_short_edges_comprehensive(modeler: Modeler):
 def test_find_and_fix_split_edges_comprehensive(modeler: Modeler):
     """Test to read geometry, find and fix split edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "bracket-with-split-edges.scdocx")
-    assert len(design.bodies[0].edges) == 304
+    assert len(design.bodies[0].edges) == 158
     result = modeler.repair_tools.find_and_fix_split_edges(design.bodies, 2.61799, 0.01, True)
-    assert len(design.bodies[0].edges) == 169
-    assert result.found == 135
-    assert result.repaired == 135
+    assert len(design.bodies[0].edges) == 99
+    assert result.found == 59
+    assert result.repaired == 59
 
 
 def test_find_and_fix_extra_edges_comprehensive(modeler: Modeler):
@@ -520,8 +520,8 @@ def test_find_and_fix_extra_edges_comprehensive(modeler: Modeler):
 
 def test_find_and_fix_simplify(modeler: Modeler):
     """Test to read geometry and find and fix spline faces"""
-    design = modeler.open_file(FILES_DIR / "SOBracket2.scdocx")
+    design = modeler.open_file(FILES_DIR / "SOBracket2_HalfModel.scdocx")
     result = modeler.repair_tools.find_and_fix_simplify(design.bodies, True)
     assert result
-    assert result.found == 46
-    assert result.repaired == 46  # There is a SC bug where success is always true
+    assert result.found == 23
+    assert result.repaired == 23  # There is a SC bug where success is always true

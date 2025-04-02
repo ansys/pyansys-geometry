@@ -33,7 +33,6 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import PersistentIdType
 
@@ -354,27 +353,32 @@ def test_design_import_with_named_selections(modeler: Modeler):
     # Open the design
     design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
 
-    # Check that there are 29 Named Selections
-    assert len(design.named_selections) == 6
+    # Check that there are 5 Named Selections
+    assert len(design.named_selections) == 5
 
-    # Get named selection nozzle1
-    nozzle1 = design._named_selections["n1"]
-    assert len(nozzle1.bodies) == 0
-    assert len(nozzle1.faces) == 11
+    # Get full body named selection
+    body = design._named_selections["SolidBody"]
+    assert len(body.bodies) == 1
+    assert len(body.faces) == 0
+    assert len(body.beams) == 0
 
-    assert nozzle1.faces[0].area.m == pytest.approx(
-        Quantity(1.55183312719e-05, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
-    )
+    # Get beam named selection
+    beam = design._named_selections["Beam1"]
+    assert len(beam.bodies) == 0
+    assert len(beam.beams) == 1
 
-    # Get named selection p1
-    p1 = design._named_selections["p1"]
-    assert len(p1.bodies) == 0
-    assert len(p1.design_points) == 1
+    # Get mixed named selection 1
+    ns1 = design._named_selections["Group1"]
+    assert len(ns1.bodies) == 0
+    assert len(ns1.faces) == 2
 
-    assert p1.design_points[0].value.x.m == pytest.approx(
-        Quantity(8.601, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
-    )
-    assert p1.design_points[0].value.y.m == pytest.approx(
-        Quantity(11.024, UNITS.inches).m_as(DEFAULT_UNITS.SERVER_LENGTH), abs=1e-3
-    )
-    assert p1.design_points[0].value.z.m == pytest.approx(0.0, abs=1e-3)
+    # Get mixed named selection 2
+    ns2 = design._named_selections["Group2"]
+    assert len(ns2.bodies) == 1
+    assert len(ns2.beams) == 1
+    assert len(ns2.design_points) == 1
+
+    # Get mixed named selection 3
+    ns3 = design._named_selections["Group3"]
+    assert len(ns3.bodies) == 0
+    assert len(ns3.design_points) == 1

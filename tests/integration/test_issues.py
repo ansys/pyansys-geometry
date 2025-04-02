@@ -289,3 +289,39 @@ def test_issue_1807_translate_sketch_non_default_units():
     finally:
         # Reset the default units to meters
         DEFAULT_UNITS.LENGTH = UNITS.meter
+
+
+def test_issue_1813_edge_start_end_non_default_units(modeler: Modeler):
+    """Test that creating an edge with non-default units is handled properly.
+
+    Notes
+    -----
+    Apparently there are some issues on the start and end locations when
+    using non-default units. This test is to verify that the issue has been
+    resolved.
+
+    For more info see
+    https://github.com/ansys/pyansys-geometry/issues/1813
+    """
+    try:
+        # Create initial design and set default units to millimeters
+        design = modeler.create_design("MillimetersEdgeIssue")
+        DEFAULT_UNITS.LENGTH = UNITS.mm
+
+        # Sketch and extrude box
+        box = design.extrude_sketch("box", Sketch().box(Point2D([0.5, 0.5]), 1, 1), 1)
+
+        # Perform some assertions like...
+        # 1) The edge lengths should be 1 mm
+        for face in box.faces:
+            for edge in face.edges:
+                assert np.isclose(edge.length, 1 * UNITS.mm)
+                length_vec = edge.start - edge.end
+                assert np.isclose(np.linalg.norm(length_vec) * length_vec.base_unit, 1 * UNITS.mm)
+
+        # 2) Verify the box volume
+        assert np.isclose(box.volume, 1 * UNITS.mm * UNITS.mm * UNITS.mm)
+
+    finally:
+        # Reset the default units to meters
+        DEFAULT_UNITS.LENGTH = UNITS.meter

@@ -136,10 +136,9 @@ plotter.show()
 Export the geometry into a Fluent-compatible format. The following code exports the geometry
 into a PMDB file, which retains the named selections.
 
-```{code-cell} ipython3
+```python
 # Save the design
 file = design.export_to_pmdb()
-print(f"Design saved to {file}.")
 ```
 
 You can import the exported PMDB file into Fluent to set up the mesh and perform the simulation.

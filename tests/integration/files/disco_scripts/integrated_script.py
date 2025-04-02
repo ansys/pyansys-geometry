@@ -1,4 +1,4 @@
-doc = GetActiveWindow().Document
+doc = GetActiveDocument()
 radius = MM(int(argsDict["radius"]))
 
 sphere = Sphere.Create(Frame.World, radius)
@@ -8,6 +8,6 @@ box = BoxUV.Create(u_range, v_range)
 b = Body.CreateSurfaceBody(sphere, box)
 db = DesignBody.Create(doc.MainPart, "sphere", b)
 
-numBodies = doc.MainPart.GetAllBodies().Count
+numBodies = doc.MainPart.Bodies.Count
 
 result = {"numBodies": numBodies}
