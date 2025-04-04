@@ -1,0 +1,47 @@
+:py:mod:`ansys.geometry.core.primitives`
+========================================
+
+.. py:module:: ansys.geometry.core.primitives
+
+.. autoapi-nested-parse::
+
+   
+   Provides the PyGeometry ``primitives`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   circle/index.rst
+   cone/index.rst
+   curve_evaluation/index.rst
+   cylinder/index.rst
+   ellipse/index.rst
+   line/index.rst
+   parameterization/index.rst
+   sphere/index.rst
+   surface_evaluation/index.rst
+   torus/index.rst
+
+

@@ -1,0 +1,253 @@
+
+
+
+
+
+
+:class:`CurveEvaluation`
+========================
+
+
+.. py:class:: ansys.geometry.core.shapes.curves.curve_evaluation.CurveEvaluation(parameter: ansys.geometry.core.typing.Real = None)
+
+   
+   Provides for evaluating a curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: CurveEvaluation
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~is_set`
+            - Determine if the parameter for the evaluation has been set.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~parameter`
+            - Parameter that the evaluation is based upon.
+          * - :py:attr:`~position`
+            - Position of the evaluation.
+          * - :py:attr:`~first_derivative`
+            - First derivative of the evaluation.
+          * - :py:attr:`~second_derivative`
+            - Second derivative of the evaluation.
+          * - :py:attr:`~curvature`
+            - Curvature of the evaluation.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
+
+Property detail
+---------------
+
+.. py:property:: parameter
+   :type: ansys.geometry.core.typing.Real
+
+   :abstractmethod:
+
+
+   
+   Parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: position
+   :type: ansys.geometry.core.math.point.Point3D
+
+   :abstractmethod:
+
+
+   
+   Position of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: first_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+   :abstractmethod:
+
+
+   
+   First derivative of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: second_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+   :abstractmethod:
+
+
+   
+   Second derivative of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: curvature
+   :type: ansys.geometry.core.typing.Real
+
+   :abstractmethod:
+
+
+   
+   Curvature of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: is_set() -> bool
+
+   
+   Determine if the parameter for the evaluation has been set.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

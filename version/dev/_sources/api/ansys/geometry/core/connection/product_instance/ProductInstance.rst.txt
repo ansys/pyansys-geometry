@@ -1,0 +1,104 @@
+
+
+
+
+
+
+:class:`ProductInstance`
+========================
+
+
+.. py:class:: ansys.geometry.core.connection.product_instance.ProductInstance(pid: int)
+
+   
+   ``ProductInstance`` class.
+
+   This class is used as a handle for a local session of Ansys Product's backend: Discovery,
+   Windows Geometry Service or SpaceClaim.
+
+   :Parameters:
+
+       **pid** : :class:`python:int`
+           The local instance's process identifier. This allows to keep track of the process
+           and close it if need be.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ProductInstance
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~close`
+            - Close the process associated to the pid.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.connection.product_instance import ProductInstance
+
+
+
+Method detail
+-------------
+
+.. py:method:: close() -> bool
+
+   
+   Close the process associated to the pid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

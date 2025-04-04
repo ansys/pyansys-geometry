@@ -1,0 +1,581 @@
+
+
+
+
+
+
+:class:`Torus`
+==============
+
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.torus.Torus(origin: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.point.Point3D, major_radius: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, minor_radius: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, reference: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_X, axis: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_Z)
+
+   Bases: :py:obj:`ansys.geometry.core.shapes.surfaces.surface.Surface`
+
+
+   
+   Provides 3D torus representation.
+
+
+   :Parameters:
+
+       **origin** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Point3D`
+           Centered origin of the torus.
+
+       **major_radius** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Major radius of the torus.
+
+       **minor_radius** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Minor radius of the torus.
+
+       **reference** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`
+           X-axis direction.
+
+       **axis** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`
+           Z-axis direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: Torus
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~contains_param`
+            - Check a parameter is within the parametric range of the surface.
+          * - :py:attr:`~contains_point`
+            - Check a point is contained by the surface.
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~transformed_copy`
+            - Create a transformed copy of the torus from a transformation matrix.
+          * - :py:attr:`~mirrored_copy`
+            - Create a mirrored copy of the torus along the y-axis.
+          * - :py:attr:`~evaluate`
+            - Evaluate the torus at the given parameters.
+          * - :py:attr:`~parameterization`
+            - Parameterize the torus surface as a tuple (U and V respectively).
+          * - :py:attr:`~project_point`
+            - Project a point onto the torus and evaluate the torus.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~origin`
+            - Origin of the torus.
+          * - :py:attr:`~major_radius`
+            - Semi-major radius of the torus.
+          * - :py:attr:`~minor_radius`
+            - Semi-minor radius of the torus.
+          * - :py:attr:`~dir_x`
+            - X-direction of the torus.
+          * - :py:attr:`~dir_y`
+            - Y-direction of the torus.
+          * - :py:attr:`~dir_z`
+            - Z-direction of the torus.
+          * - :py:attr:`~volume`
+            - Volume of the torus.
+          * - :py:attr:`~surface_area`
+            - Surface_area of the torus.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Torus`` class.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.torus import Torus
+
+Property detail
+---------------
+
+.. py:property:: origin
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Origin of the torus.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: major_radius
+   :type: pint.Quantity
+
+
+   
+   Semi-major radius of the torus.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: minor_radius
+   :type: pint.Quantity
+
+
+   
+   Semi-minor radius of the torus.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_x
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   X-direction of the torus.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_y
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Y-direction of the torus.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_z
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Z-direction of the torus.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: volume
+   :type: pint.Quantity
+
+
+   
+   Volume of the torus.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: surface_area
+   :type: pint.Quantity
+
+
+   
+   Surface_area of the torus.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __eq__(other: Torus) -> bool
+
+   
+   Equals operator for the ``Torus`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Torus
+
+   
+   Create a transformed copy of the torus from a transformation matrix.
+
+
+   :Parameters:
+
+       **matrix** : :obj:`Matrix44`
+           4x4 transformation matrix to apply to the torus.
+
+
+
+   :Returns:
+
+       :obj:`Torus`
+           New torus that is the transformed copy of the original torus.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: mirrored_copy() -> Torus
+
+   
+   Create a mirrored copy of the torus along the y-axis.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Torus`
+           New torus that is a mirrored copy of the original torus.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate(parameter: ansys.geometry.core.shapes.parameterization.ParamUV) -> TorusEvaluation
+
+   
+   Evaluate the torus at the given parameters.
+
+
+   :Parameters:
+
+       **parameter** : :obj:`ParamUV`
+           Parameters (u,v) to evaluate the torus at.
+
+
+
+   :Returns:
+
+       :obj:`TorusEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: parameterization() -> tuple[ansys.geometry.core.shapes.parameterization.Parameterization, ansys.geometry.core.shapes.parameterization.Parameterization]
+
+   
+   Parameterize the torus surface as a tuple (U and V respectively).
+
+   The U parameter specifies the longitude angle, increasing clockwise (east) about
+   the axis (right-hand corkscrew law). It has a zero parameter at
+   ``Geometry.Frame.DirX`` and a period of ``2*pi``.
+
+   The V parameter specifies the latitude, increasing north, with a zero parameter
+   at the equator. For the donut, where the major radius is greater
+   than the minor radius, the range is [-pi, pi] and the
+   parameterization is periodic. For a degenerate torus, the range is restricted
+   accordingly and the parameterization is non-periodic.
+
+
+
+
+   :Returns:
+
+       :class:`python:tuple`\[:obj:`Parameterization`, :obj:`Parameterization`]
+           Information about how a torus's u and v parameters are parameterized, respectively.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> TorusEvaluation
+
+   
+   Project a point onto the torus and evaluate the torus.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Point to project onto the torus.
+
+
+
+   :Returns:
+
+       :obj:`TorusEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_param(param_uv: ansys.geometry.core.shapes.parameterization.ParamUV) -> bool
+   :abstractmethod:
+
+
+   
+   Check a parameter is within the parametric range of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.point.Point3D) -> bool
+   :abstractmethod:
+
+
+   
+   Check a point is contained by the surface.
+
+   The point can either lie within the surface or on its boundary.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

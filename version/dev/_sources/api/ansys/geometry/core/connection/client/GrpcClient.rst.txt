@@ -1,0 +1,470 @@
+
+
+
+
+
+
+:class:`GrpcClient`
+===================
+
+
+.. py:class:: ansys.geometry.core.connection.client.GrpcClient(host: str = pygeom_defaults.DEFAULT_HOST, port: str | int = pygeom_defaults.DEFAULT_PORT, channel: grpc.Channel | None = None, remote_instance: Optional[ansys.platform.instancemanagement.Instance] = None, docker_instance: ansys.geometry.core.connection.docker_instance.LocalDockerInstance | None = None, product_instance: ansys.geometry.core.connection.product_instance.ProductInstance | None = None, timeout: ansys.geometry.core.typing.Real = 120, logging_level: int = logging.INFO, logging_file: pathlib.Path | str | None = None, proto_version: str | None = None)
+
+   
+   Wraps the gRPC connection for the Geometry service.
+
+
+   :Parameters:
+
+       **host** : :class:`python:str`, default: :obj:`DEFAULT_HOST`
+           Host where the server is running.
+
+       **port** : :class:`python:str` or :class:`python:int`, default: :obj:`DEFAULT_PORT`
+           Port number where the server is running.
+
+       **channel** : :obj:`~grpc.Channel`, default: :data:`python:None`
+           gRPC channel for server communication.
+
+       **remote_instance** : :obj:`ansys.platform.instancemanagement.Instance`, default: :data:`python:None`
+           Corresponding remote instance when the Geometry service
+           is launched through `PyPIM <https://github.com/ansys/pypim>`_.
+           This instance is deleted when calling the
+           :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+           method.
+
+       **docker_instance** : :obj:`LocalDockerInstance`, default: :data:`python:None`
+           Corresponding local Docker instance when the Geometry service is launched using
+           the ``launch_docker_modeler()`` method. This local Docker instance is deleted
+           when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+           method is called.
+
+       **product_instance** : :obj:`ProductInstance`, default: :data:`python:None`
+           Corresponding local product instance when the product (Discovery or SpaceClaim)
+           is launched through the ``launch_modeler_with_geometry_service()``,
+           ``launch_modeler_with_discovery()`` or the ``launch_modeler_with_spaceclaim()``
+           interface. This instance will be deleted
+           when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+           method is called.
+
+       **timeout** : :obj:`real`, default: 120
+           Maximum time to spend trying to make the connection.
+
+       **logging_level** : :class:`python:int`, default: :obj:`INFO`
+           Logging level to apply to the client.
+
+       **logging_file** : :class:`python:str` or :obj:`Path`, default: :data:`python:None`
+           File to output the log to, if requested.
+
+       **proto_version: str or None, default: None**
+           Version of the gRPC protocol to use. If ``None``, the latest version is used.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: GrpcClient
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~close`
+            - Close the channel.
+          * - :py:attr:`~target`
+            - Get the target of the channel.
+          * - :py:attr:`~get_name`
+            - Get the target name of the connection.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~backend_type`
+            - Backend type.
+          * - :py:attr:`~backend_version`
+            - Get the current backend version.
+          * - :py:attr:`~multiple_designs_allowed`
+            - Flag indicating whether multiple designs are allowed.
+          * - :py:attr:`~channel`
+            - Client gRPC channel.
+          * - :py:attr:`~services`
+            - GRPC services.
+          * - :py:attr:`~log`
+            - Specific instance logger.
+          * - :py:attr:`~is_closed`
+            - Flag indicating whether the client connection is closed.
+          * - :py:attr:`~healthy`
+            - Flag indicating whether the client channel is healthy.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the client as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.connection.client import GrpcClient
+
+Property detail
+---------------
+
+.. py:property:: backend_type
+   :type: ansys.geometry.core.connection.backend.BackendType
+
+
+   
+   Backend type.
+
+   Options are ``Windows Service``, ``Linux Service``, ``Discovery``,
+   and ``SpaceClaim``.
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method might return ``None`` because determining the backend type is
+   not straightforward.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: backend_version
+   :type: semver.version.Version
+
+
+   
+   Get the current backend version.
+
+
+
+
+
+   :Returns:
+
+       :obj:`~semver.version.Version`
+           Backend version.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: multiple_designs_allowed
+   :type: bool
+
+
+   
+   Flag indicating whether multiple designs are allowed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Currently, only one design is allowed per service. This method will always
+   return ``False``.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: channel
+   :type: grpc.Channel
+
+
+   
+   Client gRPC channel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: services
+   :type: ansys.geometry.core._grpc._services._service._GRPCServices
+
+
+   
+   GRPC services.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: log
+   :type: ansys.geometry.core.logger.PyGeometryCustomAdapter
+
+
+   
+   Specific instance logger.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_closed
+   :type: bool
+
+
+   
+   Flag indicating whether the client connection is closed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: healthy
+   :type: bool
+
+
+   
+   Flag indicating whether the client channel is healthy.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the client as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: close()
+
+   
+   Close the channel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   If an instance of the Geometry service was started using
+   `PyPIM <https://github.com/ansys/pypim>`_, this instance is
+   deleted. Furthermore, if a local Docker instance
+   of the Geometry service was started, it is stopped.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: target() -> str
+
+   
+   Get the target of the channel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_name() -> str
+
+   
+   Get the target name of the connection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

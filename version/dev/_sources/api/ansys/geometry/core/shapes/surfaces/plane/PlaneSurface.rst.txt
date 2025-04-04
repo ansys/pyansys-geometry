@@ -1,0 +1,400 @@
+
+
+
+
+
+
+:class:`PlaneSurface`
+=====================
+
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.plane.PlaneSurface(origin: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.point.Point3D, reference: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_X, axis: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_Z)
+
+   Bases: :py:obj:`ansys.geometry.core.shapes.surfaces.surface.Surface`
+
+
+   
+   Provides 3D plane surface representation.
+
+
+   :Parameters:
+
+       **origin** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Point3D`
+           Centered origin of the plane.
+
+       **reference** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`
+           X-axis direction.
+
+       **axis** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`
+           X-axis direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: PlaneSurface
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~contains_param`
+            - Check a ``ParamUV`` is within the parametric range of the surface.
+          * - :py:attr:`~contains_point`
+            - Check whether a 3D point is in the domain of the plane.
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~parameterization`
+            - Parametrize the plane.
+          * - :py:attr:`~project_point`
+            - Evaluate the plane at a given 3D point.
+          * - :py:attr:`~transformed_copy`
+            - Get a transformed version of the plane given the transform.
+          * - :py:attr:`~evaluate`
+            - Evaluate the plane at a given u and v parameter.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~origin`
+            - Origin of the plane.
+          * - :py:attr:`~dir_x`
+            - X-direction of the plane.
+          * - :py:attr:`~dir_y`
+            - Y-direction of the plane.
+          * - :py:attr:`~dir_z`
+            - Z-direction of the plane.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Check whether two planes are equal.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.plane import PlaneSurface
+
+Property detail
+---------------
+
+.. py:property:: origin
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Origin of the plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_x
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   X-direction of the plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_y
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Y-direction of the plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_z
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Z-direction of the plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __eq__(other: PlaneSurface) -> bool
+
+   
+   Check whether two planes are equal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_param(param_uv: ansys.geometry.core.shapes.parameterization.ParamUV) -> bool
+   :abstractmethod:
+
+
+   
+   Check a ``ParamUV`` is within the parametric range of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.point.Point3D) -> bool
+   :abstractmethod:
+
+
+   
+   Check whether a 3D point is in the domain of the plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: parameterization() -> tuple[ansys.geometry.core.shapes.parameterization.Parameterization, ansys.geometry.core.shapes.parameterization.Parameterization]
+
+   
+   Parametrize the plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation
+
+   
+   Evaluate the plane at a given 3D point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> ansys.geometry.core.shapes.surfaces.surface.Surface
+
+   
+   Get a transformed version of the plane given the transform.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate(parameter: ansys.geometry.core.shapes.parameterization.ParamUV) -> PlaneEvaluation
+
+   
+   Evaluate the plane at a given u and v parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

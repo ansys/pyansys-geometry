@@ -1,0 +1,203 @@
+
+
+
+
+
+
+:class:`SketchFace`
+===================
+
+
+.. py:class:: ansys.geometry.core.sketch.face.SketchFace
+
+   
+   Provides for modeling a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SketchFace
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~plane_change`
+            - Redefine the plane containing ``SketchFace`` objects.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~edges`
+            - List of all component edges forming the face.
+          * - :py:attr:`~perimeter`
+            - Perimeter of the face.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.face import SketchFace
+
+Property detail
+---------------
+
+.. py:property:: edges
+   :type: list[ansys.geometry.core.sketch.edge.SketchEdge]
+
+
+   
+   List of all component edges forming the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: perimeter
+   :type: pint.Quantity
+
+
+   
+   Perimeter of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: plane_change(plane: ansys.geometry.core.math.plane.Plane) -> None
+
+   
+   Redefine the plane containing ``SketchFace`` objects.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Desired new plane that is to contain the sketched face.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This implies that their 3D definition might suffer changes. This method does
+   nothing by default. It is required to be implemented in child ``SketchFace`` classes.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

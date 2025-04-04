@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``dbuapplication.py`` module
+================================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.dbuapplication
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: dbuapplication
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.dbuapplication.GRPCDbuApplicationService`
+            - DBU Application service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCDbuApplicationService</api/ansys/geometry/core/_grpc/_services/base/dbuapplication/GRPCDbuApplicationService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the DBU Application service implementation (abstraction layer).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
