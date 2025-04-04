@@ -59,8 +59,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
     """
 
     @protect_grpc
-    def __init__(self, channel: grpc.Channel):
-        """Initialize the BodyService with the gRPC stub."""
+    def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 
         self.stub = BodiesStub(channel)
