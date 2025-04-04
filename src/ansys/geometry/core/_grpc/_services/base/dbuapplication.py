@@ -19,21 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the admin service implementation for v1."""
+"""Module containing the DBU Application service implementation (abstraction layer)."""
+
+from abc import ABC, abstractmethod
 
 import grpc
 
-from ansys.geometry.core.errors import protect_grpc
 
-from ..base.admin import GRPCAdminService
-
-
-class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
-    """Admin service for gRPC communication with the Geometry server.
-
-    This class provides methods to interact with the Geometry server's
-    admin service. It is specifically designed for the v1 version of the
-    Geometry API.
+class GRPCDbuApplicationService(ABC):
+    """DBU Application service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -41,16 +35,11 @@ class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
         The gRPC channel to the server.
     """
 
-    @protect_grpc
-    def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.dbu.v1.admin_pb2_grpc import AdminStub
+    def __init__(self, channel: grpc.Channel):
+        """Initialize the GRPCDbuApplicationService class."""
+        pass  # pragma: no cover
 
-        self.stub = AdminStub(channel)
-
-    @protect_grpc
-    def get_backend(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
-
-    @protect_grpc
-    def get_logs(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+    @abstractmethod
+    def run_script(self, **kwargs) -> dict:
+        """Run a Scripting API script."""
+        pass  # pragma: no cover

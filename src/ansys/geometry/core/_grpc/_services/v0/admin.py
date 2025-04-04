@@ -45,8 +45,8 @@ class GRPCAdminServiceV0(GRPCAdminService):
         The gRPC channel to the server.
     """
 
-    def __init__(self, channel: grpc.Channel):
-        """Initialize the AdminServiceBase class."""
+    @protect_grpc
+    def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
 
         self.stub = AdminStub(channel)

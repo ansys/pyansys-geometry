@@ -23,7 +23,9 @@
 import grpc
 
 from .._version import GeometryApiProtos, set_proto_version
+from .base.admin import GRPCAdminService
 from .base.bodies import GRPCBodyService
+from .base.dbuapplication import GRPCDbuApplicationService
 
 
 class _GRPCServices:
@@ -66,6 +68,7 @@ class _GRPCServices:
         # Lazy load all the services
         self._admin = None
         self._bodies = None
+        self._dbu_application = None
 
     @property
     def bodies(self) -> GRPCBodyService:
@@ -92,7 +95,7 @@ class _GRPCServices:
         return self._bodies
 
     @property
-    def admin(self):
+    def admin(self) -> GRPCAdminService:
         """
         Get the admin service for the specified version.
 
@@ -114,3 +117,27 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._admin
+
+    @property
+    def dbu_application(self) -> GRPCDbuApplicationService:
+        """
+        Get the DBU application service for the specified version.
+
+        Returns
+        -------
+        DbuApplicationServiceBase
+            The DBU application service for the specified version.
+        """
+        if not self._dbu_application:
+            # Import the appropriate DBU application service based on the version
+            from .v0.dbuapplication import GRPCDbuApplicationServiceV0
+            from .v1.dbuapplication import GRPCDbuApplicationServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._dbu_application = GRPCDbuApplicationServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:
+                self._dbu_application = GRPCDbuApplicationServiceV1(self.channel)
+            else:
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._dbu_application
