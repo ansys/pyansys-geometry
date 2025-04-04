@@ -561,7 +561,7 @@ class Modeler:
 
         self.client.log.debug(f"Running Discovery script file at {file_path}...")
         response = self.client.services.dbu_application.run_script(
-            script_file=serv_path,
+            script_path=serv_path,
             script_args=script_args,
             api_version=api_version.value if api_version is not None else None,
         )
