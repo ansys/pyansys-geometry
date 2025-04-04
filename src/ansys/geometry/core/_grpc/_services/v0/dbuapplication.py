@@ -54,7 +54,7 @@ class GRPCDbuApplicationServiceV0(GRPCDbuApplicationService):
         # Create the request - assumes all inputs are valid and of the proper type
         request = RunScriptFileRequest(
             script_args=kwargs["script_args"],
-            script_file=kwargs["script_file"],
+            script_path=kwargs["script_file"],
             api_version=kwargs["api_version"],
         )
 
