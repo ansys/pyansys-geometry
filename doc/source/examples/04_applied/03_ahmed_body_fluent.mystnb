@@ -364,3 +364,6 @@ For an example of how to set up the mesh and boundary conditions in Fluent, see 
 ```{code-cell} ipython3
 modeler.close()
 ```
+
+## References
+[1] S.R. Ahmed, G. Ramm, Some Salient Features of the Time-Averaged Ground Vehicle Wake,SAE-Paper 840300,1984
