@@ -26,38 +26,20 @@ import logging
 from pathlib import Path
 import time
 from typing import Optional
-import warnings
-
-from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.checks import deprecated_method
-
-# TODO: Remove this context and filter once the protobuf UserWarning issue is downgraded to INFO
-# https://github.com/grpc/grpc/issues/37609
-with warnings.catch_warnings():
-    warnings.filterwarnings(
-        "ignore", "Protobuf gencode version", UserWarning, "google.protobuf.runtime_version"
-    )
-
-    from google.protobuf.empty_pb2 import Empty
-    import grpc
-    from grpc._channel import _InactiveRpcError
-    from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 from beartype import beartype as check_input_types
+import grpc
+from grpc._channel import _InactiveRpcError
+from grpc_health.v1 import health_pb2, health_pb2_grpc
 import semver
 
-from ansys.api.dbu.v0.admin_pb2 import (
-    BackendType as GRPCBackendType,
-    LogsRequest,
-    LogsTarget,
-    PeriodType,
-)
-from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
+from ansys.geometry.core._grpc._services._service import _GRPCServices
 from ansys.geometry.core.connection.backend import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG, PyGeometryCustomAdapter
+from ansys.geometry.core.misc.checks import deprecated_method
 from ansys.geometry.core.typing import Real
 
 try:
@@ -150,9 +132,8 @@ class GrpcClient:
         Logging level to apply to the client.
     logging_file : str or Path, default: None
         File to output the log to, if requested.
-    backend_type: BackendType, default: None
-        Type of the backend that PyAnsys Geometry is communicating with. By default, this
-        value is unknown, which results in ``None`` being the default value.
+    proto_version: str or None, default: None
+        Version of the gRPC protocol to use. If ``None``, the latest version is used.
     """
 
     @check_input_types
@@ -167,7 +148,7 @@ class GrpcClient:
         timeout: Real = 120,
         logging_level: int = logging.INFO,
         logging_file: Path | str | None = None,
-        backend_type: BackendType | None = None,
+        proto_version: str | None = None,
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
@@ -192,7 +173,10 @@ class GrpcClient:
         self._grpc_health_timeout = timeout
         wait_until_healthy(self._channel, self._grpc_health_timeout)
 
-        # once connection with the client is established, create a logger
+        # Initialize the gRPC services
+        self._services = _GRPCServices(self._channel, version=proto_version)
+
+        # Once connection with the client is established, create a logger
         self._log = LOG.add_instance_logger(
             name=self._target, client_instance=self, level=logging_level
         )
@@ -201,41 +185,12 @@ class GrpcClient:
                 logging_file = str(logging_file)
             self._log.log_to_file(filename=logging_file, level=logging_level)
 
-        self._admin_stub = AdminStub(self._channel)
+        # Retrieve the backend information
+        response = self._services.admin.get_backend()
 
-        # retrieve the backend information
-        grpc_backend_response = self._admin_stub.GetBackend(Empty())
-
-        # if no backend type has been specified, ask the backend which type it is
-        if backend_type is None:
-            grpc_backend_type = grpc_backend_response.type
-            if grpc_backend_type == GRPCBackendType.DISCOVERY:
-                backend_type = BackendType.DISCOVERY
-            elif grpc_backend_type == GRPCBackendType.SPACECLAIM:
-                backend_type = BackendType.SPACECLAIM
-            elif grpc_backend_type == GRPCBackendType.WINDOWS_DMS:
-                backend_type = BackendType.WINDOWS_SERVICE
-            elif grpc_backend_type == GRPCBackendType.LINUX_DMS:
-                backend_type = BackendType.LINUX_SERVICE
-            elif grpc_backend_type == GRPCBackendType.CORE_SERVICE_LINUX:
-                backend_type = BackendType.CORE_LINUX
-            elif grpc_backend_type == GRPCBackendType.CORE_SERVICE_WINDOWS:
-                backend_type = BackendType.CORE_WINDOWS
-            elif grpc_backend_type == GRPCBackendType.DISCOVERY_HEADLESS:
-                backend_type = BackendType.DISCOVERY_HEADLESS
-
-        # Store the backend type
-        self._backend_type = backend_type
-
-        # retrieve the backend version
-        if hasattr(grpc_backend_response, "version"):
-            ver = grpc_backend_response.version
-            self._backend_version = semver.Version(
-                ver.major_release, ver.minor_release, ver.service_pack
-            )
-        else:
-            LOG.warning("The backend version is only available after 24.1 version.")
-            self._backend_version = semver.Version(24, 1, 0)
+        # Store the backend type and version
+        self._backend_type = response["backend"]
+        self._backend_version = response["version"]
 
         # Register the close method to be called at exit - irrespectively of
         # the user calling it or not...
@@ -286,6 +241,11 @@ class GrpcClient:
     def channel(self) -> grpc.Channel:
         """Client gRPC channel."""
         return self._channel
+
+    @property
+    def services(self) -> _GRPCServices:
+        """GRPC services."""
+        return self._services
 
     @property
     def log(self) -> PyGeometryCustomAdapter:
@@ -361,7 +321,6 @@ class GrpcClient:
         return self._target
 
     @check_input_types
-    @protect_grpc
     def _get_service_logs(
         self,
         all_logs: bool = False,
@@ -398,19 +357,8 @@ class GrpcClient:
             the current logs are retrieved). The ``dump_to_file`` parameter
             must be set to ``True``.
         """
-        request = LogsRequest(
-            target=LogsTarget.CLIENT,
-            period_type=PeriodType.CURRENT if not all_logs else PeriodType.ALL,
-            null_path=None,
-            null_period=None,
-        )
-        logs_generator = self._admin_stub.GetLogs(request)
-        logs: dict[str, str] = {}
-
-        for chunk in logs_generator:
-            if chunk.log_name not in logs:
-                logs[chunk.log_name] = ""
-            logs[chunk.log_name] += chunk.log_chunk.decode()
+        response = self._services.admin.get_logs(all_logs=all_logs)
+        logs: dict[str, str] = response["logs"]
 
         # Let's handle the various scenarios...
         if not dump_to_file:
