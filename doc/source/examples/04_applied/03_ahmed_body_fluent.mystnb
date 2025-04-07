@@ -167,8 +167,8 @@ sketch_plane_2 = Plane(
 
 
 ```{code-cell} ipython3
-# Calculate the horizontal and vertical distance based on slant angle
-slant_x, slant_y = distance_calculator(hypo=222, slant_angle=slant_angle)
+# Calculate the horizontal and vertical distance based on slant angle of 20 degrees
+slant_x, slant_y = distance_calculator(hypo=222, slant_angle=20)
 
 # Define the sketch for Ahmed body
 ahmed_body_sketch = Sketch(sketch_plane)
@@ -337,9 +337,9 @@ design.create_named_selection(
     faces=[symmetry_surface, bottom_surface, top_surface],
 )
 
-# Identify face which intends the slant angle
+# Identify face which intends the slant angle of 20 degrees
 for face in body_planar_surface:
-    if round(math.degrees(math.acos(abs(face.face_normal().y)))) == slant_angle:
+    if round(math.degrees(math.acos(abs(face.face_normal().y)))) == 20:
         hypo_face = face
 design.create_named_selection(
     "wall_ahmed_body_rear", faces=[hypo_face, rear_surface]
