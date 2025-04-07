@@ -185,7 +185,7 @@ ahmed_body_sketch.segment(
 ).segment_to_point(
     end=Point2D([50, 0])
 )
-ahmed_body.plot()
+ahmed_body_sketch.plot()
 ```
 
 ```{image} ../../_static/images/enclosure_schematic.jpg
