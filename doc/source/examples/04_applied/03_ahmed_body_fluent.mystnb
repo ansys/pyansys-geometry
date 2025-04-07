@@ -339,7 +339,7 @@ design.create_named_selection(
 
 # Identify face which intends the slant angle of 20 degrees
 for face in body_planar_surface:
-    if round(math.degrees(math.acos(abs(face.face_normal().y)))) == 20:
+    if round(math.degrees(math.acos(abs(face.normal().y)))) == 20:
         hypo_face = face
 design.create_named_selection(
     "wall_ahmed_body_rear", faces=[hypo_face, rear_surface]
