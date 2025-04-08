@@ -138,11 +138,7 @@ Define the appropriate sketch planes parallel to y-z and x-z planes passing thro
 
 #### Sketch Planes
 
-```{image} source/_static/images/sketch_planes.jpg
-:alt: Sketch Planes
-:width: 500px
-:align: center
-```
+![Sketch Planes](../../_static/images/sketch_planes.jpg){width=500px, align=center}
 
 ```{code-cell} ipython3
 
@@ -162,11 +158,8 @@ sketch_plane_2 = Plane(
 ```
 #### Ahmed Body
 
-```{image} source/_static/images/ahmed_body_schematic.jpg
-:alt: Ahmed body schematic image
-:width: 500px
-:align: center
-```
+![Ahmed body schematic image](../../_static/images/ahmed_body_schematic.jpg){width=500px, align=center}
+
 ```{code-cell} ipython3
 # Calculate the horizontal and vertical distance based on slant angle of 20 degrees
 slant_x, slant_y = distance_calculator(hypo=222, slant_angle=20)
@@ -188,12 +181,11 @@ ahmed_body_sketch.segment(
 )
 ahmed_body_sketch.plot()
 ```
+
 #### Enclosure
-```{image} source/_static/images/enclosure_schematic.jpg
-:alt: Enclosure schematic image
-:width: 500px
-:align: center
-```
+
+![Enclosure schematic image](../../_static/images/enclosure_schematic.jpg){width=500px, align=center}
+
 
 ```{code-cell} ipython3
 # Define the sketch for Enclosure
@@ -217,12 +209,11 @@ ahmed_body_fillet_sketch.segment(
     Point2D([194.5, 944]), center=Point2D([94.5, 944]), clockwise=True
 )
 ```
-### Body of Influence (BOI)
-```{image} source/_static/images/boi_schematic.jpg
-:alt: BOI schematic image
-:width: 500px
-:align: center
-```
+
+#### Body of Influence (BOI)
+
+![BOI schematic image](../../_static/images/boi_schematic.jpg){width=500px, align=center}
+
 ```{code-cell} ipython3
 # Define the sketch for boi
 boi_sketch = Sketch(sketch_plane_2)
