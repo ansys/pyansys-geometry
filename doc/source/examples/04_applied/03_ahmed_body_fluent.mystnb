@@ -160,7 +160,7 @@ sketch_plane_2 = Plane(
     direction_y=UNITVECTOR3D_Z,
 )
 ```
-#### Ahmed Body 
+#### Ahmed Body
 
 ```{image} source/_static/images/ahmed_body_schematic.jpg
 :alt: Ahmed body schematic image
