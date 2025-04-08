@@ -10,7 +10,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Applied: Develop an External Aerodynamic Simulation Model: Ahmed Body with BOI and Enclosure for Fluent Analysis
+# Applied: Develop an External Aerodynamic Simulation Model for Fluent Analysis
 
 The Ahmed body is a simplified car model used to study airflow around vehicles. The wake (turbulent flow behind the body)
  depends on the slant angle:
@@ -132,15 +132,17 @@ DEFAULT_UNITS.angle = UNITS.degrees
 
 ```
 
-##  2. Creation of sketches for ahmed body, enclosure and BOI
+##  2. Create of sketches for ahmed body, enclosure and BOI
 
 Define the appropriate sketch planes parallel to y-z and x-z planes passing through the origin namely sketch_plane and sketch_plane_2 respectively.
 
-```{image} ../../_static/images/sketch_planes.jpg
+### Sketch Planes
+
+```{image} source/_static/images/sketch_planes.jpg
 :alt: Sketch Planes
 :width: 500px
 :align: center
-```
+
 
 ```{code-cell} ipython3
 
@@ -158,8 +160,8 @@ sketch_plane_2 = Plane(
     direction_y=UNITVECTOR3D_Z,
 )
 ```
-
-```{image} ../../_static/images/ahmed_body_schematic.jpg
+### Ahmed Body 
+```{image} source/_static/images/ahmed_body_schematic.jpg
 :alt: Ahmed body schematic image
 :width: 500px
 :align: center
@@ -187,8 +189,8 @@ ahmed_body_sketch.segment(
 )
 ahmed_body_sketch.plot()
 ```
-
-```{image} ../../_static/images/enclosure_schematic.jpg
+### Enclosure
+```{image} source/_static/images/enclosure_schematic.jpg
 :alt: Enclosure schematic image
 :width: 500px
 :align: center
@@ -203,12 +205,10 @@ enclosure_sketch.plot()
 # Define the sketch for mounting 1
 mount_sketch_1 = Sketch(sketch_plane_2)
 mount_sketch_1.circle(center=Point2D([163.5, 792]), radius=15)
-mount_sketch_1.plot()
 
 # Define the sketch for mounting 2
 mount_sketch_2 = Sketch(sketch_plane_2)
 mount_sketch_2.circle(center=Point2D([163.5, 322]), radius=15)
-mount_sketch_2.plot()
 
 # Define the sketch for fillet
 ahmed_body_fillet_sketch = Sketch(sketch_plane_2)
@@ -218,7 +218,8 @@ ahmed_body_fillet_sketch.segment(
     Point2D([194.5, 944]), center=Point2D([94.5, 944]), clockwise=True
 )
 ```
-```{image} ../../_static/images/boi_schematic.jpg
+### Body of Influence (BOI)
+```{image} source/_static/images/boi_schematic.jpg
 :alt: BOI schematic image
 :width: 500px
 :align: center
@@ -339,7 +340,7 @@ design.create_named_selection(
 
 # Identify face which intends the slant angle of 20 degrees
 for face in body_planar_surface:
-    if round(math.degrees(math.acos(abs(face.normal().y)))) == 20:
+    if round(math.degrees(math.acos(abs(face.face_normal().y)))) == 20:
         hypo_face = face
 design.create_named_selection(
     "wall_ahmed_body_rear", faces=[hypo_face, rear_surface]
