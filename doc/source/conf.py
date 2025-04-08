@@ -379,7 +379,9 @@ user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 exclude_patterns = []
 BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
 if not BUILD_API:
-    exclude_patterns.append("autoapi")
+    exclude_patterns.append("api")
+    html_theme_options.pop("ansys_sphinx_theme_autoapi")
+    extensions.remove("ansys_sphinx_theme.extension.autoapi")
 
 BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "true") == "true" else False
 if not BUILD_EXAMPLES:

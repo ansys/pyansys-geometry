@@ -149,24 +149,21 @@ You can also test the correct build process of a new example by performing the f
 
     pip install -e .[doc]
 
-2. Install ``myst-nb`` by running this command::
+2. Navigate to the ``doc`` folder and run the following command::
 
-    pip install myst-nb
+    # On Linux or macOS
+    make single-example examples/01_getting_started/01_math.mystnb
 
-3. Run the following command to build a single example (that is, substitute
-   ``<PATH_TO_MY_EXAMPLE_FILE>`` with the path to your example file)::
+    # On Windows
+    ./make.bat single-example examples/01_getting_started/01_math.mystnb
 
-    mystnb-docutils-html --nb-read-as-md=1 <PATH_TO_MY_EXAMPLE_FILE> output.html
+  .. note::
 
-4. Check the output file ``output.html`` to ensure that the example is correctly built.
-   Rendered output does not have documentation styling but users should have the
-   ability to see its proper execution.
+    The example name must be the same as the notebook name, with its path
+    starting at the ``examples`` folder.
 
-.. note::
-
-  Plots are not be rendered in the output file, but the code and markdown cells should
-  be correctly rendered. In case of failure during execution users can also see the error
-  message in the output file.
+3. Check the ``doc/source/_build/html`` folder for the generated documentation
+   and open the ``index.html`` file in your browser.
 
 Run tests
 ---------
