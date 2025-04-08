@@ -51,7 +51,9 @@ def test_fix_split_edge(modeler: Modeler):
     """Test to find and fix split edge problem areas."""
     design = modeler.open_file(FILES_DIR / "SplitEdgeDesignTest.scdocx")
     problem_areas = modeler.repair_tools.find_split_edges(design.bodies, 25, 150)
-    assert problem_areas[0].fix().success is True
+    message = problem_areas[0].fix()
+    assert message.success is True
+    assert len(message.tracked_changes.modified_components) == 1
 
 
 def test_find_extra_edges(modeler: Modeler):
@@ -82,7 +84,9 @@ def test_fix_extra_edge(modeler: Modeler):
     """Test to find and fix extra edge problem areas."""
     design = modeler.open_file(FILES_DIR / "ExtraEdgesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_extra_edges(design.bodies)
-    assert problem_areas[0].fix().success is True
+    message = problem_areas[0].fix()
+    assert message.success is True
+    assert len(message.tracked_changes.modified_components) == 1
 
 
 def test_find_inexact_edges(modeler: Modeler):
@@ -114,7 +118,9 @@ def test_fix_inexact_edge(modeler: Modeler):
     """
     design = modeler.open_file(FILES_DIR / "InExactEdgesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_inexact_edges(design.bodies)
-    assert problem_areas[0].fix().success is True
+    message = problem_areas[0].fix()
+    assert message.success is True
+    assert len(message.tracked_changes.modified_components) == 1
 
 
 def test_find_missing_faces(modeler: Modeler):
@@ -146,7 +152,10 @@ def test_fix_missing_face(modeler: Modeler):
     """
     design = modeler.open_file(FILES_DIR / "MissingFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_missing_faces(design.bodies)
-    assert problem_areas[0].fix().success is True
+    message = problem_areas[0].fix()
+    assert message.success is True
+    assert len(message.tracked_changes.modified_bodies) == 1
+    assert len(message.tracked_changes.modified_components) == 1
 
 
 def test_find_duplicate_faces(modeler: Modeler):
@@ -178,7 +187,10 @@ def test_fix_duplicate_face(modeler: Modeler):
     """
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
-    assert problem_areas[0].fix().success is True
+    message = problem_areas[0].fix()
+    assert message.success is True
+    assert len(message.tracked_changes.deleted_bodies) == 1
+    assert len(message.tracked_changes.modified_components) == 1
 
 
 def test_find_small_faces(modeler: Modeler):
@@ -208,7 +220,10 @@ def test_find_small_face_faces(modeler: Modeler):
     )  # Skip test on CoreService
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
-    assert len(problem_areas[0].faces) > 0
+    assert len(problem_areas[0].faces) == 1
+    assert len(problem_areas[1].faces) == 1
+    assert len(problem_areas[2].faces) == 1
+    assert len(problem_areas[3].faces) == 1
 
 
 def test_fix_small_face(modeler: Modeler):
@@ -217,7 +232,25 @@ def test_fix_small_face(modeler: Modeler):
     skip_if_core_service(modeler, test_fix_small_face.__name__, "repair_tools")
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
-    assert problem_areas[0].fix().success is True
+    result = problem_areas[0].fix()
+    assert result.success is True
+    # There's a potential bug here.  The test model can't remove it's small faces.  Regardless,
+    #   think we need to revisit some of the logic in this tool (and maybe the repair tools in
+    #   general).
+    # assert len(result.tracked_changes.modified_bodies) == 1, "Modified bodies should be 1"
+    # assert len(result.tracked_changes.modified_components) == 1, "Modified components should be 1"
+    # result = problem_areas[1].fix()
+    # assert result.success is True
+    # assert len(result.tracked_changes.modified_bodies) == 1, "Modified bodies should be 1"
+    # assert len(result.tracked_changes.modified_components) == 1, "Modified components should be 1"
+    # result = problem_areas[2].fix()
+    # assert result.success is True
+    # assert len(result.tracked_changes.modified_bodies) == 1, "Modified bodies should be 1"
+    # assert len(result.tracked_changes.modified_components) == 1, "Modified components should be 1"
+    # result = problem_areas[3].fix()
+    # assert result.success is True
+    # assert len(result.tracked_changes.modified_bodies) == 1, "Modified bodies should be 1"
+    # assert len(result.tracked_changes.modified_components) == 1, "Modified components should be 1"
 
 
 def test_find_stitch_faces(modeler: Modeler):
