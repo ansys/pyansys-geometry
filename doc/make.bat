@@ -68,7 +68,7 @@ if "%2" == "" (
 	echo. Example: ./make.bat single-example examples/01_getting_started/01_math.mystnb
 	exit /b 1
 )
-echo Building single example --> %2
+echo Building single example: %2
 set BUILD_API=false
 set SKIP_BUILD_CHEAT_SHEET=true
 set SPHINXOPTS=-j auto

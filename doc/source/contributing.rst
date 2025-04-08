@@ -138,7 +138,8 @@ To add a new example, follow these steps:
 
 1. Create a new notebook in the ``doc/source/examples`` directory, under the appropriate
    folder for your example.
-2. Take as reference an existing example to see how the notebook should be structured.
+2. Take as reference ``doc\source\examples\99_misc\template.mystnb`` to create your
+   example notebook. This template contains the necessary metadata and structure for it.
 3. Add the new notebook to the ``doc/source/examples.rst`` file.
 4. Store a thumbnail image of the example in the ``doc/source/_static/thumbnails`` directory.
 5. Link the thumbnail image to your example file in ``doc/source/conf.py`` as shown in the reference commit.
