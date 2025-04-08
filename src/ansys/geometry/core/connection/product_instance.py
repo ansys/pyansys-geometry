@@ -43,7 +43,7 @@ if TYPE_CHECKING:  # pragma: no cover
 WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryService"
 """Default Geometry Service's folder name into the unified installer (DMS)."""
 
-CORE_GEOMETRY_SERVICE_FOLDER = "CoreGeometryService"
+CORE_GEOMETRY_SERVICE_FOLDER = "GeometryService"
 """Default Geometry Service's folder name into the unified installer (Core Service)."""
 
 DISCOVERY_FOLDER = "Discovery"
@@ -486,7 +486,6 @@ def prepare_and_start_backend(
         port=port,
         timeout=timeout,
         product_instance=instance,
-        backend_type=backend_type,
         logging_level=client_log_level,
         logging_file=client_log_file,
     )

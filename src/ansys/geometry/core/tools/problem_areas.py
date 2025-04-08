@@ -26,6 +26,11 @@ from typing import TYPE_CHECKING
 
 from google.protobuf.wrappers_pb2 import Int32Value
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.api.geometry.v0.preparetools_pb2 import (
+    RemoveLogoRequest,
+)
+from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FixAdjustSimplifyRequest,
     FixDuplicateFacesRequest,
@@ -71,6 +76,7 @@ class ProblemArea:
         self._id = id
         self._grpc_id = Int32Value(value=int(id))
         self._repair_stub = RepairToolsStub(grpc_client.channel)
+        self._prepare_stub = PrepareToolsStub(grpc_client.channel)
 
     @property
     def id(self) -> str:
@@ -619,3 +625,45 @@ class InterferenceProblemAreas(ProblemArea):
         message = RepairToolMessage(response.result.success, [], [])
 
         return message
+
+
+class LogoProblemArea(ProblemArea):
+    """Represents a logo problem area defined by a list of faces.
+
+    Parameters
+    ----------
+    id : str
+        Server-defined ID for the problem area.
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    faces : list[str]
+        List of faces defining the logo problem area.
+    """
+
+    def __init__(self, id: str, grpc_client: GrpcClient, face_ids: list[str]):
+        """Initialize a new instance of the logo problem area class."""
+        super().__init__(id, grpc_client)
+
+        self._face_ids = face_ids
+
+    @property
+    def face_ids(self) -> list[str]:
+        """The ids of the faces defining the logos."""
+        return self._face_ids
+
+    @protect_grpc
+    def fix(self) -> bool:
+        """Fix the problem area by deleting the logos.
+
+        Returns
+        -------
+        message: bool
+            Message that return whether the operation was successful.
+        """
+        if len(self._face_ids) == 0:
+            return False
+
+        entity_ids = [EntityIdentifier(id=face_id) for face_id in self._face_ids]
+        response = self._prepare_stub.RemoveLogo(RemoveLogoRequest(face_ids=entity_ids))
+
+        return response.success
