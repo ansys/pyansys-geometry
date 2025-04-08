@@ -136,13 +136,13 @@ DEFAULT_UNITS.angle = UNITS.degrees
 
 Define the appropriate sketch planes parallel to y-z and x-z planes passing through the origin namely sketch_plane and sketch_plane_2 respectively.
 
-### Sketch Planes
+#### Sketch Planes
 
 ```{image} source/_static/images/sketch_planes.jpg
 :alt: Sketch Planes
 :width: 500px
 :align: center
-
+```
 
 ```{code-cell} ipython3
 
@@ -161,13 +161,12 @@ sketch_plane_2 = Plane(
 )
 ```
 #### Ahmed Body 
+
 ```{image} source/_static/images/ahmed_body_schematic.jpg
 :alt: Ahmed body schematic image
 :width: 500px
 :align: center
 ```
-
-
 ```{code-cell} ipython3
 # Calculate the horizontal and vertical distance based on slant angle of 20 degrees
 slant_x, slant_y = distance_calculator(hypo=222, slant_angle=20)
@@ -189,7 +188,7 @@ ahmed_body_sketch.segment(
 )
 ahmed_body_sketch.plot()
 ```
-### Enclosure
+#### Enclosure
 ```{image} source/_static/images/enclosure_schematic.jpg
 :alt: Enclosure schematic image
 :width: 500px
