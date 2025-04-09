@@ -239,7 +239,7 @@ ahmed_body = component_1.extrude_sketch(
     "ahmed_body", sketch=ahmed_body_sketch, distance=194.5
 )
 
-# Create body ahmed_body_fillet by cut extrusion
+# Create body `ahmed_body_fillet` by cut extrusion
 ahmed_body_fillet = component_1.extrude_sketch(
     "ahmed_body_fillet", sketch=ahmed_body_fillet_sketch, distance=-500, cut=True
 )
