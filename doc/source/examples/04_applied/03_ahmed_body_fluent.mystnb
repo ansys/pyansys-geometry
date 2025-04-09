@@ -95,9 +95,9 @@ def distance_calculator(hypo, slant_angle):
         slant_y (float): Vertical distance calculated using the cosine of the slant angle.
 
     """
-    slant_y = hypo * math.cos(math.radians(slant_angle))
-    slant_x = hypo * math.sin(math.radians(slant_angle))
-    return slant_x, slant_y
+    slant_x = hypo * math.cos(math.radians(slant_angle))
+    slant_y = hypo * math.sin(math.radians(slant_angle))
+    return slant_y, slant_x
 
 ```
 
@@ -158,13 +158,13 @@ sketch_plane_2 = Plane(
 
 ```{code-cell} ipython3
 # Calculate the horizontal and vertical distance based on slant angle of 20 degrees
-slant_x, slant_y = distance_calculator(hypo=222, slant_angle=20)
+slant_y, slant_x = distance_calculator(hypo=222, slant_angle=20)
 
 # Define sketch for the Ahmed body
 ahmed_body_sketch = Sketch(sketch_plane)
 ahmed_body_sketch.segment(
-    start=Point2D([50, 0]), end=Point2D([338 - slant_x, 0])
-).segment_to_point(Point2D([338, slant_y])).segment_to_point(
+    start=Point2D([50, 0]), end=Point2D([338 - slant_y, 0])
+).segment_to_point(Point2D([338, slant_x])).segment_to_point(
     Point2D([338, 944])
 ).arc_to_point(
     end=Point2D([238, 1044]), center=Point2D([238, 944]), clockwise=False
