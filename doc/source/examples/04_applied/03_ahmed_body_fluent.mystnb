@@ -164,7 +164,7 @@ sketch_plane_2 = Plane(
 # Calculate the horizontal and vertical distance based on slant angle of 20 degrees
 slant_x, slant_y = distance_calculator(hypo=222, slant_angle=20)
 
-# Define the sketch for Ahmed body
+# Define sketch for the Ahmed body
 ahmed_body_sketch = Sketch(sketch_plane)
 ahmed_body_sketch.segment(
     start=Point2D([50, 0]), end=Point2D([338 - slant_x, 0])
