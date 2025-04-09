@@ -81,7 +81,7 @@ def face_identifier(faces, axis):
 ```{code-cell} ipython3
 def distance_calculator(hypo, slant_angle):
     """
-    Calculates the horizontal and vertical distances based on the hypotenuse and slant angle.
+    Calculate the horizontal and vertical distances based on the hypotenuse and slant angle.
 
     Args:
         hypo : int
