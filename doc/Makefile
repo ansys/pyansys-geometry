@@ -37,3 +37,13 @@ html:
 # Linkcheck
 linkcheck:
 	@$(SPHINXBUILD) -M linkcheck "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+# Single example target
+single-example:
+	@if [ -z "$(example)" ]; then \
+		echo "No example specified."; \
+		echo "Usage --> make single-example example=examples/01_getting_started/01_math.mystnb"; \
+		exit 1; \
+	fi
+	@echo "Building single example --> $(example)"
+	@BUILD_API=False SKIP_BUILD_CHEAT_SHEET=True $(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" -j 1 $(O) -D "include_patterns=index.rst,examples.rst,$(example)"

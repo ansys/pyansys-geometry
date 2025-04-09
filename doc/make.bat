@@ -20,6 +20,7 @@ if "%1" == "clean" goto clean
 if "%1" == "pdf" goto pdf
 if "%1" == "html" goto html
 if "%1" == "linkcheck" goto linkcheck
+if "%1" == "single-example" goto single-example
 
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (
@@ -59,6 +60,19 @@ goto end
 :clean
 rmdir /s /q %BUILDDIR% > /NUL 2>&1
 rmdir /s /q %APIDIR% > /NUL 2>&1
+goto end
+
+:single-example
+if "%2" == "" (
+	echo. No example specified.
+	echo. Example: ./make.bat single-example examples/01_getting_started/01_math.mystnb
+	exit /b 1
+)
+echo Building single example: %2
+set BUILD_API=false
+set SKIP_BUILD_CHEAT_SHEET=true
+set SPHINXOPTS=-j auto
+%SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O% -D "include_patterns=index.rst,examples.rst,%2"
 goto end
 
 :help
