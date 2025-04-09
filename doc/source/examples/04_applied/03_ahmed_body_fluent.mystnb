@@ -40,7 +40,7 @@ def face_identifier(faces, axis):
 
     Args:
         faces : List[IFace, IFace]
-        This parameter takes in a list of planar face pairs
+        List of planar face pairs.
 
         axis : (string)
         This can take the following values based on the axis on which the face pair has to be sorted
