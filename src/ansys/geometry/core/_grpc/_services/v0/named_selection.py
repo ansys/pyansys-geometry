@@ -23,7 +23,6 @@
 
 import grpc
 
-from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.named_selection import GRPCNamedSelectionService
@@ -64,7 +63,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "beams": response.beams,
             "design_points": response.design_points,
         }
-    
+
     @protect_grpc
     def create_named_selection(self, **kwargs):  # noqa: D102
         from ansys.api.geometry.v0.namedselections_pb2 import CreateRequest
@@ -88,7 +87,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "beams": response.beams,
             "design_points": response.design_points,
         }
-    
+
     @protect_grpc
     def get_all_named_selections(self, **kwargs):  # noqa: D102
         # Call the gRPC service
@@ -107,7 +106,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
                 for ns in response.named_selections
             ]
         }
-    
+
     @protect_grpc
     def delete_named_selection(self, **kwargs):  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
@@ -118,7 +117,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
 
         # Return the response - empty dictionary
         return {}
-    
+
     @protect_grpc
     def delete_named_selection_by_name(self, **kwargs):  # noqa: D102
         from ansys.api.geometry.v0.namedselections_pb2 import DeleteByNameRequest

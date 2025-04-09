@@ -130,7 +130,8 @@ class NamedSelection:
                 ids.add(entity_id)
 
         response = self._grpc_client.services.named_selection.create_named_selection(
-            name=name, members=ids)
+            name=name, members=ids
+        )
         self._id = response["id"]
 
     @property
@@ -207,7 +208,8 @@ class NamedSelection:
 
         # Get all entities from the named selection
         resp = self._grpc_client.services.named_selection.get_named_selection(
-            id=EntityIdentifier(id=self._id))
+            id=EntityIdentifier(id=self._id)
+        )
 
         # Check if the named selection has changed
         ids = {
