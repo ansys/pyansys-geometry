@@ -21,10 +21,10 @@ The Ahmed body is a simplified car model used to study airflow around vehicles. 
 
 This example creates an Ahmed body with a slant angle of 20 degrees. It consists of these steps:
  1. Launch PyAnsys Geometry and define the default units.
- 2. Creation of sketches for ahmed body, enclosure and BOI.
- 3. Generating Solid bodies from the sketches.
- 4. Performing boolean operations for region extraction.
- 5. Grouping faces and defining named selection.
+ 2. Create sketches for the Ahmed body, enclosure, and BOI (Body of Influence).
+ 3. Generate solid bodies from the sketches.
+ 4. Perform Boolean operations for region extraction.
+ 5. Group faces and define a named selection.
  6. Export model as a CAD file.
  7. Close session.
 
