@@ -23,7 +23,6 @@
 
 from typing import TYPE_CHECKING
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_point_to_point3d
 from ansys.geometry.core.designer.beam import Beam
@@ -123,14 +122,15 @@ class NamedSelection:
 
         # All ids should be unique - no duplicated values
         ids = set()
-        
+
         # Loop over all entities to get their ids
         for value in self._ids_cached.values():
             for entity_id in value:
                 ids.add(entity_id)
 
         response = self._grpc_client.services.named_selection.create_named_selection(
-            name=name, members=ids)
+            name=name, members=ids
+        )
         self._id = response["id"]
 
     @property

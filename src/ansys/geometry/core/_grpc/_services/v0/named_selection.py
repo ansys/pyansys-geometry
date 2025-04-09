@@ -66,7 +66,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "beams": [beam.id.id for beam in response.beams],
             "design_points": [dp.id for dp in response.design_points],
         }
-    
+
     @protect_grpc
     def create_named_selection(self, **kwargs):  # noqa: D102
         from ansys.api.geometry.v0.namedselections_pb2 import CreateRequest
@@ -90,7 +90,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "beams": [beam.id.id for beam in response.beams],
             "design_points": [dp.id for dp in response.design_points],
         }
-    
+
     @protect_grpc
     def delete_named_selection(self, **kwargs):  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
@@ -101,4 +101,3 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
 
         # Return the response - empty dictionary
         return {}
-    
