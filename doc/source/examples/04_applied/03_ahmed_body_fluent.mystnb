@@ -260,7 +260,7 @@ boi_body = design.extrude_sketch(
 )
 ```
 
-### 4. Performing boolean operations for region extraction
+### Perform Boolean operations for region extraction
 
 ```{code-cell} ipython3
 enclosure.subtract([ahmed_body, mount_1, mount_2])
