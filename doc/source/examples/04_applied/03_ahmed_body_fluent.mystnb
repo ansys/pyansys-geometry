@@ -197,7 +197,7 @@ mount_sketch_1.circle(center=Point2D([163.5, 792]), radius=15)
 mount_sketch_2 = Sketch(sketch_plane_2)
 mount_sketch_2.circle(center=Point2D([163.5, 322]), radius=15)
 
-# Define the sketch for fillet
+# Define sketch for the fillet
 ahmed_body_fillet_sketch = Sketch(sketch_plane_2)
 ahmed_body_fillet_sketch.segment(
     start=Point2D([194.5, 944]), end=Point2D([194.5, 1044])
