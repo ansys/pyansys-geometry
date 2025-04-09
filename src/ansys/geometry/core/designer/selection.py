@@ -23,9 +23,6 @@
 
 from typing import TYPE_CHECKING
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.namedselections_pb2 import CreateRequest
-from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_point_to_point3d
 from ansys.geometry.core.designer.beam import Beam
@@ -33,7 +30,6 @@ from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
-from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
     get_beams_from_ids,
     get_bodies_from_ids,
@@ -73,7 +69,6 @@ class NamedSelection:
         All design points to include in the named selection.
     """
 
-    @protect_grpc
     def __init__(
         self,
         name: str,
@@ -90,7 +85,6 @@ class NamedSelection:
         self._name = name
         self._design = design
         self._grpc_client = grpc_client
-        self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
 
         # Create empty arrays if there are none of a type
         if bodies is None:
@@ -132,10 +126,10 @@ class NamedSelection:
             for entity_id in value:
                 ids.add(entity_id)
 
-        named_selection_request = CreateRequest(name=name, members=ids)
-        self._grpc_client.log.debug("Requesting creation of named selection.")
-        new_named_selection = self._named_selections_stub.Create(named_selection_request)
-        self._id = new_named_selection.id
+        response = self._grpc_client.services.named_selection.create_named_selection(
+            name=name, members=ids
+        )
+        self._id = response["id"]
 
     @property
     def id(self) -> str:
@@ -210,15 +204,15 @@ class NamedSelection:
             return
 
         # Get all entities from the named selection
-        resp = self._named_selections_stub.Get(EntityIdentifier(id=self._id))
+        resp = self._grpc_client.services.named_selection.get_named_selection(id=self._id)
 
         # Check if the named selection has changed
         ids = {
-            "bodies": [body.id for body in resp.bodies],
-            "faces": [face.id for face in resp.faces],
-            "edges": [edge.id for edge in resp.edges],
-            "beams": [beam.id.id for beam in resp.beams],
-            "design_points": [(dp.id, dp.points[0]) for dp in resp.design_points],
+            "bodies": resp["bodies"],
+            "faces": resp["faces"],
+            "edges": resp["edges"],
+            "beams": resp["beams"],
+            "design_points": resp["design_points"],
         }
 
         for key in ids:
