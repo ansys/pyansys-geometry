@@ -244,7 +244,7 @@ ahmed_body_fillet = component_1.extrude_sketch(
     "ahmed_body_fillet", sketch=ahmed_body_fillet_sketch, distance=-500, cut=True
 )
 
-# Create body mounting_1 by extrusion
+# Create body `mounting_1` by extrusion
 mount_1 = component_1.extrude_sketch(
     "mount_1", sketch=mount_sketch_1, distance=-100
 )
