@@ -47,8 +47,8 @@ def face_identifier(faces, axis):
 
     Returns:
         IFace, IFace
-        - IFace: The face with the centroid positioned behind the other face along the specified axis.
-        - IFace: The face with the centroid positioned ahead of the other face along the specified axis.
+        - IFace: Face with the centroid positioned behind the other face along the specified axis.
+        - IFace: Face with the centroid positioned ahead of the other face along the specified axis.
 
     """
     min_face = ""
