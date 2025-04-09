@@ -206,7 +206,7 @@ ahmed_body_fillet_sketch.segment(
 )
 ```
 
-#### Body of Influence (BOI)
+#### Define the BOI
 
 ![BOI schematic image](../../_static/images/boi_schematic.jpg){width=500px, align=center}
 
