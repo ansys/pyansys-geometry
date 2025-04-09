@@ -1,0 +1,141 @@
+
+
+
+
+
+
+The ``conversions.py`` module
+=============================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.conversions
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: conversions
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~from_measurement_to_server_length`
+            - Convert a measurement to a length value.
+
+
+          * - :py:obj:`~from_measurement_to_server_angle`
+            - Convert a measurement to an angle value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing server-version agnostic conversions.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: from_measurement_to_server_length(input: ansys.geometry.core.misc.measurements.Measurement) -> float
+
+   
+   Convert a measurement to a length value.
+
+
+   :Parameters:
+
+       **value** : :obj:`Measurement`
+           Measurement value.
+
+
+
+   :Returns:
+
+       :class:`python:float`
+           Length value in server-defined units. By default, meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_measurement_to_server_angle(input: ansys.geometry.core.misc.measurements.Measurement) -> float
+
+   
+   Convert a measurement to an angle value.
+
+
+   :Parameters:
+
+       **value** : :obj:`Measurement`
+           Measurement value.
+
+
+
+   :Returns:
+
+       :class:`python:float`
+           Angle value in server-defined units. By default, radians.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
