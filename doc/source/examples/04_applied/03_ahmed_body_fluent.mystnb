@@ -339,7 +339,7 @@ Export the geometry into a Fluent-compatible format. The following code exports 
 
 ```{code-cell} ipython3
 
-# Save the design
+# Save design
 file = design.export_to_pmdb()
 print(f"Design saved to {file}")
 ```
