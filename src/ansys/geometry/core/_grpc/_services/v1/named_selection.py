@@ -56,13 +56,6 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
         raise NotImplementedError
     
     @protect_grpc
-    def get_all_named_selections(self, **kwargs):  # noqa: D102
-        raise NotImplementedError
-    
-    @protect_grpc
     def delete_named_selection(self, **kwargs):  # noqa: D102
         raise NotImplementedError
     
-    @protect_grpc
-    def delete_named_selection_by_name(self, **kwargs):  # noqa: D102
-        raise NotImplementedError

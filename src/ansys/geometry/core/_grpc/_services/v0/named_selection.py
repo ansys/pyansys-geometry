@@ -23,7 +23,7 @@
 
 import grpc
 
-from ansys.geometry.core.designer.selection import NamedSelection
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.named_selection import GRPCNamedSelectionService
@@ -51,18 +51,20 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
     @protect_grpc
     def get_named_selection(self, **kwargs):  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
-        request = kwargs["id"]
+        request = EntityIdentifier(id=kwargs["id"])
 
         # Call the gRPC service
         response = self.stub.Get(request)
 
         # Return the response - formatted as a dictionary
         return {
-            "bodies": response.bodies,
-            "faces": response.faces,
-            "edges": response.edges,
-            "beams": response.beams,
-            "design_points": response.design_points,
+            "id": response.id,
+            "name": response.name,
+            "bodies": [body.id for body in response.bodies],
+            "faces": [face.id for face in response.faces],
+            "edges": [edge.id for edge in response.edges],
+            "beams": [beam.id for beam in response.beams],
+            "design_points": [dp.id for dp in response.design_points],
         }
     
     @protect_grpc
@@ -82,36 +84,17 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
         return {
             "id": response.id,
             "name": response.name,
-            "bodies": response.bodies,
-            "faces": response.faces,
-            "edges": response.edges,
-            "beams": response.beams,
-            "design_points": response.design_points,
-        }
-    
-    @protect_grpc
-    def get_all_named_selections(self, **kwargs):  # noqa: D102
-        # Call the gRPC service
-        response = self.stub.GetAll()
-
-        # Return the response - formatted as a dictionary
-        return {
-            "named_selections": [
-                {
-                    "bodies": ns.bodies,
-                    "faces": ns.faces,
-                    "edges": ns.edges,
-                    "beams": ns.beams,
-                    "design_points": ns.design_points,
-                }
-                for ns in response.named_selections
-            ]
+            "bodies": [body.id for body in response.bodies],
+            "faces": [face.id for face in response.faces],
+            "edges": [edge.id for edge in response.edges],
+            "beams": [beam.id for beam in response.beams],
+            "design_points": [dp.id for dp in response.design_points],
         }
     
     @protect_grpc
     def delete_named_selection(self, **kwargs):  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
-        request = kwargs["id"]
+        request = EntityIdentifier(id=kwargs["id"])
 
         # Call the gRPC service
         self.stub.Delete(request)
@@ -119,17 +102,3 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
         # Return the response - empty dictionary
         return {}
     
-    @protect_grpc
-    def delete_named_selection_by_name(self, **kwargs):  # noqa: D102
-        from ansys.api.geometry.v0.namedselections_pb2 import DeleteByNameRequest
-
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = DeleteByNameRequest(
-            name=kwargs["name"],
-        )
-
-        # Call the gRPC service
-        self.stub.DeleteByName(request)
-
-        # Return the response - empty dictionary
-        return {}

@@ -38,7 +38,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     Line as GRPCLine,
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
-    NamedSelection as GRPCNamedSelection,
     Plane as GRPCPlane,
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
@@ -49,7 +48,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
-from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.misc.checks import graphics_required
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -725,26 +723,3 @@ def from_grpc_backend_type_to_backend_type(
         raise ValueError(f"Invalid backend type: {grpc_backend_type}")
 
     return backend_type
-
-
-def from_grpc_named_selection_to_named_selection(
-    grpc_named_selection: GRPCNamedSelection,
-) -> NamedSelection:
-    """Convert a gRPC named selection message to a named selection dictionary.
-
-    Parameters
-    ----------
-    grpc_named_selection : GRPCNamedSelection
-        Source gRPC named selection message.
-
-    Returns
-    -------
-    NamedSelection
-        Converted named selection.
-    """
-    return NamedSelection(
-        id=grpc_named_selection.id,
-        name=grpc_named_selection.name,
-        description=grpc_named_selection.description,
-        entities=[entity.id for entity in grpc_named_selection.entities],
-    )

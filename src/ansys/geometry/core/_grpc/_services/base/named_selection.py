@@ -50,16 +50,6 @@ class GRPCNamedSelectionService(ABC):
         pass
 
     @abstractmethod
-    def get_all_named_selections(self, **kwargs) -> dict:
-        """Get all named selections."""
-        pass
-
-    @abstractmethod
     def delete_named_selection(self, **kwargs) -> dict:
         """Delete a named selection by id."""
-        pass
-
-    @abstractmethod
-    def delete_named_selection_by_name(self, **kwargs) -> dict:
-        """Delete a named selection by name."""
         pass

@@ -206,8 +206,7 @@ class NamedSelection:
             return
 
         # Get all entities from the named selection
-        resp = self._grpc_client.services.named_selection.get_named_selection(
-            id=EntityIdentifier(id=self._id))
+        resp = self._grpc_client.services.named_selection.get_named_selection(id=self._id)
 
         # Check if the named selection has changed
         ids = {

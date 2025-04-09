@@ -716,7 +716,7 @@ class Design(Component):
             removal_id = named_selection.id
 
         self._grpc_client.log.debug(f"Named selection {removal_name} deletion request received.")
-        self._grpc_client.services.named_selection.delete_named_selection(id=EntityIdentifier(id=removal_id))
+        self._grpc_client.services.named_selection.delete_named_selection(id=removal_id)
 
         try:
             self._named_selections.pop(removal_name)
