@@ -10,7 +10,7 @@ kernelspec:
   language: python
   name: python3
 ---
-# Applied: Develop an External Aerodynamic Simulation Model for Fluent Analysis
+# Applied: Develop an external aerodynamic simulation model for Fluent analysis
 
 The Ahmed body is a simplified car model used to study airflow around vehicles. The wake (turbulent flow behind the body)
  depends on the slant angle:
