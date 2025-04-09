@@ -156,7 +156,7 @@ sketch_plane_2 = Plane(
     direction_y=UNITVECTOR3D_Z,
 )
 ```
-#### Ahmed Body
+#### Define the Ahmed body
 
 ![Ahmed body schematic image](../../_static/images/ahmed_body_schematic.jpg){width=500px, align=center}
 
