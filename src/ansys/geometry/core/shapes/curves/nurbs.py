@@ -38,7 +38,7 @@ from ansys.geometry.core.shapes.parameterization import (
 )
 from ansys.geometry.core.typing import Real
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     import geomdl.NURBS as geomdl_nurbs  # noqa: N811
 
 
