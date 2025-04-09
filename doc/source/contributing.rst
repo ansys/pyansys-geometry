@@ -159,10 +159,10 @@ You can also test the correct build process of a new example by performing the f
     # On Windows
     ./make.bat single-example examples/01_getting_started/01_math.mystnb
 
-  .. note::
+.. note::
 
-    The example name must be the same as the notebook name, with its path
-    starting at the ``examples`` directory.
+  The example name must be the same as the notebook name, with its path
+  starting at the ``examples`` directory.
 
 3. Check the ``doc/source/_build/html`` directory for the generated documentation
    and open the ``index.html`` file in your browser.
