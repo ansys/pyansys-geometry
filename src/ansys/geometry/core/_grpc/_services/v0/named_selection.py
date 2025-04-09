@@ -64,7 +64,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "faces": [face.id for face in response.faces],
             "edges": [edge.id for edge in response.edges],
             "beams": [beam.id.id for beam in response.beams],
-            "design_points": [dp.id for dp in response.design_points],
+            "design_points": [(dp.id, dp.points[0]) for dp in response.design_points],
         }
     
     @protect_grpc
