@@ -254,7 +254,8 @@ mount_2 = component_1.extrude_sketch(
     "mount_2", sketch=mount_sketch_2, distance=-100
 )
 
-# Create body boi by extrusion , (direction is negative since the sketch is created in X-Z plane , resulting in the direction of normal to be parallel to the -Y axis)
+# Create body `boi` by extrusion
+# The direction is negative since the sketch is created in X-Z plane, resulting in the direction of normal to be parallel to the -Y axis.
 boi_body = design.extrude_sketch(
     "boi", sketch=boi_sketch, distance=500, direction="-"
 )
