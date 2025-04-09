@@ -229,11 +229,6 @@ design = modeler.create_design("ahmed_model")
 # Create component
 component_1 = design.add_component("Component1")
 
-# Create body enclosure by extrusion
-enclosure = component_1.extrude_sketch(
-    "Solid1", sketch=enclosure_sketch, distance=1167
-)
-
 # Create body `ahmed_body` by extrusion
 ahmed_body = component_1.extrude_sketch(
     "ahmed_body", sketch=ahmed_body_sketch, distance=194.5
@@ -242,6 +237,11 @@ ahmed_body = component_1.extrude_sketch(
 # Create body `ahmed_body_fillet` by cut extrusion
 ahmed_body_fillet = component_1.extrude_sketch(
     "ahmed_body_fillet", sketch=ahmed_body_fillet_sketch, distance=-500, cut=True
+)
+
+# Create body `enclosure` by extrusion
+enclosure = component_1.extrude_sketch(
+    "Solid1", sketch=enclosure_sketch, distance=1167
 )
 
 # Create body `mounting_1` by extrusion
