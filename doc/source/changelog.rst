@@ -9,6 +9,74 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.10.4 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.4>`_ - April 09, 2025
+===========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - grpc named selection stub implementation
+          - `#1899 <https://github.com/ansys/pyansys-geometry/pull/1899>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - bump ansys-api-geometry from 0.4.55 to 0.4.56
+          - `#1896 <https://github.com/ansys/pyansys-geometry/pull/1896>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Ahmed body example for external aero simulation
+          - `#1886 <https://github.com/ansys/pyansys-geometry/pull/1886>`_
+
+        * - adding command for single example build
+          - `#1893 <https://github.com/ansys/pyansys-geometry/pull/1893>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - geomdl dependency in conda-forge
+          - `#1900 <https://github.com/ansys/pyansys-geometry/pull/1900>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - update CHANGELOG for v0.10.3
+          - `#1894 <https://github.com/ansys/pyansys-geometry/pull/1894>`_
+
+        * - upgrading to ansys/actions v9 and securing action usage
+          - `#1895 <https://github.com/ansys/pyansys-geometry/pull/1895>`_
+
+        * - bump the actions group with 3 updates
+          - `#1897 <https://github.com/ansys/pyansys-geometry/pull/1897>`_
+
+        * - remove whitelisting
+          - `#1898 <https://github.com/ansys/pyansys-geometry/pull/1898>`_
+
+
 `0.10.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.3>`_ - April 08, 2025
 ===========================================================================================
 
