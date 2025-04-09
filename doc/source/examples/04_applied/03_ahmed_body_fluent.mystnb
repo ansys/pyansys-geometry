@@ -211,7 +211,7 @@ ahmed_body_fillet_sketch.segment(
 ![BOI schematic image](../../_static/images/boi_schematic.jpg){width=500px, align=center}
 
 ```{code-cell} ipython3
-# Define the sketch for boi
+# Define sketch for BOI
 boi_sketch = Sketch(sketch_plane_2)
 boi_sketch.box(center=Point2D([0, -325]), width=1000, height=1450)
 boi_sketch.plot()
