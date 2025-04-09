@@ -288,7 +288,7 @@ for cyl_face in cylindrical_surface:
     if cyl_face.point(0, 0.5)[1] < 0.050:
         wall_mount.append(cyl_face)
 
-# Identify faces associated enclosure extremes
+# Identify faces associated with enclosure extremes
 outlet_face, inlet_face = face_identifier(faces=plane_surface, axis="z")
 symmetry_face, symmetry_x_pos = face_identifier(faces=plane_surface, axis="x")
 ground, top = face_identifier(faces=plane_surface, axis="y")
