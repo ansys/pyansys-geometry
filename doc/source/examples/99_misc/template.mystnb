@@ -19,7 +19,7 @@ It also provides a basic outline for importing necessary modules, initializing t
 performing operations, and closing the modeler.
 
 It is important to follow the conventions and formatting used in this example to ensure that
-the documentation is easy to read and understand.
+the documentation is easy to read and understandable.
 
 ## Example imports
 
@@ -44,9 +44,9 @@ print(m)
 ## Body of your example
 
 Developers can add their code here to perform the desired operations.
-This section should include comments and explanations to help users understand what the code is doing.
+This section should include comments and explanations to explain what the code is doing.
 
-### Example section: initializing a design
+### Example section: Initialize a design
 
 Create a design named ``example-design``.
 
@@ -55,17 +55,17 @@ Create a design named ``example-design``.
 design = m.create_design("example-design")
 ```
 
-### Example section: including images
+### Example section: Include images
 
 This section demonstrates how to include static images in the documentation.
-If images want to be included, they should be placed in the ``doc/source/_static/`` directory.
+You should place these images in the ``doc/source/_static/`` directory.
 
-They can be referenced in the documentation using the following syntax:
+You can then reference images in the documentation using the following syntax:
 
 ![image](../../_static/thumbnails/101_getting_started.png){align=center}
 
 
-### Example section: creating a sketch and plotting it
+### Example section: Create a sketch and plot it
 
 This section demonstrates how to create a sketch and plot it.
 
@@ -75,7 +75,7 @@ sketch.box(Point2D([0, 0]), 10, 10)
 sketch.plot()
 ```
 
-### Example section: extruding the sketch and creating a body
+### Example section: Extrude the sketch and create a body
 This section demonstrates how to extrude the sketch and create a body.
 
 ```{code-cell} ipython3

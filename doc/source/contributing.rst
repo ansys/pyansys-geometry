@@ -138,11 +138,12 @@ To add a new example, follow these steps:
 
 1. Create a new notebook in the ``doc/source/examples`` directory, under the appropriate
    folder for your example.
-2. Take as reference ``doc\source\examples\99_misc\template.mystnb`` to create your
-   example notebook. This template contains the necessary metadata and structure for it.
+2. Use the ``doc\source\examples\99_misc\template.mystnb`` file as a reference for creating
+   your example notebook. It contains the necessary metadata and structure for a
+   PyAnsys Geometry example.
 3. Add the new notebook to the ``doc/source/examples.rst`` file.
 4. Store a thumbnail image of the example in the ``doc/source/_static/thumbnails`` directory.
-5. Link the thumbnail image to your example file in ``doc/source/conf.py`` as shown in the reference commit.
+5. Link the thumbnail image to your example file in the ``doc/source/conf.py`` file as shown in the reference commit.
 
 You can also test the correct build process of a new example by performing the following steps:
 
@@ -150,7 +151,7 @@ You can also test the correct build process of a new example by performing the f
 
     pip install -e .[doc]
 
-2. Navigate to the ``doc`` folder and run the following command::
+2. Navigate to the ``doc`` directory and run the following command::
 
     # On Linux or macOS
     make single-example examples/01_getting_started/01_math.mystnb
@@ -161,9 +162,9 @@ You can also test the correct build process of a new example by performing the f
   .. note::
 
     The example name must be the same as the notebook name, with its path
-    starting at the ``examples`` folder.
+    starting at the ``examples`` directory.
 
-3. Check the ``doc/source/_build/html`` folder for the generated documentation
+3. Check the ``doc/source/_build/html`` directory for the generated documentation
    and open the ``index.html`` file in your browser.
 
 Run tests
