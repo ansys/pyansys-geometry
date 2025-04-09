@@ -91,8 +91,8 @@ def distance_calculator(hypo, slant_angle):
         Slant angle in degrees.
 
     Returns:
-        slant_x (float): The horizontal distance calculated using the sine of the slant angle.
-        slant_y (float): The vertical distance calculated using the cosine of the slant angle.
+        slant_x (float): Horizontal distance calculated using the sine of the slant angle.
+        slant_y (float): Vertical distance calculated using the cosine of the slant angle.
 
     """
     slant_y = hypo * math.cos(math.radians(slant_angle))
