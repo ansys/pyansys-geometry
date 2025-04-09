@@ -267,7 +267,7 @@ enclosure.subtract([ahmed_body, mount_1, mount_2])
 enclosure.plot()
 ```
 
-### 5. Grouping faces and defining named selection
+### Group faces and define named selection
 
 
 ```{code-cell} ipython3
