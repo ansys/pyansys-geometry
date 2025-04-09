@@ -154,7 +154,7 @@ class _GRPCServices:
     def named_selection(self) -> GRPCNamedSelectionService:
         """
         Get the named selection service for the specified version.
-        
+
         Returns
         -------
         NamedSelectionServiceBase
@@ -173,5 +173,5 @@ class _GRPCServices:
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
                 raise ValueError(f"Unsupported version: {self.version}")
-            
+
         return self._named_selection

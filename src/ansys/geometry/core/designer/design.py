@@ -52,7 +52,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
 )
-from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from ansys.geometry.core.connection.backend import BackendType
