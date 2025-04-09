@@ -43,10 +43,7 @@ def face_identifier(faces, axis):
         List of planar face pairs.
 
         axis : (string)
-        This can take the following values based on the axis on which the face pair has to be sorted
-            x axis -  "x"
-            y axis -  "y"
-            z axis -  "z"
+        Axis to sort the face pair on. Options are "x", "y", or "z".
 
     Returns:
         IFace, IFace
