@@ -63,3 +63,12 @@ applications.
 
     examples/04_applied/01_naca_airfoils.mystnb
     examples/04_applied/02_naca_fluent.mystnb
+    examples/04_applied/03_ahmed_body_fluent.mystnb
+
+Miscellaneous examples
+----------------------
+
+.. nbgallery::
+    :caption: Miscellaneous examples
+
+    examples/99_misc/template.mystnb
