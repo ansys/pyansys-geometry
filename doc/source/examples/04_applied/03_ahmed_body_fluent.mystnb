@@ -333,7 +333,7 @@ design.create_named_selection(
 )
 ```
 
-### 6. Export model as a PMDB file
+### Export model as a PMDB file
 
 Export the geometry into a Fluent-compatible format. The following code exports the geometry into a PMDB file, which retains the named selections.
 
