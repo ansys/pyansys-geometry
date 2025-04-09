@@ -128,7 +128,7 @@ DEFAULT_UNITS.angle = UNITS.degrees
 
 ```
 
-###  2. Create of sketches for ahmed body, enclosure and BOI
+### Create sketches for the Ahmed body, enclosure, and BOI
 
 Define the appropriate sketch planes parallel to y-z and x-z planes passing through the origin namely sketch_plane and sketch_plane_2 respectively.
 
