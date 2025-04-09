@@ -184,7 +184,7 @@ ahmed_body_sketch.plot()
 
 
 ```{code-cell} ipython3
-# Define the sketch for Enclosure
+# Define sketch for enclosure
 enclosure_sketch = Sketch(plane=sketch_plane)
 enclosure_sketch.box(center=Point2D([1014 / 2, 0]), height=4176, width=1014)
 enclosure_sketch.plot()
