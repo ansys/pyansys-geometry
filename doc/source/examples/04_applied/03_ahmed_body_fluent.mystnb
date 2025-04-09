@@ -101,7 +101,7 @@ def distance_calculator(hypo, slant_angle):
 
 ```
 
-###  1. Launch Pyansys geometry and define the default units
+### Launch PyAnsys geometry and define the default units
 Before you start creating the ahmed body, you must import the necessary modules to create the model using PyAnsys Geometry.
 Its also a good procedure to define the units before initiating developing the sketch.
 
