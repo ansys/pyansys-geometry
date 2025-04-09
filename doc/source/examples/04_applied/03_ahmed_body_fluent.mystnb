@@ -189,7 +189,7 @@ enclosure_sketch = Sketch(plane=sketch_plane)
 enclosure_sketch.box(center=Point2D([1014 / 2, 0]), height=4176, width=1014)
 enclosure_sketch.plot()
 
-# Define the sketch for mounting 1
+# Define sketch for mounting 1
 mount_sketch_1 = Sketch(sketch_plane_2)
 mount_sketch_1.circle(center=Point2D([163.5, 792]), radius=15)
 
