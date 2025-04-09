@@ -234,7 +234,7 @@ enclosure = component_1.extrude_sketch(
     "Solid1", sketch=enclosure_sketch, distance=1167
 )
 
-# Create body ahmed_body by extrusion
+# Create body `ahmed_body` by extrusion
 ahmed_body = component_1.extrude_sketch(
     "ahmed_body", sketch=ahmed_body_sketch, distance=194.5
 )
