@@ -346,7 +346,7 @@ print(f"Design saved to {file}")
 You can import the exported PMDB file into Fluent to set up the mesh and perform the simulation.
 For an example of how to set up the mesh and boundary conditions in Fluent, see the [Ahmed Body External Aerodynamics Simulation](https://examples.fluent.docs.pyansys.com/version/dev/examples/00-released_examples/00-ahmed_body_workflow.html) example in the Fluent documentation.
 
-### 7. Close session
+### Close session
 
 ```{code-cell} ipython3
 modeler.close()
