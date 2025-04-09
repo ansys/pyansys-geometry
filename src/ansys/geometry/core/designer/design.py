@@ -695,7 +695,6 @@ class Design(Component):
 
         return self._named_selections[named_selection.name]
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def delete_named_selection(self, named_selection: NamedSelection | str) -> None:

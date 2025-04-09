@@ -30,7 +30,6 @@ from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
-from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
     get_beams_from_ids,
     get_bodies_from_ids,
@@ -70,7 +69,6 @@ class NamedSelection:
         All design points to include in the named selection.
     """
 
-    @protect_grpc
     def __init__(
         self,
         name: str,
