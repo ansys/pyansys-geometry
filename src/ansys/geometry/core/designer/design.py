@@ -146,7 +146,6 @@ class Design(Component):
         self._design_stub = DesignsStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
-        self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
         self._parts_stub = PartsStub(self._grpc_client.channel)
         self._parameters_stub = DrivingDimensionsStub(self._grpc_client.channel)
 
@@ -717,7 +716,7 @@ class Design(Component):
             removal_id = named_selection.id
 
         self._grpc_client.log.debug(f"Named selection {removal_name} deletion request received.")
-        self._named_selections_stub.Delete(EntityIdentifier(id=removal_id))
+        self._grpc_client.services.named_selection.delete_named_selection(id=EntityIdentifier(id=removal_id))
 
         try:
             self._named_selections.pop(removal_name)
