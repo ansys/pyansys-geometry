@@ -123,7 +123,7 @@ class NamedSelection:
 
         # All ids should be unique - no duplicated values
         ids = set()
-
+        
         # Loop over all entities to get their ids
         for value in self._ids_cached.values():
             for entity_id in value:
@@ -210,11 +210,11 @@ class NamedSelection:
 
         # Check if the named selection has changed
         ids = {
-            "bodies": [body.id for body in resp["bodies"]],
-            "faces": [face.id for face in resp["faces"]],
-            "edges": [edge.id for edge in resp["edges"]],
-            "beams": [beam.id.id for beam in resp["beams"]],
-            "design_points": [(dp.id, dp.points[0]) for dp in resp["design_points"]],
+            "bodies": resp["bodies"],
+            "faces": resp["faces"],
+            "edges": resp["edges"],
+            "beams": resp["beams"],
+            "design_points": resp["design_points"],
         }
 
         for key in ids:

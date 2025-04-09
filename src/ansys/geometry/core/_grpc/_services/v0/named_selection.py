@@ -63,7 +63,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "bodies": [body.id for body in response.bodies],
             "faces": [face.id for face in response.faces],
             "edges": [edge.id for edge in response.edges],
-            "beams": [beam.id for beam in response.beams],
+            "beams": [beam.id.id for beam in response.beams],
             "design_points": [dp.id for dp in response.design_points],
         }
     
@@ -87,7 +87,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "bodies": [body.id for body in response.bodies],
             "faces": [face.id for face in response.faces],
             "edges": [edge.id for edge in response.edges],
-            "beams": [beam.id for beam in response.beams],
+            "beams": [beam.id.id for beam in response.beams],
             "design_points": [dp.id for dp in response.design_points],
         }
     
