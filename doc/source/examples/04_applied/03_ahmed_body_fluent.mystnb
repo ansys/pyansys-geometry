@@ -325,7 +325,7 @@ design.create_named_selection(
     faces=[symmetry_surface, bottom_surface, top_surface],
 )
 
-# Identify face which intends the slant angle of 20 degrees
+# Identify the face that forms a 20-degree angle with the y-axis.
 for face in body_planar_surface:
     if round(math.degrees(math.acos(abs(face.normal().y)))) == 20:
         hypo_face = face
