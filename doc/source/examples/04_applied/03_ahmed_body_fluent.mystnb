@@ -85,10 +85,10 @@ def distance_calculator(hypo, slant_angle):
 
     Args:
         hypo : int
-        The length of the hypotenuse in millimeters..
+        Length of the hypotenuse in millimeters.
 
         slant_angle : int
-        The slant angle in degrees.
+        Slant angle in degrees.
 
     Returns:
         slant_x (float): The horizontal distance calculated using the sine of the slant angle.
