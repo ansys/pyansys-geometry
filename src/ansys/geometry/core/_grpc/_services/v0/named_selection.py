@@ -23,7 +23,6 @@
 
 import grpc
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.named_selection import GRPCNamedSelectionService
@@ -50,6 +49,8 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
 
     @protect_grpc
     def get_named_selection(self, **kwargs):  # noqa: D102
+        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = EntityIdentifier(id=kwargs["id"])
 
@@ -93,6 +94,8 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
 
     @protect_grpc
     def delete_named_selection(self, **kwargs):  # noqa: D102
+        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = EntityIdentifier(id=kwargs["id"])
 

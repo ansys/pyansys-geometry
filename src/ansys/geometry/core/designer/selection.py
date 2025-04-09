@@ -75,7 +75,7 @@ class NamedSelection:
         self,
         name: str,
         design: "Design",
-        grpc_client: GrpcClient = None,
+        grpc_client: GrpcClient,
         bodies: list[Body] | None = None,
         faces: list[Face] | None = None,
         edges: list[Edge] | None = None,
