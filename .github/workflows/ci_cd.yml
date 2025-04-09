@@ -91,7 +91,6 @@ jobs:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
-          whitelist-license-check: 'attrs,referencing'
           target: 'all'
 
   docker-style:
