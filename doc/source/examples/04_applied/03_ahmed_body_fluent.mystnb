@@ -15,10 +15,9 @@ kernelspec:
 The Ahmed body is a simplified car model used to study airflow around vehicles. The wake (turbulent flow behind the body)
  depends on the slant angle:
 
- - Less than 12°: The airflow stays attached to the slant, creating low drag and a mostly two-dimensional flow.
- - 12° to 30°: The flow becomes three-dimensional with strong c-pillar vortices, peaking at 30°. This increases
-  drag due to low-pressure areas on the rear surfaces.
- - More than 30°: The flow fully separates from the slant, reducing drag and weakening the c-pillar vortices.
+ - Less than 12 degrees: The airflow stays attached to the slant, creating low drag and a mostly two-dimensional flow.
+ - 12 to 30 degrees: The flow becomes three-dimensional with strong c-pillar vortices, peaking at 30 degrees. This increases drag due to low-pressure areas on the rear surfaces.
+ - More than 30 degrees: The flow fully separates from the slant, reducing drag and weakening the c-pillar vortices.
 
 In this example we are going to create an Ahmed body with a slant angle of 20 degrees, The following steps are involved:
  1. Launch Pyansys geometry and define the default units
