@@ -36,7 +36,7 @@ the named selections.
 ```{code-cell} ipython3
 def face_identifier(faces, axis):
     """
-    Sorts a pair of planar faces based on their positions along the specified coordinate axis.
+    Sort a pair of planar faces based on their positions along the specified coordinate axis.
 
     Args:
         faces : List[IFace, IFace]
