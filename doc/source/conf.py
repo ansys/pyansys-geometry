@@ -313,6 +313,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/chamfer": "_static/thumbnails/chamfer.png",
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
+    "examples/04_applied/03_ahmed_body_fluent": "_static/thumbnails/ahmed_body.png",
     "examples/99_misc/template": "_static/thumbnails/101_getting_started.png",
 }
 nbsphinx_epilog = """
