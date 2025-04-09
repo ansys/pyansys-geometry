@@ -274,7 +274,7 @@ enclosure.plot()
 plane_surface = []
 cylindrical_surface = []
 
-# Grouping of faces of the enclosure based on the topology
+# Group faces of enclosure based on topology
 for face in enclosure.faces:
     if face.surface_type.name == "SURFACETYPE_PLANE":
         plane_surface.append(face)
