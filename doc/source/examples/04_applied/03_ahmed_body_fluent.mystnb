@@ -249,7 +249,7 @@ mount_1 = component_1.extrude_sketch(
     "mount_1", sketch=mount_sketch_1, distance=-100
 )
 
-# Create body mounting_2 by extrusion
+# Create body `mounting_2` by extrusion
 mount_2 = component_1.extrude_sketch(
     "mount_2", sketch=mount_sketch_2, distance=-100
 )
