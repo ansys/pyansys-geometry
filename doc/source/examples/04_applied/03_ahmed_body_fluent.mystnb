@@ -178,7 +178,7 @@ ahmed_body_sketch.segment(
 ahmed_body_sketch.plot()
 ```
 
-#### Enclosure
+#### Define the enclosure
 
 ![Enclosure schematic image](../../_static/images/enclosure_schematic.jpg){width=500px, align=center}
 
