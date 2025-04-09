@@ -19,7 +19,7 @@ The Ahmed body is a simplified car model used to study airflow around vehicles. 
  - 12 to 30 degrees: The flow becomes three-dimensional with strong c-pillar vortices, peaking at 30 degrees. This increases drag due to low-pressure areas on the rear surfaces.
  - More than 30 degrees: The flow fully separates from the slant, reducing drag and weakening the c-pillar vortices.
 
-In this example we are going to create an Ahmed body with a slant angle of 20 degrees, The following steps are involved:
+This example creates an Ahmed body with a slant angle of 20 degrees. It consists of these steps:
  1. Launch Pyansys geometry and define the default units
  2. Creation of sketches for ahmed body, enclosure and BOI.
  3. Generating Solid bodies from the sketches.
