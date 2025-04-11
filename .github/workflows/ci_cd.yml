@@ -481,11 +481,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Pull and launch geometry service
-        run: |
-          docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -499,6 +494,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .[all,tests-minimal]
           pip install pytest
+
+      - name: Start Geometry service and verify start
+        run: |
+          docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run pytest
         run: |
@@ -529,11 +530,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Pull and launch geometry service
-        run: |
-          docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -551,6 +547,12 @@ jobs:
           # Installing docker (needed for the tests)
           pip install docker
 
+      - name: Start Geometry service and verify start
+        run: |
+          docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
       - name: Run pytest
         run: |
           pytest -v -c pytest-nographics.ini
@@ -561,7 +563,6 @@ jobs:
           docker stop ${{ env.GEO_CONT_NAME }}
           docker logs ${{ env.GEO_CONT_NAME }}
           docker rm ${{ env.GEO_CONT_NAME }}
-
 
   package:
     name: Package library
@@ -691,17 +692,12 @@ jobs:
         run:
           echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Launch Geometry service
-        run: |
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:windows-tmp
-
       - name: Validate connection using PyAnsys Geometry
         run: |
           python -m venv .venv
           .\.venv\Scripts\Activate.ps1
           python -m pip install --upgrade pip
           pip install -e .[tests]
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
@@ -709,6 +705,12 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
+
+      - name: Start Geometry service and verify start
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:windows-tmp
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
         run: |
@@ -778,14 +780,14 @@ jobs:
         run: |
           docker build -f linux/coreservice/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
 
-      - name: Launch Geometry service
-        run: |
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:linux-tmp
-
       - name: Validate connection using PyAnsys Geometry
         run: |
           python -m pip install --upgrade pip
           pip install -e .[tests]
+
+      - name: Start Geometry service and verify start
+        run: |
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:linux-tmp
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache

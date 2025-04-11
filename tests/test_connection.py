@@ -27,7 +27,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core.connection.backend import ApiVersions
-from ansys.geometry.core.connection.client import GrpcClient, wait_until_healthy
+from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
     plane_to_grpc_plane,
@@ -50,7 +50,7 @@ def test_wait_until_healthy():
     # create a bogus channel
     channel = grpc.insecure_channel("9.0.0.1:80")
     with pytest.raises(TimeoutError):
-        wait_until_healthy(channel, timeout=1)
+        GrpcClient(channel=channel, timeout=1)
 
 
 def test_invalid_inputs():

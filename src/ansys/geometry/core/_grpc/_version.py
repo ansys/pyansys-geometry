@@ -23,28 +23,31 @@
 
 from enum import Enum, unique
 
-from google.protobuf.empty_pb2 import Empty
 import grpc
 
 # ATTEMPT v0 IMPORT
 try:
-    import ansys.api.dbu.v0.admin_pb2_grpc as dbu_v0_admin_pb2_grpc
+    import ansys.api.dbu.v0.admin_pb2_grpc  # noqa: F401
+
+    from ._services.v0.admin import GRPCAdminServiceV0 as V0AdminService
 except ImportError:
-    dbu_v0_admin_pb2_grpc = None
+    V0AdminService = None
 
 # ATTEMPT v1 IMPORT
 try:
-    import ansys.api.dbu.v1.admin_pb2_grpc as dbu_v1_admin_pb2_grpc
+    import ansys.api.dbu.v1.admin_pb2_grpc  # noqa: F401
+
+    from ._services.v1.admin import GRPCAdminServiceV1 as V1AdminService
 except ImportError:
-    dbu_v1_admin_pb2_grpc = None
+    V1AdminService = None
 
 
 @unique
 class GeometryApiProtos(Enum):
     """Enumeration of the supported versions of the gRPC API protocol."""
 
-    V0 = 0, dbu_v0_admin_pb2_grpc
-    V1 = 1, dbu_v1_admin_pb2_grpc
+    V0 = 0, V0AdminService
+    V1 = 1, V1AdminService
 
     @staticmethod
     def get_latest_version() -> "GeometryApiProtos":
@@ -68,7 +71,7 @@ class GeometryApiProtos(Enum):
                 return version
         raise ValueError(f"Invalid version string: {version_string}")
 
-    def verify_supported(self, channel: grpc.Channel) -> bool:
+    def verify_supported(self, channel: grpc.Channel, timeout: float) -> bool:
         """Check if the version is supported.
 
         Notes
@@ -85,20 +88,22 @@ class GeometryApiProtos(Enum):
         bool
             True if the server supports the version, otherwise False.
         """
-        pb2_grpc = self.value[1]
-        if pb2_grpc is None:
+        from ._services.base.admin import GRPCAdminService
+
+        AdminService: type[GRPCAdminService] | None = self.value[1]  # noqa: N806
+        if AdminService is None:
             return False
 
         try:
-            admin_stub = pb2_grpc.AdminStub(channel)
-            admin_stub.Health(Empty())
+            admin_service = AdminService(channel)
+            admin_service.wait_until_healthy(timeout=timeout, target=channel._target)
             return True
         except grpc.RpcError:
             return False
 
 
 def set_proto_version(
-    channel: grpc.Channel, version: GeometryApiProtos | str | None = None
+    channel: grpc.Channel, version: GeometryApiProtos | str | None = None, timeout: float = 5.0
 ) -> "GeometryApiProtos":
     """Set the version of the gRPC API protocol used by the server.
 
@@ -109,6 +114,8 @@ def set_proto_version(
     version : GeometryApiProtos | str | None
         The version of the gRPC API protocol to use. If None, the latest
         version is used.
+    timeout : float
+        The timeout in seconds for the health check. Default is 5 seconds.
 
     Returns
     -------
@@ -120,14 +127,14 @@ def set_proto_version(
         version = GeometryApiProtos.from_string(version)
 
     # Check the server supports the requested version (if specified)
-    if version and not version.verify_supported(channel):
+    if version and not version.verify_supported(channel, timeout):
         raise ValueError(f"Server does not support the requested version: {version.name}")
 
     # If no version specified... Attempt to use all of them, starting
     # with the latest version
     if version is None:
         version = GeometryApiProtos.get_latest_version()
-        while not version.verify_supported(channel):
+        while not version.verify_supported(channel, timeout):
             version = GeometryApiProtos.from_int_value(version.value[0] - 1)
 
     # Return the version
