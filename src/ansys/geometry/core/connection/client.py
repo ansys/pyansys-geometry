@@ -114,6 +114,7 @@ class GrpcClient:
                 options=[
                     ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
                     ("grpc.max_send_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
+                    ("grpc.keepalive_permit_without_calls", 1),
                 ],
             )
 
