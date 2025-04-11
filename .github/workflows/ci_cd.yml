@@ -495,7 +495,7 @@ jobs:
           pip install -e .[all,tests-minimal]
           pip install pytest
 
-      - name: Pull and launch geometry service
+      - name: Start Geometry service and verify start
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
@@ -547,7 +547,7 @@ jobs:
           # Installing docker (needed for the tests)
           pip install docker
 
-      - name: Pull and launch geometry service
+      - name: Start Geometry service and verify start
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
@@ -706,7 +706,7 @@ jobs:
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
-      - name: Launch Geometry service
+      - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:windows-tmp          
@@ -785,7 +785,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .[tests]
 
-      - name: Launch Geometry service
+      - name: Start Geometry service and verify start
         run: |
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:linux-tmp
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
