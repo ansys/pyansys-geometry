@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.56",
+    "ansys-api-geometry==0.4.57",
     "ansys-tools-path>=0.3,<1",
     "beartype>=0.11.0,<0.21",
     "geomdl>=5,<6",
@@ -33,7 +33,7 @@ dependencies = [
     "matplotlib>=3,<4",
     "numpy>=1.20.3,<3",
     "Pint>=0.18,<1",
-    "protobuf>=3.20.2,<6",
+    "protobuf>=3.20.2,<7",
     "requests>=2,<3",
     "scipy>=1.7.3,<2",
     "semver>=3,<4",
@@ -67,7 +67,7 @@ tests = [
     "matplotlib==3.10.1",
     "numpy==2.2.4",
     "Pint==0.24.4",
-    "protobuf==5.29.3",
+    "protobuf==6.30.2",
     "pygltflib==1.16.3",
     "pytest==8.3.5",
     "pytest-cov==6.1.1",
@@ -108,7 +108,7 @@ doc = [
     "panel==1.6.1",
     "pdf2image==1.17.0",
     "Pint==0.24.4",
-    "protobuf==5.29.3",
+    "protobuf==6.30.2",
     "pygltflib==1.16.3",
     "pyvista[jupyter]==0.44.2",
     "quarto-cli==1.6.42",
