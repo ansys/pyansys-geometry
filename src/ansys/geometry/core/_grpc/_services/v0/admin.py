@@ -21,8 +21,6 @@
 # SOFTWARE.
 """Module containing the admin service implementation for v0."""
 
-import warnings
-
 import grpc
 import semver
 
@@ -53,13 +51,7 @@ class GRPCAdminServiceV0(GRPCAdminService):
 
     @protect_grpc
     def get_backend(self, **kwargs) -> dict:  # noqa: D102
-        # TODO: Remove this context and filter once the protobuf UserWarning is downgraded to INFO
-        # https://github.com/grpc/grpc/issues/37609
-        with warnings.catch_warnings():
-            warnings.filterwarnings(
-                "ignore", "Protobuf gencode version", UserWarning, "google.protobuf.runtime_version"
-            )
-            from google.protobuf.empty_pb2 import Empty
+        from google.protobuf.empty_pb2 import Empty
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = Empty()
@@ -104,3 +96,46 @@ class GRPCAdminServiceV0(GRPCAdminService):
             logs[chunk.log_name] += chunk.log_chunk.decode()
 
         return {"logs": logs}
+
+    @protect_grpc
+    def wait_until_healthy(self, **kwargs) -> dict:  # noqa: D102
+        from concurrent.futures import ThreadPoolExecutor
+        import time
+
+        from ansys.api.dbu.v0.admin_pb2 import HealthResponse
+
+        def _get_health_status() -> HealthResponse:
+            """Get the health status of the server."""
+            from google.protobuf.empty_pb2 import Empty
+
+            return self.stub.Health(Empty())
+
+        t_max = time.time() + kwargs["timeout"]
+        t_out = 0.1
+        while time.time() < t_max:
+            try:
+                with ThreadPoolExecutor() as executor:
+                    future = executor.submit(_get_health_status)
+                    try:
+                        result = future.result(timeout=t_out)  # seconds
+                    except (TimeoutError, grpc.RpcError) as e:
+                        # Timeout error, try again
+                        raise TimeoutError(f"Timeout/connection error... {e}")
+                if result:
+                    return {"healthy": True if result.message == "I am healthy!" else False}
+
+            except TimeoutError:
+                # Duplicate timeout and try again
+                t_now = time.time()
+                t_out *= 2
+                # If we have time to try again, continue.. but if we don't,
+                # just try for the remaining time
+                if t_now + t_out > t_max:
+                    t_out = t_max - t_now
+                continue
+
+        # If we reach here, the server is not healthy
+        target_str = kwargs["target"]
+        raise TimeoutError(
+            f"Channel health check to target '{target_str}' timed out after {kwargs['timeout']} seconds."  # noqa: E501
+        )

@@ -50,7 +50,12 @@ class _GRPCServices:
         version is used.
     """
 
-    def __init__(self, channel: grpc.Channel, version: GeometryApiProtos | str | None = None):
+    def __init__(
+        self,
+        channel: grpc.Channel,
+        version: GeometryApiProtos | str | None = None,
+        timeout: float = 5.0,
+    ):
         """
         Initialize the GRPCServices class.
 
@@ -61,9 +66,11 @@ class _GRPCServices:
         version : GeometryApiProtos | str | None
             The version of the gRPC API protocol to use. If None, the latest
             version is used.
+        timeout : float
+            The timeout in seconds for the health check. Default is 5 seconds.
         """
         # Set the proto version to be used
-        self.version = set_proto_version(channel, version)
+        self.version = set_proto_version(channel, version, timeout)
         self.channel = channel
 
         # Lazy load all the services

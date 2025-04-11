@@ -48,3 +48,8 @@ class GRPCAdminService(ABC):
     def get_logs(self, **kwargs) -> dict:
         """Get server logs."""
         pass  # pragma: no cover
+
+    @abstractmethod
+    def wait_until_healthy(self, **kwargs) -> dict:
+        """Wait until the server is healthy."""
+        pass

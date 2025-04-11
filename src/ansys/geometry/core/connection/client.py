@@ -24,13 +24,10 @@
 import atexit
 import logging
 from pathlib import Path
-import time
 from typing import Optional
 
 from beartype import beartype as check_input_types
 import grpc
-from grpc._channel import _InactiveRpcError
-from grpc_health.v1 import health_pb2, health_pb2_grpc
 import semver
 
 from ansys.geometry.core._grpc._services._service import _GRPCServices
@@ -46,55 +43,6 @@ try:
     from ansys.platform.instancemanagement import Instance
 except ModuleNotFoundError:  # pragma: no cover
     pass
-
-
-def wait_until_healthy(channel: grpc.Channel, timeout: float):
-    """Wait until a channel is healthy before returning.
-
-    Parameters
-    ----------
-    channel : ~grpc.Channel
-        Channel that must be established and healthy.
-    timeout : float
-        Timeout in seconds. Attempts are made with the following backoff strategy:
-
-        * Starts with 0.1 seconds.
-        * If the attempt fails, double the timeout.
-        * This is repeated until the next timeoff exceeds the
-          value for the remaining time. In that case, a final attempt
-          is made with the remaining time.
-        * If the total elapsed time exceeds the value for the ``timeout`` parameter,
-          a ``TimeoutError`` is raised.
-
-    Raises
-    ------
-    TimeoutError
-        Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
-    """
-    t_max = time.time() + timeout
-    health_stub = health_pb2_grpc.HealthStub(channel)
-    request = health_pb2.HealthCheckRequest(service="")
-
-    t_out = 0.1
-    while time.time() < t_max:
-        try:
-            out = health_stub.Check(request, timeout=t_out)
-            if out.status is health_pb2.HealthCheckResponse.SERVING:
-                break
-        except _InactiveRpcError:
-            # Duplicate timeout and try again
-            t_now = time.time()
-            t_out *= 2
-            # If we have time to try again, continue.. but if we don't,
-            # just try for the remaining time
-            if t_now + t_out > t_max:
-                t_out = t_max - t_now
-            continue
-    else:
-        target_str = channel._channel.target().decode()
-        raise TimeoutError(
-            f"Channel health check to target '{target_str}' timed out after {timeout} seconds."
-        )
 
 
 class GrpcClient:
@@ -158,7 +106,7 @@ class GrpcClient:
         if channel:
             # Used for PyPIM when directly providing a channel
             self._channel = channel
-            self._target = str(channel)
+            self._target = str(channel._target)
         else:
             self._target = f"{host}:{port}"
             self._channel = grpc.insecure_channel(
@@ -171,10 +119,11 @@ class GrpcClient:
 
         # do not finish initialization until channel is healthy
         self._grpc_health_timeout = timeout
-        wait_until_healthy(self._channel, self._grpc_health_timeout)
 
         # Initialize the gRPC services
-        self._services = _GRPCServices(self._channel, version=proto_version)
+        self._services = _GRPCServices(
+            self._channel, version=proto_version, timeout=self._grpc_health_timeout
+        )
 
         # Once connection with the client is established, create a logger
         self._log = LOG.add_instance_logger(
@@ -263,7 +212,9 @@ class GrpcClient:
         if self._closed:
             return False
         try:
-            wait_until_healthy(self._channel, self._grpc_health_timeout)
+            self._services.admin.wait_until_healthy(
+                timeout=self._grpc_health_timeout, target=self._target
+            )
             return True
         except TimeoutError:  # pragma: no cover
             return False

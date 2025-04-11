@@ -54,3 +54,7 @@ class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
     @protect_grpc
     def get_logs(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def wait_until_healthy(self, **kwargs):  # noqa: D102
+        raise NotImplementedError
