@@ -212,10 +212,10 @@ class GrpcClient:
         if self._closed:
             return False
         try:
-            self._services.admin.wait_until_healthy(
+            response = self._services.admin.wait_until_healthy(
                 timeout=self._grpc_health_timeout, target=self._target
             )
-            return True
+            return response["healthy"]
         except TimeoutError:  # pragma: no cover
             return False
 

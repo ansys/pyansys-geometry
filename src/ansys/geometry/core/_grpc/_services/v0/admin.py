@@ -114,6 +114,8 @@ class GRPCAdminServiceV0(GRPCAdminService):
         t_out = 0.1
         while time.time() < t_max:
             try:
+                result = None
+                # Use ThreadPoolExecutor to run the health check in a separate thread
                 with ThreadPoolExecutor() as executor:
                     future = executor.submit(_get_health_status)
                     try:
