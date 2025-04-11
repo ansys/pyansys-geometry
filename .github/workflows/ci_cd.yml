@@ -709,7 +709,7 @@ jobs:
       - name: Launch Geometry service
         run: |
           .\.venv\Scripts\Activate.ps1
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:windows-tmp          
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:windows-tmp
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
