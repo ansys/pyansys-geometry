@@ -500,7 +500,7 @@ jobs:
           docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
-  
+
       - name: Run pytest
         run: |
           pytest -v
@@ -552,7 +552,7 @@ jobs:
           docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
-  
+
       - name: Run pytest
         run: |
           pytest -v -c pytest-nographics.ini
