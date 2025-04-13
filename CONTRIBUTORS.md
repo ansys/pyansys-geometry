@@ -6,6 +6,7 @@
 
 ## Individual Contributors
 
+* [Alan George Varghese](https://github.com/agvarghe)
 * [Alex Fernandez](https://github.com/AlejandroFernandezLuces)
 * [Alex Kaszynski](https://github.com/akaszynski)
 * [Bane Sullivan](https://github.com/banesullivan)
