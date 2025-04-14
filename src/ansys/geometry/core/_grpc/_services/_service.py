@@ -27,6 +27,7 @@ from .base.admin import GRPCAdminService
 from .base.bodies import GRPCBodyService
 from .base.dbuapplication import GRPCDbuApplicationService
 from .base.named_selection import GRPCNamedSelectionService
+from .base.repair_tools import GRPCRepairToolsService
 
 
 class _GRPCServices:
@@ -71,6 +72,7 @@ class _GRPCServices:
         self._bodies = None
         self._dbu_application = None
         self._named_selection = None
+        self._repair_tools = None
 
     @property
     def bodies(self) -> GRPCBodyService:
@@ -175,3 +177,11 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._named_selection
+
+    @property
+    def repair_tools(self) -> GRPCRepairToolsService:
+        if not self._repair_tools:
+            from .v0.repair_tools import GRPCRepairToolsServiceV0
+            # TODO: Add V1 later
+            self._repair_tools = GRPCRepairToolsServiceV0(self.channel)
+        return self._repair_tools

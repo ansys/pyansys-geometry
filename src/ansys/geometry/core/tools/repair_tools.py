@@ -31,20 +31,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     InspectGeometryResult,
     InspectGeometryResultIssue,
 )
-from ansys.api.geometry.v0.repairtools_pb2 import (
-    FindAdjustSimplifyRequest,
-    FindDuplicateFacesRequest,
-    FindExtraEdgesRequest,
-    FindInexactEdgesRequest,
-    FindInterferenceRequest,
-    FindMissingFacesRequest,
-    FindShortEdgesRequest,
-    FindSmallFacesRequest,
-    FindSplitEdgesRequest,
-    FindStitchFacesRequest,
-    InspectGeometryRequest,
-    RepairGeometryRequest,
-)
+
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
@@ -119,11 +106,10 @@ class RepairTools:
         length_value = DoubleValue(value=float(length))
         body_ids = [body.id for body in bodies]
 
-        problem_areas_response = self._repair_stub.FindSplitEdges(
-            FindSplitEdgesRequest(
-                bodies_or_faces=body_ids, angle=angle_value, distance=length_value
-            )
+        problem_areas_response = self._grpc_client.services.repair_tools.find_split_edges( 
+            bodies_or_faces=body_ids, angle=angle_value, distance=length_value
         )
+        
         parent_design = get_design_from_body(bodies[0])
         return [
             SplitEdgeProblemAreas(
@@ -155,9 +141,7 @@ class RepairTools:
             return []
 
         body_ids = [body.id for body in bodies]
-        problem_areas_response = self._repair_stub.FindExtraEdges(
-            FindExtraEdgesRequest(selection=body_ids)
-        )
+        problem_areas_response = self._grpc_client.services.repair_tools.find_extra_edges(selection=body_ids)
         parent_design = get_design_from_body(bodies[0])
 
         return [
@@ -190,9 +174,7 @@ class RepairTools:
             return []
 
         body_ids = [body.id for body in bodies]
-        problem_areas_response = self._repair_stub.FindInexactEdges(
-            FindInexactEdgesRequest(selection=body_ids)
-        )
+        problem_areas_response = self._grpc_client.services.repair_tools.find_inexact_edges(selection=body_ids)
 
         parent_design = get_design_from_body(bodies[0])
 
@@ -227,12 +209,10 @@ class RepairTools:
         if not bodies:
             return []
 
-        problem_areas_response = self._repair_stub.FindShortEdges(
-            FindShortEdgesRequest(
-                selection=[body.id for body in bodies],
-                max_edge_length=DoubleValue(value=length),
-            )
-        )
+        body_ids = [body.id for body in bodies]
+
+        problem_areas_response = self._grpc_client.services.repair_tools.find_short_edges(
+        selection=body_ids, length=length)
 
         parent_design = get_design_from_body(bodies[0])
         return [
@@ -265,9 +245,7 @@ class RepairTools:
             return []
 
         body_ids = [body.id for body in bodies]
-        problem_areas_response = self._repair_stub.FindDuplicateFaces(
-            FindDuplicateFacesRequest(faces=body_ids)
-        )
+        problem_areas_response = self._grpc_client.services.repair_tools.find_duplicate_faces(faces=body_ids)
 
         parent_design = get_design_from_body(bodies[0])
         return [
@@ -299,9 +277,7 @@ class RepairTools:
         if not bodies:
             return []
         body_ids = [body.id for body in bodies]
-        problem_areas_response = self._repair_stub.FindMissingFaces(
-            FindMissingFacesRequest(faces=body_ids)
-        )
+        problem_areas_response = self._grpc_client.services.repair_tools.find_missing_faces(faces=body_ids)
         parent_design = get_design_from_body(bodies[0])
 
         return [
@@ -334,9 +310,7 @@ class RepairTools:
             return []
 
         body_ids = [body.id for body in bodies]
-        problem_areas_response = self._repair_stub.FindSmallFaces(
-            FindSmallFacesRequest(selection=body_ids)
-        )
+        problem_areas_response = self._grpc_client.services.repair_tools.find_small_faces(selection=body_ids)
         parent_design = get_design_from_body(bodies[0])
 
         return [
@@ -366,9 +340,7 @@ class RepairTools:
             List of objects representing stitch face problem areas.
         """
         body_ids = [body.id for body in bodies]
-        problem_areas_response = self._repair_stub.FindStitchFaces(
-            FindStitchFacesRequest(faces=body_ids)
-        )
+        problem_areas_response = self._grpc_client.services.repair_tools.find_stitch_faces(faces=body_ids)
         parent_design = get_design_from_body(bodies[0])
         return [
             StitchFaceProblemAreas(
@@ -400,11 +372,7 @@ class RepairTools:
         body_ids = [body.id for body in bodies]
 
         parent_design = get_design_from_body(bodies[0])
-        problem_areas_response = self._repair_stub.FindAdjustSimplify(
-            FindAdjustSimplifyRequest(
-                selection=body_ids,
-            )
-        )
+        problem_areas_response = self._grpc_client.services.repair_tools.find_simplify(selection=body_ids)
 
         return [
             UnsimplifiedFaceProblemAreas(
@@ -452,9 +420,10 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         body_ids = [body.id for body in bodies]
         cut_smaller_body_bool = BoolValue(value=cut_smaller_body)
-        problem_areas_response = self._repair_stub.FindInterference(
-            FindInterferenceRequest(bodies=body_ids, cut_smaller_body=cut_smaller_body_bool)
-        )
+        problem_areas_response = self._grpc_client.services.repair_tools.find_interferences(
+        bodies=body_ids,
+        cut_smaller_body=cut_smaller_body_bool,
+    )
 
         return [
             InterferenceProblemAreas(
@@ -500,13 +469,13 @@ class RepairTools:
         if not bodies:
             return RepairToolMessage(False, [], [], 0, 0)
 
-        response = self._repair_stub.FindAndFixShortEdges(
-            FindShortEdgesRequest(
-                selection=[body.id for body in bodies],
-                max_edge_length=DoubleValue(value=length),
-                comprehensive=comprehensive_result,
-            )
-        )
+        body_ids = [body.id for body in bodies]
+
+        response = self._grpc_client.services.repair_tools.find_and_fix_short_edges(
+        selection=body_ids,
+        length=length,
+        comprehensive_result=comprehensive_result,
+    )
 
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
@@ -553,10 +522,10 @@ class RepairTools:
         if not bodies:
             return RepairToolMessage(False, [], [], 0, 0)
 
-        response = self._repair_stub.FindAndFixExtraEdges(
-            FindExtraEdgesRequest(
-                selection=[body.id for body in bodies], comprehensive=comprehensive_result
-            )
+        body_ids = [body.id for body in bodies]
+        response = self._grpc_client.services.repair_tools.find_and_fix_extra_edges(
+        selection=body_ids,
+        comprehensive_result=comprehensive_result,
         )
 
         parent_design = get_design_from_body(bodies[0])
@@ -615,14 +584,12 @@ class RepairTools:
         angle_value = DoubleValue(value=float(angle))
         length_value = DoubleValue(value=float(length))
         body_ids = [body.id for body in bodies]
-
-        response = self._repair_stub.FindAndFixSplitEdges(
-            FindSplitEdgesRequest(
-                bodies_or_faces=body_ids,
-                angle=angle_value,
-                distance=length_value,
-                comprehensive=comprehensive_result,
-            )
+        
+        response = self._grpc_client.services.repair_tools.find_and_fix_split_edges(
+            bodies_or_faces=body_ids,
+            angle=angle_value,
+            length=length_value,
+            comprehensive_result=comprehensive_result,
         )
 
         parent_design = get_design_from_body(bodies[0])
@@ -670,9 +637,10 @@ class RepairTools:
 
         body_ids = [body.id for body in bodies]
 
-        response = self._repair_stub.FindAndSimplify(
-            FindAdjustSimplifyRequest(selection=body_ids, comprehensive=comprehensive_result)
-        )
+        response = self._grpc_client.services.repair_tools.find_and_fix_simplify(
+        selection=body_ids,
+        comprehensive_result=comprehensive_result,
+    )   
 
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
@@ -706,9 +674,7 @@ class RepairTools:
         """
         parent_design = self._modeler.get_active_design()
         body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
-        inspect_result_response = self._repair_stub.InspectGeometry(
-            InspectGeometryRequest(bodies=body_ids)
-        )
+        inspect_result_response = self._grpc_client.services.repair_tools.inspect_geometry(bodies=body_ids)
         return self.__create_inspect_result_from_response(
             parent_design, inspect_result_response.issues_by_body
         )
@@ -766,9 +732,7 @@ class RepairTools:
             Message containing success of the operation.
         """
         body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
-        repair_result_response = self._repair_stub.RepairGeometry(
-            RepairGeometryRequest(bodies=body_ids)
-        )
+        repair_result_response = self._grpc_client.services.repair_tools.repair_geometry(bodies=body_ids)
 
         message = RepairToolMessage(repair_result_response.result.success, [], [])
         return message
