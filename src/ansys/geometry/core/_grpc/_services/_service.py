@@ -26,8 +26,8 @@ from .._version import GeometryApiProtos, set_proto_version
 from .base.admin import GRPCAdminService
 from .base.bodies import GRPCBodyService
 from .base.dbuapplication import GRPCDbuApplicationService
-from .base.named_selection import GRPCNamedSelectionService
 from .base.measurement_tools import GRPCMeasurementToolsService
+from .base.named_selection import GRPCNamedSelectionService
 
 
 class _GRPCServices:
@@ -177,7 +177,7 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._named_selection
-    
+
     @property
     def measurement_tools(self) -> GRPCMeasurementToolsService:
         """
