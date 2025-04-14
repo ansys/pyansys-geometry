@@ -61,6 +61,7 @@ class GRPCMeasurementToolsServiceV0(GRPCMeasurementToolsService):
             request = MinDistanceBetweenObjectsRequest(bodies=bodies)
         else:
             from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+
             request = MinDistanceBetweenObjectsRequest(
                 selection=[EntityIdentifier(id=selection[0]), EntityIdentifier(id=selection[1])]
             )
