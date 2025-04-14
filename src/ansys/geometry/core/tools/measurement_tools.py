@@ -103,6 +103,7 @@ class MeasurementTools:
         """
         response = self._grpc_client.services.measurement_tools.min_distance_between_objects(
             bodies=[object1.id, object2.id],
-            selection=[object1._grpc_id, object2._grpc_id],
+            selection=[object1.id, object2.id],
+            backend_version=self._grpc_client.backend_version,
         )
         return Gap._from_distance_response(response["distance"])

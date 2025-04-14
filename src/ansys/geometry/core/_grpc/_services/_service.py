@@ -188,7 +188,7 @@ class _GRPCServices:
         MeasurementToolsServiceBase
             The measurement tools service for the specified version.
         """
-        if not self._named_selection:
+        if not self._measurement_tools:
             # Import the appropriate measurement tools service based on the version
             from .v0.measurement_tools import GRPCMeasurementToolsServiceV0
             from .v1.measurement_tools import GRPCMeasurementToolsServiceV1
