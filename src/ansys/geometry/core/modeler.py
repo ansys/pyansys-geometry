@@ -37,6 +37,7 @@ import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.tools.unsupported import UnsupportedCommands
@@ -118,6 +119,7 @@ class Modeler:
         self._design: Optional["Design"] = None
 
         # Enabling tools/commands for all: repair and prepare tools, geometry commands
+        self._measurement_tools = MeasurementTools(self._grpc_client)
         self._repair_tools = RepairTools(self._grpc_client, self)
         self._prepare_tools = PrepareTools(self._grpc_client)
         self._geometry_commands = GeometryCommands(self._grpc_client)
@@ -583,6 +585,12 @@ class Modeler:
     def prepare_tools(self) -> PrepareTools:
         """Access to prepare tools."""
         return self._prepare_tools
+
+    @property
+    @min_backend_version(24, 2, 0)
+    def measurement_tools(self) -> MeasurementTools:
+        """Access to measurement tools."""
+        return self._measurement_tools
 
     @property
     def geometry_commands(self) -> "GeometryCommands":
