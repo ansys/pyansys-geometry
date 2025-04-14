@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Module containing the measurement tools service implementation (abstraction layer)."""
 
-
 from abc import ABC, abstractmethod
 
 import grpc
@@ -43,4 +42,4 @@ class GRPCMeasurementToolsService(ABC):
     @abstractmethod
     def min_distance_between_objects(self, **kwargs) -> dict:
         """Calculate the minimum distance between two objects."""
-        pass # pragma: no cover
+        pass  # pragma: no cover
