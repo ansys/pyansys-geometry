@@ -49,7 +49,23 @@ except ModuleNotFoundError:  # pragma: no cover
 
 
 def _create_geometry_channel(target: str) -> grpc.Channel:
-    """Create a temporary channel."""
+    """Create a Geometry service gRPC channel.
+
+    Notes
+    -----
+    Contains specific options for the Geometry service.
+
+    Parameters
+    ----------
+    target : str
+        Target of the channel. This is usually a string in the form of
+        ``host:port``.
+
+    Returns
+    -------
+    ~grpc.Channel
+        gRPC channel for the Geometry service.
+    """
     return grpc.insecure_channel(
         target,
         options=[
@@ -59,7 +75,7 @@ def _create_geometry_channel(target: str) -> grpc.Channel:
     )
 
 
-def wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Channel | None:
+def wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Channel:
     """Wait until a channel is healthy before returning.
 
     Parameters
@@ -187,9 +203,8 @@ class GrpcClient:
 
         if channel:
             # Used for PyPIM when directly providing a channel
-            self._channel = channel
             self._target = str(channel)
-            wait_until_healthy(self._channel, self._grpc_health_timeout)
+            self._channel = wait_until_healthy(channel, self._grpc_health_timeout)
         else:
             self._target = f"{host}:{port}"
             self._channel = wait_until_healthy(self._target, self._grpc_health_timeout)
