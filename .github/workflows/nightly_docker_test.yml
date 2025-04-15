@@ -164,7 +164,7 @@ jobs:
         run: docker image prune -f
 
       - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@fab6aca2609ba706ebc981d066278d47ab4af0fc # master
+        uses: skitionek/notify-microsoft-teams@fab6aca2609ba706ebc981d066278d47ab4af0fc # v1.0.9
         if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
@@ -230,7 +230,7 @@ jobs:
           docker rm ${{ env.GEO_CONT_NAME }}
 
       - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@fab6aca2609ba706ebc981d066278d47ab4af0fc # master
+        uses: skitionek/notify-microsoft-teams@fab6aca2609ba706ebc981d066278d47ab4af0fc # v1.0.9
         if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
