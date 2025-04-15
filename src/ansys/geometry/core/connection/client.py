@@ -93,11 +93,15 @@ def wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Chan
     t_out = 0.1
 
     # If the channel is a string, create a channel using the default insecure channel
-    channel = _create_geometry_channel(channel) if isinstance(channel, str) else channel
+    channel_creation_required = True if isinstance(channel, str) else False
+    tmp_channel = None
 
     while time.time() < t_max:
         try:
-            health_stub = health_pb2_grpc.HealthStub(channel)
+            tmp_channel = (
+                _create_geometry_channel(channel) if channel_creation_required else channel
+            )
+            health_stub = health_pb2_grpc.HealthStub(tmp_channel)
             request = health_pb2.HealthCheckRequest(service="")
 
             out = health_stub.Check(request, timeout=t_out)
@@ -113,12 +117,12 @@ def wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Chan
                 t_out = t_max - t_now
             continue
     else:
-        target_str = channel._channel.target().decode()
+        target_str = tmp_channel._channel.target().decode()
         raise TimeoutError(
             f"Channel health check to target '{target_str}' timed out after {timeout} seconds."
         )
 
-    return channel
+    return tmp_channel
 
 
 class GrpcClient:
