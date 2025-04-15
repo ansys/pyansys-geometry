@@ -299,9 +299,8 @@ class GrpcClient:
         if self._closed:
             return False
         try:
-            wait_until_healthy(self._channel, self._grpc_health_timeout)
-            return True
-        except TimeoutError:  # pragma: no cover
+            return self.services.admin.get_service_status().get("healthy")
+        except Exception:  # pragma: no cover
             return False
 
     def __repr__(self) -> str:
