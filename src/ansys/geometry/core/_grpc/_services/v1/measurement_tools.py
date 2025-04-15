@@ -48,5 +48,5 @@ class GRPCMeasurementToolsServiceV1(GRPCMeasurementToolsService):
         self.stub = MeasureToolsStub(channel)
 
     @protect_grpc
-    def min_distance_between_objects(self, **kwargs):  # noqa: D102
+    def min_distance_between_objects(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
