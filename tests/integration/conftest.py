@@ -157,6 +157,10 @@ def session_modeler(docker_instance):
     except OSError:
         pass
 
+    import time
+    
+    time.sleep(10)
+
     modeler = Modeler(
         docker_instance=docker_instance, logging_level=logging.DEBUG, logging_file=log_file_path
     )
