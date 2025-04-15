@@ -25,8 +25,7 @@ from typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc.checks import min_backend_version
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
-from ansys.geometry.core.typing import Real
+from ansys.geometry.core.misc.measurements import Distance
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -51,23 +50,6 @@ class Gap:
     def distance(self) -> Distance:
         """Returns the closest distance between two bodies."""
         return self._distance
-
-    @classmethod
-    def _from_distance_response(cls, distance: Real) -> "Gap":
-        """Construct ``Gap`` object from distance response.
-
-        Parameters
-        ----------
-        response : MinDistanceBetweenObjectsResponse
-            Response from the gRPC server.
-
-        Notes
-        -----
-        This method is used internally to construct a ``Gap`` object from a
-        gRPC response.
-        """
-        distance = Distance(distance, unit=DEFAULT_UNITS.LENGTH)
-        return cls(distance)
 
 
 class MeasurementTools:
@@ -102,8 +84,7 @@ class MeasurementTools:
             Gap between two bodies.
         """
         response = self._grpc_client.services.measurement_tools.min_distance_between_objects(
-            bodies=[object1.id, object2.id],
             selection=[object1.id, object2.id],
             backend_version=self._grpc_client.backend_version,
         )
-        return Gap._from_distance_response(response["distance"])
+        return Gap(response.get("distance"))

@@ -129,7 +129,7 @@ class NamedSelection:
         response = self._grpc_client.services.named_selection.create_named_selection(
             name=name, members=ids
         )
-        self._id = response["id"]
+        self._id = response.get("id")
 
     @property
     def id(self) -> str:
@@ -204,15 +204,15 @@ class NamedSelection:
             return
 
         # Get all entities from the named selection
-        resp = self._grpc_client.services.named_selection.get_named_selection(id=self._id)
+        response = self._grpc_client.services.named_selection.get_named_selection(id=self._id)
 
         # Check if the named selection has changed
         ids = {
-            "bodies": resp["bodies"],
-            "faces": resp["faces"],
-            "edges": resp["edges"],
-            "beams": resp["beams"],
-            "design_points": resp["design_points"],
+            "bodies": response.get("bodies"),
+            "faces": response.get("faces"),
+            "edges": response.get("edges"),
+            "beams": response.get("beams"),
+            "design_points": response.get("design_points"),
         }
 
         for key in ids:

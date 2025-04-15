@@ -189,8 +189,8 @@ class GrpcClient:
         response = self._services.admin.get_backend()
 
         # Store the backend type and version
-        self._backend_type = response["backend"]
-        self._backend_version = response["version"]
+        self._backend_type = response.get("backend")
+        self._backend_version = response.get("version")
 
         # Register the close method to be called at exit - irrespectively of
         # the user calling it or not...
@@ -357,8 +357,7 @@ class GrpcClient:
             the current logs are retrieved). The ``dump_to_file`` parameter
             must be set to ``True``.
         """
-        response = self._services.admin.get_logs(all_logs=all_logs)
-        logs: dict[str, str] = response["logs"]
+        logs: dict[str, str] = self._services.admin.get_logs(all_logs=all_logs).get("logs")
 
         # Let's handle the various scenarios...
         if not dump_to_file:
