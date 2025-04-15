@@ -82,15 +82,13 @@ def wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Chan
     ------
     TimeoutError
         Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
-    
+
     Returns
     -------
     grpc.Channel
         The channel that was passed in. This channel is guaranteed to be healthy.
         If a string was passed in, a channel is created using the default insecure channel.
     """
-
-
     t_max = time.time() + timeout
     t_out = 0.1
 
@@ -190,9 +188,7 @@ class GrpcClient:
             wait_until_healthy(self._channel, self._grpc_health_timeout)
         else:
             self._target = f"{host}:{port}"
-            self._channel = wait_until_healthy(
-                self._target, self._grpc_health_timeout
-            )
+            self._channel = wait_until_healthy(self._target, self._grpc_health_timeout)
 
         # Initialize the gRPC services
         self._services = _GRPCServices(self._channel, version=proto_version)
