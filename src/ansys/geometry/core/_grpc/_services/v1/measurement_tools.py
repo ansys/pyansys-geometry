@@ -43,7 +43,7 @@ class GRPCMeasurementToolsServiceV1(GRPCMeasurementToolsService):
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v0.measuretools_pb2_grpc import MeasureToolsStub
+        from ansys.api.geometry.v1.measuretools_pb2_grpc import MeasureToolsStub
 
         self.stub = MeasureToolsStub(channel)
 
