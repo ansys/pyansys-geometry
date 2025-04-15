@@ -74,7 +74,7 @@ class _GRPCServices:
         self._dbu_application = None
         self._named_selection = None
         self._measurement_tools = None
-		self._prepare_tools = None
+        self._prepare_tools = None
 
     @property
     def bodies(self) -> GRPCBodyService:
@@ -180,7 +180,7 @@ class _GRPCServices:
 
         return self._named_selection
 
-	@property
+    @property
     def measurement_tools(self) -> GRPCMeasurementToolsService:
         """
         Get the measurement tools service for the specified version.
@@ -206,7 +206,7 @@ class _GRPCServices:
 
         return self._measurement_tools
         
-	@property
+    @property
     def prepare_tools(self) -> GRPCPrepareToolsService:
         """
         Get the prepare tools service for the specified version.
