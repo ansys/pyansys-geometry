@@ -158,7 +158,7 @@ def session_modeler(docker_instance):
         pass
 
     import time
-    
+
     time.sleep(10)
 
     modeler = Modeler(
