@@ -48,13 +48,25 @@ except ModuleNotFoundError:  # pragma: no cover
     pass
 
 
-def wait_until_healthy(channel: grpc.Channel, timeout: float):
+def _create_geometry_channel(target: str) -> grpc.Channel:
+    """Create a temporary channel."""
+    return grpc.insecure_channel(
+        target,
+        options=[
+            ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
+            ("grpc.max_send_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
+        ],
+    )
+
+
+def wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Channel | None:
     """Wait until a channel is healthy before returning.
 
     Parameters
     ----------
-    channel : ~grpc.Channel
-        Channel that must be established and healthy.
+    channel : ~grpc.Channel | str
+        Channel that must be established and healthy. The target can also be
+        passed in. In that case, a channel is created using the default insecure channel.
     timeout : float
         Timeout in seconds. Attempts are made with the following backoff strategy:
 
@@ -70,14 +82,28 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
     ------
     TimeoutError
         Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
+    
+    Returns
+    -------
+    grpc.Channel
+        The channel that was passed in. This channel is guaranteed to be healthy.
+        If a string was passed in, a channel is created using the default insecure channel.
     """
-    t_max = time.time() + timeout
-    health_stub = health_pb2_grpc.HealthStub(channel)
-    request = health_pb2.HealthCheckRequest(service="")
 
+
+    t_max = time.time() + timeout
     t_out = 0.1
+
+    # If the channel is a string, create a channel using the default insecure channel
+    channel_creation_required = True if isinstance(channel, str) else False
+
     while time.time() < t_max:
         try:
+            health_stub = health_pb2_grpc.HealthStub(
+                _create_geometry_channel(channel) if channel_creation_required else channel
+            )
+            request = health_pb2.HealthCheckRequest(service="")
+
             out = health_stub.Check(request, timeout=t_out)
             if out.status is health_pb2.HealthCheckResponse.SERVING:
                 break
@@ -91,7 +117,7 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
                 t_out = t_max - t_now
             continue
     else:
-        target_str = channel._channel.target().decode()
+        target_str = channel._channel.target().decode() if channel_creation_required else channel
         raise TimeoutError(
             f"Channel health check to target '{target_str}' timed out after {timeout} seconds."
         )
@@ -155,23 +181,18 @@ class GrpcClient:
         self._remote_instance = remote_instance
         self._docker_instance = docker_instance
         self._product_instance = product_instance
+        self._grpc_health_timeout = timeout
+
         if channel:
             # Used for PyPIM when directly providing a channel
             self._channel = channel
             self._target = str(channel)
+            wait_until_healthy(self._channel, self._grpc_health_timeout)
         else:
             self._target = f"{host}:{port}"
-            self._channel = grpc.insecure_channel(
-                self._target,
-                options=[
-                    ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
-                    ("grpc.max_send_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
-                ],
+            self._channel = wait_until_healthy(
+                self._target, self._grpc_health_timeout
             )
-
-        # do not finish initialization until channel is healthy
-        self._grpc_health_timeout = timeout
-        wait_until_healthy(self._channel, self._grpc_health_timeout)
 
         # Initialize the gRPC services
         self._services = _GRPCServices(self._channel, version=proto_version)
