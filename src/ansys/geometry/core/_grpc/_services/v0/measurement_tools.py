@@ -50,6 +50,7 @@ class GRPCMeasurementToolsServiceV0(GRPCMeasurementToolsService):
     @protect_grpc
     def min_distance_between_objects(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.measuretools_pb2 import MinDistanceBetweenObjectsRequest
+
         from ..base.conversions import to_distance
 
         # Create the request - assumes all inputs are valid and of the proper type

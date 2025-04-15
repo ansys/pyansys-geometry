@@ -91,10 +91,10 @@ class PrepareTools:
         parent_design = get_design_from_face(sealing_faces[0])
 
         response = self._grpc_client._services.prepare_tools.extract_volume_from_faces(
-            sealing_faces=sealing_faces, 
+            sealing_faces=sealing_faces,
             inside_faces=inside_faces,
         )
-        
+
         if response.get("success"):
             bodies_ids = response.get("created_bodies")
             if len(bodies_ids) > 0:

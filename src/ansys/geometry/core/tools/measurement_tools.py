@@ -51,6 +51,7 @@ class Gap:
         """Returns the closest distance between two bodies."""
         return self._distance
 
+
 class MeasurementTools:
     """Measurement tools for PyAnsys Geometry.
 

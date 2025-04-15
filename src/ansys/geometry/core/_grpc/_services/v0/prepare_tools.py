@@ -66,7 +66,6 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
             "success": response.success,
             "created_bodies": [body.id for body in response.created_bodies],
         }
-        
 
     @protect_grpc
     def extract_volume_from_edge_loops(self, **kwargs) -> dict:  # noqa: D102
@@ -87,7 +86,6 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
             "success": response.success,
             "created_bodies": [body.id for body in response.created_bodies],
         }
-        
 
     @protect_grpc
     def remove_rounds(self, **kwargs) -> dict:  # noqa: D102
@@ -109,7 +107,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         }
 
     @protect_grpc
-    def share_topology(self, **kwargs) -> dict:  # noqa: D102 
+    def share_topology(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.models_pb2 import Body
         from ansys.api.geometry.v0.preparetools_pb2 import ShareTopologyRequest
 
@@ -129,7 +127,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         }
 
     @protect_grpc
-    def enhanced_share_topology(self, **kwargs) -> dict:  # noqa: D102 
+    def enhanced_share_topology(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.models_pb2 import Body
         from ansys.api.geometry.v0.preparetools_pb2 import ShareTopologyRequest
 
@@ -154,7 +152,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         }
 
     @protect_grpc
-    def find_logos(self, **kwargs) -> dict:  # noqa: D102 
+    def find_logos(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.models_pb2 import FindLogoOptions
         from ansys.api.geometry.v0.preparetools_pb2 import FindLogosRequest
@@ -181,7 +179,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         }
 
     @protect_grpc
-    def find_and_remove_logos(self, **kwargs) -> dict:  # noqa: D102 
+    def find_and_remove_logos(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.models_pb2 import FindLogoOptions
         from ansys.api.geometry.v0.preparetools_pb2 import FindLogosRequest
@@ -202,6 +200,4 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         response = self.stub.FindAndRemoveLogos(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.success
-        }
+        return {"success": response.success}
