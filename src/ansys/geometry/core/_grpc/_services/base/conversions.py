@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Module containing server-version agnostic conversions."""
 
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Measurement
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance, Measurement
 
 
 def from_measurement_to_server_length(input: Measurement) -> float:
@@ -54,3 +54,24 @@ def from_measurement_to_server_angle(input: Measurement) -> float:
         Angle value in server-defined units. By default, radians.
     """
     return input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
+
+
+def to_distance(value: float | int) -> Distance:
+    """Convert a server value to a Distance object.
+
+    Notes
+    -----
+    The value is converted to a Distance object using the default server length unit.
+    The value should represent a length in the server's unit system.
+
+    Parameters
+    ----------
+    value : float | int
+        Value to convert.
+
+    Returns
+    -------
+    Distance
+        Converted distance.
+    """
+    return Distance(value, DEFAULT_UNITS.SERVER_LENGTH)

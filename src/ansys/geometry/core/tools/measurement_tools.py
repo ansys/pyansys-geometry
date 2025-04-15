@@ -23,15 +23,9 @@
 
 from typing import TYPE_CHECKING, Union
 
-from ansys.api.geometry.v0.measuretools_pb2 import (
-    MinDistanceBetweenObjectsRequest,
-    MinDistanceBetweenObjectsResponse,
-)
-from ansys.api.geometry.v0.measuretools_pb2_grpc import MeasureToolsStub
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.checks import min_backend_version
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
+from ansys.geometry.core.misc.measurements import Distance
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -57,23 +51,6 @@ class Gap:
         """Returns the closest distance between two bodies."""
         return self._distance
 
-    @classmethod
-    def _from_distance_response(cls, response: MinDistanceBetweenObjectsResponse) -> "Gap":
-        """Construct ``Gap`` object from distance response.
-
-        Parameters
-        ----------
-        response : MinDistanceBetweenObjectsResponse
-            Response from the gRPC server.
-
-        Notes
-        -----
-        This method is used internally to construct a ``Gap`` object from a
-        gRPC response.
-        """
-        distance = Distance(response.gap.distance, unit=DEFAULT_UNITS.LENGTH)
-        return cls(distance)
-
 
 class MeasurementTools:
     """Measurement tools for PyAnsys Geometry.
@@ -84,13 +61,10 @@ class MeasurementTools:
         gRPC client to use for the measurement tools.
     """
 
-    @protect_grpc
     def __init__(self, grpc_client: GrpcClient):
         """Initialize measurement tools class."""
         self._grpc_client = grpc_client
-        self._measure_stub = MeasureToolsStub(self._grpc_client.channel)
 
-    @protect_grpc
     @min_backend_version(24, 2, 0)
     def min_distance_between_objects(
         self, object1: Union["Body", "Face", "Edge"], object2: Union["Body", "Face", "Edge"]
@@ -109,12 +83,8 @@ class MeasurementTools:
         Gap
             Gap between two bodies.
         """
-        if self._grpc_client.backend_version < (25, 2, 0):
-            response = self._measure_stub.MinDistanceBetweenObjects(
-                MinDistanceBetweenObjectsRequest(bodies=[object1.id, object2.id])
-            )
-        else:
-            response = self._measure_stub.MinDistanceBetweenSelectionObjects(
-                MinDistanceBetweenObjectsRequest(selection=[object1._grpc_id, object2._grpc_id])
-            )
-        return Gap._from_distance_response(response)
+        response = self._grpc_client.services.measurement_tools.min_distance_between_objects(
+            selection=[object1.id, object2.id],
+            backend_version=self._grpc_client.backend_version,
+        )
+        return Gap(response.get("distance"))
