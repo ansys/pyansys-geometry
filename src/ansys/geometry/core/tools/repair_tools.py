@@ -73,7 +73,6 @@ class RepairTools:
         self._modeler = modeler
         self._grpc_client = grpc_client
 
-
     @protect_grpc
     def find_split_edges(
         self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
