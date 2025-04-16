@@ -209,7 +209,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         
         # Create the request - assumes all inputs are valid and of the proper type
         request = RemoveLogoRequest(
-            face_ids=[EntityIdentifier(id=face.id) for face in kwargs["face_ids"]],
+            face_ids=[EntityIdentifier(id=id) for id in kwargs["face_ids"]],
         )
         
         # Call the gRPC service
