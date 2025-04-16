@@ -9,6 +9,86 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.10.5 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.5>`_ - April 16, 2025
+===========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - grpc measurement tools stub implementation
+          - `#1909 <https://github.com/ansys/pyansys-geometry/pull/1909>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - bump ansys-api-geometry from 0.4.56 to 0.4.57
+          - `#1906 <https://github.com/ansys/pyansys-geometry/pull/1906>`_
+
+        * - bump grpcio limits and handle erratic gRPC channel creation
+          - `#1913 <https://github.com/ansys/pyansys-geometry/pull/1913>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update ``CONTRIBUTORS.md`` with the latest contributors
+          - `#1907 <https://github.com/ansys/pyansys-geometry/pull/1907>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - is_suppressed is not available until 25R2
+          - `#1916 <https://github.com/ansys/pyansys-geometry/pull/1916>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - update CHANGELOG for v0.10.4
+          - `#1901 <https://github.com/ansys/pyansys-geometry/pull/1901>`_
+
+        * - make doc releases dependent on GH and PyPI release
+          - `#1902 <https://github.com/ansys/pyansys-geometry/pull/1902>`_
+
+        * - bump ansys/actions from 9.0.1 to 9.0.2 in the actions group
+          - `#1903 <https://github.com/ansys/pyansys-geometry/pull/1903>`_
+
+        * - bump skitionek/notify-microsoft-teams from 190d4d92146df11f854709774a4dae6eaf5e2aa3 to fab6aca2609ba706ebc981d066278d47ab4af0fc in the actions group
+          - `#1910 <https://github.com/ansys/pyansys-geometry/pull/1910>`_
+
+        * - pre-commit automatic update
+          - `#1911 <https://github.com/ansys/pyansys-geometry/pull/1911>`_
+
+        * - bump the actions group with 2 updates
+          - `#1915 <https://github.com/ansys/pyansys-geometry/pull/1915>`_
+
+        * - update CHANGELOG for v0.8.3
+          - `#1917 <https://github.com/ansys/pyansys-geometry/pull/1917>`_
+
+        * - update CHANGELOG for v0.9.2
+          - `#1918 <https://github.com/ansys/pyansys-geometry/pull/1918>`_
+
+
 `0.10.4 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.4>`_ - April 09, 2025
 ===========================================================================================
 
@@ -414,6 +494,14 @@ This document contains the release notes for the PyAnsys Geometry project.
           - `#1833 <https://github.com/ansys/pyansys-geometry/pull/1833>`_
 
 
+`0.9.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.9.2>`_ - April 16, 2025
+=========================================================================================
+
+Fixed
+^^^^^
+
+- is_suppressed is not available until 25R2 `#1916 <https://github.com/ansys/pyansys-geometry/pull/1916>`_
+
 `0.9.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.9.1>`_ - 2025-02-28
 =====================================================================================
 
@@ -521,6 +609,14 @@ Test
 - Expand pattern tests `#1713 <https://github.com/ansys/pyansys-geometry/pull/1713>`_
 - set body name `#1727 <https://github.com/ansys/pyansys-geometry/pull/1727>`_
 - activate 8 linux tests `#1745 <https://github.com/ansys/pyansys-geometry/pull/1745>`_
+
+`0.8.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.8.3>`_ - April 16, 2025
+=========================================================================================
+
+Fixed
+^^^^^
+
+- is_suppressed is not available until 25R2 `#1916 <https://github.com/ansys/pyansys-geometry/pull/1916>`_
 
 `0.8.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.8.2>`_ - 2025-01-29
 =====================================================================================
