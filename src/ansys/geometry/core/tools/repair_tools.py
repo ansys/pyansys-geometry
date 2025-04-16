@@ -71,6 +71,8 @@ class RepairTools:
     def __init__(self, grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize a new instance of the ``RepairTools`` class."""
         self._modeler = modeler
+        self._grpc_client = grpc_client
+
 
     @protect_grpc
     def find_split_edges(
