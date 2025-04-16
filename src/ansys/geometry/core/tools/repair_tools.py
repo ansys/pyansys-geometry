@@ -32,7 +32,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     InspectGeometryResultIssue,
 )
 
-from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
@@ -73,7 +72,6 @@ class RepairTools:
     def __init__(self, grpc_client: GrpcClient, modeler: "Modeler"):
         """Initialize a new instance of the ``RepairTools`` class."""
         self._grpc_client = grpc_client
-        self._repair_stub = RepairToolsStub(self._grpc_client.channel)
         self._modeler = modeler
 
     @protect_grpc
