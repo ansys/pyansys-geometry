@@ -853,6 +853,7 @@ class MasterBody(IBody):
         self.set_fill_style(value)
 
     @property
+    @min_backend_version(25, 2, 0)
     def is_suppressed(self) -> bool:  # noqa: D102
         response = self._grpc_client.services.bodies.is_suppressed(id=self.id)
         return response.get("result")
