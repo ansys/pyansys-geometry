@@ -252,7 +252,7 @@ class GeometryPlotter(PlotterInterface):
         try:
             if body.is_suppressed:
                 return
-        except GeometryRuntimeError: # pragma: no cover
+        except GeometryRuntimeError:  # pragma: no cover
             # For backward compatibility with older versions of PyAnsys Geometry
             # Inserted in 25R2
             pass
