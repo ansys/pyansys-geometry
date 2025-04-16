@@ -414,6 +414,14 @@ This document contains the release notes for the PyAnsys Geometry project.
           - `#1833 <https://github.com/ansys/pyansys-geometry/pull/1833>`_
 
 
+`0.9.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.9.2>`_ - April 16, 2025
+=========================================================================================
+
+Fixed
+^^^^^
+
+- is_suppressed is not available until 25R2 `#1916 <https://github.com/ansys/pyansys-geometry/pull/1916>`_
+
 `0.9.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.9.1>`_ - 2025-02-28
 =====================================================================================
 
@@ -521,6 +529,14 @@ Test
 - Expand pattern tests `#1713 <https://github.com/ansys/pyansys-geometry/pull/1713>`_
 - set body name `#1727 <https://github.com/ansys/pyansys-geometry/pull/1727>`_
 - activate 8 linux tests `#1745 <https://github.com/ansys/pyansys-geometry/pull/1745>`_
+
+`0.8.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.8.3>`_ - April 16, 2025
+=========================================================================================
+
+Fixed
+^^^^^
+
+- is_suppressed is not available until 25R2 `#1916 <https://github.com/ansys/pyansys-geometry/pull/1916>`_
 
 `0.8.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.8.2>`_ - 2025-01-29
 =====================================================================================

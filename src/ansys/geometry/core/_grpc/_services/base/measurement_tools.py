@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the admin service implementation (abstraction layer)."""
+"""Module containing the measurement tools service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCAdminService(ABC):
-    """Admin service for gRPC communication with the Geometry server.
+class GRPCMeasurementToolsService(ABC):
+    """Measurement tools service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,20 +36,10 @@ class GRPCAdminService(ABC):
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the AdminServiceBase class."""
+        """Initialize the MeasurementToolsService class."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def get_backend(self, **kwargs) -> dict:
-        """Get server information."""
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def get_logs(self, **kwargs) -> dict:
-        """Get server logs."""
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def get_service_status(self, **kwargs) -> dict:
-        """Get server status (i.e. healthy or not)."""
+    def min_distance_between_objects(self, **kwargs) -> dict:
+        """Calculate the minimum distance between two objects."""
         pass  # pragma: no cover

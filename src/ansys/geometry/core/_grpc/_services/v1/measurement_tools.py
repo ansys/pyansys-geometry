@@ -19,15 +19,21 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the admin service implementation (abstraction layer)."""
-
-from abc import ABC, abstractmethod
+"""Module containing the measurement tools service implementation for v0."""
 
 import grpc
 
+from ansys.geometry.core.errors import protect_grpc
 
-class GRPCAdminService(ABC):
-    """Admin service for gRPC communication with the Geometry server.
+from ..base.measurement_tools import GRPCMeasurementToolsService
+
+
+class GRPCMeasurementToolsServiceV1(GRPCMeasurementToolsService):
+    """Measurement tools service for gRPC communication with the Geometry server.
+
+    This class provides methods to interact with the Geometry server's
+    measurement tools service. It is specifically designed for the v0 version of the
+    Geometry API.
 
     Parameters
     ----------
@@ -35,21 +41,12 @@ class GRPCAdminService(ABC):
         The gRPC channel to the server.
     """
 
-    def __init__(self, channel: grpc.Channel):
-        """Initialize the AdminServiceBase class."""
-        pass  # pragma: no cover
+    @protect_grpc
+    def __init__(self, channel: grpc.Channel):  # noqa: D102
+        from ansys.api.geometry.v1.measuretools_pb2_grpc import MeasureToolsStub
 
-    @abstractmethod
-    def get_backend(self, **kwargs) -> dict:
-        """Get server information."""
-        pass  # pragma: no cover
+        self.stub = MeasureToolsStub(channel)
 
-    @abstractmethod
-    def get_logs(self, **kwargs) -> dict:
-        """Get server logs."""
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def get_service_status(self, **kwargs) -> dict:
-        """Get server status (i.e. healthy or not)."""
-        pass  # pragma: no cover
+    @protect_grpc
+    def min_distance_between_objects(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError

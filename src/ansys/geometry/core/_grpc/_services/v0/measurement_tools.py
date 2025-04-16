@@ -19,20 +19,20 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the admin service implementation for v1."""
+"""Module containing the measurement tools service implementation for v0."""
 
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.admin import GRPCAdminService
+from ..base.measurement_tools import GRPCMeasurementToolsService
 
 
-class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
-    """Admin service for gRPC communication with the Geometry server.
+class GRPCMeasurementToolsServiceV0(GRPCMeasurementToolsService):
+    """Measurement tools service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
-    admin service. It is specifically designed for the v1 version of the
+    measurement tools service. It is specifically designed for the v0 version of the
     Geometry API.
 
     Parameters
@@ -43,18 +43,29 @@ class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.dbu.v1.admin_pb2_grpc import AdminStub
+        from ansys.api.geometry.v0.measuretools_pb2_grpc import MeasureToolsStub
 
-        self.stub = AdminStub(channel)
-
-    @protect_grpc
-    def get_backend(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        self.stub = MeasureToolsStub(channel)
 
     @protect_grpc
-    def get_logs(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+    def min_distance_between_objects(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.measuretools_pb2 import MinDistanceBetweenObjectsRequest
 
-    @protect_grpc
-    def get_service_status(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ..base.conversions import to_distance
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        # Request is different based on backend_version (25.2 vs. earlier)
+        if kwargs["backend_version"] < (25, 2, 0):
+            request = MinDistanceBetweenObjectsRequest(bodies=kwargs["selection"])
+        else:
+            from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+
+            request = MinDistanceBetweenObjectsRequest(
+                selection=[EntityIdentifier(id=item) for item in kwargs["selection"]]
+            )
+
+        # Call the gRPC service
+        response = self.stub.MinDistanceBetweenSelectionObjects(request)
+
+        # Return the response - formatted as a dictionary
+        return {"distance": to_distance(response.gap.distance)}
