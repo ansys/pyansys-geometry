@@ -9,6 +9,14 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.9.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.9.2>`_ - April 16, 2025
+=========================================================================================
+
+Fixed
+^^^^^
+
+- is_suppressed is not available until 25R2 `#1916 <https://github.com/ansys/pyansys-geometry/pull/1916>`_
+
 `0.9.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.9.1>`_ - 2025-02-28
 =====================================================================================
 
