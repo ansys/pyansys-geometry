@@ -74,7 +74,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
     @protect_grpc
     def find_and_remove_logos(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def remove_logo(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
