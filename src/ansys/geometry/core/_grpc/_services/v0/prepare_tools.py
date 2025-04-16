@@ -216,6 +216,4 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         response = self.stub.RemoveLogo(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.success,
-        }
+        return {"success": response.success}
