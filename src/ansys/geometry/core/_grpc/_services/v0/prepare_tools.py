@@ -206,16 +206,14 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
     def remove_logo(self, **kwargs):  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.preparetools_pb2 import RemoveLogoRequest
-        
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = RemoveLogoRequest(
             face_ids=[EntityIdentifier(id=id) for id in kwargs["face_ids"]],
         )
-        
+
         # Call the gRPC service
         response = self.stub.RemoveLogo(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.success,
-        }
+        return {"success": response.success}

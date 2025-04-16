@@ -26,10 +26,6 @@ from typing import TYPE_CHECKING
 
 from google.protobuf.wrappers_pb2 import Int32Value
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.preparetools_pb2 import (
-    RemoveLogoRequest,
-)
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FixAdjustSimplifyRequest,
     FixDuplicateFacesRequest,
