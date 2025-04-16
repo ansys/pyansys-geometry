@@ -145,11 +145,35 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):
         )
         return self.stub.FindInterference(request)
 
+    @protect_grpc
     def find_and_fix_short_edges(self, **kwargs):
-        raise NotImplementedError
+        from ansys.api.geometry.v0.repairtools_pb2 import FindShortEdgesRequest
+        request = FindShortEdgesRequest(
+            selection=kwargs["selection"],
+            max_edge_length=DoubleValue(value=kwargs["length"]),
+            comprehensive=kwargs["comprehensive_result"],
+        )
+        return self.stub.FindAndFixShortEdges(request)
 
+    @protect_grpc
     def find_and_fix_extra_edges(self, **kwargs):
-        raise NotImplementedError
+        from ansys.api.geometry.v0.repairtools_pb2 import FindExtraEdgesRequest
 
+        request = FindExtraEdgesRequest(
+            selection=kwargs["selection"],
+            comprehensive=kwargs["comprehensive_result"],
+        )
+        return self.stub.FindAndFixExtraEdges(request)
+
+
+    @protect_grpc
     def find_and_fix_split_edges(self, **kwargs):
-        raise NotImplementedError
+        from ansys.api.geometry.v0.repairtools_pb2 import FindSplitEdgesRequest
+
+        request = FindSplitEdgesRequest(
+            bodies_or_faces=kwargs["bodies_or_faces"],
+            angle=kwargs["angle"],
+            distance=kwargs["length"],
+            comprehensive=kwargs["comprehensive_result"],
+        )
+        return self.stub.FindAndFixSplitEdges(request)
