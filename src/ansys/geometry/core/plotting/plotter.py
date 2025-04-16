@@ -44,6 +44,7 @@ from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
@@ -248,8 +249,13 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        if body.is_suppressed:
-            return
+        try:
+            if body.is_suppressed:
+                return
+        except GeometryRuntimeError:  # pragma: no cover
+            # For backward compatibility with older versions of PyAnsys Geometry
+            # Inserted in 25R2
+            pass
 
         if self.use_service_colors:
             faces = body.faces
