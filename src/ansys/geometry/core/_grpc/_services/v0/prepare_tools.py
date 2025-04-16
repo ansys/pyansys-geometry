@@ -89,13 +89,15 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def remove_rounds(self, **kwargs) -> dict:  # noqa: D102
+        from google.protobuf.wrappers_pb2 import BoolValue
+
         from ansys.api.geometry.v0.models_pb2 import Face
         from ansys.api.geometry.v0.preparetools_pb2 import RemoveRoundsRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RemoveRoundsRequest(
             selection=[Face(id=round.id) for round in kwargs["rounds"]],
-            auto_shrink=kwargs["auto_shrink"],
+            auto_shrink=BoolValue(value=kwargs["auto_shrink"]),
         )
 
         # Call the gRPC service
@@ -108,14 +110,16 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def share_topology(self, **kwargs) -> dict:  # noqa: D102
+        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
+
         from ansys.api.geometry.v0.models_pb2 import Body
         from ansys.api.geometry.v0.preparetools_pb2 import ShareTopologyRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
             selection=[Body(id=body.id) for body in kwargs["bodies"]],
-            tolerance=kwargs["tolerance"],
-            preserve_instances=kwargs["preserve_instances"],
+            tolerance=DoubleValue(value=kwargs["tolerance"]),
+            preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
 
         # Call the gRPC service
@@ -128,14 +132,16 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def enhanced_share_topology(self, **kwargs) -> dict:  # noqa: D102
+        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
+        
         from ansys.api.geometry.v0.models_pb2 import Body
         from ansys.api.geometry.v0.preparetools_pb2 import ShareTopologyRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
             selection=[Body(id=body.id) for body in kwargs["bodies"]],
-            tolerance=kwargs["tolerance"],
-            preserve_instances=kwargs["preserve_instances"],
+            tolerance=DoubleValue(value=kwargs["tolerance"]),
+            preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
 
         # Call the gRPC service
