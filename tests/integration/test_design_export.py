@@ -217,7 +217,7 @@ def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFact
     # Check the imported design
     _checker_method(design_read, design, True)
 
-
+@pytest.mark.skip("Windows Core service failing")
 def test_export_to_parasolid_text(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to parasolid text format."""
     # Create a demo design
@@ -240,7 +240,7 @@ def test_export_to_parasolid_text(modeler: Modeler, tmp_path_factory: pytest.Tem
     # TODO: Check the exported file content
     # https://github.com/ansys/pyansys-geometry/issues/1146
 
-
+@pytest.mark.skip("Windows Core service failing")
 def test_export_to_parasolid_binary(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to parasolid binary format."""
     # Create a demo design
