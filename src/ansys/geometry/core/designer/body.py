@@ -841,6 +841,7 @@ class MasterBody(IBody):
 
     @property
     @protect_grpc
+    @min_backend_version(25, 2, 0)
     def is_suppressed(self) -> bool:  # noqa: D102
         response = self._bodies_stub.IsSuppressed(EntityIdentifier(id=self._id))
         return response.result
