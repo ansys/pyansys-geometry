@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the Named Selection service implementation for v0."""
+"""Module containing the Prepare Tools service implementation for v0."""
 
 import grpc
 
@@ -163,16 +163,13 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         from ansys.api.geometry.v0.models_pb2 import FindLogoOptions
         from ansys.api.geometry.v0.preparetools_pb2 import FindLogosRequest
 
-        # Create the gRPC options object
-        options = FindLogoOptions(
-            min_height=kwargs["min_height"],
-            max_height=kwargs["max_height"],
-        )
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindLogosRequest(
             bodies=[EntityIdentifier(id=body.id) for body in kwargs["bodies"]],
-            options=options,
+            options=FindLogoOptions(
+                min_height=kwargs["min_height"],
+                max_height=kwargs["max_height"],
+            ),
         )
 
         # Call the gRPC service
@@ -190,16 +187,13 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         from ansys.api.geometry.v0.models_pb2 import FindLogoOptions
         from ansys.api.geometry.v0.preparetools_pb2 import FindLogosRequest
 
-        # Create the gRPC options object
-        options = FindLogoOptions(
-            min_height=kwargs["min_height"],
-            max_height=kwargs["max_height"],
-        )
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindLogosRequest(
             bodies=[EntityIdentifier(id=body.id) for body in kwargs["bodies"]],
-            options=options,
+            options=FindLogoOptions(
+                min_height=kwargs["min_height"],
+                max_height=kwargs["max_height"],
+            ),
         )
 
         # Call the gRPC service
@@ -207,3 +201,21 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Return the response - formatted as a dictionary
         return {"success": response.success}
+
+    @protect_grpc
+    def remove_logo(self, **kwargs):  # noqa: D102
+        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+        from ansys.api.geometry.v0.preparetools_pb2 import RemoveLogoRequest
+        
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RemoveLogoRequest(
+            face_ids=[EntityIdentifier(id=face.id) for face in kwargs["face_ids"]],
+        )
+        
+        # Call the gRPC service
+        response = self.stub.RemoveLogo(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+        }

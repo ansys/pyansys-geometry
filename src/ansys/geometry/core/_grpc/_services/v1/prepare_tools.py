@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the Named Selection service implementation for v0."""
+"""Module containing the Prepare Tools service implementation for v0."""
 
 import grpc
 
@@ -47,30 +47,34 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
 
         self.stub = PrepareToolsStub(channel)
 
+    @protect_grpc
     def extract_volume_from_faces(self, **kwargs) -> dict:  # noqa: D102
-        """Extract a volume from input faces."""
         raise NotImplementedError
 
+    @protect_grpc
     def extract_volume_from_edge_loops(self, **kwargs) -> dict:  # noqa: D102
-        """Extract a volume from input edge loop."""
         raise NotImplementedError
 
+    @protect_grpc
     def remove_rounds(self, **kwargs) -> dict:  # noqa: D102
-        """Remove rounds from geometry."""
         raise NotImplementedError
 
+    @protect_grpc
     def share_topology(self, **kwargs) -> dict:  # noqa: D102
-        """Share topology between the given bodies."""
         raise NotImplementedError
 
+    @protect_grpc
     def enhanced_share_topology(self, **kwargs) -> dict:  # noqa: D102
-        """Share topology between the given bodies."""
         raise NotImplementedError
 
+    @protect_grpc
     def find_logos(self, **kwargs) -> dict:  # noqa: D102
-        """Detect logos in geometry."""
         raise NotImplementedError
 
+    @protect_grpc
     def find_and_remove_logos(self, **kwargs) -> dict:  # noqa: D102
-        """Detect and remove logos in geometry."""
+        raise NotImplementedError
+    
+    @protect_grpc
+    def remove_logo(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
