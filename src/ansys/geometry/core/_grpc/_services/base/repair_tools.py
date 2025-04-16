@@ -26,9 +26,6 @@ from abc import ABC, abstractmethod
 import grpc
 
 
-from abc import ABC, abstractmethod
-import grpc
-
 class GRPCRepairToolsService(ABC):
     def __init__(self, channel: grpc.Channel):
         pass

@@ -21,13 +21,14 @@
 # SOFTWARE.
 """Module containing the repair tools service implementation (abstraction layer)."""
 
-from abc import ABC, abstractmethod
+from abc import ABC
 
 import grpc
 
 
 class GRPCRepairToolsServiceV1(ABC):
     """Repair tools service for gRPC communication with the Geometry server.
+
     Parameters
     ----------
     channel : grpc.Channel
@@ -38,19 +39,50 @@ class GRPCRepairToolsServiceV1(ABC):
         """Initialize the MeasurementToolsService class."""
         pass  # pragma: no cover
 
-    def find_split_edges(self, **kwargs): raise NotImplementedError
-    def find_extra_edges(self, **kwargs): raise NotImplementedError
-    def find_inexact_edges(self, **kwargs): raise NotImplementedError
-    def find_short_edges(self, **kwargs): raise NotImplementedError
-    def find_duplicate_faces(self, **kwargs): raise NotImplementedError
-    def find_missing_faces(self, **kwargs): raise NotImplementedError
-    def find_small_faces(self, **kwargs): raise NotImplementedError
-    def find_stitch_faces(self, **kwargs): raise NotImplementedError
-    def find_simplify(self, **kwargs): raise NotImplementedError
-    def find_interferences(self, **kwargs): raise NotImplementedError
-    def find_and_fix_short_edges(self, **kwargs): raise NotImplementedError
-    def find_and_fix_extra_edges(self, **kwargs): raise NotImplementedError
-    def find_and_fix_split_edges(self, **kwargs): raise NotImplementedError
-    def find_and_fix_simplify(self, **kwargs): raise NotImplementedError
-    def inspect_geometry(self, **kwargs): raise NotImplementedError
-    def repair_geometry(self, **kwargs): raise NotImplementedError
+    def find_split_edges(self, **kwargs):
+        raise NotImplementedError
+
+    def find_extra_edges(self, **kwargs):
+        raise NotImplementedError
+
+    def find_inexact_edges(self, **kwargs):
+        raise NotImplementedError
+
+    def find_short_edges(self, **kwargs):
+        raise NotImplementedError
+
+    def find_duplicate_faces(self, **kwargs):
+        raise NotImplementedError
+
+    def find_missing_faces(self, **kwargs):
+        raise NotImplementedError
+
+    def find_small_faces(self, **kwargs):
+        raise NotImplementedError
+
+    def find_stitch_faces(self, **kwargs):
+        raise NotImplementedError
+
+    def find_simplify(self, **kwargs):
+        raise NotImplementedError
+
+    def find_interferences(self, **kwargs):
+        raise NotImplementedError
+
+    def find_and_fix_short_edges(self, **kwargs):
+        raise NotImplementedError
+
+    def find_and_fix_extra_edges(self, **kwargs):
+        raise NotImplementedError
+
+    def find_and_fix_split_edges(self, **kwargs):
+        raise NotImplementedError
+
+    def find_and_fix_simplify(self, **kwargs):
+        raise NotImplementedError
+
+    def inspect_geometry(self, **kwargs):
+        raise NotImplementedError
+
+    def repair_geometry(self, **kwargs):
+        raise NotImplementedError
