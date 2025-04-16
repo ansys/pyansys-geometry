@@ -28,8 +28,8 @@ from .base.bodies import GRPCBodyService
 from .base.dbuapplication import GRPCDbuApplicationService
 from .base.measurement_tools import GRPCMeasurementToolsService
 from .base.named_selection import GRPCNamedSelectionService
-from .base.repair_tools import GRPCRepairToolsService
 from .base.prepare_tools import GRPCPrepareToolsService
+from .base.repair_tools import GRPCRepairToolsService
 
 
 class _GRPCServices:
@@ -216,6 +216,7 @@ class _GRPCServices:
             # TODO: Add V1 later
             self._repair_tools = GRPCRepairToolsServiceV0(self.channel)
         return self._repair_tools
+
     def prepare_tools(self) -> GRPCPrepareToolsService:
         """
         Get the prepare tools service for the specified version.
