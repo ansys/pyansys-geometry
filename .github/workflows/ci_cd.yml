@@ -91,7 +91,7 @@ jobs:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
-          whitelist-license-check: 'attrs,referencing'
+          whitelist-license-check: 'attrs,referencing,pillow,urllib3'
           target: 'all'
 
   docker-style:
