@@ -148,6 +148,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):
     @protect_grpc
     def find_and_fix_short_edges(self, **kwargs):
         from ansys.api.geometry.v0.repairtools_pb2 import FindShortEdgesRequest
+
         request = FindShortEdgesRequest(
             selection=kwargs["selection"],
             max_edge_length=DoubleValue(value=kwargs["length"]),
@@ -164,7 +165,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):
             comprehensive=kwargs["comprehensive_result"],
         )
         return self.stub.FindAndFixExtraEdges(request)
-
 
     @protect_grpc
     def find_and_fix_split_edges(self, **kwargs):
