@@ -818,8 +818,7 @@ class Design(Component):
         )
 
         return self._beam_profiles[profile.name]
-
-    @protect_grpc
+    
     @min_backend_version(25, 1, 0)
     def get_all_parameters(self) -> list[Parameter]:
         """Get parameters for the design.
@@ -832,7 +831,6 @@ class Design(Component):
         response = self._grpc_client._services.driving_dimensions.get_all_parameters()
         return response.get("parameters")
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
     def set_parameter(self, dimension: Parameter) -> ParameterUpdateStatus:
