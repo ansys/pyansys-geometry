@@ -210,11 +210,26 @@ class _GRPCServices:
 
     @property
     def repair_tools(self) -> GRPCRepairToolsService:
+        """
+        Get the repair tools service for the specified version.
+
+        Returns
+        -------
+        RepairToolsServiceBase
+            The prepare tools service for the specified version.
+        """
         if not self._repair_tools:
             from .v0.repair_tools import GRPCRepairToolsServiceV0
+            from .v1.prepare_tools import GRPCRepairToolsServiceV1
 
-            # TODO: Add V1 later
-            self._repair_tools = GRPCRepairToolsServiceV0(self.channel)
+            if self.version == GeometryApiProtos.V0:
+                self._repair_tools = GRPCRepairToolsServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._repair_tools = GRPCRepairToolsServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
         return self._repair_tools
 
     def prepare_tools(self) -> GRPCPrepareToolsService:
@@ -223,7 +238,7 @@ class _GRPCServices:
 
         Returns
         -------
-        NamedSelectionServiceBase
+        PrepareToolsServiceBase
             The prepare tools service for the specified version.
         """
         if not self._prepare_tools:
