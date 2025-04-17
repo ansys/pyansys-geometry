@@ -50,7 +50,7 @@ class GRPCDrivingDimensionsServiceV1(GRPCDrivingDimensionsService):
     @protect_grpc
     def get_all_parameters(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def set_parameter(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError

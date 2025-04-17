@@ -853,7 +853,7 @@ class Design(Component):
         # Update the design in place. This method is computationally expensive,
         # consider finding a more efficient approach.
         self._update_design_inplace()
-        
+
         return response.get("status")
 
     @protect_grpc

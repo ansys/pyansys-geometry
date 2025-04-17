@@ -62,7 +62,7 @@ class GRPCDrivingDimensionsServiceV0(GRPCDrivingDimensionsService):
         # Return the response - formatted as a dictionary
         return {
             "parameters": [
-                from_grpc_driving_dimension_to_driving_dimension(param) 
+                from_grpc_driving_dimension_to_driving_dimension(param)
                 for param in response.driving_dimensions
             ],
         }
@@ -73,7 +73,9 @@ class GRPCDrivingDimensionsServiceV0(GRPCDrivingDimensionsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = UpdateRequest(
-            driving_dimension=from_driving_dimension_to_grpc_driving_dimension(kwargs["driving_dimension"]),
+            driving_dimension=from_driving_dimension_to_grpc_driving_dimension(
+                kwargs["driving_dimension"]
+            ),
         )
 
         # Call the gRPC service

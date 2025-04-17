@@ -731,7 +731,7 @@ def from_grpc_backend_type_to_backend_type(
 
 
 def from_grpc_driving_dimension_to_driving_dimension(
-    driving_dimension: GRPCDrivingDimension
+    driving_dimension: GRPCDrivingDimension,
 ) -> "Parameter":
     """Convert a gRPC driving dimension to a driving dimension object.
 
@@ -777,7 +777,7 @@ def from_driving_dimension_to_grpc_driving_dimension(
 
 
 def from_grpc_update_status_to_parameter_update_status(
-    update_status: GRPCUpdateStatus,        
+    update_status: GRPCUpdateStatus,
 ) -> ParameterUpdateStatus:
     """Convert a gRPC update status to a parameter update status.
 
@@ -792,8 +792,8 @@ def from_grpc_update_status_to_parameter_update_status(
         Converted update status.
     """
     status_mapping = {
-            GRPCUpdateStatus.SUCCESS: ParameterUpdateStatus.SUCCESS,
-            GRPCUpdateStatus.FAILURE: ParameterUpdateStatus.FAILURE,
-            GRPCUpdateStatus.CONSTRAINED_PARAMETERS: ParameterUpdateStatus.CONSTRAINED_PARAMETERS,
-        }
+        GRPCUpdateStatus.SUCCESS: ParameterUpdateStatus.SUCCESS,
+        GRPCUpdateStatus.FAILURE: ParameterUpdateStatus.FAILURE,
+        GRPCUpdateStatus.CONSTRAINED_PARAMETERS: ParameterUpdateStatus.CONSTRAINED_PARAMETERS,
+    }
     return status_mapping.get(update_status, ParameterUpdateStatus.UNKNOWN)
