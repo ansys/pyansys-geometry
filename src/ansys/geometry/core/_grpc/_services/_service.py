@@ -232,6 +232,7 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
         return self._repair_tools
 
+    @property
     def prepare_tools(self) -> GRPCPrepareToolsService:
         """
         Get the prepare tools service for the specified version.
