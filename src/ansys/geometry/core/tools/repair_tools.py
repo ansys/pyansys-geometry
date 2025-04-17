@@ -434,7 +434,7 @@ class RepairTools:
         cut_smaller_body_bool = BoolValue(value=cut_smaller_body)
         problem_areas_response = self._grpc_client.services.repair_tools.find_interferences(
             bodies=body_ids,
-            cut_smaller_body=cut_smaller_body_bool,
+            cut_smaller_body=cut_smaller_body
         )
 
         return [
