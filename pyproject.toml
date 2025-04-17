@@ -1,5 +1,5 @@
 [build-system]
-requires = ["flit_core >=3.2,<3.11"] # THIS SHOULD BE REVERTED TO '["flit_core >=3.2,<4"]'
+requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
@@ -24,13 +24,12 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.54",
+    "ansys-api-geometry==0.4.57",
     "ansys-tools-path>=0.3,<1",
-    "attrs!=24.3.0",
     "beartype>=0.11.0,<0.21",
     "geomdl>=5,<6",
-    "grpcio>=1.35.0,<1.68",
-    "grpcio-health-checking>=1.45.0,<1.68",
+    "grpcio>=1.35.0,<2",
+    "grpcio-health-checking>=1.45.0,<2",
     "matplotlib>=3,<4",
     "numpy>=1.20.3,<3",
     "Pint>=0.18,<1",
@@ -63,15 +62,15 @@ tests = [
     "beartype==0.20.2",
     "docker==7.1.0",
     "geomdl==5.3.1",
-    "grpcio==1.67.1",
-    "grpcio-health-checking==1.67.1",
+    "grpcio==1.71.0",
+    "grpcio-health-checking==1.71.0",
     "matplotlib==3.10.1",
     "numpy==2.2.4",
     "Pint==0.24.4",
     "protobuf==5.29.3",
     "pygltflib==1.16.3",
     "pytest==8.3.5",
-    "pytest-cov==6.1.0",
+    "pytest-cov==6.1.1",
     "pytest-pyvista==0.1.9",
     "pytest-xvfb==3.1.1",
     "pyvista[jupyter]==0.44.2",
@@ -83,7 +82,7 @@ tests = [
 ]
 tests-minimal = [
     "pytest==8.3.5",
-    "pytest-cov==6.1.0",
+    "pytest-cov==6.1.1",
     "pytest-pyvista==0.1.9",
     "pytest-xvfb==3.1.1",
 ]
@@ -94,8 +93,8 @@ doc = [
     "beartype==0.20.2",
     "docker==7.1.0",
     "geomdl==5.3.1",
-    "grpcio==1.67.1",
-    "grpcio-health-checking==1.67.1",
+    "grpcio==1.71.0",
+    "grpcio-health-checking==1.71.0",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.5.3",
     "jupytext==1.16.7",

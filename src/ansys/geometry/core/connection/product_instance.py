@@ -486,7 +486,6 @@ def prepare_and_start_backend(
         port=port,
         timeout=timeout,
         product_instance=instance,
-        backend_type=backend_type,
         logging_level=client_log_level,
         logging_file=client_log_file,
     )

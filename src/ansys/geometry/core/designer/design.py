@@ -52,7 +52,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
 )
-from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from ansys.geometry.core.connection.backend import BackendType
@@ -146,7 +145,6 @@ class Design(Component):
         self._design_stub = DesignsStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
-        self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
         self._parts_stub = PartsStub(self._grpc_client.channel)
         self._parameters_stub = DrivingDimensionsStub(self._grpc_client.channel)
 
@@ -697,7 +695,6 @@ class Design(Component):
 
         return self._named_selections[named_selection.name]
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def delete_named_selection(self, named_selection: NamedSelection | str) -> None:
@@ -717,7 +714,7 @@ class Design(Component):
             removal_id = named_selection.id
 
         self._grpc_client.log.debug(f"Named selection {removal_name} deletion request received.")
-        self._named_selections_stub.Delete(EntityIdentifier(id=removal_id))
+        self._grpc_client.services.named_selection.delete_named_selection(id=removal_id)
 
         try:
             self._named_selections.pop(removal_name)

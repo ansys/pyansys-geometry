@@ -29,7 +29,7 @@ import numpy as np
 from ansys.geometry.core.misc.checks import check_ndarray_is_float_int, check_type
 from ansys.geometry.core.typing import Real, RealSequence
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.frame import Frame
     from ansys.geometry.core.math.vector import Vector3D  # For type hints
 
