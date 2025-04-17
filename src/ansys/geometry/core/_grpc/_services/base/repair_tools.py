@@ -27,6 +27,7 @@ geometry issues, such as split edges, extra edges, duplicate faces, and more.
 """
 
 from abc import ABC, abstractmethod
+
 import grpc
 
 
@@ -41,7 +42,8 @@ class GRPCRepairToolsService(ABC):
     def __init__(self, channel: grpc.Channel):
         """Initialize the gRPC repair tools service.
 
-        Parameters:
+        Parameters
+        ----------
             channel (grpc.Channel): The gRPC channel used to communicate with the service.
         """
         pass  # pragma: no cover
@@ -50,7 +52,6 @@ class GRPCRepairToolsService(ABC):
     def find_split_edges(self, **kwargs):
         """Identify split edges in the geometry."""
         pass  # pragma: no cover
-
 
     @abstractmethod
     def find_extra_edges(self, **kwargs):
