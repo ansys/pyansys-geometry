@@ -220,7 +220,7 @@ class _GRPCServices:
         """
         if not self._repair_tools:
             from .v0.repair_tools import GRPCRepairToolsServiceV0
-            from .v1.prepare_tools import GRPCRepairToolsServiceV1
+            from .v1.repair_tools import GRPCRepairToolsServiceV1
 
             if self.version == GeometryApiProtos.V0:
                 self._repair_tools = GRPCRepairToolsServiceV0(self.channel)
