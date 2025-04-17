@@ -26,7 +26,11 @@ from typing import TYPE_CHECKING
 import pint
 
 from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.api.dbu.v0.dbumodels_pb2 import (
+    DrivingDimension as GRPCDrivingDimension,
+    EntityIdentifier,
+)
+from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus as GRPCUpdateStatus
 from ansys.api.geometry.v0.models_pb2 import (
     Arc as GRPCArc,
     Circle as GRPCCircle,
@@ -49,6 +53,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedSurface as GRPCTrimmedSurface,
 )
 from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.parameters.parameter import Parameter, ParameterType, ParameterUpdateStatus
 
 if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
@@ -723,3 +728,72 @@ def from_grpc_backend_type_to_backend_type(
         raise ValueError(f"Invalid backend type: {grpc_backend_type}")
 
     return backend_type
+
+
+def from_grpc_driving_dimension_to_driving_dimension(
+    driving_dimension: GRPCDrivingDimension
+) -> "Parameter":
+    """Convert a gRPC driving dimension to a driving dimension object.
+
+    Parameters
+    ----------
+    driving_dimension : GRPCDrivingDimension
+        Source driving dimension type.
+
+    Returns
+    -------
+    Parameter
+        Converted driving dimension.
+    """
+    return Parameter(
+        id=driving_dimension.id,
+        name=driving_dimension.name,
+        dimension_type=ParameterType(driving_dimension.dimension_type),
+        dimension_value=driving_dimension.dimension_value,
+    )
+
+
+def from_driving_dimension_to_grpc_driving_dimension(
+    driving_dimension: "Parameter",
+) -> GRPCDrivingDimension:
+    """Convert a driving dimension object to a gRPC driving dimension.
+
+    Parameters
+    ----------
+    driving_dimension : Parameter
+        Source driving dimension type.
+
+    Returns
+    -------
+    GRPCDrivingDimension
+        Converted driving dimension.
+    """
+    return GRPCDrivingDimension(
+        id=driving_dimension.id,
+        name=driving_dimension.name,
+        dimension_type=driving_dimension.dimension_type.value,
+        dimension_value=driving_dimension.dimension_value,
+    )
+
+
+def from_grpc_update_status_to_parameter_update_status(
+    update_status: GRPCUpdateStatus,        
+) -> ParameterUpdateStatus:
+    """Convert a gRPC update status to a parameter update status.
+
+    Parameters
+    ----------
+    update_status : GRPCUpdateStatus
+        Source update status.
+
+    Returns
+    -------
+    ParameterUpdateStatus
+        Converted update status.
+    """
+    status_mapping = {
+            GRPCUpdateStatus.SUCCESS: ParameterUpdateStatus.SUCCESS,
+            GRPCUpdateStatus.FAILURE: ParameterUpdateStatus.FAILURE,
+            GRPCUpdateStatus.CONSTRAINED_PARAMETERS: ParameterUpdateStatus.CONSTRAINED_PARAMETERS,
+        }
+    return status_mapping.get(update_status, ParameterUpdateStatus.UNKNOWN)

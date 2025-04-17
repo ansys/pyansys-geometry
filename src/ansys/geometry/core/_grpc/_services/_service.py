@@ -22,6 +22,8 @@
 
 import grpc
 
+from ansys.geometry.core._grpc._services.base.driving_dimensions import GRPCDrivingDimensionsService
+
 from .._version import GeometryApiProtos, set_proto_version
 from .base.admin import GRPCAdminService
 from .base.bodies import GRPCBodyService
@@ -75,6 +77,7 @@ class _GRPCServices:
         self._named_selection = None
         self._measurement_tools = None
         self._prepare_tools = None
+        self._driving_dimensions = None
 
     @property
     def bodies(self) -> GRPCBodyService:
@@ -213,7 +216,7 @@ class _GRPCServices:
 
         Returns
         -------
-        NamedSelectionServiceBase
+        PrepareToolsServiceBase
             The prepare tools service for the specified version.
         """
         if not self._prepare_tools:
@@ -231,3 +234,29 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._prepare_tools
+
+    @property
+    def driving_dimensions(self) -> GRPCDrivingDimensionsService:
+        """
+        Get the driving dimensions service for the specified version.
+
+        Returns
+        -------
+        DrivingDimensionsServiceBase
+            The driving dimensions service for the specified version.
+        """
+        if not self._driving_dimensions:
+            # Import the appropriate driving dimensions service based on the version
+            from .v0.driving_dimensions import GRPCDrivingDimensionsServiceV0
+            from .v1.driving_dimensions import GRPCDrivingDimensionsServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._driving_dimensions = GRPCDrivingDimensionsServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._driving_dimensions = GRPCDrivingDimensionsServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._driving_dimensions

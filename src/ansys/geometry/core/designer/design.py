@@ -38,8 +38,6 @@ from ansys.api.dbu.v0.designs_pb2 import (
     SaveAsRequest,
 )
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
-from ansys.api.dbu.v0.drivingdimensions_pb2 import GetAllRequest, UpdateRequest
-from ansys.api.dbu.v0.drivingdimensions_pb2_grpc import DrivingDimensionsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
@@ -146,7 +144,6 @@ class Design(Component):
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._parts_stub = PartsStub(self._grpc_client.channel)
-        self._parameters_stub = DrivingDimensionsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -832,8 +829,8 @@ class Design(Component):
         list[Parameter]
             List of parameters for the design.
         """
-        response = self._parameters_stub.GetAll(GetAllRequest())
-        return [Parameter._from_proto(dimension) for dimension in response.driving_dimensions]
+        response = self._grpc_client._services.driving_dimensions.get_all_parameters()
+        return response.get("parameters")
 
     @protect_grpc
     @check_input_types
@@ -851,15 +848,15 @@ class Design(Component):
         ParameterUpdateStatus
             Status of the update operation.
         """
-        request = UpdateRequest(driving_dimension=Parameter._to_proto(dimension))
-        response = self._parameters_stub.UpdateParameter(request)
-        status = response.status
+        response = self._grpc_client._services.driving_dimensions.set_parameter(
+            driving_dimension=dimension
+        )
 
         # Update the design in place. This method is computationally expensive,
         # consider finding a more efficient approach.
         self._update_design_inplace()
-
-        return ParameterUpdateStatus._from_update_status(status)
+        
+        return response.get("status")
 
     @protect_grpc
     @check_input_types

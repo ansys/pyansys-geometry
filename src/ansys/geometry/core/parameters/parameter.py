@@ -23,8 +23,6 @@
 
 from enum import Enum, unique
 
-from ansys.api.dbu.v0.dbumodels_pb2 import DrivingDimension as GRPCDrivingDimension
-from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus as GRPCUpdateStatus
 from ansys.geometry.core.typing import Real
 
 
@@ -54,32 +52,6 @@ class ParameterUpdateStatus(Enum):
     CONSTRAINED_PARAMETERS = 2
     UNKNOWN = 3
 
-    @staticmethod
-    def _from_update_status(status: GRPCUpdateStatus) -> "ParameterUpdateStatus":
-        """Convert GRPCUpdateStatus to ParameterUpdateStatus.
-
-        Notes
-        -----
-        This method is used to convert the status of the update from gRPC to the
-        parameter update status. Not to be used directly by the user.
-
-        Parameters
-        ----------
-        status : GRPCUpdateStatus
-            Status of the update. Coming from gRPC.
-
-        Returns
-        -------
-        ParameterUpdateStatus
-            Parameter update status.
-        """
-        status_mapping = {
-            GRPCUpdateStatus.SUCCESS: ParameterUpdateStatus.SUCCESS,
-            GRPCUpdateStatus.FAILURE: ParameterUpdateStatus.FAILURE,
-            GRPCUpdateStatus.CONSTRAINED_PARAMETERS: ParameterUpdateStatus.CONSTRAINED_PARAMETERS,
-        }
-        return status_mapping.get(status, ParameterUpdateStatus.UNKNOWN)
-
 
 class Parameter:
     """Represents a parameter.
@@ -102,32 +74,6 @@ class Parameter:
         self._name = name
         self._dimension_type = dimension_type
         self._dimension_value = dimension_value
-
-    @classmethod
-    def _from_proto(cls, proto: GRPCDrivingDimension) -> "Parameter":
-        """Create a ``Parameter`` instance from a ``proto`` object.
-
-        Notes
-        -----
-        This method is used to convert the parameter from gRPC to the parameter
-        object. Not to be used directly by the user.
-
-        Parameters
-        ----------
-        proto : GRPCDrivingDimension
-            Parameter object coming from gRPC.
-
-        Returns
-        -------
-        Parameter
-            Parameter object.
-        """
-        return cls(
-            id=proto.id,
-            name=proto.name,
-            dimension_type=ParameterType(proto.dimension_type),
-            dimension_value=proto.dimension_value,
-        )
 
     @property
     def name(self) -> str:
@@ -158,23 +104,3 @@ class Parameter:
     def dimension_type(self, value: ParameterType):
         """Set the type of the parameter."""
         self._dimension_type = value
-
-    def _to_proto(self):
-        """Convert a ``Parameter`` instance to a ``proto`` object.
-
-        Notes
-        -----
-        This method is used to convert the parameter from the parameter object to
-        gRPC. Not to be used directly by the user.
-
-        Returns
-        -------
-        GRPCDrivingDimension
-            Parameter object in gRPC.
-        """
-        return GRPCDrivingDimension(
-            id=self.id,
-            name=self.name,
-            dimension_type=self.dimension_type.value,
-            dimension_value=self.dimension_value,
-        )
