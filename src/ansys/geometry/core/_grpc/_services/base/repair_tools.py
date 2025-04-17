@@ -34,9 +34,7 @@ import grpc
 class GRPCRepairToolsService(ABC):
     """Abstract base class for gRPC-based repair tools service.
 
-    This class defines a set of abstract methods that must be implemented
-    by any concrete subclass. These methods are used to identify and repair
-    various geometry issues in a CAD model.
+    Defines abstract methods for identifying and repairing geometry issues in a model.
     """
 
     def __init__(self, channel: grpc.Channel):

@@ -216,7 +216,7 @@ class _GRPCServices:
         Returns
         -------
         RepairToolsServiceBase
-            The prepare tools service for the specified version.
+            The repair tools service for the specified version.
         """
         if not self._repair_tools:
             from .v0.repair_tools import GRPCRepairToolsServiceV0
