@@ -818,7 +818,7 @@ class Design(Component):
         )
 
         return self._beam_profiles[profile.name]
-    
+
     @min_backend_version(25, 1, 0)
     def get_all_parameters(self) -> list[Parameter]:
         """Get parameters for the design.
