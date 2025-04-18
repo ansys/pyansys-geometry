@@ -351,12 +351,13 @@ class ShortEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixShortEdges(
             FixShortEdgesRequest(short_edge_problem_area_id=self._grpc_id)
         )
-        parent_design._update_design_inplace()
+        #parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
         )
+        parent_design.update_from_tracker(response.result.complete_command_response)
 
         return message
 
@@ -406,12 +407,15 @@ class SmallFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixSmallFaces(
             FixSmallFacesRequest(small_face_problem_area_id=self._grpc_id)
         )
-        parent_design._update_design_inplace()
+        #parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
         )
+
+        parent_design.update_from_tracker(response.result.complete_command_response)
+
         return message
 
 
@@ -460,12 +464,14 @@ class SplitEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixSplitEdges(
             FixSplitEdgesRequest(split_edge_problem_area_id=self._grpc_id)
         )
-        parent_design._update_design_inplace()
+        #parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
         )
+        parent_design.update_from_tracker(response.result.complete_command_response)
+
         return message
 
 

@@ -509,7 +509,7 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        parent_design._update_design_inplace()
+        #parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.success,
             response.created_bodies_monikers,
@@ -517,6 +517,7 @@ class RepairTools:
             response.found,
             response.repaired,
         )
+        parent_design.update_from_tracker(response.result.complete_command_response)
         return message
 
     @protect_grpc
@@ -560,7 +561,7 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        parent_design._update_design_inplace()
+        #parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.success,
             response.created_bodies_monikers,
@@ -568,6 +569,7 @@ class RepairTools:
             response.found,
             response.repaired,
         )
+        parent_design.update_from_tracker(response.result.complete_command_response)
         return message
 
     @protect_grpc
@@ -626,7 +628,7 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        parent_design._update_design_inplace()
+        # parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.success,
             response.created_bodies_monikers,
@@ -634,6 +636,8 @@ class RepairTools:
             response.found,
             response.repaired,
         )
+        parent_design.update_from_tracker(response.result.complete_command_response)
+
         return message
 
     @protect_grpc
@@ -675,7 +679,7 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        parent_design._update_design_inplace()
+        #parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.success,
             response.created_bodies_monikers,
@@ -683,6 +687,7 @@ class RepairTools:
             response.found,
             response.repaired,
         )
+        parent_design.update_from_tracker(response.result.complete_command_response)
         return message
 
     @protect_grpc
