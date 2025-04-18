@@ -1284,8 +1284,6 @@ class Design(Component):
         """
         print("Updating design using the tracker...")
 
-        
-
         # Function to update a body if it exists
         def update_body(existing_body, body_info):
             existing_body.name = body_info.name
@@ -1330,7 +1328,7 @@ class Design(Component):
             # Function to find and remove bodies within components recursively
 
         def find_and_remove_body(body_info, component):
-            if component ==[]:
+            if component == []:
                 return False
             for body in component.bodies:
                 if body.id == body_info.id:

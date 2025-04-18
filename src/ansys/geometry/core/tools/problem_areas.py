@@ -131,7 +131,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixDuplicateFaces(
             FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._grpc_id)
         )
-        #parent_design._update_design_inplace()
+        # parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
@@ -243,7 +243,7 @@ class InexactEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixInexactEdges(
             FixInexactEdgesRequest(inexact_edge_problem_area_id=self._grpc_id)
         )
-        #parent_design._update_design_inplace()
+        # parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
