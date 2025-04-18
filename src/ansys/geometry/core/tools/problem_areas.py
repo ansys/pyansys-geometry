@@ -188,13 +188,13 @@ class MissingFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixMissingFaces(
             FixMissingFacesRequest(missing_face_problem_area_id=self._grpc_id)
         )
-        # parent_design._update_design_inplace()
+        parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
         )
-        parent_design.update_from_tracker(response.result.complete_command_response)
+        #parent_design.update_from_tracker(response.result.complete_command_response)
         return message
 
 
@@ -520,12 +520,13 @@ class StitchFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=self._grpc_id)
         )
-        parent_design._update_design_inplace()
+        #parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
         )
+        parent_design.update_from_tracker(response.result.complete_command_response)
         return message
 
 
@@ -569,12 +570,13 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixAdjustSimplify(
             FixAdjustSimplifyRequest(adjust_simplify_problem_area_id=self._grpc_id)
         )
-        parent_design._update_design_inplace()
+        #parent_design._update_design_inplace()
         message = RepairToolMessage(
             response.result.success,
             response.result.created_bodies_monikers,
             response.result.modified_bodies_monikers,
         )
+        parent_design.update_from_tracker(response.result.complete_command_response)
         return message
 
 
