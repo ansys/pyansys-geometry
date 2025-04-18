@@ -215,7 +215,7 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_CORE_TAG }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/tests-pytest@b753a73e0ac5d5b3f69811e860ca546a7488f98f # v9.0.3
         env:
           ALLOW_PLOTTING: true
         with:
