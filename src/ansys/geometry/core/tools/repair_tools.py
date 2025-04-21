@@ -569,7 +569,7 @@ class RepairTools:
             found=response.found,
             repaired=response.repaired,
         )
-        parent_design.update_from_tracker(response.result.complete_command_response)
+        parent_design.update_from_tracker(response.complete_command_response)
         return message
 
     @protect_grpc
@@ -636,7 +636,7 @@ class RepairTools:
             found=response.found,
             repaired=response.repaired,
         )
-        parent_design.update_from_tracker(response.result.complete_command_response)
+        parent_design.update_from_tracker(response.complete_command_response)
 
         return message
 
@@ -687,7 +687,7 @@ class RepairTools:
             found=response.found,
             repaired=response.repaired,
         )
-        parent_design.update_from_tracker(response.result.complete_command_response)
+        parent_design.update_from_tracker(response.complete_command_response)
         return message
 
     @protect_grpc
