@@ -384,6 +384,7 @@ def test_plot_trapezoid(verify_image_cache):
     sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_trapezoid.png"))
 
 
+@skip_no_xserver
 def test_plot_trapezoid_symmetric(verify_image_cache):
     """Test plotting of a trapezoid which is symmetric."""
     # Create a sketch instance
