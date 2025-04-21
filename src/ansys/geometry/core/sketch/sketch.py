@@ -964,7 +964,9 @@ class Sketch:
         sketches_polydata_selection = []
         sketches_polydata_selection.extend(
             [
-                sketch_item.visualization_polydata.transform(self._plane.transformation_matrix, inplace=True)
+                sketch_item.visualization_polydata.transform(
+                    self._plane.transformation_matrix, inplace=True
+                )
                 for sketch_item in self._current_sketch_context
             ]
         )
