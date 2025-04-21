@@ -442,7 +442,6 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           checkout: false
           randomize: true
-          requires-xvfb: true
 
       - name: Upload integration test logs
         if: always()
