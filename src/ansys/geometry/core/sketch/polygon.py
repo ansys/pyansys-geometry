@@ -172,4 +172,4 @@ class Polygon(SketchFace):
         return pv.Polygon(
             radius=self.inner_radius.m_as(DEFAULT_UNITS.LENGTH),
             n_sides=self.n_sides,
-        ).transform(transformation_matrix)
+        ).transform(transformation_matrix, inplace=True)

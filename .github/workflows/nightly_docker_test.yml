@@ -21,7 +21,7 @@ on:
       - v*
 
 env:
-  MAIN_PYTHON_VERSION: '3.12'
+  MAIN_PYTHON_VERSION: '3.13'
   ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG: ghcr.io/ansys/geometry:core-windows-latest-unstable
   ANSRV_GEO_IMAGE_LINUX_CORE_TAG: ghcr.io/ansys/geometry:core-linux-latest-unstable
   ANSRV_GEO_PORT: 710
