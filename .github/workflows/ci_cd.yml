@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  MAIN_PYTHON_VERSION: '3.12'
+  MAIN_PYTHON_VERSION: '3.13'
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
@@ -401,6 +401,12 @@ jobs:
           echo "SKIP_UNSTABLE=$Result" >> $GITHUB_ENV
           echo "SKIP_UNSTABLE will be: $Result"
 
+      - name: Set up headless display
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
+        with:
+          pyvista: false
+
       - name: Login in Github Container registry
         if: env.SKIP_UNSTABLE == 'false'
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
@@ -474,6 +480,11 @@ jobs:
       matrix:
         python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
+      - name: Set up headless display
+        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
+        with:
+          pyvista: false
+
       - name: Login in Github Container registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
@@ -769,6 +780,11 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
+      - name: Set up headless display
+        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
+        with:
+          pyvista: false
+
       - name: Download Linux binaries
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
@@ -805,7 +821,6 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           pytest-extra-args: "--use-existing-service=yes"
           checkout: false
-          requires-xvfb: true
           randomize: true
 
       - name: "Compressing Linux Dockerfile"

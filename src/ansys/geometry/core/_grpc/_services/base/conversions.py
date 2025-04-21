@@ -59,11 +59,6 @@ def from_measurement_to_server_angle(input: Measurement) -> float:
 def to_distance(value: float | int) -> Distance:
     """Convert a server value to a Distance object.
 
-    Notes
-    -----
-    The value is converted to a Distance object using the default server length unit.
-    The value should represent a length in the server's unit system.
-
     Parameters
     ----------
     value : float | int
@@ -73,5 +68,10 @@ def to_distance(value: float | int) -> Distance:
     -------
     Distance
         Converted distance.
+
+    Notes
+    -----
+    The value is converted to a Distance object using the default server length unit.
+    The value should represent a length in the server's unit system.
     """
     return Distance(value, DEFAULT_UNITS.SERVER_LENGTH)

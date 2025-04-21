@@ -556,15 +556,15 @@ class Face:
         tess_options : TessellationOptions | None, default: None
             A set of options to determine the tessellation quality.
 
-        Notes
-        -----
-        The tessellation options are ONLY used if the face has not been tessellated before.
-        If the face has been tessellated before, the stored tessellation is returned.
-
         Returns
         -------
         ~pyvista.PolyData
             :class:`pyvista.PolyData` object holding the face.
+
+        Notes
+        -----
+        The tessellation options are ONLY used if the face has not been tessellated before.
+        If the face has been tessellated before, the stored tessellation is returned.
         """
         # If tessellation has not been called before... call it
         if self._body._template._tessellation is None:
