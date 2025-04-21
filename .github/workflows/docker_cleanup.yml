@@ -22,7 +22,7 @@ jobs:
     steps:
 
     - name: "Perform versions cleanup - except certain tags"
-      uses: ansys/actions/hk-package-clean-except@b753a73e0ac5d5b3f69811e860ca546a7488f98f # v9.0.3
+      uses: ansys/actions/hk-package-clean-except@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
       with:
         package-name: 'geometry'
         token: ${{ secrets.GITHUB_TOKEN }}
