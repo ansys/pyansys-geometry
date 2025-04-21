@@ -220,7 +220,6 @@ jobs:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          requires-xvfb: true
 
       - name: Stop the Geometry service
         if: always()
