@@ -20,6 +20,7 @@ env:
   RESET_IMAGE_CACHE: 5
   IS_WORKFLOW_RUNNING: True
   ARTIFACTORY_VERSION: v252
+  VTK_DEFAULT_OPENGL_WINDOW: "vtkOSOpenGLRenderWindow"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
