@@ -218,14 +218,6 @@ class NURBSCurve(Curve):
 
         This method returns the evaluation at the closest point.
 
-        Notes
-        -----
-        Based on `the NURBS book <https://link.springer.com/book/10.1007/978-3-642-59223-2>`_,
-        the projection of a point to a NURBS curve is the solution to the following optimization
-        problem: minimize the distance between the point and the curve. The distance is defined
-        as the Euclidean distance squared. For more information, please refer to
-        the implementation of the `distance_squared` function.
-
         Parameters
         ----------
         point : Point3D
@@ -239,6 +231,13 @@ class NURBSCurve(Curve):
         CurveEvaluation
             Evaluation at the closest point on the curve.
 
+        Notes
+        -----
+        Based on `the NURBS book <https://link.springer.com/book/10.1007/978-3-642-59223-2>`_,
+        the projection of a point to a NURBS curve is the solution to the following optimization
+        problem: minimize the distance between the point and the curve. The distance is defined
+        as the Euclidean distance squared. For more information, please refer to
+        the implementation of the `distance_squared` function.
         """
         import numpy as np
         from scipy.optimize import minimize

@@ -506,12 +506,6 @@ class Component:
     def __build_body_from_response(self, response: dict) -> Body:
         """Build a body from a response dictionary coming out of the gRPC call.
 
-        Notes
-        -----
-        This is a completely private method and is intended to be
-        used only within the class. It handles the MasterBody and
-        Body creation, and addition to the component.
-
         Parameters
         ----------
         response : dict
@@ -521,6 +515,12 @@ class Component:
         -------
         Body
             Body object.
+
+        Notes
+        -----
+        This is a completely private method and is intended to be
+        used only within the class. It handles the MasterBody and
+        Body creation, and addition to the component.
         """
         tb = MasterBody(
             response["master_id"],
@@ -1102,10 +1102,6 @@ class Component:
     ) -> list[Beam]:
         """Create beams under the component.
 
-        Notes
-        -----
-        This is a legacy method, which is used in versions up to Ansys 25.1.1 products.
-
         Parameters
         ----------
         segments : list[tuple[Point3D, Point3D]]
@@ -1117,6 +1113,10 @@ class Component:
         -------
         list[Beam]
             A list of the created Beams.
+
+        Notes
+        -----
+        This is a legacy method, which is used in versions up to Ansys 25.1.1 products.
         """
         request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
 
