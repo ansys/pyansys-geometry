@@ -784,7 +784,7 @@ jobs:
         uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
         with:
           pyvista: false
-  
+
       - name: Download Linux binaries
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
