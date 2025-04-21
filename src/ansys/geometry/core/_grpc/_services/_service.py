@@ -36,14 +36,6 @@ class _GRPCServices:
     """
     Placeholder for the gRPC services (i.e. stubs).
 
-    Notes
-    -----
-    This class provides a unified interface to access the different
-    gRPC services available in the Geometry API. It allows for easy
-    switching between different versions of the API by using the
-    `version` parameter in the constructor. The services are lazy-loaded
-    to avoid unnecessary imports and to improve performance.
-
     Parameters
     ----------
     channel : grpc.Channel
@@ -51,6 +43,14 @@ class _GRPCServices:
     version : GeometryApiProtos | str | None
         The version of the gRPC API protocol to use. If None, the latest
         version is used.
+
+    Notes
+    -----
+    This class provides a unified interface to access the different
+    gRPC services available in the Geometry API. It allows for easy
+    switching between different versions of the API by using the
+    `version` parameter in the constructor. The services are lazy-loaded
+    to avoid unnecessary imports and to improve performance.
     """
 
     def __init__(self, channel: grpc.Channel, version: GeometryApiProtos | str | None = None):

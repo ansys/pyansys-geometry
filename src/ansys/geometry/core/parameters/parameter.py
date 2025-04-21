@@ -58,11 +58,6 @@ class ParameterUpdateStatus(Enum):
     def _from_update_status(status: GRPCUpdateStatus) -> "ParameterUpdateStatus":
         """Convert GRPCUpdateStatus to ParameterUpdateStatus.
 
-        Notes
-        -----
-        This method is used to convert the status of the update from gRPC to the
-        parameter update status. Not to be used directly by the user.
-
         Parameters
         ----------
         status : GRPCUpdateStatus
@@ -72,6 +67,11 @@ class ParameterUpdateStatus(Enum):
         -------
         ParameterUpdateStatus
             Parameter update status.
+
+        Notes
+        -----
+        This method is used to convert the status of the update from gRPC to the
+        parameter update status. Not to be used directly by the user.
         """
         status_mapping = {
             GRPCUpdateStatus.SUCCESS: ParameterUpdateStatus.SUCCESS,
@@ -107,11 +107,6 @@ class Parameter:
     def _from_proto(cls, proto: GRPCDrivingDimension) -> "Parameter":
         """Create a ``Parameter`` instance from a ``proto`` object.
 
-        Notes
-        -----
-        This method is used to convert the parameter from gRPC to the parameter
-        object. Not to be used directly by the user.
-
         Parameters
         ----------
         proto : GRPCDrivingDimension
@@ -121,6 +116,11 @@ class Parameter:
         -------
         Parameter
             Parameter object.
+
+        Notes
+        -----
+        This method is used to convert the parameter from gRPC to the parameter
+        object. Not to be used directly by the user.
         """
         return cls(
             id=proto.id,
@@ -162,15 +162,15 @@ class Parameter:
     def _to_proto(self):
         """Convert a ``Parameter`` instance to a ``proto`` object.
 
-        Notes
-        -----
-        This method is used to convert the parameter from the parameter object to
-        gRPC. Not to be used directly by the user.
-
         Returns
         -------
         GRPCDrivingDimension
             Parameter object in gRPC.
+
+        Notes
+        -----
+        This method is used to convert the parameter from the parameter object to
+        gRPC. Not to be used directly by the user.
         """
         return GRPCDrivingDimension(
             id=self.id,

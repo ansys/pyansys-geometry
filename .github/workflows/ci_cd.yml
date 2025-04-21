@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  MAIN_PYTHON_VERSION: '3.12'
+  MAIN_PYTHON_VERSION: '3.13'
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
@@ -35,7 +35,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+      - uses: ansys/actions/doc-deploy-changelog@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -45,7 +45,7 @@ jobs:
     name: Vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+      - uses: ansys/actions/check-vulnerabilities@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/check-pr-title@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/doc-style@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -86,7 +86,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/build-wheelhouse@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/docker-style@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/docker-style@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
           directory: docker
           recursive: true
@@ -342,7 +342,7 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
 
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/doc-build@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
@@ -401,6 +401,12 @@ jobs:
           echo "SKIP_UNSTABLE=$Result" >> $GITHUB_ENV
           echo "SKIP_UNSTABLE will be: $Result"
 
+      - name: Set up headless display
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
+        with:
+          pyvista: false
+
       - name: Login in Github Container registry
         if: env.SKIP_UNSTABLE == 'false'
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
@@ -429,7 +435,7 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/tests-pytest@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         env:
           ALLOW_PLOTTING: true
         with:
@@ -474,6 +480,11 @@ jobs:
       matrix:
         python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
+      - name: Set up headless display
+        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
+        with:
+          pyvista: false
+
       - name: Login in Github Container registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
@@ -574,7 +585,7 @@ jobs:
       id-token: write
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/build-library@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -769,6 +780,11 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
+      - name: Set up headless display
+        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
+        with:
+          pyvista: false
+
       - name: Download Linux binaries
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
@@ -798,14 +814,13 @@ jobs:
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/tests-pytest@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         env:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           pytest-extra-args: "--use-existing-service=yes"
           checkout: false
-          requires-xvfb: true
           randomize: true
 
       - name: "Compressing Linux Dockerfile"
@@ -840,7 +855,7 @@ jobs:
       contents: write
     steps:
       - name: Release to GitHub
-        uses: ansys/actions/release-github@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/release-github@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
@@ -880,7 +895,7 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/doc-deploy-dev@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -894,7 +909,7 @@ jobs:
     needs: [release, release-pypi]
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/doc-deploy-stable@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -911,7 +926,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Automerge PRs
-        uses: ansys/actions/hk-automerge-prs@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/hk-automerge-prs@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

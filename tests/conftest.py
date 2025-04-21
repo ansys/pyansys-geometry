@@ -129,6 +129,8 @@ def are_graphics_available() -> bool:
     # ...otherwise, graphics are not available.
     try:
         run_if_graphics_required()
-        return True
+        from pyvista.plotting import system_supports_plotting
+
+        return system_supports_plotting()
     except ImportError:
         return False
