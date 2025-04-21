@@ -2115,6 +2115,7 @@ def test_child_component_instances(modeler: Modeler):
     assert len(comp1.components) == len(base2.components[0].components)
 
 
+@pytest.mark.skipif(os.name == "nt", reason="TESTING GRAPHICS")
 def test_multiple_designs(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Generate multiple designs, make sure they are all separate, and once
     a design is deactivated, the next one is activated.
