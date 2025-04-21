@@ -72,7 +72,6 @@ tests = [
     "pytest==8.3.5",
     "pytest-cov==6.1.1",
     "pytest-pyvista==0.1.9",
-    "pytest-xvfb==3.1.1",
     "pyvista[jupyter]==0.45.0",
     "requests==2.32.3",
     "scipy==1.15.2",
@@ -84,7 +83,6 @@ tests-minimal = [
     "pytest==8.3.5",
     "pytest-cov==6.1.1",
     "pytest-pyvista==0.1.9",
-    "pytest-xvfb==3.1.1",
 ]
 doc = [
     "ansys-sphinx-theme[autoapi]==1.4.2",
