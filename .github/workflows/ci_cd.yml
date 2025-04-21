@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  MAIN_PYTHON_VERSION: '3.12'
+  MAIN_PYTHON_VERSION: '3.13'
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
