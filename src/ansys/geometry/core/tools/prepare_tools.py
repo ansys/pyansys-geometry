@@ -266,11 +266,11 @@ class PrepareTools:
         )
 
         message = RepairToolMessage(
-            response.get("success"),
-            response.get("created_bodies_monikers"),
-            response.get("modified_bodies_monikers"),
-            response.get("found"),
-            response.get("repaired"),
+            success=response.get("success"),
+            created_bodies=response.get("created_bodies_monikers"),
+            modified_bodies=response.get("modified_bodies_monikers"),
+            found=response.get("found"),
+            repaired=response.get("repaired"),
         )
         return message
 

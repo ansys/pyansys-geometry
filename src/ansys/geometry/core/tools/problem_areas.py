@@ -133,9 +133,9 @@ class DuplicateFaceProblemAreas(ProblemArea):
         )
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            success=response.result.success,
+            created_bodies=response.result.created_bodies_monikers,
+            modified_bodies=response.result.modified_bodies_monikers,
         )
 
         parent_design.update_from_tracker(response.result.complete_command_response)
@@ -190,9 +190,9 @@ class MissingFaceProblemAreas(ProblemArea):
         )
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            success=response.result.success,
+            created_bodies=response.result.created_bodies_monikers,
+            modified_bodies=response.result.modified_bodies_monikers,
         )
         # parent_design.update_from_tracker(response.result.complete_command_response)
         return message
@@ -243,11 +243,11 @@ class InexactEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixInexactEdges(
             FixInexactEdgesRequest(inexact_edge_problem_area_id=self._grpc_id)
         )
-        # parent_design._update_design_inplace()
+        parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            success=response.result.success,
+            created_bodies=response.result.created_bodies_monikers,
+            modified_bodies=response.result.modified_bodies_monikers,
         )
         return message
 
@@ -297,9 +297,9 @@ class ExtraEdgeProblemAreas(ProblemArea):
         request = FixExtraEdgesRequest(extra_edge_problem_area_id=self._grpc_id)
         response = self._repair_stub.FixExtraEdges(request)
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            success=response.result.success,
+            created_bodies=response.result.created_bodies_monikers,
+            modified_bodies=response.result.modified_bodies_monikers,
         )
         parent_design.update_from_tracker(response.result.complete_command_response)
 
@@ -353,9 +353,9 @@ class ShortEdgeProblemAreas(ProblemArea):
         )
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            success=response.result.success,
+            created_bodies=response.result.created_bodies_monikers,
+            modified_bodies=response.result.modified_bodies_monikers,
         )
         parent_design.update_from_tracker(response.result.complete_command_response)
 
@@ -409,9 +409,9 @@ class SmallFaceProblemAreas(ProblemArea):
         )
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            success=response.result.success,
+            created_bodies=response.result.created_bodies_monikers,
+            modified_bodies=response.result.modified_bodies_monikers,
         )
 
         parent_design.update_from_tracker(response.result.complete_command_response)
@@ -466,9 +466,9 @@ class SplitEdgeProblemAreas(ProblemArea):
         )
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            success=response.result.success,
+            created_bodies=response.result.created_bodies_monikers,
+            modified_bodies=response.result.modified_bodies_monikers,
         )
         parent_design.update_from_tracker(response.result.complete_command_response)
 
@@ -522,9 +522,9 @@ class StitchFaceProblemAreas(ProblemArea):
         )
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            success=response.result.success,
+            created_bodies=response.result.created_bodies_monikers,
+            modified_bodies=response.result.modified_bodies_monikers,
         )
         parent_design.update_from_tracker(response.result.complete_command_response)
         return message
@@ -572,9 +572,9 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
         )
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.result.success,
-            response.result.created_bodies_monikers,
-            response.result.modified_bodies_monikers,
+            success=response.result.success,
+            created_bodies=response.result.created_bodies_monikers,
+            modified_bodies=response.result.modified_bodies_monikers,
         )
         parent_design.update_from_tracker(response.result.complete_command_response)
         return message
