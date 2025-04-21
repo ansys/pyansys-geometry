@@ -42,16 +42,6 @@ jobs:
             experimental: false
 
     steps:
-      - name: Calculate SKIP_UNSTABLE
-        if: matrix.experimental
-        run: |
-          # Calculate the logical expression
-          $Result = $false
-
-          # Export it as an environment variable with true/false value
-          Write-Output "SKIP_UNSTABLE=$Result" | Out-File -FilePath $env:GITHUB_ENV -Append
-          Write-Output "SKIP_UNSTABLE will be: $Result"
-
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         if: env.SKIP_UNSTABLE == 'false'
 
