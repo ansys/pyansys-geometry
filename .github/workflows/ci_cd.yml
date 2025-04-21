@@ -20,6 +20,7 @@ env:
   RESET_IMAGE_CACHE: 5
   IS_WORKFLOW_RUNNING: True
   ARTIFACTORY_VERSION: v252
+  VTK_DEFAULT_OPENGL_WINDOW: "vtkOSOpenGLRenderWindow"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -400,6 +401,12 @@ jobs:
           # Export it as an environment variable with true/false value
           echo "SKIP_UNSTABLE=$Result" >> $GITHUB_ENV
           echo "SKIP_UNSTABLE will be: $Result"
+
+      - name: Set up headless display
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
+        with:
+          pyvista: false
 
       - name: Login in Github Container registry
         if: env.SKIP_UNSTABLE == 'false'
@@ -805,7 +812,6 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           pytest-extra-args: "--use-existing-service=yes"
           checkout: false
-          requires-xvfb: true
           randomize: true
 
       - name: "Compressing Linux Dockerfile"
