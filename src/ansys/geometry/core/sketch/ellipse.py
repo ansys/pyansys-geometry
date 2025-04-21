@@ -203,7 +203,7 @@ class SketchEllipse(SketchFace, Ellipse):
         return pv.Ellipse(
             semi_major_axis=self.major_radius.m_as(DEFAULT_UNITS.LENGTH),
             semi_minor_axis=self.minor_radius.m_as(DEFAULT_UNITS.LENGTH),
-        ).transform(transformation_matrix)
+        ).transform(transformation_matrix, inplace=True)
 
     def plane_change(self, plane: Plane) -> None:
         """Redefine the plane containing ``SketchEllipse`` objects.

@@ -964,7 +964,7 @@ class Sketch:
         sketches_polydata_selection = []
         sketches_polydata_selection.extend(
             [
-                sketch_item.visualization_polydata.transform(self._plane.transformation_matrix)
+                sketch_item.visualization_polydata.transform(self._plane.transformation_matrix, inplace=True)
                 for sketch_item in self._current_sketch_context
             ]
         )
@@ -998,7 +998,7 @@ class Sketch:
             List of the polydata configuration for faces in the sketch.
         """
         sketches_polydata_faces = [
-            face.visualization_polydata.transform(self._plane.transformation_matrix)
+            face.visualization_polydata.transform(self._plane.transformation_matrix, inplace=True)
             for face in self.faces
         ]
         return sketches_polydata_faces
@@ -1012,7 +1012,7 @@ class Sketch:
             List of the polydata configuration for edges in the sketch.
         """
         sketches_polydata_edges = [
-            edge.visualization_polydata.transform(self._plane.transformation_matrix)
+            edge.visualization_polydata.transform(self._plane.transformation_matrix, inplace=True)
             for edge in self.edges
         ]
         return sketches_polydata_edges
