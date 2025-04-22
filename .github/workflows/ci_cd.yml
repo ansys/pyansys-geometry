@@ -53,7 +53,7 @@ jobs:
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
-        uses: /RobPasMue/setup-headless-display-action@offscreen-mesa3d 
+        uses: /RobPasMue/setup-headless-display-action@offscreen-mesa3d
         with:
           pyvista: false
           # install-mesa-offscreen: true
