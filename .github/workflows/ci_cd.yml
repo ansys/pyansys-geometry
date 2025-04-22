@@ -56,7 +56,9 @@ jobs:
         uses: RobPasMue/setup-headless-display-action@offscreen-mesa3d
         with:
           pyvista: false
-          install-mesa-offscreen: true
+          # Mesa3D off screen rendering only needed on Windows self-hosted runners
+          # without GPU support (e.g. pygeometry-ci-2 has GPU, so it doesn't need it)
+          install-mesa3d-offscreen: ${{ runner.name != 'pygeometry-ci-2' }}
 
       - name: Create Python venv
         if: env.SKIP_UNSTABLE == 'false'
