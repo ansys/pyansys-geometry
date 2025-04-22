@@ -56,7 +56,7 @@ jobs:
         uses: /RobPasMue/setup-headless-display-action@offscreen-mesa3d
         with:
           pyvista: false
-          # install-mesa-offscreen: true
+          install-mesa-offscreen: true
 
       - name: Create Python venv
         if: env.SKIP_UNSTABLE == 'false'
