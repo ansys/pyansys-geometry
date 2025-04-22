@@ -33,8 +33,6 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     env:
       SKIP_UNSTABLE: false
-      # IMPORTANT: needed for Windows runners to use Mesa3D drivers
-      VTK_DEFAULT_OPENGL_WINDOW: "vtkOSOpenGLRenderWindow"
       PYVISTA_OFF_SCREEN: true
     strategy:
       fail-fast: false
@@ -55,9 +53,10 @@ jobs:
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
-        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
+        uses: /RobPasMue/setup-headless-display-action@offscreen-mesa3d 
         with:
           pyvista: false
+          # install-mesa-offscreen: true
 
       - name: Create Python venv
         if: env.SKIP_UNSTABLE == 'false'
