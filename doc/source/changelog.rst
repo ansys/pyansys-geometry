@@ -9,6 +9,73 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.10.6 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.6>`_ - April 22, 2025
+===========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - grpc prepare tools stub implementation
+          - `#1914 <https://github.com/ansys/pyansys-geometry/pull/1914>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - bump PyVista and VTK versions (support Python 3.13)
+          - `#1924 <https://github.com/ansys/pyansys-geometry/pull/1924>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - docstyle ordering
+          - `#1925 <https://github.com/ansys/pyansys-geometry/pull/1925>`_
+
+        * - adapt Native folder path for Linux and Windows
+          - `#1932 <https://github.com/ansys/pyansys-geometry/pull/1932>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - update CHANGELOG for v0.10.5
+          - `#1919 <https://github.com/ansys/pyansys-geometry/pull/1919>`_
+
+        * - bump skitionek/notify-microsoft-teams to v1.0.9 in the actions group
+          - `#1920 <https://github.com/ansys/pyansys-geometry/pull/1920>`_
+
+        * - bump ansys/actions from 9.0.2 to 9.0.3 in the actions group
+          - `#1923 <https://github.com/ansys/pyansys-geometry/pull/1923>`_
+
+        * - fix issues with OSMesa installation and env variables set up
+          - `#1927 <https://github.com/ansys/pyansys-geometry/pull/1927>`_
+
+        * - bump ansys/actions from 9.0.3 to 9.0.6 in the actions group
+          - `#1928 <https://github.com/ansys/pyansys-geometry/pull/1928>`_
+
+        * - pre-commit automatic update
+          - `#1930 <https://github.com/ansys/pyansys-geometry/pull/1930>`_
+
+        * - fix unstable workflows for Linux (missing headless display)
+          - `#1931 <https://github.com/ansys/pyansys-geometry/pull/1931>`_
+
+
 `0.10.5 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.5>`_ - April 16, 2025
 ===========================================================================================
 
