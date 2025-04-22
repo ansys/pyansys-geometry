@@ -26,11 +26,6 @@ from typing import TYPE_CHECKING
 
 from google.protobuf.wrappers_pb2 import Int32Value
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.preparetools_pb2 import (
-    RemoveLogoRequest,
-)
-from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FixAdjustSimplifyRequest,
     FixDuplicateFacesRequest,
@@ -76,7 +71,7 @@ class ProblemArea:
         self._id = id
         self._grpc_id = Int32Value(value=int(id))
         self._repair_stub = RepairToolsStub(grpc_client.channel)
-        self._prepare_stub = PrepareToolsStub(grpc_client.channel)
+        self._grpc_client = grpc_client
 
     @property
     def id(self) -> str:
@@ -663,7 +658,6 @@ class LogoProblemArea(ProblemArea):
         if len(self._face_ids) == 0:
             return False
 
-        entity_ids = [EntityIdentifier(id=face_id) for face_id in self._face_ids]
-        response = self._prepare_stub.RemoveLogo(RemoveLogoRequest(face_ids=entity_ids))
+        response = self._grpc_client._services.prepare_tools.remove_logo(face_ids=self._face_ids)
 
-        return response.success
+        return response.get("success")

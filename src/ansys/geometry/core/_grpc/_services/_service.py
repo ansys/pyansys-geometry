@@ -28,19 +28,12 @@ from .base.bodies import GRPCBodyService
 from .base.dbuapplication import GRPCDbuApplicationService
 from .base.measurement_tools import GRPCMeasurementToolsService
 from .base.named_selection import GRPCNamedSelectionService
+from .base.prepare_tools import GRPCPrepareToolsService
 
 
 class _GRPCServices:
     """
     Placeholder for the gRPC services (i.e. stubs).
-
-    Notes
-    -----
-    This class provides a unified interface to access the different
-    gRPC services available in the Geometry API. It allows for easy
-    switching between different versions of the API by using the
-    `version` parameter in the constructor. The services are lazy-loaded
-    to avoid unnecessary imports and to improve performance.
 
     Parameters
     ----------
@@ -49,6 +42,14 @@ class _GRPCServices:
     version : GeometryApiProtos | str | None
         The version of the gRPC API protocol to use. If None, the latest
         version is used.
+
+    Notes
+    -----
+    This class provides a unified interface to access the different
+    gRPC services available in the Geometry API. It allows for easy
+    switching between different versions of the API by using the
+    `version` parameter in the constructor. The services are lazy-loaded
+    to avoid unnecessary imports and to improve performance.
     """
 
     def __init__(self, channel: grpc.Channel, version: GeometryApiProtos | str | None = None):
@@ -73,6 +74,7 @@ class _GRPCServices:
         self._dbu_application = None
         self._named_selection = None
         self._measurement_tools = None
+        self._prepare_tools = None
 
     @property
     def bodies(self) -> GRPCBodyService:
@@ -203,3 +205,29 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._measurement_tools
+
+    @property
+    def prepare_tools(self) -> GRPCPrepareToolsService:
+        """
+        Get the prepare tools service for the specified version.
+
+        Returns
+        -------
+        NamedSelectionServiceBase
+            The prepare tools service for the specified version.
+        """
+        if not self._prepare_tools:
+            # Import the appropriate prepare tools service based on the version
+            from .v0.prepare_tools import GRPCPrepareToolsServiceV0
+            from .v1.prepare_tools import GRPCPrepareToolsServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._prepare_tools = GRPCPrepareToolsServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._prepare_tools = GRPCPrepareToolsServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._prepare_tools

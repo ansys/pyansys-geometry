@@ -321,11 +321,6 @@ class Design(Component):
     def __export_and_download_legacy(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
 
-        Notes
-        -----
-        This is a legacy method, which is used in versions
-        up to Ansys 25.1.1 products.
-
         Parameters
         ----------
         format : DesignFileFormat
@@ -335,6 +330,11 @@ class Design(Component):
         -------
         bytes
             The raw data from the exported and downloaded file.
+
+        Notes
+        -----
+        This is a legacy method, which is used in versions
+        up to Ansys 25.1.1 products.
         """
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
