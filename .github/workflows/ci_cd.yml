@@ -20,7 +20,6 @@ env:
   RESET_IMAGE_CACHE: 5
   IS_WORKFLOW_RUNNING: True
   ARTIFACTORY_VERSION: v252
-  # VTK_DEFAULT_OPENGL_WINDOW: "vtkOSOpenGLRenderWindow"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,6 +33,8 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     env:
       SKIP_UNSTABLE: false
+      # IMPORTANT: needed for Windows runners to use Mesa3D drivers
+      VTK_DEFAULT_OPENGL_WINDOW: "vtkOSOpenGLRenderWindow"
       PYVISTA_OFF_SCREEN: true
     strategy:
       fail-fast: false
