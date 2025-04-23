@@ -42,86 +42,87 @@ class GRPCRepairToolsService(ABC):
 
         Parameters
         ----------
-            channel (grpc.Channel): The gRPC channel used to communicate with the service.
+        channel: grpc.Channel
+            The gRPC channel used to communicate with the service.
         """
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_split_edges(self, **kwargs):
+    def find_split_edges(self, **kwargs) -> dict:
         """Identify split edges in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_extra_edges(self, **kwargs):
+    def find_extra_edges(self, **kwargs) -> dict:
         """Identify extra edges in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_inexact_edges(self, **kwargs):
+    def find_inexact_edges(self, **kwargs) -> dict:
         """Identify inexact edges in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_short_edges(self, **kwargs):
+    def find_short_edges(self, **kwargs) -> dict:
         """Identify short edges in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_duplicate_faces(self, **kwargs):
+    def find_duplicate_faces(self, **kwargs) -> dict:
         """Identify duplicate faces in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_missing_faces(self, **kwargs):
+    def find_missing_faces(self, **kwargs) -> dict:
         """Identify missing faces in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_small_faces(self, **kwargs):
+    def find_small_faces(self, **kwargs) -> dict:
         """Identify small faces in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_stitch_faces(self, **kwargs):
+    def find_stitch_faces(self, **kwargs) -> dict:
         """Identify faces that can be stitched together in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_simplify(self, **kwargs):
+    def find_simplify(self, **kwargs) -> dict:
         """Identify areas in the geometry that can be simplified."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_interferences(self, **kwargs):
+    def find_interferences(self, **kwargs) -> dict:
         """Identify interferences in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_and_fix_short_edges(self, **kwargs):
+    def find_and_fix_short_edges(self, **kwargs) -> dict:
         """Identify and fix short edges in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_and_fix_extra_edges(self, **kwargs):
+    def find_and_fix_extra_edges(self, **kwargs) -> dict:
         """Identify and fix extra edges in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_and_fix_split_edges(self, **kwargs):
+    def find_and_fix_split_edges(self, **kwargs) -> dict:
         """Identify and fix split edges in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def find_and_fix_simplify(self, **kwargs):
+    def find_and_fix_simplify(self, **kwargs) -> dict:
         """Identify and simplify areas in the geometry."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def inspect_geometry(self, **kwargs):
+    def inspect_geometry(self, **kwargs) -> dict:
         """Inspect the geometry for issues."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def repair_geometry(self, **kwargs):
+    def repair_geometry(self, **kwargs) -> dict:
         """Repair the geometry by addressing identified issues."""
         pass  # pragma: no cover
