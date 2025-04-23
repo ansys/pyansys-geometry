@@ -160,7 +160,6 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     env:
       SKIP_UNSTABLE: false
-      PYVISTA_OFF_SCREEN: true
     strategy:
       fail-fast: false
       matrix:
@@ -203,12 +202,7 @@ jobs:
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
-        uses: RobPasMue/setup-headless-display-action@offscreen-mesa3d
-        with:
-          pyvista: false
-          # Mesa3D off screen rendering only needed on Windows self-hosted runners
-          # without GPU support (e.g. pygeometry-ci-2 has GPU, so it doesn't need it)
-          install-mesa3d-offscreen: ${{ runner.name != 'pygeometry-ci-2' }}
+        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
 
       - name: Create Python venv
         if: env.SKIP_UNSTABLE == 'false'
@@ -326,11 +320,9 @@ jobs:
     name: Documentation
     needs: [docs-style]
     runs-on: ubuntu-latest
-    env:
-      PYVISTA_OFF_SCREEN: true
     steps:
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
+        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
@@ -406,9 +398,7 @@ jobs:
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
-        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
-        with:
-          pyvista: false
+        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
 
       - name: Login in Github Container registry
         if: env.SKIP_UNSTABLE == 'false'
@@ -484,9 +474,7 @@ jobs:
         python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
-        with:
-          pyvista: false
+        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
 
       - name: Login in Github Container registry
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
@@ -686,12 +674,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Set up headless display
-        uses: RobPasMue/setup-headless-display-action@offscreen-mesa3d
-        with:
-          pyvista: false
-          # Mesa3D off screen rendering only needed on Windows self-hosted runners
-          # without GPU support (e.g. pygeometry-ci-2 has GPU, so it doesn't need it)
-          install-mesa3d-offscreen: ${{ runner.name != 'pygeometry-ci-2' }}
+        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
 
       - name: Set up Python
         uses: actions/setup-python@8d9ed9ac5c53483de85588cdf95a591a75ab9f55 # v5.5.0
@@ -792,9 +775,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
-        with:
-          pyvista: false
+        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
 
       - name: Download Linux binaries
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1

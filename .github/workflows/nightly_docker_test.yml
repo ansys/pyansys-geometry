@@ -100,12 +100,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
-        uses: RobPasMue/setup-headless-display-action@offscreen-mesa3d
-        with:
-          pyvista: false
-          # Mesa3D off screen rendering only needed on Windows self-hosted runners
-          # without GPU support (e.g. pygeometry-ci-2 has GPU, so it doesn't need it)
-          install-mesa3d-offscreen: ${{ runner.name != 'pygeometry-ci-2' }}
+        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
 
       - name: Create Python venv
         run: |
@@ -218,9 +213,7 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_CORE_TAG }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
-        with:
-          pyvista: false
+        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
 
       - name: Run pytest
         uses: ansys/actions/tests-pytest@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
