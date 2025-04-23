@@ -62,14 +62,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             angle=kwargs["angle"],
             distance=kwargs["distance"],
         )
-        
+
         # Call the gRPC service
         response = self.stub.FindSplitEdges(request)
 
         return self.stub.FindSplitEdges(request)
 
     @protect_grpc
-    def find_extra_edges(self, **kwargs) -> dict: # noqa: D102
+    def find_extra_edges(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindExtraEdgesRequest
 
         request = FindExtraEdgesRequest(selection=kwargs["selection"])
