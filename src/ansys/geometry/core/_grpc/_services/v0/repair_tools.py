@@ -198,4 +198,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             distance=kwargs["length"],
             comprehensive=kwargs["comprehensive_result"],
         )
+
+        # Call the gRPC service
+        response = self.stub.FindSplitEdges(request)
+
+        # Return the response - formatted as a dictionary
         return self.stub.FindAndFixSplitEdges(request)
