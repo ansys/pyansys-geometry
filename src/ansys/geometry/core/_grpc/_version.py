@@ -71,10 +71,6 @@ class GeometryApiProtos(Enum):
     def verify_supported(self, channel: grpc.Channel) -> bool:
         """Check if the version is supported.
 
-        Notes
-        -----
-        This method checks if the server supports the gRPC API protocol version.
-
         Parameters
         ----------
         channel : grpc.Channel
@@ -84,6 +80,10 @@ class GeometryApiProtos(Enum):
         -------
         bool
             True if the server supports the version, otherwise False.
+
+        Notes
+        -----
+        This method checks if the server supports the gRPC API protocol version.
         """
         pb2_grpc = self.value[1]
         if pb2_grpc is None:

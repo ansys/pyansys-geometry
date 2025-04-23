@@ -386,6 +386,13 @@ def prepare_and_start_backend(
         cad_integration_folder = root_service_folder / "CADIntegration"
         schema_folder = root_service_folder / "Schema"
 
+        # Adapt the native folder to the OS
+        # The native folder is different for Windows and Linux.
+        if os.name == "nt":
+            native_folder = native_folder / "Windows"
+        else:
+            native_folder = native_folder / "Linux"
+
         # Set the environment variables for the Ansys Geometry Core Service launch
         # ANS_DSCO_REMOTE_IP should be variable "host" directly, but not working...
         env_copy["ANS_DSCO_REMOTE_IP"] = "127.0.0.1" if host == "localhost" else host

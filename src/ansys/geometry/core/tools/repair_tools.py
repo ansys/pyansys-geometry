@@ -422,11 +422,6 @@ class RepairTools:
     ) -> list[InterferenceProblemAreas]:
         """Find the interference problem areas.
 
-        Notes
-        -----
-        This method finds and returns a list of ids of interference problem areas
-        objects.
-
         Parameters
         ----------
         bodies : list[Body]
@@ -439,6 +434,11 @@ class RepairTools:
         -------
         list[InterfenceProblemAreas]
             List of objects representing interference problem areas.
+
+        Notes
+        -----
+        This method finds and returns a list of ids of interference problem areas
+        objects.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -472,10 +472,6 @@ class RepairTools:
     ) -> RepairToolMessage:
         """Find and fix the short edge problem areas.
 
-        Notes
-        -----
-        This method finds the short edges in the bodies and fixes them.
-
         Parameters
         ----------
         bodies : list[Body]
@@ -490,6 +486,10 @@ class RepairTools:
         -------
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+        Notes
+        -----
+        This method finds the short edges in the bodies and fixes them.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -526,10 +526,6 @@ class RepairTools:
     ) -> RepairToolMessage:
         """Find and fix the extra edge problem areas.
 
-        Notes
-        -----
-        This method finds the extra edges in the bodies and fixes them.
-
         Parameters
         ----------
         bodies : list[Body]
@@ -544,6 +540,10 @@ class RepairTools:
         -------
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+        Notes
+        -----
+        This method finds the extra edges in the bodies and fixes them.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -581,10 +581,6 @@ class RepairTools:
     ) -> RepairToolMessage:
         """Find and fix the split edge problem areas.
 
-        Notes
-        -----
-        This method finds the extra edges in the bodies and fixes them.
-
         Parameters
         ----------
         bodies : list[Body]
@@ -601,6 +597,10 @@ class RepairTools:
         -------
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+        Notes
+        -----
+        This method finds the extra edges in the bodies and fixes them.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -643,10 +643,6 @@ class RepairTools:
     ) -> RepairToolMessage:
         """Find and simplify the provided geometry.
 
-        Notes
-        -----
-        This method simplifies the provided geometry.
-
         Parameters
         ----------
         bodies : list[Body]
@@ -659,6 +655,10 @@ class RepairTools:
         -------
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+        Notes
+        -----
+        This method simplifies the provided geometry.
         """
         from ansys.geometry.core.designer.body import Body
 

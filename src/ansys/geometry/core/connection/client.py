@@ -51,10 +51,6 @@ except ModuleNotFoundError:  # pragma: no cover
 def _create_geometry_channel(target: str) -> grpc.Channel:
     """Create a Geometry service gRPC channel.
 
-    Notes
-    -----
-    Contains specific options for the Geometry service.
-
     Parameters
     ----------
     target : str
@@ -65,6 +61,10 @@ def _create_geometry_channel(target: str) -> grpc.Channel:
     -------
     ~grpc.Channel
         gRPC channel for the Geometry service.
+
+    Notes
+    -----
+    Contains specific options for the Geometry service.
     """
     return grpc.insecure_channel(
         target,
@@ -94,16 +94,16 @@ def wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Chan
         * If the total elapsed time exceeds the value for the ``timeout`` parameter,
           a ``TimeoutError`` is raised.
 
-    Raises
-    ------
-    TimeoutError
-        Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
-
     Returns
     -------
     grpc.Channel
         The channel that was passed in. This channel is guaranteed to be healthy.
         If a string was passed in, a channel is created using the default insecure channel.
+
+    Raises
+    ------
+    TimeoutError
+        Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
     """
     t_max = time.time() + timeout
     t_out = 0.1

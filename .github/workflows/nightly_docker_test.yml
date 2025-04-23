@@ -21,7 +21,7 @@ on:
       - v*
 
 env:
-  MAIN_PYTHON_VERSION: '3.12'
+  MAIN_PYTHON_VERSION: '3.13'
   ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG: ghcr.io/ansys/geometry:core-windows-latest-unstable
   ANSRV_GEO_IMAGE_LINUX_CORE_TAG: ghcr.io/ansys/geometry:core-linux-latest-unstable
   ANSRV_GEO_PORT: 710
@@ -100,9 +100,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@52bda06d59c0fc422fc2512c9c670bf6b66616f8 # v3.2
-        with:
-          pyvista: false
+        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
 
       - name: Create Python venv
         run: |
@@ -214,13 +212,15 @@ jobs:
           docker pull ${{ env.ANSRV_GEO_IMAGE_LINUX_CORE_TAG }}
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_CORE_TAG }}
 
+      - name: Set up headless display
+        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
+
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@4f15ff3ab1183912ce862d51b8c66ea124b052a1 # v9.0.2
+        uses: ansys/actions/tests-pytest@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
         env:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          requires-xvfb: true
 
       - name: Stop the Geometry service
         if: always()
