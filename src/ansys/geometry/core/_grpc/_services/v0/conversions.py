@@ -749,6 +749,8 @@ def from_grpc_driving_dimension_to_driving_dimension(
     Parameter
         Converted driving dimension.
     """
+    from ansys.geometry.core.parameters.parameter import Parameter, ParameterType
+
     return Parameter(
         id=driving_dimension.id,
         name=driving_dimension.name,
@@ -795,6 +797,8 @@ def from_grpc_update_status_to_parameter_update_status(
     ParameterUpdateStatus
         Converted update status.
     """
+    from ansys.geometry.core.parameters.parameter import ParameterUpdateStatus
+
     status_mapping = {
         GRPCUpdateStatus.SUCCESS: ParameterUpdateStatus.SUCCESS,
         GRPCUpdateStatus.FAILURE: ParameterUpdateStatus.FAILURE,
