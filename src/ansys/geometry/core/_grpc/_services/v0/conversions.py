@@ -67,7 +67,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.misc.options import TessellationOptions
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
-        ParameterType,
         ParameterUpdateStatus,
     )
     from ansys.geometry.core.shapes.curves.curve import Curve
