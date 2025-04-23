@@ -782,7 +782,7 @@ def from_driving_dimension_to_grpc_driving_dimension(
 
 def from_grpc_update_status_to_parameter_update_status(
     update_status: GRPCUpdateStatus,
-) -> ParameterUpdateStatus:
+) -> "ParameterUpdateStatus":
     """Convert a gRPC update status to a parameter update status.
 
     Parameters
