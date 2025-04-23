@@ -39,50 +39,50 @@ class GRPCRepairToolsServiceV1(ABC):
         """Initialize the MeasurementToolsService class."""
         pass  # pragma: no cover
 
-    def find_split_edges(self, **kwargs):
+    def find_split_edges(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_extra_edges(self, **kwargs):
+    def find_extra_edges(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_inexact_edges(self, **kwargs):
+    def find_inexact_edges(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_short_edges(self, **kwargs):
+    def find_short_edges(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_duplicate_faces(self, **kwargs):
+    def find_duplicate_faces(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_missing_faces(self, **kwargs):
+    def find_missing_faces(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_small_faces(self, **kwargs):
+    def find_small_faces(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_stitch_faces(self, **kwargs):
+    def find_stitch_faces(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_simplify(self, **kwargs):
+    def find_simplify(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_interferences(self, **kwargs):
+    def find_interferences(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_and_fix_short_edges(self, **kwargs):
+    def find_and_fix_short_edges(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_and_fix_extra_edges(self, **kwargs):
+    def find_and_fix_extra_edges(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_and_fix_split_edges(self, **kwargs):
+    def find_and_fix_split_edges(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def find_and_fix_simplify(self, **kwargs):
+    def find_and_fix_simplify(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def inspect_geometry(self, **kwargs):
+    def inspect_geometry(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
 
-    def repair_geometry(self, **kwargs):
+    def repair_geometry(self, **kwargs) -> dict: # noqa: D102
         raise NotImplementedError
