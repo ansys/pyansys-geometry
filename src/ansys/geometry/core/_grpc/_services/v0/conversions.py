@@ -53,7 +53,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedSurface as GRPCTrimmedSurface,
 )
 from ansys.geometry.core.misc.checks import graphics_required
-from ansys.geometry.core.parameters.parameter import Parameter, ParameterType, ParameterUpdateStatus
 
 if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
@@ -66,6 +65,11 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.misc.options import TessellationOptions
+    from ansys.geometry.core.parameters.parameter import (
+        Parameter,
+        ParameterType,
+        ParameterUpdateStatus,
+    )
     from ansys.geometry.core.shapes.curves.curve import Curve
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
     from ansys.geometry.core.shapes.surfaces.surface import Surface

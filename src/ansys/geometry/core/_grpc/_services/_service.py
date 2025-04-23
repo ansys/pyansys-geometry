@@ -22,12 +22,11 @@
 
 import grpc
 
-from ansys.geometry.core._grpc._services.base.driving_dimensions import GRPCDrivingDimensionsService
-
 from .._version import GeometryApiProtos, set_proto_version
 from .base.admin import GRPCAdminService
 from .base.bodies import GRPCBodyService
 from .base.dbuapplication import GRPCDbuApplicationService
+from .base.driving_dimensions import GRPCDrivingDimensionsService
 from .base.measurement_tools import GRPCMeasurementToolsService
 from .base.named_selection import GRPCNamedSelectionService
 from .base.prepare_tools import GRPCPrepareToolsService
