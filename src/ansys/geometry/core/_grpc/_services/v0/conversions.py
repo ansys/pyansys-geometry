@@ -264,6 +264,50 @@ def from_frame_to_grpc_frame(frame: "Frame") -> GRPCFrame:
     )
 
 
+def from_grpc_frame_to_frame(frame: GRPCFrame) -> "Frame":
+    """Convert a frame gRPC message to a ``Frame`` class.
+
+    Parameters
+    ----------
+    frame : GRPCFrame
+        Source frame data.
+
+    Returns
+    -------
+    Frame
+        Converted frame.
+    """
+    from ansys.geometry.core.math.frame import Frame
+    from ansys.geometry.core.math.point import Point3D
+    from ansys.geometry.core.math.vector import UnitVector3D
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
+    return Frame(
+        Point3D(
+            input=[
+                frame.origin.x,
+                frame.origin.y,
+                frame.origin.z,
+            ],
+            unit=DEFAULT_UNITS.SERVER_LENGTH,
+        ),
+        UnitVector3D(
+            input=[
+                frame.dir_x.x,
+                frame.dir_x.y,
+                frame.dir_x.z,
+            ]
+        ),
+        UnitVector3D(
+            input=[
+                frame.dir_y.x,
+                frame.dir_y.y,
+                frame.dir_y.z,
+            ]
+        ),
+    )
+
+
 def from_plane_to_grpc_plane(plane: "Plane") -> GRPCPlane:
     """Convert a ``Plane`` class to a plane gRPC message.
 
