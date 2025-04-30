@@ -36,7 +36,7 @@ class GRPCAdminService(ABC):
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the AdminServiceBase class."""
+        """Initialize the GRPCAdminService class."""
         pass  # pragma: no cover
 
     @abstractmethod

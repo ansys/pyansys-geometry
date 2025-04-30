@@ -36,7 +36,7 @@ class GRPCPrepareToolsService(ABC):
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the PrepareToolsService class."""
+        """Initialize the GRPCPrepareToolsService class."""
         pass  # pragma: no cover
 
     @abstractmethod
