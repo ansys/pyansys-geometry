@@ -357,8 +357,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "success": response.success,
             "found": response.found,
             "repaired": response.repaired,
-            "created_bodies_monikers": [],
-            "modified_bodies_monikers": [],
+            "created_bodies_monikers": response.created_bodies_monikers,
+            "modified_bodies_monikers": response.modified_bodies_monikers,
         }
 
     @protect_grpc
