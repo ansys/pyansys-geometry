@@ -491,11 +491,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.success,
-            response.created_bodies_monikers,
-            response.modified_bodies_monikers,
-            response.found,
-            response.repaired,
+            response['success'],
+            response['created_bodies'],
+            response['modified_bodies'],
+            response["found"],
+            response["repaired"],
         )
         return message
 
@@ -542,11 +542,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.success,
-            response.created_bodies_monikers,
-            response.modified_bodies_monikers,
-            response.found,
-            response.repaired,
+            response['success'],
+            response['created_bodies'],
+            response['modified_bodies'],
+            response["found"],
+            response["repaired"],
         )
         return message
 
@@ -606,11 +606,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.success,
-            response.created_bodies_monikers,
-            response.modified_bodies_monikers,
-            response.found,
-            response.repaired,
+            response['success'],
+            response['created_bodies'],
+            response['modified_bodies'],
+            response["found"],
+            response["repaired"],
         )
         return message
 
@@ -656,11 +656,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response.success,
-            response.created_bodies_monikers,
-            response.modified_bodies_monikers,
-            response.found,
-            response.repaired,
+            response['success'],
+            response['created_bodies'],
+            response['modified_bodies'],
+            response["found"],
+            response["repaired"],
         )
         return message
 
