@@ -36,7 +36,7 @@ class GRPCDrivingDimensionsService(ABC):
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the DrivingDimensionsServiceBase class."""
+        """Initialize the GRPCDrivingDimensionsService class."""
         pass  # pragma: no cover
 
     @abstractmethod
