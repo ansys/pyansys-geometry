@@ -390,7 +390,7 @@ class RepairTools:
             UnsimplifiedFaceProblemAreas(
                 f"{res['id']}",
                 self._grpc_client,
-                get_faces_from_ids(parent_design, res.body_monikers),
+                get_faces_from_ids(parent_design, res["bodies"]),
             )
             for res in problem_areas_response["problems"]
         ]

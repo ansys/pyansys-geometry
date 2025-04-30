@@ -225,13 +225,13 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         request = FindAdjustSimplifyRequest(selection=kwargs["selection"])
 
         # Call the gRPC service
-        response = self.stub.FindAndSimplify(request)
+        response = self.stub.FindAdjustSimplify(request)
         # Return the response - formatted as a dictionary
         return {
             "problems": [
                 {
                     "id": res.id,
-                    "faces": res.face_monikers,
+                    "bodies": res.body_monikers,
                 }
                 for res in response.result
             ]
