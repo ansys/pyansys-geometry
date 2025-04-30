@@ -24,7 +24,6 @@
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import frame_to_grpc_frame
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.frame import Frame
 
@@ -75,7 +74,7 @@ class CoordinateSystem:
         response = self._grpc_client.services.coordinate_systems.create(
             parent_id=self._parent_component.id,
             name=name,
-            frame=frame_to_grpc_frame(frame),
+            frame=frame,
         )
 
         self._id = response.get("id")
