@@ -53,7 +53,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         self.stub = RepairToolsStub(channel)
 
     @protect_grpc
-    def find_split_edges(self, **kwargs):  # noqa: D102
+    def find_split_edges(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindSplitEdgesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -66,21 +66,57 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindSplitEdges(request)
 
-        return self.stub.FindSplitEdges(request)
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "edges": res.edge_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_extra_edges(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindExtraEdgesRequest
 
+        # Create the request - assumes all inputs are valid and of the proper type
         request = FindExtraEdgesRequest(selection=kwargs["selection"])
-        return self.stub.FindExtraEdges(request)
+
+        # Return the response - formatted as a dictionary
+        response = self.stub.FindExtraEdges(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "edges": res.edge_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_inexact_edges(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindInexactEdgesRequest
 
         request = FindInexactEdgesRequest(selection=kwargs["selection"])
-        return self.stub.FindInexactEdges(request)
+
+        # Call the gRPC service
+        response = self.stub.FindInexactEdges(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "edges": res.edge_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_short_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -88,46 +124,118 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         from ansys.api.geometry.v0.repairtools_pb2 import FindShortEdgesRequest
 
+        # Create the request - assumes all inputs are valid and of the proper type
         request = FindShortEdgesRequest(
             selection=kwargs["selection"],
             max_edge_length=DoubleValue(value=kwargs["length"]),
         )
-        return self.stub.FindShortEdges(request)
+
+        # Call the gRPC service
+        response = self.stub.FindShortEdges(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "edges": res.edge_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_duplicate_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindDuplicateFacesRequest
 
         request = FindDuplicateFacesRequest(faces=kwargs["faces"])
-        return self.stub.FindDuplicateFaces(request)
+
+        # Call the gRPC service
+        response = self.stub.FindDuplicateFaces(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "faces": res.face_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_missing_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindMissingFacesRequest
 
         request = FindMissingFacesRequest(faces=kwargs["faces"])
-        return self.stub.FindMissingFaces(request)
+        # Call the gRPC service
+        response = self.stub.FindMissingFaces(request)
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "edges": res.edge_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_small_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindSmallFacesRequest
 
         request = FindSmallFacesRequest(selection=kwargs["selection"])
-        return self.stub.FindSmallFaces(request)
+        # Call the gRPC service
+        response = self.stub.FindSmallFaces(request)
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "faces": res.face_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
 
         request = FindStitchFacesRequest(faces=kwargs["faces"])
-        return self.stub.FindStitchFaces(request)
+        # Call the gRPC service
+        response = self.stub.FindStitchFaces(request)
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "bodies": res.body_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_simplify(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindAdjustSimplifyRequest
 
         request = FindAdjustSimplifyRequest(selection=kwargs["selection"])
-        return self.stub.FindAdjustSimplify(request)
+
+        # Call the gRPC service
+        response = self.stub.FindSimplify(request)
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "faces": res.face_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_and_fix_simplify(self, **kwargs) -> dict:  # noqa: D102
@@ -137,21 +245,54 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             selection=kwargs["selection"],
             comprehensive=kwargs["comprehensive_result"],
         )
-        return self.stub.FindAndSimplify(request)
+        # Call the gRPC service
+        response = self.stub.FindAndSimplify(request)
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "faces": res.face_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def inspect_geometry(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import InspectGeometryRequest
 
         request = InspectGeometryRequest(bodies=kwargs.get("bodies", []))
-        return self.stub.InspectGeometry(request)
+        # Call the gRPC service
+        response = self.stub.InspectGeometry(request)
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "faces": res.face_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
 
         request = RepairGeometryRequest(bodies=kwargs.get("bodies", []))
-        return self.stub.RepairGeometry(request)
+        # Call the gRPC service
+        response = self.stub.RepairGeometry(request)
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "faces": res.face_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_interferences(self, **kwargs) -> dict:  # noqa: D102
@@ -163,7 +304,19 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             bodies=kwargs["bodies"],
             cut_smaller_body=BoolValue(value=kwargs["cut_smaller_body"]),
         )
-        return self.stub.FindInterference(request)
+        # Call the gRPC service
+        response = self.stub.FindInterference(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "bodies": res.body_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_and_fix_short_edges(self, **kwargs):  # noqa: D102
@@ -176,7 +329,19 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             max_edge_length=DoubleValue(value=kwargs["length"]),
             comprehensive=kwargs["comprehensive_result"],
         )
-        return self.stub.FindAndFixShortEdges(request)
+        # Call the gRPC service
+        response = self.stub.FindShortEdges(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "edges": res.edge_monikers,
+                }
+                for res in response.result
+            ]
+        }
 
     @protect_grpc
     def find_and_fix_extra_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -203,4 +368,12 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FindSplitEdges(request)
 
         # Return the response - formatted as a dictionary
-        return self.stub.FindAndFixSplitEdges(request)
+        return {
+            "problems": [
+                {
+                    "id": res.id,
+                    "edges": res.edge_monikers,
+                }
+                for res in response.result
+            ]
+        }

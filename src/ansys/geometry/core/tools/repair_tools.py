@@ -23,7 +23,7 @@
 
 from typing import TYPE_CHECKING
 
-from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
+from google.protobuf.wrappers_pb2 import DoubleValue
 
 from ansys.api.geometry.v0.models_pb2 import (
     InspectGeometryMessageId,
@@ -110,11 +110,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             SplitEdgeProblemAreas(
-                f"{res.id}",
+                f"{res['id']}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res.edge_monikers),
+                get_edges_from_ids(parent_design, res["edges"]),
             )
-            for res in problem_areas_response.result
+            for res in problem_areas_response["problems"]
         ]
 
     @protect_grpc
@@ -145,11 +145,11 @@ class RepairTools:
 
         return [
             ExtraEdgeProblemAreas(
-                f"{res.id}",
+                f"{res['id']}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res.edge_monikers),
+                get_edges_from_ids(parent_design, res["edges"]),
             )
-            for res in problem_areas_response.result
+            for res in problem_areas_response["problems"]
         ]
 
     @protect_grpc
@@ -181,11 +181,11 @@ class RepairTools:
 
         return [
             InexactEdgeProblemAreas(
-                f"{res.id}",
+                f"{res['id']}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res.edge_monikers),
+                get_edges_from_ids(parent_design, res["edges"]),
             )
-            for res in problem_areas_response.result
+            for res in problem_areas_response["problems"]
         ]
 
     @protect_grpc
@@ -219,11 +219,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             ShortEdgeProblemAreas(
-                f"{res.id}",
+                f"{res['id']}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res.edge_monikers),
+                get_edges_from_ids(parent_design, res["edges"]),
             )
-            for res in problem_areas_response.result
+            for res in problem_areas_response["problems"]
         ]
 
     @protect_grpc
@@ -254,11 +254,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             DuplicateFaceProblemAreas(
-                f"{res.id}",
+                f"{res['id']}",
                 self._grpc_client,
-                get_faces_from_ids(parent_design, res.face_monikers),
+                get_faces_from_ids(parent_design, res["faces"]),
             )
-            for res in problem_areas_response.result
+            for res in problem_areas_response["problems"]
         ]
 
     @protect_grpc
@@ -288,11 +288,11 @@ class RepairTools:
 
         return [
             MissingFaceProblemAreas(
-                f"{res.id}",
+                f"{res['id']}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res.edge_monikers),
+                get_edges_from_ids(parent_design, res["edges"]),
             )
-            for res in problem_areas_response.result
+            for res in problem_areas_response["problems"]
         ]
 
     @protect_grpc
@@ -323,11 +323,11 @@ class RepairTools:
 
         return [
             SmallFaceProblemAreas(
-                f"{res.id}",
+                f"{res['id']}",
                 self._grpc_client,
-                get_faces_from_ids(parent_design, res.face_monikers),
+                get_faces_from_ids(parent_design, res["faces"]),
             )
-            for res in problem_areas_response.result
+            for res in problem_areas_response["problems"]
         ]
 
     @protect_grpc
@@ -354,11 +354,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             StitchFaceProblemAreas(
-                f"{res.id}",
+                f"{res['id']}",
                 self._grpc_client,
-                get_bodies_from_ids(parent_design, res.body_monikers),
+                get_bodies_from_ids(parent_design, res["bodies"]),
             )
-            for res in problem_areas_response.result
+            for res in problem_areas_response["problems"]
         ]
 
     @protect_grpc
@@ -388,11 +388,11 @@ class RepairTools:
 
         return [
             UnsimplifiedFaceProblemAreas(
-                f"{res.id}",
+                f"{res['id']}",
                 self._grpc_client,
                 get_faces_from_ids(parent_design, res.body_monikers),
             )
-            for res in problem_areas_response.result
+            for res in problem_areas_response["problems"]
         ]
 
     @protect_grpc
@@ -431,18 +431,18 @@ class RepairTools:
 
         parent_design = get_design_from_body(bodies[0])
         body_ids = [body.id for body in bodies]
-        cut_smaller_body_bool = BoolValue(value=cut_smaller_body)
+        # cut_smaller_body_bool = BoolValue(value=cut_smaller_body)
         problem_areas_response = self._grpc_client.services.repair_tools.find_interferences(
             bodies=body_ids, cut_smaller_body=cut_smaller_body
         )
 
         return [
             InterferenceProblemAreas(
-                f"{res.id}",
+                f"{res['id']}",
                 self._grpc_client,
-                get_bodies_from_ids(parent_design, res.body_monikers),
+                get_bodies_from_ids(parent_design, res["bodies"]),
             )
-            for res in problem_areas_response.result
+            for res in problem_areas_response["problems"]
         ]
 
     @protect_grpc
