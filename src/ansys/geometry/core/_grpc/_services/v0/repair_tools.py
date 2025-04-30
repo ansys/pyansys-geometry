@@ -225,7 +225,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         request = FindAdjustSimplifyRequest(selection=kwargs["selection"])
 
         # Call the gRPC service
-        response = self.stub.FindSimplify(request)
+        response = self.stub.FindAndSimplify(request)
         # Return the response - formatted as a dictionary
         return {
             "problems": [
