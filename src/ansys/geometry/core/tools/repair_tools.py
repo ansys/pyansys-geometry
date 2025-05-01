@@ -688,12 +688,12 @@ class RepairTools:
             response.repaired,
         )
         return message
-    
+
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_fix_stitch_faces(
-        self, 
-        bodies: list["Body"], 
+        self,
+        bodies: list["Body"],
         max_distance: Real = 0.0001,
         allow_multiple_bodies: bool = False,
         maintain_components: bool = True,
@@ -726,7 +726,7 @@ class RepairTools:
         -------
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
-        
+
         Notes
         -----
         This method finds the stitchable faces and fixes them.
