@@ -314,7 +314,12 @@ class RepairTools:
         ]
 
     @protect_grpc
-    def find_small_faces(self, bodies: list["Body"]) -> list[SmallFaceProblemAreas]:
+    def find_small_faces(
+        self,
+        bodies: list["Body"],
+        area: Real = None,
+        width: Real = None,
+    ) -> list[SmallFaceProblemAreas]:
         """Find the small face problem areas.
 
         This method finds and returns a list of ids of small face problem areas
@@ -335,7 +340,11 @@ class RepairTools:
 
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindSmallFaces(
-            FindSmallFacesRequest(selection=body_ids)
+            FindSmallFacesRequest(
+                selection=body_ids,
+                area=DoubleValue(value=area) if area is not None else None,
+                width=DoubleValue(value=width) if width is not None else None,
+            )
         )
         parent_design = get_design_from_body(bodies[0])
 
