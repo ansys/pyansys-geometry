@@ -59,6 +59,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.tools.check_geometry import GeometryIssue, InspectResult
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
@@ -280,7 +281,12 @@ class RepairTools:
         ]
 
     @protect_grpc
-    def find_missing_faces(self, bodies: list["Body"]) -> list[MissingFaceProblemAreas]:
+    def find_missing_faces(
+        self,
+        bodies: list["Body"],
+        angle: Angle = None,
+        distance: Distance = None,
+        ) -> list[MissingFaceProblemAreas]:
         """Find the missing faces.
 
         This method find the missing face problem areas and returns a list of missing
@@ -300,7 +306,11 @@ class RepairTools:
             return []
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindMissingFaces(
-            FindMissingFacesRequest(faces=body_ids)
+            FindMissingFacesRequest(
+                faces=body_ids,
+                distance=DoubleValue(value=distance.value) if distance else None,
+                angle=DoubleValue(value=angle.value) if angle else None,
+            )
         )
         parent_design = get_design_from_body(bodies[0])
 
