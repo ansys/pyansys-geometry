@@ -961,6 +961,33 @@ def test_nurbs_curve_from_control_points():
     assert nurbs_curve != nurbs_curve_weights
 
 
+def test_nurbs_curve_fitting():
+    """Test ``NURBSCurve`` fitting."""
+    points = [
+        Point3D([0, 0, 0]),
+        Point3D([1, 1, 0]),
+        Point3D([2, 0, 0]),
+    ]
+    degree = 2
+    nurbs_curve = NURBSCurve.fit_curve_from_points(points=points, degree=degree)
+
+    # Verify degree, knots, and control points
+    assert nurbs_curve.degree == degree
+
+    assert len(nurbs_curve.knots) == 6
+    assert nurbs_curve.knots[0] == 0
+    assert nurbs_curve.knots[1] == 0
+    assert nurbs_curve.knots[2] == 0
+    assert nurbs_curve.knots[3] == 1
+    assert nurbs_curve.knots[4] == 1
+    assert nurbs_curve.knots[5] == 1
+
+    assert len(nurbs_curve.control_points) == 4
+    assert np.allclose(nurbs_curve.control_points[0], Point3D([0, 0, 0]))
+    assert np.allclose(nurbs_curve.control_points[1], Point3D([0.666666, 1.333333, 0]))
+    assert np.allclose(nurbs_curve.control_points[2], Point3D([1.333333, 1.333333, 0]))
+    assert np.allclose(nurbs_curve.control_points[3], Point3D([2, 0, 0]))
+
 def test_nurbs_curve_evaluation():
     """Test ``NURBSCurve`` evaluation."""
     control_points = [

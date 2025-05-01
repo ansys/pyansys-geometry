@@ -140,6 +140,42 @@ class NURBSCurve(Curve):
             raise ValueError(f"Invalid NURBS curve: {e}")
 
         return curve
+    
+    @classmethod
+    @check_input_types
+    def fit_curve_from_points(
+        cls,
+        points: list[Point3D],
+        degree: int, 
+    ) -> "NURBSCurve":
+        """Fit a NURBS curve to a set of points.
+
+        Parameters
+        ----------
+        points : list[Point3D]
+            Points to fit the curve to.
+        degree : int
+            Degree of the curve.
+
+        Returns
+        -------
+        NURBSCurve
+            Fitted NURBS curve.
+
+        """
+        from geomdl import fitting
+
+        # Fit the curve to the points
+        curve = fitting.interpolate_curve(points, degree)
+
+        # Construct the NURBSCurve object
+        nurbs_curve = cls()
+        nurbs_curve._nurbs_curve.degree = curve.degree
+        nurbs_curve._nurbs_curve.ctrlpts = curve.ctrlpts
+        nurbs_curve._nurbs_curve.knotvector = curve.knotvector
+        nurbs_curve._nurbs_curve.weights = curve.weights
+
+        return nurbs_curve
 
     def __eq__(self, other: "NURBSCurve") -> bool:
         """Determine if two curves are equal."""
