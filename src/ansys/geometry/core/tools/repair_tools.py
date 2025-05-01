@@ -362,7 +362,7 @@ class RepairTools:
     def find_stitch_faces(
         self,
         bodies: list["Body"],
-        max_distance: Real = 0.0001,
+        max_distance: Distance = None,
     ) -> list[StitchFaceProblemAreas]:
         """Return the list of stitch face problem areas.
 
@@ -381,7 +381,10 @@ class RepairTools:
         """
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindStitchFaces(
-            FindStitchFacesRequest(faces=body_ids, maximum_distance=DoubleValue(value=max_distance))
+            FindStitchFacesRequest(
+                faces=body_ids,
+                maximum_distance=DoubleValue(value=max_distance) if max_distance else None,
+            )
         )
         parent_design = get_design_from_body(bodies[0])
         return [
@@ -704,7 +707,7 @@ class RepairTools:
     def find_and_fix_stitch_faces(
         self,
         bodies: list["Body"],
-        max_distance: Real = 0.0001,
+        max_distance: Distance = None,
         allow_multiple_bodies: bool = False,
         maintain_components: bool = True,
         check_for_coincidence: bool = False,
@@ -750,7 +753,7 @@ class RepairTools:
         response = self._repair_stub.FindAndFixStitchFaces(
             FindStitchFacesRequest(
                 faces=body_ids,
-                maximum_distance=DoubleValue(value=max_distance),
+                maximum_distance=DoubleValue(value=max_distance) if max_distance else None,
                 allow_multiple_bodies=BoolValue(value=allow_multiple_bodies),
                 maintain_components=BoolValue(value=maintain_components),
                 check_for_coincidence=BoolValue(value=check_for_coincidence),
