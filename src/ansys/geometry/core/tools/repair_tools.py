@@ -349,7 +349,7 @@ class RepairTools:
         ]
 
     @protect_grpc
-    def find_stitch_faces(self, bodies: list["Body"]) -> list[StitchFaceProblemAreas]:
+    def find_stitch_faces(self, bodies: list["Body"], max_distance: Real = None) -> list[StitchFaceProblemAreas]:
         """Return the list of stitch face problem areas.
 
         This method find the stitch face problem areas and returns a list of ids of stitch face
@@ -367,7 +367,7 @@ class RepairTools:
         """
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._repair_stub.FindStitchFaces(
-            FindStitchFacesRequest(faces=body_ids)
+            FindStitchFacesRequest(faces=body_ids, maximum_distance=DoubleValue(value=max_distance))
         )
         parent_design = get_design_from_body(bodies[0])
         return [
@@ -690,7 +690,7 @@ class RepairTools:
     def find_and_fix_stitch_faces(
         self, 
         bodies: list["Body"], 
-        max_distance: Real = 0.0001,
+        max_distance: Real = None,
         allow_multiple_bodies: bool = False,
         maintain_components: bool = True,
         check_for_coincidence: bool = False,
