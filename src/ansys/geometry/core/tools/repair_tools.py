@@ -684,6 +684,76 @@ class RepairTools:
             response.repaired,
         )
         return message
+    
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
+    def find_and_fix_stitch_faces(
+        self, 
+        bodies: list["Body"], 
+        max_distance: Real = 0.0001,
+        allow_multiple_bodies: bool = False,
+        maintain_components: bool = True,
+        check_for_coincidence: bool = False,
+        comprehensive_result: bool = False,
+    ) -> RepairToolMessage:
+        """Find and fix the stitch face problem areas.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies that stitchable faces are investigated on.
+        max_distance : Real, optional
+            The maximum distance between faces to be stitched.
+            By default, 0.0001.
+        allow_multiple_bodies : bool, optional
+            Whether to allow multiple bodies in the result.
+            By default, False.
+        maintain_components : bool, optional
+            Whether to stitch bodies within the components.
+            By default, True.
+        check_for_coincidence : bool, optional
+            Whether coincidence surfaces are searched.
+            By default, False.
+        comprehensive_result : bool, optional
+            Whether to fix all problem areas individually.
+            By default, False.
+
+        Returns
+        -------
+        RepairToolMessage
+            Message containing number of problem areas found/fixed, created and/or modified bodies.
+        
+        Notes
+        -----
+        This method finds the stitchable faces and fixes them.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        body_ids = [body.id for body in bodies]
+
+        response = self._repair_stub.FindAndFixStitchFaces(
+            FindStitchFacesRequest(
+                faces=body_ids,
+                maximum_distance=DoubleValue(value=max_distance),
+                allow_multiple_bodies=BoolValue(value=allow_multiple_bodies),
+                maintain_components=BoolValue(value=maintain_components),
+                check_for_coincidence=BoolValue(value=check_for_coincidence),
+                comprehensive=comprehensive_result,
+            )
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.success,
+            response.created_bodies_monikers,
+            response.modified_bodies_monikers,
+            response.found,
+            response.repaired,
+        )
+        return message
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
