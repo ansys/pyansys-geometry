@@ -428,8 +428,7 @@ def test_find_and_fix_stitch_faces_comprehensive(modeler: Modeler):
     assert len(design.bodies) == 3600
 
     stitch_faces = modeler.repair_tools.find_and_fix_stitch_faces(
-        design.bodies, 
-        comprehensive_result=True
+        design.bodies, comprehensive_result=True
     )
     assert stitch_faces.found == 1200
     assert stitch_faces.repaired == 1200
