@@ -54,9 +54,42 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_split_edges(self, **kwargs) -> dict:  # noqa: D102
+        """Identify split edges in the geometry.
+
+        This method interacts with the gRPC service to identify split edges
+        in the provided geometry based on the input parameters.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Keyword arguments containing the input parameters for the request.
+            - bodies_or_faces: list
+                List of body or face identifiers to inspect.
+            - angle: float
+                The angle threshold for identifying split edges.
+            - distance: float
+                The distance threshold for identifying split edges.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the identified split edge problems. Each problem
+            includes an ID and a list of associated edge monikers.
+
+            Example:
+            {
+                "problems": [
+                    {
+                        "id": "problem_id_1",
+                        "edges": ["edge_1", "edge_2"]
+                    },
+                    ...
+                ]
+            }
+        """
         from ansys.api.geometry.v0.repairtools_pb2 import FindSplitEdgesRequest
 
-        # Create the request - assumes all inputs are valid and of the proper type
+        # Create the gRPC request
         request = FindSplitEdgesRequest(
             bodies_or_faces=kwargs["bodies_or_faces"],
             angle=kwargs["angle"],
@@ -66,7 +99,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindSplitEdges(request)
 
-        # Return the response - formatted as a dictionary
+        # Format and return the response as a dictionary
         return {
             "problems": [
                 {
@@ -258,14 +291,31 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def inspect_geometry(self, **kwargs) -> dict:  # noqa: D102
+        """Inspect the geometry for issues.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Keyword arguments containing the input parameters for the inspection.
+            - bodies: list
+                List of bodies to inspect.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the serialized inspection results.
+        """
         from ansys.api.geometry.v0.repairtools_pb2 import InspectGeometryRequest
 
+        # Create the gRPC request
         request = InspectGeometryRequest(bodies=kwargs.get("bodies", []))
+
         # Call the gRPC service
         inspect_result_response = self.stub.InspectGeometry(request)
-        # Return the response - formatted as a dictionary
 
+        # Serialize and return the response
         return self.serialize_inspect_result_response(inspect_result_response)
+
     @protect_grpc
     def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
