@@ -25,6 +25,13 @@ from typing import TYPE_CHECKING
 
 from google.protobuf.wrappers_pb2 import DoubleValue
 
+from ansys.api.geometry.v0.models_pb2 import (
+    InspectGeometryMessageId,
+    InspectGeometryMessageType,
+    InspectGeometryResult,
+    InspectGeometryResultIssue,
+)
+
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
@@ -38,7 +45,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
-from ansys.geometry.core.tools.check_geometry import InspectResult
+from ansys.geometry.core.tools.check_geometry import GeometryIssue, InspectResult
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
     ExtraEdgeProblemAreas,
@@ -658,8 +665,6 @@ class RepairTools:
         )
         return message
 
-    @protect_grpc
-    @min_backend_version(25, 2, 0)
     def inspect_geometry(self, bodies: list["Body"] = None) -> list[InspectResult]:
         """Return a list of geometry issues organized by body.
 
@@ -683,8 +688,43 @@ class RepairTools:
             parent_design=parent_design, bodies=body_ids
         )
         return self.__create_inspect_result_from_response(
-            parent_design, inspect_result_response["issues_by_body"]
+            parent_design, inspect_result_response.issues_by_body
         )
+    
+    def __create_inspect_result_from_response(
+        self, design, inspect_geometry_results: list[InspectGeometryResult]
+    ) -> list[InspectResult]:
+        inspect_results = []
+        for inspect_geometry_result in inspect_geometry_results:
+            body = get_bodies_from_ids(design, [inspect_geometry_result.body.id])
+            issues = self.__create_issues_from_response(inspect_geometry_result.issues)
+            inspect_result = InspectResult(
+                grpc_client=self._grpc_client, body=body[0], issues=issues
+            )
+            inspect_results.append(inspect_result)
+
+        return inspect_results
+
+    def __create_issues_from_response(
+        self,
+        inspect_geometry_result_issues: list[InspectGeometryResultIssue],
+    ) -> list[GeometryIssue]:
+        issues = []
+        for inspect_result_issue in inspect_geometry_result_issues:
+            message_type = InspectGeometryMessageType.Name(inspect_result_issue.message_type)
+            message_id = InspectGeometryMessageId.Name(inspect_result_issue.message_id)
+            message = inspect_result_issue.message
+
+            issue = GeometryIssue(
+                message_type=message_type,
+                message_id=message_id,
+                message=message,
+                faces=[face.id for face in inspect_result_issue.faces],
+                edges=[edge.id for edge in inspect_result_issue.edges],
+            )
+            issues.append(issue)
+        return issues
+
 
     @protect_grpc
     @min_backend_version(25, 2, 0)

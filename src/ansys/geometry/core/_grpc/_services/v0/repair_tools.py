@@ -268,17 +268,12 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
     def inspect_geometry(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import InspectGeometryRequest
 
-        parent_design = kwargs.get("parent_design")
         request = InspectGeometryRequest(bodies=kwargs.get("bodies", []))
         # Call the gRPC service
         inspect_result_response = self.stub.InspectGeometry(request)
         # Return the response - formatted as a dictionary
 
-        result = self.__create_inspect_result_from_response(
-            parent_design, inspect_result_response.issues_by_body
-        )
-
-        return result
+        return inspect_result_response
 
     def __create_inspect_result_from_response(
         self, design, inspect_geometry_results: list[InspectGeometryResult]
@@ -287,8 +282,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         for inspect_geometry_result in inspect_geometry_results:
             body = get_bodies_from_ids(design, [inspect_geometry_result.body.id])
             issues = self.__create_issues_from_response(inspect_geometry_result.issues)
-            inspect_result = InspectResult(
-                grpc_client=self._grpc_client, body=body[0], issues=issues
+            inspect_result = InspectResult(body=body[0], issues=issues
             )
             inspect_results.append(inspect_result)
 
