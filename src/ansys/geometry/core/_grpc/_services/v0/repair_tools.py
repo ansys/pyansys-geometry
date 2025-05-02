@@ -282,8 +282,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         for inspect_geometry_result in inspect_geometry_results:
             body = get_bodies_from_ids(design, [inspect_geometry_result.body.id])
             issues = self.__create_issues_from_response(inspect_geometry_result.issues)
-            inspect_result = InspectResult(body=body[0], issues=issues
-            )
+            inspect_result = InspectResult(body=body[0], issues=issues)
             inspect_results.append(inspect_result)
 
         return inspect_results

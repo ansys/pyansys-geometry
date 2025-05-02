@@ -31,7 +31,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     InspectGeometryResult,
     InspectGeometryResultIssue,
 )
-
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
@@ -690,7 +689,7 @@ class RepairTools:
         return self.__create_inspect_result_from_response(
             parent_design, inspect_result_response.issues_by_body
         )
-    
+
     def __create_inspect_result_from_response(
         self, design, inspect_geometry_results: list[InspectGeometryResult]
     ) -> list[InspectResult]:
@@ -724,7 +723,6 @@ class RepairTools:
             )
             issues.append(issue)
         return issues
-
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
