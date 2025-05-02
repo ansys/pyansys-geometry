@@ -275,37 +275,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         return inspect_result_response
 
-    def __create_inspect_result_from_response(
-        self, design, inspect_geometry_results: list[InspectGeometryResult]
-    ) -> list[InspectResult]:
-        inspect_results = []
-        for inspect_geometry_result in inspect_geometry_results:
-            body = get_bodies_from_ids(design, [inspect_geometry_result.body.id])
-            issues = self.__create_issues_from_response(inspect_geometry_result.issues)
-            inspect_result = InspectResult(body=body[0], issues=issues)
-            inspect_results.append(inspect_result)
-
-        return inspect_results
-
-    def __create_issues_from_response(
-        self,
-        inspect_geometry_result_issues: list[InspectGeometryResultIssue],
-    ) -> list[GeometryIssue]:
-        issues = []
-        for inspect_result_issue in inspect_geometry_result_issues:
-            message_type = InspectGeometryMessageType.Name(inspect_result_issue.message_type)
-            message_id = InspectGeometryMessageId.Name(inspect_result_issue.message_id)
-            message = inspect_result_issue.message
-
-            issue = GeometryIssue(
-                message_type=message_type,
-                message_id=message_id,
-                message=message,
-                faces=[face.id for face in inspect_result_issue.faces],
-                edges=[edge.id for edge in inspect_result_issue.edges],
-            )
-            issues.append(issue)
-        return issues
 
     @protect_grpc
     def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
