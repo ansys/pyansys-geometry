@@ -28,18 +28,17 @@ geometry issues, such as split edges, extra edges, duplicate faces etc.
 
 import grpc
 
-from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.auxiliary import get_bodies_from_ids
-from ansys.geometry.core.tools.check_geometry import GeometryIssue, InspectResult
-
-from ..base.repair_tools import GRPCRepairToolsService
-
 from ansys.api.geometry.v0.models_pb2 import (
     InspectGeometryMessageId,
     InspectGeometryMessageType,
     InspectGeometryResult,
     InspectGeometryResultIssue,
 )
+from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.auxiliary import get_bodies_from_ids
+from ansys.geometry.core.tools.check_geometry import GeometryIssue, InspectResult
+
+from ..base.repair_tools import GRPCRepairToolsService
 
 
 class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
@@ -274,14 +273,13 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         inspect_result_response = self.stub.InspectGeometry(request)
         # Return the response - formatted as a dictionary
-    
+
         result = self.__create_inspect_result_from_response(
-                parent_design, inspect_result_response.issues_by_body
+            parent_design, inspect_result_response.issues_by_body
         )
 
         return result
-      
-    
+
     def __create_inspect_result_from_response(
         self, design, inspect_geometry_results: list[InspectGeometryResult]
     ) -> list[InspectResult]:
@@ -295,7 +293,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             inspect_results.append(inspect_result)
 
         return inspect_results
-    
+
     def __create_issues_from_response(
         self,
         inspect_geometry_result_issues: list[InspectGeometryResultIssue],
