@@ -264,7 +264,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         inspect_result_response = self.stub.InspectGeometry(request)
         # Return the response - formatted as a dictionary
-        return self.serialize_inspect_result_response(inspect_result_response)
+
+        return inspect_result_response
+
 
     @protect_grpc
     def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
