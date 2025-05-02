@@ -686,45 +686,16 @@ class RepairTools:
         parent_design = self._modeler.get_active_design()
         body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
         inspect_result_response = self._grpc_client.services.repair_tools.inspect_geometry(
+            parent_design = parent_design,
             bodies=body_ids
         )
         return self.__create_inspect_result_from_response(
-            parent_design, inspect_result_response.issues_by_body
+            parent_design, inspect_result_response["issues_by_body"]
         )
 
-    def __create_inspect_result_from_response(
-        self, design, inspect_geometry_results: list[InspectGeometryResult]
-    ) -> list[InspectResult]:
-        inspect_results = []
-        for inspect_geometry_result in inspect_geometry_results:
-            body = get_bodies_from_ids(design, [inspect_geometry_result.body.id])
-            issues = self.__create_issues_from_response(inspect_geometry_result.issues)
-            inspect_result = InspectResult(
-                grpc_client=self._grpc_client, body=body[0], issues=issues
-            )
-            inspect_results.append(inspect_result)
 
-        return inspect_results
 
-    def __create_issues_from_response(
-        self,
-        inspect_geometry_result_issues: list[InspectGeometryResultIssue],
-    ) -> list[GeometryIssue]:
-        issues = []
-        for inspect_result_issue in inspect_geometry_result_issues:
-            message_type = InspectGeometryMessageType.Name(inspect_result_issue.message_type)
-            message_id = InspectGeometryMessageId.Name(inspect_result_issue.message_id)
-            message = inspect_result_issue.message
-
-            issue = GeometryIssue(
-                message_type=message_type,
-                message_id=message_id,
-                message=message,
-                faces=[face.id for face in inspect_result_issue.faces],
-                edges=[edge.id for edge in inspect_result_issue.edges],
-            )
-            issues.append(issue)
-        return issues
+    
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
@@ -749,5 +720,5 @@ class RepairTools:
             bodies=body_ids
         )
 
-        message = RepairToolMessage(repair_result_response.result.success, [], [])
+        message = RepairToolMessage(repair_result_response["success"], [], [])
         return message

@@ -29,8 +29,17 @@ geometry issues, such as split edges, extra edges, duplicate faces etc.
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.auxiliary import get_bodies_from_ids
+from ansys.geometry.core.tools.check_geometry import GeometryIssue, InspectResult
 
 from ..base.repair_tools import GRPCRepairToolsService
+
+from ansys.api.geometry.v0.models_pb2 import (
+    InspectGeometryMessageId,
+    InspectGeometryMessageType,
+    InspectGeometryResult,
+    InspectGeometryResultIssue,
+)
 
 
 class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
@@ -249,32 +258,63 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FindAndSimplify(request)
         # Return the response - formatted as a dictionary
         return {
-            "problems": [
-                {
-                    "id": res.id,
-                    "faces": res.face_monikers,
-                }
-                for res in response.result
-            ]
+            "success": response.success,
+            "found": response.found,
+            "repaired": response.repaired,
+            "created_bodies_monikers": [],
+            "modified_bodies_monikers": [],
         }
 
     @protect_grpc
     def inspect_geometry(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import InspectGeometryRequest
 
+        parent_design = kwargs.get("parent_design")
         request = InspectGeometryRequest(bodies=kwargs.get("bodies", []))
         # Call the gRPC service
-        response = self.stub.InspectGeometry(request)
+        inspect_result_response = self.stub.InspectGeometry(request)
         # Return the response - formatted as a dictionary
-        return {
-            "problems": [
-                {
-                    "id": res.id,
-                    "faces": res.face_monikers,
-                }
-                for res in response.result
-            ]
-        }
+    
+        result = self.__create_inspect_result_from_response(
+                parent_design, inspect_result_response.issues_by_body
+        )
+
+        return result
+      
+    
+    def __create_inspect_result_from_response(
+        self, design, inspect_geometry_results: list[InspectGeometryResult]
+    ) -> list[InspectResult]:
+        inspect_results = []
+        for inspect_geometry_result in inspect_geometry_results:
+            body = get_bodies_from_ids(design, [inspect_geometry_result.body.id])
+            issues = self.__create_issues_from_response(inspect_geometry_result.issues)
+            inspect_result = InspectResult(
+                grpc_client=self._grpc_client, body=body[0], issues=issues
+            )
+            inspect_results.append(inspect_result)
+
+        return inspect_results
+    
+    def __create_issues_from_response(
+        self,
+        inspect_geometry_result_issues: list[InspectGeometryResultIssue],
+    ) -> list[GeometryIssue]:
+        issues = []
+        for inspect_result_issue in inspect_geometry_result_issues:
+            message_type = InspectGeometryMessageType.Name(inspect_result_issue.message_type)
+            message_id = InspectGeometryMessageId.Name(inspect_result_issue.message_id)
+            message = inspect_result_issue.message
+
+            issue = GeometryIssue(
+                message_type=message_type,
+                message_id=message_id,
+                message=message,
+                faces=[face.id for face in inspect_result_issue.faces],
+                edges=[edge.id for edge in inspect_result_issue.edges],
+            )
+            issues.append(issue)
+        return issues
 
     @protect_grpc
     def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
@@ -285,13 +325,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.RepairGeometry(request)
         # Return the response - formatted as a dictionary
         return {
-            "problems": [
-                {
-                    "id": res.id,
-                    "faces": res.face_monikers,
-                }
-                for res in response.result
-            ]
+            "success": response.result.success,
         }
 
     @protect_grpc
