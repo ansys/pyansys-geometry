@@ -25,12 +25,6 @@ from typing import TYPE_CHECKING
 
 from google.protobuf.wrappers_pb2 import DoubleValue
 
-from ansys.api.geometry.v0.models_pb2 import (
-    InspectGeometryMessageId,
-    InspectGeometryMessageType,
-    InspectGeometryResult,
-    InspectGeometryResultIssue,
-)
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
@@ -683,20 +677,20 @@ class RepairTools:
         """
         parent_design = self._modeler.get_active_design()
         body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
-        inspect_result_response = self._grpc_client.services.repair_tools.inspect_geometry(
+        inspect_result_response_dict = self._grpc_client.services.repair_tools.inspect_geometry(
             parent_design=parent_design, bodies=body_ids
         )
         return self.__create_inspect_result_from_response(
-            parent_design, inspect_result_response.issues_by_body
+            parent_design, inspect_result_response_dict["issues_by_body"]
         )
 
     def __create_inspect_result_from_response(
-        self, design, inspect_geometry_results: list[InspectGeometryResult]
+        self, design, inspect_geometry_results: list[dict]
     ) -> list[InspectResult]:
         inspect_results = []
         for inspect_geometry_result in inspect_geometry_results:
-            body = get_bodies_from_ids(design, [inspect_geometry_result.body.id])
-            issues = self.__create_issues_from_response(inspect_geometry_result.issues)
+            body = get_bodies_from_ids(design, [inspect_geometry_result["body"]["id"]])
+            issues = self.__create_issues_from_response(inspect_geometry_result["issues"])
             inspect_result = InspectResult(
                 grpc_client=self._grpc_client, body=body[0], issues=issues
             )
@@ -706,22 +700,25 @@ class RepairTools:
 
     def __create_issues_from_response(
         self,
-        inspect_geometry_result_issues: list[InspectGeometryResultIssue],
+        inspect_geometry_result_issues: list[dict],
     ) -> list[GeometryIssue]:
         issues = []
-        for inspect_result_issue in inspect_geometry_result_issues:
-            message_type = InspectGeometryMessageType.Name(inspect_result_issue.message_type)
-            message_id = InspectGeometryMessageId.Name(inspect_result_issue.message_id)
-            message = inspect_result_issue.message
+        for issue in inspect_geometry_result_issues:
+            message_type = issue["message_type"]
+            message_id = issue["message_id"]
+            message = issue["message"]
 
-            issue = GeometryIssue(
+            faces = [face["id"] for face in issue.get("faces", [])]
+            edges = [edge["id"] for edge in issue.get("edges", [])]
+
+            geometry_issue = GeometryIssue(
                 message_type=message_type,
                 message_id=message_id,
                 message=message,
-                faces=[face.id for face in inspect_result_issue.faces],
-                edges=[edge.id for edge in inspect_result_issue.edges],
+                faces=faces,
+                edges=edges,
             )
-            issues.append(issue)
+            issues.append(geometry_issue)
         return issues
 
     @protect_grpc

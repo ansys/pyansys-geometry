@@ -28,15 +28,7 @@ geometry issues, such as split edges, extra edges, duplicate faces etc.
 
 import grpc
 
-from ansys.api.geometry.v0.models_pb2 import (
-    InspectGeometryMessageId,
-    InspectGeometryMessageType,
-    InspectGeometryResult,
-    InspectGeometryResultIssue,
-)
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.auxiliary import get_bodies_from_ids
-from ansys.geometry.core.tools.check_geometry import GeometryIssue, InspectResult
 
 from ..base.repair_tools import GRPCRepairToolsService
 
@@ -272,9 +264,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         inspect_result_response = self.stub.InspectGeometry(request)
         # Return the response - formatted as a dictionary
-
-        return inspect_result_response
-
+        return self.serialize_inspect_result_response(inspect_result_response)
 
     @protect_grpc
     def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
@@ -376,4 +366,61 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
+        }
+
+    @staticmethod
+    def serialize_inspect_result_response(response) -> dict:
+        """Serialize the InspectGeometryResponse to a dictionary."""
+
+        def serialize_body(body):
+            return {
+                "id": body.id,
+                "name": body.name,
+                "can_suppress": body.can_suppress,
+                "transform_to_master": {
+                    "m00": body.transform_to_master.m00,
+                    "m11": body.transform_to_master.m11,
+                    "m22": body.transform_to_master.m22,
+                    "m33": body.transform_to_master.m33,
+                },
+                "master_id": body.master_id,
+                "parent_id": body.parent_id,
+            }
+
+        def serialize_face(face):
+            return {
+                "id": face.id,
+                "surface_type": face.surface_type,
+                "export_id": face.export_id,
+                "is_reversed": getattr(face, "is_reversed", False),
+                "parent_id": face.parent_id.id,
+            }
+
+        def serialize_edge(edge):
+            return {
+                "id": edge.id,
+                "curve_type": edge.curve_type,
+                "export_id": edge.export_id,
+                "length": edge.length,
+                "owner_id": edge.owner_id,
+                "parent": serialize_body(edge.parent) if hasattr(edge, "parent") else None,
+            }
+
+        def serialize_issue(issue):
+            return {
+                "message_type": issue.message_type,
+                "message_id": issue.message_id,
+                "message": issue.message,
+                "faces": [serialize_face(f) for f in issue.faces],
+                "edges": [serialize_edge(e) for e in issue.edges],
+            }
+
+        return {
+            "issues_by_body": [
+                {
+                    "body": serialize_body(body_issues.body),
+                    "issues": [serialize_issue(i) for i in body_issues.issues],
+                }
+                for body_issues in response.issues_by_body
+            ]
         }
