@@ -28,15 +28,7 @@ geometry issues, such as split edges, extra edges, duplicate faces etc.
 
 import grpc
 
-from ansys.api.geometry.v0.models_pb2 import (
-    InspectGeometryMessageId,
-    InspectGeometryMessageType,
-    InspectGeometryResult,
-    InspectGeometryResultIssue,
-)
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.auxiliary import get_bodies_from_ids
-from ansys.geometry.core.tools.check_geometry import GeometryIssue, InspectResult
 
 from ..base.repair_tools import GRPCRepairToolsService
 
@@ -274,7 +266,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
 
         return inspect_result_response
-
 
     @protect_grpc
     def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
