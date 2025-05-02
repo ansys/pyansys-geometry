@@ -267,7 +267,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         return inspect_result_response
 
-
     @protect_grpc
     def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
