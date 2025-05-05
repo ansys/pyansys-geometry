@@ -7,8 +7,8 @@ on:
         required: false
         default: false
         type: boolean
-  schedule: # UTC at 0300
-    - cron: "0 3 * * *"
+  schedule: # UTC at 0300, 1100, and 1900
+    - cron: "0 3,11,19 * * *"
   # Trigger workflow when file is modified
   push:
     paths:
