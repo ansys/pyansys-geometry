@@ -384,6 +384,7 @@ def prepare_and_start_backend(
             root_service_folder = Path(root_service_folder)
         native_folder = root_service_folder / "Native"
         cad_integration_folder = root_service_folder / "CADIntegration"
+        cad_integration_folder_bin = cad_integration_folder / "bin"
         schema_folder = root_service_folder / "Schema"
 
         # Adapt the native folder to the OS
@@ -427,7 +428,7 @@ def prepare_and_start_backend(
                 f"{env_copy['PATH']}"
                 + f";{root_service_folder.as_posix()}"
                 + f";{native_folder.as_posix()}"
-                + f";{cad_integration_folder.as_posix()}"
+                + f";{cad_integration_folder_bin.as_posix()}"
             )
 
             # For Windows, we need to use the exe file to launch the Core Geometry Service
@@ -461,7 +462,7 @@ def prepare_and_start_backend(
                 env_copy.get("LD_LIBRARY_PATH", "")
                 + f":{root_service_folder.as_posix()}"
                 + f":{native_folder.as_posix()}"
-                + f":{cad_integration_folder.as_posix()}"
+                + f":{cad_integration_folder_bin.as_posix()}"
             )
 
             # For Linux, we need to use the dotnet command to launch the Core Geometry Service
