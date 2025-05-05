@@ -425,10 +425,10 @@ def prepare_and_start_backend(
         if os.name == "nt":
             # Modify the PATH variable to include the path to the Ansys Geometry Core Service
             env_copy["PATH"] = (
-                f"{env_copy['PATH']}"
-                + f";{root_service_folder.as_posix()}"
+                f"{root_service_folder.as_posix()}"
                 + f";{native_folder.as_posix()}"
                 + f";{cad_integration_folder_bin.as_posix()}"
+                + f";{env_copy['PATH']}"
             )
 
             # For Windows, we need to use the exe file to launch the Core Geometry Service
@@ -459,10 +459,10 @@ def prepare_and_start_backend(
 
             # Modify the LD_LIBRARY_PATH variable to include the Ansys Geometry Core Service
             env_copy["LD_LIBRARY_PATH"] = (
-                env_copy.get("LD_LIBRARY_PATH", "")
-                + f":{root_service_folder.as_posix()}"
+                f":{root_service_folder.as_posix()}"
                 + f":{native_folder.as_posix()}"
                 + f":{cad_integration_folder_bin.as_posix()}"
+                + f":{env_copy.get("LD_LIBRARY_PATH", "")}"
             )
 
             # For Linux, we need to use the dotnet command to launch the Core Geometry Service
