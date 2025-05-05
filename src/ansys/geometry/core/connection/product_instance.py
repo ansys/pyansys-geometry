@@ -422,15 +422,19 @@ def prepare_and_start_backend(
         else:
             env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE", "1055@localhost")
 
-        if os.name == "nt":
-            # Modify the PATH variable to include the path to the Ansys Geometry Core Service
-            env_copy["PATH"] = (
-                f"{root_service_folder.as_posix()}"
-                + f";{native_folder.as_posix()}"
-                + f";{cad_integration_folder_bin.as_posix()}"
-                + f";{env_copy['PATH']}"
-            )
+        # Adapt the path environment variable to the OS and
+        # modify the PATH/LD_LIBRARY_PATH variable to include the path to the Ansys Geometry Core Service
+        path_env_var = "PATH" if os.name == "nt" else "LD_LIBRARY_PATH"
+        env_copy[path_env_var] = os.pathsep.join(
+            [
+                root_service_folder.as_posix(),
+                native_folder.as_posix(),
+                cad_integration_folder_bin.as_posix(),
+                env_copy.get(path_env_var, ""),
+            ]
+        )
 
+        if os.name == "nt":
             # For Windows, we need to use the exe file to launch the Core Geometry Service
             args.append(
                 Path(
@@ -456,14 +460,6 @@ def prepare_and_start_backend(
                     "Ansys Geometry Core Service requires at least dotnet 8.0. "
                     "Please install a compatible version."
                 )
-
-            # Modify the LD_LIBRARY_PATH variable to include the Ansys Geometry Core Service
-            env_copy["LD_LIBRARY_PATH"] = (
-                f"{root_service_folder.as_posix()}"
-                + f":{native_folder.as_posix()}"
-                + f":{cad_integration_folder_bin.as_posix()}"
-                + f":{env_copy.get('LD_LIBRARY_PATH', '')}"
-            )
 
             # For Linux, we need to use the dotnet command to launch the Core Geometry Service
             args.append("dotnet")
