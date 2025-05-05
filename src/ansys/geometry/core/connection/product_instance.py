@@ -462,7 +462,7 @@ def prepare_and_start_backend(
                 f":{root_service_folder.as_posix()}"
                 + f":{native_folder.as_posix()}"
                 + f":{cad_integration_folder_bin.as_posix()}"
-                + f":{env_copy.get("LD_LIBRARY_PATH", "")}"
+                + f":{env_copy.get('LD_LIBRARY_PATH', '')}"
             )
 
             # For Linux, we need to use the dotnet command to launch the Core Geometry Service
