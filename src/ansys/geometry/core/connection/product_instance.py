@@ -459,7 +459,7 @@ def prepare_and_start_backend(
 
             # Modify the LD_LIBRARY_PATH variable to include the Ansys Geometry Core Service
             env_copy["LD_LIBRARY_PATH"] = (
-                f":{root_service_folder.as_posix()}"
+                f"{root_service_folder.as_posix()}"
                 + f":{native_folder.as_posix()}"
                 + f":{cad_integration_folder_bin.as_posix()}"
                 + f":{env_copy.get('LD_LIBRARY_PATH', '')}"
