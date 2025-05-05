@@ -36,7 +36,7 @@ class GRPCBodyService(ABC):
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the BodyServiceBase class."""
+        """Initialize the GRPCBodyService class."""
         pass  # pragma: no cover
 
     @abstractmethod

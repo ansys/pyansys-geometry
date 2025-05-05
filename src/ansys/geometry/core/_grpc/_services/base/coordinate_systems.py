@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the prepare tools service implementation (abstraction layer)."""
+"""Module containing the coordinate systems service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCPrepareToolsService(ABC):
-    """Prepare tools service for gRPC communication with the Geometry server.
+class GRPCCoordinateSystemService(ABC):
+    """Coordinate systems service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,45 +36,10 @@ class GRPCPrepareToolsService(ABC):
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCPrepareToolsService class."""
+        """Initialize the GRPCCoordinateSystemService class."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def extract_volume_from_faces(self, **kwargs) -> dict:
-        """Extract a volume from input faces."""
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def extract_volume_from_edge_loops(self, **kwargs) -> dict:
-        """Extract a volume from input edge loop."""
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def remove_rounds(self, **kwargs) -> dict:
-        """Remove rounds from geometry."""
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def share_topology(self, **kwargs) -> dict:
-        """Share topology between the given bodies."""
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def enhanced_share_topology(self, **kwargs) -> dict:
-        """Share topology between the given bodies."""
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def find_logos(self, **kwargs) -> dict:
-        """Detect logos in geometry."""
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def find_and_remove_logos(self, **kwargs) -> dict:
-        """Detect and remove logos in geometry."""
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def remove_logo(self, **kwargs) -> dict:
-        """Remove logos in geometry."""
+    def create(self, **kwargs) -> dict:
+        """Create a coordinate system."""
         pass  # pragma: no cover

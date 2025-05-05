@@ -23,15 +23,9 @@
 
 from typing import TYPE_CHECKING
 
-from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
-from ansys.api.geometry.v0.coordinatesystems_pb2_grpc import CoordinateSystemsStub
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import frame_to_grpc_frame
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.frame import Frame
-from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
@@ -67,7 +61,6 @@ class CoordinateSystem:
         """Initialize the ``CoordinateSystem`` class."""
         self._parent_component = parent_component
         self._grpc_client = grpc_client
-        self._coordinate_systems_stub = CoordinateSystemsStub(grpc_client.channel)
         self._is_alive = True
 
         # Create without going to server
@@ -78,40 +71,15 @@ class CoordinateSystem:
             return
 
         self._grpc_client.log.debug("Requesting creation of a coordinate system.")
-        new_coordinate_system = self._coordinate_systems_stub.Create(
-            CreateRequest(
-                parent=parent_component.id,
-                name=name,
-                frame=frame_to_grpc_frame(frame),
-            )
+        response = self._grpc_client.services.coordinate_systems.create(
+            parent_id=self._parent_component.id,
+            name=name,
+            frame=frame,
         )
 
-        self._id = new_coordinate_system.id
-        self._name = new_coordinate_system.name
-        self._frame = Frame(
-            Point3D(
-                [
-                    new_coordinate_system.frame.origin.x,
-                    new_coordinate_system.frame.origin.y,
-                    new_coordinate_system.frame.origin.z,
-                ],
-                DEFAULT_UNITS.SERVER_LENGTH,
-            ),
-            UnitVector3D(
-                [
-                    new_coordinate_system.frame.dir_x.x,
-                    new_coordinate_system.frame.dir_x.y,
-                    new_coordinate_system.frame.dir_x.z,
-                ]
-            ),
-            UnitVector3D(
-                [
-                    new_coordinate_system.frame.dir_y.x,
-                    new_coordinate_system.frame.dir_y.y,
-                    new_coordinate_system.frame.dir_y.z,
-                ]
-            ),
-        )
+        self._id = response.get("id")
+        self._name = response.get("name")
+        self._frame = response.get("frame")
 
     @property
     def id(self) -> str:

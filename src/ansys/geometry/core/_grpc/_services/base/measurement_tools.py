@@ -36,7 +36,7 @@ class GRPCMeasurementToolsService(ABC):
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the MeasurementToolsService class."""
+        """Initialize the GRPCMeasurementToolsService class."""
         pass  # pragma: no cover
 
     @abstractmethod
