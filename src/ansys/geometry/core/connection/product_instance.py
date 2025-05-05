@@ -423,7 +423,8 @@ def prepare_and_start_backend(
             env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE", "1055@localhost")
 
         # Adapt the path environment variable to the OS and
-        # modify the PATH/LD_LIBRARY_PATH variable to include the path to the Ansys Geometry Core Service
+        # modify the PATH/LD_LIBRARY_PATH variable to include the path
+        # to the Ansys Geometry Core Service
         path_env_var = "PATH" if os.name == "nt" else "LD_LIBRARY_PATH"
         env_copy[path_env_var] = os.pathsep.join(
             [
