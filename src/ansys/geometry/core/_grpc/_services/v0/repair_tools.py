@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the repair tools service implementation.
+"""Module containing the repair tools service implementation for v0.
 
 This module defines an abstract base class for a gRPC-based repair tools service.
 The class provides a set of abstract methods for identifying and repairing various
