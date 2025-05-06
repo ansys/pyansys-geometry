@@ -338,6 +338,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             bodies=kwargs["bodies"],
             cut_smaller_body=BoolValue(value=kwargs["cut_smaller_body"]),
         )
+
         # Call the gRPC service
         response = self.stub.FindInterference(request)
 
