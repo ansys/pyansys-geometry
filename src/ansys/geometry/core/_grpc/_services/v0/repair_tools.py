@@ -223,6 +223,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         request = FindSmallFacesRequest(selection=kwargs["selection"])
         # Call the gRPC service
         response = self.stub.FindSmallFaces(request)
+
         # Return the response - formatted as a dictionary
         return {
             "problems": [
