@@ -34,17 +34,14 @@ import grpc
 class GRPCRepairToolsService(ABC):
     """Abstract base class for gRPC-based repair tools service.
 
-    Defines abstract methods for identifying and repairing geometry issues in a model.
+    Parameters
+    ----------
+    channel: grpc.Channel
+        The gRPC channel used to communicate with the service.   
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the gRPC repair tools service.
-
-        Parameters
-        ----------
-        channel: grpc.Channel
-            The gRPC channel used to communicate with the service.
-        """
+        """Initialize the gRPC repair tools service."""
         pass  # pragma: no cover
 
     @abstractmethod
