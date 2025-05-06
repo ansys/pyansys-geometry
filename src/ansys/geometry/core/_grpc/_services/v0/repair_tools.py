@@ -204,6 +204,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         request = FindMissingFacesRequest(faces=kwargs["faces"])
         # Call the gRPC service
         response = self.stub.FindMissingFaces(request)
+
         # Return the response - formatted as a dictionary
         return {
             "problems": [
