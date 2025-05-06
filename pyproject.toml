@@ -8,14 +8,14 @@ version = "0.11.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
 requires-python = ">=3.10,<4"
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Information Analysis",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.57",
+    "ansys-api-geometry==0.4.58",
     "ansys-tools-path>=0.3,<1",
     "beartype>=0.11.0,<0.21",
     "geomdl>=5,<6",
@@ -95,7 +95,7 @@ doc = [
     "grpcio-health-checking==1.71.0",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.5.3",
-    "jupytext==1.16.7",
+    "jupytext==1.17.1",
     "matplotlib==3.10.1",
     "myst-parser==4.0.1",
     "nbconvert==7.16.6",
@@ -109,7 +109,7 @@ doc = [
     "protobuf==5.29.3",
     "pygltflib==1.16.4",
     "pyvista[jupyter]==0.45.0",
-    "quarto-cli==1.6.42",
+    "quarto-cli==1.7.29",
     "requests==2.32.3",
     "scipy==1.15.2",
     "semver==3.0.4",
