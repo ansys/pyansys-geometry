@@ -322,8 +322,10 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
 
         request = RepairGeometryRequest(bodies=kwargs.get("bodies", []))
+
         # Call the gRPC service
         response = self.stub.RepairGeometry(request)
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.result.success,
