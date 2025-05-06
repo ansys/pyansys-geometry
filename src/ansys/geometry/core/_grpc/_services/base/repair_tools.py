@@ -37,7 +37,7 @@ class GRPCRepairToolsService(ABC):
     Parameters
     ----------
     channel: grpc.Channel
-        The gRPC channel used to communicate with the service.   
+        The gRPC channel used to communicate with the service.
     """
 
     def __init__(self, channel: grpc.Channel):
