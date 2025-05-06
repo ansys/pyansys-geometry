@@ -7,8 +7,8 @@ on:
         required: false
         default: false
         type: boolean
-  schedule: # UTC at 0300
-    - cron: "0 3 * * *"
+  schedule: # UTC at 0300, 1100, and 1900
+    - cron: "0 3,11,19 * * *"
   # Trigger workflow when file is modified
   push:
     paths:
@@ -100,7 +100,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
+        uses: pyvista/setup-headless-display-action@f744438e29e50189f40f1749859bac7d0f69b5fa # v4.1
 
       - name: Create Python venv
         run: |
@@ -213,10 +213,10 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_CORE_TAG }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@48066dd0b79cf46babc16223a1dce3aa4803ec43 # v4.0
+        uses: pyvista/setup-headless-display-action@f744438e29e50189f40f1749859bac7d0f69b5fa # v4.1
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@1f1f205361706d22f67c71c29b775222380cd95a # v9.0.6
+        uses: ansys/actions/tests-pytest@90c8d3f174d3393c68bc2143088d60265275b8cc # v9.0.7
         env:
           ALLOW_PLOTTING: true
         with:

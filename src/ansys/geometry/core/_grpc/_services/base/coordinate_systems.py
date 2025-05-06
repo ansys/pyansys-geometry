@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the Driving Dimension service implementation (abstraction layer)."""
+"""Module containing the coordinate systems service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCDrivingDimensionsService(ABC):
-    """Driving Dimension service for gRPC communication with the Geometry server.
+class GRPCCoordinateSystemService(ABC):
+    """Coordinate systems service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,15 +36,10 @@ class GRPCDrivingDimensionsService(ABC):
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCDrivingDimensionsService class."""
+        """Initialize the GRPCCoordinateSystemService class."""
         pass  # pragma: no cover
 
     @abstractmethod
-    def get_all_parameters(self, **kwargs) -> dict:
-        """Get driving dimensions."""
-        pass  # pragma: no cover
-
-    @abstractmethod
-    def set_parameter(self, **kwargs) -> dict:
-        """Set driving dimensions."""
+    def create(self, **kwargs) -> dict:
+        """Create a coordinate system."""
         pass  # pragma: no cover
