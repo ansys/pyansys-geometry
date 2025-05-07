@@ -173,8 +173,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         request = FindMissingFacesRequest(
             faces=kwargs["faces"],
-            angle=DoubleValue(value=kwargs["angle"]),
-            distance=DoubleValue(value=kwargs["distance"]),
+            angle=DoubleValue(value=kwargs["angle"].value) if kwargs["angle"] is not None else None,
+            distance=DoubleValue(value=kwargs["distance"].value)
+                if kwargs["distance"] is not None else None,
         )
 
         # Call the gRPC service
@@ -216,7 +217,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         request = FindStitchFacesRequest(
             faces=kwargs["faces"],
-            maximum_distance=DoubleValue(value=kwargs["distance"])
+            maximum_distance=DoubleValue(value=kwargs["distance"].value) 
+                if kwargs["distance"] is not None else None
         )
 
         # Call the gRPC service
@@ -278,7 +280,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Create the gRPC request
         request = FindStitchFacesRequest(
             faces=kwargs["body_ids"],
-            maximum_distance=DoubleValue(value=kwargs["max_distance"]),
+            maximum_distance=DoubleValue(value=kwargs["max_distance"])
+                if kwargs["max_distance"] is not None else None,
             allow_multiple_bodies=BoolValue(value=kwargs["allow_multiple_bodies"]),
             maintain_components=BoolValue(value=kwargs["maintain_components"]),
             check_for_coincidence=BoolValue(value=kwargs["check_for_coincidence"]),

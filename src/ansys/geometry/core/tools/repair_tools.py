@@ -99,11 +99,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             SplitEdgeProblemAreas(
-                f"{res['id']}",
+                f"{res.get('id')}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res["edges"]),
+                get_edges_from_ids(parent_design, res.get("edges")),
             )
-            for res in problem_areas_response["problems"]
+            for res in problem_areas_response.get("problems")
         ]
 
     def find_extra_edges(self, bodies: list["Body"]) -> list[ExtraEdgeProblemAreas]:
@@ -133,11 +133,11 @@ class RepairTools:
 
         return [
             ExtraEdgeProblemAreas(
-                f"{res['id']}",
+                f"{res.get('id')}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res["edges"]),
+                get_edges_from_ids(parent_design, res.get("edges")),
             )
-            for res in problem_areas_response["problems"]
+            for res in problem_areas_response.get("problems")
         ]
 
     def find_inexact_edges(self, bodies: list["Body"]) -> list[InexactEdgeProblemAreas]:
@@ -168,11 +168,11 @@ class RepairTools:
 
         return [
             InexactEdgeProblemAreas(
-                f"{res['id']}",
+                f"{res.get('id')}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res["edges"]),
+                get_edges_from_ids(parent_design, res.get("edges")),
             )
-            for res in problem_areas_response["problems"]
+            for res in problem_areas_response.get("problems")
         ]
 
     def find_short_edges(
@@ -205,11 +205,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             ShortEdgeProblemAreas(
-                f"{res['id']}",
+                f"{res.get('id')}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res["edges"]),
+                get_edges_from_ids(parent_design, res.get("edges")),
             )
-            for res in problem_areas_response["problems"]
+            for res in problem_areas_response.get("problems")
         ]
 
     def find_duplicate_faces(self, bodies: list["Body"]) -> list[DuplicateFaceProblemAreas]:
@@ -239,11 +239,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         return [
             DuplicateFaceProblemAreas(
-                f"{res['id']}",
+                f"{res.get('id')}",
                 self._grpc_client,
-                get_faces_from_ids(parent_design, res["faces"]),
+                get_faces_from_ids(parent_design, res.get("faces")),
             )
-            for res in problem_areas_response["problems"]
+            for res in problem_areas_response.get("problems")
         ]
 
     def find_missing_faces(
@@ -276,18 +276,18 @@ class RepairTools:
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._grpc_client.services.repair_tools.find_missing_faces(
             faces=body_ids,
-            angle=angle.value if angle is not None else None,
-            distance=distance.value if distance is not None else None,
+            angle=angle,
+            distance=distance,
         )
         parent_design = get_design_from_body(bodies[0])
 
         return [
             MissingFaceProblemAreas(
-                f"{res['id']}",
+                f"{res.get('id')}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res["edges"]),
+                get_edges_from_ids(parent_design, res.get("edges")),
             )
-            for res in problem_areas_response["problems"]
+            for res in problem_areas_response.get("problems")
         ]
 
     def find_small_faces(self, bodies: list["Body"]) -> list[SmallFaceProblemAreas]:
@@ -317,11 +317,11 @@ class RepairTools:
 
         return [
             SmallFaceProblemAreas(
-                f"{res['id']}",
+                f"{res.get('id')}",
                 self._grpc_client,
-                get_faces_from_ids(parent_design, res["faces"]),
+                get_faces_from_ids(parent_design, res.get("faces")),
             )
-            for res in problem_areas_response["problems"]
+            for res in problem_areas_response.get("problems")
         ]
 
     def find_stitch_faces(
@@ -349,16 +349,16 @@ class RepairTools:
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._grpc_client.services.repair_tools.find_stitch_faces(
             faces=body_ids,
-            distance=max_distance.value if max_distance is not None else None,
+            distance=max_distance,
         )
         parent_design = get_design_from_body(bodies[0])
         return [
             StitchFaceProblemAreas(
-                f"{res['id']}",
+                f"{res.get('id')}",
                 self._grpc_client,
-                get_bodies_from_ids(parent_design, res["bodies"]),
+                get_bodies_from_ids(parent_design, res.get("bodies")),
             )
-            for res in problem_areas_response["problems"]
+            for res in problem_areas_response.get("problems")
         ]
 
     @min_backend_version(25, 2, 0)
@@ -387,11 +387,11 @@ class RepairTools:
 
         return [
             UnsimplifiedFaceProblemAreas(
-                f"{res['id']}",
+                f"{res.get('id')}",
                 self._grpc_client,
-                get_faces_from_ids(parent_design, res["bodies"]),
+                get_faces_from_ids(parent_design, res.get("bodies")),
             )
-            for res in problem_areas_response["problems"]
+            for res in problem_areas_response.get("problems")
         ]
 
     @min_backend_version(25, 2, 0)
@@ -436,11 +436,11 @@ class RepairTools:
 
         return [
             InterferenceProblemAreas(
-                f"{res['id']}",
+                f"{res.get('id')}",
                 self._grpc_client,
-                get_bodies_from_ids(parent_design, res["bodies"]),
+                get_bodies_from_ids(parent_design, res.get("bodies")),
             )
-            for res in problem_areas_response["problems"]
+            for res in problem_areas_response.get("problems")
         ]
 
     @min_backend_version(25, 2, 0)
@@ -488,9 +488,9 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            success=response["success"],
-            found=response["found"],
-            repaired=response["repaired"],
+            success=response.get("success"),
+            found=response.get("found"),
+            repaired=response.get("repaired"),
             created_bodies=[],
             modified_bodies=[],
         )
@@ -538,11 +538,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response["success"],
-            response["created_bodies_monikers"],
-            response["modified_bodies_monikers"],
-            response["found"],
-            response["repaired"],
+            response.get("success"),
+            response.get("created_bodies_monikers"),
+            response.get("modified_bodies_monikers"),
+            response.get("found"),
+            response.get("repaired"),
         )
         return message
 
@@ -599,11 +599,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response["success"],
-            response["created_bodies_monikers"],
-            response["modified_bodies_monikers"],
-            response["found"],
-            response["repaired"],
+            response.get("success"),
+            response.get("created_bodies_monikers"),
+            response.get("modified_bodies_monikers"),
+            response.get("found"),
+            response.get("repaired"),
         )
         return message
 
@@ -648,11 +648,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
         message = RepairToolMessage(
-            response["success"],
-            response["created_bodies_monikers"],
-            response["modified_bodies_monikers"],
-            response["found"],
-            response["repaired"],
+            response.get("success"),
+            response.get("created_bodies_monikers"),
+            response.get("modified_bodies_monikers"),
+            response.get("found"),
+            response.get("repaired"),
         )
         return message
 
@@ -705,7 +705,7 @@ class RepairTools:
 
         response = self._grpc_client.services.repair_tools.find_and_fix_stitch_faces(
             body_ids=body_ids,
-            max_distance=max_distance.value if max_distance is not None else None,
+            max_distance=max_distance,
             allow_multiple_bodies=allow_multiple_bodies,
             maintain_components=maintain_components,
             check_for_coincidence=check_for_coincidence,
@@ -746,7 +746,7 @@ class RepairTools:
             parent_design=parent_design, bodies=body_ids
         )
         return self.__create_inspect_result_from_response(
-            parent_design, inspect_result_response_dict["issues_by_body"]
+            parent_design, inspect_result_response_dict.get("issues_by_body")
         )
 
     def __create_inspect_result_from_response(
@@ -755,7 +755,7 @@ class RepairTools:
         inspect_results = []
         for inspect_geometry_result in inspect_geometry_results:
             body = get_bodies_from_ids(design, [inspect_geometry_result["body"]["id"]])
-            issues = self.__create_issues_from_response(inspect_geometry_result["issues"])
+            issues = self.__create_issues_from_response(inspect_geometry_result.get("issues"))
             inspect_result = InspectResult(
                 grpc_client=self._grpc_client, body=body[0], issues=issues
             )
@@ -769,9 +769,9 @@ class RepairTools:
     ) -> list[GeometryIssue]:
         issues = []
         for issue in inspect_geometry_result_issues:
-            message_type = issue["message_type"]
-            message_id = issue["message_id"]
-            message = issue["message"]
+            message_type = issue.get("message_type")
+            message_id = issue.get("message_id")
+            message = issue.get("message")
 
             faces = [face["id"] for face in issue.get("faces", [])]
             edges = [edge["id"] for edge in issue.get("edges", [])]
@@ -808,5 +808,5 @@ class RepairTools:
             bodies=body_ids
         )
 
-        message = RepairToolMessage(repair_result_response["success"], [], [])
+        message = RepairToolMessage(repair_result_response.get("success"), [], [])
         return message
