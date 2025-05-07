@@ -54,39 +54,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_split_edges(self, **kwargs) -> dict:  # noqa: D102
-        """Identify split edges in the geometry.
 
-        This method interacts with the gRPC service to identify split edges
-        in the provided geometry based on the input parameters.
-
-        Parameters
-        ----------
-        **kwargs : dict
-            Keyword arguments containing the input parameters for the request.
-            - bodies_or_faces: list
-                List of body or face identifiers to inspect.
-            - angle: float
-                The angle threshold for identifying split edges.
-            - distance: float
-                The distance threshold for identifying split edges.
-
-        Returns
-        -------
-        dict
-            A dictionary containing the identified split edge problems. Each problem
-            includes an ID and a list of associated edge monikers.
-
-            Example:
-            {
-                "problems": [
-                    {
-                        "id": "problem_id_1",
-                        "edges": ["edge_1", "edge_2"]
-                    },
-                    ...
-                ]
-            }
-        """
         from google.protobuf.wrappers_pb2 import DoubleValue
 
         from ansys.api.geometry.v0.repairtools_pb2 import FindSplitEdgesRequest
