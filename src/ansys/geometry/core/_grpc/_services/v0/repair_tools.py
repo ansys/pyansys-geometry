@@ -295,20 +295,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def inspect_geometry(self, **kwargs) -> dict:  # noqa: D102
-        """Inspect the geometry for issues.
-
-        Parameters
-        ----------
-        **kwargs : dict
-            Keyword arguments containing the input parameters for the inspection.
-            - bodies: list
-                List of bodies to inspect.
-
-        Returns
-        -------
-        dict
-            A dictionary containing the serialized inspection results.
-        """
         from ansys.api.geometry.v0.repairtools_pb2 import InspectGeometryRequest
 
         # Create the gRPC request
@@ -429,7 +415,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @staticmethod
     def serialize_inspect_result_response(response) -> dict:
-        """Serialize the InspectGeometryResponse to a dictionary."""
 
         def serialize_body(body):
             return {
