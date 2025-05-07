@@ -1287,7 +1287,7 @@ class Design(Component):
 
         # Function to find and add bodies within components recursively
         def find_and_add_body(body_info, component):
-            for component in components:
+            for component in component:
                 if component.id == body_info["parent_id"]:
                     new_body = MasterBody(
                         body_info["id"],
