@@ -175,7 +175,6 @@ def test_duplicate_face_faces(modeler: Modeler):
     design.close()
 
 
-
 def test_fix_duplicate_face(modeler: Modeler):
     """Test to read geometry and find and fix it's duplicate face problem
     areas.
