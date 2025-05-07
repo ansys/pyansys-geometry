@@ -381,7 +381,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         }
 
     @staticmethod
-    def serialize_inspect_result_response(response) -> dict:
+    def serialize_inspect_result_response(response) -> dict:  # noqa: D102
         def serialize_body(body):
             return {
                 "id": body.id,
