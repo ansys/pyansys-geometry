@@ -9,6 +9,159 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.10.7 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.7>`_ - May 05, 2025
+=========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - grpc driving dimensions stub implementation
+          - `#1921 <https://github.com/ansys/pyansys-geometry/pull/1921>`_
+
+        * - move coordinate systems stub to grpc layer
+          - `#1943 <https://github.com/ansys/pyansys-geometry/pull/1943>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - bump numpy from 2.2.4 to 2.2.5
+          - `#1935 <https://github.com/ansys/pyansys-geometry/pull/1935>`_
+
+        * - bump pygltflib from 1.16.3 to 1.16.4
+          - `#1940 <https://github.com/ansys/pyansys-geometry/pull/1940>`_
+
+        * - bump notebook from 7.3.3 to 7.4.1 in the docs-deps group
+          - `#1946 <https://github.com/ansys/pyansys-geometry/pull/1946>`_
+
+        * - bump ansys-api-geometry from 0.4.57 to 0.4.58
+          - `#1954 <https://github.com/ansys/pyansys-geometry/pull/1954>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update ``CONTRIBUTORS.md`` with the latest contributors
+          - `#1938 <https://github.com/ansys/pyansys-geometry/pull/1938>`_
+
+        * - ignore stackoverflow link
+          - `#1957 <https://github.com/ansys/pyansys-geometry/pull/1957>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - core service launcher missing CADIntegration bin folder in path
+          - `#1958 <https://github.com/ansys/pyansys-geometry/pull/1958>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - update CHANGELOG for v0.10.6
+          - `#1933 <https://github.com/ansys/pyansys-geometry/pull/1933>`_
+
+        * - use v4 of pyvista/setup-headless-display-action
+          - `#1934 <https://github.com/ansys/pyansys-geometry/pull/1934>`_
+
+        * - bump github/codeql-action from 3.28.15 to 3.28.16 in the actions group
+          - `#1936 <https://github.com/ansys/pyansys-geometry/pull/1936>`_
+
+        * - bump the actions group with 2 updates
+          - `#1937 <https://github.com/ansys/pyansys-geometry/pull/1937>`_, `#1942 <https://github.com/ansys/pyansys-geometry/pull/1942>`_
+
+        * - pre-commit automatic update
+          - `#1941 <https://github.com/ansys/pyansys-geometry/pull/1941>`_
+
+        * - bump github/codeql-action from 3.28.16 to 3.28.17 in the actions group
+          - `#1956 <https://github.com/ansys/pyansys-geometry/pull/1956>`_
+
+
+`0.10.6 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.6>`_ - April 22, 2025
+===========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - grpc prepare tools stub implementation
+          - `#1914 <https://github.com/ansys/pyansys-geometry/pull/1914>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - bump PyVista and VTK versions (support Python 3.13)
+          - `#1924 <https://github.com/ansys/pyansys-geometry/pull/1924>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - docstyle ordering
+          - `#1925 <https://github.com/ansys/pyansys-geometry/pull/1925>`_
+
+        * - adapt Native folder path for Linux and Windows
+          - `#1932 <https://github.com/ansys/pyansys-geometry/pull/1932>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - update CHANGELOG for v0.10.5
+          - `#1919 <https://github.com/ansys/pyansys-geometry/pull/1919>`_
+
+        * - bump skitionek/notify-microsoft-teams to v1.0.9 in the actions group
+          - `#1920 <https://github.com/ansys/pyansys-geometry/pull/1920>`_
+
+        * - bump ansys/actions from 9.0.2 to 9.0.3 in the actions group
+          - `#1923 <https://github.com/ansys/pyansys-geometry/pull/1923>`_
+
+        * - fix issues with OSMesa installation and env variables set up
+          - `#1927 <https://github.com/ansys/pyansys-geometry/pull/1927>`_
+
+        * - bump ansys/actions from 9.0.3 to 9.0.6 in the actions group
+          - `#1928 <https://github.com/ansys/pyansys-geometry/pull/1928>`_
+
+        * - pre-commit automatic update
+          - `#1930 <https://github.com/ansys/pyansys-geometry/pull/1930>`_
+
+        * - fix unstable workflows for Linux (missing headless display)
+          - `#1931 <https://github.com/ansys/pyansys-geometry/pull/1931>`_
+
+
 `0.10.5 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.5>`_ - April 16, 2025
 ===========================================================================================
 

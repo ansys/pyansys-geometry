@@ -25,7 +25,9 @@ import grpc
 from .._version import GeometryApiProtos, set_proto_version
 from .base.admin import GRPCAdminService
 from .base.bodies import GRPCBodyService
+from .base.coordinate_systems import GRPCCoordinateSystemService
 from .base.dbuapplication import GRPCDbuApplicationService
+from .base.driving_dimensions import GRPCDrivingDimensionsService
 from .base.measurement_tools import GRPCMeasurementToolsService
 from .base.named_selection import GRPCNamedSelectionService
 from .base.prepare_tools import GRPCPrepareToolsService
@@ -75,6 +77,8 @@ class _GRPCServices:
         self._named_selection = None
         self._measurement_tools = None
         self._prepare_tools = None
+        self._driving_dimensions = None
+        self._coordinate_systems = None
 
     @property
     def bodies(self) -> GRPCBodyService:
@@ -83,7 +87,7 @@ class _GRPCServices:
 
         Returns
         -------
-        BodyServiceBase
+        GRPCBodyService
             The body service for the specified version.
         """
         if not self._bodies:
@@ -109,7 +113,7 @@ class _GRPCServices:
 
         Returns
         -------
-        AdminServiceBase
+        GRPCAdminService
             The admin service for the specified version.
         """
         if not self._admin:
@@ -135,7 +139,7 @@ class _GRPCServices:
 
         Returns
         -------
-        DbuApplicationServiceBase
+        GRPCDbuApplicationService
             The DBU application service for the specified version.
         """
         if not self._dbu_application:
@@ -161,7 +165,7 @@ class _GRPCServices:
 
         Returns
         -------
-        NamedSelectionServiceBase
+        GRPCNamedSelectionService
             The named selection service for the specified version.
         """
         if not self._named_selection:
@@ -187,7 +191,7 @@ class _GRPCServices:
 
         Returns
         -------
-        MeasurementToolsServiceBase
+        GRPCMeasurementToolsService
             The measurement tools service for the specified version.
         """
         if not self._measurement_tools:
@@ -213,7 +217,7 @@ class _GRPCServices:
 
         Returns
         -------
-        NamedSelectionServiceBase
+        GRPCPrepareToolsService
             The prepare tools service for the specified version.
         """
         if not self._prepare_tools:
@@ -231,3 +235,55 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._prepare_tools
+
+    @property
+    def driving_dimensions(self) -> GRPCDrivingDimensionsService:
+        """
+        Get the driving dimensions service for the specified version.
+
+        Returns
+        -------
+        GRPCDrivingDimensionsService
+            The driving dimensions service for the specified version.
+        """
+        if not self._driving_dimensions:
+            # Import the appropriate driving dimensions service based on the version
+            from .v0.driving_dimensions import GRPCDrivingDimensionsServiceV0
+            from .v1.driving_dimensions import GRPCDrivingDimensionsServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._driving_dimensions = GRPCDrivingDimensionsServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._driving_dimensions = GRPCDrivingDimensionsServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._driving_dimensions
+
+    @property
+    def coordinate_systems(self) -> GRPCCoordinateSystemService:
+        """
+        Get the coordinate systems service for the specified version.
+
+        Returns
+        -------
+        GRPCCoordinateSystemService
+            The coordinate systems service for the specified version.
+        """
+        if not self._coordinate_systems:
+            # Import the appropriate coordinate systems service based on the version
+            from .v0.coordinate_systems import GRPCCoordinateSystemServiceV0
+            from .v1.coordinate_systems import GRPCCoordinateSystemServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._coordinate_systems = GRPCCoordinateSystemServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._coordinate_systems = GRPCCoordinateSystemServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._coordinate_systems
