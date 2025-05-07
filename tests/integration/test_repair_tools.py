@@ -154,6 +154,7 @@ def test_find_duplicate_faces(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
     assert len(problem_areas) == 1
+    design.close()
 
 
 def test_duplicate_face_id(modeler: Modeler):
@@ -161,6 +162,7 @@ def test_duplicate_face_id(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
     assert problem_areas[0].id != "0"
+    design.close()
 
 
 def test_duplicate_face_faces(modeler: Modeler):
@@ -170,6 +172,8 @@ def test_duplicate_face_faces(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
     assert len(problem_areas[0].faces) > 0
+    design.close()
+
 
 
 def test_fix_duplicate_face(modeler: Modeler):
