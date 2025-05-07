@@ -87,13 +87,15 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 ]
             }
         """
+        from google.protobuf.wrappers_pb2 import DoubleValue
+
         from ansys.api.geometry.v0.repairtools_pb2 import FindSplitEdgesRequest
 
         # Create the gRPC request
         request = FindSplitEdgesRequest(
             bodies_or_faces=kwargs["bodies_or_faces"],
-            angle=kwargs["angle"],
-            distance=kwargs["distance"],
+            angle=DoubleValue(value=float(kwargs["angle"])),
+            distance=DoubleValue(value=float(kwargs["distance"])),
         )
 
         # Call the gRPC service
@@ -402,12 +404,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_and_fix_split_edges(self, **kwargs) -> dict:  # noqa: D102
+        from google.protobuf.wrappers_pb2 import DoubleValue
+
         from ansys.api.geometry.v0.repairtools_pb2 import FindSplitEdgesRequest
 
         request = FindSplitEdgesRequest(
             bodies_or_faces=kwargs["bodies_or_faces"],
-            angle=kwargs["angle"],
-            distance=kwargs["length"],
+            angle=DoubleValue(value=float(kwargs["angle"])),
+            distance=DoubleValue(value=float(kwargs["length"])),
             comprehensive=kwargs["comprehensive_result"],
         )
 

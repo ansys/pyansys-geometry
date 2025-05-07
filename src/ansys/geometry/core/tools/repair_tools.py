@@ -23,8 +23,6 @@
 
 from typing import TYPE_CHECKING
 
-from google.protobuf.wrappers_pb2 import DoubleValue
-
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
@@ -93,12 +91,10 @@ class RepairTools:
         if not bodies:
             return []
 
-        angle_value = DoubleValue(value=float(angle))
-        length_value = DoubleValue(value=float(length))
         body_ids = [body.id for body in bodies]
 
         problem_areas_response = self._grpc_client.services.repair_tools.find_split_edges(
-            bodies_or_faces=body_ids, angle=angle_value, distance=length_value
+            bodies_or_faces=body_ids, angle=angle, distance=length
         )
 
         parent_design = get_design_from_body(bodies[0])
@@ -586,14 +582,12 @@ class RepairTools:
         if not bodies:
             return RepairToolMessage(False, [], [], 0, 0)
 
-        angle_value = DoubleValue(value=float(angle))
-        length_value = DoubleValue(value=float(length))
         body_ids = [body.id for body in bodies]
 
         response = self._grpc_client.services.repair_tools.find_and_fix_split_edges(
             bodies_or_faces=body_ids,
-            angle=angle_value,
-            length=length_value,
+            angle=angle,
+            length=length,
             comprehensive_result=comprehensive_result,
         )
 
