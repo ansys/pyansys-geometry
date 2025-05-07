@@ -37,7 +37,6 @@ class GRPCRepairToolsServiceV1(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the MeasurementToolsService class."""
-        pass  # pragma: no cover
 
     def find_split_edges(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
