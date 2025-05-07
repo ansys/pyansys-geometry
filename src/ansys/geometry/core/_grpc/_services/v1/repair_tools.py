@@ -80,6 +80,9 @@ class GRPCRepairToolsServiceV1(ABC):
     def find_and_fix_simplify(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
+    def find_and_fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+    
     def inspect_geometry(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 

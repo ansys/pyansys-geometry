@@ -24,7 +24,6 @@
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_body,
@@ -36,6 +35,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.tools.check_geometry import GeometryIssue, InspectResult
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
@@ -65,7 +65,6 @@ class RepairTools:
         self._modeler = modeler
         self._grpc_client = grpc_client
 
-    @protect_grpc
     def find_split_edges(
         self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
     ) -> list[SplitEdgeProblemAreas]:
@@ -107,7 +106,6 @@ class RepairTools:
             for res in problem_areas_response["problems"]
         ]
 
-    @protect_grpc
     def find_extra_edges(self, bodies: list["Body"]) -> list[ExtraEdgeProblemAreas]:
         """Find the extra edges in the given list of bodies.
 
@@ -142,7 +140,6 @@ class RepairTools:
             for res in problem_areas_response["problems"]
         ]
 
-    @protect_grpc
     def find_inexact_edges(self, bodies: list["Body"]) -> list[InexactEdgeProblemAreas]:
         """Find inexact edges in the given list of bodies.
 
@@ -178,7 +175,6 @@ class RepairTools:
             for res in problem_areas_response["problems"]
         ]
 
-    @protect_grpc
     def find_short_edges(
         self, bodies: list["Body"], length: Real = 0.0
     ) -> list[ShortEdgeProblemAreas]:
@@ -216,7 +212,6 @@ class RepairTools:
             for res in problem_areas_response["problems"]
         ]
 
-    @protect_grpc
     def find_duplicate_faces(self, bodies: list["Body"]) -> list[DuplicateFaceProblemAreas]:
         """Find the duplicate face problem areas.
 
@@ -251,8 +246,12 @@ class RepairTools:
             for res in problem_areas_response["problems"]
         ]
 
-    @protect_grpc
-    def find_missing_faces(self, bodies: list["Body"]) -> list[MissingFaceProblemAreas]:
+    def find_missing_faces(
+        self,
+        bodies: list["Body"],
+        angle: Angle = None,
+        distance: Distance = None,
+    )-> list[MissingFaceProblemAreas]:
         """Find the missing faces.
 
         This method find the missing face problem areas and returns a list of missing
@@ -262,6 +261,10 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that missing faces are investigated on.
+        angle : Angle, optional
+            The minimum angle between faces. By default, None.
+        distance : Distance, optional
+            The minimum distance between faces. By default, None.
 
         Returns
         -------
@@ -272,7 +275,9 @@ class RepairTools:
             return []
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._grpc_client.services.repair_tools.find_missing_faces(
-            faces=body_ids
+            faces=body_ids,
+            angle=angle.value if angle is not None else None,
+            distance=distance.value if distance is not None else None,
         )
         parent_design = get_design_from_body(bodies[0])
 
@@ -285,7 +290,6 @@ class RepairTools:
             for res in problem_areas_response["problems"]
         ]
 
-    @protect_grpc
     def find_small_faces(self, bodies: list["Body"]) -> list[SmallFaceProblemAreas]:
         """Find the small face problem areas.
 
@@ -320,8 +324,11 @@ class RepairTools:
             for res in problem_areas_response["problems"]
         ]
 
-    @protect_grpc
-    def find_stitch_faces(self, bodies: list["Body"]) -> list[StitchFaceProblemAreas]:
+    def find_stitch_faces(
+        self,
+        bodies: list["Body"],
+        max_distance: Distance = None,
+    ) -> list[StitchFaceProblemAreas]:
         """Return the list of stitch face problem areas.
 
         This method find the stitch face problem areas and returns a list of ids of stitch face
@@ -331,6 +338,8 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that stitchable faces are investigated on.
+        max_distance : Distance, optional
+            Maximum distance between faces. By default, None.
 
         Returns
         -------
@@ -339,7 +348,8 @@ class RepairTools:
         """
         body_ids = [body.id for body in bodies]
         problem_areas_response = self._grpc_client.services.repair_tools.find_stitch_faces(
-            faces=body_ids
+            faces=body_ids,
+            distance=max_distance.value if max_distance is not None else None,
         )
         parent_design = get_design_from_body(bodies[0])
         return [
@@ -351,7 +361,6 @@ class RepairTools:
             for res in problem_areas_response["problems"]
         ]
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_simplify(self, bodies: list["Body"]) -> list[UnsimplifiedFaceProblemAreas]:
         """Detect faces in a body that can be simplified.
@@ -385,7 +394,6 @@ class RepairTools:
             for res in problem_areas_response["problems"]
         ]
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_interferences(
         self, bodies: list["Body"], cut_smaller_body: bool = False
@@ -435,7 +443,6 @@ class RepairTools:
             for res in problem_areas_response["problems"]
         ]
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_fix_short_edges(
         self, bodies: list["Body"], length: Real = 0.0, comprehensive_result: bool = False
@@ -489,7 +496,6 @@ class RepairTools:
         )
         return message
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_fix_extra_edges(
         self, bodies: list["Body"], comprehensive_result: bool = False
@@ -540,7 +546,6 @@ class RepairTools:
         )
         return message
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_fix_split_edges(
         self,
@@ -602,7 +607,6 @@ class RepairTools:
         )
         return message
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def find_and_fix_simplify(
         self, bodies: list["Body"], comprehensive_result: bool = False
@@ -649,6 +653,73 @@ class RepairTools:
             response["modified_bodies_monikers"],
             response["found"],
             response["repaired"],
+        )
+        return message
+
+    @min_backend_version(25, 2, 0)
+    def find_and_fix_stitch_faces(
+        self,
+        bodies: list["Body"],
+        max_distance: Distance = None,
+        allow_multiple_bodies: bool = False,
+        maintain_components: bool = True,
+        check_for_coincidence: bool = False,
+        comprehensive_result: bool = False,
+    ) -> RepairToolMessage:
+        """Find and fix the stitch face problem areas.
+        
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies that stitchable faces are investigated on.
+        max_distance : Real, optional
+            The maximum distance between faces to be stitched.
+            By default, 0.0001.
+        allow_multiple_bodies : bool, optional
+            Whether to allow multiple bodies in the result.
+            By default, False.
+        maintain_components : bool, optional
+            Whether to stitch bodies within the components.
+            By default, True.
+        check_for_coincidence : bool, optional
+            Whether coincidence surfaces are searched.
+            By default, False.
+        comprehensive_result : bool, optional
+            Whether to fix all problem areas individually.
+            By default, False.
+
+        Returns
+        -------
+        RepairToolMessage
+            Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+        Notes
+        -----
+        This method finds the stitchable faces and fixes them.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        body_ids = [body.id for body in bodies]
+
+        response = self._grpc_client.services.repair_tools.find_and_fix_stitch_faces(
+            body_ids=body_ids,
+            max_distance=max_distance.value if max_distance is not None else None,
+            allow_multiple_bodies=allow_multiple_bodies,
+            maintain_components=maintain_components,
+            check_for_coincidence=check_for_coincidence,
+            comprehensive_result=comprehensive_result,
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+        parent_design._update_design_inplace()
+        message = RepairToolMessage(
+            response.get("success"),
+            response.get("created_bodies_monikers"),
+            response.get("modified_bodies_monikers"),
+            response.get("found"),
+            response.get("repaired"),
         )
         return message
 
@@ -715,7 +786,6 @@ class RepairTools:
             issues.append(geometry_issue)
         return issues
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def repair_geometry(self, bodies: list["Body"] = None) -> RepairToolMessage:
         """Attempt to repair the geometry for the given bodies.

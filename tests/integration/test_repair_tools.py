@@ -285,6 +285,32 @@ def test_fix_interference(modeler: Modeler):
     assert result.success is True
 
 
+def test_find_and_fix_stitch_faces(modeler: Modeler):
+    """Test to find and fix stitch faces and validate that we get a solid."""
+    design = modeler.open_file(FILES_DIR / "stitch_1200_bodies.dsco")
+    assert len(design.bodies) == 3600
+
+    stitch_faces = modeler.repair_tools.find_and_fix_stitch_faces(design.bodies)
+    assert stitch_faces.found == 1
+    assert stitch_faces.repaired == 1
+
+    assert len(design.bodies) == 1200
+
+
+def test_find_and_fix_stitch_faces_comprehensive(modeler: Modeler):
+    """Test to find and fix stitch faces and validate that we get a solid."""
+    design = modeler.open_file(FILES_DIR / "stitch_1200_bodies.dsco")
+    assert len(design.bodies) == 3600
+
+    stitch_faces = modeler.repair_tools.find_and_fix_stitch_faces(
+        design.bodies, comprehensive_result=True
+    )
+    assert stitch_faces.found == 1200
+    assert stitch_faces.repaired == 1200
+
+    assert len(design.bodies) == 1200
+
+
 def test_find_and_fix_duplicate_faces(modeler: Modeler):
     """Test to read geometry, find and fix duplicate faces and validate they are removed."""
     design = modeler.open_file(FILES_DIR / "DuplicateFaces.scdocx")

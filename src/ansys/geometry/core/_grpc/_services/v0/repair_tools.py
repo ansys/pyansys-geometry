@@ -26,6 +26,7 @@ The class provides a set of abstract methods for identifying and repairing vario
 geometry issues, such as split edges, extra edges, duplicate faces etc.
 """
 
+from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
@@ -170,7 +171,12 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
     def find_missing_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindMissingFacesRequest
 
-        request = FindMissingFacesRequest(faces=kwargs["faces"])
+        request = FindMissingFacesRequest(
+            faces=kwargs["faces"],
+            angle=DoubleValue(value=kwargs["angle"]),
+            distance=DoubleValue(value=kwargs["distance"]),
+        )
+
         # Call the gRPC service
         response = self.stub.FindMissingFaces(request)
 
@@ -208,9 +214,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
     def find_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
 
-        request = FindStitchFacesRequest(faces=kwargs["faces"])
+        request = FindStitchFacesRequest(
+            faces=kwargs["faces"],
+            maximum_distance=DoubleValue(value=kwargs["distance"])
+        )
+
         # Call the gRPC service
         response = self.stub.FindStitchFaces(request)
+        
         # Return the response - formatted as a dictionary
         return {
             "problems": [
@@ -258,6 +269,32 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
+        }
+
+    @protect_grpc
+    def find_and_fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
+
+        # Create the gRPC request
+        request = FindStitchFacesRequest(
+            faces=kwargs["body_ids"],
+            maximum_distance=DoubleValue(value=kwargs["max_distance"]),
+            allow_multiple_bodies=BoolValue(value=kwargs["allow_multiple_bodies"]),
+            maintain_components=BoolValue(value=kwargs["maintain_components"]),
+            check_for_coincidence=BoolValue(value=kwargs["check_for_coincidence"]),
+            comprehensive=kwargs["comprehensive_result"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FindAndFixStitchFaces(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+            "created_bodies_monikers": response.created_bodies_monikers,
+            "modified_bodies_monikers": response.modified_bodies_monikers,
+            "found": response.found,
+            "repaired": response.repaired,
         }
 
     @protect_grpc

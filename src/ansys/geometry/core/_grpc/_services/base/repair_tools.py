@@ -114,6 +114,11 @@ class GRPCRepairToolsService(ABC):
         pass  # pragma: no cover
 
     @abstractmethod
+    def find_and_fix_stitch_faces(self, **kwargs) -> dict:
+        """Identify and stitch faces in the geometry."""
+        pass  # pragma: no cover
+
+    @abstractmethod
     def inspect_geometry(self, **kwargs) -> dict:
         """Inspect the geometry for issues."""
         pass  # pragma: no cover
