@@ -54,7 +54,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_split_edges(self, **kwargs) -> dict:  # noqa: D102
-
         from google.protobuf.wrappers_pb2 import DoubleValue
 
         from ansys.api.geometry.v0.repairtools_pb2 import FindSplitEdgesRequest
@@ -383,7 +382,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @staticmethod
     def serialize_inspect_result_response(response) -> dict:
-
         def serialize_body(body):
             return {
                 "id": body.id,
