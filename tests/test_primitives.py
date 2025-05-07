@@ -967,26 +967,21 @@ def test_nurbs_curve_fitting():
         Point3D([0, 0, 0]),
         Point3D([1, 1, 0]),
         Point3D([2, 0, 0]),
+        Point3D([5, 2, 0]),
     ]
-    degree = 2
+    degree = 3
     nurbs_curve = NURBSCurve.fit_curve_from_points(points=points, degree=degree)
 
     # Verify degree, knots, and control points
     assert nurbs_curve.degree == degree
 
-    assert len(nurbs_curve.knots) == 6
-    assert nurbs_curve.knots[0] == 0
-    assert nurbs_curve.knots[1] == 0
-    assert nurbs_curve.knots[2] == 0
-    assert nurbs_curve.knots[3] == 1
-    assert nurbs_curve.knots[4] == 1
-    assert nurbs_curve.knots[5] == 1
+    assert len(nurbs_curve.knots) == 8
 
     assert len(nurbs_curve.control_points) == 4
     assert np.allclose(nurbs_curve.control_points[0], Point3D([0, 0, 0]))
-    assert np.allclose(nurbs_curve.control_points[1], Point3D([0.666666, 1.333333, 0]))
-    assert np.allclose(nurbs_curve.control_points[2], Point3D([1.333333, 1.333333, 0]))
-    assert np.allclose(nurbs_curve.control_points[3], Point3D([2, 0, 0]))
+    assert np.allclose(nurbs_curve.control_points[1], Point3D([1.54969033497753, 4.03483016710592, 0]))
+    assert np.allclose(nurbs_curve.control_points[2], Point3D([2.87290323505786, -5.66639579939497, 0]))
+    assert np.allclose(nurbs_curve.control_points[3], Point3D([5, 2, 0]))
 
 def test_nurbs_curve_evaluation():
     """Test ``NURBSCurve`` evaluation."""

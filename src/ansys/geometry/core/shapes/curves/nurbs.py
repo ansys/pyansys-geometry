@@ -165,8 +165,15 @@ class NURBSCurve(Curve):
         """
         from geomdl import fitting
 
+        # Convert points to a format suitable for the fitting function
+        converted_points = []
+        for pt in points:
+            pt = (pt.x.m, pt.y.m, pt.z.m)
+            converted_points.append(pt)
+
         # Fit the curve to the points
-        curve = fitting.interpolate_curve(points, degree)
+        curve = fitting.interpolate_curve(converted_points, degree)
+        print(curve.ctrlpts)
 
         # Construct the NURBSCurve object
         nurbs_curve = cls()

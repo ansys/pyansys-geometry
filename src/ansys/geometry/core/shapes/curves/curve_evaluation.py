@@ -23,16 +23,28 @@
 
 from functools import cached_property
 
+from ansys.api.geometry.v0.commands_pb2 import EvaluateNurbsCurveRequest
+from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import Vector3D
+from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.typing import Real
 
 
 class CurveEvaluation:
     """Provides for evaluating a curve."""
 
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
     def __init__(self, parameter: Real = None) -> None:
         """Initialize the ``CurveEvaluation`` class."""
+        # design._commands_stub.EvaluateNurbsCurve(
+        #     EvaluateNurbsCurveRequest(
+        #         curve=#PUT NURBSCURVE HERE
+        #         parameter=parameter,
+        #     )
+        # )
+
         self._parameter = parameter
 
     def is_set(self) -> bool:
