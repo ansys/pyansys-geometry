@@ -251,7 +251,7 @@ class RepairTools:
         bodies: list["Body"],
         angle: Angle = None,
         distance: Distance = None,
-    )-> list[MissingFaceProblemAreas]:
+    ) -> list[MissingFaceProblemAreas]:
         """Find the missing faces.
 
         This method find the missing face problem areas and returns a list of missing
@@ -667,7 +667,7 @@ class RepairTools:
         comprehensive_result: bool = False,
     ) -> RepairToolMessage:
         """Find and fix the stitch face problem areas.
-        
+
         Parameters
         ----------
         bodies : list[Body]
