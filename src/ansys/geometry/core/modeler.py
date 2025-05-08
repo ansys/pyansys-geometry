@@ -27,8 +27,6 @@ from typing import TYPE_CHECKING, Generator, Optional
 
 from grpc import Channel
 
-from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
-from ansys.api.dbu.v0.dbuapplication_pb2_grpc import DbuApplicationStub
 from ansys.api.dbu.v0.designs_pb2 import OpenRequest
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
@@ -101,7 +99,6 @@ class Modeler:
         timeout: Real = 120,
         logging_level: int = logging.INFO,
         logging_file: Path | str | None = None,
-        backend_type: BackendType | None = None,
     ):
         """Initialize the ``Modeler`` class."""
         from ansys.geometry.core.designer.geometry_commands import GeometryCommands
@@ -116,7 +113,6 @@ class Modeler:
             timeout=timeout,
             logging_level=logging_level,
             logging_file=logging_file,
-            backend_type=backend_type,
         )
 
         # Single design for the Modeler
@@ -562,25 +558,23 @@ class Modeler:
                 api_version = ApiVersions.parse_input(api_version)
 
         serv_path = self._upload_file(file_path)
-        ga_stub = DbuApplicationStub(self.client.channel)
-        request = RunScriptFileRequest(
+
+        self.client.log.debug(f"Running Discovery script file at {file_path}...")
+        response = self.client.services.dbu_application.run_script(
             script_path=serv_path,
             script_args=script_args,
             api_version=api_version.value if api_version is not None else None,
         )
 
-        self.client.log.debug(f"Running Discovery script file at {file_path}...")
-        response = ga_stub.RunScriptFile(request)
+        if not response.get("success"):
+            raise GeometryRuntimeError(response.get("message"))
 
-        if not response.success:
-            raise GeometryRuntimeError(response.message)
-
-        self.client.log.debug(f"Script result message: {response.message}")
+        self.client.log.debug(f"Script result message: {response.get('message')}")
 
         if import_design:
-            return (dict(response.values), self.read_existing_design())
+            return response.get("values"), self.read_existing_design()
         else:
-            return dict(response.values)
+            return response.get("values"), None
 
     @property
     def repair_tools(self) -> RepairTools:

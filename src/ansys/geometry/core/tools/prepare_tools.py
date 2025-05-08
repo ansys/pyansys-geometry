@@ -23,25 +23,18 @@
 
 from typing import TYPE_CHECKING
 
-from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
+from beartype import beartype as check_input_types
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody, Face as GRPCFace
-from ansys.api.geometry.v0.preparetools_pb2 import (
-    ExtractVolumeFromEdgeLoopsRequest,
-    ExtractVolumeFromFacesRequest,
-    RemoveRoundsRequest,
-    ShareTopologyRequest,
-)
-from ansys.api.geometry.v0.preparetools_pb2_grpc import PrepareToolsStub
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.connection.backend import BackendType
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_edge,
     get_design_from_face,
 )
 from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
+from ansys.geometry.core.tools.problem_areas import LogoProblemArea
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.typing import Real
 
@@ -63,9 +56,7 @@ class PrepareTools:
     def __init__(self, grpc_client: GrpcClient):
         """Initialize Prepare Tools class."""
         self._grpc_client = grpc_client
-        self._prepare_stub = PrepareToolsStub(self._grpc_client.channel)
 
-    @protect_grpc
     @min_backend_version(25, 1, 0)
     def extract_volume_from_faces(
         self, sealing_faces: list["Face"], inside_faces: list["Face"]
@@ -99,15 +90,13 @@ class PrepareTools:
 
         parent_design = get_design_from_face(sealing_faces[0])
 
-        response = self._prepare_stub.ExtractVolumeFromFaces(
-            ExtractVolumeFromFacesRequest(
-                sealing_faces=[EntityIdentifier(id=face.id) for face in sealing_faces],
-                inside_faces=[EntityIdentifier(id=face.id) for face in inside_faces],
-            )
+        response = self._grpc_client._services.prepare_tools.extract_volume_from_faces(
+            sealing_faces=sealing_faces,
+            inside_faces=inside_faces,
         )
 
-        if response.success:
-            bodies_ids = [created_body.id for created_body in response.created_bodies]
+        if response.get("success"):
+            bodies_ids = response.get("created_bodies")
             if len(bodies_ids) > 0:
                 parent_design._update_design_inplace()
             return get_bodies_from_ids(parent_design, bodies_ids)
@@ -115,7 +104,6 @@ class PrepareTools:
             self._grpc_client.log.info("Failed to extract volume from faces...")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 1, 0)
     def extract_volume_from_edge_loops(
         self, sealing_edges: list["Edge"], inside_faces: list["Face"] = None
@@ -153,15 +141,13 @@ class PrepareTools:
 
         parent_design = get_design_from_edge(sealing_edges[0])
 
-        response = self._prepare_stub.ExtractVolumeFromEdgeLoops(
-            ExtractVolumeFromEdgeLoopsRequest(
-                sealing_edges=[EntityIdentifier(id=face.id) for face in sealing_edges],
-                inside_faces=[EntityIdentifier(id=face.id) for face in inside_faces],
-            )
+        response = self._grpc_client._services.prepare_tools.extract_volume_from_edge_loops(
+            sealing_edges=sealing_edges,
+            inside_faces=inside_faces,
         )
 
-        if response.success:
-            bodies_ids = [created_body.id for created_body in response.created_bodies]
+        if response.get("success"):
+            bodies_ids = response.get("created_bodies")
             if len(bodies_ids) > 0:
                 parent_design._update_design_inplace()
             return get_bodies_from_ids(parent_design, bodies_ids)
@@ -169,7 +155,6 @@ class PrepareTools:
             self._grpc_client.log.info("Failed to extract volume from edge loops...")
             return []
 
-    @protect_grpc
     def remove_rounds(self, faces: list["Face"], auto_shrink: bool = False) -> bool:
         """Remove rounds from geometry.
 
@@ -198,21 +183,18 @@ class PrepareTools:
         check_type_all_elements_in_iterable(faces, Face)
 
         parent_design = get_design_from_face(faces[0])
-        response = self._prepare_stub.RemoveRounds(
-            RemoveRoundsRequest(
-                selection=[GRPCFace(id=face.id) for face in faces],
-                auto_shrink=BoolValue(value=auto_shrink),
-            )
+        response = self._grpc_client._services.prepare_tools.remove_rounds(
+            rounds=faces,
+            auto_shrink=auto_shrink,
         )
 
-        if response.result:
+        if response.get("success"):
             parent_design._update_design_inplace()
         else:
             self._grpc_client.log.info("Failed to remove rounds...")
 
-        return response.result
+        return response.get("success")
 
-    @protect_grpc
     @min_backend_version(24, 2, 0)
     def share_topology(
         self, bodies: list["Body"], tol: Real = 0.0, preserve_instances: bool = False
@@ -241,16 +223,14 @@ class PrepareTools:
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
 
-        share_topo_response = self._prepare_stub.ShareTopology(
-            ShareTopologyRequest(
-                selection=[GRPCBody(id=body.id) for body in bodies],
-                tolerance=DoubleValue(value=tol),
-                preserve_instances=BoolValue(value=preserve_instances),
-            )
+        response = self._grpc_client._services.prepare_tools.share_topology(
+            bodies=bodies,
+            tolerance=tol,
+            preserve_instances=preserve_instances,
         )
-        return share_topo_response.result
 
-    @protect_grpc
+        return response.get("success")
+
     @min_backend_version(25, 2, 0)
     def enhanced_share_topology(
         self, bodies: list["Body"], tol: Real = 0.0, preserve_instances: bool = False
@@ -279,19 +259,107 @@ class PrepareTools:
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
 
-        share_topo_response = self._prepare_stub.EnhancedShareTopology(
-            ShareTopologyRequest(
-                selection=[GRPCBody(id=body.id) for body in bodies],
-                tolerance=DoubleValue(value=tol),
-                preserve_instances=BoolValue(value=preserve_instances),
-            )
+        response = self._grpc_client._services.prepare_tools.enhanced_share_topology(
+            bodies=bodies,
+            tolerance=tol,
+            preserve_instances=preserve_instances,
         )
 
         message = RepairToolMessage(
-            share_topo_response.success,
-            share_topo_response.created_bodies_monikers,
-            share_topo_response.modified_bodies_monikers,
-            share_topo_response.found,
-            share_topo_response.repaired,
+            response.get("success"),
+            response.get("created_bodies_monikers"),
+            response.get("modified_bodies_monikers"),
+            response.get("found"),
+            response.get("repaired"),
         )
         return message
+
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def find_logos(
+        self, bodies: list["Body"] = None, min_height: Real = None, max_height: Real = None
+    ) -> "LogoProblemArea":
+        """Detect logos in geometry.
+
+        Detects logos, using a list of bodies if provided.
+        The logos are returned as a list of faces.
+
+        Parameters
+        ----------
+        bodies : list[Body], optional
+            List of bodies where logos should be detected
+        min_height : real, optional
+            The minimum height when searching for logos
+        max_height: real, optional
+            The minimum height when searching for logos
+
+        Returns
+        -------
+        LogoProblemArea
+            Problem area with logo faces.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        if BackendType.is_linux_service(self._grpc_client.backend_type):
+            # not yet available in Linux
+            LOG.warning("Logo detection not available on Linux")
+            return
+
+        # Verify inputs
+        if bodies and len(bodies) > 0:
+            check_type_all_elements_in_iterable(bodies, Body)
+
+        bodies = [] if bodies is None else bodies
+        response = self._grpc_client._services.prepare_tools.find_logos(
+            bodies=bodies,
+            min_height=min_height,
+            max_height=max_height,
+        )
+
+        return LogoProblemArea(
+            id=response.get("id"),
+            grpc_client=self._grpc_client,
+            face_ids=response.get("face_ids"),
+        )
+
+    @check_input_types
+    @min_backend_version(25, 2, 0)
+    def find_and_remove_logos(
+        self, bodies: list["Body"] = None, min_height: Real = None, max_height: Real = None
+    ) -> bool:
+        """Detect and remove logos in geometry.
+
+        Detects and remove logos, using a list of bodies if provided.
+
+        Parameters
+        ----------
+        bodies : list[Body], optional
+            List of bodies where logos should be detected and removed.
+        min_height : real, optional
+            The minimum height when searching for logos
+        max_height: real, optional
+            The minimum height when searching for logos
+
+        Returns
+        -------
+        Boolean value indicating whether the operation was successful.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        if BackendType.is_linux_service(self._grpc_client.backend_type):
+            # not yet available in Linux
+            LOG.warning("Logo detection not available on Linux")
+            return
+
+        # Verify inputs
+        if bodies and len(bodies) > 0:
+            check_type_all_elements_in_iterable(bodies, Body)
+
+        bodies = [] if bodies is None else bodies
+        response = self._grpc_client._services.prepare_tools.find_and_remove_logos(
+            bodies=bodies,
+            min_height=min_height,
+            max_height=max_height,
+        )
+
+        return response.get("success")

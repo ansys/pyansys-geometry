@@ -26,38 +26,20 @@ import logging
 from pathlib import Path
 import time
 from typing import Optional
-import warnings
-
-from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.checks import deprecated_method
-
-# TODO: Remove this context and filter once the protobuf UserWarning issue is downgraded to INFO
-# https://github.com/grpc/grpc/issues/37609
-with warnings.catch_warnings():
-    warnings.filterwarnings(
-        "ignore", "Protobuf gencode version", UserWarning, "google.protobuf.runtime_version"
-    )
-
-    from google.protobuf.empty_pb2 import Empty
-    import grpc
-    from grpc._channel import _InactiveRpcError
-    from grpc_health.v1 import health_pb2, health_pb2_grpc
 
 from beartype import beartype as check_input_types
+import grpc
+from grpc._channel import _InactiveRpcError
+from grpc_health.v1 import health_pb2, health_pb2_grpc
 import semver
 
-from ansys.api.dbu.v0.admin_pb2 import (
-    BackendType as GRPCBackendType,
-    LogsRequest,
-    LogsTarget,
-    PeriodType,
-)
-from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
+from ansys.geometry.core._grpc._services._service import _GRPCServices
 from ansys.geometry.core.connection.backend import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG, PyGeometryCustomAdapter
+from ansys.geometry.core.misc.checks import deprecated_method
 from ansys.geometry.core.typing import Real
 
 try:
@@ -66,13 +48,41 @@ except ModuleNotFoundError:  # pragma: no cover
     pass
 
 
-def wait_until_healthy(channel: grpc.Channel, timeout: float):
+def _create_geometry_channel(target: str) -> grpc.Channel:
+    """Create a Geometry service gRPC channel.
+
+    Parameters
+    ----------
+    target : str
+        Target of the channel. This is usually a string in the form of
+        ``host:port``.
+
+    Returns
+    -------
+    ~grpc.Channel
+        gRPC channel for the Geometry service.
+
+    Notes
+    -----
+    Contains specific options for the Geometry service.
+    """
+    return grpc.insecure_channel(
+        target,
+        options=[
+            ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
+            ("grpc.max_send_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
+        ],
+    )
+
+
+def wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Channel:
     """Wait until a channel is healthy before returning.
 
     Parameters
     ----------
-    channel : ~grpc.Channel
-        Channel that must be established and healthy.
+    channel : ~grpc.Channel | str
+        Channel that must be established and healthy. The target can also be
+        passed in. In that case, a channel is created using the default insecure channel.
     timeout : float
         Timeout in seconds. Attempts are made with the following backoff strategy:
 
@@ -84,18 +94,32 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
         * If the total elapsed time exceeds the value for the ``timeout`` parameter,
           a ``TimeoutError`` is raised.
 
+    Returns
+    -------
+    grpc.Channel
+        The channel that was passed in. This channel is guaranteed to be healthy.
+        If a string was passed in, a channel is created using the default insecure channel.
+
     Raises
     ------
     TimeoutError
         Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
     """
     t_max = time.time() + timeout
-    health_stub = health_pb2_grpc.HealthStub(channel)
-    request = health_pb2.HealthCheckRequest(service="")
-
     t_out = 0.1
+
+    # If the channel is a string, create a channel using the default insecure channel
+    channel_creation_required = True if isinstance(channel, str) else False
+    tmp_channel = None
+
     while time.time() < t_max:
         try:
+            tmp_channel = (
+                _create_geometry_channel(channel) if channel_creation_required else channel
+            )
+            health_stub = health_pb2_grpc.HealthStub(tmp_channel)
+            request = health_pb2.HealthCheckRequest(service="")
+
             out = health_stub.Check(request, timeout=t_out)
             if out.status is health_pb2.HealthCheckResponse.SERVING:
                 break
@@ -109,10 +133,12 @@ def wait_until_healthy(channel: grpc.Channel, timeout: float):
                 t_out = t_max - t_now
             continue
     else:
-        target_str = channel._channel.target().decode()
+        target_str = tmp_channel._channel.target().decode()
         raise TimeoutError(
             f"Channel health check to target '{target_str}' timed out after {timeout} seconds."
         )
+
+    return tmp_channel
 
 
 class GrpcClient:
@@ -150,9 +176,8 @@ class GrpcClient:
         Logging level to apply to the client.
     logging_file : str or Path, default: None
         File to output the log to, if requested.
-    backend_type: BackendType, default: None
-        Type of the backend that PyAnsys Geometry is communicating with. By default, this
-        value is unknown, which results in ``None`` being the default value.
+    proto_version: str or None, default: None
+        Version of the gRPC protocol to use. If ``None``, the latest version is used.
     """
 
     @check_input_types
@@ -167,32 +192,27 @@ class GrpcClient:
         timeout: Real = 120,
         logging_level: int = logging.INFO,
         logging_file: Path | str | None = None,
-        backend_type: BackendType | None = None,
+        proto_version: str | None = None,
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
         self._remote_instance = remote_instance
         self._docker_instance = docker_instance
         self._product_instance = product_instance
+        self._grpc_health_timeout = timeout
+
         if channel:
             # Used for PyPIM when directly providing a channel
-            self._channel = channel
             self._target = str(channel)
+            self._channel = wait_until_healthy(channel, self._grpc_health_timeout)
         else:
             self._target = f"{host}:{port}"
-            self._channel = grpc.insecure_channel(
-                self._target,
-                options=[
-                    ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
-                    ("grpc.max_send_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
-                ],
-            )
+            self._channel = wait_until_healthy(self._target, self._grpc_health_timeout)
 
-        # do not finish initialization until channel is healthy
-        self._grpc_health_timeout = timeout
-        wait_until_healthy(self._channel, self._grpc_health_timeout)
+        # Initialize the gRPC services
+        self._services = _GRPCServices(self._channel, version=proto_version)
 
-        # once connection with the client is established, create a logger
+        # Once connection with the client is established, create a logger
         self._log = LOG.add_instance_logger(
             name=self._target, client_instance=self, level=logging_level
         )
@@ -201,41 +221,12 @@ class GrpcClient:
                 logging_file = str(logging_file)
             self._log.log_to_file(filename=logging_file, level=logging_level)
 
-        self._admin_stub = AdminStub(self._channel)
+        # Retrieve the backend information
+        response = self._services.admin.get_backend()
 
-        # retrieve the backend information
-        grpc_backend_response = self._admin_stub.GetBackend(Empty())
-
-        # if no backend type has been specified, ask the backend which type it is
-        if backend_type is None:
-            grpc_backend_type = grpc_backend_response.type
-            if grpc_backend_type == GRPCBackendType.DISCOVERY:
-                backend_type = BackendType.DISCOVERY
-            elif grpc_backend_type == GRPCBackendType.SPACECLAIM:
-                backend_type = BackendType.SPACECLAIM
-            elif grpc_backend_type == GRPCBackendType.WINDOWS_DMS:
-                backend_type = BackendType.WINDOWS_SERVICE
-            elif grpc_backend_type == GRPCBackendType.LINUX_DMS:
-                backend_type = BackendType.LINUX_SERVICE
-            elif grpc_backend_type == GRPCBackendType.CORE_SERVICE_LINUX:
-                backend_type = BackendType.CORE_LINUX
-            elif grpc_backend_type == GRPCBackendType.CORE_SERVICE_WINDOWS:
-                backend_type = BackendType.CORE_WINDOWS
-            elif grpc_backend_type == GRPCBackendType.DISCOVERY_HEADLESS:
-                backend_type = BackendType.DISCOVERY_HEADLESS
-
-        # Store the backend type
-        self._backend_type = backend_type
-
-        # retrieve the backend version
-        if hasattr(grpc_backend_response, "version"):
-            ver = grpc_backend_response.version
-            self._backend_version = semver.Version(
-                ver.major_release, ver.minor_release, ver.service_pack
-            )
-        else:
-            LOG.warning("The backend version is only available after 24.1 version.")
-            self._backend_version = semver.Version(24, 1, 0)
+        # Store the backend type and version
+        self._backend_type = response.get("backend")
+        self._backend_version = response.get("version")
 
         # Register the close method to be called at exit - irrespectively of
         # the user calling it or not...
@@ -288,6 +279,11 @@ class GrpcClient:
         return self._channel
 
     @property
+    def services(self) -> _GRPCServices:
+        """GRPC services."""
+        return self._services
+
+    @property
     def log(self) -> PyGeometryCustomAdapter:
         """Specific instance logger."""
         return self._log
@@ -303,9 +299,8 @@ class GrpcClient:
         if self._closed:
             return False
         try:
-            wait_until_healthy(self._channel, self._grpc_health_timeout)
-            return True
-        except TimeoutError:  # pragma: no cover
+            return self.services.admin.get_service_status().get("healthy")
+        except Exception:  # pragma: no cover
             return False
 
     def __repr__(self) -> str:
@@ -361,7 +356,6 @@ class GrpcClient:
         return self._target
 
     @check_input_types
-    @protect_grpc
     def _get_service_logs(
         self,
         all_logs: bool = False,
@@ -398,19 +392,7 @@ class GrpcClient:
             the current logs are retrieved). The ``dump_to_file`` parameter
             must be set to ``True``.
         """
-        request = LogsRequest(
-            target=LogsTarget.CLIENT,
-            period_type=PeriodType.CURRENT if not all_logs else PeriodType.ALL,
-            null_path=None,
-            null_period=None,
-        )
-        logs_generator = self._admin_stub.GetLogs(request)
-        logs: dict[str, str] = {}
-
-        for chunk in logs_generator:
-            if chunk.log_name not in logs:
-                logs[chunk.log_name] = ""
-            logs[chunk.log_name] += chunk.log_chunk.decode()
+        logs: dict[str, str] = self._services.admin.get_logs(all_logs=all_logs).get("logs")
 
         # Let's handle the various scenarios...
         if not dump_to_file:

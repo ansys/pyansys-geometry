@@ -41,10 +41,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
     Surface as GRPCSurface,
-    SurfaceType as GRPCSurfaceType,
-    Tessellation,
     TrimmedCurve as GRPCTrimmedCurve,
-    TrimmedSurface as GRPCTrimmedSurface,
 )
 from ansys.geometry.core.materials.material import (
     Material,
@@ -56,13 +53,11 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, UNITS
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.ellipse import Ellipse
 from ansys.geometry.core.shapes.curves.line import Line
-from ansys.geometry.core.shapes.surfaces import TrimmedSurface
 from ansys.geometry.core.shapes.surfaces.cone import Cone
 from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder
 from ansys.geometry.core.shapes.surfaces.plane import PlaneSurface
@@ -78,8 +73,6 @@ from ansys.geometry.core.sketch.polygon import Polygon
 from ansys.geometry.core.sketch.segment import SketchSegment
 
 if TYPE_CHECKING:  # pragma: no cover
-    from pyvista import PolyData
-
     from ansys.geometry.core.designer.face import SurfaceType
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
@@ -405,16 +398,6 @@ def sketch_segment_to_grpc_line(segment: SketchSegment, plane: Plane) -> GRPCLin
     )
 
 
-@graphics_required
-def tess_to_pd(tess: Tessellation) -> "PolyData":
-    """Convert an ``ansys.api.geometry.Tessellation`` to ``pyvista.PolyData``."""
-    # lazy imports here to improve initial load
-    import numpy as np
-    import pyvista as pv
-
-    return pv.PolyData(var_inp=np.array(tess.vertices).reshape(-1, 3), faces=tess.faces)
-
-
 def grpc_matrix_to_matrix(m: GRPCMatrix) -> Matrix44:
     """Convert an ``ansys.api.geometry.Matrix`` to a ``Matrix44``."""
     import numpy as np
@@ -608,89 +591,6 @@ def trimmed_curve_to_grpc_trimmed_curve(curve: "TrimmedCurve") -> GRPCTrimmedCur
         curve=curve_geometry,
         interval_start=i_start,
         interval_end=i_end,
-    )
-
-
-def surface_to_grpc_surface(surface: Surface) -> tuple[GRPCSurface, GRPCSurfaceType]:
-    """Convert a ``Surface`` object to a surface gRPC message.
-
-    Parameters
-    ----------
-    surface : Surface
-        Surface to convert.
-
-    Returns
-    -------
-    GRPCSurface
-        Return ``Surface`` as a ``ansys.api.geometry.Surface`` message.
-    GRPCSurfaceType
-        Return the grpc surface type of ``Surface``.
-    """
-    grpc_surface = None
-    surface_type = None
-    origin = point3d_to_grpc_point(surface.origin)
-    reference = unit_vector_to_grpc_direction(surface.dir_x)
-    axis = unit_vector_to_grpc_direction(surface.dir_z)
-
-    if isinstance(surface, Plane):
-        grpc_surface = GRPCSurface(origin=origin, reference=reference, axis=axis)
-        surface_type = GRPCSurfaceType.SURFACETYPE_PLANE
-    elif isinstance(surface, Sphere):
-        grpc_surface = GRPCSurface(
-            origin=origin, reference=reference, axis=axis, radius=surface.radius.m
-        )
-        surface_type = GRPCSurfaceType.SURFACETYPE_SPHERE
-    elif isinstance(surface, Cylinder):
-        grpc_surface = GRPCSurface(
-            origin=origin, reference=reference, axis=axis, radius=surface.radius.m
-        )
-        surface_type = GRPCSurfaceType.SURFACETYPE_CYLINDER
-    elif isinstance(surface, Cone):
-        grpc_surface = GRPCSurface(
-            origin=origin,
-            reference=reference,
-            axis=axis,
-            radius=surface.radius.m,
-            half_angle=surface.half_angle.m,
-        )
-        surface_type = GRPCSurfaceType.SURFACETYPE_CONE
-    elif isinstance(surface, Torus):
-        grpc_surface = GRPCSurface(
-            origin=origin,
-            reference=reference,
-            axis=axis,
-            major_radius=surface.major_radius.m,
-            minor_radius=surface.minor_radius.m,
-        )
-        surface_type = GRPCSurfaceType.SURFACETYPE_TORUS
-
-    return grpc_surface, surface_type
-
-
-def trimmed_surface_to_grpc_trimmed_surface(
-    trimmed_surface: TrimmedSurface,
-) -> GRPCTrimmedSurface:
-    """Convert a ``TrimmedSurface`` to a trimmed surface gRPC message.
-
-    Parameters
-    ----------
-    trimmed_surface : TrimmedSurface
-        Surface to convert.
-
-    Returns
-    -------
-    GRPCTrimmedSurface
-        Geometry service gRPC ``TrimmedSurface`` message.
-    """
-    surface_geometry, surface_type = surface_to_grpc_surface(trimmed_surface.geometry)
-
-    return GRPCTrimmedSurface(
-        surface=surface_geometry,
-        type=surface_type,
-        u_min=trimmed_surface.box_uv.interval_u.start,
-        u_max=trimmed_surface.box_uv.interval_u.end,
-        v_min=trimmed_surface.box_uv.interval_v.start,
-        v_max=trimmed_surface.box_uv.interval_v.end,
     )
 
 

@@ -46,7 +46,7 @@ in the ANSYS_GEOMETRY_SERVICE_ROOT environment variable. In that case, the launc
 
             $env:ANSYS_GEOMETRY_SERVICE_ROOT="C:\Program Files\ANSYS Inc\v252\GeometryService"
             # or
-            $env:ANSYS_GEOMETRY_SERVICE_ROOT="C:\myCustomPath\CoreGeometryService"
+            $env:ANSYS_GEOMETRY_SERVICE_ROOT="C:\myCustomPath\GeometryService"
 
    .. tab-item:: Windows CMD
 
@@ -54,7 +54,7 @@ in the ANSYS_GEOMETRY_SERVICE_ROOT environment variable. In that case, the launc
 
             SET ANSYS_GEOMETRY_SERVICE_ROOT="C:\Program Files\ANSYS Inc\v252\GeometryService"
             # or
-            SET ANSYS_GEOMETRY_SERVICE_ROOT="C:\myCustomPath\CoreGeometryService"
+            SET ANSYS_GEOMETRY_SERVICE_ROOT="C:\myCustomPath\GeometryService"
 
    .. tab-item:: Linux
 

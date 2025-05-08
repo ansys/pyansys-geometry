@@ -43,7 +43,7 @@ if TYPE_CHECKING:  # pragma: no cover
 WINDOWS_GEOMETRY_SERVICE_FOLDER = "GeometryService"
 """Default Geometry Service's folder name into the unified installer (DMS)."""
 
-CORE_GEOMETRY_SERVICE_FOLDER = "CoreGeometryService"
+CORE_GEOMETRY_SERVICE_FOLDER = "GeometryService"
 """Default Geometry Service's folder name into the unified installer (Core Service)."""
 
 DISCOVERY_FOLDER = "Discovery"
@@ -384,7 +384,15 @@ def prepare_and_start_backend(
             root_service_folder = Path(root_service_folder)
         native_folder = root_service_folder / "Native"
         cad_integration_folder = root_service_folder / "CADIntegration"
+        cad_integration_folder_bin = cad_integration_folder / "bin"
         schema_folder = root_service_folder / "Schema"
+
+        # Adapt the native folder to the OS
+        # The native folder is different for Windows and Linux.
+        if os.name == "nt":
+            native_folder = native_folder / "Windows"
+        else:
+            native_folder = native_folder / "Linux"
 
         # Set the environment variables for the Ansys Geometry Core Service launch
         # ANS_DSCO_REMOTE_IP should be variable "host" directly, but not working...
@@ -414,15 +422,20 @@ def prepare_and_start_backend(
         else:
             env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE", "1055@localhost")
 
-        if os.name == "nt":
-            # Modify the PATH variable to include the path to the Ansys Geometry Core Service
-            env_copy["PATH"] = (
-                f"{env_copy['PATH']}"
-                + f";{root_service_folder.as_posix()}"
-                + f";{native_folder.as_posix()}"
-                + f";{cad_integration_folder.as_posix()}"
-            )
+        # Adapt the path environment variable to the OS and
+        # modify the PATH/LD_LIBRARY_PATH variable to include the path
+        # to the Ansys Geometry Core Service
+        path_env_var = "PATH" if os.name == "nt" else "LD_LIBRARY_PATH"
+        env_copy[path_env_var] = os.pathsep.join(
+            [
+                root_service_folder.as_posix(),
+                native_folder.as_posix(),
+                cad_integration_folder_bin.as_posix(),
+                env_copy.get(path_env_var, ""),
+            ]
+        )
 
+        if os.name == "nt":
             # For Windows, we need to use the exe file to launch the Core Geometry Service
             args.append(
                 Path(
@@ -448,14 +461,6 @@ def prepare_and_start_backend(
                     "Ansys Geometry Core Service requires at least dotnet 8.0. "
                     "Please install a compatible version."
                 )
-
-            # Modify the LD_LIBRARY_PATH variable to include the Ansys Geometry Core Service
-            env_copy["LD_LIBRARY_PATH"] = (
-                env_copy.get("LD_LIBRARY_PATH", "")
-                + f":{root_service_folder.as_posix()}"
-                + f":{native_folder.as_posix()}"
-                + f":{cad_integration_folder.as_posix()}"
-            )
 
             # For Linux, we need to use the dotnet command to launch the Core Geometry Service
             args.append("dotnet")
@@ -486,7 +491,6 @@ def prepare_and_start_backend(
         port=port,
         timeout=timeout,
         product_instance=instance,
-        backend_type=backend_type,
         logging_level=client_log_level,
         logging_file=client_log_file,
     )

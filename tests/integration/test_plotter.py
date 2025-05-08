@@ -384,6 +384,7 @@ def test_plot_trapezoid(verify_image_cache):
     sketch.plot_selection(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_trapezoid.png"))
 
 
+@skip_no_xserver
 def test_plot_trapezoid_symmetric(verify_image_cache):
     """Test plotting of a trapezoid which is symmetric."""
     # Create a sketch instance
@@ -578,25 +579,22 @@ def test_visualization_polydata():
         rel=1e-6,
         abs=1e-8,
     )
-    assert polygon.visualization_polydata.n_faces == 2
     assert polygon.visualization_polydata.n_cells == 2
     assert polygon.visualization_polydata.n_points == 5
     assert polygon.visualization_polydata.n_open_edges == 5
 
     # Test for arc visualization polydata
     arc = Arc(Point2D([10, 10]), Point2D([10, -10]), Point2D([10, 0]))
-    assert arc.visualization_polydata.center == ([5.0, 0.0, 0.0])
+    assert arc.visualization_polydata.center == pytest.approx([5.0, 0.0, 0.0])
     assert arc.visualization_polydata.bounds == pytest.approx([0.0, 10.0, -10.0, 10.0, 0.0, 0.0])
-    assert arc.visualization_polydata.n_faces == 2
     assert arc.visualization_polydata.n_cells == 2
     assert arc.visualization_polydata.n_points == 202
     assert arc.visualization_polydata.n_open_edges == 0
 
     # Test for segment visualization polydata
     segment = SketchSegment(Point2D([3, 2]), Point2D([2, 0]))
-    assert segment.visualization_polydata.center == ([2.5, 1.0, 0.0])
+    assert segment.visualization_polydata.center == pytest.approx([2.5, 1.0, 0.0])
     assert segment.visualization_polydata.bounds == pytest.approx([2.0, 3.0, 0.0, 2.0, 0.0, 0.0])
-    assert segment.visualization_polydata.n_faces == 1
     assert segment.visualization_polydata.n_cells == 1
     assert segment.visualization_polydata.n_points == 2
     assert segment.visualization_polydata.n_open_edges == 0
@@ -609,20 +607,18 @@ def test_visualization_polydata():
     )
     assert slot.visualization_polydata
     assert slot.visualization_polydata.bounds == pytest.approx([0.0, 4.0, 2.0, 4.0, 0.0, 0.0])
-    assert slot.visualization_polydata.center == ([2.0, 3.0, 0.0])
+    assert slot.visualization_polydata.center == pytest.approx([2.0, 3.0, 0.0])
     # Two arcs and segments creates the slot, thus it should have 6 faces
-    assert slot.visualization_polydata.n_faces == 6
     assert slot.visualization_polydata.n_cells == 6
     assert slot.visualization_polydata.n_points == 402
     assert slot.visualization_polydata.n_open_edges == 0
 
     # Test for triangle visualization polydata
     triangle = Triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10]))
-    assert triangle.visualization_polydata.center == ([6.0, 0.0, 0.0])
+    assert triangle.visualization_polydata.center == pytest.approx([6.0, 0.0, 0.0])
     assert triangle.visualization_polydata.bounds == pytest.approx(
         [2.0, 10.0, -10.0, 10.0, 0.0, 0.0]
     )
-    assert triangle.visualization_polydata.n_faces == 1
     assert triangle.visualization_polydata.n_cells == 1
     assert triangle.visualization_polydata.n_points == 3
     assert triangle.visualization_polydata.n_open_edges == 3
@@ -639,7 +635,6 @@ def test_visualization_polydata():
         rel=1e-6,
         abs=1e-8,
     )
-    assert trapezoid.visualization_polydata.n_faces == 1
     assert trapezoid.visualization_polydata.n_cells == 1
     assert trapezoid.visualization_polydata.n_points == 4
     assert trapezoid.visualization_polydata.n_open_edges == 4
@@ -648,18 +643,16 @@ def test_visualization_polydata():
     circle = SketchCircle(
         Point2D([10, -10], DEFAULT_UNITS.LENGTH), Quantity(1, DEFAULT_UNITS.LENGTH)
     )
-    assert circle.visualization_polydata.center == pytest.approx(([10.0, -10.0, 0.0]))
+    assert circle.visualization_polydata.center == pytest.approx([10.0, -10.0, 0.0])
     assert circle.visualization_polydata.bounds == pytest.approx([9.0, 11.0, -11.0, -9.0, 0.0, 0.0])
-    assert circle.visualization_polydata.n_faces == 1
     assert circle.visualization_polydata.n_cells == 1
     assert circle.visualization_polydata.n_points == 100
     assert circle.visualization_polydata.n_open_edges == 100
 
     # Test for ellipse visualization polydata
     ellipse = SketchEllipse(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(1, UNITS.m))
-    assert ellipse.visualization_polydata.center == pytest.approx(([0.0, 0.0, 0.0]))
+    assert ellipse.visualization_polydata.center == pytest.approx([0.0, 0.0, 0.0])
     assert ellipse.visualization_polydata.bounds == pytest.approx([-1.0, 1.0, -1.0, 1.0, 0.0, 0.0])
-    assert ellipse.visualization_polydata.n_faces == 1
     assert ellipse.visualization_polydata.n_cells == 1
     assert ellipse.visualization_polydata.n_points == 100
     assert ellipse.visualization_polydata.n_open_edges == 100
@@ -670,9 +663,8 @@ def test_visualization_polydata():
         Distance(4, unit=UNITS.meter),
         Distance(2, unit=UNITS.meter),
     )
-    assert box.visualization_polydata.center == ([3.0, 1.0, 0.0])
+    assert box.visualization_polydata.center == pytest.approx([3.0, 1.0, 0.0])
     assert box.visualization_polydata.bounds == pytest.approx([1.0, 5.0, 0.0, 2.0, 0.0, 0.0])
-    assert box.visualization_polydata.n_faces == 1
     assert box.visualization_polydata.n_cells == 1
     assert box.visualization_polydata.n_points == 4
     assert box.visualization_polydata.n_open_edges == 4

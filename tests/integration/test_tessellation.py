@@ -49,7 +49,7 @@ def test_body_tessellate(modeler: Modeler):
     # Number of blocks will be the number of faces
     assert blocks_1.n_blocks == 6
     # Test the center of the bounding box
-    assert (blocks_1.center == ([2, 0, 0.5])).all()
+    assert blocks_1.center == pytest.approx([2, 0, 0.5])
     # Test the values of blocks which are the length 6 tuple of floats
     # containing min/max along each axis
     assert blocks_1.bounds == pytest.approx([0.0, 4.0, -2.0, 2.0, 0.0, 1.0])
@@ -145,7 +145,6 @@ def test_component_tessellate(modeler: Modeler):
     assert "PolyData" in str(mesh)
     if not BackendType.is_core_service(modeler.client.backend_type):
         assert mesh.n_cells == 3280
-        assert mesh.n_faces == 3280
         assert mesh.n_arrays == 0
         assert mesh.n_points == 3300
         assert mesh.bounds == pytest.approx(
@@ -155,7 +154,6 @@ def test_component_tessellate(modeler: Modeler):
         )
     else:
         assert mesh.n_cells == 3280
-        assert mesh.n_faces == 3280
         assert mesh.n_arrays == 0
         assert mesh.n_points == 3300
         assert mesh.bounds == pytest.approx(

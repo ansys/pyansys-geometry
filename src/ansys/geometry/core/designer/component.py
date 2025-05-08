@@ -30,20 +30,6 @@ from beartype import beartype as check_input_types
 from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.bodies_pb2 import (
-    CreateBodyFromFaceRequest,
-    CreateExtrudedBodyFromFaceProfileRequest,
-    CreateExtrudedBodyFromLoftProfilesRequest,
-    CreateExtrudedBodyRequest,
-    CreatePlanarBodyRequest,
-    CreateSphereBodyRequest,
-    CreateSurfaceBodyFromTrimmedCurvesRequest,
-    CreateSurfaceBodyRequest,
-    CreateSweepingChainRequest,
-    CreateSweepingProfileRequest,
-    TranslateRequest,
-)
-from ansys.api.geometry.v0.bodies_pb2_grpc import BodiesStub
 from ansys.api.geometry.v0.commands_pb2 import (
     CreateBeamSegmentsRequest,
     CreateDesignPointsRequest,
@@ -55,7 +41,7 @@ from ansys.api.geometry.v0.components_pb2 import (
     SetSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Direction, Line, SetObjectNameRequest, TrimmedCurveList
+from ansys.api.geometry.v0.models_pb2 import Direction, Line, SetObjectNameRequest
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     grpc_curve_to_curve,
@@ -63,11 +49,7 @@ from ansys.geometry.core.connection.conversions import (
     grpc_material_to_material,
     grpc_matrix_to_matrix,
     grpc_point_to_point3d,
-    plane_to_grpc_plane,
     point3d_to_grpc_point,
-    sketch_shapes_to_grpc_geometries,
-    trimmed_curve_to_grpc_trimmed_curve,
-    trimmed_surface_to_grpc_trimmed_surface,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.beam import (
@@ -139,6 +121,16 @@ class ExtrusionDirection(Enum):
         else:  # pragma: no cover
             raise ValueError(f"Invalid extrusion direction: {string}.")
 
+    def get_multiplier(self) -> int:
+        """Get the multiplier for the extrusion direction.
+
+        Returns
+        -------
+        int
+            1 if the direction is positive, -1 if negative.
+        """
+        return 1 if self is ExtrusionDirection.POSITIVE else -1
+
 
 class Component:
     """Provides for creating and managing a component.
@@ -195,7 +187,6 @@ class Component:
         # Initialize the client and stubs needed
         self._grpc_client = grpc_client
         self._component_stub = ComponentsStub(self._grpc_client.channel)
-        self._bodies_stub = BodiesStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
         # Align instance name behavior with the server - empty string if None
@@ -512,7 +503,35 @@ class Component:
         # Store the SharedTopologyType set on the client
         self._shared_topology = share_type
 
-    @protect_grpc
+    def __build_body_from_response(self, response: dict) -> Body:
+        """Build a body from a response dictionary coming out of the gRPC call.
+
+        Parameters
+        ----------
+        response : dict
+            Response dictionary from the gRPC call.
+
+        Returns
+        -------
+        Body
+            Body object.
+
+        Notes
+        -----
+        This is a completely private method and is intended to be
+        used only within the class. It handles the MasterBody and
+        Body creation, and addition to the component.
+        """
+        tb = MasterBody(
+            response["master_id"],
+            response["name"],
+            self._grpc_client,
+            is_surface=response["is_surface"],
+        )
+        self._master_component.part.bodies.append(tb)
+        self._clear_cached_bodies()
+        return Body(response["id"], response["name"], self, tb)
+
     @check_input_types
     @ensure_design_is_active
     def extrude_sketch(
@@ -558,25 +577,16 @@ class Component:
             direction = ExtrusionDirection.from_string(direction, use_default_if_error=True)
 
         # Perform extrusion request
-        request = CreateExtrudedBodyRequest(
-            distance=distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-            parent=self.id,
-            plane=plane_to_grpc_plane(sketch._plane),
-            geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
-            name=name,
-        )
-
-        # Check the direction - if it is -, flip the distance
-        if direction is ExtrusionDirection.NEGATIVE:
-            request.distance = -request.distance
-
         self._grpc_client.log.debug(f"Extruding sketch provided on {self.id}. Creating body...")
-        response = self._bodies_stub.CreateExtrudedBody(request)
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
-        self._master_component.part.bodies.append(tb)
-        self._clear_cached_bodies()
+        response = self._grpc_client.services.bodies.create_extruded_body(
+            name=name,
+            parent_id=self.id,
+            sketch=sketch,
+            distance=distance,
+            direction=direction.get_multiplier(),
+        )
+        created_body = self.__build_body_from_response(response)
 
-        created_body = Body(response.id, response.name, self, tb)
         if not cut:
             return created_body
         else:
@@ -597,7 +607,6 @@ class Component:
             return None
 
     @min_backend_version(24, 2, 0)
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def sweep_sketch(
@@ -626,28 +635,16 @@ class Component:
         -----
         The newly created body is placed under this component within the design assembly.
         """
-        # Convert each ``TrimmedCurve`` in path to equivalent gRPC type
-        path_grpc = []
-        for tc in path:
-            path_grpc.append(trimmed_curve_to_grpc_trimmed_curve(tc))
-
-        request = CreateSweepingProfileRequest(
-            name=name,
-            parent=self.id,
-            plane=plane_to_grpc_plane(sketch._plane),
-            geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
-            path=path_grpc,
-        )
-
         self._grpc_client.log.debug(f"Creating a sweeping profile on {self.id}. Creating body...")
-        response = self._bodies_stub.CreateSweepingProfile(request)
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
-        self._master_component.part.bodies.append(tb)
-        self._clear_cached_bodies()
-        return Body(response.id, response.name, self, tb)
+        response = self._grpc_client.services.bodies.create_sweeping_profile_body(
+            name=name,
+            parent_id=self.id,
+            sketch=sketch,
+            path=path,
+        )
+        return self.__build_body_from_response(response)
 
     @min_backend_version(24, 2, 0)
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def sweep_chain(
@@ -676,23 +673,14 @@ class Component:
         -----
         The newly created body is placed under this component within the design assembly.
         """
-        # Convert each ``TrimmedCurve`` in path and chain to equivalent gRPC types
-        path_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in path]
-        chain_grpc = [trimmed_curve_to_grpc_trimmed_curve(tc) for tc in chain]
-
-        request = CreateSweepingChainRequest(
-            name=name,
-            parent=self.id,
-            path=path_grpc,
-            chain=chain_grpc,
-        )
-
         self._grpc_client.log.debug(f"Creating a sweeping chain on {self.id}. Creating body...")
-        response = self._bodies_stub.CreateSweepingChain(request)
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
-        self._master_component.part.bodies.append(tb)
-        self._clear_cached_bodies()
-        return Body(response.id, response.name, self, tb)
+        response = self._grpc_client.services.bodies.create_sweeping_chain(
+            name=name,
+            parent_id=self.id,
+            path=path,
+            chain=chain,
+        )
+        return self.__build_body_from_response(response)
 
     @min_backend_version(24, 2, 0)
     @check_input_types
@@ -747,7 +735,6 @@ class Component:
         # Create the revolved body by delegating to the sweep method
         return self.sweep_sketch(name, sketch, [path])
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def extrude_face(
@@ -790,27 +777,17 @@ class Component:
         if isinstance(direction, str):
             direction = ExtrusionDirection.from_string(direction, use_default_if_error=True)
 
-        # Take the face source directly. No need to verify the source of the face.
-        request = CreateExtrudedBodyFromFaceProfileRequest(
-            distance=distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-            parent=self.id,
-            face=face.id,
+        self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
+        response = self._grpc_client.services.bodies.create_extruded_body_from_face_profile(
             name=name,
+            parent_id=self.id,
+            face_id=face.id,
+            distance=distance,
+            direction=direction.get_multiplier(),
         )
 
-        # Check the direction - if it is -, flip the distance
-        if direction is ExtrusionDirection.NEGATIVE:
-            request.distance = -request.distance
+        return self.__build_body_from_response(response)
 
-        self._grpc_client.log.debug(f"Extruding from face provided on {self.id}. Creating body...")
-        response = self._bodies_stub.CreateExtrudedBodyFromFaceProfile(request)
-
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
-        self._master_component.part.bodies.append(tb)
-        self._clear_cached_bodies()
-        return Body(response.id, response.name, self, tb)
-
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
@@ -831,20 +808,12 @@ class Component:
         Body
             Sphere body object.
         """
-        request = CreateSphereBodyRequest(
-            name=name,
-            parent=self.id,
-            center=point3d_to_grpc_point(center),
-            radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        self._grpc_client.log.debug(f"Creating a sphere body on {self.id}.")
+        response = self._grpc_client.services.bodies.create_sphere_body(
+            name=name, parent=self.id, center=center, radius=radius
         )
-        self._grpc_client.log.debug(f"Creating a sphere body on {self.id} .")
-        response = self._bodies_stub.CreateSphereBody(request)
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
-        self._master_component.part.bodies.append(tb)
-        self._clear_cached_bodies()
-        return Body(response.id, response.name, self, tb)
+        return self.__build_body_from_response(response)
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
@@ -896,22 +865,16 @@ class Component:
         If ``periodic=True``, the loft continues from the last profile back to the first
         profile, but the surfaces are not periodic.
         """
-        profiles_grpc = [
-            TrimmedCurveList(curves=[trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile])
-            for profile in profiles
-        ]
-
-        request = CreateExtrudedBodyFromLoftProfilesRequest(
-            name=name, parent=self.id, profiles=profiles_grpc, periodic=periodic, ruled=ruled
+        self._grpc_client.log.debug(f"Creating a loft profile body on {self.id}.")
+        response = self._grpc_client.services.bodies.create_extruded_body_from_loft_profiles(
+            name=name,
+            parent_id=self.id,
+            profiles=profiles,
+            periodic=periodic,
+            ruled=ruled,
         )
-        self._grpc_client.log.debug(f"Creating a loft profile body on {self.id} .")
-        response = self._bodies_stub.CreateExtrudedBodyFromLoftProfiles(request)
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=False)
-        self._master_component.part.bodies.append(tb)
-        self._clear_cached_bodies()
-        return Body(response.id, response.name, self, tb)
+        return self.__build_body_from_response(response)
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def create_surface(self, name: str, sketch: Sketch) -> Body:
@@ -931,25 +894,15 @@ class Component:
         Body
             Body (as a planar surface) from the given sketch.
         """
-        # Perform planar body request
-        request = CreatePlanarBodyRequest(
-            parent=self.id,
-            plane=plane_to_grpc_plane(sketch._plane),
-            geometries=sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces),
-            name=name,
-        )
-
         self._grpc_client.log.debug(
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
         )
-        response = self._bodies_stub.CreatePlanarBody(request)
+        response = self._grpc_client.services.bodies.create_planar_body(
+            name=name, parent_id=self.id, sketch=sketch
+        )
 
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
-        self._master_component.part.bodies.append(tb)
-        self._clear_cached_bodies()
-        return Body(response.id, response.name, self, tb)
+        return self.__build_body_from_response(response)
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def create_surface_from_face(self, name: str, face: Face) -> Body:
@@ -973,24 +926,14 @@ class Component:
         Therefore, there is no validation requiring that the face is placed under the
         target component where the body is to be created.
         """
-        # Take the face source directly. No need to verify the source of the face.
-        request = CreateBodyFromFaceRequest(
-            parent=self.id,
-            face=face.id,
-            name=name,
-        )
-
         self._grpc_client.log.debug(
             f"Creating planar surface from face provided on {self.id}. Creating body..."
         )
-        response = self._bodies_stub.CreateBodyFromFace(request)
+        response = self._grpc_client.services.bodies.create_body_from_face(
+            name=name, parent_id=self.id, face_id=face.id
+        )
+        return self.__build_body_from_response(response)
 
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=True)
-        self._master_component.part.bodies.append(tb)
-        self._clear_cached_bodies()
-        return Body(response.id, response.name, self, tb)
-
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(25, 1, 0)
@@ -1014,22 +957,15 @@ class Component:
         It is possible to create a closed solid body (as opposed to an open surface body) with a
         Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
         """
-        surface = trimmed_surface_to_grpc_trimmed_surface(trimmed_surface)
-        request = CreateSurfaceBodyRequest(
-            name=name,
-            parent=self.id,
-            trimmed_surface=surface,
-        )
-
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
         )
-        response = self._bodies_stub.CreateSurfaceBody(request)
-
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
-        self._master_component.part.bodies.append(tb)
-        self._clear_cached_bodies()
-        return Body(response.id, response.name, self, tb)
+        response = self._grpc_client.services.bodies.create_surface_body(
+            name=name,
+            parent_id=self.id,
+            trimmed_surface=trimmed_surface,
+        )
+        return self.__build_body_from_response(response)
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
@@ -1050,22 +986,15 @@ class Component:
         Body
             Surface body.
         """
-        curves = [trimmed_curve_to_grpc_trimmed_curve(curve) for curve in trimmed_curves]
-        request = CreateSurfaceBodyFromTrimmedCurvesRequest(
-            name=name,
-            parent=self.id,
-            trimmed_curves=curves,
-        )
-
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed curves provided on {self.id}. Creating body..."
         )
-        response = self._bodies_stub.CreateSurfaceBodyFromTrimmedCurves(request)
-
-        tb = MasterBody(response.master_id, name, self._grpc_client, is_surface=response.is_surface)
-        self._master_component.part.bodies.append(tb)
-        self._clear_cached_bodies()
-        return Body(response.id, response.name, self, tb)
+        response = self._grpc_client.services.bodies.create_surface_body_from_trimmed_curves(
+            name=name,
+            parent_id=self.id,
+            trimmed_curves=trimmed_curves,
+        )
+        return self.__build_body_from_response(response)
 
     @check_input_types
     @ensure_design_is_active
@@ -1089,7 +1018,6 @@ class Component:
         self._coordinate_systems.append(CoordinateSystem(name, frame, self, self._grpc_client))
         return self._coordinate_systems[-1]
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def translate_bodies(
@@ -1130,15 +1058,11 @@ class Component:
 
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 
-        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-
         self._grpc_client.log.debug(f"Translating {body_ids_found}...")
-        self._bodies_stub.Translate(
-            TranslateRequest(
-                ids=body_ids_found,
-                direction=unit_vector_to_grpc_direction(direction),
-                distance=translation_magnitude,
-            )
+        self._grpc_client.services.bodies.translate(
+            ids=body_ids_found,
+            direction=direction,
+            distance=distance,
         )
 
     @protect_grpc
@@ -1178,10 +1102,6 @@ class Component:
     ) -> list[Beam]:
         """Create beams under the component.
 
-        Notes
-        -----
-        This is a legacy method, which is used in versions up to Ansys 25.1.1 products.
-
         Parameters
         ----------
         segments : list[tuple[Point3D, Point3D]]
@@ -1193,6 +1113,10 @@ class Component:
         -------
         list[Beam]
             A list of the created Beams.
+
+        Notes
+        -----
+        This is a legacy method, which is used in versions up to Ansys 25.1.1 products.
         """
         request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
 
@@ -1358,7 +1282,6 @@ class Component:
             )
             pass
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def delete_body(self, body: Body | str) -> None:
@@ -1380,7 +1303,7 @@ class Component:
         if body_requested:
             # If the body belongs to this component (or nested components)
             # call the server deletion mechanism
-            self._bodies_stub.Delete(EntityIdentifier(id=id))
+            self._grpc_client.services.bodies.delete(id=id)
 
             # If the body was deleted from the server side... "kill" it
             # on the client side
