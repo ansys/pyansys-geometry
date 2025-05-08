@@ -474,16 +474,12 @@ class RepairTools:
             comprehensive_result=comprehensive_result,
         )
 
+        # Update existing design
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
-        message = RepairToolMessage(
-            success=response.get("success"),
-            created_bodies=response.get("created_bodies_monikers"),
-            modified_bodies=response.get("modified_bodies_monikers"),
-            found=response.get("found"),
-            repaired=response.get("repaired"),
-        )
-        return message
+
+        # Build the response message
+        return self.__build_repair_tool_message(response)
 
     @min_backend_version(25, 2, 0)
     def find_and_fix_extra_edges(
@@ -524,16 +520,12 @@ class RepairTools:
             comprehensive_result=comprehensive_result,
         )
 
+        # Update existing design
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
-        message = RepairToolMessage(
-            success=response.get("success"),
-            created_bodies=response.get("created_bodies_monikers"),
-            modified_bodies=response.get("modified_bodies_monikers"),
-            found=response.get("found"),
-            repaired=response.get("repaired"),
-        )
-        return message
+
+        # Build the response message
+        return self.__build_repair_tool_message(response)
 
     @min_backend_version(25, 2, 0)
     def find_and_fix_split_edges(
@@ -585,16 +577,12 @@ class RepairTools:
             comprehensive_result=comprehensive_result,
         )
 
+        # Update existing design
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
-        message = RepairToolMessage(
-            success=response.get("success"),
-            created_bodies=response.get("created_bodies_monikers"),
-            modified_bodies=response.get("modified_bodies_monikers"),
-            found=response.get("found"),
-            repaired=response.get("repaired"),
-        )
-        return message
+
+        # Build the response message
+        return self.__build_repair_tool_message(response)
 
     @min_backend_version(25, 2, 0)
     def find_and_fix_simplify(
@@ -634,16 +622,12 @@ class RepairTools:
             comprehensive_result=comprehensive_result,
         )
 
+        # Update existing design
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
-        message = RepairToolMessage(
-            success=response.get("success"),
-            created_bodies=response.get("created_bodies_monikers"),
-            modified_bodies=response.get("modified_bodies_monikers"),
-            found=response.get("found"),
-            repaired=response.get("repaired"),
-        )
-        return message
+
+        # Build the response message
+        return self.__build_repair_tool_message(response)
 
     @min_backend_version(25, 2, 0)
     def find_and_fix_stitch_faces(
@@ -701,16 +685,12 @@ class RepairTools:
             comprehensive_result=comprehensive_result,
         )
 
+        # Update existing design
         parent_design = get_design_from_body(bodies[0])
         parent_design._update_design_inplace()
-        message = RepairToolMessage(
-            success=response.get("success"),
-            created_bodies=response.get("created_bodies_monikers"),
-            modified_bodies=response.get("modified_bodies_monikers"),
-            found=response.get("found"),
-            repaired=response.get("repaired"),
-        )
-        return message
+
+        # Build the response message
+        return self.__build_repair_tool_message(response)
 
     def inspect_geometry(self, bodies: list["Body"] = None) -> list[InspectResult]:
         """Return a list of geometry issues organized by body.
@@ -797,5 +777,26 @@ class RepairTools:
             bodies=body_ids
         )
 
-        message = RepairToolMessage(repair_result_response.get("success"), [], [])
-        return message
+        return self.__build_repair_tool_message(repair_result_response)
+
+    def __build_repair_tool_message(self, response: dict) -> RepairToolMessage:
+        """Build a repair tool message from the service response.
+
+        Parameters
+        ----------
+        response : dict
+            The response from the service containing information about the repair operation.
+
+        Returns
+        -------
+        RepairToolMessage
+            A message containing the success status, created bodies, modified bodies,
+            number of found problem areas, and number of repaired problem areas.
+        """
+        return RepairToolMessage(
+            success=response.get("success"),
+            created_bodies=response.get("created_bodies_monikers", []),
+            modified_bodies=response.get("modified_bodies_monikers", []),
+            found=response.get("found", -1),
+            repaired=response.get("repaired", -1),
+        )
