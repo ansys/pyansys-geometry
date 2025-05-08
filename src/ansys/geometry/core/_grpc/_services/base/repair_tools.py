@@ -42,6 +42,7 @@ class GRPCRepairToolsService(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the gRPC repair tools service."""
+        pass  # pragma: no cover
 
     @abstractmethod
     def find_split_edges(self, **kwargs) -> dict:

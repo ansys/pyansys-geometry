@@ -19,14 +19,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the repair tools service implementation."""
+"""Module containing the repair tools service implementation for v1."""
 
 from abc import ABC
 
 import grpc
 
 
-class GRPCRepairToolsServiceV1(ABC):
+class GRPCRepairToolsServiceV1(ABC):  # pragma: no cover
     """Repair tools service for gRPC communication with the Geometry server.
 
     Parameters
@@ -36,7 +36,9 @@ class GRPCRepairToolsServiceV1(ABC):
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the MeasurementToolsService class."""
+        from ansys.api.geometry.v1.repairtools_pb2_grpc import RepairToolsStub
+
+        self.stub = RepairToolsStub(channel)
 
     def find_split_edges(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
