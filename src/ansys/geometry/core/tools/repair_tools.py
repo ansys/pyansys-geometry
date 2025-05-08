@@ -23,6 +23,8 @@
 
 from typing import TYPE_CHECKING
 
+import pint
+
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
@@ -243,8 +245,8 @@ class RepairTools:
     def find_missing_faces(
         self,
         bodies: list["Body"],
-        angle: Angle = None,
-        distance: Distance = None,
+        angle: Angle | pint.Quantity | Real | None = None,
+        distance: Distance | pint.Quantity | Real | None = None,
     ) -> list[MissingFaceProblemAreas]:
         """Find the missing faces.
 
@@ -255,9 +257,9 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that missing faces are investigated on.
-        angle : Angle, optional
+        angle : Angle | ~pint.Quantity | Real, optional
             The minimum angle between faces. By default, None.
-        distance : Distance, optional
+        distance : Distance | ~pint.Quantity | Real, optional
             The minimum distance between faces. By default, None.
 
         Returns
@@ -267,6 +269,13 @@ class RepairTools:
         """
         if not bodies:
             return []
+
+        # Perform sanity check
+        if angle is not None:
+            angle = angle if isinstance(angle, Angle) else Angle(angle)
+        if distance is not None:
+            distance = distance if isinstance(distance, Distance) else Distance(distance)
+
         body_ids = [body.id for body in bodies]
         response = self._grpc_client.services.repair_tools.find_missing_faces(
             faces=body_ids,
@@ -319,7 +328,7 @@ class RepairTools:
     def find_stitch_faces(
         self,
         bodies: list["Body"],
-        max_distance: Distance = None,
+        max_distance: Distance | pint.Quantity | Real | None = None,
     ) -> list[StitchFaceProblemAreas]:
         """Return the list of stitch face problem areas.
 
@@ -330,7 +339,7 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that stitchable faces are investigated on.
-        max_distance : Distance, optional
+        max_distance : Distance | ~pint.Quantity | Real, optional
             Maximum distance between faces. By default, None.
 
         Returns
@@ -338,6 +347,15 @@ class RepairTools:
         list[StitchFaceProblemAreas]
             List of objects representing stitch face problem areas.
         """
+        from ansys.geometry.core.designer.body import Body
+
+        # Perform sanity check
+        check_type_all_elements_in_iterable(bodies, Body)
+        if max_distance is not None:
+            max_distance = (
+                max_distance if isinstance(max_distance, Distance) else Distance(max_distance)
+            )
+
         body_ids = [body.id for body in bodies]
         response = self._grpc_client.services.repair_tools.find_stitch_faces(
             faces=body_ids,
@@ -633,7 +651,7 @@ class RepairTools:
     def find_and_fix_stitch_faces(
         self,
         bodies: list["Body"],
-        max_distance: Distance = None,
+        max_distance: Distance | pint.Quantity | Real | None = None,
         allow_multiple_bodies: bool = False,
         maintain_components: bool = True,
         check_for_coincidence: bool = False,
@@ -645,7 +663,7 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that stitchable faces are investigated on.
-        max_distance : Real, optional
+        max_distance : Distance | ~pint.Quantity | Real, optional
             The maximum distance between faces to be stitched.
             By default, 0.0001.
         allow_multiple_bodies : bool, optional
@@ -672,7 +690,12 @@ class RepairTools:
         """
         from ansys.geometry.core.designer.body import Body
 
+        # Perform sanity check
         check_type_all_elements_in_iterable(bodies, Body)
+        if max_distance is not None:
+            max_distance = (
+                max_distance if isinstance(max_distance, Distance) else Distance(max_distance)
+            )
 
         body_ids = [body.id for body in bodies]
 

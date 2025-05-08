@@ -26,7 +26,6 @@ The class provides a set of abstract methods for identifying and repairing vario
 geometry issues, such as split edges, extra edges, duplicate faces etc.
 """
 
-from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
@@ -171,13 +170,22 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_missing_faces(self, **kwargs) -> dict:  # noqa: D102
+        from google.protobuf.wrappers_pb2 import DoubleValue
+
         from ansys.api.geometry.v0.repairtools_pb2 import FindMissingFacesRequest
+
+        from ..base.conversions import (
+            from_measurement_to_server_angle,
+            from_measurement_to_server_length,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindMissingFacesRequest(
             faces=kwargs["faces"],
-            angle=DoubleValue(value=kwargs["angle"].value) if kwargs["angle"] is not None else None,
-            distance=DoubleValue(value=kwargs["distance"].value)
+            angle=DoubleValue(value=from_measurement_to_server_angle(kwargs["angle"]))
+            if kwargs["angle"] is not None
+            else None,
+            distance=DoubleValue(value=from_measurement_to_server_length(kwargs["distance"]))
             if kwargs["distance"] is not None
             else None,
         )
@@ -219,12 +227,18 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
+        from google.protobuf.wrappers_pb2 import DoubleValue
+
         from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
+
+        from ..base.conversions import from_measurement_to_server_length
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindStitchFacesRequest(
             faces=kwargs["faces"],
-            maximum_distance=DoubleValue(value=kwargs["distance"].value)
+            maximum_distance=DoubleValue(
+                value=from_measurement_to_server_length(kwargs["distance"])
+            )
             if kwargs["distance"] is not None
             else None,
         )
@@ -288,6 +302,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_and_fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
+        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
+
         from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
