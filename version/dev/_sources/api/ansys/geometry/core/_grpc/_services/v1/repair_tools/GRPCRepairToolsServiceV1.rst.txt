@@ -1,0 +1,191 @@
+
+
+
+
+
+
+:class:`GRPCRepairToolsServiceV1`
+=================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.repair_tools.GRPCRepairToolsServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Repair tools service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCRepairToolsServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~find_split_edges`
+            - 
+          * - :py:attr:`~find_extra_edges`
+            - 
+          * - :py:attr:`~find_inexact_edges`
+            - 
+          * - :py:attr:`~find_short_edges`
+            - 
+          * - :py:attr:`~find_duplicate_faces`
+            - 
+          * - :py:attr:`~find_missing_faces`
+            - 
+          * - :py:attr:`~find_small_faces`
+            - 
+          * - :py:attr:`~find_stitch_faces`
+            - 
+          * - :py:attr:`~find_simplify`
+            - 
+          * - :py:attr:`~find_interferences`
+            - 
+          * - :py:attr:`~find_and_fix_short_edges`
+            - 
+          * - :py:attr:`~find_and_fix_extra_edges`
+            - 
+          * - :py:attr:`~find_and_fix_split_edges`
+            - 
+          * - :py:attr:`~find_and_fix_simplify`
+            - 
+          * - :py:attr:`~inspect_geometry`
+            - 
+          * - :py:attr:`~repair_geometry`
+            - 
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.repair_tools import GRPCRepairToolsServiceV1
+
+
+
+Method detail
+-------------
+
+.. py:method:: find_split_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_extra_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_inexact_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_short_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_duplicate_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_missing_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_small_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_stitch_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_simplify(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_interferences(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_and_fix_short_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_and_fix_extra_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_and_fix_split_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: find_and_fix_simplify(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: inspect_geometry(**kwargs) -> dict
+   :abstractmethod:
+
+
+.. py:method:: repair_geometry(**kwargs) -> dict
+   :abstractmethod:
+
+
+
+
+
