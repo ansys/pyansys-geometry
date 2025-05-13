@@ -382,7 +382,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
             "complete_command_response": response.complete_command_response,
-
         }
 
     @staticmethod
