@@ -258,6 +258,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
+            "complete_command_response": response.complete_command_response,
         }
 
     @protect_grpc
@@ -333,6 +334,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
+            "complete_command_response": response.complete_command_response,
         }
 
     @protect_grpc
@@ -353,6 +355,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": response.created_bodies_monikers,
             "modified_bodies_monikers": response.modified_bodies_monikers,
+            "complete_command_response": response.complete_command_response,
         }
 
     @protect_grpc
@@ -378,6 +381,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
+            "complete_command_response": response.complete_command_response,
+
         }
 
     @staticmethod
