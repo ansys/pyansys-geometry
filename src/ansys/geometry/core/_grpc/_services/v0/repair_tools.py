@@ -209,8 +209,12 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindSmallFacesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = FindSmallFacesRequest(selection=kwargs["selection"])
-
+        request = FindSmallFacesRequest(
+            selection=kwargs["selection"],
+            area=kwargs["area"],
+            width=kwargs["width"],
+        )
+    
         # Call the gRPC service
         response = self.stub.FindSmallFaces(request)
 

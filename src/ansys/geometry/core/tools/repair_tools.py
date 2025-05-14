@@ -313,7 +313,11 @@ class RepairTools:
             return []
 
         body_ids = [body.id for body in bodies]
-        response = self._grpc_client.services.repair_tools.find_small_faces(selection=body_ids)
+        response = self._grpc_client.services.repair_tools.find_small_faces(
+            selection=body_ids,
+            area=area,
+            width=width,
+        )
         parent_design = get_design_from_body(bodies[0])
 
         return [
