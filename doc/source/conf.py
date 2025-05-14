@@ -358,6 +358,7 @@ linkcheck_exclude_documents = ["index", "getting_started/local/index", "changelo
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries",
     r"https://download.ansys.com/",
+    r"https://stackoverflow.com/",  # Requires human authentication
     r".*/examples/.*.py",
     r".*/examples/.*.ipynb",
     r"_static/assets/.*",

@@ -170,7 +170,7 @@ plotter.show(plot_list)
 You can clip any object represented in the plotter by defining a ``Plane`` object that
 intersects the target object.
 
-```{code-cell} ipython
+```{code-cell} ipython3
 
 from ansys.geometry.core.math import Plane, Point3D
 pl = GeometryPlotter()
@@ -219,7 +219,7 @@ the ``plot()`` method.
 
 In the following cell you can create a new design and plot a prism and a cylinder in different colors.
 
-```{code-cell} ipython
+```{code-cell} ipython3
 design = modeler.create_design("MultiColors")
 
 # Create a sketch of a box
