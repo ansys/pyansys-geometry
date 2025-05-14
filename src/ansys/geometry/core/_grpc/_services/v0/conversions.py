@@ -29,6 +29,7 @@ from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
 from ansys.api.dbu.v0.dbumodels_pb2 import (
     DrivingDimension as GRPCDrivingDimension,
     EntityIdentifier,
+    PartExportFormat as GRPCPartExportFormat,
 )
 from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus as GRPCUpdateStatus
 from ansys.api.geometry.v0.models_pb2 import (
@@ -58,6 +59,7 @@ if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
 
     from ansys.geometry.core.connection.backend import BackendType
+    from ansys.geometry.core.designer.design import DesignFileFormat
     from ansys.geometry.core.materials.material import Material
     from ansys.geometry.core.materials.property import MaterialProperty
     from ansys.geometry.core.math.frame import Frame
@@ -848,3 +850,41 @@ def from_grpc_update_status_to_parameter_update_status(
         GRPCUpdateStatus.CONSTRAINED_PARAMETERS: ParameterUpdateStatus.CONSTRAINED_PARAMETERS,
     }
     return status_mapping.get(update_status, ParameterUpdateStatus.UNKNOWN)
+
+def from_design_file_format_to_grpc_part_export_format(
+    design_file_format: "DesignFileFormat",
+) -> GRPCPartExportFormat:
+    """Convert from a DesignFileFormat object to a gRPC PartExportFormat one.
+
+    Parameters
+    ----------
+    design_file_format : DesignFileFormat
+        The file format desired
+
+    Returns
+    -------
+    GRPCPartExportFormat
+        Converted gRPC Part format
+    """
+    from ansys.geometry.core.designer.design import DesignFileFormat
+
+    if design_file_format == DesignFileFormat.SCDOCX:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_SCDOCX
+    elif design_file_format == DesignFileFormat.PARASOLID_TEXT:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
+    elif design_file_format == DesignFileFormat.PARASOLID_BIN:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
+    elif design_file_format == DesignFileFormat.FMD:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_FMD
+    elif design_file_format == DesignFileFormat.STEP:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_STEP
+    elif design_file_format == DesignFileFormat.IGES:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_IGES
+    elif design_file_format == DesignFileFormat.PMDB:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_PMDB
+    elif design_file_format == DesignFileFormat.STRIDE:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_STRIDE
+    elif design_file_format == DesignFileFormat.DISCO:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_DISCO
+    else:
+        return None

@@ -99,17 +99,20 @@ from ansys.geometry.core.typing import RealSequence
 class DesignFileFormat(Enum):
     """Provides supported file formats that can be downloaded for designs."""
 
-    SCDOCX = "SCDOCX", PartExportFormat.PARTEXPORTFORMAT_SCDOCX
-    PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
-    PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
-    FMD = "FMD", PartExportFormat.PARTEXPORTFORMAT_FMD
-    STEP = "STEP", PartExportFormat.PARTEXPORTFORMAT_STEP
-    IGES = "IGES", PartExportFormat.PARTEXPORTFORMAT_IGES
-    PMDB = "PMDB", PartExportFormat.PARTEXPORTFORMAT_PMDB
-    STRIDE = "STRIDE", PartExportFormat.PARTEXPORTFORMAT_STRIDE
-    DISCO = "DISCO", PartExportFormat.PARTEXPORTFORMAT_DISCO
-    INVALID = "INVALID", None
-
+    SCDOCX = "SCDOCX"
+    PARASOLID_TEXT = "PARASOLID_TEXT"
+    PARASOLID_BIN = "PARASOLID_BIN"
+    FMD = "FMD"
+    STEP = "STEP"
+    IGES = "IGES"
+    PMDB = "PMDB"
+    STRIDE = "STRIDE"
+    DISCO = "DISCO"
+    INVALID = "INVALID"
+    
+    def __str__(self):
+        """Represent object in string format"""
+        return self.value
 
 class Design(Component):
     """Provides for organizing geometry assemblies.
@@ -140,7 +143,6 @@ class Design(Component):
         super().__init__(name, None, modeler.client)
 
         # Initialize the stubs needed
-        self._design_stub = DesignsStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
         self._parts_stub = PartsStub(self._grpc_client.channel)
@@ -158,9 +160,9 @@ class Design(Component):
             self._grpc_client.log.debug("Reading Design object from service.")
             self.__read_existing_design()
         else:
-            new_design = self._design_stub.New(NewRequest(name=name))
-            self._design_id = new_design.id
-            self._id = new_design.main_part.id
+            response = self._grpc_client.services.designs.new(name=name)
+            self._design_id = response.get("design_id")
+            self._id = response.get("main_part_id")
             self._activate(called_after_design_creation=True)
             self._grpc_client.log.debug("Design object instantiated successfully.")
 
@@ -208,7 +210,7 @@ class Design(Component):
 
         # Attempt to close the design
         try:
-            self._design_stub.Close(EntityIdentifier(id=self._design_id))
+            self._grpc_client.services.designs.close(design_id=self._design_id)
         except Exception as err:
             self._grpc_client.log.warning(f"Design {self.name} could not be closed. Error: {err}.")
             self._grpc_client.log.warning("Ignoring response and assuming the design is closed.")
@@ -216,12 +218,11 @@ class Design(Component):
         # Consider the design closed (even if the close request failed)
         self._is_active = False
 
-    @protect_grpc
     def _activate(self, called_after_design_creation: bool = False) -> None:
         """Activate the design."""
         # Activate the current design
         if not called_after_design_creation:
-            self._design_stub.PutActive(EntityIdentifier(id=self._design_id))
+            self._grpc_client.services.designs.put_active(design_id=self._design_id)
         self._is_active = True
         self._grpc_client.log.debug(f"Design {self.name} is activated.")
 
@@ -260,7 +261,6 @@ class Design(Component):
 
         self._grpc_client.log.debug(f"Material {material.name} is successfully added to design.")
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def save(self, file_location: Path | str) -> None:
@@ -275,7 +275,7 @@ class Design(Component):
         if isinstance(file_location, Path):
             file_location = str(file_location)
 
-        self._design_stub.SaveAs(SaveAsRequest(filepath=file_location))
+        self._grpc_client.services.designs.save_as(filepath=file_location)
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
     @protect_grpc
@@ -305,7 +305,7 @@ class Design(Component):
             file_location.parent.mkdir(parents=True, exist_ok=True)
 
         # Process response
-        self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
+        self._grpc_client.log.debug(f"Requesting design download in {format} format.")
         if self._modeler.client.backend_version < (25, 2, 0):
             received_bytes = self.__export_and_download_legacy(format=format)
         else:
@@ -334,7 +334,7 @@ class Design(Component):
         up to Ansys 25.1.1 products.
         """
         # Process response
-        self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
+        self._grpc_client.log.debug(f"Requesting design download in {format} format.")
         received_bytes = bytes()
         if format is DesignFileFormat.SCDOCX:
             response = self._commands_stub.DownloadFile(Empty())
@@ -347,11 +347,11 @@ class Design(Component):
             DesignFileFormat.IGES,
             DesignFileFormat.PMDB,
         ]:
-            response = self._parts_stub.Export(ExportRequest(format=format.value[1]))
+            response = self._parts_stub.Export(ExportRequest(format=format[1]))
             received_bytes += response.data
         else:
             self._grpc_client.log.warning(
-                f"{format.value[0]} format requested is not supported. Ignoring download request."
+                f"{format} format requested is not supported. Ignoring download request."
             )
             return
 
@@ -371,8 +371,7 @@ class Design(Component):
             The raw data from the exported and downloaded file.
         """
         # Process response
-        self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
-        received_bytes = bytes()
+        self._grpc_client.log.debug(f"Requesting design download in {format} format.")
 
         if format in [
             DesignFileFormat.PARASOLID_TEXT,
@@ -386,29 +385,21 @@ class Design(Component):
             DesignFileFormat.STRIDE,
         ]:
             try:
-                response = self._design_stub.DownloadExportFile(
-                    DownloadExportFileRequest(format=format.value[1])
-                )
-                received_bytes += response.data
+                response = self._grpc_client.services.designs.download_export(format=format)
             except Exception:
                 self._grpc_client.log.warning(
-                    f"Failed to download the file in {format.value[0]} format."
+                    f"Failed to download the file in {format} format."
                     " Attempting to stream download."
                 )
                 # Attempt to download the file via streaming
-                received_bytes = bytes()
-                responses = self._design_stub.StreamDownloadExportFile(
-                    DownloadExportFileRequest(format=format.value[1])
-                )
-                for response in responses:
-                    received_bytes += response.data
+                response = self._grpc_client.services.designs.stream_download_export(format=format)
         else:
             self._grpc_client.log.warning(
-                f"{format.value[0]} format requested is not supported. Ignoring download request."
+                f"{format} format requested is not supported. Ignoring download request."
             )
-            return
+            return None
 
-        return received_bytes
+        return response.get("data")
 
     def __build_export_file_location(self, location: Path | str | None, ext: str) -> Path:
         """Build the file location for export functions.
@@ -984,7 +975,7 @@ class Design(Component):
         filepath_server = self._modeler._upload_file(file_location, import_options=import_options)
 
         # Insert the file into the design
-        self._design_stub.Insert(InsertRequest(filepath=filepath_server))
+        self._grpc_client.services.designs.insert(filepath=filepath_server)
         self._grpc_client.log.debug(f"File {file_location} successfully inserted into design.")
 
         self._update_design_inplace()
@@ -1045,28 +1036,26 @@ class Design(Component):
 
         start = time.time()
         # Grab active design
-        design = self._design_stub.GetActive(Empty())
-        if not design:
+        design_response = self._grpc_client.services.designs.get_active()
+        if not design_response:
             raise RuntimeError("No existing design available at service level.")
         else:
-            self._design_id = design.id
-            self._id = design.main_part.id
+            self._design_id = design_response.get("design_id")
+            self._id = design_response.get("main_part_id")
+            self._name = design_response.get("name")
             self._activate(called_after_design_creation=True)
-            # Here we may take the design's name instead of the main part's name.
-            # Since they're the same in the backend.
-            self._name = design.name
 
         response = self._commands_stub.GetAssembly(EntityIdentifier(id=self._design_id))
 
         # Store created objects
         created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}
         created_tps = {}
-        created_components = {design.main_part.id: self}
+        created_components = {design_response.get("main_part_id"): self}
         created_bodies = {}
 
         # Make dummy master for design since server doesn't have one
         self._master_component = MasterComponent(
-            "1", "master_design", created_parts[design.main_part.id]
+            "1", "master_design", created_parts[design_response.get("main_part_id")]
         )
 
         # Create MasterComponents

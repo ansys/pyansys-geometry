@@ -26,6 +26,7 @@ from .._version import GeometryApiProtos, set_proto_version
 from .base.admin import GRPCAdminService
 from .base.bodies import GRPCBodyService
 from .base.coordinate_systems import GRPCCoordinateSystemService
+from .base.designs import GRPCDesignsService
 from .base.dbuapplication import GRPCDbuApplicationService
 from .base.driving_dimensions import GRPCDrivingDimensionsService
 from .base.measurement_tools import GRPCMeasurementToolsService
@@ -74,39 +75,14 @@ class _GRPCServices:
         # Lazy load all the services
         self._admin = None
         self._bodies = None
-        self._dbu_application = None
-        self._named_selection = None
-        self._measurement_tools = None
-        self._repair_tools = None
-        self._prepare_tools = None
-        self._driving_dimensions = None
         self._coordinate_systems = None
-
-    @property
-    def bodies(self) -> GRPCBodyService:
-        """
-        Get the body service for the specified version.
-
-        Returns
-        -------
-        GRPCBodyService
-            The body service for the specified version.
-        """
-        if not self._bodies:
-            # Import the appropriate body service based on the version
-            from .v0.bodies import GRPCBodyServiceV0
-            from .v1.bodies import GRPCBodyServiceV1
-
-            if self.version == GeometryApiProtos.V0:
-                self._bodies = GRPCBodyServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
-                self._bodies = GRPCBodyServiceV1(self.channel)
-            else:  # pragma: no cover
-                # This should never happen as the version is set in the constructor
-                raise ValueError(f"Unsupported version: {self.version}")
-
-        return self._bodies
+        self._dbu_application = None
+        self._designs = None
+        self._driving_dimensions = None
+        self._measurement_tools = None
+        self._named_selection = None
+        self._prepare_tools = None
+        self._repair_tools = None
 
     @property
     def admin(self) -> GRPCAdminService:
@@ -135,6 +111,84 @@ class _GRPCServices:
         return self._admin
 
     @property
+    def bodies(self) -> GRPCBodyService:
+        """
+        Get the body service for the specified version.
+
+        Returns
+        -------
+        GRPCBodyService
+            The body service for the specified version.
+        """
+        if not self._bodies:
+            # Import the appropriate body service based on the version
+            from .v0.bodies import GRPCBodyServiceV0
+            from .v1.bodies import GRPCBodyServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._bodies = GRPCBodyServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._bodies = GRPCBodyServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._bodies
+
+    @property
+    def coordinate_systems(self) -> GRPCCoordinateSystemService:
+        """
+        Get the coordinate systems service for the specified version.
+
+        Returns
+        -------
+        GRPCCoordinateSystemService
+            The coordinate systems service for the specified version.
+        """
+        if not self._coordinate_systems:
+            # Import the appropriate coordinate systems service based on the version
+            from .v0.coordinate_systems import GRPCCoordinateSystemServiceV0
+            from .v1.coordinate_systems import GRPCCoordinateSystemServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._coordinate_systems = GRPCCoordinateSystemServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._coordinate_systems = GRPCCoordinateSystemServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._coordinate_systems
+
+    @property
+    def designs(self) -> GRPCDesignsService:
+        """
+        Get the designs service for the specified version.
+
+        Returns
+        -------
+        GRPCDesignsService
+            The designs service for the specified version.
+        """
+        if not self._designs:
+            # Import the appropriate designs service based on the version
+            from .v0.designs import GRPCDesignsServiceV0
+            from .v1.designs import GRPCDesignsServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._designs = GRPCDesignsServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._designs = GRPCDesignsServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._designs
+
+    @property
     def dbu_application(self) -> GRPCDbuApplicationService:
         """
         Get the DBU application service for the specified version.
@@ -159,108 +213,6 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._dbu_application
-
-    @property
-    def named_selection(self) -> GRPCNamedSelectionService:
-        """
-        Get the named selection service for the specified version.
-
-        Returns
-        -------
-        GRPCNamedSelectionService
-            The named selection service for the specified version.
-        """
-        if not self._named_selection:
-            # Import the appropriate named selection service based on the version
-            from .v0.named_selection import GRPCNamedSelectionServiceV0
-            from .v1.named_selection import GRPCNamedSelectionServiceV1
-
-            if self.version == GeometryApiProtos.V0:
-                self._named_selection = GRPCNamedSelectionServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
-                self._named_selection = GRPCNamedSelectionServiceV1(self.channel)
-            else:  # pragma: no cover
-                # This should never happen as the version is set in the constructor
-                raise ValueError(f"Unsupported version: {self.version}")
-
-        return self._named_selection
-
-    @property
-    def measurement_tools(self) -> GRPCMeasurementToolsService:
-        """
-        Get the measurement tools service for the specified version.
-
-        Returns
-        -------
-        GRPCMeasurementToolsService
-            The measurement tools service for the specified version.
-        """
-        if not self._measurement_tools:
-            # Import the appropriate measurement tools service based on the version
-            from .v0.measurement_tools import GRPCMeasurementToolsServiceV0
-            from .v1.measurement_tools import GRPCMeasurementToolsServiceV1
-
-            if self.version == GeometryApiProtos.V0:
-                self._measurement_tools = GRPCMeasurementToolsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
-                self._measurement_tools = GRPCMeasurementToolsServiceV1(self.channel)
-            else:  # pragma: no cover
-                # This should never happen as the version is set in the constructor
-                raise ValueError(f"Unsupported version: {self.version}")
-
-        return self._measurement_tools
-
-    @property
-    def repair_tools(self) -> GRPCRepairToolsService:
-        """
-        Get the repair tools service for the specified version.
-
-        Returns
-        -------
-        RepairToolsServiceBase
-            The repair tools service for the specified version.
-        """
-        if not self._repair_tools:
-            from .v0.repair_tools import GRPCRepairToolsServiceV0
-            from .v1.repair_tools import GRPCRepairToolsServiceV1
-
-            if self.version == GeometryApiProtos.V0:
-                self._repair_tools = GRPCRepairToolsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
-                self._repair_tools = GRPCRepairToolsServiceV1(self.channel)
-            else:  # pragma: no cover
-                # This should never happen as the version is set in the constructor
-                raise ValueError(f"Unsupported version: {self.version}")
-        return self._repair_tools
-
-    @property
-    def prepare_tools(self) -> GRPCPrepareToolsService:
-        """
-        Get the prepare tools service for the specified version.
-
-        Returns
-        -------
-        GRPCPrepareToolsService
-            The prepare tools service for the specified version.
-        """
-        if not self._prepare_tools:
-            # Import the appropriate prepare tools service based on the version
-            from .v0.prepare_tools import GRPCPrepareToolsServiceV0
-            from .v1.prepare_tools import GRPCPrepareToolsServiceV1
-
-            if self.version == GeometryApiProtos.V0:
-                self._prepare_tools = GRPCPrepareToolsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
-                self._prepare_tools = GRPCPrepareToolsServiceV1(self.channel)
-            else:  # pragma: no cover
-                # This should never happen as the version is set in the constructor
-                raise ValueError(f"Unsupported version: {self.version}")
-
-        return self._prepare_tools
 
     @property
     def driving_dimensions(self) -> GRPCDrivingDimensionsService:
@@ -289,27 +241,103 @@ class _GRPCServices:
         return self._driving_dimensions
 
     @property
-    def coordinate_systems(self) -> GRPCCoordinateSystemService:
+    def measurement_tools(self) -> GRPCMeasurementToolsService:
         """
-        Get the coordinate systems service for the specified version.
+        Get the measurement tools service for the specified version.
 
         Returns
         -------
-        GRPCCoordinateSystemService
-            The coordinate systems service for the specified version.
+        GRPCMeasurementToolsService
+            The measurement tools service for the specified version.
         """
-        if not self._coordinate_systems:
-            # Import the appropriate coordinate systems service based on the version
-            from .v0.coordinate_systems import GRPCCoordinateSystemServiceV0
-            from .v1.coordinate_systems import GRPCCoordinateSystemServiceV1
+        if not self._measurement_tools:
+            # Import the appropriate measurement tools service based on the version
+            from .v0.measurement_tools import GRPCMeasurementToolsServiceV0
+            from .v1.measurement_tools import GRPCMeasurementToolsServiceV1
 
             if self.version == GeometryApiProtos.V0:
-                self._coordinate_systems = GRPCCoordinateSystemServiceV0(self.channel)
+                self._measurement_tools = GRPCMeasurementToolsServiceV0(self.channel)
             elif self.version == GeometryApiProtos.V1:  # pragma: no cover
                 # V1 is not implemented yet
-                self._coordinate_systems = GRPCCoordinateSystemServiceV1(self.channel)
+                self._measurement_tools = GRPCMeasurementToolsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
                 raise ValueError(f"Unsupported version: {self.version}")
 
-        return self._coordinate_systems
+        return self._measurement_tools
+
+    @property
+    def named_selection(self) -> GRPCNamedSelectionService:
+        """
+        Get the named selection service for the specified version.
+
+        Returns
+        -------
+        GRPCNamedSelectionService
+            The named selection service for the specified version.
+        """
+        if not self._named_selection:
+            # Import the appropriate named selection service based on the version
+            from .v0.named_selection import GRPCNamedSelectionServiceV0
+            from .v1.named_selection import GRPCNamedSelectionServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._named_selection = GRPCNamedSelectionServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._named_selection = GRPCNamedSelectionServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._named_selection
+
+    @property
+    def prepare_tools(self) -> GRPCPrepareToolsService:
+        """
+        Get the prepare tools service for the specified version.
+
+        Returns
+        -------
+        GRPCPrepareToolsService
+            The prepare tools service for the specified version.
+        """
+        if not self._prepare_tools:
+            # Import the appropriate prepare tools service based on the version
+            from .v0.prepare_tools import GRPCPrepareToolsServiceV0
+            from .v1.prepare_tools import GRPCPrepareToolsServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._prepare_tools = GRPCPrepareToolsServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._prepare_tools = GRPCPrepareToolsServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._prepare_tools
+
+    @property
+    def repair_tools(self) -> GRPCRepairToolsService:
+        """
+        Get the repair tools service for the specified version.
+
+        Returns
+        -------
+        RepairToolsServiceBase
+            The repair tools service for the specified version.
+        """
+        if not self._repair_tools:
+            from .v0.repair_tools import GRPCRepairToolsServiceV0
+            from .v1.repair_tools import GRPCRepairToolsServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._repair_tools = GRPCRepairToolsServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._repair_tools = GRPCRepairToolsServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+        return self._repair_tools

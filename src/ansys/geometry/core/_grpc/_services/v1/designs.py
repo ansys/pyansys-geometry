@@ -19,20 +19,20 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the coordinate systems service implementation for v1."""
+"""Module containing the designs service implementation for v1."""
 
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.coordinate_systems import GRPCCoordinateSystemService
+from ..base.designs import GRPCDesignsService
 
 
-class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no cover
-    """Coordinate systems service for gRPC communication with the Geometry server.
+class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
+    """Designs service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
-    coordinate systems service. It is specifically designed for the v1 version of the
+    designs service. It is specifically designed for the v1 version of the
     Geometry API.
 
     Parameters
@@ -40,13 +40,47 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no 
     channel : grpc.Channel
         The gRPC channel to the server.
     """
-
+    
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.coordinatesystems_pb2_grpc import CoordinateSystemsStub
+        from ansys.api.dbu.v1.designs_pb2_grpc import DesignsStub
 
-        self.stub = CoordinateSystemsStub(channel)
+        self.stub = DesignsStub(channel)
+    
+    @protect_grpc
+    def open(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
 
     @protect_grpc
-    def create(self, **kwargs) -> dict:  # noqa: D102
+    def new(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def close(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+    
+    @protect_grpc
+    def put_active(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+    
+    @protect_grpc
+    def save_as(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def download_export(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def stream_download_export(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+    
+    @protect_grpc
+    def insert(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+    
+    @protect_grpc
+    def get_active(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+    
+    
