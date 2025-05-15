@@ -23,7 +23,7 @@
 
 from ansys.geometry.core.modeler import Modeler
 
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_find_split_edges(modeler: Modeler):
