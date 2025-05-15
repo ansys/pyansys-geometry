@@ -40,13 +40,13 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
     channel : grpc.Channel
         The gRPC channel to the server.
     """
-    
+
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.dbu.v1.designs_pb2_grpc import DesignsStub
 
         self.stub = DesignsStub(channel)
-    
+
     @protect_grpc
     def open(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
@@ -58,11 +58,11 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def close(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def put_active(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def save_as(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
@@ -74,13 +74,11 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def stream_download_export(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def insert(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def get_active(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
-    

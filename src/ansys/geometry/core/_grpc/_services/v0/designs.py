@@ -41,13 +41,13 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
     channel : grpc.Channel
         The gRPC channel to the server.
     """
-    
+
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 
         self.stub = DesignsStub(channel)
-    
+
     @protect_grpc
     def open(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.designs_pb2 import OpenRequest
@@ -90,7 +90,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {}
-    
+
     @protect_grpc
     def put_active(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
@@ -101,7 +101,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {}
-    
+
     @protect_grpc
     def save_as(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.designs_pb2 import SaveAsRequest
@@ -120,7 +120,9 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         from ansys.api.dbu.v0.designs_pb2 import DownloadExportFileRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = DownloadExportFileRequest(format=from_design_file_format_to_grpc_part_export_format(kwargs["format"]))
+        request = DownloadExportFileRequest(
+            format=from_design_file_format_to_grpc_part_export_format(kwargs["format"])
+        )
 
         # Call the gRPC service
         response = self.stub.DownloadExportFile(request)
@@ -128,14 +130,16 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         data = bytes()
         data += response.data
-        return {"data" : data}
+        return {"data": data}
 
     @protect_grpc
     def stream_download_export(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.designs_pb2 import DownloadExportFileRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = DownloadExportFileRequest(format=from_design_file_format_to_grpc_part_export_format(kwargs["format"]))
+        request = DownloadExportFileRequest(
+            format=from_design_file_format_to_grpc_part_export_format(kwargs["format"])
+        )
 
         # Call the gRPC service
         response = self.stub.StreamDownloadExportFile(request)
@@ -145,8 +149,8 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         for elem in response:
             data += response.data
 
-        return {"data" : data}
-    
+        return {"data": data}
+
     @protect_grpc
     def insert(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.designs_pb2 import InsertRequest
@@ -159,7 +163,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {}
-    
+
     @protect_grpc
     def get_active(self, **kwargs) -> dict:  # noqa: D102
         from google.protobuf.empty_pb2 import Empty

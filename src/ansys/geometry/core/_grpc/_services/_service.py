@@ -26,8 +26,8 @@ from .._version import GeometryApiProtos, set_proto_version
 from .base.admin import GRPCAdminService
 from .base.bodies import GRPCBodyService
 from .base.coordinate_systems import GRPCCoordinateSystemService
-from .base.designs import GRPCDesignsService
 from .base.dbuapplication import GRPCDbuApplicationService
+from .base.designs import GRPCDesignsService
 from .base.driving_dimensions import GRPCDrivingDimensionsService
 from .base.measurement_tools import GRPCMeasurementToolsService
 from .base.named_selection import GRPCNamedSelectionService

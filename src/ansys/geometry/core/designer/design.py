@@ -30,14 +30,7 @@ from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity, UndefinedUnitError
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
-from ansys.api.dbu.v0.designs_pb2 import (
-    DownloadExportFileRequest,
-    InsertRequest,
-    NewRequest,
-    SaveAsRequest,
-)
-from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
@@ -109,10 +102,11 @@ class DesignFileFormat(Enum):
     STRIDE = "STRIDE"
     DISCO = "DISCO"
     INVALID = "INVALID"
-    
+
     def __str__(self):
         """Represent object in string format"""
         return self.value
+
 
 class Design(Component):
     """Provides for organizing geometry assemblies.

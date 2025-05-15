@@ -851,6 +851,7 @@ def from_grpc_update_status_to_parameter_update_status(
     }
     return status_mapping.get(update_status, ParameterUpdateStatus.UNKNOWN)
 
+
 def from_design_file_format_to_grpc_part_export_format(
     design_file_format: "DesignFileFormat",
 ) -> GRPCPartExportFormat:

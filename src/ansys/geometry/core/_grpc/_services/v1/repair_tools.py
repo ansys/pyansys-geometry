@@ -27,6 +27,7 @@ from ansys.geometry.core.errors import protect_grpc
 
 from ..base.repair_tools import GRPCRepairToolsService
 
+
 class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # pragma: no cover
     """Repair tools service for gRPC communication with the Geometry server.
 
@@ -39,9 +40,9 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # pragma: no cover
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.geometry.v1.repairtools_pb2_grpc import RepairToolsStub
-        
+
         self.stub = RepairToolsStub(channel)
-    
+
     @protect_grpc
     def find_split_edges(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
