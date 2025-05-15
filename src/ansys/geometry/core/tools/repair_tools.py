@@ -293,7 +293,12 @@ class RepairTools:
             for res in response.get("problems")
         ]
 
-    def find_small_faces(self, bodies: list["Body"]) -> list[SmallFaceProblemAreas]:
+    def find_small_faces(
+        self,
+        bodies: list["Body"],
+        area: pint.Quantity | Real | None = None,
+        width: pint.Quantity | Real | None = None,
+    ) -> list[SmallFaceProblemAreas]:
         """Find the small face problem areas.
 
         This method finds and returns a list of ids of small face problem areas
@@ -303,6 +308,10 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that small faces are investigated on.
+        area : ~pint.Quantity | Real, optional
+            Maximum area of the faces. By default, None.
+        width : ~pint.Quantity | Real, optional
+            Maximum width of the faces. By default, None.
 
         Returns
         -------

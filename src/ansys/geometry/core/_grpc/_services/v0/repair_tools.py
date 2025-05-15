@@ -206,13 +206,24 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_small_faces(self, **kwargs) -> dict:  # noqa: D102
+        from google.protobuf.wrappers_pb2 import DoubleValue
+
         from ansys.api.geometry.v0.repairtools_pb2 import FindSmallFacesRequest
+
+        from ..base.conversions import (
+            from_measurement_to_server_angle,
+            from_measurement_to_server_length,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSmallFacesRequest(
             selection=kwargs["selection"],
-            area=kwargs["area"],
-            width=kwargs["width"],
+            area=DoubleValue(value=from_measurement_to_server_angle(kwargs["area"]))
+            if kwargs["area"] is not None
+            else None,
+            width=DoubleValue(value=from_measurement_to_server_length(kwargs["width"]))
+            if kwargs["width"] is not None
+            else None,
         )
     
         # Call the gRPC service
