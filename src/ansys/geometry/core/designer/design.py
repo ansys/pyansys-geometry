@@ -43,8 +43,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
 )
-from ansys.api.geometry.v0.parts_pb2 import ExportRequest
-from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
     grpc_curve_to_curve,
@@ -104,7 +102,7 @@ class DesignFileFormat(Enum):
     INVALID = "INVALID"
 
     def __str__(self):
-        """Represent object in string format"""
+        """Represent object in string format."""
         return self.value
 
 
@@ -139,7 +137,6 @@ class Design(Component):
         # Initialize the stubs needed
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
-        self._parts_stub = PartsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -329,9 +326,9 @@ class Design(Component):
         """
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format} format.")
-        received_bytes = bytes()
         if format is DesignFileFormat.SCDOCX:
             response = self._commands_stub.DownloadFile(Empty())
+            received_bytes = bytes()
             received_bytes += response.data
         elif format in [
             DesignFileFormat.PARASOLID_TEXT,
@@ -341,8 +338,8 @@ class Design(Component):
             DesignFileFormat.IGES,
             DesignFileFormat.PMDB,
         ]:
-            response = self._parts_stub.Export(ExportRequest(format=format[1]))
-            received_bytes += response.data
+            response = self._grpc_client.services.parts.export(format=format)
+            received_bytes = response.get("data")
         else:
             self._grpc_client.log.warning(
                 f"{format} format requested is not supported. Ignoring download request."
