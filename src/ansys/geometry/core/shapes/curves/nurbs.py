@@ -206,8 +206,8 @@ class NURBSCurve(Curve):
             Information about how the NURBS curve is parameterized.
         """
         return Parameterization(
-            ParamType.OTHER,
             ParamForm.OTHER,
+            ParamType.OTHER,
             Interval(start=self._nurbs_curve.domain[0], end=self._nurbs_curve.domain[1]),
         )
 

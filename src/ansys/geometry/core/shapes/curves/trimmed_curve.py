@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Trimmed curve class."""
 
+import geomdl.operations as geomdl_operations
 from pint import Quantity
 
 from ansys.api.geometry.v0.commands_pb2 import IntersectCurvesRequest
