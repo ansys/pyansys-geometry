@@ -173,7 +173,6 @@ class NURBSCurve(Curve):
 
         # Fit the curve to the points
         curve = fitting.interpolate_curve(converted_points, degree)
-        print(curve.ctrlpts)
 
         # Construct the NURBSCurve object
         nurbs_curve = cls()
