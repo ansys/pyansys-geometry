@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 import grpc
 
 
-class GRPCDesignsService(ABC):
+class GRPCDesignsService(ABC):  # pragma: no cover
     """Designs service for gRPC communication with the Geometry server.
 
     Parameters
@@ -37,49 +37,49 @@ class GRPCDesignsService(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the GRPCDesignsService class."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def open(self, **kwargs) -> dict:
         """Open a design on the service."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def new(self, **kwargs) -> dict:
         """Create a new design."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def close(self, **kwargs) -> dict:
         """Close the currently open design."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def put_active(self, **kwargs) -> dict:
         """Activate an already opened design on the service."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def save_as(self, **kwargs) -> dict:
         """Create a new design."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def download_export(self, **kwargs) -> dict:
         """Download and export a design into a certain format."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def stream_download_export(self, **kwargs) -> dict:
         """Download and export a design into a certain format."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def insert(self, **kwargs) -> dict:
         """Insert a part/component/design into an existing design."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def get_active(self, **kwargs) -> dict:
         """Get the active design on the service."""
-        pass  # pragma: no cover
+        pass

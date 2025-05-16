@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 import grpc
 
 
-class GRPCPartsService(ABC):
+class GRPCPartsService(ABC):  # pragma: no cover
     """Parts service for gRPC communication with the Geometry server.
 
     Parameters
@@ -37,7 +37,7 @@ class GRPCPartsService(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the GRPCPartsService class."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def export(self, **kwargs) -> dict:
