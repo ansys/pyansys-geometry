@@ -19,20 +19,20 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the coordinate systems service implementation for v1."""
+"""Module containing the parts service implementation for v0."""
 
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.coordinate_systems import GRPCCoordinateSystemService
+from ..base.parts import GRPCPartsService
 
 
-class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no cover
-    """Coordinate systems service for gRPC communication with the Geometry server.
+class GRPCPartsServiceV0(GRPCPartsService):
+    """Parts service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
-    coordinate systems service. It is specifically designed for the v1 version of the
+    parts service. It is specifically designed for the v0 version of the
     Geometry API.
 
     Parameters
@@ -43,10 +43,27 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no 
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.coordinatesystems_pb2_grpc import CoordinateSystemsStub
+        from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 
-        self.stub = CoordinateSystemsStub(channel)
+        self.stub = PartsStub(channel)
 
     @protect_grpc
-    def create(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+    def export(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.parts_pb2 import ExportRequest
+
+        from .conversions import from_design_file_format_to_grpc_part_export_format
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ExportRequest(
+            format=from_design_file_format_to_grpc_part_export_format(kwargs["format"])
+        )
+
+        # Call the gRPC service
+        response = self.stub.Export(request)
+
+        # Return the response
+        data = bytes()
+        data += response.data
+        return {
+            "data": data,
+        }

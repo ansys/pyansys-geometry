@@ -28,7 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.named_selection import GRPCNamedSelectionService
 
 
-class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
+class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):  # pragma: no cover
     """Named Selection service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

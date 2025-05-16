@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 import grpc
 
 
-class GRPCNamedSelectionService(ABC):
+class GRPCNamedSelectionService(ABC):  # pragma: no cover
     """Named Selection service for gRPC communication with the Geometry server.
 
     Parameters
@@ -37,12 +37,12 @@ class GRPCNamedSelectionService(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the GRPCNamedSelectionService class."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def get_named_selection(self, **kwargs) -> dict:
         """Get the named selection by its id."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def create_named_selection(self, **kwargs) -> dict:

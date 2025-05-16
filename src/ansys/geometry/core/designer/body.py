@@ -914,7 +914,7 @@ class MasterBody(IBody):
     def _get_faces_from_id(self, body: Union["Body", "MasterBody"]) -> list[Face]:
         """Retrieve faces from a body ID."""
         self._grpc_client.log.debug(f"Retrieving faces for body {body.id} from server.")
-        resp = self._grpc_client.services.bodies.get_faces(id=body.id)
+        response = self._grpc_client.services.bodies.get_faces(id=body.id)
         return [
             Face(
                 face_resp.get("id"),
@@ -923,7 +923,7 @@ class MasterBody(IBody):
                 self._grpc_client,
                 face_resp.get("is_reversed"),
             )
-            for face_resp in resp.get("faces")
+            for face_resp in response.get("faces")
         ]
 
     @property
@@ -933,7 +933,7 @@ class MasterBody(IBody):
     def _get_edges_from_id(self, body: Union["Body", "MasterBody"]) -> list[Edge]:
         """Retrieve edges from a body ID."""
         self._grpc_client.log.debug(f"Retrieving edges for body {body.id} from server.")
-        resp = self._grpc_client.services.bodies.get_edges(id=body.id)
+        response = self._grpc_client.services.bodies.get_edges(id=body.id)
         return [
             Edge(
                 edge_resp.get("id"),
@@ -942,7 +942,7 @@ class MasterBody(IBody):
                 self._grpc_client,
                 edge_resp.get("is_reversed"),
             )
-            for edge_resp in resp.get("edges")
+            for edge_resp in response.get("edges")
         ]
 
     @property
@@ -956,8 +956,8 @@ class MasterBody(IBody):
             return Quantity(0, DEFAULT_UNITS.SERVER_VOLUME)
         else:
             self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
-            resp = self._grpc_client.services.bodies.get_volume(id=self.id)
-            return resp.get("volume")
+            response = self._grpc_client.services.bodies.get_volume(id=self.id)
+            return response.get("volume")
 
     @property
     def material(self) -> Material:  # noqa: D102
@@ -971,11 +971,11 @@ class MasterBody(IBody):
     @min_backend_version(25, 2, 0)
     def bounding_box(self) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
-        resp = self._grpc_client.services.bodies.get_bounding_box(id=self.id)
+        response = self._grpc_client.services.bodies.get_bounding_box(id=self.id)
         return BoundingBox(
-            min_corner=resp.get("min"),
-            max_corner=resp.get("max"),
-            center=resp.get("center"),
+            min_corner=response.get("min"),
+            max_corner=response.get("max"),
+            center=response.get("center"),
         )
 
     @check_input_types
@@ -985,8 +985,8 @@ class MasterBody(IBody):
 
     def get_assigned_material(self) -> Material:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving assigned material for body {self.id}.")
-        resp = self._grpc_client.services.bodies.get_assigned_material(id=self.id)
-        return resp.get("material")
+        response = self._grpc_client.services.bodies.get_assigned_material(id=self.id)
+        return response.get("material")
 
     @protect_grpc
     @check_input_types
@@ -1157,8 +1157,8 @@ class MasterBody(IBody):
     @min_backend_version(24, 2, 0)
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
         self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
-        resp = self._grpc_client.services.bodies.get_collision(id=self.id, other_id=body.id)
-        return CollisionType(resp.get("collision_type"))
+        response = self._grpc_client.services.bodies.get_collision(id=self.id, other_id=body.id)
+        return CollisionType(response.get("collision_type"))
 
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         from ansys.geometry.core.designer.component import Component
@@ -1169,18 +1169,18 @@ class MasterBody(IBody):
         check_type(copy_name, str)
 
         self._grpc_client.log.debug(f"Copying body {self.id}.")
-        resp = self._grpc_client.services.bodies.copy(
+        response = self._grpc_client.services.bodies.copy(
             id=self.id, parent_id=parent.id, name=copy_name
         )
 
         # Assign the new body to its specified parent (and return the new body)
         tb = MasterBody(
-            resp.get("master_id"), copy_name, self._grpc_client, is_surface=self.is_surface
+            response.get("master_id"), copy_name, self._grpc_client, is_surface=self.is_surface
         )
         parent._master_component.part.bodies.append(tb)
         parent._clear_cached_bodies()
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
-        return Body(body_id, resp.get("name"), parent, tb)
+        return Body(body_id, response.get("name"), parent, tb)
 
     @graphics_required
     def tessellate(  # noqa: D102
@@ -1208,17 +1208,17 @@ class MasterBody(IBody):
         # cache tessellation
         if not self._tessellation:
             if tess_options is not None:
-                resp = self._grpc_client.services.bodies.get_tesellation_with_options(
+                response = self._grpc_client.services.bodies.get_tesellation_with_options(
                     id=self.id,
                     options=tess_options,
                 )
             else:
-                resp = self._grpc_client.services.bodies.get_tesellation(
+                response = self._grpc_client.services.bodies.get_tesellation(
                     id=self.id,
                     backend_version=self._grpc_client.backend_version,
                 )
 
-            self._tessellation = resp.get("tessellation")
+            self._tessellation = response.get("tessellation")
 
         pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
         comp = pv.MultiBlock(pdata)

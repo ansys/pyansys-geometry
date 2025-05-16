@@ -19,15 +19,21 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the coordinate systems service implementation (abstraction layer)."""
-
-from abc import ABC, abstractmethod
+"""Module containing the materials service implementation for v1."""
 
 import grpc
 
+from ansys.geometry.core.errors import protect_grpc
 
-class GRPCCoordinateSystemService(ABC):  # pragma: no cover
-    """Coordinate systems service for gRPC communication with the Geometry server.
+from ..base.materials import GRPCMaterialsService
+
+
+class GRPCMaterialsServiceV1(GRPCMaterialsService):  # pragma: no cover
+    """Materials service for gRPC communication with the Geometry server.
+
+    This class provides methods to interact with the Geometry server's
+    materials service. It is specifically designed for the v1 version of the
+    Geometry API.
 
     Parameters
     ----------
@@ -35,11 +41,12 @@ class GRPCCoordinateSystemService(ABC):  # pragma: no cover
         The gRPC channel to the server.
     """
 
-    def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCCoordinateSystemService class."""
-        pass
+    @protect_grpc
+    def __init__(self, channel: grpc.Channel):  # noqa: D102
+        from ansys.api.geometry.v1.materials_pb2_grpc import MaterialsStub
 
-    @abstractmethod
-    def create(self, **kwargs) -> dict:
-        """Create a coordinate system."""
-        pass
+        self.stub = MaterialsStub(channel)
+
+    @protect_grpc
+    def add_material(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError

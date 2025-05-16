@@ -28,7 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.prepare_tools import GRPCPrepareToolsService
 
 
-class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
+class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
     """Prepare tools service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
