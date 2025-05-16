@@ -29,6 +29,7 @@ from .base.coordinate_systems import GRPCCoordinateSystemService
 from .base.dbuapplication import GRPCDbuApplicationService
 from .base.designs import GRPCDesignsService
 from .base.driving_dimensions import GRPCDrivingDimensionsService
+from .base.materials import GRPCMaterialsService
 from .base.measurement_tools import GRPCMeasurementToolsService
 from .base.named_selection import GRPCNamedSelectionService
 from .base.parts import GRPCPartsService
@@ -80,6 +81,7 @@ class _GRPCServices:
         self._dbu_application = None
         self._designs = None
         self._driving_dimensions = None
+        self._materials = None
         self._measurement_tools = None
         self._named_selection = None
         self._parts = None
@@ -241,6 +243,32 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._driving_dimensions
+
+    @property
+    def materials(self) -> GRPCMaterialsService:
+        """
+        Get the materials service for the specified version.
+
+        Returns
+        -------
+        GRPCMaterialsService
+            The materials service for the specified version.
+        """
+        if not self._materials:
+            # Import the appropriate materials service based on the version
+            from .v0.materials import GRPCMaterialsServiceV0
+            from .v1.materials import GRPCMaterialsServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._materials = GRPCMaterialsServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:
+                # V1 is not implemented yet
+                self._materials = GRPCMaterialsServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._materials
 
     @property
     def measurement_tools(self) -> GRPCMeasurementToolsService:

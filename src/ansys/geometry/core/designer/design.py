@@ -37,12 +37,6 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
-from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
-from ansys.api.geometry.v0.models_pb2 import (
-    Material as GRPCMaterial,
-    MaterialProperty as GRPCMaterialProperty,
-)
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
     grpc_curve_to_curve,
@@ -136,7 +130,6 @@ class Design(Component):
 
         # Initialize the stubs needed
         self._commands_stub = CommandsStub(self._grpc_client.channel)
-        self._materials_stub = MaterialsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -230,26 +223,8 @@ class Design(Component):
         material : Material
             Material to add.
         """
-        # TODO: Add design id to the request
-        # https://github.com/ansys/pyansys-geometry/issues/1319
-        self._materials_stub.AddToDocument(
-            AddToDocumentRequest(
-                material=GRPCMaterial(
-                    name=material.name,
-                    material_properties=[
-                        GRPCMaterialProperty(
-                            id=property.type.value,
-                            display_name=property.name,
-                            value=property.quantity.m,
-                            units=format(property.quantity.units),
-                        )
-                        for property in material.properties.values()
-                    ],
-                )
-            )
-        )
+        self._grpc_client.services.materials.add_material(material=material)
         self._materials.append(material)
-
         self._grpc_client.log.debug(f"Material {material.name} is successfully added to design.")
 
     @check_input_types

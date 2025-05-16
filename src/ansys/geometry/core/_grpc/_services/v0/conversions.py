@@ -889,3 +889,32 @@ def from_design_file_format_to_grpc_part_export_format(
         return GRPCPartExportFormat.PARTEXPORTFORMAT_DISCO
     else:
         return None
+
+
+def from_material_to_grpc_material(
+    material: "Material",
+) -> GRPCMaterial:
+    """Convert a ``Material`` class to a material gRPC message.
+
+    Parameters
+    ----------
+    material : Material
+        Source material data.
+
+    Returns
+    -------
+    GRPCMaterial
+        Geometry service gRPC material message.
+    """
+    return GRPCMaterial(
+        name=material.name,
+        material_properties=[
+            GRPCMaterialProperty(
+                id=property.type.value,
+                display_name=property.name,
+                value=property.quantity.m,
+                units=format(property.quantity.units),
+            )
+            for property in material.properties.values()
+        ],
+    )
