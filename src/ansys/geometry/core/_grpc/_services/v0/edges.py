@@ -27,7 +27,7 @@ from ansys.geometry.core.errors import protect_grpc
 
 from ..base.conversions import to_distance
 from ..base.edges import GRPCEdgesService
-from .conversions import build_grpc_id, from_grpc_point_to_point3d
+from .conversions import build_grpc_id, from_grpc_curve_to_curve, from_grpc_point_to_point3d
 
 
 class GRPCEdgesServiceV0(GRPCEdgesService):
@@ -66,8 +66,6 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
 
     @protect_grpc
     def get_curve(self, **kwargs) -> dict:  # noqa: D102
-        from .conversions import from_grpc_curve_to_curve
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = build_grpc_id(kwargs["id"])
 
