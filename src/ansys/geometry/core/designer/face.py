@@ -31,7 +31,6 @@ from pint import Quantity
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import FaceOffsetRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.api.geometry.v0.faces_pb2 import (
     CreateIsoParamCurvesRequest,
     EvaluateRequest,
@@ -39,7 +38,6 @@ from ansys.api.geometry.v0.faces_pb2 import (
     SetColorRequest,
 )
 from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
-from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     grpc_curve_to_curve,
@@ -193,7 +191,6 @@ class Face:
         self._body = body
         self._grpc_client = grpc_client
         self._faces_stub = FacesStub(grpc_client.channel)
-        self._edges_stub = EdgesStub(grpc_client.channel)
         self._commands_stub = CommandsStub(grpc_client.channel)
         self._is_reversed = is_reversed
         self._shape = None
@@ -263,9 +260,20 @@ class Face:
     @ensure_design_is_active
     def edges(self) -> list[Edge]:
         """List of all edges of the face."""
+        from ansys.geometry.core.designer.edge import CurveType
+
         self._grpc_client.log.debug("Requesting face edges from server.")
         edges_response = self._faces_stub.GetEdges(self._grpc_id)
-        return self.__grpc_edges_to_edges(edges_response.edges)
+        return [
+            Edge(
+                edge.id,
+                CurveType(edge.curve_type),
+                self._body,
+                self._grpc_client,
+                edge.is_reversed,
+            )
+            for edge in edges_response.edges
+        ]
 
     @property
     @protect_grpc
@@ -294,10 +302,7 @@ class Face:
                 ],
                 DEFAULT_UNITS.SERVER_LENGTH,
             )
-            grpc_edges = [
-                self._edges_stub.Get(EntityIdentifier(id=edge_id)) for edge_id in grpc_loop.edges
-            ]
-            edges = self.__grpc_edges_to_edges(grpc_edges)
+            edges = self.__grpc_edge_ids_to_edges(grpc_loop.edges)
             loops.append(
                 FaceLoop(type=type, length=length, min_bbox=min, max_bbox=max, edges=edges)
             )
@@ -446,30 +451,31 @@ class Face:
             response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
             return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
 
-    def __grpc_edges_to_edges(self, edges_grpc: list[GRPCEdge]) -> list[Edge]:
-        """Transform a list of gRPC edge messages into actual ``Edge`` objects.
+    def __grpc_edge_ids_to_edges(self, edge_ids: list[str]) -> list[Edge]:
+        """Retrieve from a list of gRPC ids the actual ``Edge`` objects.
 
         Parameters
         ----------
-        edges_grpc : list[GRPCEdge]
-            list of gRPC messages of type ``Edge``.
+        edge_ids : list[dict]
+            List of edges.
 
         Returns
         -------
         list[Edge]
             ``Edge`` objects to obtain from gRPC messages.
         """
-        from ansys.geometry.core.designer.edge import CurveType, Edge
+        from ansys.geometry.core.designer.edge import CurveType
 
         edges = []
-        for edge_grpc in edges_grpc:
+        for edge_id in edge_ids:
+            response = self._grpc_client.services.edges.get_edge(id=edge_id)
             edges.append(
                 Edge(
-                    edge_grpc.id,
-                    CurveType(edge_grpc.curve_type),
+                    response.get("edge_id"),
+                    CurveType(response.get("edge_curve_type")),
                     self._body,
                     self._grpc_client,
-                    edge_grpc.is_reversed,
+                    response.get("edge_is_reversed"),
                 )
             )
         return edges

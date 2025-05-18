@@ -650,6 +650,51 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
     return grpc_curve
 
 
+def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
+    """Convert a curve gRPC message to a ``Curve``.
+
+    Parameters
+    ----------
+    curve : GRPCCurve
+        Geometry service gRPC curve message.
+
+    Returns
+    -------
+    Curve
+        Resulting converted curve.
+    """
+    from ansys.geometry.core.shapes.curves.circle import Circle
+    from ansys.geometry.core.shapes.curves.ellipse import Ellipse
+    from ansys.geometry.core.shapes.curves.line import Line
+
+    origin = Point3D([curve.origin.x, curve.origin.y, curve.origin.z])
+    try:
+        reference = UnitVector3D([curve.reference.x, curve.reference.y, curve.reference.z])
+        axis = UnitVector3D([curve.axis.x, curve.axis.y, curve.axis.z])
+    except ValueError:
+        # curve will be a line
+        pass
+    if curve.radius != 0:
+        result = Circle(origin, curve.radius, reference, axis)
+    elif curve.major_radius != 0 and curve.minor_radius != 0:
+        result = Ellipse(origin, curve.major_radius, curve.minor_radius, reference, axis)
+    elif curve.direction is not None:
+        result = Line(
+            origin,
+            UnitVector3D(
+                [
+                    curve.direction.x,
+                    curve.direction.y,
+                    curve.direction.z,
+                ]
+            ),
+        )
+    else:
+        result = None
+
+    return result
+
+
 def from_trimmed_surface_to_grpc_trimmed_surface(
     trimmed_surface: "TrimmedSurface",
 ) -> GRPCTrimmedSurface:
