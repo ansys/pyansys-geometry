@@ -27,7 +27,6 @@ from typing import TYPE_CHECKING
 from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.bbox import BoundingBox
@@ -85,7 +84,6 @@ class Edge:
         self._curve_type = curve_type
         self._body = body
         self._grpc_client = grpc_client
-        self._edges_stub = EdgesStub(grpc_client.channel)
         self._is_reversed = is_reversed
         self._shape = None
 
