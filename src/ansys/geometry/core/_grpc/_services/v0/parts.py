@@ -26,6 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.parts import GRPCPartsService
+from .conversions import from_design_file_format_to_grpc_part_export_format
 
 
 class GRPCPartsServiceV0(GRPCPartsService):
@@ -50,8 +51,6 @@ class GRPCPartsServiceV0(GRPCPartsService):
     @protect_grpc
     def export(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.parts_pb2 import ExportRequest
-
-        from .conversions import from_design_file_format_to_grpc_part_export_format
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExportRequest(

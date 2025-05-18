@@ -26,6 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.materials import GRPCMaterialsService
+from .conversions import from_material_to_grpc_material
 
 
 class GRPCMaterialsServiceV0(GRPCMaterialsService):
@@ -50,8 +51,6 @@ class GRPCMaterialsServiceV0(GRPCMaterialsService):
     @protect_grpc
     def add_material(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
-
-        from .conversions import from_material_to_grpc_material
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = AddToDocumentRequest(

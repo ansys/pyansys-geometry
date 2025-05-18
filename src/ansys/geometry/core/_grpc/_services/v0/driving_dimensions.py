@@ -26,6 +26,11 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.driving_dimensions import GRPCDrivingDimensionsService
+from .conversions import (
+    from_driving_dimension_to_grpc_driving_dimension,
+    from_grpc_driving_dimension_to_driving_dimension,
+    from_grpc_update_status_to_parameter_update_status,
+)
 
 
 class GRPCDrivingDimensionsServiceV0(GRPCDrivingDimensionsService):
@@ -51,8 +56,6 @@ class GRPCDrivingDimensionsServiceV0(GRPCDrivingDimensionsService):
     def get_all_parameters(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.drivingdimensions_pb2 import GetAllRequest
 
-        from .conversions import from_grpc_driving_dimension_to_driving_dimension
-
         # Call the gRPC service
         response = self.stub.GetAll(GetAllRequest())
 
@@ -67,11 +70,6 @@ class GRPCDrivingDimensionsServiceV0(GRPCDrivingDimensionsService):
     @protect_grpc
     def set_parameter(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateRequest
-
-        from .conversions import (
-            from_driving_dimension_to_grpc_driving_dimension,
-            from_grpc_update_status_to_parameter_update_status,
-        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = UpdateRequest(
