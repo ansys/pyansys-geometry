@@ -132,9 +132,9 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
         return {
             "faces": [
                 {
-                    "id": response.id,
-                    "surface_type": response.surface_type,
-                    "is_reversed": response.is_reversed,
+                    "id": face.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
                 }
                 for face in response.faces
             ],
