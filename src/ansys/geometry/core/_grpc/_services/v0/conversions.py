@@ -663,6 +663,8 @@ def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
     Curve
         Resulting converted curve.
     """
+    from ansys.geometry.core.math.point import Point3D
+    from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.shapes.curves.circle import Circle
     from ansys.geometry.core.shapes.curves.ellipse import Ellipse
     from ansys.geometry.core.shapes.curves.line import Line
