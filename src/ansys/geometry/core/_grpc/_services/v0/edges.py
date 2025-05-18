@@ -74,7 +74,7 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
 
         # Return the response - formatted as a dictionary
         return {
-            "curve": from_grpc_curve_to_curve(response.curve),
+            "curve": from_grpc_curve_to_curve(response),
         }
 
     @protect_grpc
