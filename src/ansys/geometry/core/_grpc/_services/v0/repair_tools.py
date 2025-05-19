@@ -29,8 +29,6 @@ geometry issues, such as split edges, extra edges, duplicate faces etc.
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
-from google.protobuf.json_format import MessageToDict
-
 
 from ..base.repair_tools import GRPCRepairToolsService
 
@@ -329,8 +327,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixShortEdges(request)
 
-        serialized_tracker_response = self.serialize_tracker_command_response(response.complete_command_response)
-
+        serialized_tracker_response = self.serialize_tracker_command_response(
+            response.complete_command_response
+        )
 
         # Return the response - formatted as a dictionary
         return {
@@ -341,8 +340,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "modified_bodies_monikers": [],
             "complete_command_response": serialized_tracker_response,
         }
-    
-
 
     @protect_grpc
     def find_and_fix_extra_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -460,6 +457,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         dict
             A dictionary representation of the TrackerCommandResponse object.
         """
+
         def serialize_body(body):
             return {
                 "id": body.id,
@@ -475,8 +473,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 "parent_id": body.parent_id,
             }
 
-
-        
         def serialize_entity_identifier(entity):
             """Serialize an EntityIdentifier object into a dictionary."""
             return {
@@ -498,6 +494,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         dict
             A dictionary representation of the TrackerCommandResponse object.
         """
+
         def serialize_body(body):
             return {
                 "id": body.id,
@@ -513,8 +510,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 "parent_id": body.parent_id,
             }
 
-
-        
         def serialize_entity_identifier(entity):
             """Serialize an EntityIdentifier object into a dictionary."""
             return {
@@ -531,9 +526,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 serialize_body(body) for body in getattr(response, "modified_bodies", [])
             ],
             "deleted_bodies": [
-                serialize_entity_identifier(entity) for entity in getattr(response, "deleted_bodies", [])
+                serialize_entity_identifier(entity)
+                for entity in getattr(response, "deleted_bodies", [])
             ],
         }
-        
-        
-        
