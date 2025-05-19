@@ -76,7 +76,7 @@ class ProblemArea:
     def id(self) -> str:
         """The id of the problem area."""
         return self._id
-    
+
     @staticmethod
     def serialize_tracker_command_response(response) -> dict:
         """Serialize a TrackerCommandResponse object into a dictionary.
@@ -112,7 +112,7 @@ class ProblemArea:
             """Serialize an EntityIdentifier object into a dictionary."""
             return {
                 "id": entity.id,
-                #"type": entity.type,
+                # "type": entity.type,
             }
 
         # Safely serialize each field, defaulting to an empty list if the field is missing
@@ -408,8 +408,6 @@ class ShortEdgeProblemAreas(ProblemArea):
             FixShortEdgesRequest(short_edge_problem_area_id=self._grpc_id)
         )
 
-
-
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
             success=response.result.success,
@@ -480,7 +478,7 @@ class SmallFaceProblemAreas(ProblemArea):
         tracker_response = response.result.complete_command_response
         serialized_response = self.serialize_tracker_command_response(tracker_response)
         parent_design.update_from_tracker(serialized_response)
-        
+
         return message
 
 
