@@ -479,7 +479,7 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        # parent_design._update_design_inplace()
+        #parent_design._update_design_inplace()
         message = RepairToolMessage(
             success=response["success"],
             found=response["found"],
@@ -487,7 +487,7 @@ class RepairTools:
             created_bodies=[],
             modified_bodies=[],
         )
-        parent_design.update_from_tracker(response.complete_command_response)
+        parent_design.update_from_tracker(response["complete_command_response"])
         return message
 
     @protect_grpc
