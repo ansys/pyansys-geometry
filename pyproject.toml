@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.59",
+    "ansys-api-geometry==0.4.60",
     "ansys-tools-path>=0.3,<1",
     "beartype>=0.11.0,<0.21",
     "geomdl>=5,<6",
@@ -109,7 +109,7 @@ doc = [
     "protobuf==5.29.3",
     "pygltflib==1.16.4",
     "pyvista[jupyter]==0.45.2",
-    "quarto-cli==1.7.30",
+    "quarto-cli==1.7.31",
     "requests==2.32.3",
     "scipy==1.15.3",
     "semver==3.0.4",
