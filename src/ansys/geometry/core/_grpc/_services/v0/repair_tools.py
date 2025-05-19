@@ -252,7 +252,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndSimplify(request)
 
-        serialized_tracker_response = self.serialize_tracker_command_response(response.complete_command_response)
+        serialized_tracker_response = self.serialize_tracker_command_response(
+            response.complete_command_response
+        )
 
         # Return the response - formatted as a dictionary
         return {
@@ -355,7 +357,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixExtraEdges(request)
 
-        serialized_tracker_response = self.serialize_tracker_command_response(response.complete_command_response)
+        serialized_tracker_response = self.serialize_tracker_command_response(
+            response.complete_command_response
+        )
 
         # Return the response - formatted as a dictionary
         return {

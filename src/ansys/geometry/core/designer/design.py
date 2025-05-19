@@ -1283,7 +1283,7 @@ class Design(Component):
         def update_body(existing_body, body_info):
             existing_body.name = body_info["name"]
             existing_body._template._is_surface = body_info.get("is_surface", False)
-            print(f"Updated body: {body_info["name"]} (ID: {body_info["id"]})")
+            print(f"Updated body: {body_info['name']} (ID: {body_info['id']})")
 
         # Function to find and add bodies within components recursively
         def find_and_add_body(body_info, component):
@@ -1329,7 +1329,7 @@ class Design(Component):
                 if body.id == body_info["id"]:
                     # Remove the body from the component
                     component.bodies.remove(body)
-                    print(f"Removed body: {body_info["id"]}")
+                    print(f"Removed body: {body_info['id']}")
                     return True  # Found and removed
 
                 # Recursively search in subcomponents
@@ -1342,7 +1342,9 @@ class Design(Component):
         for body_info in tracker_response["modified_bodies"]:
             body_id = body_info["id"]
             body_name = body_info["name"]
-            is_surface = body_info.get("is_surface", False)  # Default to False if "is_surface" is missing
+            is_surface = body_info.get(
+                "is_surface", False
+            )  # Default to False if "is_surface" is missing
             updated = False  # Track if a body was updated
 
             # First, check bodies at the root level

@@ -21,7 +21,6 @@
 # SOFTWARE.
 """The problem area definition."""
 
-from abc import abstractmethod
 from typing import TYPE_CHECKING
 
 from google.protobuf.wrappers_pb2 import Int32Value
@@ -87,6 +86,7 @@ class ProblemArea:
         dict
             A dictionary representation of the TrackerCommandResponse object.
         """
+
         def serialize_body(body):
             """Serialize a Body object into a dictionary."""
             return {
@@ -120,7 +120,8 @@ class ProblemArea:
                 serialize_body(body) for body in getattr(response, "modified_bodies", [])
             ],
             "deleted_bodies": [
-                serialize_entity_identifier(entity) for entity in getattr(response, "deleted_bodies", [])
+                serialize_entity_identifier(entity)
+                for entity in getattr(response, "deleted_bodies", [])
             ],
         }
 
@@ -230,9 +231,9 @@ class MissingFaceProblemAreas(ProblemArea):
             FixMissingFacesRequest(missing_face_problem_area_id=self._grpc_id)
         )
 
-        serialized_response = self.serialize_tracker_command_response(response.result.complete_command_response)
-
-
+        serialized_response = self.serialize_tracker_command_response(
+            response.result.complete_command_response
+        )
 
         parent_design._update_design_inplace()
         message = RepairToolMessage(
@@ -457,7 +458,6 @@ class SmallFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixSmallFaces(
             FixSmallFacesRequest(small_face_problem_area_id=self._grpc_id)
         )
-
 
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
