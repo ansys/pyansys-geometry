@@ -253,6 +253,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         )
         # Call the gRPC service
         response = self.stub.FindAndSimplify(request)
+
+        serialized_tracker_response = self.serialize_tracker_command_response(response.complete_command_response)
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.success,
@@ -260,7 +263,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
-            "complete_command_response": response.complete_command_response,
+            "complete_command_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -355,6 +358,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixExtraEdges(request)
 
+        serialized_tracker_response = self.serialize_tracker_command_response(response.complete_command_response)
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.success,
@@ -362,7 +367,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": response.created_bodies_monikers,
             "modified_bodies_monikers": response.modified_bodies_monikers,
-            "complete_command_response": response.complete_command_response,
+            "complete_command_response": serialized_tracker_response,
         }
 
     @protect_grpc

@@ -1282,8 +1282,8 @@ class Design(Component):
         # Function to update a body if it exists
         def update_body(existing_body, body_info):
             existing_body.name = body_info["name"]
-            existing_body._template._is_surface = body_info["is_surface"]
-            print(f"Updated body: {body_info["name"} (ID: {body_info["id"]})")
+            existing_body._template._is_surface = body_info.get("is_surface", False)
+            print(f"Updated body: {body_info["name"]} (ID: {body_info["id"]})")
 
         # Function to find and add bodies within components recursively
         def find_and_add_body(body_info, component):
@@ -1293,7 +1293,7 @@ class Design(Component):
                         body_info["id"],
                         body_info["name"],
                         self._grpc_client,
-                        is_surface=body_info["is_surface"],
+                        is_surface=body_info.get("is_surface", False),
                     )
                     component.bodies.append(new_body)
                     print(f"Added new body: {body_info['name']} (ID: {body_info['id']})")
