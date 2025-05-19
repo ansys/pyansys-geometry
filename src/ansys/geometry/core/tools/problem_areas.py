@@ -72,6 +72,11 @@ class ProblemArea:
         self._repair_stub = RepairToolsStub(grpc_client.channel)
         self._grpc_client = grpc_client
 
+    @property
+    def id(self) -> str:
+        """The id of the problem area."""
+        return self._id
+    
     @staticmethod
     def serialize_tracker_command_response(response) -> dict:
         """Serialize a TrackerCommandResponse object into a dictionary.
@@ -107,7 +112,7 @@ class ProblemArea:
             """Serialize an EntityIdentifier object into a dictionary."""
             return {
                 "id": entity.id,
-                "type": entity.type,
+                #"type": entity.type,
             }
 
         # Safely serialize each field, defaulting to an empty list if the field is missing
@@ -180,7 +185,9 @@ class DuplicateFaceProblemAreas(ProblemArea):
             modified_bodies=response.result.modified_bodies_monikers,
         )
 
-        parent_design.update_from_tracker(response.result.complete_command_response)
+        tracker_response = response.result.complete_command_response
+        serialized_response = self.serialize_tracker_command_response(tracker_response)
+        parent_design.update_from_tracker(serialized_response)
 
         return message
 
@@ -348,7 +355,9 @@ class ExtraEdgeProblemAreas(ProblemArea):
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
-        parent_design.update_from_tracker(response.result.complete_command_response)
+        tracker_response = response.result.complete_command_response
+        serialized_response = self.serialize_tracker_command_response(tracker_response)
+        parent_design.update_from_tracker(serialized_response)
 
         return message
 
@@ -399,8 +408,7 @@ class ShortEdgeProblemAreas(ProblemArea):
             FixShortEdgesRequest(short_edge_problem_area_id=self._grpc_id)
         )
 
-        tracker_response = response.result.complete_command_response
-        serialized_response = self.serialize_tracker_command_response(tracker_response)
+
 
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
@@ -408,6 +416,9 @@ class ShortEdgeProblemAreas(ProblemArea):
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
+
+        tracker_response = response.result.complete_command_response
+        serialized_response = self.serialize_tracker_command_response(tracker_response)
         parent_design.update_from_tracker(serialized_response)
 
         return message
@@ -466,8 +477,10 @@ class SmallFaceProblemAreas(ProblemArea):
             modified_bodies=response.result.modified_bodies_monikers,
         )
 
-        parent_design.update_from_tracker(response.result.complete_command_response)
-
+        tracker_response = response.result.complete_command_response
+        serialized_response = self.serialize_tracker_command_response(tracker_response)
+        parent_design.update_from_tracker(serialized_response)
+        
         return message
 
 
@@ -582,7 +595,10 @@ class StitchFaceProblemAreas(ProblemArea):
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
-        parent_design.update_from_tracker(response.result.complete_command_response)
+
+        tracker_response = response.result.complete_command_response
+        serialized_response = self.serialize_tracker_command_response(tracker_response)
+        parent_design.update_from_tracker(serialized_response)
         return message
 
 
@@ -632,7 +648,9 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
-        parent_design.update_from_tracker(response.result.complete_command_response)
+        tracker_response = response.result.complete_command_response
+        serialized_response = self.serialize_tracker_command_response(tracker_response)
+        parent_design.update_from_tracker(serialized_response)
         return message
 
 

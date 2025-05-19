@@ -539,7 +539,7 @@ class RepairTools:
             response["found"],
             response["repaired"],
         )
-        parent_design.update_from_tracker(response.complete_command_response)
+        parent_design.update_from_tracker(response["complete_command_response"])
         return message
 
     @protect_grpc
@@ -602,7 +602,8 @@ class RepairTools:
             response["found"],
             response["repaired"],
         )
-        parent_design.update_from_tracker(response.complete_command_response)
+
+        parent_design.update_from_tracker(response["complete_command_response"])
 
         return message
 
@@ -654,7 +655,7 @@ class RepairTools:
             response["found"],
             response["repaired"],
         )
-        parent_design.update_from_tracker(response.complete_command_response)
+        parent_design.update_from_tracker(response["complete_command_response"])
         return message
 
     def inspect_geometry(self, bodies: list["Body"] = None) -> list[InspectResult]:
