@@ -25,6 +25,7 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Optional
 
 from beartype import beartype as check_input_types
+import numpy as np
 
 from ansys.geometry.core.math import Matrix44, Point3D
 from ansys.geometry.core.math.vector import Vector3D
@@ -224,7 +225,12 @@ class NURBSCurve(Curve):
         NURBSCurve
             Transformed copy of the curve.
         """
-        control_points = [matrix @ point for point in self._nurbs_curve.ctrlpts]
+        control_points = []
+        for point in self._nurbs_curve.ctrlpts:
+            # Transform the control point using the transformation matrix
+            transformed_point = matrix @ np.array([*point, 1])
+            control_points.append(Point3D(transformed_point[:3]))
+
         return NURBSCurve.from_control_points(
             control_points,
             self._nurbs_curve.degree,

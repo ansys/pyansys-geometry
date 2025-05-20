@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Trimmed curve class."""
 
-import geomdl.operations as geomdl_operations
+import numpy as np
 from pint import Quantity
 
 from ansys.api.geometry.v0.commands_pb2 import IntersectCurvesRequest
@@ -29,8 +29,10 @@ from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import trimmed_curve_to_grpc_trimmed_curve
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.math.vector import Vector3D
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -154,6 +156,31 @@ class TrimmedCurve:
             Point3D([point.x, point.y, point.z], unit=DEFAULT_UNITS.SERVER_LENGTH)
             for point in res.points
         ]
+    
+    def transformed_copy(self, matrix: Matrix44) -> "TrimmedCurve":
+        """Return a copy of the trimmed curve transformed by the given matrix.
+
+        Parameters
+        ----------
+        matrix : Matrix44
+            Transformation matrix to apply to the curve.
+
+        Returns
+        -------
+        TrimmedCurve
+            A new trimmed curve with the transformation applied.
+        """
+        transformed_geometry = self.geometry.transformed_copy(matrix)
+        transformed_start = self.start.transform(matrix)
+        transformed_end = self.end.transform(matrix)
+
+        return TrimmedCurve(
+            transformed_geometry,
+            transformed_start,
+            transformed_end,
+            self.interval,
+            self.length,
+        )
 
     def __repr__(self) -> str:
         """Represent the trimmed curve as a string."""
