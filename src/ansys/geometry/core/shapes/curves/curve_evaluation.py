@@ -23,7 +23,6 @@
 
 from functools import cached_property
 
-from ansys.api.geometry.v0.commands_pb2 import EvaluateNurbsCurveRequest
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import Vector3D

@@ -979,9 +979,14 @@ def test_nurbs_curve_fitting():
 
     assert len(nurbs_curve.control_points) == 4
     assert np.allclose(nurbs_curve.control_points[0], Point3D([0, 0, 0]))
-    assert np.allclose(nurbs_curve.control_points[1], Point3D([1.54969033497753, 4.03483016710592, 0]))
-    assert np.allclose(nurbs_curve.control_points[2], Point3D([2.87290323505786, -5.66639579939497, 0]))
+    assert np.allclose(
+        nurbs_curve.control_points[1], Point3D([1.54969033497753, 4.03483016710592, 0])
+    )
+    assert np.allclose(
+        nurbs_curve.control_points[2], Point3D([2.87290323505786, -5.66639579939497, 0])
+    )
     assert np.allclose(nurbs_curve.control_points[3], Point3D([5, 2, 0]))
+
 
 def test_nurbs_curve_evaluation():
     """Test ``NURBSCurve`` evaluation."""

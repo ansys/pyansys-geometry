@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Trimmed curve class."""
 
-import numpy as np
 from pint import Quantity
 
 from ansys.api.geometry.v0.commands_pb2 import IntersectCurvesRequest
@@ -156,7 +155,7 @@ class TrimmedCurve:
             Point3D([point.x, point.y, point.z], unit=DEFAULT_UNITS.SERVER_LENGTH)
             for point in res.points
         ]
-    
+
     def transformed_copy(self, matrix: Matrix44) -> "TrimmedCurve":
         """Return a copy of the trimmed curve transformed by the given matrix.
 
@@ -181,7 +180,7 @@ class TrimmedCurve:
             self.interval,
             self.length,
         )
-    
+
     def translate(self, direction: Vector3D, distance: Real | Quantity | Distance) -> None:
         """Translate the trimmed curve by a given vector and distance.
 
@@ -220,7 +219,8 @@ class TrimmedCurve:
 
         # Translate the curve to the origin
         translate_to_origin_matrix = Matrix44.create_translation(
-            Vector3D([origin.x.m, origin.y.m, origin.z.m]))
+            Vector3D([origin.x.m, origin.y.m, origin.z.m])
+        )
         translated_copy = self.transformed_copy(translate_to_origin_matrix)
 
         # Rotate the curve around the axis
@@ -229,7 +229,8 @@ class TrimmedCurve:
 
         # Translate the curve back to its original position
         translate_back_matrix = Matrix44.create_translation(
-            Vector3D([-origin.x.m, -origin.y.m, -origin.z.m]))
+            Vector3D([-origin.x.m, -origin.y.m, -origin.z.m])
+        )
         translated_back_copy = rotated_copy.transformed_copy(translate_back_matrix)
 
         # Update the current instance with the rotated copy
