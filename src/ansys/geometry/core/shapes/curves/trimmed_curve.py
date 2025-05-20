@@ -32,7 +32,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import Vector3D
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -181,6 +181,63 @@ class TrimmedCurve:
             self.interval,
             self.length,
         )
+    
+    def translate(self, direction: Vector3D, distance: Real | Quantity | Distance) -> None:
+        """Translate the trimmed curve by a given vector and distance.
+
+        Parameters
+        ----------
+        direction : Vector3D
+            Direction of translation.
+        distance : Real | Quantity | Distance
+            Distance to translate.
+        """
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+        translation_matrix = Matrix44.create_translation(direction * distance.value.m)
+
+        translated_copy = self.transformed_copy(translation_matrix)
+
+        # Update the current instance with the translated copy
+        self._geometry = translated_copy.geometry
+        self._start = translated_copy.start
+        self._end = translated_copy.end
+        self._length = translated_copy.length
+        self._interval = translated_copy.interval
+
+    def rotate(self, origin: Point3D, axis: Vector3D, angle: Real | Quantity | Angle) -> None:
+        """Rotate the trimmed curve around a given axis centered at a given point.
+
+        Parameters
+        ----------
+        origin : Point3D
+            Origin point of the rotation.
+        axis : Vector3D
+            Axis of rotation.
+        angle : Real | Quantity | Angle
+            Angle to rotate in radians.
+        """
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+
+        # Translate the curve to the origin
+        translate_to_origin_matrix = Matrix44.create_translation(
+            Vector3D([origin.x.m, origin.y.m, origin.z.m]))
+        translated_copy = self.transformed_copy(translate_to_origin_matrix)
+
+        # Rotate the curve around the axis
+        rotation_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle.value.m)
+        rotated_copy = translated_copy.transformed_copy(rotation_matrix)
+
+        # Translate the curve back to its original position
+        translate_back_matrix = Matrix44.create_translation(
+            Vector3D([-origin.x.m, -origin.y.m, -origin.z.m]))
+        translated_back_copy = rotated_copy.transformed_copy(translate_back_matrix)
+
+        # Update the current instance with the rotated copy
+        self._geometry = translated_back_copy.geometry
+        self._start = translated_back_copy.start
+        self._end = translated_back_copy.end
+        self._length = translated_back_copy.length
+        self._interval = translated_back_copy.interval
 
     def __repr__(self) -> str:
         """Represent the trimmed curve as a string."""
