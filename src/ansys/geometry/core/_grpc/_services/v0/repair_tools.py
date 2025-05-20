@@ -225,7 +225,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             if kwargs["width"] is not None
             else None,
         )
-    
+
         # Call the gRPC service
         response = self.stub.FindSmallFaces(request)
 
