@@ -38,8 +38,6 @@ from ansys.api.dbu.v0.designs_pb2 import (
     SaveAsRequest,
 )
 from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
-from ansys.api.dbu.v0.drivingdimensions_pb2 import GetAllRequest, UpdateRequest
-from ansys.api.dbu.v0.drivingdimensions_pb2_grpc import DrivingDimensionsStub
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
@@ -52,7 +50,6 @@ from ansys.api.geometry.v0.models_pb2 import (
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
 )
-from ansys.api.geometry.v0.namedselections_pb2_grpc import NamedSelectionsStub
 from ansys.api.geometry.v0.parts_pb2 import ExportRequest
 from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from ansys.geometry.core.connection.backend import BackendType
@@ -146,9 +143,7 @@ class Design(Component):
         self._design_stub = DesignsStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._materials_stub = MaterialsStub(self._grpc_client.channel)
-        self._named_selections_stub = NamedSelectionsStub(self._grpc_client.channel)
         self._parts_stub = PartsStub(self._grpc_client.channel)
-        self._parameters_stub = DrivingDimensionsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -323,11 +318,6 @@ class Design(Component):
     def __export_and_download_legacy(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
 
-        Notes
-        -----
-        This is a legacy method, which is used in versions
-        up to Ansys 25.1.1 products.
-
         Parameters
         ----------
         format : DesignFileFormat
@@ -337,6 +327,11 @@ class Design(Component):
         -------
         bytes
             The raw data from the exported and downloaded file.
+
+        Notes
+        -----
+        This is a legacy method, which is used in versions
+        up to Ansys 25.1.1 products.
         """
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
@@ -697,7 +692,6 @@ class Design(Component):
 
         return self._named_selections[named_selection.name]
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def delete_named_selection(self, named_selection: NamedSelection | str) -> None:
@@ -717,7 +711,7 @@ class Design(Component):
             removal_id = named_selection.id
 
         self._grpc_client.log.debug(f"Named selection {removal_name} deletion request received.")
-        self._named_selections_stub.Delete(EntityIdentifier(id=removal_id))
+        self._grpc_client.services.named_selection.delete_named_selection(id=removal_id)
 
         try:
             self._named_selections.pop(removal_name)
@@ -825,7 +819,6 @@ class Design(Component):
 
         return self._beam_profiles[profile.name]
 
-    @protect_grpc
     @min_backend_version(25, 1, 0)
     def get_all_parameters(self) -> list[Parameter]:
         """Get parameters for the design.
@@ -835,10 +828,9 @@ class Design(Component):
         list[Parameter]
             List of parameters for the design.
         """
-        response = self._parameters_stub.GetAll(GetAllRequest())
-        return [Parameter._from_proto(dimension) for dimension in response.driving_dimensions]
+        response = self._grpc_client._services.driving_dimensions.get_all_parameters()
+        return response.get("parameters")
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 1, 0)
     def set_parameter(self, dimension: Parameter) -> ParameterUpdateStatus:
@@ -854,15 +846,15 @@ class Design(Component):
         ParameterUpdateStatus
             Status of the update operation.
         """
-        request = UpdateRequest(driving_dimension=Parameter._to_proto(dimension))
-        response = self._parameters_stub.UpdateParameter(request)
-        status = response.status
+        response = self._grpc_client._services.driving_dimensions.set_parameter(
+            driving_dimension=dimension
+        )
 
         # Update the design in place. This method is computationally expensive,
         # consider finding a more efficient approach.
         self._update_design_inplace()
 
-        return ParameterUpdateStatus._from_update_status(status)
+        return response.get("status")
 
     @protect_grpc
     @check_input_types

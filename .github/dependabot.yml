@@ -1,9 +1,17 @@
 version: 2
+enable-beta-ecosystems: true # TODO: to be removed once the beta is stable for cooldown
 updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "daily"
+    cooldown:
+      default-days: 5  # Fallback cooldown if no specific rule applies
+      semver-major-days: 30  # Cooldown for major version updates
+      semver-minor-days: 7   # Cooldown for minor version updates
+      semver-patch-days: 3   # Cooldown for patch updates
+      exclude:
+        - "ansys-api-geometry"
     labels:
       - "maintenance"
       - "dependencies"
@@ -33,7 +41,15 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
+    # TODO: This should be activated once it's supported
+    # cooldown:
+    #   default-days: 5  # Fallback cooldown if no specific rule applies
+    #   semver-major-days: 30  # Cooldown for major version updates
+    #   semver-minor-days: 7   # Cooldown for minor version updates
+    #   semver-patch-days: 3   # Cooldown for patch updates
+    #   exclude:
+    #     - "ansys/actions/*"
     labels:
       - "maintenance"
     assignees:

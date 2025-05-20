@@ -1,5 +1,5 @@
 [build-system]
-requires = ["flit_core >=3.2,<3.11"] # THIS SHOULD BE REVERTED TO '["flit_core >=3.2,<4"]'
+requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
@@ -8,14 +8,14 @@ version = "0.11.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
 requires-python = ">=3.10,<4"
-license = { file = "LICENSE" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Information Analysis",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -24,13 +24,12 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.55",
+    "ansys-api-geometry==0.4.61",
     "ansys-tools-path>=0.3,<1",
-    "attrs!=24.3.0",
     "beartype>=0.11.0,<0.21",
     "geomdl>=5,<6",
-    "grpcio>=1.35.0,<1.68",
-    "grpcio-health-checking>=1.45.0,<1.68",
+    "grpcio>=1.35.0,<2",
+    "grpcio-health-checking>=1.45.0,<2",
     "matplotlib>=3,<4",
     "numpy>=1.20.3,<3",
     "Pint>=0.18,<1",
@@ -59,62 +58,60 @@ all = [
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
     "ansys-tools-path==0.7.1",
-    "ansys-tools-visualization-interface==0.8.3",
+    "ansys-tools-visualization-interface==0.9.1",
     "beartype==0.20.2",
     "docker==7.1.0",
     "geomdl==5.3.1",
-    "grpcio==1.67.1",
-    "grpcio-health-checking==1.67.1",
-    "matplotlib==3.10.1",
-    "numpy==2.2.4",
+    "grpcio==1.71.0",
+    "grpcio-health-checking==1.71.0",
+    "matplotlib==3.10.3",
+    "numpy==2.2.5",
     "Pint==0.24.4",
     "protobuf==5.29.3",
-    "pygltflib==1.16.3",
+    "pygltflib==1.16.4",
     "pytest==8.3.5",
     "pytest-cov==6.1.1",
     "pytest-pyvista==0.1.9",
-    "pytest-xvfb==3.1.1",
-    "pyvista[jupyter]==0.44.2",
+    "pyvista[jupyter]==0.45.2",
     "requests==2.32.3",
-    "scipy==1.15.2",
+    "scipy==1.15.3",
     "semver==3.0.4",
     "six==1.17.0",
-    "vtk==9.3.1",
+    "vtk==9.4.2",
 ]
 tests-minimal = [
     "pytest==8.3.5",
     "pytest-cov==6.1.1",
     "pytest-pyvista==0.1.9",
-    "pytest-xvfb==3.1.1",
 ]
 doc = [
-    "ansys-sphinx-theme[autoapi]==1.4.2",
+    "ansys-sphinx-theme[autoapi]==1.4.4",
     "ansys-tools-path==0.7.1",
-    "ansys-tools-visualization-interface==0.8.3",
+    "ansys-tools-visualization-interface==0.9.1",
     "beartype==0.20.2",
     "docker==7.1.0",
     "geomdl==5.3.1",
-    "grpcio==1.67.1",
-    "grpcio-health-checking==1.67.1",
+    "grpcio==1.71.0",
+    "grpcio-health-checking==1.71.0",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.5.3",
-    "jupytext==1.16.7",
-    "matplotlib==3.10.1",
+    "jupytext==1.17.1",
+    "matplotlib==3.10.3",
     "myst-parser==4.0.1",
     "nbconvert==7.16.6",
     "nbsphinx==0.9.6",
-    "notebook==7.3.3",
+    "notebook==7.4.2",
     "numpydoc==1.8.0",
-    "numpy==2.2.4",
+    "numpy==2.2.5",
     "panel==1.6.1",
     "pdf2image==1.17.0",
     "Pint==0.24.4",
     "protobuf==5.29.3",
-    "pygltflib==1.16.3",
-    "pyvista[jupyter]==0.44.2",
-    "quarto-cli==1.6.42",
+    "pygltflib==1.16.4",
+    "pyvista[jupyter]==0.45.2",
+    "quarto-cli==1.7.31",
     "requests==2.32.3",
-    "scipy==1.15.2",
+    "scipy==1.15.3",
     "semver==3.0.4",
     "six==1.17.0",
     "sphinx==8.2.3",
@@ -122,7 +119,7 @@ doc = [
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
     "trame-vtk==2.8.15",
-    "vtk==9.3.1",
+    "vtk==9.4.2",
 ]
 
 [project.urls]

@@ -313,6 +313,8 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/chamfer": "_static/thumbnails/chamfer.png",
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
+    "examples/04_applied/03_ahmed_body_fluent": "_static/thumbnails/ahmed_body.png",
+    "examples/99_misc/template": "_static/thumbnails/101_getting_started.png",
 }
 nbsphinx_epilog = """
 ----
@@ -356,6 +358,7 @@ linkcheck_exclude_documents = ["index", "getting_started/local/index", "changelo
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries",
     r"https://download.ansys.com/",
+    r"https://stackoverflow.com/",  # Requires human authentication
     r".*/examples/.*.py",
     r".*/examples/.*.ipynb",
     r"_static/assets/.*",
@@ -379,7 +382,9 @@ user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 exclude_patterns = []
 BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
 if not BUILD_API:
-    exclude_patterns.append("autoapi")
+    exclude_patterns.append("api")
+    html_theme_options.pop("ansys_sphinx_theme_autoapi")
+    extensions.remove("ansys_sphinx_theme.extension.autoapi")
 
 BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "true") == "true" else False
 if not BUILD_EXAMPLES:

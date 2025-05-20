@@ -6,6 +6,7 @@
 
 ## Individual Contributors
 
+* [Alan George Varghese](https://github.com/agvarghe)
 * [Alex Fernandez](https://github.com/AlejandroFernandezLuces)
 * [Alex Kaszynski](https://github.com/akaszynski)
 * [Bane Sullivan](https://github.com/banesullivan)
@@ -13,6 +14,8 @@
 * [Camille](https://github.com/clatapie)
 * [Chad Queen](https://github.com/chadqueen)
 * [Chris Hawkins](https://github.com/chris-hawkins-usa)
+* [colton](https://github.com/syscordan)
+* [dastan-ansys](https://github.com/dastan-ansys)
 * [David Gorman](https://github.com/david-gorman)
 * [Dominik Gresch](https://github.com/greschd)
 * [German](https://github.com/germa89)
@@ -22,6 +25,7 @@
 * [Jorge Martínez](https://github.com/jorgepiloto)
 * [Kathy Pippert](https://github.com/PipKat)
 * [Kerry McAdams](https://github.com/klmcadams)
+* [kmahajan-cadfem](https://github.com/kmahajan-cadfem)
 * [LanceX2214](https://github.com/LanceX2214)
 * [Matteo Bini](https://github.com/b-matteo)
 * [Maxime Rey](https://github.com/MaxJPRey)
@@ -33,9 +37,6 @@
 * [Revathy Venugopal](https://github.com/Revathyvenugopal162)
 * [Riccardo Manno](https://github.com/rmanno91)
 * [Ryan Ward](https://github.com/RyanJWard)
+* [smereu](https://github.com/smereu)
 * [Sébastien Morais](https://github.com/SMoraisAnsys)
 * [Umut Soysal](https://github.com/umutsoysalansys)
-* [colton](https://github.com/syscordan)
-* [dastan-ansys](https://github.com/dastan-ansys)
-* [kmahajan-cadfem](https://github.com/kmahajan-cadfem)
-* [smereu](https://github.com/smereu)

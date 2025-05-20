@@ -54,3 +54,7 @@ class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
     @protect_grpc
     def get_logs(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def get_service_status(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError

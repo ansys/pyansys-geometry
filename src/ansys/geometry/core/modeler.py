@@ -566,15 +566,15 @@ class Modeler:
             api_version=api_version.value if api_version is not None else None,
         )
 
-        if not response["success"]:
-            raise GeometryRuntimeError(response["message"])
+        if not response.get("success"):
+            raise GeometryRuntimeError(response.get("message"))
 
-        self.client.log.debug(f"Script result message: {response['message']}")
+        self.client.log.debug(f"Script result message: {response.get('message')}")
 
         if import_design:
-            return response["values"], self.read_existing_design()
+            return response.get("values"), self.read_existing_design()
         else:
-            return response["values"], None
+            return response.get("values"), None
 
     @property
     def repair_tools(self) -> RepairTools:

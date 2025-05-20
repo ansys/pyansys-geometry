@@ -104,3 +104,16 @@ class GRPCAdminServiceV0(GRPCAdminService):
             logs[chunk.log_name] += chunk.log_chunk.decode()
 
         return {"logs": logs}
+
+    @protect_grpc
+    def get_service_status(self, **kwargs) -> dict:  # noqa: D102
+        from google.protobuf.empty_pb2 import Empty
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = Empty()
+
+        # Call the gRPC service
+        response = self.stub.Health(request=request)
+
+        # Convert the response to a dictionary
+        return {"healthy": True if response.message == "I am healthy!" else False}

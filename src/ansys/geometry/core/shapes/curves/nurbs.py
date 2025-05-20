@@ -22,10 +22,9 @@
 """Provides for creating and managing a NURBS curve."""
 
 from functools import cached_property
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from beartype import beartype as check_input_types
-import geomdl.NURBS as geomdl_nurbs  # noqa: N811
 
 from ansys.geometry.core.math import Matrix44, Point3D
 from ansys.geometry.core.math.vector import Vector3D
@@ -38,6 +37,9 @@ from ansys.geometry.core.shapes.parameterization import (
     ParamType,
 )
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    import geomdl.NURBS as geomdl_nurbs  # noqa: N811
 
 
 class NURBSCurve(Curve):
@@ -53,14 +55,20 @@ class NURBSCurve(Curve):
 
     """
 
-    def __init__(
-        self,
-    ):
+    def __init__(self):
         """Initialize ``NURBSCurve`` class."""
+        try:
+            import geomdl.NURBS as geomdl_nurbs  # noqa: N811
+        except ImportError as e:  # pragma: no cover
+            raise ImportError(
+                "The `geomdl` library is required to use the NURBSCurve class. "
+                "Please install it using `pip install geomdl`."
+            ) from e
+
         self._nurbs_curve = geomdl_nurbs.Curve()
 
     @property
-    def geomdl_nurbs_curve(self) -> geomdl_nurbs.Curve:
+    def geomdl_nurbs_curve(self) -> "geomdl_nurbs.Curve":
         """Get the underlying NURBS curve.
 
         Notes
@@ -210,14 +218,6 @@ class NURBSCurve(Curve):
 
         This method returns the evaluation at the closest point.
 
-        Notes
-        -----
-        Based on `the NURBS book <https://link.springer.com/book/10.1007/978-3-642-59223-2>`_,
-        the projection of a point to a NURBS curve is the solution to the following optimization
-        problem: minimize the distance between the point and the curve. The distance is defined
-        as the Euclidean distance squared. For more information, please refer to
-        the implementation of the `distance_squared` function.
-
         Parameters
         ----------
         point : Point3D
@@ -231,13 +231,20 @@ class NURBSCurve(Curve):
         CurveEvaluation
             Evaluation at the closest point on the curve.
 
+        Notes
+        -----
+        Based on `the NURBS book <https://link.springer.com/book/10.1007/978-3-642-59223-2>`_,
+        the projection of a point to a NURBS curve is the solution to the following optimization
+        problem: minimize the distance between the point and the curve. The distance is defined
+        as the Euclidean distance squared. For more information, please refer to
+        the implementation of the `distance_squared` function.
         """
         import numpy as np
         from scipy.optimize import minimize
 
         # Function to minimize (distance squared)
         def distance_squared(
-            u: float, geomdl_nurbs_curbe: geomdl_nurbs.Curve, point: np.ndarray
+            u: float, geomdl_nurbs_curbe: "geomdl_nurbs.Curve", point: np.ndarray
         ) -> np.ndarray:
             point_on_curve = np.array(geomdl_nurbs_curbe.evaluate_single(u))
             return np.sum((point_on_curve - point) ** 2)
