@@ -31,7 +31,7 @@ from ansys.geometry.core.connection.conversions import trimmed_curve_to_grpc_tri
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.math.vector import Vector3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
@@ -182,7 +182,7 @@ class TrimmedCurve:
             self.length,
         )
     
-    def translate(self, direction: Vector3D, distance: Real | Quantity | Distance) -> None:
+    def translate(self, direction: UnitVector3D, distance: Real | Quantity | Distance) -> None:
         """Translate the trimmed curve by a given vector and distance.
 
         Parameters
@@ -204,7 +204,7 @@ class TrimmedCurve:
         self._length = translated_copy.length
         self._interval = translated_copy.interval
 
-    def rotate(self, origin: Point3D, axis: Vector3D, angle: Real | Quantity | Angle) -> None:
+    def rotate(self, origin: Point3D, axis: UnitVector3D, angle: Real | Quantity | Angle) -> None:
         """Rotate the trimmed curve around a given axis centered at a given point.
 
         Parameters

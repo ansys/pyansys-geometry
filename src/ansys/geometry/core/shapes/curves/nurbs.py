@@ -169,8 +169,8 @@ class NURBSCurve(Curve):
         # Convert points to a format suitable for the fitting function
         converted_points = []
         for pt in points:
-            pt = (pt.x.m, pt.y.m, pt.z.m)
-            converted_points.append(pt)
+            pt_raw = [*pt]
+            converted_points.append(pt_raw)
 
         # Fit the curve to the points
         curve = fitting.interpolate_curve(converted_points, degree)
@@ -178,9 +178,15 @@ class NURBSCurve(Curve):
         # Construct the NURBSCurve object
         nurbs_curve = cls()
         nurbs_curve._nurbs_curve.degree = curve.degree
-        nurbs_curve._nurbs_curve.ctrlpts = curve.ctrlpts
+        nurbs_curve._nurbs_curve.ctrlpts = [Point3D(entry) for entry in curve.ctrlpts]
         nurbs_curve._nurbs_curve.knotvector = curve.knotvector
         nurbs_curve._nurbs_curve.weights = curve.weights
+
+        # Verify the curve is valid
+        try:
+            nurbs_curve._nurbs_curve._check_variables()
+        except ValueError as e:
+            raise ValueError(f"Invalid NURBS curve: {e}")
 
         return nurbs_curve
 
