@@ -801,6 +801,7 @@ def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceTyp
         Resulting converted surface.
     """
     from ansys.geometry.core.designer.face import SurfaceType
+    from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.shapes.surfaces.cone import Cone
     from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder
     from ansys.geometry.core.shapes.surfaces.plane import PlaneSurface
