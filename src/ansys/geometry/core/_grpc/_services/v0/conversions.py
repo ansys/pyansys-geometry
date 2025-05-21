@@ -60,6 +60,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from ansys.geometry.core.connection.backend import BackendType
     from ansys.geometry.core.designer.design import DesignFileFormat
+    from ansys.geometry.core.designer.face import SurfaceType
     from ansys.geometry.core.materials.material import Material
     from ansys.geometry.core.materials.property import MaterialProperty
     from ansys.geometry.core.math.frame import Frame
@@ -784,6 +785,45 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
         surface_type = GRPCSurfaceType.SURFACETYPE_TORUS
 
     return grpc_surface, surface_type
+
+
+def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceType") -> "Surface":
+    """Convert a surface gRPC message to a ``Surface`` class.
+
+    Parameters
+    ----------
+    surface : GRPCSurface
+        Geometry service gRPC surface message.
+
+    Returns
+    -------
+    Surface
+        Resulting converted surface.
+    """
+    from ansys.geometry.core.designer.face import SurfaceType
+    from ansys.geometry.core.shapes.surfaces.cone import Cone
+    from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder
+    from ansys.geometry.core.shapes.surfaces.plane import PlaneSurface
+    from ansys.geometry.core.shapes.surfaces.sphere import Sphere
+    from ansys.geometry.core.shapes.surfaces.torus import Torus
+
+    origin = from_grpc_point_to_point3d(surface.origin)
+    axis = UnitVector3D([surface.axis.x, surface.axis.y, surface.axis.z])
+    reference = UnitVector3D([surface.reference.x, surface.reference.y, surface.reference.z])
+
+    if surface_type == SurfaceType.SURFACETYPE_CONE:
+        result = Cone(origin, surface.radius, surface.half_angle, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_CYLINDER:
+        result = Cylinder(origin, surface.radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_SPHERE:
+        result = Sphere(origin, surface.radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_TORUS:
+        result = Torus(origin, surface.major_radius, surface.minor_radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_PLANE:
+        result = PlaneSurface(origin, reference, axis)
+    else:
+        result = None
+    return result
 
 
 def from_grpc_backend_type_to_backend_type(

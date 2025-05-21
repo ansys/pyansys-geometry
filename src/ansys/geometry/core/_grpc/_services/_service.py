@@ -30,6 +30,7 @@ from .base.dbuapplication import GRPCDbuApplicationService
 from .base.designs import GRPCDesignsService
 from .base.driving_dimensions import GRPCDrivingDimensionsService
 from .base.edges import GRPCEdgesService
+from .base.faces import GRPCFacesService
 from .base.materials import GRPCMaterialsService
 from .base.measurement_tools import GRPCMeasurementToolsService
 from .base.named_selection import GRPCNamedSelectionService
@@ -83,6 +84,7 @@ class _GRPCServices:
         self._designs = None
         self._driving_dimensions = None
         self._edges = None
+        self._faces = None
         self._materials = None
         self._measurement_tools = None
         self._named_selection = None
@@ -271,6 +273,32 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._edges
+
+    @property
+    def faces(self) -> GRPCFacesService:
+        """
+        Get the faces service for the specified version.
+
+        Returns
+        -------
+        GRPCEdgesService
+            The faces service for the specified version.
+        """
+        if not self._faces:
+            # Import the appropriate faces service based on the version
+            from .v0.faces import GRPCFacesServiceV0
+            from .v1.faces import GRPCFacesServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._faces = GRPCFacesServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._faces = GRPCFacesServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._faces
 
     @property
     def materials(self) -> GRPCMaterialsService:
