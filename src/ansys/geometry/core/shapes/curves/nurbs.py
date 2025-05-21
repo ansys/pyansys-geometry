@@ -141,13 +141,13 @@ class NURBSCurve(Curve):
             raise ValueError(f"Invalid NURBS curve: {e}")
 
         return curve
-    
+
     @classmethod
     @check_input_types
     def fit_curve_from_points(
         cls,
         points: list[Point3D],
-        degree: int, 
+        degree: int,
     ) -> "NURBSCurve":
         """Fit a NURBS curve to a set of points.
 
