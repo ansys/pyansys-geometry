@@ -168,7 +168,7 @@ class Circle(Curve):
             self.dir_x,
             self.dir_z,
         )
-    
+
     def translate(self, translation: UnitVector3D, distance: Real) -> "Circle":
         """Translate the circle by a given distance in a specified direction.
 

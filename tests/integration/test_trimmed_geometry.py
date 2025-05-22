@@ -286,7 +286,7 @@ def test_trimmed_curve_circle_translate(hedgehog_design):
 
     trimmed_curve.translate(UnitVector3D([1, 0, 0]), 0.01)
 
-    assert np.allclose(trimmed_curve.start,Point3D([0.02, 0.01, 0.02]))
+    assert np.allclose(trimmed_curve.start, Point3D([0.02, 0.01, 0.02]))
     assert np.allclose(trimmed_curve.end, Point3D([0.0, 0.01, 0.02]))
 
 
