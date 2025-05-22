@@ -147,7 +147,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         data = bytes()
         for elem in response:
-            data += response.data
+            data += elem.data
 
         return {"data": data}
 
