@@ -317,7 +317,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._materials = GRPCMaterialsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
                 # V1 is not implemented yet
                 self._materials = GRPCMaterialsServiceV1(self.channel)
             else:  # pragma: no cover
