@@ -19,17 +19,21 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the repair tools service implementation."""
+"""Module containing the faces service implementation for v1."""
 
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.repair_tools import GRPCRepairToolsService
+from ..base.faces import GRPCFacesService
 
 
-class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # pragma: no cover
-    """Repair tools service for gRPC communication with the Geometry server.
+class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
+    """Faces service for gRPC communication with the Geometry server.
+
+    This class provides methods to interact with the Geometry server's
+    faces service. It is specifically designed for the v1 version of the
+    Geometry API.
 
     Parameters
     ----------
@@ -39,70 +43,50 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.repairtools_pb2_grpc import RepairToolsStub
+        from ansys.api.geometry.v1.faces_pb2_grpc import FacesStub
 
-        self.stub = RepairToolsStub(channel)
+        self.stub = FacesStub(channel)
 
     @protect_grpc
-    def find_split_edges(self, **kwargs) -> dict:  # noqa: D102
+    def get_surface(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def find_extra_edges(self, **kwargs) -> dict:  # noqa: D102
+    def get_box_uv(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def find_inexact_edges(self, **kwargs) -> dict:  # noqa: D102
+    def get_area(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def find_short_edges(self, **kwargs) -> dict:  # noqa: D102
+    def get_edges(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def find_duplicate_faces(self, **kwargs) -> dict:  # noqa: D102
+    def get_loops(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def find_missing_faces(self, **kwargs) -> dict:  # noqa: D102
+    def get_color(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def find_small_faces(self, **kwargs) -> dict:  # noqa: D102
+    def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def find_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
+    def set_color(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def find_simplify(self, **kwargs) -> dict:  # noqa: D102
+    def get_normal(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def find_interferences(self, **kwargs) -> dict:  # noqa: D102
+    def evaluate(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def find_and_fix_short_edges(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
-
-    @protect_grpc
-    def find_and_fix_extra_edges(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
-
-    @protect_grpc
-    def find_and_fix_split_edges(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
-
-    @protect_grpc
-    def find_and_fix_simplify(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
-
-    @protect_grpc
-    def inspect_geometry(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
-
-    @protect_grpc
-    def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
+    def create_iso_parametric_curve(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError

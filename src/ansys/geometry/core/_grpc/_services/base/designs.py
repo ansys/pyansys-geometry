@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the coordinate systems service implementation (abstraction layer)."""
+"""Module containing the designs service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCCoordinateSystemService(ABC):  # pragma: no cover
-    """Coordinate systems service for gRPC communication with the Geometry server.
+class GRPCDesignsService(ABC):  # pragma: no cover
+    """Designs service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,10 +36,50 @@ class GRPCCoordinateSystemService(ABC):  # pragma: no cover
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCCoordinateSystemService class."""
+        """Initialize the GRPCDesignsService class."""
         pass
 
     @abstractmethod
-    def create(self, **kwargs) -> dict:
-        """Create a coordinate system."""
+    def open(self, **kwargs) -> dict:
+        """Open a design on the service."""
+        pass
+
+    @abstractmethod
+    def new(self, **kwargs) -> dict:
+        """Create a new design."""
+        pass
+
+    @abstractmethod
+    def close(self, **kwargs) -> dict:
+        """Close the currently open design."""
+        pass
+
+    @abstractmethod
+    def put_active(self, **kwargs) -> dict:
+        """Activate an already opened design on the service."""
+        pass
+
+    @abstractmethod
+    def save_as(self, **kwargs) -> dict:
+        """Create a new design."""
+        pass
+
+    @abstractmethod
+    def download_export(self, **kwargs) -> dict:
+        """Download and export a design into a certain format."""
+        pass
+
+    @abstractmethod
+    def stream_download_export(self, **kwargs) -> dict:
+        """Download and export a design into a certain format."""
+        pass
+
+    @abstractmethod
+    def insert(self, **kwargs) -> dict:
+        """Insert a part/component/design into an existing design."""
+        pass
+
+    @abstractmethod
+    def get_active(self, **kwargs) -> dict:
+        """Get the active design on the service."""
         pass

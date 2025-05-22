@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the coordinate systems service implementation (abstraction layer)."""
+"""Module containing the materials service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCCoordinateSystemService(ABC):  # pragma: no cover
-    """Coordinate systems service for gRPC communication with the Geometry server.
+class GRPCMaterialsService(ABC):  # pragma: no cover
+    """Materials service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,10 +36,10 @@ class GRPCCoordinateSystemService(ABC):  # pragma: no cover
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCCoordinateSystemService class."""
+        """Initialize the GRPCMaterialsService class."""
         pass
 
     @abstractmethod
-    def create(self, **kwargs) -> dict:
-        """Create a coordinate system."""
+    def add_material(self, **kwargs) -> dict:
+        """Add material to the service design."""
         pass

@@ -19,20 +19,20 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the coordinate systems service implementation for v1."""
+"""Module containing the edges service implementation for v1."""
 
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.coordinate_systems import GRPCCoordinateSystemService
+from ..base.edges import GRPCEdgesService
 
 
-class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no cover
-    """Coordinate systems service for gRPC communication with the Geometry server.
+class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
+    """Edges service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
-    coordinate systems service. It is specifically designed for the v1 version of the
+    edges service. It is specifically designed for the v1 version of the
     Geometry API.
 
     Parameters
@@ -43,10 +43,34 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no 
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.coordinatesystems_pb2_grpc import CoordinateSystemsStub
+        from ansys.api.geometry.v1.edges_pb2_grpc import EdgesStub
 
-        self.stub = CoordinateSystemsStub(channel)
+        self.stub = EdgesStub(channel)
 
     @protect_grpc
-    def create(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+    def get_edge(self, **kwargs) -> dict:  # noqa: D102
+        return NotImplementedError
+
+    @protect_grpc
+    def get_curve(self, **kwargs) -> dict:  # noqa: D102
+        return NotImplementedError
+
+    @protect_grpc
+    def get_start_and_end_points(self, **kwargs) -> dict:  # noqa: D102
+        return NotImplementedError
+
+    @protect_grpc
+    def get_length(self, **kwargs) -> dict:  # noqa: D102
+        return NotImplementedError
+
+    @protect_grpc
+    def get_interval(self, **kwargs) -> dict:  # noqa: D102
+        return NotImplementedError
+
+    @protect_grpc
+    def get_faces(self, **kwargs) -> dict:  # noqa: D102
+        return NotImplementedError
+
+    @protect_grpc
+    def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
+        return NotImplementedError

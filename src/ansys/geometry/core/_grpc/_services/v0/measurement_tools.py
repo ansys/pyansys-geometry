@@ -25,6 +25,7 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import to_distance
 from ..base.measurement_tools import GRPCMeasurementToolsService
 
 
@@ -50,8 +51,6 @@ class GRPCMeasurementToolsServiceV0(GRPCMeasurementToolsService):
     @protect_grpc
     def min_distance_between_objects(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.measuretools_pb2 import MinDistanceBetweenObjectsRequest
-
-        from ..base.conversions import to_distance
 
         # Create the request - assumes all inputs are valid and of the proper type
         # Request is different based on backend_version (25.2 vs. earlier)
