@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the coordinate systems service implementation (abstraction layer)."""
+"""Module containing the edges service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCCoordinateSystemService(ABC):  # pragma: no cover
-    """Coordinate systems service for gRPC communication with the Geometry server.
+class GRPCEdgesService(ABC):  # pragma: no cover
+    """Edges service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,10 +36,40 @@ class GRPCCoordinateSystemService(ABC):  # pragma: no cover
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCCoordinateSystemService class."""
+        """Initialize the GRPCEdgesService class."""
         pass
 
     @abstractmethod
-    def create(self, **kwargs) -> dict:
-        """Create a coordinate system."""
+    def get_edge(self, **kwargs) -> dict:
+        """Get edge."""
+        pass
+
+    @abstractmethod
+    def get_curve(self, **kwargs) -> dict:
+        """Get curve information for the edge."""
+        pass
+
+    @abstractmethod
+    def get_start_and_end_points(self, **kwargs) -> dict:
+        """Get start and end points for the edge."""
+        pass
+
+    @abstractmethod
+    def get_length(self, **kwargs) -> dict:
+        """Get the length of the edge."""
+        pass
+
+    @abstractmethod
+    def get_interval(self, **kwargs) -> dict:
+        """Get the interval of the edge."""
+        pass
+
+    @abstractmethod
+    def get_faces(self, **kwargs) -> dict:
+        """Get the faces that are connected to the edge."""
+        pass
+
+    @abstractmethod
+    def get_bounding_box(self, **kwargs) -> dict:
+        """Get the bounding box of the edge."""
         pass

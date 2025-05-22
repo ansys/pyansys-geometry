@@ -19,15 +19,22 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the coordinate systems service implementation (abstraction layer)."""
-
-from abc import ABC, abstractmethod
+"""Module containing the materials service implementation for v0."""
 
 import grpc
 
+from ansys.geometry.core.errors import protect_grpc
 
-class GRPCCoordinateSystemService(ABC):  # pragma: no cover
-    """Coordinate systems service for gRPC communication with the Geometry server.
+from ..base.materials import GRPCMaterialsService
+from .conversions import from_material_to_grpc_material
+
+
+class GRPCMaterialsServiceV0(GRPCMaterialsService):
+    """Materials service for gRPC communication with the Geometry server.
+
+    This class provides methods to interact with the Geometry server's
+    materials service. It is specifically designed for the v0 version of the
+    Geometry API.
 
     Parameters
     ----------
@@ -35,11 +42,23 @@ class GRPCCoordinateSystemService(ABC):  # pragma: no cover
         The gRPC channel to the server.
     """
 
-    def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCCoordinateSystemService class."""
-        pass
+    @protect_grpc
+    def __init__(self, channel: grpc.Channel):  # noqa: D102
+        from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
 
-    @abstractmethod
-    def create(self, **kwargs) -> dict:
-        """Create a coordinate system."""
-        pass
+        self.stub = MaterialsStub(channel)
+
+    @protect_grpc
+    def add_material(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = AddToDocumentRequest(
+            material=from_material_to_grpc_material(kwargs["material"]),
+        )
+
+        # Call the gRPC service
+        _ = self.stub.AddToDocument(request=request)
+
+        # Convert the response to a dictionary
+        return {}

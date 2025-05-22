@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the prepare tools service implementation (abstraction layer)."""
+"""Module containing the faces service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCPrepareToolsService(ABC):  # pragma: no cover
-    """Prepare tools service for gRPC communication with the Geometry server.
+class GRPCFacesService(ABC):  # pragma: no cover
+    """Faces service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,45 +36,60 @@ class GRPCPrepareToolsService(ABC):  # pragma: no cover
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCPrepareToolsService class."""
+        """Initialize the GRPCFacesService class."""
         pass
 
     @abstractmethod
-    def extract_volume_from_faces(self, **kwargs) -> dict:
-        """Extract a volume from input faces."""
+    def get_surface(self, **kwargs) -> dict:
+        """Get the surface of a face."""
         pass
 
     @abstractmethod
-    def extract_volume_from_edge_loops(self, **kwargs) -> dict:
-        """Extract a volume from input edge loop."""
+    def get_box_uv(self, **kwargs) -> dict:
+        """Get the UV box of a face."""
         pass
 
     @abstractmethod
-    def remove_rounds(self, **kwargs) -> dict:
-        """Remove rounds from geometry."""
+    def get_area(self, **kwargs) -> dict:
+        """Get the area of a face."""
         pass
 
     @abstractmethod
-    def share_topology(self, **kwargs) -> dict:
-        """Share topology between the given bodies."""
+    def get_edges(self, **kwargs) -> dict:
+        """Get the edges of a face."""
         pass
 
     @abstractmethod
-    def enhanced_share_topology(self, **kwargs) -> dict:
-        """Share topology between the given bodies."""
+    def get_loops(self, **kwargs) -> dict:
+        """Get the loops of a face."""
         pass
 
     @abstractmethod
-    def find_logos(self, **kwargs) -> dict:
-        """Detect logos in geometry."""
+    def get_color(self, **kwargs) -> dict:
+        """Get the color of a face."""
         pass
 
     @abstractmethod
-    def find_and_remove_logos(self, **kwargs) -> dict:
-        """Detect and remove logos in geometry."""
+    def get_bounding_box(self, **kwargs) -> dict:
+        """Get the bounding box of a face."""
         pass
 
     @abstractmethod
-    def remove_logo(self, **kwargs) -> dict:
-        """Remove logos in geometry."""
+    def set_color(self, **kwargs) -> dict:
+        """Set the color of a face."""
+        pass
+
+    @abstractmethod
+    def get_normal(self, **kwargs) -> dict:
+        """Get the normal of a face."""
+        pass
+
+    @abstractmethod
+    def evaluate(self, **kwargs) -> dict:
+        """Evaluate a face at a given parameter."""
+        pass
+
+    @abstractmethod
+    def create_iso_parametric_curve(self, **kwargs) -> dict:
+        """Create an iso-parametric curve on a face."""
         pass

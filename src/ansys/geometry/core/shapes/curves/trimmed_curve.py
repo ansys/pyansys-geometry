@@ -95,13 +95,11 @@ class TrimmedCurve:
         return self._end
 
     @property
-    @protect_grpc
     def length(self) -> Quantity:
         """Calculated length of the edge."""
         return self._length
 
     @property
-    @protect_grpc
     def interval(self) -> Interval:
         """Interval of the curve that provides its boundary."""
         return self._interval
