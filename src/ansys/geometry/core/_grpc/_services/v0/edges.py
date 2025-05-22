@@ -59,9 +59,9 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
 
         # Return the response - formatted as a dictionary
         return {
-            "edge_id": response.id,
-            "edge_curve_type": response.curve_type,
-            "edge_is_reversed": response.is_reversed,
+            "id": response.id,
+            "curve_type": response.curve_type,
+            "is_reversed": response.is_reversed,
         }
 
     @protect_grpc

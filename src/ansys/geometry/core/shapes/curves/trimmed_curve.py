@@ -27,7 +27,6 @@ from ansys.api.geometry.v0.commands_pb2 import IntersectCurvesRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import trimmed_curve_to_grpc_trimmed_curve
-from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.curves.curve import Curve
@@ -92,13 +91,11 @@ class TrimmedCurve:
         return self._end
 
     @property
-    @protect_grpc
     def length(self) -> Quantity:
         """Calculated length of the edge."""
         return self._length
 
     @property
-    @protect_grpc
     def interval(self) -> Interval:
         """Interval of the curve that provides its boundary."""
         return self._interval

@@ -212,7 +212,6 @@ class Design(Component):
 
     # TODO: allow for list of materials
     # https://github.com/ansys/pyansys-geometry/issues/1319
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def add_material(self, material: Material) -> None:

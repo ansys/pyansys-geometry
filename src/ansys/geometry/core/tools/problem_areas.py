@@ -646,7 +646,6 @@ class LogoProblemArea(ProblemArea):
         """The ids of the faces defining the logos."""
         return self._face_ids
 
-    @protect_grpc
     def fix(self) -> bool:
         """Fix the problem area by deleting the logos.
 
