@@ -266,7 +266,7 @@ class Face:
         from ansys.geometry.core.designer.edge import CurveType
 
         self._grpc_client.log.debug("Requesting face loops from server.")
-        response_loops = self._grpc_client.services.faces.get_edges(id=self.id).get("loops")
+        response_loops = self._grpc_client.services.faces.get_loops(id=self.id).get("loops")
         loops = []
         for response_loop in response_loops:
             type = FaceLoopType(response_loop.get("type"))
