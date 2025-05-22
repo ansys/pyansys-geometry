@@ -273,16 +273,18 @@ class Face:
             length = response_loop.get("length")
             min = response_loop.get("min_corner")
             max = response_loop.get("max_corner")
-            edges = [
-                Edge(
-                    edge.get("id"),
-                    CurveType(edge.get("curve_type")),
-                    self._body,
-                    self._grpc_client,
-                    edge.get("is_reversed"),
+            edges = []
+            for edge_id in response_loop.get("edges"):
+                response_edge = self._grpc_client.services.edges.get_edge(id=edge_id)
+                edges.append(
+                    Edge(
+                        response_edge.get("id"),
+                        CurveType(response_edge.get("curve_type")),
+                        self._body,
+                        self._grpc_client,
+                        response_edge.get("is_reversed"),
+                    )
                 )
-                for edge in response_loop.get("edges")
-            ]
             loops.append(
                 FaceLoop(type=type, length=length, min_bbox=min, max_bbox=max, edges=edges)
             )

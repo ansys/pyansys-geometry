@@ -130,14 +130,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
                     "length": to_distance(loop.length).value,
                     "min_corner": from_grpc_point_to_point3d(loop.bounding_box.min),
                     "max_corner": from_grpc_point_to_point3d(loop.bounding_box.max),
-                    "edges": [
-                        {
-                            "id": edge.id,
-                            "curve_type": edge.curve_type,
-                            "is_reversed": edge.is_reversed,
-                        }
-                        for edge in loop.edges
-                    ],
+                    "edges": [edge for edge in loop.edges],
                 }
                 for loop in response.loops
             ]
