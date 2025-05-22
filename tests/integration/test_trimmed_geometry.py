@@ -21,6 +21,8 @@
 # SOFTWARE.
 """Tests trimmed geometry."""
 
+import math
+
 import numpy as np
 import pytest
 
@@ -41,19 +43,16 @@ from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
 )
 from ansys.geometry.core.sketch.sketch import Sketch
 
-"""A helper function to create a sketch line given two points and a design."""
-
 
 def create_sketch_line(design: Design, p1: Point3D, p2: Point3D):
+    """A helper function to create a sketch line given two points and a design."""
     point1 = point3d_to_grpc_point(p1)
     point2 = point3d_to_grpc_point(p2)
     design._commands_stub.CreateSketchLine(CreateSketchLineRequest(point1=point1, point2=point2))
 
 
-"""A helper function that creates the Hedgehog model."""
-
-
 def create_hedgehog(modeler: Modeler):
+    """A helper function that creates the Hedgehog model."""
     design = modeler.create_design("Hedgehog")
     sketch = Sketch().arc_from_three_points(
         Point2D([0.01, 0.01]), Point2D([0, -0.005]), Point2D([-0.01, 0.01])
@@ -97,19 +96,15 @@ def create_hedgehog(modeler: Modeler):
     return design
 
 
-"""A fixture of the hedgehog design to test the surface and curve properties individually."""
-
-
 @pytest.fixture
 def hedgehog_design(modeler: Modeler):
+    """A fixture of the hedgehog design to test the surface and curve properties individually."""
     h = create_hedgehog(modeler)
     yield h
 
 
-"""Tests the surface properties for the hedgehog design."""
-
-
 def test_trimmed_surface_properties(hedgehog_design):
+    """Tests the surface properties for the hedgehog design."""
     hedgehog_body = hedgehog_design.bodies[0]
     faces = hedgehog_body.faces
 
@@ -161,10 +156,8 @@ def test_trimmed_surface_properties(hedgehog_design):
         assert faces[i].shape.box_uv.interval_v == Interval(start=interval_v[0], end=interval_v[1])
 
 
-"""Tests the normal vectors for the hedgehog design using the BoxUV coordinates."""
-
-
 def test_trimmed_surface_normals(hedgehog_design):
+    """Tests the normal vectors for the hedgehog design using the BoxUV coordinates."""
     hedgehog_body = hedgehog_design.bodies[0]
     faces = hedgehog_body.faces
     # corners to consider
@@ -219,10 +212,8 @@ def test_trimmed_surface_normals(hedgehog_design):
         assert np.allclose(faces[i].shape.normal(corner_param.u, corner_param.v), bottom_right)
 
 
-"""Tests the curve properties for the hedgehog design."""
-
-
 def test_trimmed_curve_properties(hedgehog_design):
+    """Tests the curve properties for the hedgehog design."""
     hedgehog_body = hedgehog_design.bodies[0]
     edges = hedgehog_body.edges
 
@@ -245,3 +236,55 @@ def test_trimmed_curve_properties(hedgehog_design):
         assert isinstance(edges[i].shape.geometry, geometry_type)
         assert np.allclose(edges[i].shape.start, Point3D(start))
         assert np.allclose(edges[i].shape.end, Point3D(end))
+
+
+def test_trimmed_curve_line_translate(hedgehog_design):
+    """Tests the translation of a trimmed curve with line geometry."""
+    hedgehog_body = hedgehog_design.bodies[0]
+    edges = hedgehog_body.edges
+    edge = edges[1]
+    trimmed_curve = edge.shape
+
+    assert isinstance(trimmed_curve, TrimmedCurve)
+    assert trimmed_curve.start == Point3D([0.01, 0.01, 0.0])
+    assert trimmed_curve.end == Point3D([0.01, 0.01, 0.02])
+
+    trimmed_curve.translate(UnitVector3D([1, 0, 0]), 0.01)
+
+    assert trimmed_curve.start == Point3D([0.02, 0.01, 0.0])
+    assert trimmed_curve.end == Point3D([0.02, 0.01, 0.02])
+
+
+def test_trimmed_curve_line_rotate(hedgehog_design):
+    """Tests the rotation of a trimmed curve with line geometry."""
+    hedgehog_body = hedgehog_design.bodies[0]
+    edges = hedgehog_body.edges
+    edge = edges[1]
+    trimmed_curve = edge.shape
+
+    assert isinstance(trimmed_curve, TrimmedCurve)
+    assert trimmed_curve.start == Point3D([0.01, 0.01, 0.0])
+    assert trimmed_curve.end == Point3D([0.01, 0.01, 0.02])
+
+    # Rotate the curve in the x-direction by 90 degrees about the point (0.01, 0.01, 0.0)
+    trimmed_curve.rotate(Point3D([0.01, 0.01, 0.0]), UnitVector3D([1, 0, 0]), math.pi / 2)
+
+    assert np.allclose(trimmed_curve.start, Point3D([0.01, 0.01, 0.0]))
+    assert np.allclose(trimmed_curve.end, Point3D([0.01, -0.01, 0.0]))
+
+
+def test_trimmed_curve_circle_translate(hedgehog_design):
+    """Tests the rotation of a trimmed curve with circle geometry."""
+    hedgehog_body = hedgehog_design.bodies[0]
+    edges = hedgehog_body.edges
+    edge = edges[0]
+    trimmed_curve = edge.shape
+
+    assert isinstance(trimmed_curve, TrimmedCurve)
+    assert np.allclose(trimmed_curve.start, Point3D([0.01, 0.01, 0.02]))
+    assert np.allclose(trimmed_curve.end, Point3D([-0.01, 0.01, 0.02]))
+
+    trimmed_curve.translate(UnitVector3D([1, 0, 0]), 0.01)
+
+    assert np.allclose(trimmed_curve.start,Point3D([0.02, 0.01, 0.02]))
+    assert np.allclose(trimmed_curve.end, Point3D([0.0, 0.01, 0.02]))

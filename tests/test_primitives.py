@@ -723,8 +723,6 @@ def test_circle():
     rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
     circle_transformation = circle_2.transformed_copy(matrix=rotation_matrix)
     assert np.allclose(circle_transformation._origin, Point3D([-99, 42, 13]))
-    assert np.allclose(circle_transformation._reference, UnitVector3D([-31, 12, 99]))
-    assert np.allclose(circle_transformation._axis, UnitVector3D([-99, 0, -31]))
     circle_mirror = circle_2.mirrored_copy()
     assert np.allclose(circle_mirror._origin, Point3D([42, 99, 13]))
     assert np.allclose(

@@ -220,7 +220,7 @@ class TrimmedCurve:
 
         # Translate the curve to the origin
         translate_to_origin_matrix = Matrix44.create_translation(
-            Vector3D([origin.x.m, origin.y.m, origin.z.m]))
+            Vector3D([-origin.x.m, -origin.y.m, -origin.z.m]))
         translated_copy = self.transformed_copy(translate_to_origin_matrix)
 
         # Rotate the curve around the axis
@@ -229,7 +229,7 @@ class TrimmedCurve:
 
         # Translate the curve back to its original position
         translate_back_matrix = Matrix44.create_translation(
-            Vector3D([-origin.x.m, -origin.y.m, -origin.z.m]))
+            Vector3D([origin.x.m, origin.y.m, origin.z.m]))
         translated_back_copy = rotated_copy.transformed_copy(translate_back_matrix)
 
         # Update the current instance with the rotated copy

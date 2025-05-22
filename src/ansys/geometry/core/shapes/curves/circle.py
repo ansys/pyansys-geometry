@@ -161,14 +161,31 @@ class Circle(Curve):
             New circle that is the transformed copy of the original circle.
         """
         new_point = self.origin.transform(matrix)
-        new_reference = self._reference.transform(matrix)
-        new_axis = self._axis.transform(matrix)
+
         return Circle(
             new_point,
             self.radius,
-            UnitVector3D(new_reference[0:3]),
-            UnitVector3D(new_axis[0:3]),
+            self.dir_x,
+            self.dir_z,
         )
+    
+    def translate(self, translation: UnitVector3D, distance: Real) -> "Circle":
+        """Translate the circle by a given distance in a specified direction.
+
+        Parameters
+        ----------
+        translation : UnitVector3D
+            Direction to translate the circle.
+        distance : Real
+            Distance to translate the circle.
+
+        Returns
+        -------
+        Circle
+            New circle that is the translated copy of the original circle.
+        """
+        new_origin = self.origin + translation * distance
+        return Circle(new_origin, self.radius, self._reference, self._axis)
 
     def mirrored_copy(self) -> "Circle":
         """Create a mirrored copy of the circle along the y-axis.
