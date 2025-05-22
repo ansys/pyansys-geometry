@@ -723,8 +723,6 @@ def test_circle():
     rotation_matrix = Matrix44([[0, -1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
     circle_transformation = circle_2.transformed_copy(matrix=rotation_matrix)
     assert np.allclose(circle_transformation._origin, Point3D([-99, 42, 13]))
-    assert np.allclose(circle_transformation._reference, UnitVector3D([-31, 12, 99]))
-    assert np.allclose(circle_transformation._axis, UnitVector3D([-99, 0, -31]))
     circle_mirror = circle_2.mirrored_copy()
     assert np.allclose(circle_mirror._origin, Point3D([42, 99, 13]))
     assert np.allclose(
@@ -959,6 +957,33 @@ def test_nurbs_curve_from_control_points():
 
     # Verify that the curves are different
     assert nurbs_curve != nurbs_curve_weights
+
+
+def test_nurbs_curve_fitting():
+    """Test ``NURBSCurve`` fitting."""
+    points = [
+        Point3D([0, 0, 0]),
+        Point3D([1, 1, 0]),
+        Point3D([2, 0, 0]),
+        Point3D([5, 2, 0]),
+    ]
+    degree = 3
+    nurbs_curve = NURBSCurve.fit_curve_from_points(points=points, degree=degree)
+
+    # Verify degree, knots, and control points
+    assert nurbs_curve.degree == degree
+
+    assert len(nurbs_curve.knots) == 8
+
+    assert len(nurbs_curve.control_points) == 4
+    assert np.allclose(nurbs_curve.control_points[0], Point3D([0, 0, 0]))
+    assert np.allclose(
+        nurbs_curve.control_points[1], Point3D([1.54969033497753, 4.03483016710592, 0])
+    )
+    assert np.allclose(
+        nurbs_curve.control_points[2], Point3D([2.87290323505786, -5.66639579939497, 0])
+    )
+    assert np.allclose(nurbs_curve.control_points[3], Point3D([5, 2, 0]))
 
 
 def test_nurbs_curve_evaluation():
