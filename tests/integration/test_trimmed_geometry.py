@@ -288,3 +288,21 @@ def test_trimmed_curve_circle_translate(hedgehog_design):
 
     assert np.allclose(trimmed_curve.start,Point3D([0.02, 0.01, 0.02]))
     assert np.allclose(trimmed_curve.end, Point3D([0.0, 0.01, 0.02]))
+
+
+def test_trimmed_curve_circle_rotate(hedgehog_design):
+    """Tests the rotation of a trimmed curve with circle geometry."""
+    hedgehog_body = hedgehog_design.bodies[0]
+    edges = hedgehog_body.edges
+    edge = edges[0]
+    trimmed_curve = edge.shape
+
+    assert isinstance(trimmed_curve, TrimmedCurve)
+    assert np.allclose(trimmed_curve.start, Point3D([0.01, 0.01, 0.02]))
+    assert np.allclose(trimmed_curve.end, Point3D([-0.01, 0.01, 0.02]))
+
+    # Rotate the curve in the x-direction by 90 degrees about the point (0.01, 0.01, 0.02)
+    trimmed_curve.rotate(Point3D([0.01, 0.01, 0.02]), UnitVector3D([0, 1, 0]), math.pi / 2)
+
+    assert np.allclose(trimmed_curve.start, Point3D([0.01, 0.01, 0.02]))
+    assert np.allclose(trimmed_curve.end, Point3D([0.01, 0.01, 0.04]))
