@@ -154,6 +154,7 @@ def test_find_duplicate_faces(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
     assert len(problem_areas) == 1
+    design.close()
 
 
 def test_duplicate_face_id(modeler: Modeler):
@@ -161,6 +162,7 @@ def test_duplicate_face_id(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
     assert problem_areas[0].id != "0"
+    design.close()
 
 
 def test_duplicate_face_faces(modeler: Modeler):
@@ -170,6 +172,7 @@ def test_duplicate_face_faces(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
     assert len(problem_areas[0].faces) > 0
+    design.close()
 
 
 def test_fix_duplicate_face(modeler: Modeler):
@@ -179,6 +182,7 @@ def test_fix_duplicate_face(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
     assert problem_areas[0].fix().success is True
+    design.close()
 
 
 def test_find_small_faces(modeler: Modeler):
@@ -294,6 +298,7 @@ def test_find_and_fix_duplicate_faces(modeler: Modeler):
     for area in areas:
         area.fix()
     assert len(design.bodies) == 1
+    design.close()
 
 
 def test_find_and_fix_extra_edges_problem_areas(modeler: Modeler):
@@ -424,7 +429,7 @@ def test_fix_simplify(modeler: Modeler):
     assert problem_areas[0].fix().success is True
 
 
-def test_find_and_fix_short_edges(modeler: Modeler):
+def test_find_and_fix_short_edges_a(modeler: Modeler):
     """Test to read geometry, find and fix short edges and validate they are fixed removed."""
     design = modeler.open_file(FILES_DIR / "ShortEdges.scdocx")
     assert len(design.bodies[0].edges) == 685
