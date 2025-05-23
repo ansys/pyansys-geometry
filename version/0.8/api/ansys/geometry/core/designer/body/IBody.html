@@ -1,0 +1,1618 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>IBody &#8212; PyAnsys Geometry</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/css\ansys_sphinx_theme.css?v=77703c5e" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=99899407" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+  
+    <link href="../../../../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../../../../_static/documentation_options.js?v=4514dd13"></script>
+    <script src="../../../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../../_static/thebelab-helper.js"></script>
+    <script src="../../../../../../_static/js\table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys/geometry/core/designer/body/IBody';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '0.8';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../../../../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+    <link rel="next" title="MasterBody" href="MasterBody.html" />
+    <link rel="prev" title="The body.py module" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.8.2" />
+  <link rel="canonical" href="https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/body/IBody.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Geometry - Home"/>
+    <img src="../../../../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Geometry - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+        </div>
+      
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/0.8/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/0.8/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../../index.html"><span class="nf nf-md-package"></span> ansys.geometry.core</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../connection/index.html"> <span class="nf nf-md-package"></span> connection</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../index.html"> <span class="nf nf-md-package"></span> designer</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../beam/index.html"> <span class="nf nf-fa-file"></span> beam</a></li>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="index.html"> <span class="nf nf-fa-file"></span> body</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l4 current active"><a class="current reference internal" href="#"> <span class="nf nf-cod-symbol_interface"></span> IBody</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MasterBody.html"> <span class="nf nf-cod-symbol_class"></span> MasterBody</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Body.html"> <span class="nf nf-cod-symbol_class"></span> Body</a></li>
+<li class="toctree-l4"><a class="reference internal" href="MidSurfaceOffsetType.html"> <span class="nf nf-cod-symbol_enum"></span> MidSurfaceOffsetType</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CollisionType.html"> <span class="nf nf-cod-symbol_enum"></span> CollisionType</a></li>
+<li class="toctree-l4"><a class="reference internal" href="FillStyle.html"> <span class="nf nf-cod-symbol_enum"></span> FillStyle</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../component/index.html"> <span class="nf nf-fa-file"></span> component</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../coordinate_system/index.html"> <span class="nf nf-fa-file"></span> coordinate_system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../design/index.html"> <span class="nf nf-fa-file"></span> design</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../designpoint/index.html"> <span class="nf nf-fa-file"></span> designpoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../edge/index.html"> <span class="nf nf-fa-file"></span> edge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../face/index.html"> <span class="nf nf-fa-file"></span> face</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../geometry_commands/index.html"> <span class="nf nf-fa-file"></span> geometry_commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../part/index.html"> <span class="nf nf-fa-file"></span> part</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../selection/index.html"> <span class="nf nf-fa-file"></span> selection</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../materials/index.html"> <span class="nf nf-md-package"></span> materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../math/index.html"> <span class="nf nf-md-package"></span> math</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../misc/index.html"> <span class="nf nf-md-package"></span> misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../parameters/index.html"> <span class="nf nf-md-package"></span> parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../plotting/index.html"> <span class="nf nf-md-package"></span> plotting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shapes/index.html"> <span class="nf nf-md-package"></span> shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sketch/index.html"> <span class="nf nf-md-package"></span> sketch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tools/index.html"> <span class="nf nf-md-package"></span> tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../errors/index.html"> <span class="nf nf-fa-file"></span> errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../logger/index.html"> <span class="nf nf-fa-file"></span> logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modeler/index.html"> <span class="nf nf-fa-file"></span> modeler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../typing/index.html"> <span class="nf nf-fa-file"></span> typing</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../../../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">ansys.geometry.core</span></code> library</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">designer</span></code> package</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">body.py</span></code> module</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis"><code class="xref py py-class docutils literal notranslate"><span class="pre">IBody</span></code></span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="ibody">
+<h1><code class="xref py py-class docutils literal notranslate"><span class="pre">IBody</span></code><a class="headerlink" href="#ibody" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.geometry.core.designer.body.IBody">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ansys.geometry.core.designer.body.</span></span><span class="sig-name descname"><span class="pre">IBody</span></span><a class="headerlink" href="#ansys.geometry.core.designer.body.IBody" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.13/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Defines the common methods for a body, providing the abstract body interface.</p>
+<p>Both the <code class="docutils literal notranslate"><span class="pre">MasterBody</span></code> class and <code class="docutils literal notranslate"><span class="pre">Body</span></code> class both inherit from the <code class="docutils literal notranslate"><span class="pre">IBody</span></code>
+class. All child classes must implement all abstract methods.</p>
+</dd></dl>
+
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Abstract methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.id" title="IBody.id"><code class="xref py py-attr docutils literal notranslate"><span class="pre">id</span></code></a></p></td>
+<td><p>Get the ID of the body as a string.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.name" title="IBody.name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Get the name of the body.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.set_name" title="IBody.set_name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_name</span></code></a></p></td>
+<td><p>Set the name of the body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.fill_style" title="IBody.fill_style"><code class="xref py py-attr docutils literal notranslate"><span class="pre">fill_style</span></code></a></p></td>
+<td><p>Get the fill style of the body.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.set_fill_style" title="IBody.set_fill_style"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_fill_style</span></code></a></p></td>
+<td><p>Set the fill style of the body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.is_suppressed" title="IBody.is_suppressed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">is_suppressed</span></code></a></p></td>
+<td><p>Get the body suppression state.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.set_suppressed" title="IBody.set_suppressed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_suppressed</span></code></a></p></td>
+<td><p>Set the body suppression state.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.color" title="IBody.color"><code class="xref py py-attr docutils literal notranslate"><span class="pre">color</span></code></a></p></td>
+<td><p>Get the color of the body.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.set_color" title="IBody.set_color"><code class="xref py py-attr docutils literal notranslate"><span class="pre">set_color</span></code></a></p></td>
+<td><p>Set the color of the body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.faces" title="IBody.faces"><code class="xref py py-attr docutils literal notranslate"><span class="pre">faces</span></code></a></p></td>
+<td><p>Get a list of all faces within the body.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.edges" title="IBody.edges"><code class="xref py py-attr docutils literal notranslate"><span class="pre">edges</span></code></a></p></td>
+<td><p>Get a list of all edges within the body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.is_alive" title="IBody.is_alive"><code class="xref py py-attr docutils literal notranslate"><span class="pre">is_alive</span></code></a></p></td>
+<td><p>Check if the body is still alive and has not been deleted.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.is_surface" title="IBody.is_surface"><code class="xref py py-attr docutils literal notranslate"><span class="pre">is_surface</span></code></a></p></td>
+<td><p>Check if the body is a planar body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.surface_thickness" title="IBody.surface_thickness"><code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_thickness</span></code></a></p></td>
+<td><p>Get the surface thickness of a surface body.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.surface_offset" title="IBody.surface_offset"><code class="xref py py-attr docutils literal notranslate"><span class="pre">surface_offset</span></code></a></p></td>
+<td><p>Get the surface offset type of a surface body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.volume" title="IBody.volume"><code class="xref py py-attr docutils literal notranslate"><span class="pre">volume</span></code></a></p></td>
+<td><p>Calculate the volume of the body.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.material" title="IBody.material"><code class="xref py py-attr docutils literal notranslate"><span class="pre">material</span></code></a></p></td>
+<td><p>Get the assigned material of the body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.assign_material" title="IBody.assign_material"><code class="xref py py-attr docutils literal notranslate"><span class="pre">assign_material</span></code></a></p></td>
+<td><p>Assign a material against the active design.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.get_assigned_material" title="IBody.get_assigned_material"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_assigned_material</span></code></a></p></td>
+<td><p>Get the assigned material of the body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.add_midsurface_thickness" title="IBody.add_midsurface_thickness"><code class="xref py py-attr docutils literal notranslate"><span class="pre">add_midsurface_thickness</span></code></a></p></td>
+<td><p>Add a mid-surface thickness to a surface body.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.add_midsurface_offset" title="IBody.add_midsurface_offset"><code class="xref py py-attr docutils literal notranslate"><span class="pre">add_midsurface_offset</span></code></a></p></td>
+<td><p>Add a mid-surface offset to a surface body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.imprint_curves" title="IBody.imprint_curves"><code class="xref py py-attr docutils literal notranslate"><span class="pre">imprint_curves</span></code></a></p></td>
+<td><p>Imprint all specified geometries onto specified faces of the body.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.project_curves" title="IBody.project_curves"><code class="xref py py-attr docutils literal notranslate"><span class="pre">project_curves</span></code></a></p></td>
+<td><p>Project all specified geometries onto the body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.imprint_projected_curves" title="IBody.imprint_projected_curves"><code class="xref py py-attr docutils literal notranslate"><span class="pre">imprint_projected_curves</span></code></a></p></td>
+<td><p>Project and imprint specified geometries onto the body.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.translate" title="IBody.translate"><code class="xref py py-attr docutils literal notranslate"><span class="pre">translate</span></code></a></p></td>
+<td><p>Translate the body in a specified direction and distance.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.rotate" title="IBody.rotate"><code class="xref py py-attr docutils literal notranslate"><span class="pre">rotate</span></code></a></p></td>
+<td><p>Rotate the geometry body around the specified axis by a given angle.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.scale" title="IBody.scale"><code class="xref py py-attr docutils literal notranslate"><span class="pre">scale</span></code></a></p></td>
+<td><p>Scale the geometry body by the given value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.map" title="IBody.map"><code class="xref py py-attr docutils literal notranslate"><span class="pre">map</span></code></a></p></td>
+<td><p>Map the geometry body to the new specified frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.mirror" title="IBody.mirror"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mirror</span></code></a></p></td>
+<td><p>Mirror the geometry body across the specified plane.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.get_collision" title="IBody.get_collision"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_collision</span></code></a></p></td>
+<td><p>Get the collision state between bodies.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.copy" title="IBody.copy"><code class="xref py py-attr docutils literal notranslate"><span class="pre">copy</span></code></a></p></td>
+<td><p>Create a copy of the body under the specified parent.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.tessellate" title="IBody.tessellate"><code class="xref py py-attr docutils literal notranslate"><span class="pre">tessellate</span></code></a></p></td>
+<td><p>Tessellate the body and return the geometry as triangles.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.shell_body" title="IBody.shell_body"><code class="xref py py-attr docutils literal notranslate"><span class="pre">shell_body</span></code></a></p></td>
+<td><p>Shell the body to the thickness specified.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.remove_faces" title="IBody.remove_faces"><code class="xref py py-attr docutils literal notranslate"><span class="pre">remove_faces</span></code></a></p></td>
+<td><p>Shell by removing a given set of faces.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.plot" title="IBody.plot"><code class="xref py py-attr docutils literal notranslate"><span class="pre">plot</span></code></a></p></td>
+<td><p>Plot the body.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.intersect" title="IBody.intersect"><code class="xref py py-attr docutils literal notranslate"><span class="pre">intersect</span></code></a></p></td>
+<td><p>Intersect two (or more) bodies.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#IBody.subtract" title="IBody.subtract"><code class="xref py py-attr docutils literal notranslate"><span class="pre">subtract</span></code></a></p></td>
+<td><p>Subtract two (or more) bodies.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#IBody.unite" title="IBody.unite"><code class="xref py py-attr docutils literal notranslate"><span class="pre">unite</span></code></a></p></td>
+<td><p>Unite two (or more) bodies.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="import-detail">
+<h2>Import detail<a class="headerlink" href="#import-detail" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.designer.body</span><span class="w"> </span><span class="kn">import</span> <span class="n">IBody</span>
+</pre></div>
+</div>
+</section>
+<section id="method-detail">
+<h2>Method detail<a class="headerlink" href="#method-detail" title="Link to this heading">#</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.id">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#IBody.id" title="Link to this definition">#</a></dt>
+<dd><p>Get the ID of the body as a string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.name">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#IBody.name" title="Link to this definition">#</a></dt>
+<dd><p>Get the name of the body.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.set_name">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">set_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.set_name" title="Link to this definition">#</a></dt>
+<dd><p>Set the name of the body.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.fill_style">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">fill_style</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="FillStyle.html#ansys.geometry.core.designer.body.FillStyle" title="ansys.geometry.core.designer.body.FillStyle"><span class="pre">FillStyle</span></a></span></span><a class="headerlink" href="#IBody.fill_style" title="Link to this definition">#</a></dt>
+<dd><p>Get the fill style of the body.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.set_fill_style">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">set_fill_style</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fill_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="FillStyle.html#ansys.geometry.core.designer.body.FillStyle" title="ansys.geometry.core.designer.body.FillStyle"><span class="pre">FillStyle</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.set_fill_style" title="Link to this definition">#</a></dt>
+<dd><p>Set the fill style of the body.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.is_suppressed">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">is_suppressed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#IBody.is_suppressed" title="Link to this definition">#</a></dt>
+<dd><p>Get the body suppression state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.set_suppressed">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">set_suppressed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">suppressed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.set_suppressed" title="Link to this definition">#</a></dt>
+<dd><p>Set the body suppression state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.color">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">color</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#IBody.color" title="Link to this definition">#</a></dt>
+<dd><p>Get the color of the body.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.set_color">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">set_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.set_color" title="Link to this definition">#</a></dt>
+<dd><p>Set the color of the body.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>color</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3.13/library/functions.html#float" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3.13/library/functions.html#float" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3.13/library/functions.html#float" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">float</span></code></a>]</span></dt><dd><p>Color to set the body to. This can be a string representing a color name
+or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.faces">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">faces</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../face/Face.html#ansys.geometry.core.designer.face.Face" title="ansys.geometry.core.designer.face.Face"><span class="pre">ansys.geometry.core.designer.face.Face</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#IBody.faces" title="Link to this definition">#</a></dt>
+<dd><p>Get a list of all faces within the body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Face</span></code>]</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.edges">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">edges</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../edge/Edge.html#ansys.geometry.core.designer.edge.Edge" title="ansys.geometry.core.designer.edge.Edge"><span class="pre">ansys.geometry.core.designer.edge.Edge</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#IBody.edges" title="Link to this definition">#</a></dt>
+<dd><p>Get a list of all edges within the body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Edge</span></code>]</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.is_alive">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">is_alive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#IBody.is_alive" title="Link to this definition">#</a></dt>
+<dd><p>Check if the body is still alive and has not been deleted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.is_surface">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">is_surface</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#IBody.is_surface" title="Link to this definition">#</a></dt>
+<dd><p>Check if the body is a planar body.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.surface_thickness">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">surface_thickness</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.24.4)"><span class="pre">pint.Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.surface_thickness" title="Link to this definition">#</a></dt>
+<dd><p>Get the surface thickness of a surface body.</p>
+<p class="rubric">Notes</p>
+<p>This method is only for surface-type bodies that have been assigned a surface thickness.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.surface_offset">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">surface_offset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="MidSurfaceOffsetType.html#ansys.geometry.core.designer.body.MidSurfaceOffsetType" title="ansys.geometry.core.designer.body.MidSurfaceOffsetType"><span class="pre">MidSurfaceOffsetType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.surface_offset" title="Link to this definition">#</a></dt>
+<dd><p>Get the surface offset type of a surface body.</p>
+<p class="rubric">Notes</p>
+<p>This method is only for surface-type bodies that have been assigned a surface offset.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.volume">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">volume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.24.4)"><span class="pre">pint.Quantity</span></a></span></span><a class="headerlink" href="#IBody.volume" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the volume of the body.</p>
+<p class="rubric">Notes</p>
+<p>When dealing with a planar surface, a value of <code class="docutils literal notranslate"><span class="pre">0</span></code> is returned as a volume.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.material">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">material</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../materials/material/Material.html#ansys.geometry.core.materials.material.Material" title="ansys.geometry.core.materials.material.Material"><span class="pre">ansys.geometry.core.materials.material.Material</span></a></span></span><a class="headerlink" href="#IBody.material" title="Link to this definition">#</a></dt>
+<dd><p>Get the assigned material of the body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Material</span></code></dt><dd><p>Material assigned to the body.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.assign_material">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">assign_material</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">material</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../materials/material/Material.html#ansys.geometry.core.materials.material.Material" title="ansys.geometry.core.materials.material.Material"><span class="pre">ansys.geometry.core.materials.material.Material</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.assign_material" title="Link to this definition">#</a></dt>
+<dd><p>Assign a material against the active design.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>material</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Material</span></code></span></dt><dd><p>Source material data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.get_assigned_material">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">get_assigned_material</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../materials/material/Material.html#ansys.geometry.core.materials.material.Material" title="ansys.geometry.core.materials.material.Material"><span class="pre">ansys.geometry.core.materials.material.Material</span></a></span></span><a class="headerlink" href="#IBody.get_assigned_material" title="Link to this definition">#</a></dt>
+<dd><p>Get the assigned material of the body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Material</span></code></dt><dd><p>Material assigned to the body.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.add_midsurface_thickness">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">add_midsurface_thickness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">thickness</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.24.4)"><span class="pre">pint.Quantity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.add_midsurface_thickness" title="Link to this definition">#</a></dt>
+<dd><p>Add a mid-surface thickness to a surface body.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>thickness</strong><span class="classifier"><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.24.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Quantity</span></code></a></span></dt><dd><p>Thickness to assign.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Only surface bodies are eligible for mid-surface thickness assignment.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.add_midsurface_offset">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">add_midsurface_offset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="MidSurfaceOffsetType.html#ansys.geometry.core.designer.body.MidSurfaceOffsetType" title="ansys.geometry.core.designer.body.MidSurfaceOffsetType"><span class="pre">MidSurfaceOffsetType</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.add_midsurface_offset" title="Link to this definition">#</a></dt>
+<dd><p>Add a mid-surface offset to a surface body.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>offset_type</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MidSurfaceOffsetType</span></code></span></dt><dd><p>Surface offset to assign.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Only surface bodies are eligible for mid-surface offset assignment.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.imprint_curves">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">imprint_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">faces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../face/Face.html#ansys.geometry.core.designer.face.Face" title="ansys.geometry.core.designer.face.Face"><span class="pre">ansys.geometry.core.designer.face.Face</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sketch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../sketch/sketch/Sketch.html#ansys.geometry.core.sketch.sketch.Sketch" title="ansys.geometry.core.sketch.sketch.Sketch"><span class="pre">ansys.geometry.core.sketch.sketch.Sketch</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../edge/Edge.html#ansys.geometry.core.designer.edge.Edge" title="ansys.geometry.core.designer.edge.Edge"><span class="pre">ansys.geometry.core.designer.edge.Edge</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../face/Face.html#ansys.geometry.core.designer.face.Face" title="ansys.geometry.core.designer.face.Face"><span class="pre">ansys.geometry.core.designer.face.Face</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#IBody.imprint_curves" title="Link to this definition">#</a></dt>
+<dd><p>Imprint all specified geometries onto specified faces of the body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>faces: list[Face]</strong></dt><dd><p>list of faces to imprint the curves of the sketch onto.</p>
+</dd>
+<dt><strong>sketch: Sketch</strong></dt><dd><p>All curves to imprint on the faces.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Edge</span></code>], <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Face</span></code>]]</dt><dd><p>All impacted edges and faces from the imprint operation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.project_curves">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">project_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../math/vector/UnitVector3D.html#ansys.geometry.core.math.vector.UnitVector3D" title="ansys.geometry.core.math.vector.UnitVector3D"><span class="pre">ansys.geometry.core.math.vector.UnitVector3D</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sketch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../sketch/sketch/Sketch.html#ansys.geometry.core.sketch.sketch.Sketch" title="ansys.geometry.core.sketch.sketch.Sketch"><span class="pre">ansys.geometry.core.sketch.sketch.Sketch</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">closest_face</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_one_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../face/Face.html#ansys.geometry.core.designer.face.Face" title="ansys.geometry.core.designer.face.Face"><span class="pre">ansys.geometry.core.designer.face.Face</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#IBody.project_curves" title="Link to this definition">#</a></dt>
+<dd><p>Project all specified geometries onto the body.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>direction: UnitVector3D</strong></dt><dd><p>Direction of the projection.</p>
+</dd>
+<dt><strong>sketch: Sketch</strong></dt><dd><p>All curves to project on the body.</p>
+</dd>
+<dt><strong>closest_face: bool</strong></dt><dd><p>Whether to target the closest face with the projection.</p>
+</dd>
+<dt><strong>only_one_curve: bool, default: False</strong></dt><dd><p>Whether to project only one curve of the entire sketch. When
+<code class="docutils literal notranslate"><span class="pre">True</span></code>, only one curve is projected.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Face</span></code>]</dt><dd><p>All faces from the project curves operation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">only_one_curve</span></code> parameter allows you to optimize the server call because
+projecting curves is an expensive operation. This reduces the workload on the
+server side.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.imprint_projected_curves">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">imprint_projected_curves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../math/vector/UnitVector3D.html#ansys.geometry.core.math.vector.UnitVector3D" title="ansys.geometry.core.math.vector.UnitVector3D"><span class="pre">ansys.geometry.core.math.vector.UnitVector3D</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sketch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../sketch/sketch/Sketch.html#ansys.geometry.core.sketch.sketch.Sketch" title="ansys.geometry.core.sketch.sketch.Sketch"><span class="pre">ansys.geometry.core.sketch.sketch.Sketch</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">closest_face</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_one_curve</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../face/Face.html#ansys.geometry.core.designer.face.Face" title="ansys.geometry.core.designer.face.Face"><span class="pre">ansys.geometry.core.designer.face.Face</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#IBody.imprint_projected_curves" title="Link to this definition">#</a></dt>
+<dd><p>Project and imprint specified geometries onto the body.</p>
+<p>This method combines the <code class="docutils literal notranslate"><span class="pre">project_curves()</span></code> and <code class="docutils literal notranslate"><span class="pre">imprint_curves()</span></code> method into
+one method. It has higher performance than calling them back-to-back when dealing
+with many curves. Because it is a specialized function, this method only returns
+the faces (and not the edges) from the imprint operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>direction: UnitVector3D</strong></dt><dd><p>Direction of the projection.</p>
+</dd>
+<dt><strong>sketch: Sketch</strong></dt><dd><p>All curves to project on the body.</p>
+</dd>
+<dt><strong>closest_face: bool</strong></dt><dd><p>Whether to target the closest face with the projection.</p>
+</dd>
+<dt><strong>only_one_curve: bool, default: False</strong></dt><dd><p>Whether to project only one curve of the entire sketch. When
+<code class="docutils literal notranslate"><span class="pre">True</span></code>, only one curve is projected.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#list" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Face</span></code>]</dt><dd><p>All imprinted faces from the operation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">only_one_curve</span></code> parameter allows you to optimize the server call because
+projecting curves is an expensive operation. This reduces the workload on the
+server side.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.translate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">translate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../math/vector/UnitVector3D.html#ansys.geometry.core.math.vector.UnitVector3D" title="ansys.geometry.core.math.vector.UnitVector3D"><span class="pre">ansys.geometry.core.math.vector.UnitVector3D</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.24.4)"><span class="pre">pint.Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../misc/measurements/Distance.html#ansys.geometry.core.misc.measurements.Distance" title="ansys.geometry.core.misc.measurements.Distance"><span class="pre">ansys.geometry.core.misc.measurements.Distance</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.typing.Real</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.translate" title="Link to this definition">#</a></dt>
+<dd><p>Translate the body in a specified direction and distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>direction: UnitVector3D</strong></dt><dd><p>Direction of the translation.</p>
+</dd>
+<dt><strong>distance: ~pint.Quantity | Distance | Real</strong></dt><dd><p>Distance (magnitude) of the translation.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.rotate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">rotate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis_origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../math/point/Point3D.html#ansys.geometry.core.math.point.Point3D" title="ansys.geometry.core.math.point.Point3D"><span class="pre">ansys.geometry.core.math.point.Point3D</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis_direction</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../math/vector/UnitVector3D.html#ansys.geometry.core.math.vector.UnitVector3D" title="ansys.geometry.core.math.vector.UnitVector3D"><span class="pre">ansys.geometry.core.math.vector.UnitVector3D</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pint.readthedocs.io/en/stable/api/base.html#pint.Quantity" title="(in pint v0.24.4)"><span class="pre">pint.Quantity</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../misc/measurements/Angle.html#ansys.geometry.core.misc.measurements.Angle" title="ansys.geometry.core.misc.measurements.Angle"><span class="pre">ansys.geometry.core.misc.measurements.Angle</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ansys.geometry.core.typing.Real</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.rotate" title="Link to this definition">#</a></dt>
+<dd><p>Rotate the geometry body around the specified axis by a given angle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>axis_origin: Point3D</strong></dt><dd><p>Origin of the rotational axis.</p>
+</dd>
+<dt><strong>axis_direction: UnitVector3D</strong></dt><dd><p>The axis of rotation.</p>
+</dd>
+<dt><strong>angle: ~pint.Quantity | Angle | Real</strong></dt><dd><p>Angle (magnitude) of the rotation.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.scale">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">scale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ansys.geometry.core.typing.Real</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.scale" title="Link to this definition">#</a></dt>
+<dd><p>Scale the geometry body by the given value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>value: Real</strong></dt><dd><p>Value to scale the body by.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The calling object is directly modified when this method is called.
+Thus, it is important to make copies if needed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.map">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../math/frame/Frame.html#ansys.geometry.core.math.frame.Frame" title="ansys.geometry.core.math.frame.Frame"><span class="pre">ansys.geometry.core.math.frame.Frame</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.map" title="Link to this definition">#</a></dt>
+<dd><p>Map the geometry body to the new specified frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>frame: Frame</strong></dt><dd><p>Structure defining the orientation of the body.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The calling object is directly modified when this method is called.
+Thus, it is important to make copies if needed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.mirror">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">mirror</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plane</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../math/plane/Plane.html#ansys.geometry.core.math.plane.Plane" title="ansys.geometry.core.math.plane.Plane"><span class="pre">ansys.geometry.core.math.plane.Plane</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.mirror" title="Link to this definition">#</a></dt>
+<dd><p>Mirror the geometry body across the specified plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>plane: Plane</strong></dt><dd><p>Represents the mirror.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The calling object is directly modified when this method is called.
+Thus, it is important to make copies if needed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.get_collision">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">get_collision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Body.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">Body</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="CollisionType.html#ansys.geometry.core.designer.body.CollisionType" title="ansys.geometry.core.designer.body.CollisionType"><span class="pre">CollisionType</span></a></span></span><a class="headerlink" href="#IBody.get_collision" title="Link to this definition">#</a></dt>
+<dd><p>Get the collision state between bodies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>body: Body</strong></dt><dd><p>Object that the collision state is checked with.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">CollisionType</span></code></dt><dd><p>Enum that defines the collision state between bodies.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.copy">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../component/Component.html#ansys.geometry.core.designer.component.Component" title="ansys.geometry.core.designer.component.Component"><span class="pre">ansys.geometry.core.designer.component.Component</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="Body.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">Body</span></a></span></span><a class="headerlink" href="#IBody.copy" title="Link to this definition">#</a></dt>
+<dd><p>Create a copy of the body under the specified parent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>parent: Component</strong></dt><dd><p>Parent component to place the new body under within the design assembly.</p>
+</dd>
+<dt><strong>name: str</strong></dt><dd><p>Name to give the new body.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Body</span></code></dt><dd><p>Copy of the body.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.tessellate">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">tessellate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.PolyData.html#pyvista.PolyData" title="(in PyVista v0.44.2)"><span class="pre">pyvista.PolyData</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.MultiBlock.html#pyvista.MultiBlock" title="(in PyVista v0.44.2)"><span class="pre">pyvista.MultiBlock</span></a></span></span><a class="headerlink" href="#IBody.tessellate" title="Link to this definition">#</a></dt>
+<dd><p>Tessellate the body and return the geometry as triangles.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>merge</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#False" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">False</span></code></a></span></dt><dd><p>Whether to merge the body into a single mesh. When <code class="docutils literal notranslate"><span class="pre">False</span></code> (default), the
+number of triangles are preserved and only the topology is merged.
+When <code class="docutils literal notranslate"><span class="pre">True</span></code>, the individual faces of the tessellation are merged.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.PolyData.html#pyvista.PolyData" title="(in PyVista v0.44.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolyData</span></code></a>, <a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.MultiBlock.html#pyvista.MultiBlock" title="(in PyVista v0.44.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MultiBlock</span></code></a></dt><dd><p>Merged <a class="reference external" href="https://docs.pyvista.org/api/core/_autosummary/pyvista.PolyData.html#pyvista.PolyData" title="(in PyVista v0.44.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyvista.PolyData</span></code></a> if <code class="docutils literal notranslate"><span class="pre">merge=True</span></code> or a composite dataset.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Extrude a box centered at the origin to create a rectangular body and
+tessellate it:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.misc.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNITS</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">>>> </span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.sketch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sketch</span>
+<span class="gp">>>> </span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plane</span><span class="p">,</span> <span class="n">Point2D</span><span class="p">,</span> <span class="n">Point3D</span><span class="p">,</span> <span class="n">UnitVector3D</span>
+<span class="gp">>>> </span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Modeler</span>
+<span class="gp">>>> </span><span class="n">modeler</span> <span class="o">=</span> <span class="n">Modeler</span><span class="p">()</span>
+<span class="gp">>>> </span><span class="n">origin</span> <span class="o">=</span> <span class="n">Point3D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">>>> </span><span class="n">plane</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">direction_x</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">direction_y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">>>> </span><span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">box</span> <span class="o">=</span> <span class="n">sketch</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">design</span> <span class="o">=</span> <span class="n">modeler</span><span class="o">.</span><span class="n">create_design</span><span class="p">(</span><span class="s2">&quot;my-design&quot;</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">my_comp</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;my-comp&quot;</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">body</span> <span class="o">=</span> <span class="n">my_comp</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span><span class="s2">&quot;my-sketch&quot;</span><span class="p">,</span> <span class="n">sketch</span><span class="p">,</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">blocks</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">tessellate</span><span class="p">()</span>
+<span class="gp">>>> </span><span class="n">blocks</span>
+<span class="gp">>>> </span><span class="n">MultiBlock</span><span class="p">(</span><span class="mh">0x7F94EC757460</span><span class="p">)</span>
+<span class="go">     N Blocks:  6</span>
+<span class="go">     X Bounds:  0.000, 4.000</span>
+<span class="go">     Y Bounds:  -1.000, 0.000</span>
+<span class="go">     Z Bounds:  -0.500, 4.500</span>
+</pre></div>
+</div>
+<p>Merge the body:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">mesh</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">tessellate</span><span class="p">(</span><span class="n">merge</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">mesh</span>
+<span class="go">PolyData (0x7f94ec75f3a0)</span>
+<span class="go">  N Cells:      12</span>
+<span class="go">  N Points:     24</span>
+<span class="go">  X Bounds:     0.000e+00, 4.000e+00</span>
+<span class="go">  Y Bounds:     -1.000e+00, 0.000e+00</span>
+<span class="go">  Z Bounds:     -5.000e-01, 4.500e+00</span>
+<span class="go">  N Arrays:     0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.shell_body">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">shell_body</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ansys.geometry.core.typing.Real</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#IBody.shell_body" title="Link to this definition">#</a></dt>
+<dd><p>Shell the body to the thickness specified.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>offset</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Real</span></code></span></dt><dd><p>Shell thickness.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a></dt><dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when successful, <code class="docutils literal notranslate"><span class="pre">False</span></code> when failed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.remove_faces">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">remove_faces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../face/Face.html#ansys.geometry.core.designer.face.Face" title="ansys.geometry.core.designer.face.Face"><span class="pre">ansys.geometry.core.designer.face.Face</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.13)"><span class="pre">collections.abc.Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../face/Face.html#ansys.geometry.core.designer.face.Face" title="ansys.geometry.core.designer.face.Face"><span class="pre">ansys.geometry.core.designer.face.Face</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ansys.geometry.core.typing.Real</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="headerlink" href="#IBody.remove_faces" title="Link to this definition">#</a></dt>
+<dd><p>Shell by removing a given set of faces.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>selection</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Face</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Face</span></code>]</span></dt><dd><p>Face or faces to be removed.</p>
+</dd>
+<dt><strong>offset</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Real</span></code></span></dt><dd><p>Shell thickness.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a></dt><dd><p><code class="docutils literal notranslate"><span class="pre">True</span></code> when successful, <code class="docutils literal notranslate"><span class="pre">False</span></code> when failed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.plot">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merge</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screenshot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_trame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_service_colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">plotting_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.plot" title="Link to this definition">#</a></dt>
+<dd><p>Plot the body.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>merge</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#True" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">True</span></code></a></span></dt><dd><p>Whether to merge the body into a single mesh. Performance improved when <code class="docutils literal notranslate"><span class="pre">True</span></code>.
+When <code class="docutils literal notranslate"><span class="pre">True</span></code> (default), the individual faces of the tessellation are merged.
+When <code class="docutils literal notranslate"><span class="pre">False</span></code>, the number of triangles are preserved and only the topology
+is merged.</p>
+</dd>
+<dt><strong>screenshot</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Path for saving a screenshot of the image that is being represented.</p>
+</dd>
+<dt><strong>use_trame</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Whether to enable the use of <a class="reference external" href="https://kitware.github.io/trame/index.html">trame</a>.
+The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case the
+<code class="docutils literal notranslate"><span class="pre">ansys.tools.visualization_interface.USE_TRAME</span></code> global setting is used.</p>
+</dd>
+<dt><strong>use_service_colors</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Whether to use the colors assigned to the body in the service. The default
+is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case the <code class="docutils literal notranslate"><span class="pre">ansys.geometry.core.USE_SERVICE_COLORS</span></code>
+global setting is used.</p>
+</dd>
+<dt><strong>**plotting_options</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Keyword arguments for plotting. For allowable keyword arguments, see the
+<a class="reference external" href="https://docs.pyvista.org/api/plotting/_autosummary/pyvista.Plotter.add_mesh.html#pyvista.Plotter.add_mesh" title="(in PyVista v0.44.2)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Plotter.add_mesh</span></code></a> method.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Extrude a box centered at the origin to create rectangular body and
+plot it:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.misc.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNITS</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">>>> </span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.sketch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sketch</span>
+<span class="gp">>>> </span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plane</span><span class="p">,</span> <span class="n">Point2D</span><span class="p">,</span> <span class="n">Point3D</span><span class="p">,</span> <span class="n">UnitVector3D</span>
+<span class="gp">>>> </span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Modeler</span>
+<span class="gp">>>> </span><span class="n">modeler</span> <span class="o">=</span> <span class="n">Modeler</span><span class="p">()</span>
+<span class="gp">>>> </span><span class="n">origin</span> <span class="o">=</span> <span class="n">Point3D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">>>> </span><span class="n">plane</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">direction_x</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">direction_y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">>>> </span><span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">box</span> <span class="o">=</span> <span class="n">sketch</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">design</span> <span class="o">=</span> <span class="n">modeler</span><span class="o">.</span><span class="n">create_design</span><span class="p">(</span><span class="s2">&quot;my-design&quot;</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">mycomp</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;my-comp&quot;</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">body</span> <span class="o">=</span> <span class="n">mycomp</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span><span class="s2">&quot;my-sketch&quot;</span><span class="p">,</span> <span class="n">sketch</span><span class="p">,</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="gp">>>> </span><span class="n">body</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Plot the body and color each face individually:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">>>> </span><span class="n">body</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">multi_colors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.intersect">
+<span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">intersect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Body.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">Body</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.13)"><span class="pre">collections.abc.Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Body.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">Body</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.intersect" title="Link to this definition">#</a></dt>
+<dd><p>Intersect two (or more) bodies.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>other</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Body</span></code></span></dt><dd><p>Body to intersect with.</p>
+</dd>
+<dt><strong>keep_other</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#False" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">False</span></code></a></span></dt><dd><p>Whether to retain the intersected body or not.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/exceptions.html#ValueError" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueError</span></code></a></dt><dd><p>If the bodies do not intersect.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">self</span></code> parameter is directly modified with the result, and
+the <code class="docutils literal notranslate"><span class="pre">other</span></code> parameter is consumed. Thus, it is important to make
+copies if needed. If the <code class="docutils literal notranslate"><span class="pre">keep_other</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>,
+the intersected body is retained.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.subtract">
+<span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">subtract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Body.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">Body</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.13)"><span class="pre">collections.abc.Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Body.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">Body</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.subtract" title="Link to this definition">#</a></dt>
+<dd><p>Subtract two (or more) bodies.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>other</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Body</span></code></span></dt><dd><p>Body to subtract from the <code class="docutils literal notranslate"><span class="pre">self</span></code> parameter.</p>
+</dd>
+<dt><strong>keep_other</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#False" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">False</span></code></a></span></dt><dd><p>Whether to retain the subtracted body or not.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/exceptions.html#ValueError" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueError</span></code></a></dt><dd><p>If the subtraction results in an empty (complete) subtraction.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">self</span></code> parameter is directly modified with the result, and
+the <code class="docutils literal notranslate"><span class="pre">other</span></code> parameter is consumed. Thus, it is important to make
+copies if needed. If the <code class="docutils literal notranslate"><span class="pre">keep_other</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>,
+the subtracted body is retained.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="IBody.unite">
+<span class="sig-prename descclassname"><span class="pre">IBody.</span></span><span class="sig-name descname"><span class="pre">unite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="Body.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">Body</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.13)"><span class="pre">collections.abc.Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Body.html#ansys.geometry.core.designer.body.Body" title="ansys.geometry.core.designer.body.Body"><span class="pre">Body</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#IBody.unite" title="Link to this definition">#</a></dt>
+<dd><p>Unite two (or more) bodies.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>other</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Body</span></code></span></dt><dd><p>Body to unite with the <code class="docutils literal notranslate"><span class="pre">self</span></code> parameter.</p>
+</dd>
+<dt><strong>keep_other</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#False" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">False</span></code></a></span></dt><dd><p>Whether to retain the united body or not.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">self</span></code> parameter is directly modified with the result, and
+the <code class="docutils literal notranslate"><span class="pre">other</span></code> parameter is consumed. Thus, it is important to make
+copies if needed. If the <code class="docutils literal notranslate"><span class="pre">keep_other</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>,
+the united body is retained.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.designer.body.IBody"><code class="docutils literal notranslate"><span class="pre">ansys.geometry.core.designer.body.IBody</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-detail">Import detail</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-detail">Method detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.id"><code class="docutils literal notranslate"><span class="pre">id()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.name"><code class="docutils literal notranslate"><span class="pre">name()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.set_name"><code class="docutils literal notranslate"><span class="pre">set_name()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.fill_style"><code class="docutils literal notranslate"><span class="pre">fill_style()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.set_fill_style"><code class="docutils literal notranslate"><span class="pre">set_fill_style()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.is_suppressed"><code class="docutils literal notranslate"><span class="pre">is_suppressed()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.set_suppressed"><code class="docutils literal notranslate"><span class="pre">set_suppressed()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.color"><code class="docutils literal notranslate"><span class="pre">color()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.set_color"><code class="docutils literal notranslate"><span class="pre">set_color()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.faces"><code class="docutils literal notranslate"><span class="pre">faces()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.edges"><code class="docutils literal notranslate"><span class="pre">edges()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.is_alive"><code class="docutils literal notranslate"><span class="pre">is_alive()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.is_surface"><code class="docutils literal notranslate"><span class="pre">is_surface()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.surface_thickness"><code class="docutils literal notranslate"><span class="pre">surface_thickness()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.surface_offset"><code class="docutils literal notranslate"><span class="pre">surface_offset()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.volume"><code class="docutils literal notranslate"><span class="pre">volume()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.material"><code class="docutils literal notranslate"><span class="pre">material()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.assign_material"><code class="docutils literal notranslate"><span class="pre">assign_material()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.get_assigned_material"><code class="docutils literal notranslate"><span class="pre">get_assigned_material()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.add_midsurface_thickness"><code class="docutils literal notranslate"><span class="pre">add_midsurface_thickness()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.add_midsurface_offset"><code class="docutils literal notranslate"><span class="pre">add_midsurface_offset()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.imprint_curves"><code class="docutils literal notranslate"><span class="pre">imprint_curves()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.project_curves"><code class="docutils literal notranslate"><span class="pre">project_curves()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.imprint_projected_curves"><code class="docutils literal notranslate"><span class="pre">imprint_projected_curves()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.translate"><code class="docutils literal notranslate"><span class="pre">translate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.rotate"><code class="docutils literal notranslate"><span class="pre">rotate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.scale"><code class="docutils literal notranslate"><span class="pre">scale()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.map"><code class="docutils literal notranslate"><span class="pre">map()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.mirror"><code class="docutils literal notranslate"><span class="pre">mirror()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.get_collision"><code class="docutils literal notranslate"><span class="pre">get_collision()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.copy"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.tessellate"><code class="docutils literal notranslate"><span class="pre">tessellate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.shell_body"><code class="docutils literal notranslate"><span class="pre">shell_body()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.remove_faces"><code class="docutils literal notranslate"><span class="pre">remove_faces()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.plot"><code class="docutils literal notranslate"><span class="pre">plot()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.intersect"><code class="docutils literal notranslate"><span class="pre">intersect()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.subtract"><code class="docutils literal notranslate"><span class="pre">subtract()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#IBody.unite"><code class="docutils literal notranslate"><span class="pre">unite()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="http://github.com/ansys/pyansys-geometry/edit/main/ansys/geometry/core/designer/body/IBody.py">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../../../../../_sources/api/ansys/geometry/core/designer/body/IBody.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+<link rel="stylesheet" href="../../../../../../_static/css/fuse-search.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text"], "limit": 10, "minMatchCharLength": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../../../../../../_static/search.json";
+</script>
+
+
+<script src="../../../../../../_static/js/search.js"></script>
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.2.6. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
