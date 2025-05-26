@@ -291,8 +291,8 @@ def prepare_and_start_backend(
         # we will use it as the root folder for the Geometry Service.
         pass
     else:
-        # Sanitize the version input to ensure it's an integer.
         if version is not None:
+            # Sanitize the version input to ensure it's an integer.
             try:
                 version = int(version)
             except ValueError:
@@ -300,7 +300,6 @@ def prepare_and_start_backend(
                     "The 'version' argument must be an integer representing the product version."
                 )
 
-        if version is not None:
             try:
                 _check_version_is_available(version, installations)
             except SystemError as serr:
