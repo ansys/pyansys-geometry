@@ -86,7 +86,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@b46bf28ca54671fcb1444fb119533ecd113e98f0 # v9.0.11
+        uses: ansys/actions/build-wheelhouse@fix/check-licenses-logic
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
