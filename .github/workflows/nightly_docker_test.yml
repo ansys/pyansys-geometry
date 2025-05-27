@@ -7,8 +7,8 @@ on:
         required: false
         default: false
         type: boolean
-  schedule: # UTC at 0300
-    - cron: "0 3 * * *"
+  schedule: # UTC at 0300, 1100, and 1900
+    - cron: "0 3,11,19 * * *"
   # Trigger workflow when file is modified
   push:
     paths:
@@ -216,7 +216,7 @@ jobs:
         uses: pyvista/setup-headless-display-action@f744438e29e50189f40f1749859bac7d0f69b5fa # v4.1
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@90c8d3f174d3393c68bc2143088d60265275b8cc # v9.0.7
+        uses: ansys/actions/tests-pytest@5dc39c7838f50142138f7ac518ff3e4dca065d97 # v9.0.12
         env:
           ALLOW_PLOTTING: true
         with:

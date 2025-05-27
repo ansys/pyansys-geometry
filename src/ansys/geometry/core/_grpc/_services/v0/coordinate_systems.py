@@ -26,6 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.coordinate_systems import GRPCCoordinateSystemService
+from .conversions import from_frame_to_grpc_frame, from_grpc_frame_to_frame
 
 
 class GRPCCoordinateSystemServiceV0(GRPCCoordinateSystemService):
@@ -50,8 +51,6 @@ class GRPCCoordinateSystemServiceV0(GRPCCoordinateSystemService):
     @protect_grpc
     def create(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.coordinatesystems_pb2 import CreateRequest
-
-        from .conversions import from_frame_to_grpc_frame, from_grpc_frame_to_frame
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateRequest(

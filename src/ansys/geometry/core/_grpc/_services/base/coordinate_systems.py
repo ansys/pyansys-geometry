@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 import grpc
 
 
-class GRPCCoordinateSystemService(ABC):
+class GRPCCoordinateSystemService(ABC):  # pragma: no cover
     """Coordinate systems service for gRPC communication with the Geometry server.
 
     Parameters
@@ -37,9 +37,9 @@ class GRPCCoordinateSystemService(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the GRPCCoordinateSystemService class."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def create(self, **kwargs) -> dict:
         """Create a coordinate system."""
-        pass  # pragma: no cover
+        pass

@@ -14,7 +14,7 @@ Package dependencies
 --------------------
 
 PyAnsys Geometry is supported on Python version 3.10 and later. As indicated in the
-`Moving to require Python 3 <https://python3statement.org/>`_ statement,
+`Moving to require Python 3 <https://python3statement.github.io/>`_ statement,
 previous versions of Python are no longer supported.
 
 PyAnsys Geometry dependencies are automatically checked when packages are installed.

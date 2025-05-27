@@ -21,6 +21,8 @@
 # SOFTWARE.
 """Module containing server-version agnostic conversions."""
 
+from pint import Quantity
+
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance, Measurement
 
 
@@ -75,3 +77,24 @@ def to_distance(value: float | int) -> Distance:
     The value should represent a length in the server's unit system.
     """
     return Distance(value, DEFAULT_UNITS.SERVER_LENGTH)
+
+
+def to_area(value: float | int) -> Quantity:
+    """Convert a server value to an area object.
+
+    Parameters
+    ----------
+    value : float | int
+        Value to convert.
+
+    Returns
+    -------
+    Quantity
+        Converted area.
+
+    Notes
+    -----
+    The value is converted to a Quantity object using the default server area unit.
+    The value should represent an area in the server's unit system.
+    """
+    return Quantity(value, DEFAULT_UNITS.SERVER_AREA)
