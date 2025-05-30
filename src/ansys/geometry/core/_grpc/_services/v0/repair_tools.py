@@ -251,6 +251,11 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         )
         # Call the gRPC service
         response = self.stub.FindAndSimplify(request)
+
+        serialized_tracker_response = self.serialize_tracker_command_response(
+            response.complete_command_response
+        )
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.success,
@@ -258,6 +263,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
+            "complete_command_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -326,6 +332,10 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixShortEdges(request)
 
+        serialized_tracker_response = self.serialize_tracker_command_response(
+            response.complete_command_response
+        )
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.success,
@@ -333,6 +343,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
+            "complete_command_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -346,6 +357,10 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixExtraEdges(request)
 
+        serialized_tracker_response = self.serialize_tracker_command_response(
+            response.complete_command_response
+        )
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.success,
@@ -353,6 +368,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": response.created_bodies_monikers,
             "modified_bodies_monikers": response.modified_bodies_monikers,
+            "complete_command_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -371,6 +387,10 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixSplitEdges(request)
 
+        serialized_tracker_response = self.serialize_tracker_command_response(
+            response.complete_command_response
+        )
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.success,
@@ -378,6 +398,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
+            "complete_command_response": serialized_tracker_response,
         }
 
     @staticmethod
@@ -433,4 +454,92 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 }
                 for body_issues in response.issues_by_body
             ]
+        }
+
+    @staticmethod
+    def serialize_tracker_command_response(response) -> dict:
+        """Serialize a TrackerCommandResponse object into a dictionary.
+
+        Parameters
+        ----------
+        response : TrackerCommandResponse
+            The gRPC TrackerCommandResponse object to serialize.
+
+        Returns
+        -------
+        dict
+            A dictionary representation of the TrackerCommandResponse object.
+        """
+
+        def serialize_body(body):
+            return {
+                "id": body.id,
+                "name": body.name,
+                "can_suppress": body.can_suppress,
+                "transform_to_master": {
+                    "m00": body.transform_to_master.m00,
+                    "m11": body.transform_to_master.m11,
+                    "m22": body.transform_to_master.m22,
+                    "m33": body.transform_to_master.m33,
+                },
+                "master_id": body.master_id,
+                "parent_id": body.parent_id,
+            }
+
+        def serialize_entity_identifier(entity):
+            """Serialize an EntityIdentifier object into a dictionary."""
+            return {
+                "id": entity.id,
+                "type": entity.type,
+            }
+
+    @staticmethod
+    def serialize_tracker_command_response(response) -> dict:
+        """Serialize a TrackerCommandResponse object into a dictionary.
+
+        Parameters
+        ----------
+        response : TrackerCommandResponse
+            The gRPC TrackerCommandResponse object to serialize.
+
+        Returns
+        -------
+        dict
+            A dictionary representation of the TrackerCommandResponse object.
+        """
+
+        def serialize_body(body):
+            return {
+                "id": body.id,
+                "name": body.name,
+                "can_suppress": body.can_suppress,
+                "transform_to_master": {
+                    "m00": body.transform_to_master.m00,
+                    "m11": body.transform_to_master.m11,
+                    "m22": body.transform_to_master.m22,
+                    "m33": body.transform_to_master.m33,
+                },
+                "master_id": body.master_id,
+                "parent_id": body.parent_id,
+            }
+
+        def serialize_entity_identifier(entity):
+            """Serialize an EntityIdentifier object into a dictionary."""
+            return {
+                "id": entity.id,
+                "type": entity.type,
+            }
+
+        return {
+            "success": response.success,
+            "created_bodies": [
+                serialize_body(body) for body in getattr(response, "created_bodies", [])
+            ],
+            "modified_bodies": [
+                serialize_body(body) for body in getattr(response, "modified_bodies", [])
+            ],
+            "deleted_bodies": [
+                serialize_entity_identifier(entity)
+                for entity in getattr(response, "deleted_bodies", [])
+            ],
         }
