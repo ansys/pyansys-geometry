@@ -412,21 +412,21 @@ class Modeler:
         Design
             Newly imported design.
 
-        Reader Formats
-        ----------
+        Notes
+        -----
         Format and latest supported version
-            AutoCAD 2024
-            CATIA V5 2024
-            CATIA V6 2024
-            Creo Parametric 11
-            IGES 5.3
-            Inventor 2025
-            JT 10.10
-            NX 2412
-            Rhino 8
-            Solid Edge 2025
-            SOLIDWORKS 2025
-            STEP AP242
+            * AutoCAD 2024
+            * CATIA V5 2024
+            * CATIA V6 2024
+            * Creo Parametric 11
+            * IGES 5.3
+            * Inventor 2025
+            * JT 10.10
+            * NX 2412
+            * Rhino 8
+            * Solid Edge 2025
+            * SOLIDWORKS 2025
+            * STEP AP242
         """
         # Use str format of Path object here
         file_path = str(file_path) if isinstance(file_path, Path) else file_path
