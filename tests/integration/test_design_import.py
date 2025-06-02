@@ -385,7 +385,7 @@ def test_design_import_with_named_selections(modeler: Modeler):
 
 
 def test_design_import_acad_2024(modeler: Modeler):
-    """Test importing a design with named selections."""
+    """Test importing a 2024 AutoCAD file."""
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "ACAD/CylinderBox_2024.dwg"))
     assert len(design.components) == 3
@@ -393,7 +393,7 @@ def test_design_import_acad_2024(modeler: Modeler):
 
 
 def test_design_import_cat5_2024(modeler: Modeler):
-    """Test importing a design with named selections."""
+    """Test importing a 2024 CATIA V5 file."""
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "CAT5/Bracket_Hole_2024.CATPart"))
     assert len(design.bodies) == 1
@@ -401,7 +401,7 @@ def test_design_import_cat5_2024(modeler: Modeler):
 
 
 def test_design_import_cat6_2023(modeler: Modeler):
-    """Test importing a design with named selections."""
+    """Test importing a CATIA V6 file."""
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "CAT6/Skateboard A.1_2023x.3dxml"))
     assert len(design.components) == 4
@@ -415,7 +415,7 @@ def test_design_import_cat6_2023(modeler: Modeler):
 
 
 def test_design_import_creo_11(modeler: Modeler):
-    """Test importing a design with named selections."""
+    """Test importing a Creo 11 file."""
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "Creo/rearwheel_creo11.prt.2"))
     assert len(design.bodies) == 1
@@ -423,7 +423,7 @@ def test_design_import_creo_11(modeler: Modeler):
 
 
 def test_design_import_jt(modeler: Modeler):
-    """Test importing a design with named selections."""
+    """Test importing a JT file."""
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "JT/assly_sub-assly_asso.jt"))
     assert len(design.components) == 2
@@ -432,7 +432,7 @@ def test_design_import_jt(modeler: Modeler):
 
 
 def test_design_import_rhino(modeler: Modeler):
-    """Test importing a design with named selections."""
+    """Test importing a Rhino file."""
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "Rhino/box.3dm"))
     assert len(design.components[0].bodies) == 1
@@ -440,7 +440,7 @@ def test_design_import_rhino(modeler: Modeler):
 
 
 def test_design_import_solid_edge2025(modeler: Modeler):
-    """Test importing a design with named selections."""
+    """Test importing a 2025 Solid Edge file."""
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "SolidEdge/L_Solid_2025.par"))
     assert len(design.bodies) == 1
@@ -448,14 +448,14 @@ def test_design_import_solid_edge2025(modeler: Modeler):
 
 
 # def test_design_import_parasolid(modeler: Modeler):
-#    """Test importing a design with named selections."""
+#    """Test importing a Parasolid file."""
 #    # Open the design
 #    design = modeler.open_file(Path(IMPORT_FILES_DIR, "Parasolid/blockhole_M.x_t"))
 #    assert len(design.bodies) == 4
 
 
 def test_design_import_solidworks(modeler: Modeler):
-    """Test importing a design with named selections."""
+    """Test importing a SOLIDWORKS file."""
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "SOLIDWORKS/Base_Plate.SLDPRT"))
     assert len(design.components) == 1
@@ -463,7 +463,7 @@ def test_design_import_solidworks(modeler: Modeler):
 
 
 def test_design_import_nx2412(modeler: Modeler):
-    """Test importing a design with named selections."""
+    """Test importing a NX 2412 file."""
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "NX/base_plate_2412.prt"))
     assert len(design.bodies) == 1
@@ -471,7 +471,7 @@ def test_design_import_nx2412(modeler: Modeler):
 
 
 def test_design_import_inventor2026(modeler: Modeler):
-    """Test importing a design with named selections."""
+    """Test importing a 2026 Inventor file."""
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "Inventor/ai_param_dsdm_part1_2026.ipt"))
     assert len(design.bodies) == 1
