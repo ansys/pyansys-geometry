@@ -35,7 +35,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+      - uses: ansys/actions/doc-deploy-changelog@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -45,7 +45,7 @@ jobs:
     name: Vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+      - uses: ansys/actions/check-vulnerabilities@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/check-pr-title@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/doc-style@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -86,7 +86,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/build-wheelhouse@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/docker-style@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/docker-style@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
           directory: docker
           recursive: true
@@ -181,7 +181,7 @@ jobs:
             exit 1
           }
 
-          $A = $env:SKIP_UNSTABLE_CONTAINERS_TEMPORARILY -eq 1
+          $A = ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }} -eq 1
           $B = $ImagesAreEqual -eq 1
 
           # Calculate the logical expression
@@ -337,7 +337,7 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
 
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/doc-build@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
@@ -386,7 +386,7 @@ jobs:
             exit 1
           fi
 
-          A=$([[ "$SKIP_UNSTABLE_CONTAINERS_TEMPORARILY" == "1" ]] && echo true || echo false)
+          A=$([[ "${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}" == "1" ]] && echo true || echo false)
           B=$([[ "$ImagesAreEqual" == "1" ]] && echo true || echo false)
 
           # Calculate the logical expression
@@ -428,7 +428,7 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/tests-pytest@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         env:
           ALLOW_PLOTTING: true
         with:
@@ -576,7 +576,7 @@ jobs:
       id-token: write
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/build-library@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -806,7 +806,7 @@ jobs:
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/tests-pytest@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         env:
           ALLOW_PLOTTING: true
         with:
@@ -847,7 +847,7 @@ jobs:
       contents: write
     steps:
       - name: Release to GitHub
-        uses: ansys/actions/release-github@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/release-github@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
@@ -887,7 +887,7 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/doc-deploy-dev@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -901,7 +901,7 @@ jobs:
     needs: [release, release-pypi]
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/doc-deploy-stable@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -918,7 +918,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Automerge PRs
-        uses: ansys/actions/hk-automerge-prs@2cf9a9c43235a000d613c2b13e64c954232a4553 # v9.0.9
+        uses: ansys/actions/hk-automerge-prs@495ca3d79c1627f5b96c469cfbe799718e9dc35f # v9.0.13
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
