@@ -402,7 +402,7 @@ def test_find_and_stitch_and_missing_faces(modeler: Modeler):
     for i in stitch_faces:
         i.fix()
     assert len(design.bodies) == 1
-    #assert design.bodies[0].is_surface
+    # assert design.bodies[0].is_surface
     missing_faces = modeler.repair_tools.find_missing_faces(design.bodies)
     for face in missing_faces:
         face.fix()
