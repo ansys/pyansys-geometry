@@ -3,4 +3,4 @@ paths:
   - src
   - tests
 paths-ignore:
-  - '**/failing_script.py'
+  - tests/integration/files/disco_scripts/failing_script.py
