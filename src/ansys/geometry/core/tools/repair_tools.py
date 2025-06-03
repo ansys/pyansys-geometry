@@ -533,11 +533,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
-            success = response["success"],
-            created_bodies = response["created_bodies_monikers"],
-            modified_bodies = response["modified_bodies_monikers"],
-            found = response["found"],
-            repaired = response["repaired"],
+            success=response["success"],
+            created_bodies=response["created_bodies_monikers"],
+            modified_bodies=response["modified_bodies_monikers"],
+            found=response["found"],
+            repaired=response["repaired"],
         )
         parent_design.update_from_tracker(response["complete_command_response"])
         return message
@@ -596,11 +596,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
-            success = response["success"],
-            created_bodies = response["created_bodies_monikers"],
-            modified_bodies = response["modified_bodies_monikers"],
-            found = response["found"],
-            repaired = response["repaired"],
+            success=response["success"],
+            created_bodies=response["created_bodies_monikers"],
+            modified_bodies=response["modified_bodies_monikers"],
+            found=response["found"],
+            repaired=response["repaired"],
         )
 
         parent_design.update_from_tracker(response["complete_command_response"])
@@ -649,11 +649,11 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
         # parent_design._update_design_inplace()
         message = RepairToolMessage(
-            success = response["success"],
-            created_bodies = response["created_bodies_monikers"],
-            modified_bodies = response["modified_bodies_monikers"],
-            found = response["found"],
-            repaired = response["repaired"],
+            success=response["success"],
+            created_bodies=response["created_bodies_monikers"],
+            modified_bodies=response["modified_bodies_monikers"],
+            found=response["found"],
+            repaired=response["repaired"],
         )
         parent_design.update_from_tracker(response["complete_command_response"])
         return message
