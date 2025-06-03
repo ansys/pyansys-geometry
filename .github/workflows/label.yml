@@ -106,7 +106,7 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-    - uses: ansys/actions/doc-changelog@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
+    - uses: ansys/actions/doc-changelog@64ed650bc3d7576d81c4042e480d28a0babb177e # v10.0.3
       with:
         token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
         use-conventional-commits: true
