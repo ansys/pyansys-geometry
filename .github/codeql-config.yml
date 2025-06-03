@@ -2,5 +2,3 @@
 paths:
   - src
   - tests
-paths-ignore:
-  - tests/integration/files/disco_scripts/failing_script.py
