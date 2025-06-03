@@ -28,6 +28,7 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
+  packages: read
 
 jobs:
   update-changelog:
