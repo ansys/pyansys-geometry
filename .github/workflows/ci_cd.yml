@@ -25,8 +25,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-jobs:
+permissions:
+  contents: write
+  pull-requests: write
+  packages: read
 
+jobs:
   update-changelog:
     name: "Update CHANGELOG (on release)"
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
@@ -35,7 +39,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+      - uses: ansys/actions/doc-deploy-changelog@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -45,7 +49,7 @@ jobs:
     name: Vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+      - uses: ansys/actions/check-vulnerabilities@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -58,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/check-pr-title@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -67,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/doc-style@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -86,7 +90,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/build-wheelhouse@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
@@ -98,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/docker-style@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/docker-style@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
           directory: docker
           recursive: true
@@ -181,7 +185,7 @@ jobs:
             exit 1
           }
 
-          $A = $env:SKIP_UNSTABLE_CONTAINERS_TEMPORARILY -eq 1
+          $A = ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }} -eq 1
           $B = $ImagesAreEqual -eq 1
 
           # Calculate the logical expression
@@ -290,7 +294,7 @@ jobs:
           retention-days: 7
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d # v5.4.2
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         if: matrix.docker-image == 'core-windows-latest'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -337,7 +341,7 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
 
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/doc-build@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
@@ -386,7 +390,7 @@ jobs:
             exit 1
           fi
 
-          A=$([[ "$SKIP_UNSTABLE_CONTAINERS_TEMPORARILY" == "1" ]] && echo true || echo false)
+          A=$([[ "${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}" == "1" ]] && echo true || echo false)
           B=$([[ "$ImagesAreEqual" == "1" ]] && echo true || echo false)
 
           # Calculate the logical expression
@@ -428,7 +432,7 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/tests-pytest@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         env:
           ALLOW_PLOTTING: true
         with:
@@ -576,7 +580,7 @@ jobs:
       id-token: write
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/build-library@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -806,7 +810,7 @@ jobs:
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/tests-pytest@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         env:
           ALLOW_PLOTTING: true
         with:
@@ -847,7 +851,7 @@ jobs:
       contents: write
     steps:
       - name: Release to GitHub
-        uses: ansys/actions/release-github@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/release-github@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
@@ -887,7 +891,7 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/doc-deploy-dev@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -901,7 +905,7 @@ jobs:
     needs: [release, release-pypi]
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/doc-deploy-stable@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -918,7 +922,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Automerge PRs
-        uses: ansys/actions/hk-automerge-prs@b4fc5ef083dcd319df27e3642e447171fdc1b7fc # v9.0.22
+        uses: ansys/actions/hk-automerge-prs@c577a177cb0754b8dceb5e4f3a9d6c6647833f8e # v10.0.1
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

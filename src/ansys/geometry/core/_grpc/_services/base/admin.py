@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 import grpc
 
 
-class GRPCAdminService(ABC):
+class GRPCAdminService(ABC):  # pragma: no cover
     """Admin service for gRPC communication with the Geometry server.
 
     Parameters
@@ -37,19 +37,19 @@ class GRPCAdminService(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the GRPCAdminService class."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def get_backend(self, **kwargs) -> dict:
         """Get server information."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def get_logs(self, **kwargs) -> dict:
         """Get server logs."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def get_service_status(self, **kwargs) -> dict:
         """Get server status (i.e. healthy or not)."""
-        pass  # pragma: no cover
+        pass

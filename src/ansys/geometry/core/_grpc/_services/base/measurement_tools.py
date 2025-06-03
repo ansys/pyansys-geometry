@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 import grpc
 
 
-class GRPCMeasurementToolsService(ABC):
+class GRPCMeasurementToolsService(ABC):  # pragma: no cover
     """Measurement tools service for gRPC communication with the Geometry server.
 
     Parameters
@@ -37,9 +37,9 @@ class GRPCMeasurementToolsService(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the GRPCMeasurementToolsService class."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def min_distance_between_objects(self, **kwargs) -> dict:
         """Calculate the minimum distance between two objects."""
-        pass  # pragma: no cover
+        pass

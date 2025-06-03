@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 import grpc
 
 
-class GRPCDbuApplicationService(ABC):
+class GRPCDbuApplicationService(ABC):  # pragma: no cover
     """DBU Application service for gRPC communication with the Geometry server.
 
     Parameters
@@ -37,9 +37,9 @@ class GRPCDbuApplicationService(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the GRPCDbuApplicationService class."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def run_script(self, **kwargs) -> dict:
         """Run a Scripting API script."""
-        pass  # pragma: no cover
+        pass
