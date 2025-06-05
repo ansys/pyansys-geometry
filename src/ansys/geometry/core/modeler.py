@@ -389,9 +389,8 @@ class Modeler:
     ) -> "Design":
         """Open a file.
 
-        This method imports a design into the service. On Windows, ``.scdocx``
-        and HOOPS Exchange formats are supported. On Linux, only the ``.scdocx``
-        format is supported.
+        This method imports a design into the service. On Windows and Linux, ``.scdocx``, ``.dsco``,
+        and reader formats are supported. Please see notes for supported reader formats.
 
         If the file is a shattered assembly with external references, the whole containing folder
         will need to be uploaded. Ensure proper folder structure in order to prevent the uploading
@@ -411,6 +410,22 @@ class Modeler:
         -------
         Design
             Newly imported design.
+
+        Notes
+        -----
+        Format and latest supported version
+            * AutoCAD 2024
+            * CATIA V5 2024
+            * CATIA V6 2024
+            * Creo Parametric 11
+            * IGES 5.3
+            * Inventor 2025
+            * JT 10.10
+            * NX 2412
+            * Rhino 8
+            * Solid Edge 2025
+            * SOLIDWORKS 2025
+            * STEP AP242
         """
         # Use str format of Path object here
         file_path = str(file_path) if isinstance(file_path, Path) else file_path

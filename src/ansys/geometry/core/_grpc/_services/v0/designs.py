@@ -54,7 +54,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = OpenRequest(
-            fliepath=kwargs["filepath"],
+            filepath=kwargs["filepath"],
             import_options=kwargs["import_options"].to_dict(),
         )
 
