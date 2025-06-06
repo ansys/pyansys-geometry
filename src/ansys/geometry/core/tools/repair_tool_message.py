@@ -30,6 +30,10 @@ class RepairToolMessage:
         success: bool,
         created_bodies: list[str],
         modified_bodies: list[str],
+        deleted_bodies: list[str] = None,
+        craeted_components: list[str] = None,
+        modified_components: list[str] = None,
+        deleted_components: list[str] = None,
         found: int = -1,
         repaired: int = -1,
     ):
