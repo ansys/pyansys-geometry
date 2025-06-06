@@ -34,15 +34,15 @@ SOFTWARE.
 | 0.10.x  | :white_check_mark: |
 | dev     | :white_check_mark: |
 
-## Reporting a Vulnerability
+## Reporting a vulnerability
 
 > [!CAUTION]
-> Please do not report any security vulnerabilities through GitHub issues.
+> Do not use GitHub issues to report any security vulnerabilities.
 
-If you detect a vulnerability, contact the [PyAnsys Core team](mailto:pyansys.core@ansys.com)
+If you detect a vulnerability, contact the [PyAnsys Core team](mailto:pyansys.core@ansys.com),
 mentioning the repository and the details of your finding. The team will address it as soon as possible.
 
-Please provide us with the following information:
+Provide the PyAnsys Core team with this information:
 
 - Any specific configuration settings needed to reproduce the problem
 - Step-by-step guidance to reproduce the problem
