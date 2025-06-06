@@ -161,12 +161,14 @@ class Circle(Curve):
             New circle that is the transformed copy of the original circle.
         """
         new_point = self.origin.transform(matrix)
-
+        new_reference = self._reference.transform(matrix)
+        new_axis = self._axis.transform(matrix)
+        
         return Circle(
             new_point,
             self.radius,
-            self.dir_x,
-            self.dir_z,
+            UnitVector3D(new_reference[0:3]),
+            UnitVector3D(new_axis[0:3]),
         )
 
     def translate(self, translation: UnitVector3D, distance: Real) -> "Circle":
