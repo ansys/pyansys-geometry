@@ -178,16 +178,20 @@ class DuplicateFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixDuplicateFaces(
             FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._grpc_id)
         )
-        # parent_design._update_design_inplace()
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+
+        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            tracker_response = response.result.complete_command_response
+            serialized_response = self.serialize_tracker_command_response(tracker_response)
+            parent_design.update_from_tracker(serialized_response)
+        
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
-
-        tracker_response = response.result.complete_command_response
-        serialized_response = self.serialize_tracker_command_response(tracker_response)
-        parent_design.update_from_tracker(serialized_response)
 
         return message
 
@@ -230,6 +234,7 @@ class MissingFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
+
         if not self.edges:
             return RepairToolMessage(False, [], [])
 
@@ -242,13 +247,18 @@ class MissingFaceProblemAreas(ProblemArea):
             response.result.complete_command_response
         )
 
-        parent_design._update_design_inplace()
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+
+        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            parent_design.update_from_tracker(serialized_response)
+
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
-        parent_design.update_from_tracker(serialized_response)
         return message
 
 
@@ -294,15 +304,21 @@ class InexactEdgeProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_edge(self.edges[0])
+
+        
+
+
         response = self._repair_stub.FixInexactEdges(
             FixInexactEdgesRequest(inexact_edge_problem_area_id=self._grpc_id)
         )
-        parent_design._update_design_inplace()
+
+        
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
+
         return message
 
 
@@ -350,14 +366,20 @@ class ExtraEdgeProblemAreas(ProblemArea):
         parent_design = get_design_from_edge(self.edges[0])
         request = FixExtraEdgesRequest(extra_edge_problem_area_id=self._grpc_id)
         response = self._repair_stub.FixExtraEdges(request)
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+
+        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            tracker_response = response.result.complete_command_response
+            serialized_response = self.serialize_tracker_command_response(tracker_response)
+            parent_design.update_from_tracker(serialized_response)
+
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
-        tracker_response = response.result.complete_command_response
-        serialized_response = self.serialize_tracker_command_response(tracker_response)
-        parent_design.update_from_tracker(serialized_response)
 
         return message
 
@@ -407,17 +429,20 @@ class ShortEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixShortEdges(
             FixShortEdgesRequest(short_edge_problem_area_id=self._grpc_id)
         )
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
 
-        # parent_design._update_design_inplace()
+        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            tracker_response = response.result.complete_command_response
+            serialized_response = self.serialize_tracker_command_response(tracker_response)
+            parent_design.update_from_tracker(serialized_response)
+        
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
-
-        tracker_response = response.result.complete_command_response
-        serialized_response = self.serialize_tracker_command_response(tracker_response)
-        parent_design.update_from_tracker(serialized_response)
 
         return message
 
@@ -468,17 +493,22 @@ class SmallFaceProblemAreas(ProblemArea):
             FixSmallFacesRequest(small_face_problem_area_id=self._grpc_id)
         )
 
-        # parent_design._update_design_inplace()
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+
+        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            # If USE_TRACKER_TO_UPDATE_DESIGNS is True, we serialize the response
+            # and update the parent design with the serialized response.
+            tracker_response = response.result.complete_command_response
+            serialized_response = self.serialize_tracker_command_response(tracker_response)
+            parent_design.update_from_tracker(serialized_response)
+
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
-
-        tracker_response = response.result.complete_command_response
-        serialized_response = self.serialize_tracker_command_response(tracker_response)
-        parent_design.update_from_tracker(serialized_response)
-
         return message
 
 
@@ -527,17 +557,20 @@ class SplitEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixSplitEdges(
             FixSplitEdgesRequest(split_edge_problem_area_id=self._grpc_id)
         )
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
 
-        tracker_respone = response.result.complete_command_response
+        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            tracker_respone = response.result.complete_command_response
+            serialized_response = self.serialize_tracker_command_response(tracker_respone)
+            parent_design.update_from_tracker(serialized_response)
 
-        serialized_response = self.serialize_tracker_command_response(tracker_respone)
-        # parent_design._update_design_inplace()
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
-        parent_design.update_from_tracker(serialized_response)
 
         return message
 
@@ -587,16 +620,20 @@ class StitchFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=self._grpc_id)
         )
-        # parent_design._update_design_inplace()
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+
+        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            tracker_respone = response.result.complete_command_response
+            serialized_response = self.serialize_tracker_command_response(tracker_respone)
+            parent_design.update_from_tracker(serialized_response)
+        
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
-
-        tracker_response = response.result.complete_command_response
-        serialized_response = self.serialize_tracker_command_response(tracker_response)
-        parent_design.update_from_tracker(serialized_response)
         return message
 
 
@@ -640,15 +677,20 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixAdjustSimplify(
             FixAdjustSimplifyRequest(adjust_simplify_problem_area_id=self._grpc_id)
         )
-        # parent_design._update_design_inplace()
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+
+        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            tracker_respone = response.result.complete_command_response
+            serialized_response = self.serialize_tracker_command_response(tracker_respone)
+            parent_design.update_from_tracker(serialized_response)
+
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
             modified_bodies=response.result.modified_bodies_monikers,
         )
-        tracker_response = response.result.complete_command_response
-        serialized_response = self.serialize_tracker_command_response(tracker_response)
-        parent_design.update_from_tracker(serialized_response)
         return message
 
 

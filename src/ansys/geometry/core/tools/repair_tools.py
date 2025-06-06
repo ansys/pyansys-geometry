@@ -22,6 +22,7 @@
 """Provides tools for repairing bodies."""
 
 from typing import TYPE_CHECKING
+import ansys.geometry.core as pyansys_geometry
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
@@ -479,7 +480,12 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        # parent_design._update_design_inplace()
+
+        if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            parent_design.update_from_tracker(response["complete_command_response"])
+
         message = RepairToolMessage(
             success=response["success"],
             found=response["found"],
@@ -531,7 +537,12 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        # parent_design._update_design_inplace()
+        
+        if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            parent_design.update_from_tracker(response["complete_command_response"])
+        
         message = RepairToolMessage(
             success=response["success"],
             created_bodies=response["created_bodies_monikers"],
@@ -539,7 +550,6 @@ class RepairTools:
             found=response["found"],
             repaired=response["repaired"],
         )
-        parent_design.update_from_tracker(response["complete_command_response"])
         return message
 
     @protect_grpc
@@ -594,7 +604,12 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        # parent_design._update_design_inplace()
+
+        if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            parent_design.update_from_tracker(response["complete_command_response"])
+
         message = RepairToolMessage(
             success=response["success"],
             created_bodies=response["created_bodies_monikers"],
@@ -602,8 +617,6 @@ class RepairTools:
             found=response["found"],
             repaired=response["repaired"],
         )
-
-        parent_design.update_from_tracker(response["complete_command_response"])
 
         return message
 
@@ -647,7 +660,12 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        # parent_design._update_design_inplace()
+
+        if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            parent_design.update_from_tracker(response["complete_command_response"])
+
         message = RepairToolMessage(
             success=response["success"],
             created_bodies=response["created_bodies_monikers"],
@@ -655,7 +673,6 @@ class RepairTools:
             found=response["found"],
             repaired=response["repaired"],
         )
-        parent_design.update_from_tracker(response["complete_command_response"])
         return message
 
     def inspect_geometry(self, bodies: list["Body"] = None) -> list[InspectResult]:

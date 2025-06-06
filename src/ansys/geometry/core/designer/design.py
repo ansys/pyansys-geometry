@@ -1316,13 +1316,13 @@ class Design(Component):
         # Loop through all deleted bodies from the tracker
         for body_info in tracker_response["deleted_bodies"]:
             body_id = body_info["id"]
-
             removed = False  # Track if a body was removed
 
             # First, check bodies at the root level
             for body in self.bodies:
                 if body.id == body_id:
-                    self.bodies.remove(body)
+                    body.is_alive = False
+                    #self.bodies.remove(body)
                     print(f"Removed body: {body_id}")
                     removed = True
                     break
