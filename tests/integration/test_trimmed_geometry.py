@@ -21,8 +21,6 @@
 # SOFTWARE.
 """Tests trimmed geometry."""
 
-import math
-
 import numpy as np
 import pytest
 
@@ -267,7 +265,7 @@ def test_trimmed_curve_line_rotate(hedgehog_design):
     assert trimmed_curve.end == Point3D([0.01, 0.01, 0.02])
 
     # Rotate the curve in the x-direction by 90 degrees about the point (0.01, 0.01, 0.0)
-    trimmed_curve.rotate(Point3D([0.01, 0.01, 0.0]), UnitVector3D([1, 0, 0]), math.pi / 2)
+    trimmed_curve.rotate(Point3D([0.01, 0.01, 0.0]), UnitVector3D([1, 0, 0]), np.pi / 2)
 
     assert np.allclose(trimmed_curve.start, Point3D([0.01, 0.01, 0.0]))
     assert np.allclose(trimmed_curve.end, Point3D([0.01, -0.01, 0.0]))
@@ -302,7 +300,7 @@ def test_trimmed_curve_circle_rotate(hedgehog_design):
     assert np.allclose(trimmed_curve.end, Point3D([-0.01, 0.01, 0.02]))
 
     # Rotate the curve in the x-direction by 90 degrees about the point (0.01, 0.01, 0.02)
-    trimmed_curve.rotate(Point3D([0.01, 0.01, 0.02]), UnitVector3D([0, 1, 0]), math.pi / 2)
+    trimmed_curve.rotate(Point3D([0.01, 0.01, 0.02]), UnitVector3D([0, 1, 0]), np.pi / 2)
 
     assert np.allclose(trimmed_curve.start, Point3D([0.01, 0.01, 0.02]))
     assert np.allclose(trimmed_curve.end, Point3D([0.01, 0.01, 0.04]))
