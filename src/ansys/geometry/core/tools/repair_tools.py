@@ -22,8 +22,8 @@
 """Provides tools for repairing bodies."""
 
 from typing import TYPE_CHECKING
-import ansys.geometry.core as pyansys_geometry
 
+import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
@@ -537,12 +537,12 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        
+
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGNS:
             parent_design._update_design_inplace()
         else:
             parent_design.update_from_tracker(response["complete_command_response"])
-        
+
         message = RepairToolMessage(
             success=response["success"],
             created_bodies=response["created_bodies_monikers"],

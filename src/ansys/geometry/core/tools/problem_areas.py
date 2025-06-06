@@ -186,7 +186,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
             tracker_response = response.result.complete_command_response
             serialized_response = self.serialize_tracker_command_response(tracker_response)
             parent_design.update_from_tracker(serialized_response)
-        
+
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
@@ -234,7 +234,6 @@ class MissingFaceProblemAreas(ProblemArea):
         message: RepairToolMessage
             Message containing created and/or modified bodies.
         """
-
         if not self.edges:
             return RepairToolMessage(False, [], [])
 
@@ -305,14 +304,10 @@ class InexactEdgeProblemAreas(ProblemArea):
 
         parent_design = get_design_from_edge(self.edges[0])
 
-        
-
-
         response = self._repair_stub.FixInexactEdges(
             FixInexactEdgesRequest(inexact_edge_problem_area_id=self._grpc_id)
         )
 
-        
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
@@ -437,7 +432,7 @@ class ShortEdgeProblemAreas(ProblemArea):
             tracker_response = response.result.complete_command_response
             serialized_response = self.serialize_tracker_command_response(tracker_response)
             parent_design.update_from_tracker(serialized_response)
-        
+
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
@@ -628,7 +623,7 @@ class StitchFaceProblemAreas(ProblemArea):
             tracker_respone = response.result.complete_command_response
             serialized_response = self.serialize_tracker_command_response(tracker_respone)
             parent_design.update_from_tracker(serialized_response)
-        
+
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,

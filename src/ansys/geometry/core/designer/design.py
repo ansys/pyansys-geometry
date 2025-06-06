@@ -1322,7 +1322,7 @@ class Design(Component):
             for body in self.bodies:
                 if body.id == body_id:
                     body.is_alive = False
-                    #self.bodies.remove(body)
+                    # self.bodies.remove(body)
                     print(f"Removed body: {body_id}")
                     removed = True
                     break
