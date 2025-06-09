@@ -58,7 +58,7 @@ all = [
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
     "ansys-tools-path==0.7.1",
-    "ansys-tools-visualization-interface==0.9.1",
+    "ansys-tools-visualization-interface==0.9.2",
     "beartype==0.20.2",
     "docker==7.1.0",
     "geomdl==5.4.0",
@@ -87,7 +87,7 @@ tests-minimal = [
 doc = [
     "ansys-sphinx-theme[autoapi]==1.5.2",
     "ansys-tools-path==0.7.1",
-    "ansys-tools-visualization-interface==0.9.1",
+    "ansys-tools-visualization-interface==0.9.2",
     "beartype==0.20.2",
     "docker==7.1.0",
     "geomdl==5.4.0",
@@ -95,7 +95,7 @@ doc = [
     "grpcio-health-checking==1.71.0",
     "ipyvtklink==0.2.3",
     "jupyter_sphinx==0.5.3",
-    "jupytext==1.17.1",
+    "jupytext==1.17.2",
     "matplotlib==3.10.3",
     "myst-parser==4.0.1",
     "nbconvert==7.16.6",
@@ -118,7 +118,7 @@ doc = [
     "sphinx-autodoc-typehints==3.1.0",
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
-    "trame-vtk==2.8.15",
+    "trame-vtk==2.8.17",
     "vtk==9.4.2",
 ]
 
