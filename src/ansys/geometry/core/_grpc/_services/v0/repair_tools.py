@@ -454,7 +454,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 for body_issues in response.issues_by_body
             ]
         }
-        
+
     def _serialize_tracker_command_response(self, response) -> dict:
         """Serialize a TrackerCommandResponse object into a dictionary.
 
