@@ -1230,6 +1230,7 @@ class Design(Component):
         tracker_response : list[dict]
             A list of dictionaries representing tracker response information.
         """
+
         # Function to update a body if it exists
         def update_body(existing_body, body_info):
             existing_body.name = body_info["name"]
