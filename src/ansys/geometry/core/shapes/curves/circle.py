@@ -163,6 +163,7 @@ class Circle(Curve):
         new_point = self.origin.transform(matrix)
         new_reference = self._reference.transform(matrix)
         new_axis = self._axis.transform(matrix)
+
         return Circle(
             new_point,
             self.radius,

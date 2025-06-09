@@ -9,6 +9,82 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.10.9 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.9>`_ - June 05, 2025
+==========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - bump ansys-sphinx-theme[autoapi] from 1.4.4 to 1.4.5 in the docs-deps group
+          - `#2008 <https://github.com/ansys/pyansys-geometry/pull/2008>`_
+
+        * - bump ansys-sphinx-theme[autoapi] from 1.4.5 to 1.5.0 in the docs-deps group
+          - `#2009 <https://github.com/ansys/pyansys-geometry/pull/2009>`_
+
+        * - bump notebook from 7.4.2 to 7.4.3 in the docs-deps group
+          - `#2010 <https://github.com/ansys/pyansys-geometry/pull/2010>`_
+
+        * - bump geomdl from 5.3.1 to 5.4.0
+          - `#2012 <https://github.com/ansys/pyansys-geometry/pull/2012>`_
+
+        * - bump ansys-sphinx-theme[autoapi] from 1.5.0 to 1.5.2 in the docs-deps group
+          - `#2014 <https://github.com/ansys/pyansys-geometry/pull/2014>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Typo in the open request construction
+          - `#2022 <https://github.com/ansys/pyansys-geometry/pull/2022>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - update CHANGELOG for v0.10.8
+          - `#2006 <https://github.com/ansys/pyansys-geometry/pull/2006>`_
+
+        * - bump ansys/actions from 9.0.12 to 9.0.13 in the actions group
+          - `#2011 <https://github.com/ansys/pyansys-geometry/pull/2011>`_
+
+        * - pre-commit automatic update
+          - `#2015 <https://github.com/ansys/pyansys-geometry/pull/2015>`_
+
+        * - improving CodeQL
+          - `#2016 <https://github.com/ansys/pyansys-geometry/pull/2016>`_
+
+        * - fix labeler permissions
+          - `#2017 <https://github.com/ansys/pyansys-geometry/pull/2017>`_
+
+        * - Bump ansys/actions from 9.0.13 to 10.0.1 in the actions group
+          - `#2018 <https://github.com/ansys/pyansys-geometry/pull/2018>`_
+
+        * - Bump the actions group with 2 updates
+          - `#2019 <https://github.com/ansys/pyansys-geometry/pull/2019>`_, `#2021 <https://github.com/ansys/pyansys-geometry/pull/2021>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update Reader support info and add more import tests
+          - `#2013 <https://github.com/ansys/pyansys-geometry/pull/2013>`_
+
+
 `0.10.8 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.8>`_ - May 27, 2025
 =========================================================================================
 

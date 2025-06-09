@@ -104,7 +104,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@f744438e29e50189f40f1749859bac7d0f69b5fa # v4.1
+        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
 
       - name: Create Python venv
         run: |
@@ -217,10 +217,10 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_LINUX_CORE_TAG }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@f744438e29e50189f40f1749859bac7d0f69b5fa # v4.1
+        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@64ed650bc3d7576d81c4042e480d28a0babb177e # v10.0.3
+        uses: ansys/actions/tests-pytest@4e01d5cb4927325e0ab2e8b1f60fd5b0b2777bf7 # v10.0.8
         env:
           ALLOW_PLOTTING: true
         with:
