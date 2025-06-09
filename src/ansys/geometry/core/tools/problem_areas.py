@@ -82,7 +82,7 @@ class ProblemArea:
     def fix(self):
         """Fix problem area."""
         raise NotImplementedError("Fix method is not implemented in the base class.")
-    
+
     @staticmethod
     def serialize_tracker_command_response(response) -> dict:
         """Serialize a TrackerCommandResponse object into a dictionary.
