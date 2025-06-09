@@ -557,6 +557,24 @@ class GeometryPlotter(PlotterInterface):
         ~pathlib.Path
             Path to the exported glb file.
         """
+        # Export to GLB requires merging the object into a single mesh
+        LOG.debug(
+            "Exporting to GLB requires merging the object into a single mesh. "
+            "This may take some time depending on the size of the object."
+        )
+        LOG.debug(
+            "When calling export_glb, if you had previously set the plotting_options "
+            "'merge_bodies' or 'merge_component' to False, they will be ignored."
+        )
+        plotting_options["merge_component"] = True
+        plotting_options["merge_bodies"] = True
+        if plotting_object is None:
+            LOG.warning(
+                "If you had previously added the objects to the plotter, "
+                "make sure that the options 'merge_bodies' and 'merge_component' "
+                "are set to True, otherwise the export will not work as expected."
+            )
+
         if plotting_object is not None:
             self.plot(plotting_object, **plotting_options)
 
