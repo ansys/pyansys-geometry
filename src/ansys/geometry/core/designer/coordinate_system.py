@@ -24,7 +24,6 @@
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.frame import Frame
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -49,7 +48,6 @@ class CoordinateSystem:
         Active supporting Geometry service instance for design modeling.
     """
 
-    @protect_grpc
     def __init__(
         self,
         name: str,

@@ -31,21 +31,7 @@ from pint import Quantity
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import FaceOffsetRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
-from ansys.api.geometry.v0.faces_pb2 import (
-    CreateIsoParamCurvesRequest,
-    EvaluateRequest,
-    GetNormalRequest,
-    SetColorRequest,
-)
-from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
-from ansys.api.geometry.v0.models_pb2 import Edge as GRPCEdge
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import (
-    grpc_curve_to_curve,
-    grpc_point_to_point3d,
-    grpc_surface_to_surface,
-)
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.bbox import BoundingBox
@@ -61,7 +47,6 @@ from ansys.geometry.core.misc.checks import (
     graphics_required,
     min_backend_version,
 )
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
@@ -192,8 +177,6 @@ class Face:
         self._surface_type = surface_type
         self._body = body
         self._grpc_client = grpc_client
-        self._faces_stub = FacesStub(grpc_client.channel)
-        self._edges_stub = EdgesStub(grpc_client.channel)
         self._commands_stub = CommandsStub(grpc_client.channel)
         self._is_reversed = is_reversed
         self._shape = None
@@ -220,7 +203,6 @@ class Face:
         return self._body
 
     @property
-    @protect_grpc
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def shape(self) -> TrimmedSurface:
@@ -232,10 +214,12 @@ class Face:
         if self._shape is None:
             self._grpc_client.log.debug("Requesting face properties from server.")
 
-            surface_response = self._faces_stub.GetSurface(self._grpc_id)
-            geometry = grpc_surface_to_surface(surface_response, self._surface_type)
-            box = self._faces_stub.GetBoxUV(self._grpc_id)
-            box_uv = BoxUV(Interval(box.start_u, box.end_u), Interval(box.start_v, box.end_v))
+            geometry = self._grpc_client.services.faces.get_surface(
+                id=self.id, surface_type=self.surface_type
+            ).get("surface")
+            response = self._grpc_client.services.faces.get_box_uv(id=self.id).get("uv_box")
+            u_comp, v_comp = response.get("u"), response.get("v")
+            box_uv = BoxUV(Interval(*u_comp), Interval(*v_comp))
 
             self._shape = (
                 ReversedTrimmedSurface(geometry, box_uv)
@@ -250,54 +234,57 @@ class Face:
         return self._surface_type
 
     @property
-    @protect_grpc
     @ensure_design_is_active
     def area(self) -> Quantity:
         """Calculated area of the face."""
         self._grpc_client.log.debug("Requesting face area from server.")
-        area_response = self._faces_stub.GetArea(self._grpc_id)
-        return Quantity(area_response.area, DEFAULT_UNITS.SERVER_AREA)
+        return self._grpc_client.services.faces.get_area(id=self.id).get("area")
 
     @property
-    @protect_grpc
     @ensure_design_is_active
     def edges(self) -> list[Edge]:
         """List of all edges of the face."""
+        from ansys.geometry.core.designer.edge import CurveType
+
         self._grpc_client.log.debug("Requesting face edges from server.")
-        edges_response = self._faces_stub.GetEdges(self._grpc_id)
-        return self.__grpc_edges_to_edges(edges_response.edges)
+        response = self._grpc_client.services.faces.get_edges(id=self.id)
+        return [
+            Edge(
+                edge.get("id"),
+                CurveType(edge.get("curve_type")),
+                self._body,
+                self._grpc_client,
+                edge.get("is_reversed"),
+            )
+            for edge in response.get("edges")
+        ]
 
     @property
-    @protect_grpc
     @ensure_design_is_active
     def loops(self) -> list[FaceLoop]:
         """List of all loops of the face."""
+        from ansys.geometry.core.designer.edge import CurveType
+
         self._grpc_client.log.debug("Requesting face loops from server.")
-        grpc_loops = self._faces_stub.GetLoops(EntityIdentifier(id=self.id)).loops
+        response_loops = self._grpc_client.services.faces.get_loops(id=self.id).get("loops")
         loops = []
-        for grpc_loop in grpc_loops:
-            type = FaceLoopType(grpc_loop.type)
-            length = Quantity(grpc_loop.length, DEFAULT_UNITS.SERVER_LENGTH)
-            min = Point3D(
-                [
-                    grpc_loop.bounding_box.min.x,
-                    grpc_loop.bounding_box.min.y,
-                    grpc_loop.bounding_box.min.z,
-                ],
-                DEFAULT_UNITS.SERVER_LENGTH,
-            )
-            max = Point3D(
-                [
-                    grpc_loop.bounding_box.max.x,
-                    grpc_loop.bounding_box.max.y,
-                    grpc_loop.bounding_box.max.z,
-                ],
-                DEFAULT_UNITS.SERVER_LENGTH,
-            )
-            grpc_edges = [
-                self._edges_stub.Get(EntityIdentifier(id=edge_id)) for edge_id in grpc_loop.edges
-            ]
-            edges = self.__grpc_edges_to_edges(grpc_edges)
+        for response_loop in response_loops:
+            type = FaceLoopType(response_loop.get("type"))
+            length = response_loop.get("length")
+            min = response_loop.get("min_corner")
+            max = response_loop.get("max_corner")
+            edges = []
+            for edge_id in response_loop.get("edges"):
+                response_edge = self._grpc_client.services.edges.get_edge(id=edge_id)
+                edges.append(
+                    Edge(
+                        response_edge.get("id"),
+                        CurveType(response_edge.get("curve_type")),
+                        self._body,
+                        self._grpc_client,
+                        response_edge.get("is_reversed"),
+                    )
+                )
             loops.append(
                 FaceLoop(type=type, length=length, min_bbox=min, max_bbox=max, edges=edges)
             )
@@ -305,7 +292,6 @@ class Face:
         return loops
 
     @property
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def color(self) -> str:
         """Get the current color of the face."""
@@ -314,11 +300,11 @@ class Face:
             self._color = DEFAULT_COLOR
 
             # If color is not cached, retrieve from the server
-            response = self._faces_stub.GetColor(EntityIdentifier(id=self.id))
+            response = self._grpc_client.services.faces.get_color(id=self.id)
 
             # Return if valid color returned
-            if response.color:
-                self._color = mcolors.to_hex(response.color, keep_alpha=True)
+            if response.get("color"):
+                self._color = mcolors.to_hex(response.get("color"), keep_alpha=True)
             else:
                 self._color = DEFAULT_COLOR
 
@@ -339,34 +325,26 @@ class Face:
         self.set_opacity(opacity)
 
     @property
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def bounding_box(self) -> BoundingBox:
         """Get the bounding box for the face."""
         self._grpc_client.log.debug(f"Getting bounding box for {self.id}.")
+        response = self._grpc_client.services.faces.get_bounding_box(id=self.id)
+        return BoundingBox(
+            response.get("min_corner"), response.get("max_corner"), response.get("center")
+        )
 
-        result = self._faces_stub.GetBoundingBox(request=self._grpc_id)
-        min_point = grpc_point_to_point3d(result.min)
-        max_point = grpc_point_to_point3d(result.max)
-        center = grpc_point_to_point3d(result.center)
-
-        return BoundingBox(min_point, max_point, center)
-
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
     def set_color(self, color: str | tuple[float, float, float]) -> None:
         """Set the color of the face."""
         self._grpc_client.log.debug(f"Setting face color of {self.id} to {color}.")
         color = convert_color_to_hex(color)
-
-        self._faces_stub.SetColor(
-            SetColorRequest(
-                face_id=self.id,
-                color=color,
-            )
-        )
-        self._color = color
+        response = self._grpc_client.services.faces.set_color(id=self.id, color=color)
+        if response.get("success"):
+            self._color = color
+        else:  # pragma: no cover
+            raise GeometryRuntimeError(f"Failed to set color {color} for face {self.id}. ")
 
     @check_input_types
     @min_backend_version(25, 2, 0)
@@ -378,7 +356,6 @@ class Face:
         new_color = self._color[0:7] + opacity
         self.set_color(new_color)
 
-    @protect_grpc
     @ensure_design_is_active
     def normal(self, u: float = 0.5, v: float = 0.5) -> UnitVector3D:
         """Get the normal direction to the face at certain UV coordinates.
@@ -410,10 +387,8 @@ class Face:
         except GeometryRuntimeError:  # pragma: no cover
             # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug(f"Requesting face normal from server with (u,v)=({u},{v}).")
-            response = self._faces_stub.GetNormal(GetNormalRequest(id=self.id, u=u, v=v)).direction
-            return UnitVector3D([response.x, response.y, response.z])
+            return self._grpc_client.services.faces.get_normal(id=self.id, u=u, v=v).get("normal")
 
-    @protect_grpc
     @ensure_design_is_active
     def point(self, u: float = 0.5, v: float = 0.5) -> Point3D:
         """Get a point of the face evaluated at certain UV coordinates.
@@ -443,38 +418,8 @@ class Face:
         except GeometryRuntimeError:  # pragma: no cover
             # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug(f"Requesting face point from server with (u,v)=({u},{v}).")
-            response = self._faces_stub.Evaluate(EvaluateRequest(id=self.id, u=u, v=v)).point
-            return Point3D([response.x, response.y, response.z], DEFAULT_UNITS.SERVER_LENGTH)
+            return self._grpc_client.services.faces.evaluate(id=self.id, u=u, v=v).get("point")
 
-    def __grpc_edges_to_edges(self, edges_grpc: list[GRPCEdge]) -> list[Edge]:
-        """Transform a list of gRPC edge messages into actual ``Edge`` objects.
-
-        Parameters
-        ----------
-        edges_grpc : list[GRPCEdge]
-            list of gRPC messages of type ``Edge``.
-
-        Returns
-        -------
-        list[Edge]
-            ``Edge`` objects to obtain from gRPC messages.
-        """
-        from ansys.geometry.core.designer.edge import CurveType, Edge
-
-        edges = []
-        for edge_grpc in edges_grpc:
-            edges.append(
-                Edge(
-                    edge_grpc.id,
-                    CurveType(edge_grpc.curve_type),
-                    self._body,
-                    self._grpc_client,
-                    edge_grpc.is_reversed,
-                )
-            )
-        return edges
-
-    @protect_grpc
     @ensure_design_is_active
     def create_isoparametric_curves(
         self, use_u_param: bool, parameter: float
@@ -497,20 +442,25 @@ class Face:
         list[TrimmedCurve]
             list of curves that were created.
         """
-        curves = self._faces_stub.CreateIsoParamCurves(
-            CreateIsoParamCurvesRequest(id=self.id, u_dir_curve=use_u_param, proportion=parameter)
-        ).curves
+        self._grpc_client.log.debug(
+            f"Creating isoparametric curves on face {self.id} with parameter={parameter}"
+            f" and use_u_param={use_u_param}."
+        )
+        response = self._grpc_client.services.faces.create_iso_parametric_curve(
+            id=self.id, use_u_param=use_u_param, parameter=parameter
+        )
 
         trimmed_curves = []
-        for c in curves:
-            geometry = grpc_curve_to_curve(c.curve)
-            start = Point3D([c.start.x, c.start.y, c.start.z], unit=DEFAULT_UNITS.SERVER_LENGTH)
-            end = Point3D([c.end.x, c.end.y, c.end.z], unit=DEFAULT_UNITS.SERVER_LENGTH)
-            interval = Interval(c.interval_start, c.interval_end)
-            length = Quantity(c.length, DEFAULT_UNITS.SERVER_LENGTH)
-
+        for curve in response.get("curves"):
             trimmed_curves.append(
-                TrimmedCurve(geometry, start, end, interval, length, self._grpc_client)
+                TrimmedCurve(
+                    curve.get("geometry"),
+                    curve.get("start"),
+                    curve.get("end"),
+                    curve.get("interval"),
+                    curve.get("length"),
+                    self._grpc_client,
+                )
             )
 
         return trimmed_curves
