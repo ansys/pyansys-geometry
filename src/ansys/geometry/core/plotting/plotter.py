@@ -568,16 +568,15 @@ class GeometryPlotter(PlotterInterface):
         )
         plotting_options["merge_component"] = True
         plotting_options["merge_bodies"] = True
-        if plotting_object is None:
+
+        if plotting_object is not None:
+            self.plot(plotting_object, **plotting_options)
+        else:
             LOG.warning(
                 "If you had previously added the objects to the plotter, "
                 "make sure that the options 'merge_bodies' and 'merge_component' "
                 "are set to True, otherwise the export will not work as expected."
             )
-
-        if plotting_object is not None:
-            self.plot(plotting_object, **plotting_options)
-
         # Depending on whether a name is provided, the file will be saved with the name
         # provided or with a default name (temp_glb). If a name is provided, the file will
         # be saved in the current working directory. If a path is provided, the file will be
