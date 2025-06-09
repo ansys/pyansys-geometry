@@ -183,9 +183,9 @@ class DuplicateFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixDuplicateFaces(
             FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._grpc_id)
         )
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 
-        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
@@ -251,9 +251,9 @@ class MissingFaceProblemAreas(ProblemArea):
             response.result.complete_command_response
         )
 
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 
-        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
             parent_design._update_from_tracker(serialized_response)
@@ -313,9 +313,9 @@ class InexactEdgeProblemAreas(ProblemArea):
             FixInexactEdgesRequest(inexact_edge_problem_area_id=self._grpc_id)
         )
 
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 
-        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
@@ -375,9 +375,9 @@ class ExtraEdgeProblemAreas(ProblemArea):
         parent_design = get_design_from_edge(self.edges[0])
         request = FixExtraEdgesRequest(extra_edge_problem_area_id=self._grpc_id)
         response = self._repair_stub.FixExtraEdges(request)
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 
-        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
@@ -438,9 +438,9 @@ class ShortEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixShortEdges(
             FixShortEdgesRequest(short_edge_problem_area_id=self._grpc_id)
         )
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 
-        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
@@ -502,12 +502,12 @@ class SmallFaceProblemAreas(ProblemArea):
             FixSmallFacesRequest(small_face_problem_area_id=self._grpc_id)
         )
 
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 
-        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            # If USE_TRACKER_TO_UPDATE_DESIGNS is True, we serialize the response
+            # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
             tracker_response = response.result.complete_command_response
             serialized_response = self._serialize_tracker_command_response(tracker_response)
@@ -566,9 +566,9 @@ class SplitEdgeProblemAreas(ProblemArea):
         response = self._repair_stub.FixSplitEdges(
             FixSplitEdgesRequest(split_edge_problem_area_id=self._grpc_id)
         )
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 
-        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
@@ -629,9 +629,9 @@ class StitchFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixStitchFaces(
             FixStitchFacesRequest(stitch_face_problem_area_id=self._grpc_id)
         )
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 
-        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
@@ -686,9 +686,9 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
         response = self._repair_stub.FixAdjustSimplify(
             FixAdjustSimplifyRequest(adjust_simplify_problem_area_id=self._grpc_id)
         )
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 
-        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
