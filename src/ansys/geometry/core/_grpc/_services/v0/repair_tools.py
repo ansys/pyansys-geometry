@@ -252,7 +252,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndSimplify(request)
 
-        serialized_tracker_response = self.serialize_tracker_command_response(
+        serialized_tracker_response = self._serialize_tracker_command_response(
             response.complete_command_response
         )
 
@@ -277,7 +277,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         inspect_result_response = self.stub.InspectGeometry(request)
 
         # Serialize and return the response
-        return self.serialize_inspect_result_response(inspect_result_response)
+        return self._serialize_inspect_result_response(inspect_result_response)
 
     @protect_grpc
     def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
@@ -332,7 +332,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixShortEdges(request)
 
-        serialized_tracker_response = self.serialize_tracker_command_response(
+        serialized_tracker_response = self._serialize_tracker_command_response(
             response.complete_command_response
         )
 
@@ -357,7 +357,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixExtraEdges(request)
 
-        serialized_tracker_response = self.serialize_tracker_command_response(
+        serialized_tracker_response = self._serialize_tracker_command_response(
             response.complete_command_response
         )
 
@@ -387,7 +387,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixSplitEdges(request)
 
-        serialized_tracker_response = self.serialize_tracker_command_response(
+        serialized_tracker_response = self._serialize_tracker_command_response(
             response.complete_command_response
         )
 
@@ -401,8 +401,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "complete_command_response": serialized_tracker_response,
         }
 
-    @staticmethod
-    def serialize_inspect_result_response(response) -> dict:  # noqa: D102
+    def _serialize_inspect_result_response(self, response) -> dict:  # noqa: D102
         def serialize_body(body):
             return {
                 "id": body.id,
@@ -455,46 +454,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 for body_issues in response.issues_by_body
             ]
         }
-
-    @staticmethod
-    def serialize_tracker_command_response(response) -> dict:
-        """Serialize a TrackerCommandResponse object into a dictionary.
-
-        Parameters
-        ----------
-        response : TrackerCommandResponse
-            The gRPC TrackerCommandResponse object to serialize.
-
-        Returns
-        -------
-        dict
-            A dictionary representation of the TrackerCommandResponse object.
-        """
-
-        def serialize_body(body):
-            return {
-                "id": body.id,
-                "name": body.name,
-                "can_suppress": body.can_suppress,
-                "transform_to_master": {
-                    "m00": body.transform_to_master.m00,
-                    "m11": body.transform_to_master.m11,
-                    "m22": body.transform_to_master.m22,
-                    "m33": body.transform_to_master.m33,
-                },
-                "master_id": body.master_id,
-                "parent_id": body.parent_id,
-            }
-
-        def serialize_entity_identifier(entity):
-            """Serialize an EntityIdentifier object into a dictionary."""
-            return {
-                "id": entity.id,
-                "type": entity.type,
-            }
-
-    @staticmethod
-    def serialize_tracker_command_response(response) -> dict:
+        
+    def _serialize_tracker_command_response(self, response) -> dict:
         """Serialize a TrackerCommandResponse object into a dictionary.
 
         Parameters

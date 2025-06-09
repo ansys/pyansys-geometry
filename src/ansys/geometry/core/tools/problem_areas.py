@@ -83,8 +83,7 @@ class ProblemArea:
         """Fix problem area."""
         raise NotImplementedError("Fix method is not implemented in the base class.")
 
-    @staticmethod
-    def serialize_tracker_command_response(response) -> dict:
+    def _serialize_tracker_command_response(self, response) -> dict:
         """Serialize a TrackerCommandResponse object into a dictionary.
 
         Parameters
@@ -190,7 +189,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
-            serialized_response = self.serialize_tracker_command_response(tracker_response)
+            serialized_response = self._serialize_tracker_command_response(tracker_response)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -248,7 +247,7 @@ class MissingFaceProblemAreas(ProblemArea):
             FixMissingFacesRequest(missing_face_problem_area_id=self._grpc_id)
         )
 
-        serialized_response = self.serialize_tracker_command_response(
+        serialized_response = self._serialize_tracker_command_response(
             response.result.complete_command_response
         )
 
@@ -320,7 +319,7 @@ class InexactEdgeProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
-            serialized_response = self.serialize_tracker_command_response(tracker_response)
+            serialized_response = self._serialize_tracker_command_response(tracker_response)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -382,7 +381,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
-            serialized_response = self.serialize_tracker_command_response(tracker_response)
+            serialized_response = self._serialize_tracker_command_response(tracker_response)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -445,7 +444,7 @@ class ShortEdgeProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
-            serialized_response = self.serialize_tracker_command_response(tracker_response)
+            serialized_response = self._serialize_tracker_command_response(tracker_response)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -511,7 +510,7 @@ class SmallFaceProblemAreas(ProblemArea):
             # If USE_TRACKER_TO_UPDATE_DESIGNS is True, we serialize the response
             # and update the parent design with the serialized response.
             tracker_response = response.result.complete_command_response
-            serialized_response = self.serialize_tracker_command_response(tracker_response)
+            serialized_response = self._serialize_tracker_command_response(tracker_response)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -573,7 +572,7 @@ class SplitEdgeProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
-            serialized_response = self.serialize_tracker_command_response(tracker_respone)
+            serialized_response = self._serialize_tracker_command_response(tracker_respone)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -636,7 +635,7 @@ class StitchFaceProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
-            serialized_response = self.serialize_tracker_command_response(tracker_respone)
+            serialized_response = self._serialize_tracker_command_response(tracker_respone)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -693,7 +692,7 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
-            serialized_response = self.serialize_tracker_command_response(tracker_respone)
+            serialized_response = self._serialize_tracker_command_response(tracker_respone)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
