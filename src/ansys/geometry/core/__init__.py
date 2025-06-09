@@ -71,5 +71,5 @@ and your objects will always exist on the server side.
 DOCUMENTATION_BUILD: bool = os.environ.get("PYANSYS_GEOMETRY_DOC_BUILD", "false").lower() == "true"
 """Global flag for the documentation to use the proper PyVista Jupyter backend."""
 
-USE_TRACKER_TO_UPDATE_DESIGNS: bool = True
+USE_TRACKER_TO_UPDATE_DESIGN: bool = True
 """Global constant for checking whether to use the tracker to update designs."""

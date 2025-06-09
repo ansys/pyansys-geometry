@@ -537,7 +537,7 @@ class RepairTools:
 
         parent_design = get_design_from_body(bodies[0])
 
-        if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGNS:
+        if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
             parent_design._update_from_tracker(response["complete_command_response"])
