@@ -183,7 +183,7 @@ class TrimmedCurve:
 
         Parameters
         ----------
-        direction : Vector3D
+        direction : UnitVector3D
             Direction of translation.
         distance : Real | Quantity | Distance
             Distance to translate.
@@ -207,7 +207,7 @@ class TrimmedCurve:
         ----------
         origin : Point3D
             Origin point of the rotation.
-        axis : Vector3D
+        axis : UnitVector3D
             Axis of rotation.
         angle : Real | Quantity | Angle
             Angle to rotate in radians.
