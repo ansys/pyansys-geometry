@@ -1227,17 +1227,13 @@ class Design(Component):
 
         Parameters
         ----------
-        changed_bodies : list[dict]
-            A list of dictionaries representing changed body information. Each dictionary
-            should contain 'id', 'name', and 'is_surface' keys.
+        tracker_response : list[dict]
+            A list of dictionaries representing tracker response information.
         """
-        print("Updating design using the tracker...")
-
         # Function to update a body if it exists
         def update_body(existing_body, body_info):
             existing_body.name = body_info["name"]
             existing_body._template._is_surface = body_info.get("is_surface", False)
-            print(f"Updated body: {body_info['name']} (ID: {body_info['id']})")
 
         # Function to find and add bodies within components recursively
         def find_and_add_body(body_info, component):
@@ -1250,7 +1246,6 @@ class Design(Component):
                         is_surface=body_info.get("is_surface", False),
                     )
                     component.bodies.append(new_body)
-                    print(f"Added new body: {body_info['name']} (ID: {body_info['id']})")
                     return True  # Found and added
 
                 # Recursively search in subcomponents
@@ -1283,7 +1278,6 @@ class Design(Component):
                 if body.id == body_info["id"]:
                     # Remove the body from the component
                     component.bodies.remove(body)
-                    print(f"Removed body: {body_info['id']}")
                     return True  # Found and removed
 
                 # Recursively search in subcomponents
@@ -1323,7 +1317,6 @@ class Design(Component):
                 if body.id == body_id:
                     self.bodies.remove(body)
                     # self.bodies.remove(body)
-                    print(f"Removed body: {body_id}")
                     removed = True
                     break
 
@@ -1353,6 +1346,3 @@ class Design(Component):
             if not added:
                 new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
                 self.bodies.append(new_body)
-                print(f"Added new body: {body_name} (ID: {body_id})")
-
-        print("Design update completed.")
