@@ -314,6 +314,15 @@ class InexactEdgeProblemAreas(ProblemArea):
             FixInexactEdgesRequest(inexact_edge_problem_area_id=self._grpc_id)
         )
 
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGNS
+
+        if not USE_TRACKER_TO_UPDATE_DESIGNS:
+            parent_design._update_design_inplace()
+        else:
+            tracker_response = response.result.complete_command_response
+            serialized_response = self.serialize_tracker_command_response(tracker_response)
+            parent_design._update_from_tracker(serialized_response)
+
         message = RepairToolMessage(
             success=response.result.success,
             created_bodies=response.result.created_bodies_monikers,
