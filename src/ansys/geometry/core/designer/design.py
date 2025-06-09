@@ -1221,7 +1221,7 @@ class Design(Component):
         # Read the existing design
         self.__read_existing_design()
 
-    def update_from_tracker(self, tracker_response):
+    def _update_from_tracker(self, tracker_response):
         """
         Update the design with the changed bodies while preserving unchanged ones.
 
@@ -1321,7 +1321,7 @@ class Design(Component):
             # First, check bodies at the root level
             for body in self.bodies:
                 if body.id == body_id:
-                    body.is_alive = False
+                    self.bodies.remove(body)
                     # self.bodies.remove(body)
                     print(f"Removed body: {body_id}")
                     removed = True

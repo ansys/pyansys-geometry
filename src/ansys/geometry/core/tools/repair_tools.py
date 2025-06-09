@@ -484,7 +484,7 @@ class RepairTools:
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGNS:
             parent_design._update_design_inplace()
         else:
-            parent_design.update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["complete_command_response"])
 
         message = RepairToolMessage(
             success=response["success"],
@@ -540,7 +540,7 @@ class RepairTools:
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGNS:
             parent_design._update_design_inplace()
         else:
-            parent_design.update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["complete_command_response"])
 
         message = RepairToolMessage(
             success=response["success"],
@@ -607,7 +607,7 @@ class RepairTools:
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGNS:
             parent_design._update_design_inplace()
         else:
-            parent_design.update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["complete_command_response"])
 
         message = RepairToolMessage(
             success=response["success"],
@@ -663,7 +663,7 @@ class RepairTools:
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGNS:
             parent_design._update_design_inplace()
         else:
-            parent_design.update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["complete_command_response"])
 
         message = RepairToolMessage(
             success=response["success"],

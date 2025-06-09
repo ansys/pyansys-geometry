@@ -21,6 +21,7 @@
 # SOFTWARE.
 """The problem area definition."""
 
+from abc import abstractmethod
 from typing import TYPE_CHECKING
 
 from google.protobuf.wrappers_pb2 import Int32Value
@@ -77,6 +78,11 @@ class ProblemArea:
         """The id of the problem area."""
         return self._id
 
+    @abstractmethod
+    def fix(self):
+        """Fix problem area."""
+        raise NotImplementedError("Fix method is not implemented in the base class.")
+    
     @staticmethod
     def serialize_tracker_command_response(response) -> dict:
         """Serialize a TrackerCommandResponse object into a dictionary.
@@ -185,7 +191,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         else:
             tracker_response = response.result.complete_command_response
             serialized_response = self.serialize_tracker_command_response(tracker_response)
-            parent_design.update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
             success=response.result.success,
@@ -251,7 +257,7 @@ class MissingFaceProblemAreas(ProblemArea):
         if not USE_TRACKER_TO_UPDATE_DESIGNS:
             parent_design._update_design_inplace()
         else:
-            parent_design.update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
             success=response.result.success,
@@ -368,7 +374,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
         else:
             tracker_response = response.result.complete_command_response
             serialized_response = self.serialize_tracker_command_response(tracker_response)
-            parent_design.update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
             success=response.result.success,
@@ -431,7 +437,7 @@ class ShortEdgeProblemAreas(ProblemArea):
         else:
             tracker_response = response.result.complete_command_response
             serialized_response = self.serialize_tracker_command_response(tracker_response)
-            parent_design.update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
             success=response.result.success,
@@ -497,7 +503,7 @@ class SmallFaceProblemAreas(ProblemArea):
             # and update the parent design with the serialized response.
             tracker_response = response.result.complete_command_response
             serialized_response = self.serialize_tracker_command_response(tracker_response)
-            parent_design.update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
             success=response.result.success,
@@ -559,7 +565,7 @@ class SplitEdgeProblemAreas(ProblemArea):
         else:
             tracker_respone = response.result.complete_command_response
             serialized_response = self.serialize_tracker_command_response(tracker_respone)
-            parent_design.update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
             success=response.result.success,
@@ -622,7 +628,7 @@ class StitchFaceProblemAreas(ProblemArea):
         else:
             tracker_respone = response.result.complete_command_response
             serialized_response = self.serialize_tracker_command_response(tracker_respone)
-            parent_design.update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
             success=response.result.success,
@@ -679,7 +685,7 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
         else:
             tracker_respone = response.result.complete_command_response
             serialized_response = self.serialize_tracker_command_response(tracker_respone)
-            parent_design.update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
             success=response.result.success,
