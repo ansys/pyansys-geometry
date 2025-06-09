@@ -293,7 +293,7 @@ def test_find_and_fix_duplicate_faces(modeler: Modeler):
     for area in areas:
         area.fix()
     assert len(design.bodies) == 1
-    
+
 def test_find_and_fix_extra_edges_problem_areas(modeler: Modeler):
     """Test to read geometry, find and fix extra edges and validate they are removed."""
     design = modeler.open_file(FILES_DIR / "ExtraEdges_NoComponents.scdocx")
@@ -403,7 +403,7 @@ def test_find_and_stitch_and_missing_faces(modeler: Modeler):
     for i in stitch_faces:
         i.fix()
     assert len(design.bodies) == 1
-    # TODO : Add surface body check from backend.
+    # TODO : Add surface body check from backend. Issue is being tracked in #2031.
     # assert design.bodies[0].is_surface
     missing_faces = modeler.repair_tools.find_missing_faces(design.bodies)
     for face in missing_faces:
