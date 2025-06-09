@@ -577,6 +577,7 @@ class GeometryPlotter(PlotterInterface):
                 "make sure that the options 'merge_bodies' and 'merge_component' "
                 "are set to True, otherwise the export will not work as expected."
             )
+
         # Depending on whether a name is provided, the file will be saved with the name
         # provided or with a default name (temp_glb). If a name is provided, the file will
         # be saved in the current working directory. If a path is provided, the file will be
