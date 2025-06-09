@@ -284,6 +284,7 @@ def test_fix_interference(modeler: Modeler):
     result = problem_areas[0].fix()
     assert result.success is True
 
+
 def test_find_and_fix_duplicate_faces(modeler: Modeler):
     """Test to read geometry, find and fix duplicate faces and validate they are removed."""
     design = modeler.open_file(FILES_DIR / "DuplicateFaces.scdocx")
@@ -293,6 +294,7 @@ def test_find_and_fix_duplicate_faces(modeler: Modeler):
     for area in areas:
         area.fix()
     assert len(design.bodies) == 1
+
 
 def test_find_and_fix_extra_edges_problem_areas(modeler: Modeler):
     """Test to read geometry, find and fix extra edges and validate they are removed."""
@@ -310,9 +312,6 @@ def test_find_and_fix_extra_edges_problem_areas(modeler: Modeler):
     for body in design.bodies:
         final_edge_count += len(body.edges)
     assert final_edge_count == 36
-
-
-
 
 
 def test_find_and_fix_extra_edges_in_components(modeler: Modeler):
