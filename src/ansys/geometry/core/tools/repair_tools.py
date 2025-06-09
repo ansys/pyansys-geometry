@@ -493,7 +493,6 @@ class RepairTools:
             created_bodies=[],
             modified_bodies=[],
         )
-        parent_design.update_from_tracker(response["complete_command_response"])
         return message
 
     @protect_grpc
