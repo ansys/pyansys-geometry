@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 import grpc
 
 
-class GRPCDrivingDimensionsService(ABC):
+class GRPCDrivingDimensionsService(ABC):  # pragma: no cover
     """Driving Dimension service for gRPC communication with the Geometry server.
 
     Parameters
@@ -37,14 +37,14 @@ class GRPCDrivingDimensionsService(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the GRPCDrivingDimensionsService class."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def get_all_parameters(self, **kwargs) -> dict:
         """Get driving dimensions."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def set_parameter(self, **kwargs) -> dict:
         """Set driving dimensions."""
-        pass  # pragma: no cover
+        pass

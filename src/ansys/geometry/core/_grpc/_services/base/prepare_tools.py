@@ -26,7 +26,7 @@ from abc import ABC, abstractmethod
 import grpc
 
 
-class GRPCPrepareToolsService(ABC):
+class GRPCPrepareToolsService(ABC):  # pragma: no cover
     """Prepare tools service for gRPC communication with the Geometry server.
 
     Parameters
@@ -37,44 +37,44 @@ class GRPCPrepareToolsService(ABC):
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the GRPCPrepareToolsService class."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def extract_volume_from_faces(self, **kwargs) -> dict:
         """Extract a volume from input faces."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def extract_volume_from_edge_loops(self, **kwargs) -> dict:
         """Extract a volume from input edge loop."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def remove_rounds(self, **kwargs) -> dict:
         """Remove rounds from geometry."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def share_topology(self, **kwargs) -> dict:
         """Share topology between the given bodies."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def enhanced_share_topology(self, **kwargs) -> dict:
         """Share topology between the given bodies."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def find_logos(self, **kwargs) -> dict:
         """Detect logos in geometry."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def find_and_remove_logos(self, **kwargs) -> dict:
         """Detect and remove logos in geometry."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def remove_logo(self, **kwargs) -> dict:
         """Remove logos in geometry."""
-        pass  # pragma: no cover
+        pass

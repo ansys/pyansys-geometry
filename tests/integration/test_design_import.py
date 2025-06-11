@@ -255,7 +255,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     # assert the two cars are the same, excepted for the ID, which should be different
     _checker_method(design, design2, True)
 
-    # Test HOOPS formats (Windows only)
+    # Test Reader formats (Windows only)
     if not BackendType.is_core_service(modeler.client.backend_type):
         # IGES
         #
@@ -382,3 +382,97 @@ def test_design_import_with_named_selections(modeler: Modeler):
     ns3 = design._named_selections["Group3"]
     assert len(ns3.bodies) == 0
     assert len(ns3.design_points) == 1
+
+
+def test_design_import_acad_2024(modeler: Modeler):
+    """Test importing a 2024 AutoCAD file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "ACAD/CylinderBox_2024.dwg"))
+    assert len(design.components) == 3
+    assert len(design.components[1].bodies[0].faces) == 6
+
+
+def test_design_import_cat5_2024(modeler: Modeler):
+    """Test importing a 2024 CATIA V5 file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "CAT5/Bracket_Hole_2024.CATPart"))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 24
+
+
+def test_design_import_cat6_2023(modeler: Modeler):
+    """Test importing a CATIA V6 file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "CAT6/Skateboard A.1_2023x.3dxml"))
+    assert len(design.components) == 4
+    assert len(design.components[0].components) == 1
+    assert len(design.components[1].components) == 3
+    assert len(design.components[2].components) == 3
+    assert len(design.components[3].components) == 1
+    assert len(design.components[1].components[0].components[0].bodies) == 15
+    assert len(design.components[1].components[1].components[0].bodies) == 16
+    assert len(design.components[1].components[2].components[0].bodies) == 16
+
+
+def test_design_import_creo_11(modeler: Modeler):
+    """Test importing a Creo 11 file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "Creo/rearwheel_creo11.prt.2"))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 32
+
+
+def test_design_import_jt(modeler: Modeler):
+    """Test importing a JT file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "JT/assly_sub-assly_asso.jt"))
+    assert len(design.components) == 2
+    assert len(design.components[0].components) == 2
+    assert len(design.components[0].components[0].bodies[0].faces) == 6
+
+
+def test_design_import_rhino(modeler: Modeler):
+    """Test importing a Rhino file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "Rhino/box.3dm"))
+    assert len(design.components[0].bodies) == 1
+    assert len(design.components[0].bodies[0].faces) == 6
+
+
+def test_design_import_solid_edge2025(modeler: Modeler):
+    """Test importing a 2025 Solid Edge file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "SolidEdge/L_Solid_2025.par"))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 8
+
+
+# def test_design_import_parasolid(modeler: Modeler):
+#    """Test importing a Parasolid file."""
+#    # Open the design
+#    design = modeler.open_file(Path(IMPORT_FILES_DIR, "Parasolid/blockhole_M.x_t"))
+#    assert len(design.bodies) == 4
+
+
+def test_design_import_solidworks(modeler: Modeler):
+    """Test importing a SOLIDWORKS file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "SOLIDWORKS/Base_Plate.SLDPRT"))
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies[0].faces) == 38
+
+
+def test_design_import_nx2412(modeler: Modeler):
+    """Test importing a NX 2412 file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "NX/base_plate_2412.prt"))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 18
+
+
+def test_design_import_inventor2026(modeler: Modeler):
+    """Test importing a 2026 Inventor file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "Inventor/ai_param_dsdm_part1_2026.ipt"))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 9

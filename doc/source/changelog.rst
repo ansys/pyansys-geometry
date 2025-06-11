@@ -9,6 +9,231 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.10.9 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.9>`_ - June 05, 2025
+==========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - bump ansys-sphinx-theme[autoapi] from 1.4.4 to 1.4.5 in the docs-deps group
+          - `#2008 <https://github.com/ansys/pyansys-geometry/pull/2008>`_
+
+        * - bump ansys-sphinx-theme[autoapi] from 1.4.5 to 1.5.0 in the docs-deps group
+          - `#2009 <https://github.com/ansys/pyansys-geometry/pull/2009>`_
+
+        * - bump notebook from 7.4.2 to 7.4.3 in the docs-deps group
+          - `#2010 <https://github.com/ansys/pyansys-geometry/pull/2010>`_
+
+        * - bump geomdl from 5.3.1 to 5.4.0
+          - `#2012 <https://github.com/ansys/pyansys-geometry/pull/2012>`_
+
+        * - bump ansys-sphinx-theme[autoapi] from 1.5.0 to 1.5.2 in the docs-deps group
+          - `#2014 <https://github.com/ansys/pyansys-geometry/pull/2014>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Typo in the open request construction
+          - `#2022 <https://github.com/ansys/pyansys-geometry/pull/2022>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - update CHANGELOG for v0.10.8
+          - `#2006 <https://github.com/ansys/pyansys-geometry/pull/2006>`_
+
+        * - bump ansys/actions from 9.0.12 to 9.0.13 in the actions group
+          - `#2011 <https://github.com/ansys/pyansys-geometry/pull/2011>`_
+
+        * - pre-commit automatic update
+          - `#2015 <https://github.com/ansys/pyansys-geometry/pull/2015>`_
+
+        * - improving CodeQL
+          - `#2016 <https://github.com/ansys/pyansys-geometry/pull/2016>`_
+
+        * - fix labeler permissions
+          - `#2017 <https://github.com/ansys/pyansys-geometry/pull/2017>`_
+
+        * - Bump ansys/actions from 9.0.13 to 10.0.1 in the actions group
+          - `#2018 <https://github.com/ansys/pyansys-geometry/pull/2018>`_
+
+        * - Bump the actions group with 2 updates
+          - `#2019 <https://github.com/ansys/pyansys-geometry/pull/2019>`_, `#2021 <https://github.com/ansys/pyansys-geometry/pull/2021>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update Reader support info and add more import tests
+          - `#2013 <https://github.com/ansys/pyansys-geometry/pull/2013>`_
+
+
+`0.10.8 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.8>`_ - May 27, 2025
+=========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - repair tools refactoring
+          - `#1912 <https://github.com/ansys/pyansys-geometry/pull/1912>`_
+
+        * - use license metadata properly
+          - `#1961 <https://github.com/ansys/pyansys-geometry/pull/1961>`_
+
+        * - add 261 version api versions list
+          - `#1980 <https://github.com/ansys/pyansys-geometry/pull/1980>`_
+
+        * - grpc reachitecture - several modules
+          - `#1988 <https://github.com/ansys/pyansys-geometry/pull/1988>`_
+
+        * - deprecating ``product_version`` in favor of ``version``
+          - `#1998 <https://github.com/ansys/pyansys-geometry/pull/1998>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - bump quarto-cli from 1.6.42 to 1.7.29
+          - `#1962 <https://github.com/ansys/pyansys-geometry/pull/1962>`_
+
+        * - bump jupytext from 1.16.7 to 1.17.1 in the docs-deps group
+          - `#1963 <https://github.com/ansys/pyansys-geometry/pull/1963>`_
+
+        * - bump ansys-sphinx-theme[autoapi] from 1.4.2 to 1.4.3 in the docs-deps group
+          - `#1967 <https://github.com/ansys/pyansys-geometry/pull/1967>`_
+
+        * - bump ansys-api-geometry from 0.4.58 to 0.4.59
+          - `#1968 <https://github.com/ansys/pyansys-geometry/pull/1968>`_
+
+        * - bump ansys-sphinx-theme[autoapi] from 1.4.3 to 1.4.4 in the docs-deps group
+          - `#1969 <https://github.com/ansys/pyansys-geometry/pull/1969>`_
+
+        * - bump notebook from 7.4.1 to 7.4.2 in the docs-deps group
+          - `#1971 <https://github.com/ansys/pyansys-geometry/pull/1971>`_
+
+        * - bump quarto-cli from 1.7.29 to 1.7.30
+          - `#1972 <https://github.com/ansys/pyansys-geometry/pull/1972>`_
+
+        * - bump matplotlib from 3.10.1 to 3.10.3
+          - `#1974 <https://github.com/ansys/pyansys-geometry/pull/1974>`_
+
+        * - bump pyvista[jupyter] from 0.45.0 to 0.45.1
+          - `#1975 <https://github.com/ansys/pyansys-geometry/pull/1975>`_
+
+        * - bump scipy from 1.15.2 to 1.15.3
+          - `#1976 <https://github.com/ansys/pyansys-geometry/pull/1976>`_
+
+        * - bump pyvista[jupyter] from 0.45.1 to 0.45.2
+          - `#1981 <https://github.com/ansys/pyansys-geometry/pull/1981>`_
+
+        * - bump ansys-api-geometry from 0.4.59 to 0.4.60
+          - `#1987 <https://github.com/ansys/pyansys-geometry/pull/1987>`_
+
+        * - bump quarto-cli from 1.7.30 to 1.7.31
+          - `#1991 <https://github.com/ansys/pyansys-geometry/pull/1991>`_
+
+        * - bump ansys-api-geometry from 0.4.60 to 0.4.61
+          - `#1992 <https://github.com/ansys/pyansys-geometry/pull/1992>`_
+
+        * - bump numpy from 2.2.5 to 2.2.6
+          - `#1995 <https://github.com/ansys/pyansys-geometry/pull/1995>`_
+
+        * - bump ansys-api-geometry from 0.4.61 to 0.4.62
+          - `#2003 <https://github.com/ansys/pyansys-geometry/pull/2003>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - change python3statement url
+          - `#1965 <https://github.com/ansys/pyansys-geometry/pull/1965>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - myst warning -- all cells must be of same type
+          - `#1970 <https://github.com/ansys/pyansys-geometry/pull/1970>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - update CHANGELOG for v0.10.7
+          - `#1959 <https://github.com/ansys/pyansys-geometry/pull/1959>`_
+
+        * - pre-commit automatic update
+          - `#1964 <https://github.com/ansys/pyansys-geometry/pull/1964>`_, `#1978 <https://github.com/ansys/pyansys-geometry/pull/1978>`_, `#1993 <https://github.com/ansys/pyansys-geometry/pull/1993>`_, `#2004 <https://github.com/ansys/pyansys-geometry/pull/2004>`_
+
+        * - bump ansys/actions from 9.0.7 to 9.0.8 in the actions group
+          - `#1966 <https://github.com/ansys/pyansys-geometry/pull/1966>`_
+
+        * - bump ansys/actions from 9.0.8 to 9.0.9 in the actions group
+          - `#1973 <https://github.com/ansys/pyansys-geometry/pull/1973>`_
+
+        * - bump ansys/actions from 9.0.9 to 9.0.19 in the actions group
+          - `#1979 <https://github.com/ansys/pyansys-geometry/pull/1979>`_
+
+        * - bump ansys/actions from 9.0.19 to 9.0.20 in the actions group
+          - `#1982 <https://github.com/ansys/pyansys-geometry/pull/1982>`_
+
+        * - bump ansys/actions from 9.0.20 to 9.0.21 in the actions group
+          - `#1983 <https://github.com/ansys/pyansys-geometry/pull/1983>`_
+
+        * - bump ansys/actions from 9.0.21 to 9.0.22 in the actions group
+          - `#1984 <https://github.com/ansys/pyansys-geometry/pull/1984>`_
+
+        * - revert ansys/actions release
+          - `#1985 <https://github.com/ansys/pyansys-geometry/pull/1985>`_
+
+        * - bump the actions group with 2 updates
+          - `#1990 <https://github.com/ansys/pyansys-geometry/pull/1990>`_
+
+        * - bump ansys/actions from 9.0.9 to 9.0.11 in the actions group
+          - `#1996 <https://github.com/ansys/pyansys-geometry/pull/1996>`_
+
+        * - fix the usage of unstable container skip
+          - `#2001 <https://github.com/ansys/pyansys-geometry/pull/2001>`_
+
+        * - bump ansys/actions from 369ef11a9888875682d1a6b0ec65f82c4d8a664d to 5dc39c7838f50142138f7ac518ff3e4dca065d97 in the actions group
+          - `#2002 <https://github.com/ansys/pyansys-geometry/pull/2002>`_
+
+
 `0.10.7 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.10.7>`_ - May 05, 2025
 =========================================================================================
 

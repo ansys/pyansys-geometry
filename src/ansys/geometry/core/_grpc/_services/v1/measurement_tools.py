@@ -28,7 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.measurement_tools import GRPCMeasurementToolsService
 
 
-class GRPCMeasurementToolsServiceV1(GRPCMeasurementToolsService):
+class GRPCMeasurementToolsServiceV1(GRPCMeasurementToolsService):  # pragma: no cover
     """Measurement tools service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

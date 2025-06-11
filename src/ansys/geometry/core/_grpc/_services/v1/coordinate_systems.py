@@ -28,7 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.coordinate_systems import GRPCCoordinateSystemService
 
 
-class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):
+class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no cover
     """Coordinate systems service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

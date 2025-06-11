@@ -29,6 +29,7 @@ from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
 from ansys.api.dbu.v0.dbumodels_pb2 import (
     DrivingDimension as GRPCDrivingDimension,
     EntityIdentifier,
+    PartExportFormat as GRPCPartExportFormat,
 )
 from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus as GRPCUpdateStatus
 from ansys.api.geometry.v0.models_pb2 import (
@@ -58,6 +59,8 @@ if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
 
     from ansys.geometry.core.connection.backend import BackendType
+    from ansys.geometry.core.designer.design import DesignFileFormat
+    from ansys.geometry.core.designer.face import SurfaceType
     from ansys.geometry.core.materials.material import Material
     from ansys.geometry.core.materials.property import MaterialProperty
     from ansys.geometry.core.math.frame import Frame
@@ -648,6 +651,53 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
     return grpc_curve
 
 
+def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
+    """Convert a curve gRPC message to a ``Curve``.
+
+    Parameters
+    ----------
+    curve : GRPCCurve
+        Geometry service gRPC curve message.
+
+    Returns
+    -------
+    Curve
+        Resulting converted curve.
+    """
+    from ansys.geometry.core.math.point import Point3D
+    from ansys.geometry.core.math.vector import UnitVector3D
+    from ansys.geometry.core.shapes.curves.circle import Circle
+    from ansys.geometry.core.shapes.curves.ellipse import Ellipse
+    from ansys.geometry.core.shapes.curves.line import Line
+
+    origin = Point3D([curve.origin.x, curve.origin.y, curve.origin.z])
+    try:
+        reference = UnitVector3D([curve.reference.x, curve.reference.y, curve.reference.z])
+        axis = UnitVector3D([curve.axis.x, curve.axis.y, curve.axis.z])
+    except ValueError:
+        # curve will be a line
+        pass
+    if curve.radius != 0:
+        result = Circle(origin, curve.radius, reference, axis)
+    elif curve.major_radius != 0 and curve.minor_radius != 0:
+        result = Ellipse(origin, curve.major_radius, curve.minor_radius, reference, axis)
+    elif curve.direction is not None:
+        result = Line(
+            origin,
+            UnitVector3D(
+                [
+                    curve.direction.x,
+                    curve.direction.y,
+                    curve.direction.z,
+                ]
+            ),
+        )
+    else:
+        result = None
+
+    return result
+
+
 def from_trimmed_surface_to_grpc_trimmed_surface(
     trimmed_surface: "TrimmedSurface",
 ) -> GRPCTrimmedSurface:
@@ -735,6 +785,46 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
         surface_type = GRPCSurfaceType.SURFACETYPE_TORUS
 
     return grpc_surface, surface_type
+
+
+def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceType") -> "Surface":
+    """Convert a surface gRPC message to a ``Surface`` class.
+
+    Parameters
+    ----------
+    surface : GRPCSurface
+        Geometry service gRPC surface message.
+
+    Returns
+    -------
+    Surface
+        Resulting converted surface.
+    """
+    from ansys.geometry.core.designer.face import SurfaceType
+    from ansys.geometry.core.math.vector import UnitVector3D
+    from ansys.geometry.core.shapes.surfaces.cone import Cone
+    from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder
+    from ansys.geometry.core.shapes.surfaces.plane import PlaneSurface
+    from ansys.geometry.core.shapes.surfaces.sphere import Sphere
+    from ansys.geometry.core.shapes.surfaces.torus import Torus
+
+    origin = from_grpc_point_to_point3d(surface.origin)
+    axis = UnitVector3D([surface.axis.x, surface.axis.y, surface.axis.z])
+    reference = UnitVector3D([surface.reference.x, surface.reference.y, surface.reference.z])
+
+    if surface_type == SurfaceType.SURFACETYPE_CONE:
+        result = Cone(origin, surface.radius, surface.half_angle, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_CYLINDER:
+        result = Cylinder(origin, surface.radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_SPHERE:
+        result = Sphere(origin, surface.radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_TORUS:
+        result = Torus(origin, surface.major_radius, surface.minor_radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_PLANE:
+        result = PlaneSurface(origin, reference, axis)
+    else:
+        result = None
+    return result
 
 
 def from_grpc_backend_type_to_backend_type(
@@ -848,3 +938,71 @@ def from_grpc_update_status_to_parameter_update_status(
         GRPCUpdateStatus.CONSTRAINED_PARAMETERS: ParameterUpdateStatus.CONSTRAINED_PARAMETERS,
     }
     return status_mapping.get(update_status, ParameterUpdateStatus.UNKNOWN)
+
+
+def from_design_file_format_to_grpc_part_export_format(
+    design_file_format: "DesignFileFormat",
+) -> GRPCPartExportFormat:
+    """Convert from a DesignFileFormat object to a gRPC PartExportFormat one.
+
+    Parameters
+    ----------
+    design_file_format : DesignFileFormat
+        The file format desired
+
+    Returns
+    -------
+    GRPCPartExportFormat
+        Converted gRPC Part format
+    """
+    from ansys.geometry.core.designer.design import DesignFileFormat
+
+    if design_file_format == DesignFileFormat.SCDOCX:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_SCDOCX
+    elif design_file_format == DesignFileFormat.PARASOLID_TEXT:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
+    elif design_file_format == DesignFileFormat.PARASOLID_BIN:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
+    elif design_file_format == DesignFileFormat.FMD:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_FMD
+    elif design_file_format == DesignFileFormat.STEP:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_STEP
+    elif design_file_format == DesignFileFormat.IGES:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_IGES
+    elif design_file_format == DesignFileFormat.PMDB:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_PMDB
+    elif design_file_format == DesignFileFormat.STRIDE:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_STRIDE
+    elif design_file_format == DesignFileFormat.DISCO:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_DISCO
+    else:
+        return None
+
+
+def from_material_to_grpc_material(
+    material: "Material",
+) -> GRPCMaterial:
+    """Convert a ``Material`` class to a material gRPC message.
+
+    Parameters
+    ----------
+    material : Material
+        Source material data.
+
+    Returns
+    -------
+    GRPCMaterial
+        Geometry service gRPC material message.
+    """
+    return GRPCMaterial(
+        name=material.name,
+        material_properties=[
+            GRPCMaterialProperty(
+                id=property.type.value,
+                display_name=property.name,
+                value=property.quantity.m,
+                units=format(property.quantity.units),
+            )
+            for property in material.properties.values()
+        ],
+    )
