@@ -206,8 +206,13 @@ def test_find_small_face_faces(modeler: Modeler):
 
 def test_fix_small_face(modeler: Modeler):
     """Test to read geometry and find and fix it's small face problem areas."""
-    design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
+    design = modeler.open_file(FILES_DIR / "SmallFaces.scdocx")
+    problem_areas = modeler.repair_tools.find_small_faces(design.bodies, 3e-8, None)
+    assert len(problem_areas) == 2
+    problem_areas = modeler.repair_tools.find_small_faces(design.bodies, None, 0.00039878)
+    assert len(problem_areas) == 109
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
+    assert len(problem_areas) == 4
     assert problem_areas[0].fix().success is True
 
 
