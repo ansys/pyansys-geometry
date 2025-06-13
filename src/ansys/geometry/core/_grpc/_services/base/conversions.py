@@ -58,6 +58,22 @@ def from_measurement_to_server_angle(input: Measurement) -> float:
     return input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
 
 
+def from_measurement_to_server_area(input: Measurement) -> float:
+    """Convert a measurement to an area value.
+
+    Parameters
+    ----------
+    value : Measurement
+        Measurement value.
+
+    Returns
+    -------
+    float
+        Area value in server-defined units. By default, square meters.
+    """
+    return input.value.m_as(DEFAULT_UNITS.SERVER_AREA)
+
+
 def to_distance(value: float | int) -> Distance:
     """Convert a server value to a Distance object.
 

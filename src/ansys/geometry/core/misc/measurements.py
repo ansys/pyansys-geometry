@@ -99,6 +99,11 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         self._angle = value
 
     @property
+    def AREA(self) -> Unit:  # noqa: N802
+        """Default area unit for PyAnsys Geometry."""
+        return self._length * self._length
+
+    @property
     def SERVER_LENGTH(self) -> Unit:  # noqa: N802
         """Default length unit for gRPC messages.
 
@@ -228,3 +233,21 @@ class Angle(Measurement):
         # Delegates in Measurement ctor. forcing expected dimensions.
         unit = unit if unit else DEFAULT_UNITS.ANGLE
         super().__init__(value, unit, DEFAULT_UNITS.ANGLE)
+
+
+class Area(Measurement):
+    """Provides the ``Measurement`` subclass for holding an area.
+
+    Parameters
+    ----------
+    value : Real | ~pint.Quantity
+        Value of the area.
+    unit : ~pint.Unit, default: DEFAULT_UNITS.AREA
+        Units for the area.
+    """
+
+    def __init__(self, value: Real | Quantity, unit: Unit | None = None):
+        """Initialize the ``Area`` class."""
+        # Delegates in Measurement ctor. forcing expected dimensions.
+        unit = unit if unit else DEFAULT_UNITS.AREA
+        super().__init__(value, unit, DEFAULT_UNITS.AREA)
