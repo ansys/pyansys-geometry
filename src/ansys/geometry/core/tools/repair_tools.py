@@ -37,7 +37,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
-from ansys.geometry.core.misc.measurements import Angle, Distance
+from ansys.geometry.core.misc.measurements import Angle, Area, Distance
 from ansys.geometry.core.tools.check_geometry import GeometryIssue, InspectResult
 from ansys.geometry.core.tools.problem_areas import (
     DuplicateFaceProblemAreas,
@@ -296,8 +296,8 @@ class RepairTools:
     def find_small_faces(
         self,
         bodies: list["Body"],
-        area: pint.Quantity | Real | None = None,
-        width: pint.Quantity | Real | None = None,
+        area: Area | pint.Quantity | Real | None = None,
+        width: Distance | pint.Quantity | Real | None = None,
     ) -> list[SmallFaceProblemAreas]:
         """Find the small face problem areas.
 
@@ -308,9 +308,9 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that small faces are investigated on.
-        area : ~pint.Quantity | Real, optional
+        area : Area | ~pint.Quantity | Real, optional
             Maximum area of the faces. By default, None.
-        width : ~pint.Quantity | Real, optional
+        width : Distance | ~pint.Quantity | Real, optional
             Maximum width of the faces. By default, None.
 
         Returns
@@ -322,6 +322,12 @@ class RepairTools:
             return []
 
         body_ids = [body.id for body in bodies]
+
+        if area is not None:
+            area = area if isinstance(area, Area) else Area(area)
+        if width is not None:
+            width = width if isinstance(width, Distance) else Distance(width)
+
         response = self._grpc_client.services.repair_tools.find_small_faces(
             selection=body_ids,
             area=area,

@@ -211,14 +211,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindSmallFacesRequest
 
         from ..base.conversions import (
-            from_measurement_to_server_angle,
+            from_measurement_to_server_area,
             from_measurement_to_server_length,
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSmallFacesRequest(
             selection=kwargs["selection"],
-            area=DoubleValue(value=from_measurement_to_server_angle(kwargs["area"]))
+            area=DoubleValue(value=from_measurement_to_server_area(kwargs["area"]))
             if kwargs["area"] is not None
             else None,
             width=DoubleValue(value=from_measurement_to_server_length(kwargs["width"]))
