@@ -61,13 +61,15 @@ from ansys.geometry.core.shapes import (
     Cone,
     Cylinder,
     Ellipse,
-    Interval,
     Line,
     ParamUV,
     Sphere,
     Torus,
 )
 from ansys.geometry.core.shapes.box_uv import BoxUV
+from ansys.geometry.core.shapes.parameterization import (
+    Interval,
+)
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available

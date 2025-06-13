@@ -22,6 +22,7 @@
 """Tests trimmed geometry."""
 
 import numpy as np
+from pint import Quantity
 import pytest
 
 from ansys.api.geometry.v0.commands_pb2 import CreateSketchLineRequest
@@ -30,6 +31,7 @@ from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.face import SurfaceType
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes import Circle, Line
 from ansys.geometry.core.shapes.box_uv import LocationUV
@@ -304,3 +306,48 @@ def test_trimmed_curve_circle_rotate(hedgehog_design):
 
     assert np.allclose(trimmed_curve.start, Point3D([0.01, 0.01, 0.02]))
     assert np.allclose(trimmed_curve.end, Point3D([0.01, 0.01, 0.04]))
+
+
+def test_trimmed_curve(modeler: Modeler):
+    """Test Trimmed Curve class"""
+    design = modeler.create_design("trimmed_curve_edges")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    with pytest.raises(ValueError):
+        design.bodies[0].edges[0].shape.intersect_curve(design.bodies[0].edges[1].shape)
+    # Retrieve edges and initialize TrimmedCurve objects with the gRPC client
+    edge0 = TrimmedCurve(
+        geometry=body.edges[0].shape.geometry,
+        start=body.edges[0].shape.start,
+        end=body.edges[0].shape.end,
+        interval=body.edges[0].shape.interval,
+        length=body.edges[0].shape.length,
+        grpc_client=modeler.client,  # Pass the gRPC client here
+    )
+    edge1 = TrimmedCurve(
+        geometry=body.edges[1].shape.geometry,
+        start=body.edges[1].shape.start,
+        end=body.edges[1].shape.end,
+        interval=body.edges[1].shape.interval,
+        length=body.edges[1].shape.length,
+        grpc_client=modeler.client,  # Pass the gRPC client here
+    )
+
+    edge2 = TrimmedCurve(
+        geometry=body.edges[4].shape.geometry,
+        start=body.edges[4].shape.start,
+        end=body.edges[4].shape.end,
+        interval=body.edges[4].shape.interval,
+        length=body.edges[4].shape.length,
+        grpc_client=modeler.client,  # Pass the gRPC client here
+    )
+
+    # Perform assertions and call intersect_curve
+    assert (
+        edge0.__repr__()
+        == "TrimmedCurve(geometry: <class 'ansys.geometry.core.shapes.curves.line.Line'>, "
+        "start: [-0.5 -0.5  1. ], end: [ 0.5 -0.5  1. ], "
+        "interval: Interval(start=0.0, end=1.0), length: 1.0 meter)"
+    )
+    assert edge0.length == Quantity(1, UNITS.m)
+    assert edge0.intersect_curve(edge1) == [Point3D([-0.5, -0.5, 1.0])]
+    assert edge0.intersect_curve(edge2) == []
