@@ -182,7 +182,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Check the backend version to set optional parameters
         if kwargs["backend_version"] < (26, 1, 0) and (
-            kwargs["angle"] is not None or kwargs["distance"] is not None):
+            kwargs["angle"] is not None or kwargs["distance"] is not None
+        ):
             # If the backend version is less than 26.1.0, set angle and distance to None
             kwargs["angle"] = None
             kwargs["distance"] = None
@@ -232,7 +233,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Check the backend version to set optional parameters
         if kwargs["backend_version"] < (26, 1, 0) and (
-            kwargs["area"] is not None or kwargs["width"] is not None):
+            kwargs["area"] is not None or kwargs["width"] is not None
+        ):
             # If the backend version is less than 26.1.0, set area and width to None
             kwargs["area"] = None
             kwargs["width"] = None
@@ -283,7 +285,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             LOG.warning(
                 "The backend version is less than 26.1.0, so distance parameter will be ignored. "
             )
-
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindStitchFacesRequest(
