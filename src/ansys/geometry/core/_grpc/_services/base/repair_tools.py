@@ -42,7 +42,7 @@ class GRPCRepairToolsService(ABC):  # pragma: no cover
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the gRPC repair tools service."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def find_split_edges(self, **kwargs) -> dict:
@@ -117,7 +117,7 @@ class GRPCRepairToolsService(ABC):  # pragma: no cover
     @abstractmethod
     def find_and_fix_stitch_faces(self, **kwargs) -> dict:
         """Identify and stitch faces in the geometry."""
-        pass  # pragma: no cover
+        pass
 
     @abstractmethod
     def inspect_geometry(self, **kwargs) -> dict:

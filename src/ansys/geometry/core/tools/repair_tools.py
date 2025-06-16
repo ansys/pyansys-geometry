@@ -259,8 +259,10 @@ class RepairTools:
             List of bodies that missing faces are investigated on.
         angle : Angle | ~pint.Quantity | Real, optional
             The minimum angle between faces. By default, None.
+            This option is only used if the backend version is 26.1 or higher.
         distance : Distance | ~pint.Quantity | Real, optional
             The minimum distance between faces. By default, None.
+            This option is only used if the backend version is 26.1 or higher.
 
         Returns
         -------
@@ -281,6 +283,7 @@ class RepairTools:
             faces=body_ids,
             angle=angle,
             distance=distance,
+            backend_version=self._grpc_client.backend_version,
         )
         parent_design = get_design_from_body(bodies[0])
 
@@ -310,8 +313,10 @@ class RepairTools:
             List of bodies that small faces are investigated on.
         area : Area | ~pint.Quantity | Real, optional
             Maximum area of the faces. By default, None.
+            This option is only used if the backend version is 26.1 or higher.
         width : Distance | ~pint.Quantity | Real, optional
             Maximum width of the faces. By default, None.
+            This option is only used if the backend version is 26.1 or higher.
 
         Returns
         -------
@@ -332,6 +337,7 @@ class RepairTools:
             selection=body_ids,
             area=area,
             width=width,
+            backend_version=self._grpc_client.backend_version,
         )
         parent_design = get_design_from_body(bodies[0])
 
@@ -360,6 +366,7 @@ class RepairTools:
             List of bodies that stitchable faces are investigated on.
         max_distance : Distance | ~pint.Quantity | Real, optional
             Maximum distance between faces. By default, None.
+            This option is only used if the backend version is 26.1 or higher.
 
         Returns
         -------
@@ -379,6 +386,7 @@ class RepairTools:
         response = self._grpc_client.services.repair_tools.find_stitch_faces(
             faces=body_ids,
             distance=max_distance,
+            backend_version=self._grpc_client.backend_version,
         )
         parent_design = get_design_from_body(bodies[0])
         return [
