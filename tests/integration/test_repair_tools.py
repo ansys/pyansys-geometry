@@ -389,17 +389,19 @@ def test_find_and_fix_missing_faces(modeler: Modeler):
     for comp in design.components:
         assert not comp.bodies[0].is_surface
 
+
 def test_find_and_fix_missing_faces_angle_distance(modeler: Modeler):
     """Test to read geometry, find and fix missing faces and validate that we now have solids."""
     design = modeler.open_file(FILES_DIR / "MissingFaces_AngleDistance.scdocx")
     assert len(design.bodies) == 1
     assert len(design.bodies[0].faces) == 11
-    missing_faces = modeler.repair_tools.find_missing_faces(design.bodies,0.785398, 0.0005)
+    missing_faces = modeler.repair_tools.find_missing_faces(design.bodies, 0.785398, 0.0005)
     assert len(missing_faces) == 4
     for face in missing_faces:
         face.fix()
     assert len(design.bodies) == 1
     assert len(design.bodies[0].faces) == 15
+
 
 def test_find_and_fix_short_edges_problem_areas(modeler: Modeler):
     """Test to read geometry, find and fix short edges and validate they are fixed removed."""
