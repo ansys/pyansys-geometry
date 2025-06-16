@@ -1344,8 +1344,8 @@ class Design(Component):
 
         # Loop through all deleted bodies from the tracker
         for body_info in tracker_response["deleted_bodies"]:
-            self._grpc_client.log.debug(f"Processing deleted body: ID={body_id}")
             body_id = body_info["id"]
+            self._grpc_client.log.debug(f"Processing deleted body: ID={body_id}")
             removed = False  # Track if a body was removed
 
             # First, check bodies at the root level
