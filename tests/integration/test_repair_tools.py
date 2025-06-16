@@ -23,7 +23,7 @@
 
 from ansys.geometry.core.modeler import Modeler
 
-from .conftest import FILES_DIR, skip_if_core_service
+from .conftest import FILES_DIR
 
 
 def test_find_split_edges(modeler: Modeler):
@@ -183,8 +183,6 @@ def test_fix_duplicate_face(modeler: Modeler):
 
 def test_find_small_faces(modeler: Modeler):
     """Test to read geometry and find it's small face problem areas."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_find_small_faces.__name__, "repair_tools")
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     assert len(problem_areas) == 4
@@ -192,8 +190,6 @@ def test_find_small_faces(modeler: Modeler):
 
 def test_find_small_face_id(modeler: Modeler):
     """Test whether problem area has the id."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_find_small_face_id.__name__, "repair_tools")
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     assert problem_areas[0].id != "0"
@@ -203,9 +199,6 @@ def test_find_small_face_faces(modeler: Modeler):
     """Test to read geometry, find it's small face problem area and return
     connected faces.
     """
-    skip_if_core_service(
-        modeler, test_find_small_face_faces.__name__, "repair_tools"
-    )  # Skip test on CoreService
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     assert len(problem_areas[0].faces) > 0
@@ -213,10 +206,13 @@ def test_find_small_face_faces(modeler: Modeler):
 
 def test_fix_small_face(modeler: Modeler):
     """Test to read geometry and find and fix it's small face problem areas."""
-    # Skip test on CoreService
-    skip_if_core_service(modeler, test_fix_small_face.__name__, "repair_tools")
-    design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
+    design = modeler.open_file(FILES_DIR / "SmallFaces.scdocx")
+    problem_areas = modeler.repair_tools.find_small_faces(design.bodies, 2.84e-8, None)
+    assert len(problem_areas) == 2
+    problem_areas = modeler.repair_tools.find_small_faces(design.bodies, None, 0.00036)
+    assert len(problem_areas) == 9
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
+    assert len(problem_areas) == 4
     assert problem_areas[0].fix().success is True
 
 
@@ -283,6 +279,32 @@ def test_fix_interference(modeler: Modeler):
     problem_areas = modeler.repair_tools.find_interferences(design.bodies, False)
     result = problem_areas[0].fix()
     assert result.success is True
+
+
+def test_find_and_fix_stitch_faces(modeler: Modeler):
+    """Test to find and fix stitch faces and validate that we get a solid."""
+    design = modeler.open_file(FILES_DIR / "stitch_1200_bodies.dsco")
+    assert len(design.bodies) == 3600
+
+    stitch_faces = modeler.repair_tools.find_and_fix_stitch_faces(design.bodies)
+    assert stitch_faces.found == 1
+    assert stitch_faces.repaired == 1
+
+    assert len(design.bodies) == 1200
+
+
+def test_find_and_fix_stitch_faces_comprehensive(modeler: Modeler):
+    """Test to find and fix stitch faces and validate that we get a solid."""
+    design = modeler.open_file(FILES_DIR / "stitch_1200_bodies.dsco")
+    assert len(design.bodies) == 3600
+
+    stitch_faces = modeler.repair_tools.find_and_fix_stitch_faces(
+        design.bodies, comprehensive_result=True
+    )
+    assert stitch_faces.found == 1200
+    assert stitch_faces.repaired == 1200
+
+    assert len(design.bodies) == 1200
 
 
 def test_find_and_fix_duplicate_faces(modeler: Modeler):
@@ -366,6 +388,19 @@ def test_find_and_fix_missing_faces(modeler: Modeler):
     assert not design.bodies[0].is_surface
     for comp in design.components:
         assert not comp.bodies[0].is_surface
+
+
+def test_find_and_fix_missing_faces_angle_distance(modeler: Modeler):
+    """Test to read geometry, find and fix missing faces specify angle and distance."""
+    design = modeler.open_file(FILES_DIR / "MissingFaces_AngleDistance.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 11
+    missing_faces = modeler.repair_tools.find_missing_faces(design.bodies, 0.785398, 0.0005)
+    assert len(missing_faces) == 4
+    for face in missing_faces:
+        face.fix()
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 15
 
 
 def test_find_and_fix_short_edges_problem_areas(modeler: Modeler):
