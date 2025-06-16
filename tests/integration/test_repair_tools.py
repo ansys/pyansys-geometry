@@ -390,7 +390,7 @@ def test_find_and_fix_missing_faces(modeler: Modeler):
         assert not comp.bodies[0].is_surface
 
 def test_find_and_fix_missing_faces_angle_distance(modeler: Modeler):
-    """Test to read geometry, find and fix missing faces and validate that we now have solids."""
+    """Test to read geometry, find and fix missing faces specify angle and distance."""
     design = modeler.open_file(FILES_DIR / "MissingFaces_AngleDistance.scdocx")
     assert len(design.bodies) == 1
     assert len(design.bodies[0].faces) == 11
