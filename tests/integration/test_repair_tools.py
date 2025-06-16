@@ -207,10 +207,10 @@ def test_find_small_face_faces(modeler: Modeler):
 def test_fix_small_face(modeler: Modeler):
     """Test to read geometry and find and fix it's small face problem areas."""
     design = modeler.open_file(FILES_DIR / "SmallFaces.scdocx")
-    problem_areas = modeler.repair_tools.find_small_faces(design.bodies, 3e-8, None)
+    problem_areas = modeler.repair_tools.find_small_faces(design.bodies, 2.84e-8, None)
     assert len(problem_areas) == 2
-    problem_areas = modeler.repair_tools.find_small_faces(design.bodies, None, 0.00039878)
-    assert len(problem_areas) == 109
+    problem_areas = modeler.repair_tools.find_small_faces(design.bodies, None, 0.00036)
+    assert len(problem_areas) == 9
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     assert len(problem_areas) == 4
     assert problem_areas[0].fix().success is True
@@ -389,6 +389,17 @@ def test_find_and_fix_missing_faces(modeler: Modeler):
     for comp in design.components:
         assert not comp.bodies[0].is_surface
 
+def test_find_and_fix_missing_faces_angle_distance(modeler: Modeler):
+    """Test to read geometry, find and fix missing faces and validate that we now have solids."""
+    design = modeler.open_file(FILES_DIR / "MissingFaces_AngleDistance.scdocx")
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 11
+    missing_faces = modeler.repair_tools.find_missing_faces(design.bodies,0.785398, 0.0005)
+    assert len(missing_faces) == 4
+    for face in missing_faces:
+        face.fix()
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 15
 
 def test_find_and_fix_short_edges_problem_areas(modeler: Modeler):
     """Test to read geometry, find and fix short edges and validate they are fixed removed."""
