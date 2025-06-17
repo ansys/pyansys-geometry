@@ -63,7 +63,8 @@ def test_sketch_sketch():
 
 
 def test_sketch_segment():
-    """Test the sketch segment unit conversion for end point, not equal, and plane change functionality"""
+    """Test the sketch segment unit conversion for end point, not equal,
+    and plane change functionality"""
     start_point = Point2D([0, 0], unit=UNITS.meter)
     end_point = Point2D([5, 5], unit=UNITS.kilometer)
     segment1 = SketchSegment(start_point, end_point)
