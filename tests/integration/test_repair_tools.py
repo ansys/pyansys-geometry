@@ -21,7 +21,24 @@
 # SOFTWARE.
 """ "Testing of repair tools."""
 
+import pytest
+
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.tools.check_geometry import InspectResult
+from ansys.geometry.core.tools.problem_areas import (
+    DuplicateFaceProblemAreas,
+    ExtraEdgeProblemAreas,
+    InterferenceProblemAreas,
+    MissingFaceProblemAreas,
+    ProblemArea,
+    ShortEdgeProblemAreas,
+    SmallFaceProblemAreas,
+    SplitEdgeProblemAreas,
+    StitchFaceProblemAreas,
+    UnsimplifiedFaceProblemAreas,
+)
+from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
+from ansys.geometry.core.tools.repair_tools import RepairTools
 
 from .conftest import FILES_DIR
 
@@ -219,7 +236,7 @@ def test_fix_small_face(modeler: Modeler):
 def test_find_stitch_faces(modeler: Modeler):
     """Test to read geometry and find it's stitch face problem areas."""
     design = modeler.open_file(FILES_DIR / "stitch_before.scdocx")
-    problem_areas = modeler.repair_tools.find_stitch_faces(design.bodies)
+    problem_areas = modeler.repair_tools.find_stitch_faces(design.bodies, 0.0001)
     assert len(problem_areas) == 1
 
 
@@ -283,28 +300,28 @@ def test_fix_interference(modeler: Modeler):
 
 def test_find_and_fix_stitch_faces(modeler: Modeler):
     """Test to find and fix stitch faces and validate that we get a solid."""
-    design = modeler.open_file(FILES_DIR / "stitch_1200_bodies.dsco")
-    assert len(design.bodies) == 3600
+    design = modeler.open_file(FILES_DIR / "stitch_300_bodies.dsco")
+    assert len(design.bodies) == 900
 
-    stitch_faces = modeler.repair_tools.find_and_fix_stitch_faces(design.bodies)
+    stitch_faces = modeler.repair_tools.find_and_fix_stitch_faces(design.bodies, 0.0001)
     assert stitch_faces.found == 1
     assert stitch_faces.repaired == 1
 
-    assert len(design.bodies) == 1200
+    assert len(design.bodies) == 300
 
 
 def test_find_and_fix_stitch_faces_comprehensive(modeler: Modeler):
     """Test to find and fix stitch faces and validate that we get a solid."""
-    design = modeler.open_file(FILES_DIR / "stitch_1200_bodies.dsco")
-    assert len(design.bodies) == 3600
+    design = modeler.open_file(FILES_DIR / "stitch_300_bodies.dsco")
+    assert len(design.bodies) == 900
 
     stitch_faces = modeler.repair_tools.find_and_fix_stitch_faces(
         design.bodies, comprehensive_result=True
     )
-    assert stitch_faces.found == 1200
-    assert stitch_faces.repaired == 1200
+    assert stitch_faces.found == 300
+    assert stitch_faces.repaired == 300
 
-    assert len(design.bodies) == 1200
+    assert len(design.bodies) == 300
 
 
 def test_find_and_fix_duplicate_faces(modeler: Modeler):
@@ -393,14 +410,16 @@ def test_find_and_fix_missing_faces(modeler: Modeler):
 def test_find_and_fix_missing_faces_angle_distance(modeler: Modeler):
     """Test to read geometry, find and fix missing faces specify angle and distance."""
     design = modeler.open_file(FILES_DIR / "MissingFaces_AngleDistance.scdocx")
-    assert len(design.bodies) == 1
-    assert len(design.bodies[0].faces) == 11
-    missing_faces = modeler.repair_tools.find_missing_faces(design.bodies, 0.785398, 0.0005)
+    assert len(design.bodies) == 4
+    total_faces = sum(len(body.faces) for body in design.bodies)
+    assert total_faces == 22
+    missing_faces = modeler.repair_tools.find_missing_faces(design.bodies, 0.698131, 0.015)
     assert len(missing_faces) == 4
     for face in missing_faces:
         face.fix()
-    assert len(design.bodies) == 1
-    assert len(design.bodies[0].faces) == 15
+    assert len(design.bodies) == 4
+    total_faces = sum(len(body.faces) for body in design.bodies)
+    assert total_faces == 26
 
 
 def test_find_and_fix_short_edges_problem_areas(modeler: Modeler):
@@ -560,3 +579,168 @@ def test_find_and_fix_simplify(modeler: Modeler):
     assert result
     assert result.found == 23
     assert result.repaired == 23  # There is a SC bug where success is always true
+
+
+def test_design_import_check_geometry(modeler: Modeler):
+    """Test importing a design with check geometry."""
+    # Open the design
+    design = modeler.open_file(FILES_DIR / "Nonmanifold_CheckGeometry.scdocx")
+    inspect_results = modeler.repair_tools.inspect_geometry(design.bodies)
+    # Assert the number of inspect results and issues
+    assert len(inspect_results) == 1
+    issues = inspect_results[0].issues
+    assert len(issues) == 5
+    # Expected messages, message IDs, and message types
+    expected_data = [
+        {
+            "message": "Geometry intersects itself.",
+            "message_id": 26,
+            "message_type": 3,
+            "faces": 0,
+            "edges": 0,
+        },
+        {
+            "message": "Geometry intersects itself.",
+            "message_id": 26,
+            "message_type": 3,
+            "faces": 0,
+            "edges": 0,
+        },
+        {
+            "message": "Geometry intersects itself.",
+            "message_id": 26,
+            "message_type": 3,
+            "faces": 0,
+            "edges": 0,
+        },
+        {
+            "message": "Geometry intersects itself.",
+            "message_id": 26,
+            "message_type": 3,
+            "faces": 0,
+            "edges": 0,
+        },
+        {
+            "message": "Face illegally intersects or abuts another face.",
+            "message_id": 25,
+            "message_type": 3,
+            "faces": 2,
+            "edges": 0,
+        },
+    ]
+    # Loop through issues and assert properties
+    for issue, expected in zip(issues, expected_data):
+        assert issue.message == expected["message"]
+        assert issue.message_id == expected["message_id"]
+        assert issue.message_type == expected["message_type"]
+        assert len(issue.faces) == expected["faces"]
+        assert len(issue.edges) == expected["edges"]
+    # Test repair functionality
+    repair_message = inspect_results[0].repair()
+    assert repair_message.success is True
+    assert repair_message.created_bodies == []
+    assert repair_message.modified_bodies == []
+
+
+def test_repair_no_body(modeler: Modeler):
+    """Test the repair method when body is None."""
+    grpc_client = modeler.client
+    # Create an instance of InspectResult with body set to None
+    inspect_result = InspectResult(grpc_client=grpc_client, body=None, issues=[])
+    # Call the repair method
+    repair_message = inspect_result.repair()
+    # Assert the returned RepairToolMessage
+    assert isinstance(repair_message, RepairToolMessage)
+    assert repair_message.success is False
+    assert repair_message.created_bodies == []
+    assert repair_message.modified_bodies == []
+
+
+def test_problem_area_fix_not_implemented(modeler: Modeler):
+    """Test that the fix method in the ProblemArea base class raises NotImplementedError."""
+    grpc_client = modeler.client
+    # Create an instance of ProblemArea
+    problem_area = ProblemArea(id="123", grpc_client=grpc_client)
+    # Assert that calling fix raises NotImplementedError
+    with pytest.raises(
+        NotImplementedError, match="Fix method is not implemented in the base class."
+    ):
+        problem_area.fix()
+
+
+@pytest.mark.parametrize(
+    "problem_area_class, kwargs",
+    [
+        (DuplicateFaceProblemAreas, {"faces": []}),
+        (MissingFaceProblemAreas, {"edges": []}),
+        (ExtraEdgeProblemAreas, {"edges": []}),
+        (ShortEdgeProblemAreas, {"edges": []}),
+        (SmallFaceProblemAreas, {"faces": []}),
+        (SplitEdgeProblemAreas, {"edges": []}),
+        (StitchFaceProblemAreas, {"bodies": []}),
+        (UnsimplifiedFaceProblemAreas, {"faces": []}),
+        (InterferenceProblemAreas, {"bodies": []}),
+    ],
+)
+def test_problem_area_fix_no_data(modeler: Modeler, problem_area_class, kwargs):
+    """Test the fix method for various ProblemArea subclasses when required attributes are empty."""
+    grpc_client = modeler.client
+    problem_area = problem_area_class(id="123", grpc_client=grpc_client, **kwargs)
+    repair_message = problem_area.fix()
+    assert isinstance(repair_message, RepairToolMessage)
+    assert repair_message.success is False
+    assert repair_message.created_bodies == []
+    assert repair_message.modified_bodies == []
+
+
+@pytest.mark.parametrize(
+    "method_name",
+    [
+        "find_split_edges",
+        "find_extra_edges",
+        "find_inexact_edges",
+        "find_short_edges",
+        "find_duplicate_faces",
+        "find_missing_faces",
+        "find_small_faces",
+        "find_interferences",
+    ],
+)
+def test_repair_tools_no_bodies(modeler: Modeler, method_name):
+    """Test RepairTools methods when bodies is empty or None."""
+    grpc_client = modeler.client
+    repair_tools = RepairTools(grpc_client, modeler)
+    method = getattr(repair_tools, method_name)
+
+    # Test with an empty list of bodies
+    result = method(bodies=[])
+    assert result == []
+
+    # Test with None as bodies
+    result = method(bodies=None)
+    assert result == []
+
+
+@pytest.mark.parametrize(
+    "method_name",
+    [
+        "find_and_fix_short_edges",
+        "find_and_fix_extra_edges",
+        "find_and_fix_split_edges",
+        "find_and_fix_simplify",
+    ],
+)
+def test_repair_tools_find_and_fix_no_bodies(modeler: Modeler, method_name):
+    """Test RepairTools find_and_fix methods when bodies is empty or None."""
+    grpc_client = modeler.client
+    repair_tools = RepairTools(grpc_client, modeler)
+    method = getattr(repair_tools, method_name)
+
+    # Test with an empty list of bodies
+    result = method(bodies=[])
+    assert isinstance(result, RepairToolMessage)
+    assert result.success is False
+    assert result.created_bodies == []
+    assert result.modified_bodies == []
+    assert result.found == 0
+    assert result.repaired == 0
