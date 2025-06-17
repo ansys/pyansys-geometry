@@ -35,7 +35,6 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
-from ansys.geometry.core.shapes import *
 from ansys.geometry.core.sketch import (
     Arc,
     Box,
@@ -64,15 +63,16 @@ def test_sketch_sketch():
 
 
 def test_sketch_segment():
-    """Test the sketch segment unit conversion for end point, not equal, and plane change functionality"""
+    """Test the sketch segment unit conversion for end point, not equal,
+    and plane change functionality"""
     start_point = Point2D([0, 0], unit=UNITS.meter)
     end_point = Point2D([5, 5], unit=UNITS.kilometer)
     segment1 = SketchSegment(start_point, end_point)
     assert segment1.end == Point2D([5000, 5000])
     segment2 = SketchSegment(start_point, end_point)
-    assert segment1.__ne__(segment2) == False
+    assert segment1.__ne__(segment2) is False
     segment2 = SketchSegment(end_point, start_point)
-    assert segment1.__ne__(segment2) == True
+    assert segment1.__ne__(segment2) is True
     new_plane = Plane(
         origin=Point3D([0, 0, 5]), direction_x=Vector3D([1, 0, 0]), direction_y=Vector3D([0, 0, 1])
     )
