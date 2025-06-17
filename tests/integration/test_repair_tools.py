@@ -586,10 +586,12 @@ def test_design_import_check_geometry(modeler: Modeler):
     # Open the design
     design = modeler.open_file(FILES_DIR / "Nonmanifold_CheckGeometry.scdocx")
     inspect_results = modeler.repair_tools.inspect_geometry(design.bodies)
+
     # Assert the number of inspect results and issues
     assert len(inspect_results) == 1
     issues = inspect_results[0].issues
     assert len(issues) == 5
+
     # Expected messages, message IDs, and message types
     expected_data = [
         {
@@ -628,13 +630,33 @@ def test_design_import_check_geometry(modeler: Modeler):
             "edges": 0,
         },
     ]
-    # Loop through issues and assert properties
-    for issue, expected in zip(issues, expected_data):
-        assert issue.message == expected["message"]
-        assert issue.message_id == expected["message_id"]
-        assert issue.message_type == expected["message_type"]
-        assert len(issue.faces) == expected["faces"]
-        assert len(issue.edges) == expected["edges"]
+
+    # Convert issues and expected data to sets of tuples for comparison
+    actual_data = {
+        (
+            issue.message,
+            issue.message_id,
+            issue.message_type,
+            len(issue.faces),
+            len(issue.edges),
+        )
+        for issue in issues
+    }
+
+    expected_data_set = {
+        (
+            item["message"],
+            item["message_id"],
+            item["message_type"],
+            item["faces"],
+            item["edges"],
+        )
+        for item in expected_data
+    }
+
+    # Assert that the actual data matches the expected data regardless of order
+    assert actual_data == expected_data_set
+
     # Test repair functionality
     repair_message = inspect_results[0].repair()
     assert repair_message.success is True
