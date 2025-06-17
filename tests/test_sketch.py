@@ -45,8 +45,8 @@ from ansys.geometry.core.sketch import (
     SketchEllipse,
     SketchSegment,
     Slot,
+    SpurGear,
     Triangle,
-    gears,
 )
 
 from .conftest import are_graphics_available
@@ -69,9 +69,9 @@ def test_sketch_segment():
     segment1 = SketchSegment(start_point, end_point)
     assert segment1.end == Point2D([5000, 5000])
     segment2 = SketchSegment(start_point, end_point)
-    assert segment1.__ne__(segment2) == False
+    assert segment1.__ne__(segment2) is False
     segment2 = SketchSegment(end_point, start_point)
-    assert segment1.__ne__(segment2) == True
+    assert segment1.__ne__(segment2) is True
     new_plane = Plane(
         origin=Point3D([0, 0, 5]), direction_x=Vector3D([1, 0, 0]), direction_y=Vector3D([0, 0, 1])
     )
@@ -85,7 +85,7 @@ def test_sketch_gears():
     module = 40
     pressure_angle = Quantity(20, UNITS.deg)
     n_teeth = 22
-    gearspur = gears.SpurGear(origin, module, pressure_angle, n_teeth)
+    gearspur = SpurGear(origin, module, pressure_angle, n_teeth)
     assert gearspur.addendum == 40.0
     assert gearspur.dedendum == 50.0
     gearspurpoly = gearspur.visualization_polydata
