@@ -80,6 +80,9 @@ def test_sketch_segment():
     assert segment1.direction == UnitVector3D([0.70710678, 0.0, 0.70710678])
 
 
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_sketch_gears():
     """Test the sketch gears addendum, dedendum, and visualization polydate functionality"""
     origin = Point2D([0, 1], unit=UNITS.meter)
@@ -105,9 +108,6 @@ def test_sketch_gears():
     assert gearspurpoly.n_open_edges == 0.0
 
 
-@pytest.mark.skipif(
-    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
-)
 def test_sketch_circle_plane_change():
     """Test the sketch circle change plane functionality"""
     center = Point2D([5, 10], UNITS.m)
