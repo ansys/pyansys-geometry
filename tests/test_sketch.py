@@ -105,6 +105,9 @@ def test_sketch_gears():
     assert gearspurpoly.n_open_edges == 0.0
 
 
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_sketch_circle_plane_change():
     """Test the sketch circle change plane functionality"""
     center = Point2D([5, 10], UNITS.m)
