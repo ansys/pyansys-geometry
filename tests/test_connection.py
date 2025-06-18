@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import sys
+
 from beartype.roar import BeartypeCallHintParamViolation
 import grpc
 import numpy as np
@@ -387,6 +389,10 @@ def test_prepare_and_start_backend_conflicting_versions():
         )
 
 
+@pytest.mark.skipif(
+    sys.platform.startswith("linux"),
+    reason="Test skipped on Linux because it is specific to Windows backends.",
+)
 def test_prepare_and_start_backend_unavailable_version():
     """Test that an unavailable product version raises a SystemError."""
     with pytest.raises(
@@ -397,6 +403,10 @@ def test_prepare_and_start_backend_unavailable_version():
         prepare_and_start_backend(backend_type=BackendType.WINDOWS_SERVICE, product_version=1901)
 
 
+@pytest.mark.skipif(
+    sys.platform.startswith("linux"),
+    reason="Test skipped on Linux because it is specific to Windows backends.",
+)
 def test_prepare_and_start_backend_invalid_version():
     """Test that a non-integer 'version' raises a ValueError."""
     with pytest.raises(
