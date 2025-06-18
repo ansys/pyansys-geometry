@@ -390,7 +390,7 @@ def test_prepare_and_start_backend_conflicting_versions():
 
 
 @pytest.mark.skipif(
-    sys.platform.startswith("linux"),
+    BackendType.is_linux_service(),
     reason="Test skipped on Linux because it is specific to Windows backends.",
 )
 def test_prepare_and_start_backend_unavailable_version():
@@ -404,7 +404,7 @@ def test_prepare_and_start_backend_unavailable_version():
 
 
 @pytest.mark.skipif(
-    sys.platform.startswith("linux"),
+    BackendType.is_linux_service(),
     reason="Test skipped on Linux because it is specific to Windows backends.",
 )
 def test_prepare_and_start_backend_invalid_version():
