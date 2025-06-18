@@ -126,9 +126,6 @@ def test_enhanced_share_topology(modeler: Modeler):
 
 def test_detect_logos(modeler: Modeler):
     """Test logos are detected and deleted."""
-    if BackendType.is_linux_service(modeler.client.backend_type):
-        # not yet available in Linux
-        return
     design = modeler.open_file(FILES_DIR / "partWithLogos.scdocx")
     component = [c for c in design.components if c.name == "Default"][0]
     body = [b for b in component.bodies if b.name == "Solid3"][0]
@@ -151,9 +148,6 @@ def test_detect_logos(modeler: Modeler):
 
 def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
     """Test logos are detected and deleted as problem area"""
-    if BackendType.is_linux_service(modeler.client.backend_type):
-        # not yet available in Linux
-        return
     design = modeler.open_file(FILES_DIR / "partWithLogos.scdocx")
     # Get the component named "Default"
     component = [c for c in design.components if c.name == "Default"][0]
