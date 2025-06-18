@@ -300,7 +300,9 @@ class PrepareTools:
         """
         from ansys.geometry.core.designer.body import Body
 
-        if BackendType.is_linux_service(self._grpc_client.backend_type) and self._grpc_client.backend_version < (26, 1, 0):
+        if BackendType.is_linux_service(
+            self._grpc_client.backend_type
+        ) and self._grpc_client.backend_version < (26, 1, 0):
             # not yet available on Linux until 26.1.0
             LOG.warning("Logo detection not available on Linux")
             return
@@ -346,7 +348,9 @@ class PrepareTools:
         """
         from ansys.geometry.core.designer.body import Body
 
-        if BackendType.is_linux_service(self._grpc_client.backend_type) and self._grpc_client.backend_version < (26, 1, 0):
+        if BackendType.is_linux_service(
+            self._grpc_client.backend_type
+        ) and self._grpc_client.backend_version < (26, 1, 0):
             # not yet available on Linux until 26.1.0
             LOG.warning("Logo detection not available on Linux")
             return
