@@ -379,7 +379,8 @@ def test_prepare_and_start_backend_conflicting_versions():
     """Test that providing both 'product_version' and 'version' raises a ValueError."""
     with pytest.raises(
         ValueError,
-        match="Both 'product_version' and 'version' arguments are provided. Please use only 'version'.",
+        match="Both 'product_version' and 'version' arguments are provided."
+        " Please use only 'version'.",
     ):
         prepare_and_start_backend(
             backend_type=BackendType.WINDOWS_SERVICE, version=1900, product_version=1901
@@ -390,7 +391,8 @@ def test_prepare_and_start_backend_unavailable_version():
     """Test that an unavailable product version raises a SystemError."""
     with pytest.raises(
         SystemError,
-        match="The requested Ansys product's version 1901 is not available, please specify a different version.",
+        match="The requested Ansys product's version 1901 is not available,"
+        " please specify a different version.",
     ):
         prepare_and_start_backend(backend_type=BackendType.WINDOWS_SERVICE, product_version=1901)
 
