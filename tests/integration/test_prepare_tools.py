@@ -23,7 +23,6 @@
 
 from pint import Quantity
 
-from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.measurements import UNITS
 from ansys.geometry.core.modeler import Modeler
