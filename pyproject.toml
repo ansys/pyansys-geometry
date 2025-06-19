@@ -109,7 +109,7 @@ doc = [
     "protobuf==5.29.3",
     "pygltflib==1.16.4",
     "pyvista[jupyter]==0.45.2",
-    "quarto-cli==1.7.31",
+    "quarto-cli==1.7.32",
     "requests==2.32.4",
     "scipy==1.15.3",
     "semver==3.0.4",
