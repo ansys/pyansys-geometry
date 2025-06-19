@@ -42,7 +42,7 @@ dependencies = [
 
 [project.optional-dependencies]
 graphics = [
-    "ansys-tools-visualization-interface>=0.2.6,<1",
+    "ansys-tools-visualization-interface>=0.2.6,<0.10",
     "pygltflib>=1.16,<2",
     "pyvista[jupyter]>=0.38.1,<1",
     "vtk>=9,<10",
