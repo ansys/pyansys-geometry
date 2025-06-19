@@ -40,9 +40,11 @@ from ansys.api.geometry.v0.models_pb2 import (
     Ellipse as GRPCEllipse,
     Frame as GRPCFrame,
     Geometries as GRPCGeometries,
+    Knot as GRPCKnot,
     Line as GRPCLine,
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
+    NurbsCurve as GRPCNurbsCurve,
     Plane as GRPCPlane,
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
@@ -73,6 +75,7 @@ if TYPE_CHECKING:  # pragma: no cover
         ParameterUpdateStatus,
     )
     from ansys.geometry.core.shapes.curves.curve import Curve
+    from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
     from ansys.geometry.core.shapes.surfaces.surface import Surface
     from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
@@ -621,6 +624,7 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
     from ansys.geometry.core.shapes.curves.circle import Circle
     from ansys.geometry.core.shapes.curves.ellipse import Ellipse
     from ansys.geometry.core.shapes.curves.line import Line
+    from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 
     grpc_curve = None
 
@@ -645,11 +649,92 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
                 major_radius=curve.major_radius.m,
                 minor_radius=curve.minor_radius.m,
             )
+    elif isinstance(curve, NURBSCurve):
+        grpc_curve = GRPCCurveGeometry(
+            nurbs_curve=from_nurbs_curve_to_grpc_nurbs_curve(curve)
+        )
     else:
         raise ValueError(f"Unsupported curve type: {type(curve)}")
 
     return grpc_curve
 
+
+def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
+    """Convert a ``NURBSCurve`` to a NURBS curve gRPC message.
+
+    Parameters
+    ----------
+    curve : NURBSCurve
+        Curve to convert.
+
+    Returns
+    -------
+    GRPCNurbsCurve
+        Geometry service gRPC ``NURBSCurve`` message.
+    """
+    from ansys.api.geometry.v0.models_pb2 import (
+        ControlPoint as GRPCControlPoint,
+        NurbsData as GRPCNurbsData,
+    )
+
+    # Convert control points
+    control_points = []
+    for i, pt in enumerate(curve.control_points):
+        position = from_point3d_to_grpc_point(pt)
+        weight = curve.weights[i]
+
+        control_points.append(
+            GRPCControlPoint(
+                position=position,
+                weight=weight,
+            )
+        )
+
+    # Convert nurbs data
+    nurbs_data = GRPCNurbsData(
+        degree=curve.degree,
+        knots=from_knots_to_grpc_knots(curve.knots),
+        order=curve.degree + 1,
+    )
+
+    return GRPCNurbsCurve(
+        control_points=control_points,
+        nurbs_data=nurbs_data,
+    )
+
+
+def from_knots_to_grpc_knots(knots: list[float]) -> list[GRPCKnot]:
+    """Convert a list of knots to a list of gRPC knot messages.
+
+    Parameters
+    ----------
+    knots : list[float]
+        Source knots data.
+
+    Returns
+    -------
+    list[GRPCKnot]
+        Geometry service gRPC knot messages.
+    """
+    from collections import Counter
+  
+    # Count multiplicities
+    multiplicities = Counter(knots)
+
+    # Get unique knots (parameters) in order
+    unique_knots = sorted(set(knots))
+    knot_multiplicities = [(knot, multiplicities[knot]) for knot in unique_knots]
+
+    # Convert to gRPC knot messages
+    grpc_knots = [
+        GRPCKnot(
+            parameter=knot,
+            multiplicity=multiplicity,
+        )
+        for knot, multiplicity in knot_multiplicities
+    ]
+
+    return grpc_knots
 
 def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
     """Convert a curve gRPC message to a ``Curve``.
