@@ -49,7 +49,7 @@ graphics = [
 ]
 all = [
     "ansys-platform-instancemanagement>=1.0.3,<2",
-    "ansys-tools-visualization-interface>=0.2.6,<1",
+    "ansys-tools-visualization-interface>=0.2.6,<0.10",
     "docker>=6.0.1,<8",
     "pygltflib>=1.16,<2",
     "pyvista[jupyter]>=0.38.1,<1",
