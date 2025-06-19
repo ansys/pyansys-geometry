@@ -650,9 +650,7 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
                 minor_radius=curve.minor_radius.m,
             )
     elif isinstance(curve, NURBSCurve):
-        grpc_curve = GRPCCurveGeometry(
-            nurbs_curve=from_nurbs_curve_to_grpc_nurbs_curve(curve)
-        )
+        grpc_curve = GRPCCurveGeometry(nurbs_curve=from_nurbs_curve_to_grpc_nurbs_curve(curve))
     else:
         raise ValueError(f"Unsupported curve type: {type(curve)}")
 
@@ -717,7 +715,7 @@ def from_knots_to_grpc_knots(knots: list[float]) -> list[GRPCKnot]:
         Geometry service gRPC knot messages.
     """
     from collections import Counter
-  
+
     # Count multiplicities
     multiplicities = Counter(knots)
 
@@ -735,6 +733,7 @@ def from_knots_to_grpc_knots(knots: list[float]) -> list[GRPCKnot]:
     ]
 
     return grpc_knots
+
 
 def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
     """Convert a curve gRPC message to a ``Curve``.
