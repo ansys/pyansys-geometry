@@ -890,6 +890,7 @@ class Sketch:
         screenshot: str | None = None,
         use_trame: bool | None = None,
         selected_pd_objects: list["PolyData"] = None,
+        show_options: dict | None = {},
         **plotting_options: dict | None,
     ):
         """Plot all objects of the sketch to the scene.
@@ -917,7 +918,7 @@ class Sketch:
             view_2d_dict = {"vector": vector, "viewup": viewup}
         else:
             view_2d_dict = None
-        plotting_options.pop("view_2d", None)
+        # plotting_options.pop("view_2d", None)
         if selected_pd_objects is not None:
             pl = GeometryPlotter(use_trame=use_trame)
             pl.plot(
@@ -928,13 +929,13 @@ class Sketch:
             pl.show(
                 screenshot=screenshot,
                 view_2d=view_2d_dict,
-                **plotting_options,
+                **show_options,
             )
         else:
             pl = GeometryPlotter(use_trame=use_trame)
             pl.plot(self.sketch_polydata_faces(), opacity=0.7, **plotting_options)
             pl.plot(self.sketch_polydata_edges(), **plotting_options)
-            pl.show(screenshot=screenshot, view_2d=view_2d_dict, **plotting_options)
+            pl.show(screenshot=screenshot, view_2d=view_2d_dict, **show_options)
 
     @graphics_required
     def plot_selection(
