@@ -50,9 +50,37 @@ from ansys.geometry.core.math import (
     Vector3D,
     get_two_circle_intersections,
 )
+from ansys.geometry.core.math.misc import intersect_interval
 from ansys.geometry.core.misc import UNITS
 
 DOUBLE_EPS = np.finfo(float).eps
+
+
+def test_intersect_interval():
+    first_interval_min = 10
+    first_interval_max = 1
+    second_interval_min = 5
+    second_interval_max = 2
+
+    intersect, intersection_min, intersection_max = intersect_interval(
+        first_interval_min, second_interval_min, first_interval_max, second_interval_max
+    )
+    assert intersect is False
+    assert intersection_min == 0
+    assert intersection_max == 0
+
+    #  132
+    first_interval_min = 10
+    first_interval_max = 15
+    second_interval_min = 5
+    second_interval_max = 20
+
+    intersect, intersection_min, intersection_max = intersect_interval(
+        first_interval_min, second_interval_min, first_interval_max, second_interval_max
+    )
+    assert intersect is True
+    assert intersection_min == 10
+    assert intersection_max == 15
 
 
 def test_point():
@@ -392,6 +420,11 @@ def test_vector3d():
     assert UNITVECTOR3D_X.is_opposite(Vector3D([-1, 0, 0]))
     assert not UNITVECTOR3D_X.is_opposite(UNITVECTOR3D_X)
 
+    # Testing it fails for zero 2D vectors
+    vector1 = Vector3D([0, 0, 0])
+    vector2 = Vector3D([0, 0, 0])
+    assert vector1.is_parallel_to(vector2) is False
+
 
 def test_vector2d():
     """Simple test to create ``Vector2D``."""
@@ -477,6 +510,11 @@ def test_vector2d():
     # Opposite vectors
     assert UNITVECTOR2D_X.is_opposite(Vector2D([-1, 0]))
     assert not UNITVECTOR2D_X.is_opposite(UNITVECTOR2D_X)
+
+    # Testing it fails for zero 2D vectors
+    vector1 = Vector2D([0, 0])
+    vector2 = Vector2D([0, 0])
+    assert vector1.is_parallel_to(vector2) is False
 
 
 def test_unitvector3d():
@@ -646,6 +684,12 @@ def test_rotate_vector():
     # Assert that the result matches the expected vector
     assert np.allclose(result_vector, expected_vector)
 
+    # Testing that the vector cannot be zero
+    vector1 = Vector3D([0, 0, 0])
+    vector2 = Vector3D([0, 0, 0])
+    with pytest.raises(Exception, match="Invalid vector operation: rotation axis cannot be zero."):
+        vector1.rotate_vector(vector2, np.pi)
+
 
 def test_matrix():
     """Simple test to create a ``Matrix``."""
@@ -679,6 +723,18 @@ def test_matrix():
     with pytest.raises(ValueError, match="Matrix should only be a 2D array."):
         Matrix([None, None, None, None, None])
 
+    # 221 checking if the 2nd row is part of identify matrix
+    matrix = Matrix44([[1, 0, 0, 5], [1, 1, 0, 3], [0, 0, 1, 2], [0, 0, 0, 1]])
+    assert matrix.is_translation() is False
+
+    # 227 checking if the 3rd row is part of identify matrix
+    matrix = Matrix44([[1, 0, 0, 5], [0, 1, 0, 3], [0, 0, 0.5, 2], [0, 0, 0, 1]])
+    assert matrix.is_translation() is False
+
+    # 229 - not sure if this needed since it should be covered in 227
+    matrix = Matrix44([[1, 0, 0, 5], [0, 1, 0, 3], [0, 0, 0.8, 2], [0, 0, 0, 1]])
+    assert matrix.is_translation() is False
+
 
 def test_matrix_errors():
     """Testing multiple ``Matrix`` errors."""
@@ -705,6 +761,15 @@ def test_matrix_errors():
         ValueError, match="The dimensions of the matrices 2 and 3 are not multipliable."
     ):
         m_1 * m_2
+
+    # Error if x and y vectors are not orthongonal for rotation
+    matrix = Matrix44([[1, 0, 0, 5], [1, 0, 0, 3], [0, 0, 1, 2], [0, 0, 0, 1]])
+    with pytest.raises(ValueError, match="The provided direction vectors are not orthogonal."):
+        matrix.create_rotation(Vector3D([1, 0, 0]), Vector3D([1, 0, 0]))
+
+    # Error if x and z and y and z are not orthongonal for rotation
+    with pytest.raises(ValueError, match="The provided direction vectors are not orthogonal."):
+        matrix.create_rotation(Vector3D([1, 0, 0]), Vector3D([0, 1, 0]), Vector3D([1, 1, 0]))
 
 
 def test_matrix_33():
@@ -1335,9 +1400,13 @@ def test_bounding_box2d_no_intersection():
     box1 = BoundingBox2D(0, 1, 0, 1)
     box2 = BoundingBox2D(2, 3, 0, 1)
 
-    # Get intersection and check
+    # Get intersection for x and check
     intersection = BoundingBox2D.intersect_bboxes(box1, box2)
     assert intersection is None
+    # Get intersection for y and check
+    boxFirst = BoundingBox2D(0, 5, 0, 5)
+    boxSecond = BoundingBox2D(3, 8, 6, 8)
+    assert BoundingBox2D.intersect_bboxes(boxFirst, boxSecond) == None
 
 
 def test_bounding_box_evaluates_bounds_comparisons():
@@ -1373,6 +1442,16 @@ def test_bounding_box_no_intersection():
     box1 = BoundingBox(Point3D([0, 0, 0]), Point3D([1, 1, 0]))
     box2 = BoundingBox(Point3D([2, 0, 0]), Point3D([3, 1, 0]))
 
-    # Get intersection and check
+    # Get intersection for x and check
     intersection = BoundingBox.intersect_bboxes(box1, box2)
     assert intersection is None
+
+    # Get intersection for y and check
+    firstBoxBounding = BoundingBox(Point3D([-1, -1, -1]), Point3D([2, 1, 1]), Point3D([0, 0, 0]))
+    secondBoxBounding = BoundingBox(Point3D([2, 2, 2]), Point3D([3, 3, 3]), Point3D([4, 4, 4]))
+    assert BoundingBox.intersect_bboxes(firstBoxBounding, secondBoxBounding) == None
+
+    # Get intersection for z and check
+    firstBoxBounding = BoundingBox(Point3D([-1, -1, -1]), Point3D([2, 2, 1]), Point3D([0, 0, 0]))
+    secondBoxBounding = BoundingBox(Point3D([2, 2, 2]), Point3D([3, 3, 3]), Point3D([4, 4, 4]))
+    assert BoundingBox.intersect_bboxes(firstBoxBounding, secondBoxBounding) == None
