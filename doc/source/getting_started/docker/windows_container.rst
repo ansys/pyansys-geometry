@@ -115,6 +115,11 @@ There are two build modes:
   the binaries available in the `ansys/pyansys-geometry-binaries <https://github.com/ansys/pyansys-geometry-binaries>`_ repository.
   If you do not have access to this repository, you can only use the first mode.
 
+.. note::
+
+   Only Ansys employees with access to
+   https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
+
 Prerequisites
 ~~~~~~~~~~~~~
 
@@ -162,7 +167,8 @@ Prior to building your image, follow these steps:
 
 .. note::
 
-   Only users with access to https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
+   Only Ansys employees with access to
+   https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
 
 * Move this ZIP file to the location of the Windows Dockerfile previously downloaded.
 
