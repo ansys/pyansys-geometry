@@ -537,6 +537,7 @@ class Face:
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
+        show_options: dict | None = {},
         **plotting_options: dict | None,
     ) -> None:
         """Plot the face.
@@ -574,4 +575,4 @@ class Face:
         mesh_object = self if use_service_colors else MeshObjectPlot(self, self.tessellate())
         pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
         pl.plot(mesh_object, **plotting_options)
-        pl.show(screenshot=screenshot, **plotting_options)
+        pl.show(screenshot=screenshot, **show_options)

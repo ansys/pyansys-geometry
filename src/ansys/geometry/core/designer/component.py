@@ -1577,6 +1577,7 @@ class Component:
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
         allow_picking: bool | None = None,
+        show_options: dict | None = {},
         **plotting_options: dict | None,
     ) -> None | list[Any]:
         """Plot the component.
@@ -1692,7 +1693,7 @@ class Component:
             allow_picking=allow_picking,
         )
         pl.plot(self, **plotting_options)
-        return pl.show(screenshot=screenshot, **plotting_options)
+        return pl.show(screenshot=screenshot, **show_options)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""

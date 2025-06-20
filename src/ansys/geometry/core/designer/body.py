@@ -643,6 +643,7 @@ class IBody(ABC):
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
+        show_options: dict | None = {},
         **plotting_options: dict | None,
     ) -> None:
         """Plot the body.
@@ -1281,6 +1282,7 @@ class MasterBody(IBody):
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
+        show_options: dict | None = {},
         **plotting_options: dict | None,
     ) -> None:
         raise NotImplementedError(
@@ -1743,6 +1745,7 @@ class Body(IBody):
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
+        show_options: dict | None = {},
         **plotting_options: dict | None,
     ) -> None:
         # lazy import here to improve initial module load time
@@ -1774,7 +1777,7 @@ class Body(IBody):
         )
         pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
         pl.plot(mesh_object, **plotting_options)
-        pl.show(screenshot=screenshot, **plotting_options)
+        pl.show(screenshot=screenshot, **show_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
