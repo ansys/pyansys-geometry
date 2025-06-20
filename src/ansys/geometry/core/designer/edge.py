@@ -116,6 +116,10 @@ class Edge:
         If the edge is reversed, its shape is the ``ReversedTrimmedCurve`` type, which swaps the
         start and end points of the curve and handles parameters to allow evaluation as if the
         curve is not reversed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 24R2.
         """
         if self._shape is None:
             self._grpc_client.log.debug("Requesting edge properties from server.")
@@ -200,7 +204,12 @@ class Edge:
     @ensure_design_is_active
     @min_backend_version(25, 2, 0)
     def bounding_box(self) -> BoundingBox:
-        """Bounding box of the edge."""
+        """Bounding box of the edge.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
+        """
         self._grpc_client.log.debug("Requesting bounding box from server.")
 
         response = self._grpc_client.services.edges.get_bounding_box(id=self._id)

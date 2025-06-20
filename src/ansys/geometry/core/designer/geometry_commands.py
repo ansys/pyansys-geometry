@@ -155,6 +155,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
@@ -191,6 +195,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
@@ -223,6 +231,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -275,6 +287,10 @@ class GeometryCommands:
         -------
         list[Body]
             Bodies created by the extrusion if any.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -349,6 +365,10 @@ class GeometryCommands:
         -------
         list[Body]
             Bodies created by the extrusion if any.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -423,6 +443,10 @@ class GeometryCommands:
         -------
         list[Body]
             Bodies created by the extrusion if any.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.edge import Edge
 
@@ -490,6 +514,10 @@ class GeometryCommands:
         -------
         list[Body]
             Bodies created by the extrusion if any.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.edge import Edge
 
@@ -539,6 +567,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         result = self._commands_stub.RenameObject(
             RenameObjectRequest(selection=[object._grpc_id for object in selection], name=name)
@@ -649,6 +681,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -712,6 +748,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -784,6 +824,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -850,6 +894,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -897,6 +945,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -941,6 +993,10 @@ class GeometryCommands:
         -------
         list[Body]
             Bodies created by the extrusion if any.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -998,6 +1054,10 @@ class GeometryCommands:
         -------
         list[Body]
             Bodies created by the extrusion if any.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -1068,6 +1128,10 @@ class GeometryCommands:
         -------
         list[Body]
             Bodies created by the extrusion if any.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -1167,6 +1231,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
         from ansys.geometry.core.designer.edge import Edge
@@ -1225,6 +1293,10 @@ class GeometryCommands:
         tuple[bool, Real]
             ``True`` if round is aligned with face's U-parameter direction, ``False`` otherwise.
             Radius of the round.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))
 
@@ -1254,6 +1326,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         distance = distance if isinstance(distance, Distance) else Distance(distance)
         translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
@@ -1293,6 +1369,10 @@ class GeometryCommands:
         dict[str, Union[bool, Real]]
             Dictionary containing the useful output from the command result.
             Keys are success, modified_bodies, modified_faces, modified_edges.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         angle = angle if isinstance(angle, Angle) else Angle(angle)
         rotation_angle = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
@@ -1343,6 +1423,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 

@@ -82,6 +82,10 @@ class MeasurementTools:
         -------
         Gap
             Gap between two bodies.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 24R2.
         """
         response = self._grpc_client.services.measurement_tools.min_distance_between_objects(
             selection=[object1.id, object2.id],

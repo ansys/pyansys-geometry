@@ -603,7 +603,12 @@ class Modeler:
     @property
     @min_backend_version(24, 2, 0)
     def measurement_tools(self) -> MeasurementTools:
-        """Access to measurement tools."""
+        """Access to measurement tools.
+
+        Notes
+        -----
+        This property is only available starting on Ansys release 24R2.
+        """
         return self._measurement_tools
 
     @property
@@ -652,6 +657,10 @@ class Modeler:
             parameter is set to ``True``) or the path to the log file (if only
             the current logs are retrieved). The ``dump_to_file`` parameter
             must be set to ``True``.
+
+        Notes
+        -----
+        This property is only available starting on Ansys release 25R1.
         """
         return self.client._get_service_logs(
             all_logs=all_logs, dump_to_file=dump_to_file, logs_folder=logs_folder

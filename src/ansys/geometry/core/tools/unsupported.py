@@ -73,6 +73,8 @@ class UnsupportedCommands:
     def __fill_imported_id_map(self, id_type: PersistentIdType) -> None:
         """Populate the persistent id map for caching.
 
+        This cache should be cleared on design change.
+
         Parameters
         ----------
         id_type : PersistentIdType
@@ -80,7 +82,7 @@ class UnsupportedCommands:
 
         Notes
         -----
-        This cache should be cleared on design change.
+        This method is only available starting on Ansys release 25R2.
         """
         request = ImportIdRequest(type=id_type.value)
         self.__id_map[id_type] = self._unsupported_stub.GetImportIdMap(request).id_map
@@ -155,6 +157,10 @@ class UnsupportedCommands:
             Type of id.
         value : str
             Id to set.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         request = ExportIdRequest(
             moniker=EntityIdentifier(id=moniker), id=value, type=id_type.value
