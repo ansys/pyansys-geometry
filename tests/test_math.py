@@ -1404,9 +1404,9 @@ def test_bounding_box2d_no_intersection():
     intersection = BoundingBox2D.intersect_bboxes(box1, box2)
     assert intersection is None
     # Get intersection for y and check
-    boxFirst = BoundingBox2D(0, 5, 0, 5)
-    boxSecond = BoundingBox2D(3, 8, 6, 8)
-    assert BoundingBox2D.intersect_bboxes(boxFirst, boxSecond) == None
+    boxfirst = BoundingBox2D(0, 5, 0, 5)
+    boxsecond = BoundingBox2D(3, 8, 6, 8)
+    assert BoundingBox2D.intersect_bboxes(boxfirst, boxsecond) is None
 
 
 def test_bounding_box_evaluates_bounds_comparisons():
@@ -1447,11 +1447,11 @@ def test_bounding_box_no_intersection():
     assert intersection is None
 
     # Get intersection for y and check
-    firstBoxBounding = BoundingBox(Point3D([-1, -1, -1]), Point3D([2, 1, 1]), Point3D([0, 0, 0]))
-    secondBoxBounding = BoundingBox(Point3D([2, 2, 2]), Point3D([3, 3, 3]), Point3D([4, 4, 4]))
-    assert BoundingBox.intersect_bboxes(firstBoxBounding, secondBoxBounding) == None
+    firstboxbounding = BoundingBox(Point3D([-1, -1, -1]), Point3D([2, 1, 1]), Point3D([0, 0, 0]))
+    secondboxbounding = BoundingBox(Point3D([2, 2, 2]), Point3D([3, 3, 3]), Point3D([4, 4, 4]))
+    assert BoundingBox.intersect_bboxes(firstboxbounding, secondboxbounding) is None
 
     # Get intersection for z and check
-    firstBoxBounding = BoundingBox(Point3D([-1, -1, -1]), Point3D([2, 2, 1]), Point3D([0, 0, 0]))
-    secondBoxBounding = BoundingBox(Point3D([2, 2, 2]), Point3D([3, 3, 3]), Point3D([4, 4, 4]))
-    assert BoundingBox.intersect_bboxes(firstBoxBounding, secondBoxBounding) == None
+    firstboxbounding = BoundingBox(Point3D([-1, -1, -1]), Point3D([2, 2, 1]), Point3D([0, 0, 0]))
+    secondboxbounding = BoundingBox(Point3D([2, 2, 2]), Point3D([3, 3, 3]), Point3D([4, 4, 4]))
+    assert BoundingBox.intersect_bboxes(firstboxbounding, secondboxbounding) is None

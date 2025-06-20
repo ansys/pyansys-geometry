@@ -56,7 +56,6 @@ from ansys.geometry.core.math import (
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
-from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
@@ -98,10 +97,10 @@ def test_design_part(modeler: Modeler):
     body2 = MasterBody(id="body2", name="Second Body in Component", grpc_client=modeler.client)
     bodies = [body1]
     part = Part(id="IDPart", name="NamePart", components=[], bodies=bodies)
-    masterPart = MasterComponent(id="PartMaster", name="Part Master", part=part)
-    assert masterPart.id == "PartMaster"
-    assert masterPart.name == "Part Master"
-    assert masterPart.__repr__()[0:50] == "MasterComponent(id=PartMaster, name=Part Master, t"
+    masterpart = MasterComponent(id="PartMaster", name="Part Master", part=part)
+    assert masterpart.id == "PartMaster"
+    assert masterpart.name == "Part Master"
+    assert masterpart.__repr__()[0:50] == "MasterComponent(id=PartMaster, name=Part Master, t"
     assert part.id == "IDPart"
     assert part.name == "NamePart"
     part.components = [body2]
