@@ -210,6 +210,10 @@ class Face:
 
         If the face is reversed, its shape is a ``ReversedTrimmedSurface`` type, which handles the
         direction of the normal vector to ensure it is always facing outward.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 24R2.
         """
         if self._shape is None:
             self._grpc_client.log.debug("Requesting face properties from server.")
@@ -294,7 +298,12 @@ class Face:
     @property
     @min_backend_version(25, 2, 0)
     def color(self) -> str:
-        """Get the current color of the face."""
+        """Get the current color of the face.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
+        """
         if self._color is None and self.body.is_alive:
             # Assigning default value first
             self._color = DEFAULT_COLOR
@@ -327,7 +336,12 @@ class Face:
     @property
     @min_backend_version(25, 2, 0)
     def bounding_box(self) -> BoundingBox:
-        """Get the bounding box for the face."""
+        """Get the bounding box for the face.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
+        """
         self._grpc_client.log.debug(f"Getting bounding box for {self.id}.")
         response = self._grpc_client.services.faces.get_bounding_box(id=self.id)
         return BoundingBox(
@@ -337,7 +351,12 @@ class Face:
     @check_input_types
     @min_backend_version(25, 2, 0)
     def set_color(self, color: str | tuple[float, float, float]) -> None:
-        """Set the color of the face."""
+        """Set the color of the face.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
+        """
         self._grpc_client.log.debug(f"Setting face color of {self.id} to {color}.")
         color = convert_color_to_hex(color)
         response = self._grpc_client.services.faces.set_color(id=self.id, color=color)
@@ -349,7 +368,12 @@ class Face:
     @check_input_types
     @min_backend_version(25, 2, 0)
     def set_opacity(self, opacity: float) -> None:
-        """Set the opacity of the face."""
+        """Set the opacity of the face.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
+        """
         self._grpc_client.log.debug(f"Setting face color of {self.id} to {opacity}.")
         opacity = convert_opacity_to_hex(opacity)
 
@@ -485,6 +509,10 @@ class Face:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 25R2.
         """
         result = self._commands_stub.FaceOffset(
             FaceOffsetRequest(
