@@ -516,9 +516,12 @@ class GeometryPlotter(PlotterInterface):
             Object you can add to the plotter.
         screenshot : str, default: None
             Path to save a screenshot of the plotter.
-        **plotting_options : dict, default: None
+        plotting_options : dict, default: {}
             Keyword arguments for the plotter. Arguments depend of the backend implementation
             you are using.
+        **show_options : dict, default: None
+            Keyword arguments for the show method. Arguments depend of the backend
+            implementation you are using.
         """
         if plotting_object is not None:
             self.plot(plotting_object, **plotting_options)

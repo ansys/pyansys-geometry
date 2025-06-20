@@ -665,6 +665,8 @@ class IBody(ABC):
             Whether to use the colors assigned to the body in the service. The default
             is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
             global setting is used.
+        show_options : dict, default: {}
+            Keyword arguments for the show method of the plotter.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.

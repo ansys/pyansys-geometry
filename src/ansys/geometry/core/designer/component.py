@@ -1606,6 +1606,8 @@ class Component:
         allow_picking : bool, default: None
             Whether to enable picking. The default is ``None``, in which case the
             picker is not enabled.
+        show_options : dict, default: {}
+            Keyword arguments for the show method of the plotter.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
 
