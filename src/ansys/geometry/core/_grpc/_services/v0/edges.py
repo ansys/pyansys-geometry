@@ -137,6 +137,25 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
                 for face in response.faces
             ],
         }
+    
+    @protect_grpc
+    def get_vertices(self, **kwargs) -> dict:  # noqa: D102
+        # Create the request - assumes all inputs are valid and of proper type
+        request = build_grpc_id(kwargs["id"])
+
+        # Call the gRPC service
+        response = self.stub.GetVertices(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "vertices": [
+                {
+                    "id": vertex.id,
+                    "position": from_grpc_point_to_point3d(vertex.position),
+                }
+                for vertex in response.vertices
+            ],
+        }
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102

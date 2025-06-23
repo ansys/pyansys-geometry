@@ -38,6 +38,7 @@ from ansys.geometry.core.shapes.parameterization import Interval
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.designer.vertex import Vertex
 
 
 @unique
@@ -174,6 +175,23 @@ class Edge:
                 face_resp.get("is_reversed"),
             )
             for face_resp in response.get("faces")
+        ]
+    
+    @property
+    @ensure_design_is_active
+    def vertices(self) -> list["Vertex"]:
+        """Vertices that define the edge."""
+        from ansys.geometry.core.designer.vertex import Vertex
+
+        self._grpc_client.log.debug("Requesting edge vertices from server.")
+        response = self._grpc_client.services.edges.get_vertices(id=self._id)
+        return [
+            Vertex(
+                vertex_resp.get("id"),
+                self._body,
+                self._grpc_client,
+            )
+            for vertex_resp in response.get("vertices")
         ]
 
     @property
