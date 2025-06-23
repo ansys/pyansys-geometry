@@ -21,8 +21,11 @@
 # SOFTWARE.
 """Test edges."""
 
+import numpy as np
+
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import Point2D, Vector3D
+from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.units import UNITS, Quantity
 from ansys.geometry.core.sketch import Sketch
 
@@ -59,8 +62,20 @@ def test_edges_get_vertices(modeler: Modeler):
     sketch.box(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(1, UNITS.m))
     body = design.extrude_sketch("BoxBody", sketch, Quantity(1, UNITS.m))
 
+    # Create array of vertices to match with vertices from edges
+    body_vertices = []
+    for x in [-1, 1]:
+        for y in [-1, 1]:
+            for z in [0, 1]:
+                body_vertices.append(Point3D([x/2, y/2, z]))
+
     # For each edge, get its vertices and check their types and positions
     for edge in body.edges:
         vertices = edge.vertices
         # Should be two vertices per edge for a box
         assert len(vertices) == 2
+
+        # Check the location of each vertex
+        for vertex in vertices:
+            assert any(np.allclose(vertex.position, v.position) for v in body_vertices)
+
