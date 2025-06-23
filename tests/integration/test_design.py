@@ -490,6 +490,22 @@ def test_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 3
 
 
+def test_empty_named_selection(modeler: Modeler):
+    """Test for verifying the creation of an empty ``NamedSelection``."""
+    # Create your design on the server side
+    design = modeler.create_design("EmptyNamedSelection_Test")
+
+    # Attempting to create an empty NamedSelection raises an error
+    with pytest.raises(ValueError, match="At least one of the following must be provided:"):
+        design.create_named_selection("EmptyNS")
+
+    # Make sure that passing empty lists also raises an error
+    with pytest.raises(ValueError, match="At least one of the following must be provided:"):
+        design.create_named_selection(
+            "EmptyNS2", bodies=[], faces=[], edges=[], beams=[], design_points=[]
+        )
+
+
 def test_named_selection_contents(modeler: Modeler):
     """Test for verifying the correct contents of a ``NamedSelection``."""
     # Create your design on the server side
