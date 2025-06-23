@@ -629,6 +629,12 @@ class Design(Component):
         -------
         NamedSelection
             Newly created named selection that maintains references to all target entities.
+
+        Raises
+        ------
+        ValueError
+            If no entities are provided for the named selection. At least
+            one of the optional parameters must be provided.
         """
         # Verify that at least one entity is provided
         if not any([bodies, faces, edges, beams, design_points]):
