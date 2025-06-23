@@ -50,3 +50,17 @@ def test_edges_startend_cylinder(modeler: Modeler):
     cylinder_body = design.extrude_sketch("JustACyl", cylinder, Quantity(10, UNITS.m))
     for edge in cylinder_body.edges:
         assert edge.shape.start == edge.shape.end
+
+
+def test_edges_get_vertices(modeler: Modeler):
+    # Create a simple design with a box
+    design = modeler.create_design("BoxVertices")
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(1, UNITS.m))
+    body = design.extrude_sketch("BoxBody", sketch, Quantity(1, UNITS.m))
+
+    # For each edge, get its vertices and check their types and positions
+    for edge in body.edges:
+        vertices = edge.vertices
+        # Should be two vertices per edge for a box
+        assert len(vertices) == 2

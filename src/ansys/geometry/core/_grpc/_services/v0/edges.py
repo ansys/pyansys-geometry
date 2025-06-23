@@ -140,8 +140,10 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
     
     @protect_grpc
     def get_vertices(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.edges_pb2 import GetVerticesRequest
+
         # Create the request - assumes all inputs are valid and of proper type
-        request = build_grpc_id(kwargs["id"])
+        request = GetVerticesRequest(edge=build_grpc_id(kwargs["id"]))
 
         # Call the gRPC service
         response = self.stub.GetVertices(request=request)

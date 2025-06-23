@@ -185,11 +185,11 @@ class Edge:
 
         self._grpc_client.log.debug("Requesting edge vertices from server.")
         response = self._grpc_client.services.edges.get_vertices(id=self._id)
+
         return [
             Vertex(
                 vertex_resp.get("id"),
-                self._body,
-                self._grpc_client,
+                vertex_resp.get("position"),
             )
             for vertex_resp in response.get("vertices")
         ]
