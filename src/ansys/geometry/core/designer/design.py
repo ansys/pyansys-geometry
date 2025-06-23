@@ -784,8 +784,8 @@ class Design(Component):
         list[Parameter]
             List of parameters for the design.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R1.
         """
         response = self._grpc_client._services.driving_dimensions.get_all_parameters()
@@ -806,8 +806,8 @@ class Design(Component):
         ParameterUpdateStatus
             Status of the update operation.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R1.
         """
         response = self._grpc_client._services.driving_dimensions.set_parameter(
@@ -944,8 +944,8 @@ class Design(Component):
         Component
             The newly inserted component.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         # Upload the file to the server

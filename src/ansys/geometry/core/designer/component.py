@@ -275,8 +275,8 @@ class Component:
     def name(self, value: str) -> None:
         """Set the name of the component.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         self.set_name(value)
@@ -287,8 +287,8 @@ class Component:
     def set_name(self, name: str) -> None:
         """Set the name of the component.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         self._grpc_client.log.debug(f"Renaming component {self.id} from '{self.name}' to '{name}'.")
@@ -643,8 +643,8 @@ class Component:
         Body
             Created body from the given sketch.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         self._grpc_client.log.debug(f"Creating a sweeping profile on {self.id}. Creating body...")
@@ -683,8 +683,8 @@ class Component:
         Body
             Created body from the given sketch.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         self._grpc_client.log.debug(f"Creating a sweeping chain on {self.id}. Creating body...")
@@ -726,8 +726,8 @@ class Component:
         Body
             Revolved body from the given sketch.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         # Based on the reference axis and the sketch plane's normal, retrieve the orthogonal
@@ -826,8 +826,8 @@ class Component:
         Body
             Sphere body object.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id}.")
@@ -885,8 +885,8 @@ class Component:
         Body
             Created lofted body object.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         self._grpc_client.log.debug(f"Creating a loft profile body on {self.id}.")
@@ -979,8 +979,8 @@ class Component:
         Body
             Surface body.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R1.
         """
         self._grpc_client.log.debug(
@@ -1012,8 +1012,8 @@ class Component:
         Body
             Surface body.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         self._grpc_client.log.debug(

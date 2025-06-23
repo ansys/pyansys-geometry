@@ -211,8 +211,8 @@ class Face:
         If the face is reversed, its shape is a ``ReversedTrimmedSurface`` type, which handles the
         direction of the normal vector to ensure it is always facing outward.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         if self._shape is None:
@@ -300,8 +300,8 @@ class Face:
     def color(self) -> str:
         """Get the current color of the face.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         if self._color is None and self.body.is_alive:
@@ -338,8 +338,8 @@ class Face:
     def bounding_box(self) -> BoundingBox:
         """Get the bounding box for the face.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         self._grpc_client.log.debug(f"Getting bounding box for {self.id}.")
@@ -353,8 +353,8 @@ class Face:
     def set_color(self, color: str | tuple[float, float, float]) -> None:
         """Set the color of the face.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         self._grpc_client.log.debug(f"Setting face color of {self.id} to {color}.")
@@ -370,8 +370,8 @@ class Face:
     def set_opacity(self, opacity: float) -> None:
         """Set the opacity of the face.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         self._grpc_client.log.debug(f"Setting face color of {self.id} to {opacity}.")
@@ -510,8 +510,8 @@ class Face:
         bool
             ``True`` when successful, ``False`` when failed.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         result = self._commands_stub.FaceOffset(

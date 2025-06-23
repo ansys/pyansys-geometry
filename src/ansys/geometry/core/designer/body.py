@@ -150,8 +150,8 @@ class IBody(ABC):
     def set_name(self, str) -> None:
         """Set the name of the body.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R1.
         """
         return
@@ -165,8 +165,8 @@ class IBody(ABC):
     def set_fill_style(self, fill_style: FillStyle) -> None:
         """Set the fill style of the body.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R1.
         """
         return
@@ -175,8 +175,8 @@ class IBody(ABC):
     def is_suppressed(self) -> bool:
         """Get the body suppression state.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         return
@@ -185,8 +185,8 @@ class IBody(ABC):
     def set_suppressed(self, suppressed: bool) -> None:
         """Set the body suppression state.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         return
@@ -213,8 +213,8 @@ class IBody(ABC):
             Color to set the body to. This can be a string representing a color name
             or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R1.
         """
         return
@@ -299,8 +299,8 @@ class IBody(ABC):
         BoundingBox
             Bounding box of the body.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         return
@@ -481,8 +481,8 @@ class IBody(ABC):
         angle: ~pint.Quantity | Angle | Real
             Angle (magnitude) of the rotation.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         return
@@ -499,8 +499,8 @@ class IBody(ABC):
         value: Real
             Value to scale the body by.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         return
@@ -517,8 +517,8 @@ class IBody(ABC):
         frame: Frame
             Structure defining the orientation of the body.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         return
@@ -535,8 +535,8 @@ class IBody(ABC):
         plane: Plane
             Represents the mirror.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         return
@@ -555,8 +555,8 @@ class IBody(ABC):
         CollisionType
             Enum that defines the collision state between bodies.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         return
@@ -652,8 +652,8 @@ class IBody(ABC):
         bool
             ``True`` when successful, ``False`` when failed.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         return
@@ -674,8 +674,8 @@ class IBody(ABC):
         bool
             ``True`` when successful, ``False`` when failed.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         return
@@ -1159,8 +1159,8 @@ class MasterBody(IBody):
     def set_opacity(self, opacity: float) -> None:
         """Set the opacity of the body.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         self._grpc_client.log.debug(f"Setting body opacity of {self.id} to {opacity}.")

@@ -412,8 +412,8 @@ class RepairTools:
         list[UnsimplifiedFaceProblemAreas]
             List of objects representing unsimplified face problem areas.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
@@ -455,8 +455,8 @@ class RepairTools:
         list[InterfenceProblemAreas]
             List of objects representing interference problem areas.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
@@ -506,8 +506,8 @@ class RepairTools:
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
@@ -557,8 +557,8 @@ class RepairTools:
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
@@ -611,8 +611,8 @@ class RepairTools:
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
@@ -662,8 +662,8 @@ class RepairTools:
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
@@ -727,8 +727,8 @@ class RepairTools:
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
@@ -838,8 +838,8 @@ class RepairTools:
         RepairToolMessage
             Message containing success of the operation.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         body_ids = [] if bodies is None else [body._grpc_id for body in bodies]

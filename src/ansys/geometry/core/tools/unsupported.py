@@ -80,8 +80,8 @@ class UnsupportedCommands:
         id_type : PersistentIdType
             Type of id.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         request = ImportIdRequest(type=id_type.value)
@@ -158,8 +158,8 @@ class UnsupportedCommands:
         value : str
             Id to set.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         request = ExportIdRequest(

@@ -78,8 +78,8 @@ class PrepareTools:
         list[Body]
             List of created bodies.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R1.
         """
         from ansys.geometry.core.designer.face import Face
@@ -129,8 +129,8 @@ class PrepareTools:
         list[Body]
             List of created bodies.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R1.
         """
         from ansys.geometry.core.designer.edge import Edge
@@ -223,8 +223,8 @@ class PrepareTools:
         bool
             ``True`` if successful, ``False`` if failed.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         from ansys.geometry.core.designer.body import Body
@@ -263,8 +263,8 @@ class PrepareTools:
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
@@ -314,8 +314,8 @@ class PrepareTools:
         LogoProblemArea
             Problem area with logo faces.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
@@ -364,8 +364,8 @@ class PrepareTools:
         -------
         Boolean value indicating whether the operation was successful.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body

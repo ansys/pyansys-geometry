@@ -117,8 +117,8 @@ class Edge:
         start and end points of the curve and handles parameters to allow evaluation as if the
         curve is not reversed.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 24R2.
         """
         if self._shape is None:
@@ -206,8 +206,8 @@ class Edge:
     def bounding_box(self) -> BoundingBox:
         """Bounding box of the edge.
 
-        Notes
-        -----
+        Warnings
+        --------
         This method is only available starting on Ansys release 25R2.
         """
         self._grpc_client.log.debug("Requesting bounding box from server.")
