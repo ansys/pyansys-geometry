@@ -629,7 +629,20 @@ class Design(Component):
         -------
         NamedSelection
             Newly created named selection that maintains references to all target entities.
+
+        Raises
+        ------
+        ValueError
+            If no entities are provided for the named selection. At least
+            one of the optional parameters must be provided.
         """
+        # Verify that at least one entity is provided
+        if not any([bodies, faces, edges, beams, design_points]):
+            raise ValueError(
+                "At least one of the following must be provided: "
+                "bodies, faces, edges, beams, or design_points."
+            )
+
         named_selection = NamedSelection(
             name,
             self,
@@ -783,6 +796,10 @@ class Design(Component):
         -------
         list[Parameter]
             List of parameters for the design.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
         """
         response = self._grpc_client._services.driving_dimensions.get_all_parameters()
         return response.get("parameters")
@@ -801,6 +818,10 @@ class Design(Component):
         -------
         ParameterUpdateStatus
             Status of the update operation.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
         """
         response = self._grpc_client._services.driving_dimensions.set_parameter(
             driving_dimension=dimension
@@ -935,6 +956,10 @@ class Design(Component):
         -------
         Component
             The newly inserted component.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         # Upload the file to the server
         filepath_server = self._modeler._upload_file(file_location, import_options=import_options)

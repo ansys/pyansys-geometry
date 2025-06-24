@@ -19,7 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the repair tools service implementation."""
+"""Module containing the repair tools service implementation for v1."""
 
 import grpc
 
@@ -97,6 +97,10 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # pragma: no cover
 
     @protect_grpc
     def find_and_fix_simplify(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def find_and_fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc

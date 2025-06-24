@@ -39,7 +39,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+      - uses: ansys/actions/doc-deploy-changelog@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -49,7 +49,7 @@ jobs:
     name: Vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+      - uses: ansys/actions/check-vulnerabilities@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/check-pr-title@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/doc-style@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -90,7 +90,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/build-wheelhouse@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/docker-style@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/docker-style@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
           directory: docker
           recursive: true
@@ -341,7 +341,7 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
 
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/doc-build@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
@@ -432,13 +432,21 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/tests-pytest@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         env:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           checkout: false
           randomize: true
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
+        if: matrix.docker-image == 'core-linux-latest'
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: .cov/xml
 
       - name: Upload integration test logs
         if: always()
@@ -580,7 +588,7 @@ jobs:
       id-token: write
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/build-library@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -810,7 +818,7 @@ jobs:
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/tests-pytest@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         env:
           ALLOW_PLOTTING: true
         with:
@@ -851,7 +859,7 @@ jobs:
       contents: write
     steps:
       - name: Release to GitHub
-        uses: ansys/actions/release-github@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/release-github@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
@@ -891,7 +899,7 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/doc-deploy-dev@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -905,7 +913,7 @@ jobs:
     needs: [release, release-pypi]
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/doc-deploy-stable@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -922,7 +930,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Automerge PRs
-        uses: ansys/actions/hk-automerge-prs@dce0e98a78079681554a90abde4ec81a7fa8e06a # v10.0.10
+        uses: ansys/actions/hk-automerge-prs@54d45960ae9d009b2a3f26dfa687f611a85c6da3 # v10.0.11
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

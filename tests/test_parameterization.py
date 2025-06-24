@@ -131,3 +131,31 @@ def test_parameterization():
 
     with pytest.raises(BeartypeCallHintParamViolation):
         Parameterization(ParamForm.CLOSED, ParamType.OTHER, [-1, 1])
+
+
+def test_param_uv_iter():
+    """Test the __iter__ method of ParamUV."""
+    param = ParamUV(3.5, 7.2)
+    u, v = param  # Unpack using the __iter__ method
+    assert u == 3.5
+    assert v == 7.2
+
+
+def test_param_uv_repr():
+    """Test the __repr__ method of ParamUV."""
+    param = ParamUV(3.5, 7.2)
+    assert repr(param) == "ParamUV(u=3.5, v=7.2)"
+
+
+def test_parameterization_repr():
+    """Test the __repr__ method of the Parameterization class."""
+    # Create a sample Parameterization object
+    interval = Interval(0, 10)
+    parameterization = Parameterization(ParamForm.CLOSED, ParamType.LINEAR, interval)
+    # Expected string representation
+    expected_repr = (
+        "Parameterization(form=ParamForm.CLOSED, type=ParamType.LINEAR, "
+        "interval=Interval(start=0, end=10))"
+    )
+    # Assert the __repr__ output matches the expected string
+    assert repr(parameterization) == expected_repr
