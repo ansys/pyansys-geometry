@@ -512,7 +512,7 @@ def test_named_selections(modeler: Modeler):
         hello = design.named_selections
         assert hello[0].faces == []
         design._grpc_client._backend_version = oldbackend
-    except:
+    except Exception:
         design._grpc_client._backend_version = oldbackend
 
 
