@@ -29,6 +29,8 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math import Point3D
 from ansys.geometry.core.misc import (
     UNITS,
+    TessellationOptions,
+    auxiliary,
     check_is_float_int,
     check_ndarray_is_float_int,
     check_ndarray_is_non_zero,
@@ -40,6 +42,44 @@ from ansys.geometry.core.misc import (
     deprecated_method,
     min_backend_version,
 )
+
+
+def test_tessellation_options():
+    # Testing tessellation options
+    tessellation_options = TessellationOptions(
+        surface_deviation=0.01,
+        angle_deviation=0.1,
+        max_aspect_ratio=2.0,
+        max_edge_length=5.0,
+        watertight=True,
+    )
+    assert tessellation_options.surface_deviation == 0.01
+    assert tessellation_options.angle_deviation == 0.1
+    assert tessellation_options.max_aspect_ratio == 2.0
+    assert tessellation_options.max_edge_length == 5.0
+    assert tessellation_options.watertight is True
+
+
+def test_misc_checks():
+    # Testing backend_version_decorator for log warning
+    @min_backend_version(25, 2, 0)
+    def fake_temp_operation(obj):
+        print("Performing operation...")
+
+    invalid_object = {"key": "value"}
+    fake_temp_operation(invalid_object)
+
+
+def test_check_auxiliary():
+    """Test the auxiliary functions for checking color conversion."""
+    with pytest.raises(ValueError, match="RGB values in the 0-1 range must be floats."):
+        colour = auxiliary.convert_color_to_hex(tuple([0, 1, 0]))
+    with pytest.raises(ValueError, match="RGB values in the 0-255 range must be integers."):
+        colour = auxiliary.convert_color_to_hex(tuple([1.1, 1.1, 1.1, 1.1]))
+    with pytest.raises(ValueError, match="RGB tuple contains mixed ranges or invalid values."):
+        colour = auxiliary.convert_color_to_hex(tuple([256, 11, 1.1]))
+    with pytest.raises(ValueError, match="Invalid color value:."):
+        colour = auxiliary.convert_color_to_hex((125, 128))
 
 
 def test_check_type():
