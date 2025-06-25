@@ -359,10 +359,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
 
+        from ..base.conversions import from_measurement_to_server_length
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindStitchFacesRequest(
             faces=kwargs["body_ids"],
-            maximum_distance=DoubleValue(value=kwargs["max_distance"])
+            maximum_distance=DoubleValue(
+                value=from_measurement_to_server_length(kwargs["max_distance"])
+            )
             if kwargs["max_distance"] is not None
             else None,
             allow_multiple_bodies=BoolValue(value=kwargs["allow_multiple_bodies"]),

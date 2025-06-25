@@ -505,7 +505,8 @@ class GeometryPlotter(PlotterInterface):
         self,
         plotting_object: Any = None,
         screenshot: str | None = None,
-        **plotting_options,
+        plotting_options: dict | None = {},
+        **show_options: dict | None,
     ) -> None | list[Any]:
         """Show the plotter.
 
@@ -515,13 +516,16 @@ class GeometryPlotter(PlotterInterface):
             Object you can add to the plotter.
         screenshot : str, default: None
             Path to save a screenshot of the plotter.
-        **plotting_options : dict, default: None
+        plotting_options : dict, default: {}
             Keyword arguments for the plotter. Arguments depend of the backend implementation
             you are using.
+        **show_options : dict, default: None
+            Keyword arguments for the show method. Arguments depend of the backend
+            implementation you are using.
         """
         if plotting_object is not None:
             self.plot(plotting_object, **plotting_options)
-        picked_objs = self._backend.show(screenshot=screenshot, **plotting_options)
+        picked_objs = self._backend.show(screenshot=screenshot, **show_options)
 
         # Return the picked objects if picking is enabled... but as the actual PyAnsys
         # Geometry objects (or PyVista objects if not)

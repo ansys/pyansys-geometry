@@ -210,6 +210,10 @@ class Face:
 
         If the face is reversed, its shape is a ``ReversedTrimmedSurface`` type, which handles the
         direction of the normal vector to ensure it is always facing outward.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         if self._shape is None:
             self._grpc_client.log.debug("Requesting face properties from server.")
@@ -294,7 +298,12 @@ class Face:
     @property
     @min_backend_version(25, 2, 0)
     def color(self) -> str:
-        """Get the current color of the face."""
+        """Get the current color of the face.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
         if self._color is None and self.body.is_alive:
             # Assigning default value first
             self._color = DEFAULT_COLOR
@@ -327,7 +336,12 @@ class Face:
     @property
     @min_backend_version(25, 2, 0)
     def bounding_box(self) -> BoundingBox:
-        """Get the bounding box for the face."""
+        """Get the bounding box for the face.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
         self._grpc_client.log.debug(f"Getting bounding box for {self.id}.")
         response = self._grpc_client.services.faces.get_bounding_box(id=self.id)
         return BoundingBox(
@@ -337,7 +351,12 @@ class Face:
     @check_input_types
     @min_backend_version(25, 2, 0)
     def set_color(self, color: str | tuple[float, float, float]) -> None:
-        """Set the color of the face."""
+        """Set the color of the face.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
         self._grpc_client.log.debug(f"Setting face color of {self.id} to {color}.")
         color = convert_color_to_hex(color)
         response = self._grpc_client.services.faces.set_color(id=self.id, color=color)
@@ -349,7 +368,12 @@ class Face:
     @check_input_types
     @min_backend_version(25, 2, 0)
     def set_opacity(self, opacity: float) -> None:
-        """Set the opacity of the face."""
+        """Set the opacity of the face.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
         self._grpc_client.log.debug(f"Setting face color of {self.id} to {opacity}.")
         opacity = convert_opacity_to_hex(opacity)
 
@@ -485,6 +509,10 @@ class Face:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         result = self._commands_stub.FaceOffset(
             FaceOffsetRequest(
@@ -537,6 +565,7 @@ class Face:
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
+        show_options: dict | None = {},
         **plotting_options: dict | None,
     ) -> None:
         """Plot the face.
@@ -553,6 +582,8 @@ class Face:
             Whether to use the colors assigned to the face in the service. The default
             is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
             global setting is used.
+        show_options : dict, default: {}
+            Keyword arguments for the show method of the plotter.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
@@ -574,4 +605,4 @@ class Face:
         mesh_object = self if use_service_colors else MeshObjectPlot(self, self.tessellate())
         pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
         pl.plot(mesh_object, **plotting_options)
-        pl.show(screenshot=screenshot, **plotting_options)
+        pl.show(screenshot=screenshot, **show_options)
