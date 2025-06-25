@@ -232,6 +232,7 @@ class NamedSelection:
             "edges": response.get("edges"),
             "beams": response.get("beams"),
             "design_points": response.get("design_points"),
+            "components": response.get("components"),
         }
 
         for key in ids:
@@ -251,4 +252,5 @@ class NamedSelection:
         lines.append(f"  N Edges              : {len(self.edges)}")
         lines.append(f"  N Beams              : {len(self.beams)}")
         lines.append(f"  N Design Points      : {len(self.design_points)}")
+        lines.append(f"  N Components         : {len(self.components)}")
         return "\n".join(lines)
