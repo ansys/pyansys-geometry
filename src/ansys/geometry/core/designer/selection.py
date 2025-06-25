@@ -31,6 +31,7 @@ from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.designer.vertex import Vertex
 from ansys.geometry.core.misc.auxiliary import (
     get_beams_from_ids,
     get_bodies_from_ids,
@@ -212,6 +213,22 @@ class NamedSelection:
             self._components = get_components_from_ids(self._design, self._ids_cached["components"])
 
         return self._components
+    
+    @property
+    def vertices(self) -> list[Vertex]:
+        """All vertices in the named selection."""
+        self.__verify_ns()
+        if self._grpc_client.backend_version < (25, 2, 0):
+            self._grpc_client.log.warning(
+                "Accessing vertices of named selections is only"
+                " consistent starting in version 2025 R2."
+            )
+            return []
+
+        # Get all vertices from the named selection
+        response = self._grpc_client.services.named_selection.get_named_selection(id=self._id)
+        vertex_ids = response.get("vertices", [])
+        return [Vertex(vertex_id, f"vertex: {vertex_id}") for vertex_id in vertex_ids]
 
     def __verify_ns(self) -> None:
         """Verify that the contents of the named selection are up to date."""
