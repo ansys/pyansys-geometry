@@ -30,6 +30,7 @@ from pint import Quantity
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
+    CreateAlignTangentOrientGearConditionRequest,
     CreateCircularPatternRequest,
     CreateFillPatternRequest,
     CreateLinearPatternRequest,
@@ -61,6 +62,11 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
+from ansys.geometry.core.designer.mating_conditions import (
+    AlignCondition,
+    OrientCondition,
+    TangentCondition,
+)
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.plane import Plane
@@ -69,6 +75,7 @@ from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_body,
+    get_design_from_component,
     get_design_from_edge,
     get_design_from_face,
 )
@@ -1450,3 +1457,150 @@ class GeometryCommands:
         )
 
         return result.success
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(26, 1, 0)
+    def create_align_condition(
+        self,
+        parent_component: "Component",
+        geometry_a: Union["Body", "Face", "Edge"],
+        geometry_b: Union["Body", "Face", "Edge"],
+    ) -> AlignCondition:
+        """Create an align condition between two geometry objects.
+
+        Parameters
+        ----------
+        parent_component : Component
+            The common ancestor component of the two geometry objects.
+        geometry_a : Body | Face | Edge
+            The first geometry object to align to the second.
+        geometry_b : Body | Face | Edge
+            The geometry object to be aligned to.
+
+        Returns
+        -------
+        AlignCondition
+            The persistent align condition that was created.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        result = self._commands_stub.CreateAlignCondition(
+            CreateAlignTangentOrientGearConditionRequest(
+                parent=parent_component._grpc_id,
+                geometric_a=geometry_a._grpc_id,
+                geometric_b=geometry_b._grpc_id,
+            )
+        )
+
+        get_design_from_component(parent_component)._update_design_inplace()
+
+        return AlignCondition(
+            result.condition.moniker,
+            result.condition.is_deleted,
+            result.condition.is_enabled,
+            result.condition.is_satisfied,
+            result.offset,
+            result.is_reversed,
+            result.is_valid,
+        )
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(26, 1, 0)
+    def create_tangent_condition(
+        self,
+        parent_component: "Component",
+        geometry_a: Union["Body", "Face", "Edge"],
+        geometry_b: Union["Body", "Face", "Edge"],
+    ) -> TangentCondition:
+        """Create a tangent condition between two geometry objects.
+
+        Parameters
+        ----------
+        parent_component : Component
+            The common ancestor component of the two geometry objects.
+        geometry_a : Body | Face | Edge
+            The first geometry object to tangent the second.
+        geometry_b : Body | Face | Edge
+            The geometry object to be tangent with.
+
+        Returns
+        -------
+        TangentCondition
+            The persistent tangent condition that was created.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        result = self._commands_stub.CreateTangentCondition(
+            CreateAlignTangentOrientGearConditionRequest(
+                parent=parent_component._grpc_id,
+                geometric_a=geometry_a._grpc_id,
+                geometric_b=geometry_b._grpc_id,
+            )
+        )
+
+        get_design_from_component(parent_component)._update_design_inplace()
+
+        return TangentCondition(
+            result.condition.moniker,
+            result.condition.is_deleted,
+            result.condition.is_enabled,
+            result.condition.is_satisfied,
+            result.offset,
+            result.is_reversed,
+            result.is_valid,
+        )
+
+    @protect_grpc
+    @check_input_types
+    @min_backend_version(26, 1, 0)
+    def create_orient_condition(
+        self,
+        parent_component: "Component",
+        geometry_a: Union["Body", "Face", "Edge"],
+        geometry_b: Union["Body", "Face", "Edge"],
+    ) -> OrientCondition:
+        """Create an orient condition between two geometry objects.
+
+        Parameters
+        ----------
+        parent_component : Component
+            The common ancestor component of the two geometry objects.
+        geometry_a : Body | Face | Edge
+            The first geometry object to orient with the second.
+        geometry_b : Body | Face | Edge
+            The geometry object to be oriented with.
+
+        Returns
+        -------
+        OrientCondition
+            The persistent orient condition that was created.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        result = self._commands_stub.CreateOrientCondition(
+            CreateAlignTangentOrientGearConditionRequest(
+                parent=parent_component._grpc_id,
+                geometric_a=geometry_a._grpc_id,
+                geometric_b=geometry_b._grpc_id,
+            )
+        )
+
+        get_design_from_component(parent_component)._update_design_inplace()
+
+        return OrientCondition(
+            result.condition.moniker,
+            result.condition.is_deleted,
+            result.condition.is_enabled,
+            result.condition.is_satisfied,
+            result.offset,
+            result.is_reversed,
+            result.is_valid,
+        )
