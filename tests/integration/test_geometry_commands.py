@@ -1209,7 +1209,7 @@ def test_move_translate_component(modeler: Modeler):
     translated_vertices = []
     for edge in box_body.edges:
         translated_vertices.extend([edge.start, edge.end])
-    
+
     # Check that the vertices have been translated
     assert np.isin(expected_vertices, translated_vertices).all()
 
