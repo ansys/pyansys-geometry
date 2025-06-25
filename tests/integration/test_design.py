@@ -1696,6 +1696,29 @@ def test_named_selections_design_points(modeler: Modeler):
     assert len(design.named_selections) == 0
 
 
+def test_named_selections_components(modeler: Modeler):
+    """Test for verifying the correct creation of ``NamedSelection`` with
+    components.
+    """
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelectionComponents_Test")
+
+    # Test creating a named selection out of components
+    comp1 = design.add_component("Comp1")
+    comp2 = design.add_component("Comp2")
+    ns_components = design.create_named_selection("Components", components=[comp1, comp2])
+    assert len(design.named_selections) == 1
+    assert design.named_selections[0].name == "Components"
+
+    # Fetch the component from the named selection
+    assert ns_components.components[0].id == comp1.id
+    assert ns_components.components[1].id == comp2.id
+
+    # Try deleting this named selection
+    design.delete_named_selection(ns_components)
+    assert len(design.named_selections) == 0
+
+
 def test_component_instances(modeler: Modeler):
     """Test creation of ``Component`` instances and the effects this has."""
     design_name = "ComponentInstance_Test"

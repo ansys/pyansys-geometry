@@ -183,6 +183,30 @@ def get_bodies_from_ids(design: "Design", body_ids: list[str]) -> list["Body"]:
     return [body for body in __traverse_all_bodies(design) if body.id in body_ids]
 
 
+def get_components_from_ids(design: "Design", component_ids: list[str]) -> list["Component"]:
+    """Find the ``Component`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the components.
+    component_ids : list[str]
+        List of component ids.
+
+    Returns
+    -------
+    list[Component]
+        List of Component objects.
+
+    Notes
+    -----
+    This method takes a design and component ids, and gets their corresponding ``Component`` object.
+    """
+    return [
+        comp for comp in __traverse_component_elem("components", design) if comp.id in component_ids
+    ]  # noqa: E501
+
+
 def get_faces_from_ids(design: "Design", face_ids: list[str]) -> list["Face"]:
     """Find the ``Face`` objects inside a ``Design`` from its ids.
 
