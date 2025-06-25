@@ -38,7 +38,6 @@ from ansys.geometry.core.misc.auxiliary import (
     get_edges_from_ids,
     get_faces_from_ids,
 )
-from ansys.geometry.core.misc.checks import min_backend_version
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.design import Design
