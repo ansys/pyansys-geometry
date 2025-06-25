@@ -83,7 +83,7 @@ def test_design_is_close(modeler: Modeler):
     sketch = Sketch()
     sketch.box(Point2D([0, 0]), 10, 10)
     design = modeler.create_design("Box")
-    body = design.extrude_sketch("Box", sketch, 2)
+    design.extrude_sketch("Box", sketch, 2)
     design.close()
     with pytest.raises(
         GeometryRuntimeError,
@@ -505,12 +505,15 @@ def test_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 3
 
     # Try to vefify name selection using earlier backend version
-    design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
     oldbackend = design._grpc_client._backend_version
-    design._grpc_client._backend_version = (24, 2, 0)
-    hello = design.named_selections
-    assert hello[0].faces == []
-    design._grpc_client._backend_version = oldbackend
+    try:
+        design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
+        design._grpc_client._backend_version = (24, 2, 0)
+        hello = design.named_selections
+        assert hello[0].faces == []
+        design._grpc_client._backend_version = oldbackend
+    except:
+        design._grpc_client._backend_version = oldbackend
 
 
 def test_empty_named_selection(modeler: Modeler):

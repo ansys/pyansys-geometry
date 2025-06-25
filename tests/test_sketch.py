@@ -123,6 +123,9 @@ def test_sketch_circle_plane_change():
     assert circle.dir_z == Vector3D([0, -1, 0])
 
 
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_sketch_face():
     """Test the sketch face perimeter, change plane, and visualization polydata functionality"""
     sketch = Sketch()

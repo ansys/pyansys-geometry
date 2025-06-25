@@ -73,13 +73,13 @@ def test_misc_checks():
 def test_check_auxiliary():
     """Test the auxiliary functions for checking color conversion."""
     with pytest.raises(ValueError, match="RGB values in the 0-1 range must be floats."):
-        colour = auxiliary.convert_color_to_hex(tuple([0, 1, 0]))
+        auxiliary.convert_color_to_hex(tuple([0, 1, 0]))
     with pytest.raises(ValueError, match="RGB values in the 0-255 range must be integers."):
-        colour = auxiliary.convert_color_to_hex(tuple([1.1, 1.1, 1.1, 1.1]))
+        auxiliary.convert_color_to_hex(tuple([1.1, 1.1, 1.1, 1.1]))
     with pytest.raises(ValueError, match="RGB tuple contains mixed ranges or invalid values."):
-        colour = auxiliary.convert_color_to_hex(tuple([256, 11, 1.1]))
+        auxiliary.convert_color_to_hex(tuple([256, 11, 1.1]))
     with pytest.raises(ValueError, match="Invalid color value:."):
-        colour = auxiliary.convert_color_to_hex((125, 128))
+        auxiliary.convert_color_to_hex((125, 128))
 
 
 def test_check_type():
