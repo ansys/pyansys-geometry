@@ -202,7 +202,7 @@ class NamedSelection:
             ]
 
         return self._design_points
-    
+
     @property
     def components(self) -> list[Component]:
         """All components in the named selection."""
