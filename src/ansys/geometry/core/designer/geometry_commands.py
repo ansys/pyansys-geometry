@@ -1308,7 +1308,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def move_translate(
         self,
-        selection: NamedSelection | Component,
+        selection: NamedSelection,
         direction: UnitVector3D,
         distance: Distance | Quantity | Real,
     ) -> bool:
@@ -1316,8 +1316,8 @@ class GeometryCommands:
 
         Parameters
         ----------
-        selection : NamedSelection | Component
-            Named selection or component to move.
+        selection : NamedSelection
+            Named selection to move.
         direction : UnitVector3D
             Direction to move in.
         distance : Distance | Quantity | Real

@@ -1186,9 +1186,12 @@ def test_move_translate_component(modeler: Modeler):
     sketch = Sketch().box(Point2D([0, 0]), 1, 1)
     box_body = component.extrude_sketch("BoxBody", sketch, 1)
 
+    # Add the component to a named selection
+    ns = design.create_named_selection("ComponentNS", components=[component])
+
     # Move the component
     success = modeler.geometry_commands.move_translate(
-        component,
+        ns,
         UNITVECTOR3D_Z,
         Distance(2, UNITS.m),
     )
