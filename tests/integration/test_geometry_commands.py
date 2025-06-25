@@ -1177,6 +1177,43 @@ def test_move_translate(modeler: Modeler):
     assert np.isin(expected_vertices, translated_vertices).all()
 
 
+def test_move_translate_component(modeler: Modeler):
+    # Create a design and a component, then add a box to the component
+    design = modeler.create_design("MyDesign")
+    component = design.add_component("MyComponent")
+
+    # Create a sketch and extrude
+    sketch = Sketch().box(Point2D([0, 0]), 1, 1)
+    box_body = component.extrude_sketch("BoxBody", sketch, 1)
+
+    # Move the component
+    success = modeler.geometry_commands.move_translate(
+        component,
+        UNITVECTOR3D_Z,
+        Distance(2, UNITS.m),
+    )
+    assert success
+
+    # Check the new location of the box body
+    expected_vertices = [
+        Point3D([-0.5, -0.5, 2.0]),
+        Point3D([0.5, -0.5, 2.0]),
+        Point3D([-0.5, 0.5, 2.0]),
+        Point3D([0.5, 0.5, 2.0]),
+        Point3D([-0.5, -0.5, 3.0]),
+        Point3D([0.5, -0.5, 3.0]),
+        Point3D([-0.5, 0.5, 3.0]),
+        Point3D([0.5, 0.5, 3.0]),
+    ]
+
+    translated_vertices = []
+    for edge in box_body.edges:
+        translated_vertices.extend([edge.start, edge.end])
+    
+    # Check that the vertices have been translated
+    assert np.isin(expected_vertices, translated_vertices).all()
+
+
 def test_move_rotate(modeler: Modeler):
     design = modeler.create_design("move_rotate_box")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)

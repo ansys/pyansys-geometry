@@ -61,6 +61,7 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
+from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.plane import Plane
@@ -1307,7 +1308,7 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def move_translate(
         self,
-        selection: NamedSelection,
+        selection: NamedSelection | Component,
         direction: UnitVector3D,
         distance: Distance | Quantity | Real,
     ) -> bool:
@@ -1315,8 +1316,8 @@ class GeometryCommands:
 
         Parameters
         ----------
-        selection : NamedSelection
-            Named selection to move.
+        selection : NamedSelection | Component
+            Named selection or component to move.
         direction : UnitVector3D
             Direction to move in.
         distance : Distance | Quantity | Real
