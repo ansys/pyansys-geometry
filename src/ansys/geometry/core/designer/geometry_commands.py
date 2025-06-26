@@ -1468,6 +1468,8 @@ class GeometryCommands:
     ) -> AlignCondition:
         """Create an align condition between two geometry objects.
 
+        This will move the objects to be aligned with each other.
+
         Parameters
         ----------
         parent_component : Component
@@ -1525,6 +1527,8 @@ class GeometryCommands:
     ) -> TangentCondition:
         """Create a tangent condition between two geometry objects.
 
+        This aligns the objects so that they are tangent.
+
         Parameters
         ----------
         parent_component : Component
@@ -1581,6 +1585,8 @@ class GeometryCommands:
         geometry_b: Union["Body", "Face", "Edge"],
     ) -> OrientCondition:
         """Create an orient condition between two geometry objects.
+
+        This rotates the objects so that they are oriented in the same direction.
 
         Parameters
         ----------
