@@ -23,9 +23,9 @@
 
 from typing import TYPE_CHECKING
 
-import ansys.geometry.core as pyansys_geometry
 import pint
 
+import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
@@ -709,7 +709,8 @@ class RepairTools:
             created_bodies=response["created_bodies_monikers"],
             modified_bodies=response["modified_bodies_monikers"],
             found=response["found"],
-            repaired=response["repaired"],)
+            repaired=response["repaired"],
+        )
 
         # Build the response message
         return self.__build_repair_tool_message(response)
