@@ -28,34 +28,34 @@ from dataclasses import dataclass
 class MatingCondition:
     """MatingCondition dataclass."""
 
-    id: str
-    is_deleted: bool
-    is_enabled: bool
-    is_satisfied: bool
+    id: str  # Id of the mating condition corresponding to the server-side object
+    is_deleted: bool  # True if the condition has been deleted
+    is_enabled: bool  # True if the condition is currently enabled
+    is_satisfied: bool  # True if the condition has been met
 
 
 @dataclass
 class AlignCondition(MatingCondition):
     """AlignCondition dataclass."""
 
-    offset: float
-    is_reversed: bool
-    is_valid: bool
+    offset: float  # Separation value (only defined if at least one geometric has a surface)
+    is_reversed: bool  # True if the condition is reversed in sense
+    is_valid: bool  # True if the condition is valid
 
 
 @dataclass
 class TangentCondition(MatingCondition):
     """TangentCondition dataclass."""
 
-    offset: float
-    is_reversed: bool
-    is_valid: bool
+    offset: float  # Separation value (only if both are surfaces)
+    is_reversed: bool  # True if the condition is reversed in sense
+    is_valid: bool  # True if the condition is valid
 
 
 @dataclass
 class OrientCondition(MatingCondition):
     """OrientCondition dataclass."""
 
-    offset: float
-    is_reversed: bool
-    is_valid: bool
+    offset: float  # Rotation angle
+    is_reversed: bool  # True if the condition is reversed in sense
+    is_valid: bool  # True if the condition is valid

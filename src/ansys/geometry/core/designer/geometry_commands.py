@@ -1487,6 +1487,15 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 26R1.
         """
+        from ansys.geometry.core.designer.body import Body
+        from ansys.geometry.core.designer.component import Component
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
+        check_type(parent_component, Component)
+        check_type(geometry_a, (Body, Face, Edge))
+        check_type(geometry_b, (Body, Face, Edge))
+
         result = self._commands_stub.CreateAlignCondition(
             CreateAlignTangentOrientGearConditionRequest(
                 parent=parent_component._grpc_id,
@@ -1536,6 +1545,15 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 26R1.
         """
+        from ansys.geometry.core.designer.body import Body
+        from ansys.geometry.core.designer.component import Component
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
+        check_type(parent_component, Component)
+        check_type(geometry_a, (Body, Face, Edge))
+        check_type(geometry_b, (Body, Face, Edge))
+
         result = self._commands_stub.CreateTangentCondition(
             CreateAlignTangentOrientGearConditionRequest(
                 parent=parent_component._grpc_id,
@@ -1557,7 +1575,6 @@ class GeometryCommands:
         )
 
     @protect_grpc
-    @check_input_types
     @min_backend_version(26, 1, 0)
     def create_orient_condition(
         self,
@@ -1585,6 +1602,15 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 26R1.
         """
+        from ansys.geometry.core.designer.body import Body
+        from ansys.geometry.core.designer.component import Component
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
+        check_type(parent_component, Component)
+        check_type(geometry_a, (Body, Face, Edge))
+        check_type(geometry_b, (Body, Face, Edge))
+
         result = self._commands_stub.CreateOrientCondition(
             CreateAlignTangentOrientGearConditionRequest(
                 parent=parent_component._grpc_id,
