@@ -41,14 +41,121 @@ from ansys.geometry.core.sketch import (
     Polygon,
     Sketch,
     SketchCircle,
+    SketchEdge,
     SketchEllipse,
     SketchSegment,
     Slot,
+    SpurGear,
+    Triangle,
 )
 
 from .conftest import are_graphics_available
 
 DOUBLE_EPS = np.finfo(float).eps
+
+
+def test_sketch_sketch():
+    """Test the sketch sketch tag functionality"""
+    sketch = Sketch()
+    sketch.segment(Point2D([-4, 5], unit=UNITS.m), Point2D([4, 5], unit=UNITS.m))
+    sketch.tag = "SketchTag"
+    assert sketch.tag == "SketchTag"
+
+
+def test_sketch_segment():
+    """Test the sketch segment unit conversion for end point, not equal,
+    and plane change functionality"""
+    start_point = Point2D([0, 0], unit=UNITS.meter)
+    end_point = Point2D([5, 5], unit=UNITS.kilometer)
+    segment1 = SketchSegment(start_point, end_point)
+    assert segment1.end == Point2D([5000, 5000])
+    segment2 = SketchSegment(start_point, end_point)
+    assert segment1.__ne__(segment2) is False
+    segment2 = SketchSegment(end_point, start_point)
+    assert segment1.__ne__(segment2) is True
+    new_plane = Plane(
+        origin=Point3D([0, 0, 5]), direction_x=Vector3D([1, 0, 0]), direction_y=Vector3D([0, 0, 1])
+    )
+    segment1.plane_change(new_plane)
+    assert segment1.direction == UnitVector3D([0.70710678, 0.0, 0.70710678])
+
+
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
+def test_sketch_gears():
+    """Test the sketch gears addendum, dedendum, and visualization polydate functionality"""
+    origin = Point2D([0, 1], unit=UNITS.meter)
+    module = 40
+    pressure_angle = Quantity(20, UNITS.deg)
+    n_teeth = 22
+    gearspur = SpurGear(origin, module, pressure_angle, n_teeth)
+    assert gearspur.addendum == 40.0
+    assert gearspur.dedendum == 50.0
+    gearspurpoly = gearspur.visualization_polydata
+    assert gearspurpoly.center == pytest.approx(
+        ([0.0, 1.0000000298023224, 0.0]),
+        rel=1e-7,
+        abs=1e-8,
+    )
+    assert gearspurpoly.bounds == pytest.approx(
+        [-0.4852221608161926, 0.4852221608161926, 0.5148882269859314, 1.4851118326187134, 0.0, 0.0],
+        rel=1e-7,
+        abs=1e-8,
+    )
+    assert gearspurpoly.n_cells == 704
+    assert gearspurpoly.n_points == 70405
+    assert gearspurpoly.n_open_edges == 0.0
+
+
+def test_sketch_circle_plane_change():
+    """Test the sketch circle change plane functionality"""
+    center = Point2D([5, 10], UNITS.m)
+    radius = 3 * UNITS.m
+    circle = SketchCircle(center, radius)
+    new_plane = Plane(
+        origin=Point3D([0, 0, 5]), direction_x=Vector3D([1, 0, 0]), direction_y=Vector3D([0, 0, 1])
+    )
+    circle.plane_change(new_plane)
+    assert circle.dir_x == Vector3D([1, 0, 0])
+    assert circle.dir_y == Vector3D([0, 0, 1])
+    assert circle.dir_z == Vector3D([0, -1, 0])
+
+
+def test_sketch_face():
+    """Test the sketch face perimeter and change plane functionality"""
+    sketch = Sketch()
+    per = Triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10])).perimeter
+    assert abs((per - 45.64306508752774 * UNITS.m).m) <= 5e-14
+    sketch.triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10]), tag="Triangle")
+
+    new_plane = Plane(
+        origin=Point3D([0, 0, 5]), direction_x=Vector3D([1, 0, 0]), direction_y=Vector3D([0, 0, 1])
+    )
+    sketch.faces[0].plane_change(new_plane)
+
+
+def test_sketch_edge():
+    """Test the sketch edge functionality"""
+    sketch = SketchEdge()
+    with pytest.raises(
+        NotImplementedError, match="Each edge must provide the start point definition."
+    ):
+        sketch.start()
+    with pytest.raises(
+        NotImplementedError, match="Each edge must provide the end point definition."
+    ):
+        sketch.end()
+    with pytest.raises(NotImplementedError, match="Each edge must provide the length definition."):
+        sketch.length()
+    with pytest.raises(
+        NotImplementedError, match="Each edge must provide the polydata definition."
+    ):
+        sketch.visualization_polydata()
+    plane = Plane(
+        origin=Point3D([0, 0, 0]), direction_x=Vector3D([1, 2, -1]), direction_y=Vector3D([1, 0, 1])
+    )
+    sketch.plane_change(plane)
 
 
 def test_errors_sketch_segment():
