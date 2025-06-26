@@ -1459,7 +1459,6 @@ class GeometryCommands:
         return result.success
 
     @protect_grpc
-    @check_input_types
     @min_backend_version(26, 1, 0)
     def create_align_condition(
         self,
@@ -1517,7 +1516,6 @@ class GeometryCommands:
         )
 
     @protect_grpc
-    @check_input_types
     @min_backend_version(26, 1, 0)
     def create_tangent_condition(
         self,
