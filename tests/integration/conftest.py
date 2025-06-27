@@ -206,7 +206,7 @@ def use_service_colors():
     pyansys_geometry.USE_SERVICE_COLORS = False
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def use_grpc_client_old_backend(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
     modeler._grpc_client._backend_version = (24, 2, 0)

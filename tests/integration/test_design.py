@@ -504,6 +504,8 @@ def test_named_selections(modeler: Modeler, use_grpc_client_old_backend: Modeler
     design.delete_named_selection("OnlyCircle")
     assert len(design.named_selections) == 3
 
+
+def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
     # Try to vefify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
     hello = design.named_selections
