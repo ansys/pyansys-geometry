@@ -1,0 +1,127 @@
+
+
+
+
+
+
+The ``connection`` package
+==============================
+
+.. py:module:: ansys.geometry.core.connection
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: connection
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.backend`
+            - Module providing definitions for the backend types.
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.client`
+            - Module providing a wrapped abstraction of the gRPC stubs.
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.conversions`
+            - Module providing for conversions.
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.defaults`
+            - Module providing default connection parameters.
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.docker_instance`
+            - Module for connecting to a local Geometry Service Docker container.
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.launcher`
+            - Module for connecting to instances of the Geometry service.
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.product_instance`
+            - Module containing the ``ProductInstance`` class.
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.validate`
+            - Module to perform a connection validation check.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> backend</api/ansys/geometry/core/connection/backend/index>
+    <span class="nf nf-fa-file"></span> client</api/ansys/geometry/core/connection/client/index>
+    <span class="nf nf-fa-file"></span> conversions</api/ansys/geometry/core/connection/conversions/index>
+    <span class="nf nf-fa-file"></span> defaults</api/ansys/geometry/core/connection/defaults/index>
+    <span class="nf nf-fa-file"></span> docker_instance</api/ansys/geometry/core/connection/docker_instance/index>
+    <span class="nf nf-fa-file"></span> launcher</api/ansys/geometry/core/connection/launcher/index>
+    <span class="nf nf-fa-file"></span> product_instance</api/ansys/geometry/core/connection/product_instance/index>
+    <span class="nf nf-fa-file"></span> validate</api/ansys/geometry/core/connection/validate/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry connection subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

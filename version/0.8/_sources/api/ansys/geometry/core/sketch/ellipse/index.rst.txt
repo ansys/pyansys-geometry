@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``ellipse.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.sketch.ellipse
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ellipse
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.ellipse.SketchEllipse`
+            - Provides for modeling an ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SketchEllipse</api/ansys/geometry/core/sketch/ellipse/SketchEllipse>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing an ellipse.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
