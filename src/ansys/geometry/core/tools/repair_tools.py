@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING
 
 import pint
 
+import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
@@ -529,6 +530,20 @@ class RepairTools:
 
         # Update existing design
         parent_design = get_design_from_body(bodies[0])
+
+        if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response["complete_command_response"])
+
+        message = RepairToolMessage(
+            success=response["success"],
+            found=response["found"],
+            repaired=response["repaired"],
+            created_bodies=[],
+            modified_bodies=[],
+        )
+        return message
         parent_design._update_design_inplace()
 
         # Build the response message
@@ -683,7 +698,19 @@ class RepairTools:
 
         # Update existing design
         parent_design = get_design_from_body(bodies[0])
-        parent_design._update_design_inplace()
+
+        if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response["complete_command_response"])
+
+        message = RepairToolMessage(
+            success=response["success"],
+            created_bodies=response["created_bodies_monikers"],
+            modified_bodies=response["modified_bodies_monikers"],
+            found=response["found"],
+            repaired=response["repaired"],
+        )
 
         # Build the response message
         return self.__build_repair_tool_message(response)
