@@ -448,7 +448,7 @@ def test_component_body(modeler: Modeler):
     assert "N Coordinate Systems : 0" in comp_str
 
 
-def test_named_selections(modeler: Modeler, use_grpc_client_old_backend: Modeler):
+def test_named_selections(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection``."""
     # Create your design on the server side
     design = modeler.create_design("NamedSelection_Test")
