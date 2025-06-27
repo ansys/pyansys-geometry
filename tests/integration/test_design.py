@@ -42,6 +42,7 @@ from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBo
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
+from ansys.geometry.core.logger import *
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     IDENTITY_MATRIX44,
@@ -448,7 +449,7 @@ def test_component_body(modeler: Modeler):
     assert "N Coordinate Systems : 0" in comp_str
 
 
-def test_named_selections(modeler: Modeler):
+def test_named_selections(modeler: Modeler, use_grpc_client_old_backend: Modeler):
     """Test for verifying the correct creation of ``NamedSelection``."""
     # Create your design on the server side
     design = modeler.create_design("NamedSelection_Test")
@@ -505,15 +506,9 @@ def test_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 3
 
     # Try to vefify name selection using earlier backend version
-    oldbackend = design._grpc_client._backend_version
-    try:
-        design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
-        design._grpc_client._backend_version = (24, 2, 0)
-        hello = design.named_selections
-        assert hello[0].faces == []
-        design._grpc_client._backend_version = oldbackend
-    except Exception:
-        design._grpc_client._backend_version = oldbackend
+    design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
+    hello = design.named_selections
+    assert hello[0].faces == []
 
 
 def test_empty_named_selection(modeler: Modeler):
