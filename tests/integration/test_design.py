@@ -42,7 +42,6 @@ from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBo
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
-from ansys.geometry.core.logger import *
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     IDENTITY_MATRIX44,
