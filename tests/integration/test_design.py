@@ -22,6 +22,7 @@
 """Test design interaction."""
 
 import os
+from pathlib import Path
 
 import matplotlib.colors as mcolors
 import numpy as np
@@ -40,7 +41,7 @@ from ansys.geometry.core.designer import (
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.designer.part import MasterComponent, Part
-from ansys.geometry.core.errors import GeometryExitedError
+from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     IDENTITY_MATRIX44,
@@ -54,7 +55,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance, checks
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
@@ -75,6 +76,20 @@ from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
 from .conftest import FILES_DIR
+
+
+def test_design_is_close(modeler: Modeler):
+    # Testing to see if design is closed and whether more operations can be performed on it
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design = modeler.create_design("Box")
+    design.extrude_sketch("Box", sketch, 2)
+    design.close()
+    with pytest.raises(
+        GeometryRuntimeError,
+        match="The design has been closed on the backend. Cannot perform any operations on it.",
+    ):
+        checks.ensure_design_is_active(design.bodies[0].edges)
 
 
 def test_design_selection(modeler: Modeler):
@@ -488,6 +503,13 @@ def test_named_selections(modeler: Modeler):
     # Try deleting a named selection by name
     design.delete_named_selection("OnlyCircle")
     assert len(design.named_selections) == 3
+
+
+def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
+    # Try to vefify name selection using earlier backend version
+    design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
+    hello = design.named_selections
+    assert hello[0].faces == []
 
 
 def test_empty_named_selection(modeler: Modeler):
