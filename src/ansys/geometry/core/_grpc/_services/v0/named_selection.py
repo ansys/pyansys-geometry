@@ -91,6 +91,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "edges": [edge.id for edge in response.edges],
             "beams": [beam.id.id for beam in response.beams],
             "design_points": [dp.id for dp in response.design_points],
+            "components": [comp.id for comp in response.components],
         }
 
     @protect_grpc

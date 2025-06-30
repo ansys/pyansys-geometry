@@ -208,6 +208,12 @@ class NamedSelection:
     def components(self) -> list[Component]:
         """All components in the named selection."""
         self.__verify_ns()
+        if self._grpc_client.backend_version < (26, 1, 0):
+            self._grpc_client.log.warning(
+                "Accessing components in named selections is only"
+                " consistent starting in version 2026 R1."
+            )
+            return []
         if self._components is None:
             # Get all components from the named selection
             self._components = get_components_from_ids(self._design, self._ids_cached["components"])
