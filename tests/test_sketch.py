@@ -43,6 +43,7 @@ from ansys.geometry.core.sketch import (
     SketchCircle,
     SketchEdge,
     SketchEllipse,
+    SketchFace,
     SketchSegment,
     Slot,
     SpurGear,
@@ -122,8 +123,11 @@ def test_sketch_circle_plane_change():
     assert circle.dir_z == Vector3D([0, -1, 0])
 
 
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_sketch_face():
-    """Test the sketch face perimeter and change plane functionality"""
+    """Test the sketch face perimeter, change plane, and visualization polydata functionality"""
     sketch = Sketch()
     per = Triangle(Point2D([10, 10]), Point2D([2, 1]), Point2D([10, -10])).perimeter
     assert abs((per - 45.64306508752774 * UNITS.m).m) <= 5e-14
@@ -133,6 +137,18 @@ def test_sketch_face():
         origin=Point3D([0, 0, 5]), direction_x=Vector3D([1, 0, 0]), direction_y=Vector3D([0, 0, 1])
     )
     sketch.faces[0].plane_change(new_plane)
+
+    start_point = Point2D([0, 0], unit=UNITS.meter)
+    end_point = Point2D([5, 5], unit=UNITS.kilometer)
+    segment1 = SketchSegment(start_point, end_point)
+    sketch1 = SketchFace()
+    sketch1._edges = [segment1]
+    polyda = sketch1.visualization_polydata
+    assert polyda.center == pytest.approx(
+        ([2500.0, 2500.0, 0.0]),
+        rel=1e-7,
+        abs=1e-8,
+    )
 
 
 def test_sketch_edge():

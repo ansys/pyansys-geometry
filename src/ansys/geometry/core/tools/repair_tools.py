@@ -411,6 +411,10 @@ class RepairTools:
         -------
         list[UnsimplifiedFaceProblemAreas]
             List of objects representing unsimplified face problem areas.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -435,6 +439,9 @@ class RepairTools:
     ) -> list[InterferenceProblemAreas]:
         """Find the interference problem areas.
 
+        This method finds and returns a list of ids of interference problem areas
+        objects.
+
         Parameters
         ----------
         bodies : list[Body]
@@ -448,10 +455,9 @@ class RepairTools:
         list[InterfenceProblemAreas]
             List of objects representing interference problem areas.
 
-        Notes
-        -----
-        This method finds and returns a list of ids of interference problem areas
-        objects.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -483,6 +489,8 @@ class RepairTools:
     ) -> RepairToolMessage:
         """Find and fix the short edge problem areas.
 
+        This method finds the short edges in the bodies and fixes them.
+
         Parameters
         ----------
         bodies : list[Body]
@@ -498,9 +506,9 @@ class RepairTools:
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
 
-        Notes
-        -----
-        This method finds the short edges in the bodies and fixes them.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -532,6 +540,8 @@ class RepairTools:
     ) -> RepairToolMessage:
         """Find and fix the extra edge problem areas.
 
+        This method finds the extra edges in the bodies and fixes them.
+
         Parameters
         ----------
         bodies : list[Body]
@@ -547,9 +557,9 @@ class RepairTools:
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
 
-        Notes
-        -----
-        This method finds the extra edges in the bodies and fixes them.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -582,6 +592,8 @@ class RepairTools:
     ) -> RepairToolMessage:
         """Find and fix the split edge problem areas.
 
+        This method finds the extra edges in the bodies and fixes them.
+
         Parameters
         ----------
         bodies : list[Body]
@@ -599,9 +611,9 @@ class RepairTools:
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
 
-        Notes
-        -----
-        This method finds the extra edges in the bodies and fixes them.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -635,6 +647,8 @@ class RepairTools:
     ) -> RepairToolMessage:
         """Find and simplify the provided geometry.
 
+        This method simplifies the provided geometry.
+
         Parameters
         ----------
         bodies : list[Body]
@@ -648,9 +662,9 @@ class RepairTools:
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
 
-        Notes
-        -----
-        This method simplifies the provided geometry.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -686,6 +700,8 @@ class RepairTools:
     ) -> RepairToolMessage:
         """Find and fix the stitch face problem areas.
 
+        This method finds the stitchable faces and fixes them.
+
         Parameters
         ----------
         bodies : list[Body]
@@ -711,9 +727,9 @@ class RepairTools:
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
 
-        Notes
-        -----
-        This method finds the stitchable faces and fixes them.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -821,6 +837,10 @@ class RepairTools:
         -------
         RepairToolMessage
             Message containing success of the operation.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
         repair_result_response = self._grpc_client.services.repair_tools.repair_geometry(

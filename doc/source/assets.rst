@@ -66,7 +66,8 @@ Windows container
 
 .. note::
 
-   Only users with access to https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
+   Only Ansys employees with access to
+   https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
 
 * `Latest Geometry service binaries for Windows containers <https://github.com/ansys/pyansys-geometry-binaries>`_
 * `Latest Geometry service Dockerfile for Windows containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-core-dockerfile.zip>`_

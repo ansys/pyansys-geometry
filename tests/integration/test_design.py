@@ -22,6 +22,7 @@
 """Test design interaction."""
 
 import os
+from pathlib import Path
 
 import matplotlib.colors as mcolors
 import numpy as np
@@ -37,9 +38,10 @@ from ansys.geometry.core.designer import (
     SharedTopologyType,
     SurfaceType,
 )
-from ansys.geometry.core.designer.body import CollisionType, FillStyle
+from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
 from ansys.geometry.core.designer.face import FaceLoopType
-from ansys.geometry.core.errors import GeometryExitedError
+from ansys.geometry.core.designer.part import MasterComponent, Part
+from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     IDENTITY_MATRIX44,
@@ -53,7 +55,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance, checks
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
@@ -74,6 +76,52 @@ from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
 from .conftest import FILES_DIR
+
+
+def test_design_is_close(modeler: Modeler):
+    # Testing to see if design is closed and whether more operations can be performed on it
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design = modeler.create_design("Box")
+    design.extrude_sketch("Box", sketch, 2)
+    design.close()
+    with pytest.raises(
+        GeometryRuntimeError,
+        match="The design has been closed on the backend. Cannot perform any operations on it.",
+    ):
+        checks.ensure_design_is_active(design.bodies[0].edges)
+
+
+def test_design_selection(modeler: Modeler):
+    """Test to validate the designer selection for edges and __repr__ method."""
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design = modeler.create_design("Box")
+    body = design.extrude_sketch("Box", sketch, Quantity(2, UNITS.m))
+    ns_edge = design.create_named_selection("The Edges", body.edges[0:2])
+    assert ns_edge.edges[0].start == Point3D([-5, -5, 2])
+    assert ns_edge.edges[0].end == Point3D([5, -5, 2])
+    assert ns_edge.edges[1].start == Point3D([-5, -5, 0])
+    assert ns_edge.edges[1].end == Point3D([-5, -5, 2])
+    assert ns_edge.__repr__()[0:54] == "ansys.geometry.core.designer.selection.NamedSelection "
+
+
+def test_design_part(modeler: Modeler):
+    """Test to validate the designer part id, name, and setter for components and bodies."""
+    body1 = MasterBody(id="body1", name="First Only Body", grpc_client=modeler.client)
+    body2 = MasterBody(id="body2", name="Second Body in Component", grpc_client=modeler.client)
+    bodies = [body1]
+    part = Part(id="IDPart", name="NamePart", components=[], bodies=bodies)
+    masterpart = MasterComponent(id="PartMaster", name="Part Master", part=part)
+    assert masterpart.id == "PartMaster"
+    assert masterpart.name == "Part Master"
+    assert masterpart.__repr__()[0:50] == "MasterComponent(id=PartMaster, name=Part Master, t"
+    assert part.id == "IDPart"
+    assert part.name == "NamePart"
+    part.components = [body2]
+    assert part.components[0].name == "Second Body in Component"
+    part.bodies = body1
+    assert part.bodies.name == "First Only Body"
 
 
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
@@ -455,6 +503,29 @@ def test_named_selections(modeler: Modeler):
     # Try deleting a named selection by name
     design.delete_named_selection("OnlyCircle")
     assert len(design.named_selections) == 3
+
+
+def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
+    # Try to vefify name selection using earlier backend version
+    design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
+    hello = design.named_selections
+    assert hello[0].faces == []
+
+
+def test_empty_named_selection(modeler: Modeler):
+    """Test for verifying the creation of an empty ``NamedSelection``."""
+    # Create your design on the server side
+    design = modeler.create_design("EmptyNamedSelection_Test")
+
+    # Attempting to create an empty NamedSelection raises an error
+    with pytest.raises(ValueError, match="At least one of the following must be provided:"):
+        design.create_named_selection("EmptyNS")
+
+    # Make sure that passing empty lists also raises an error
+    with pytest.raises(ValueError, match="At least one of the following must be provided:"):
+        design.create_named_selection(
+            "EmptyNS2", bodies=[], faces=[], edges=[], beams=[], design_points=[]
+        )
 
 
 def test_named_selection_contents(modeler: Modeler):
