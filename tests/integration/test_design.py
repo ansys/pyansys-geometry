@@ -393,6 +393,7 @@ def test_component_body(modeler: Modeler):
     assert len(design.components) == 0
     assert len(design.bodies) == 1
     assert len(body.edges) == 15  # 5 top + 5 bottom + 5 sides
+    assert len(body.vertices) == 10  # 5 top + 5 bottom
 
     # We have created this body on the base component. Let's add a new component
     # and add a planar surface to it

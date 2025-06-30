@@ -38,6 +38,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_components_from_ids,
     get_edges_from_ids,
     get_faces_from_ids,
+    get_vertices_from_ids,
 )
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -85,6 +86,7 @@ class NamedSelection:
         beams: list[Beam] | None = None,
         design_points: list[DesignPoint] | None = None,
         components: list[Component] | None = None,
+        vertices: list[Vertex] | None = None,
         preexisting_id: str | None = None,
     ):
         """Initialize the ``NamedSelection`` class."""
@@ -105,6 +107,8 @@ class NamedSelection:
             design_points = []
         if components is None:
             components = []
+        if vertices is None:
+            vertices = []
 
         # Instantiate
         self._bodies = bodies
@@ -113,6 +117,7 @@ class NamedSelection:
         self._beams = beams
         self._design_points = design_points
         self._components = components
+        self._vertices = vertices
 
         # Store ids for later use... when verifying if the NS changed.
         self._ids_cached = {
@@ -122,6 +127,7 @@ class NamedSelection:
             "beams": [beam.id for beam in beams],
             "design_points": [dp.id for dp in design_points],
             "components": [component.id for component in components],
+            "vertices": [vertex.id for vertex in vertices],
         }
 
         if preexisting_id:
@@ -224,17 +230,15 @@ class NamedSelection:
     def vertices(self) -> list[Vertex]:
         """All vertices in the named selection."""
         self.__verify_ns()
-        if self._grpc_client.backend_version < (25, 2, 0):
+        if self._grpc_client.backend_version < (26, 1, 0):
             self._grpc_client.log.warning(
                 "Accessing vertices of named selections is only"
-                " consistent starting in version 2025 R2."
+                " consistent starting in version 2026 R1."
             )
             return []
-
-        # Get all vertices from the named selection
-        response = self._grpc_client.services.named_selection.get_named_selection(id=self._id)
-        vertex_ids = response.get("vertices", [])
-        return [Vertex(vertex_id, f"vertex: {vertex_id}") for vertex_id in vertex_ids]
+        if self._vertices is None:
+            # Get all vertices from the named selection
+            self._vertices = get_vertices_from_ids(self._design, self._ids_cached["vertices"])
 
     def __verify_ns(self) -> None:
         """Verify that the contents of the named selection are up to date."""
@@ -256,6 +260,7 @@ class NamedSelection:
             "beams": response.get("beams"),
             "design_points": response.get("design_points"),
             "components": response.get("components"),
+            "vertices": response.get("vertices"),
         }
 
         for key in ids:
@@ -276,4 +281,5 @@ class NamedSelection:
         lines.append(f"  N Beams              : {len(self.beams)}")
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Components         : {len(self.components)}")
+        lines.append(f"  N Vertices           : {len(self.vertices)}")
         return "\n".join(lines)

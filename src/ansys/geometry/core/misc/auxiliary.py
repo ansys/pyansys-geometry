@@ -30,6 +30,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.designer.vertex import Vertex
 
 try:
     from ansys.tools.visualization_interface.utils.color import Color
@@ -252,6 +253,30 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     """
     return [
         edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids
+    ]  # noqa: E501
+
+
+def get_vertices_from_ids(design: "Design", vertex_ids: list[str]) -> list["Vertex"]:
+    """Find the ``Vertex`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the vertices.
+    vertex_ids : list[str]
+        List of vertex ids.
+
+    Returns
+    -------
+    list[Vertex]
+        List of Vertex objects.
+
+    Notes
+    -----
+    This method takes a design and vertex ids, and gets their corresponding ``Vertex`` objects.
+    """
+    return [
+        vertex for body in __traverse_all_bodies(design) for vertex in body.vertices if vertex.id in vertex_ids
     ]  # noqa: E501
 
 

@@ -382,6 +382,22 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 for edge in resp.edges
             ]
         }
+    
+    @protect_grpc
+    def get_vertices(self, **kwargs) -> dict:  # noqa: D102
+        # Call the gRPC service
+        resp = self.stub.GetVertices(request=build_grpc_id(kwargs["id"]))
+
+        # Return the response - formatted as a dictionary
+        return {
+            "vertices": [
+                {
+                    "id": vertex.id,
+                    "position": from_grpc_point_to_point3d(vertex.position),
+                }
+                for vertex in resp.vertices
+            ]
+        }
 
     @protect_grpc
     def get_volume(self, **kwargs) -> dict:  # noqa: D102
