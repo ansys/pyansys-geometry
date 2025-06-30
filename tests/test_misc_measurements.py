@@ -23,7 +23,13 @@
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance, measurements
+
+
+def test_repr_():
+    # Testing the __repr__ method of the Measurement class
+    mea = measurements.Measurement(5.0, DEFAULT_UNITS.LENGTH, DEFAULT_UNITS.LENGTH)
+    assert measurements.Measurement.__repr__(mea) == "5.0 meter"
 
 
 def test_distance():
