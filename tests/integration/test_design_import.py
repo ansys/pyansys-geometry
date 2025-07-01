@@ -354,7 +354,7 @@ def test_design_import_with_named_selections(modeler: Modeler):
     design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
 
     # Check that there are 5 Named Selections
-    assert len(design.named_selections) == 5
+    assert len(design.named_selections) == 6
 
     # Get full body named selection
     body = design._named_selections["SolidBody"]
@@ -382,6 +382,12 @@ def test_design_import_with_named_selections(modeler: Modeler):
     ns3 = design._named_selections["Group3"]
     assert len(ns3.bodies) == 0
     assert len(ns3.design_points) == 1
+
+    # Get mixed named selection 4
+    ns4 = design._named_selections["VertexGroup"]
+    assert len(ns4.bodies) == 0
+    assert len(ns4.vertices) == 2
+    assert len(ns4.faces) == 1
 
 
 def test_design_import_acad_2024(modeler: Modeler):
