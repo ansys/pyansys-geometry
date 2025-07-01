@@ -113,6 +113,27 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
                 for edge in response.edges
             ]
         }
+    
+    @protect_grpc
+    def get_vertices(self, **kwargs) -> dict:  # noqa: D102
+        # Create the request - assumes all inputs are valid and of the proper type
+        from ansys.api.geometry.v0.faces_pb2 import GetVerticesRequest
+
+        request = GetVerticesRequest(face_id=build_grpc_id(kwargs["id"]))
+
+        # Call the gRPC service
+        response = self.stub.GetVertices(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "vertices": [
+                {
+                    "id": vertex.id.id,
+                    "position": from_grpc_point_to_point3d(vertex.position),
+                }
+                for vertex in response.vertices
+            ]
+        }
 
     @protect_grpc
     def get_loops(self, **kwargs) -> dict:  # noqa: D102

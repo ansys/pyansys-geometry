@@ -634,6 +634,28 @@ def test_faces_edges(modeler: Modeler):
     )  # The bottom face must be one of them
 
 
+def test_faces_vertices(modeler: Modeler):
+    """Test for getting the vertices of a face."""
+    # Create your design on the server side
+    design = modeler.create_design("FacesVertices_Test")
+
+    # Create a Sketch object and draw a polygon (all client side)
+    sketch = Sketch()
+    sketch.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+
+    # Extrude the sketch to create a Body
+    polygon_comp = design.add_component("PolygonComponent")
+    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch, Quantity(30, UNITS.mm))
+
+    # Get all its faces
+    faces = body_polygon_comp.faces
+    assert len(faces) == 7  # top + bottom + sides
+
+    # Get the vertices of one of the faces
+    vertices = faces[0].vertices
+    assert len(vertices) == 5  # pentagon
+
+
 def test_coordinate_system_creation(modeler: Modeler):
     """Test for verifying the correct creation of ``CoordinateSystem``."""
     # Create your design on the server side
