@@ -176,7 +176,7 @@ class Edge:
             )
             for face_resp in response.get("faces")
         ]
-    
+
     @property
     @ensure_design_is_active
     def vertices(self) -> list["Vertex"]:

@@ -263,14 +263,14 @@ class Face:
             )
             for edge in response.get("edges")
         ]
-    
+
     @property
     @ensure_design_is_active
     def vertices(self) -> list[Vertex]:
         """List of all vertices of the face."""
         self._grpc_client.log.debug("Requesting face vertices from server.")
         response = self._grpc_client.services.faces.get_vertices(id=self.id)
-        
+
         return [
             Vertex(
                 vertex_resp.get("id"),

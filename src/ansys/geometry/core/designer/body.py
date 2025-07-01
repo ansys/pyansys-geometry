@@ -27,7 +27,6 @@ from enum import Enum, unique
 from functools import cached_property, wraps
 from typing import TYPE_CHECKING, Union
 
-from ansys.geometry.core.designer.vertex import Vertex
 from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
@@ -53,6 +52,7 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
+from ansys.geometry.core.designer.vertex import Vertex
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.bbox import BoundingBox
@@ -239,7 +239,7 @@ class IBody(ABC):
         list[Edge]
         """
         return
-    
+
     @abstractmethod
     def vertices(self) -> list[Vertex]:
         """Get a list of all vertices within the body.
@@ -1002,7 +1002,7 @@ class MasterBody(IBody):
             )
             for edge_resp in response.get("edges")
         ]
-    
+
     @property
     def vertices(self) -> list[Vertex]:  # noqa: D102
         return self._get_vertices_from_id(self)
@@ -1011,7 +1011,7 @@ class MasterBody(IBody):
         """Retrieve vertices from a body ID."""
         self._grpc_client.log.debug(f"Retrieving vertices for body {body.id} from server.")
         response = self._grpc_client.services.bodies.get_vertices(id=body.id)
-        
+
         return [
             Vertex(
                 vertex_resp.get("id"),
@@ -1516,7 +1516,7 @@ class Body(IBody):
     @ensure_design_is_active
     def edges(self) -> list[Edge]:  # noqa: D102
         return self._template._get_edges_from_id(self)
-    
+
     @property
     @ensure_design_is_active
     def vertices(self) -> list[Vertex]:  # noqa: D102
