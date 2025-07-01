@@ -525,9 +525,17 @@ def test_named_selection_contents(modeler: Modeler):
         Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
     )
 
+    # Pick vertices from the box to add to the named selection
+    vertices = box.vertices[0:2]
+
     # Create the NamedSelection
     ns = design.create_named_selection(
-        "MyNamedSelection", bodies=[box, box_2], faces=[face], edges=[edge], beams=[beam]
+        "MyNamedSelection",
+        bodies=[box, box_2],
+        faces=[face],
+        edges=[edge],
+        beams=[beam],
+        vertices=vertices
     )
 
     # Check that the named selection has everything
@@ -544,6 +552,9 @@ def test_named_selection_contents(modeler: Modeler):
     assert ns.beams[0].id == beam.id
 
     assert len(ns.design_points) == 0
+
+    assert len(ns.vertices) == 2
+    assert (ns.vertices[0].id == vertices[0].id) and (ns.vertices[1].id == vertices[1].id)
 
 
 def test_add_component_with_instance_name(modeler: Modeler):

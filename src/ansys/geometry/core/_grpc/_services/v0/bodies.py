@@ -392,7 +392,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         return {
             "vertices": [
                 {
-                    "id": vertex.id,
+                    "id": vertex.id.id,
                     "position": from_grpc_point_to_point3d(vertex.position),
                 }
                 for vertex in resp.vertices

@@ -240,6 +240,8 @@ class NamedSelection:
             # Get all vertices from the named selection
             self._vertices = get_vertices_from_ids(self._design, self._ids_cached["vertices"])
 
+        return self._vertices
+
     def __verify_ns(self) -> None:
         """Verify that the contents of the named selection are up to date."""
         if self._grpc_client.backend_version < (25, 2, 0):

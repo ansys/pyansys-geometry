@@ -1011,6 +1011,7 @@ class MasterBody(IBody):
         """Retrieve vertices from a body ID."""
         self._grpc_client.log.debug(f"Retrieving vertices for body {body.id} from server.")
         response = self._grpc_client.services.bodies.get_vertices(id=body.id)
+        
         return [
             Vertex(
                 vertex_resp.get("id"),
