@@ -676,17 +676,13 @@ def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
     )
 
     # Convert control points
-    control_points = []
-    for i, pt in enumerate(curve.control_points):
-        position = from_point3d_to_grpc_point(pt)
-        weight = curve.weights[i]
-
-        control_points.append(
-            GRPCControlPoint(
-                position=position,
-                weight=weight,
-            )
+    control_points = [
+        GRPCControlPoint(
+            position=from_point3d_to_grpc_point(pt),
+            weight=curve.weights[i],
         )
+        for i, pt in enumerate(curve.control_points)
+    ]
 
     # Convert nurbs data
     nurbs_data = GRPCNurbsData(
