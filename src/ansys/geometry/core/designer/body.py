@@ -1541,7 +1541,15 @@ class Body(IBody):
 
     @property
     def bounding_box(self) -> BoundingBox:  # noqa: D102
-        return self._template.bounding_box
+        self._template._grpc_client.log.debug(
+            f"Retrieving bounding box for body {self.id} from server."
+        )
+        response = self._template._grpc_client.services.bodies.get_bounding_box(id=self.id)
+        return BoundingBox(
+            min_corner=response.get("min"),
+            max_corner=response.get("max"),
+            center=response.get("center"),
+        )
 
     @ensure_design_is_active
     def assign_material(self, material: Material) -> None:  # noqa: D102
