@@ -113,7 +113,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
                 for edge in response.edges
             ]
         }
-    
+
     @protect_grpc
     def get_vertices(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type

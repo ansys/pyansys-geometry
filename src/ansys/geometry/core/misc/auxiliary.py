@@ -276,7 +276,10 @@ def get_vertices_from_ids(design: "Design", vertex_ids: list[str]) -> list["Vert
     This method takes a design and vertex ids, and gets their corresponding ``Vertex`` objects.
     """
     return [
-        vertex for body in __traverse_all_bodies(design) for vertex in body.vertices if vertex.id in vertex_ids
+        vertex
+        for body in __traverse_all_bodies(design)
+        for vertex in body.vertices
+        if vertex.id in vertex_ids
     ]  # noqa: E501
 
 

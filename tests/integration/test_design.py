@@ -557,7 +557,7 @@ def test_named_selection_contents(modeler: Modeler):
         faces=[face],
         edges=[edge],
         beams=[beam],
-        vertices=vertices
+        vertices=vertices,
     )
 
     # Check that the named selection has everything

@@ -382,7 +382,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 for edge in resp.edges
             ]
         }
-    
+
     @protect_grpc
     def get_vertices(self, **kwargs) -> dict:  # noqa: D102
         # Call the gRPC service

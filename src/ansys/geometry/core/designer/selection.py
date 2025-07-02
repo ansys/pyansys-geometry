@@ -225,7 +225,7 @@ class NamedSelection:
             self._components = get_components_from_ids(self._design, self._ids_cached["components"])
 
         return self._components
-    
+
     @property
     def vertices(self) -> list[Vertex]:
         """All vertices in the named selection."""

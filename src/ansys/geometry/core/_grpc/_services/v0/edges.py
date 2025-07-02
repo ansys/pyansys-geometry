@@ -137,7 +137,7 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
                 for face in response.faces
             ],
         }
-    
+
     @protect_grpc
     def get_vertices(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.edges_pb2 import GetVerticesRequest

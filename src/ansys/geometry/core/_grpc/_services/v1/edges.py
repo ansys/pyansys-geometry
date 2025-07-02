@@ -70,7 +70,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
     @protect_grpc
     def get_faces(self, **kwargs) -> dict:  # noqa: D102
         return NotImplementedError
-    
+
     @protect_grpc
     def get_vertices(self, **kwargs) -> dict:  # noqa: D102
         return NotImplementedError
