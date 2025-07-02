@@ -1603,7 +1603,6 @@ class Component:
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
         allow_picking: bool | None = None,
-        show_options: dict | None = {},
         **plotting_options: dict | None,
     ) -> None | list[Any]:
         """Plot the component.
@@ -1632,8 +1631,6 @@ class Component:
         allow_picking : bool, default: None
             Whether to enable picking. The default is ``None``, in which case the
             picker is not enabled.
-        show_options : dict, default: {}
-            Keyword arguments for the show method of the plotter.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
 
@@ -1721,7 +1718,7 @@ class Component:
             allow_picking=allow_picking,
         )
         pl.plot(self, **plotting_options)
-        return pl.show(screenshot=screenshot, **show_options)
+        return pl.show(screenshot=screenshot, **plotting_options)
 
     def __repr__(self) -> str:
         """Represent the ``Component`` as a string."""
