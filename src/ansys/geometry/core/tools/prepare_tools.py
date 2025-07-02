@@ -270,7 +270,9 @@ class PrepareTools:
         from ansys.geometry.core.designer.body import Body
 
         if not bodies:
-            return RepairToolMessage(success = False, created_bodies = [],  modified_bodies= [], found = 0, repaired =0)
+            return RepairToolMessage(
+                success=False, created_bodies=[], modified_bodies=[], found=0, repaired=0
+            )
 
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
