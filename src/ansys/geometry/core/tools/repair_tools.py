@@ -518,7 +518,9 @@ class RepairTools:
         check_type(comprehensive_result, bool)
 
         if not bodies:
-            return RepairToolMessage(success = False, created_bodies= [], modified_bodies = [], found= 0, repaired = 0)
+            return RepairToolMessage(
+                success=False, created_bodies=[], modified_bodies=[], found=0, repaired=0
+            )
 
         body_ids = [body.id for body in bodies]
 
@@ -582,7 +584,9 @@ class RepairTools:
         check_type(comprehensive_result, bool)
 
         if not bodies:
-            return RepairToolMessage(success = False, created_bodies= [], modified_bodies = [], found= 0, repaired = 0)
+            return RepairToolMessage(
+                success=False, created_bodies=[], modified_bodies=[], found=0, repaired=0
+            )
 
         body_ids = [body.id for body in bodies]
         response = self._grpc_client.services.repair_tools.find_and_fix_extra_edges(
@@ -638,7 +642,9 @@ class RepairTools:
         check_type(comprehensive_result, bool)
 
         if not bodies:
-            return RepairToolMessage(success = False, created_bodies= [], modified_bodies = [], found= 0, repaired = 0)
+            return RepairToolMessage(
+                success=False, created_bodies=[], modified_bodies=[], found=0, repaired=0
+            )
 
         body_ids = [body.id for body in bodies]
 
@@ -687,7 +693,9 @@ class RepairTools:
         check_type(comprehensive_result, bool)
 
         if not bodies:
-            return RepairToolMessage(success = False, created_bodies= [], modified_bodies = [], found= 0, repaired = 0)
+            return RepairToolMessage(
+                success=False, created_bodies=[], modified_bodies=[], found=0, repaired=0
+            )
 
         body_ids = [body.id for body in bodies]
 
