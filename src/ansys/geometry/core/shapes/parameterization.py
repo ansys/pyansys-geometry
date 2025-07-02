@@ -150,7 +150,7 @@ class Interval:
     @check_input_types
     def __init__(self, start: Real, end: Real) -> None:
         """Initialize ``Interval`` class."""
-        if end <= start:
+        if end < start:
             raise ValueError("Start value must be less than end value")
 
         self._start = start
