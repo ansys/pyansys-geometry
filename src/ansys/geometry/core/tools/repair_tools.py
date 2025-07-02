@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING
 
 import pint
 
+import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
@@ -517,7 +518,9 @@ class RepairTools:
         check_type(comprehensive_result, bool)
 
         if not bodies:
-            return RepairToolMessage(False, [], [], 0, 0)
+            return RepairToolMessage(
+                success=False, created_bodies=[], modified_bodies=[], found=0, repaired=0
+            )
 
         body_ids = [body.id for body in bodies]
 
@@ -529,6 +532,20 @@ class RepairTools:
 
         # Update existing design
         parent_design = get_design_from_body(bodies[0])
+
+        if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response["complete_command_response"])
+
+        message = RepairToolMessage(
+            success=response["success"],
+            found=response["found"],
+            repaired=response["repaired"],
+            created_bodies=[],
+            modified_bodies=[],
+        )
+        return message
         parent_design._update_design_inplace()
 
         # Build the response message
@@ -567,7 +584,9 @@ class RepairTools:
         check_type(comprehensive_result, bool)
 
         if not bodies:
-            return RepairToolMessage(False, [], [], 0, 0)
+            return RepairToolMessage(
+                success=False, created_bodies=[], modified_bodies=[], found=0, repaired=0
+            )
 
         body_ids = [body.id for body in bodies]
         response = self._grpc_client.services.repair_tools.find_and_fix_extra_edges(
@@ -623,7 +642,9 @@ class RepairTools:
         check_type(comprehensive_result, bool)
 
         if not bodies:
-            return RepairToolMessage(False, [], [], 0, 0)
+            return RepairToolMessage(
+                success=False, created_bodies=[], modified_bodies=[], found=0, repaired=0
+            )
 
         body_ids = [body.id for body in bodies]
 
@@ -672,7 +693,9 @@ class RepairTools:
         check_type(comprehensive_result, bool)
 
         if not bodies:
-            return RepairToolMessage(False, [], [], 0, 0)
+            return RepairToolMessage(
+                success=False, created_bodies=[], modified_bodies=[], found=0, repaired=0
+            )
 
         body_ids = [body.id for body in bodies]
 
@@ -683,7 +706,19 @@ class RepairTools:
 
         # Update existing design
         parent_design = get_design_from_body(bodies[0])
-        parent_design._update_design_inplace()
+
+        if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response["complete_command_response"])
+
+        message = RepairToolMessage(
+            success=response["success"],
+            created_bodies=response["created_bodies_monikers"],
+            modified_bodies=response["modified_bodies_monikers"],
+            found=response["found"],
+            repaired=response["repaired"],
+        )
 
         # Build the response message
         return self.__build_repair_tool_message(response)
