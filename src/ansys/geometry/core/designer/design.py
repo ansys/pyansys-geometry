@@ -63,6 +63,7 @@ from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
+from ansys.geometry.core.designer.vertex import Vertex
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
