@@ -687,7 +687,6 @@ class IBody(ABC):
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
-        show_options: dict | None = {},
         **plotting_options: dict | None,
     ) -> None:
         """Plot the body.
@@ -709,8 +708,6 @@ class IBody(ABC):
             Whether to use the colors assigned to the body in the service. The default
             is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
             global setting is used.
-        show_options : dict, default: {}
-            Keyword arguments for the show method of the plotter.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
@@ -1331,7 +1328,6 @@ class MasterBody(IBody):
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
-        show_options: dict | None = {},
         **plotting_options: dict | None,
     ) -> None:
         raise NotImplementedError(
@@ -1545,7 +1541,15 @@ class Body(IBody):
 
     @property
     def bounding_box(self) -> BoundingBox:  # noqa: D102
-        return self._template.bounding_box
+        self._template._grpc_client.log.debug(
+            f"Retrieving bounding box for body {self.id} from server."
+        )
+        response = self._template._grpc_client.services.bodies.get_bounding_box(id=self.id)
+        return BoundingBox(
+            min_corner=response.get("min"),
+            max_corner=response.get("max"),
+            center=response.get("center"),
+        )
 
     @ensure_design_is_active
     def assign_material(self, material: Material) -> None:  # noqa: D102
@@ -1796,7 +1800,6 @@ class Body(IBody):
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
-        show_options: dict | None = {},
         **plotting_options: dict | None,
     ) -> None:
         # lazy import here to improve initial module load time
@@ -1828,7 +1831,7 @@ class Body(IBody):
         )
         pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
         pl.plot(mesh_object, **plotting_options)
-        pl.show(screenshot=screenshot, **show_options)
+        pl.show(screenshot=screenshot, **plotting_options)
 
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
