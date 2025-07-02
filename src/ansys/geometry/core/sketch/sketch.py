@@ -561,6 +561,28 @@ class Sketch:
         )
         return self.edge(arc, tag)
 
+    def nurbs_from_2d_points(
+        self,
+        points: list[Point2D],
+        tag: str | None = None,
+    ) -> "Sketch":
+        """Add a NURBS curve from a list of 2D points.
+
+        Parameters
+        ----------
+        points : list[Point2D]
+            List of 2D points to define the NURBS curve.
+        tag : str | None, default: None
+            User-defined label for identifying the curve.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+        """
+        nurbs_curve = NURBSCurve.from_2d_points(points)
+        return self.edge(nurbs_curve, tag)
+
     def triangle(
         self,
         point1: Point2D,
