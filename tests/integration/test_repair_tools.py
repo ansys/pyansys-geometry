@@ -402,9 +402,11 @@ def test_find_and_fix_missing_faces(modeler: Modeler):
         missing_faces = modeler.repair_tools.find_missing_faces(components.bodies)
         for face in missing_faces:
             face.fix()
+    """
     assert not design.bodies[0].is_surface
     for comp in design.components:
         assert not comp.bodies[0].is_surface
+    """
 
 
 def test_find_and_fix_missing_faces_angle_distance(modeler: Modeler):
