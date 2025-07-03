@@ -23,10 +23,11 @@
 
 from typing import TYPE_CHECKING
 
-from ansys.geometry.core.misc.checks import graphics_required
 from beartype import beartype as check_input_types
+import numpy as np
 
 from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.typing import Real
 
@@ -50,6 +51,7 @@ class SketchNurbs(SketchEdge):
     
     def __init__(self):
         """Initialize the NURBS sketch curve."""
+        super().__init__()
         try:
             import geomdl.NURBS as geomdl_nurbs  # noqa: N811
         except ImportError as e:  # pragma: no cover
@@ -133,6 +135,28 @@ class SketchNurbs(SketchEdge):
         
         return polydata
 
+    def contains_point(self, point: Point2D, tolerance: Real = 1e-6) -> bool:
+        """Check if the curve contains a given point within a specified tolerance.
+
+        Parameters
+        ----------
+        point : Point2D
+            The point to check.
+        tolerance : Real, optional
+            The tolerance for the containment check, by default 1e-6.
+
+        Returns
+        -------
+        bool
+            True if the curve contains the point within the tolerance, False otherwise.
+        """
+        # Sample points along the curve
+        params = np.linspace(0, 1, 200)
+        sampled = [self._nurbs_curve.evaluate_single(u) for u in params]
+        
+        # Check if any sampled point is close to the target point
+        return any(np.linalg.norm(np.array(pt) - np.array(point)) < tolerance for pt in sampled)
+
     @classmethod
     @check_input_types
     def fit_curve_from_points(
@@ -155,6 +179,18 @@ class SketchNurbs(SketchEdge):
             A new instance of SketchNurbs fitted to the given points.
         """
         from geomdl import fitting
+
+        # Check degree compared to number of points provided
+        if degree < 1:
+            raise ValueError("Degree must be at least 1.")
+        if len(points) == 2:
+            degree = 1  # Force linear interpolation for two points
+        if len(points) == 3:
+            degree = 2  # Force quadratic interpolation for three points
+        if degree >= len(points):
+            raise ValueError(
+                f"Degree {degree} is too high for the number of points provided: {len(points)}."
+            )
 
         curve = fitting.interpolate_curve(
             [[*pt] for pt in points],  # Convert Point2D to list of coordinates

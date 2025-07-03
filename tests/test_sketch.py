@@ -344,6 +344,15 @@ def test_sketch_nurbs():
     sketch.nurbs_from_2d_points(points, tag="Nurbs1")
     assert len(sketch.edges) == 1
 
+    # Create another curve through 3 points
+    sketch.nurbs_from_2d_points(
+        [
+            Point2D([0, 0]),
+            Point2D([1, 1]),
+            Point2D([2, 2]),
+        ], tag="Nurbs2"
+    )
+
     curve = sketch.edges[0]
     assert curve.start == Point2D([0, 0])
     assert curve.end == Point2D([4, 7])
