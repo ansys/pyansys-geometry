@@ -1,0 +1,127 @@
+
+
+
+
+
+
+The ``math`` package
+========================
+
+.. py:module:: ansys.geometry.core.math
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: math
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.math.bbox`
+            - Provides for managing a bounding box.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.constants`
+            - Provides mathematical constants.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.frame`
+            - Provides for managing a frame.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.matrix`
+            - Provides matrix primitive representations.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.misc`
+            - Provides auxiliary math functions for PyAnsys Geometry.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.plane`
+            - Provides primitive representation of a 2D plane in 3D space.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.point`
+            - Provides geometry primitive representation for 2D and 3D points.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.vector`
+            - Provides for creating and managing 2D and 3D vectors.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> bbox</api/ansys/geometry/core/math/bbox/index>
+    <span class="nf nf-fa-file"></span> constants</api/ansys/geometry/core/math/constants/index>
+    <span class="nf nf-fa-file"></span> frame</api/ansys/geometry/core/math/frame/index>
+    <span class="nf nf-fa-file"></span> matrix</api/ansys/geometry/core/math/matrix/index>
+    <span class="nf nf-fa-file"></span> misc</api/ansys/geometry/core/math/misc/index>
+    <span class="nf nf-fa-file"></span> plane</api/ansys/geometry/core/math/plane/index>
+    <span class="nf nf-fa-file"></span> point</api/ansys/geometry/core/math/point/index>
+    <span class="nf nf-fa-file"></span> vector</api/ansys/geometry/core/math/vector/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry math subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
