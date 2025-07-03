@@ -124,7 +124,7 @@ class SketchNurbs(SketchEdge):
         params = np.linspace(0, 1, 100)
         points = [self._nurbs_curve.evaluate_single(u) for u in params]  # For 2D: [x, y]
 
-        # If 2D, add a zero z-coordinate for PyVista
+        # Add a zero z-coordinate for PyVista (only supports 3D points)
         points = [(*pt, 0.0) for pt in points]
 
         # Create PolyData and add the line
