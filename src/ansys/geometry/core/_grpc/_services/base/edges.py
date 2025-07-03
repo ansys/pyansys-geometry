@@ -70,6 +70,11 @@ class GRPCEdgesService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def get_vertices(self, **kwargs) -> dict:
+        """Get the vertices that are connected to the edge."""
+        pass
+
+    @abstractmethod
     def get_bounding_box(self, **kwargs) -> dict:
         """Get the bounding box of the edge."""
         pass

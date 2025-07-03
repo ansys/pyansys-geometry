@@ -139,6 +139,27 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
         }
 
     @protect_grpc
+    def get_vertices(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.edges_pb2 import GetVerticesRequest
+
+        # Create the request - assumes all inputs are valid and of proper type
+        request = GetVerticesRequest(edge=build_grpc_id(kwargs["id"]))
+
+        # Call the gRPC service
+        response = self.stub.GetVertices(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "vertices": [
+                {
+                    "id": vertex.id.id,
+                    "position": from_grpc_point_to_point3d(vertex.position),
+                }
+                for vertex in response.vertices
+            ],
+        }
+
+    @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = build_grpc_id(kwargs["id"])

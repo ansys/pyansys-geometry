@@ -60,6 +60,11 @@ class GRPCFacesService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def get_vertices(self, **kwargs) -> dict:
+        """Get the vertices of a face."""
+        pass
+
+    @abstractmethod
     def get_loops(self, **kwargs) -> dict:
         """Get the loops of a face."""
         pass
