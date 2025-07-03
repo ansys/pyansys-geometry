@@ -125,6 +125,23 @@ def test_plot_sketch(verify_image_cache):
 
 
 @skip_no_xserver
+def test_plot_nurbs_sketch(verify_image_cache):
+    # Create a NURBS sketch instance
+    sketch = Sketch()
+    sketch.nurbs_from_2d_points(
+        [
+            Point2D([0, 0]),
+            Point2D([2, 2]),
+            Point2D([3, 6]),
+            Point2D([4, 7]),
+        ]
+    )
+
+    # Plot the NURBS sketch
+    sketch.plot(view_2d=True, screenshot=Path(IMAGE_RESULTS_DIR, "plot_nurbs_sketch.png"))
+
+
+@skip_no_xserver
 def test_plot_geometryplotter_sketch_pyvista(verify_image_cache):
     # define sketch
     sketch = Sketch()

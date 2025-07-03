@@ -23,16 +23,19 @@
 
 from typing import TYPE_CHECKING
 
+from ansys.geometry.core.misc.checks import graphics_required
 from beartype import beartype as check_input_types
 
 from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     import geomdl.NURBS as geomdl_nurbs  # noqa: N811
+    import pyvista as pv
 
 
-class SketchNurbs:
+class SketchNurbs(SketchEdge):
     """Represents a NURBS sketch curve.
     
     Notes
@@ -88,6 +91,48 @@ class SketchNurbs:
         """Get the weights of the control points."""
         return self._nurbs_curve.weights
     
+    @property
+    def start(self) -> Point2D:
+        """Get the start point of the curve."""
+        return Point2D(self._nurbs_curve.evaluate_single(0.0))
+
+    @property
+    def end(self) -> Point2D:
+        """Get the end point of the curve."""
+        return Point2D(self._nurbs_curve.evaluate_single(1.0))
+
+    @property
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
+        """Get the VTK polydata representation for PyVista visualization.
+
+        Returns
+        -------
+        pyvista.PolyData
+            VTK pyvista.Polydata configuration.
+
+        Notes
+        -----
+        The representation lies in the X/Y plane within
+        the standard global Cartesian coordinate system.
+        """
+        #from geomdl.exchange_vtk import export_polydata
+        import numpy as np
+        import pyvista as pv
+
+        # Sample points along the curve
+        params = np.linspace(0, 1, 100)
+        points = [self._nurbs_curve.evaluate_single(u) for u in params]  # For 2D: [x, y]
+
+        # If 2D, add a zero z-coordinate for PyVista
+        points = [(*pt, 0.0) for pt in points]
+
+        # Create PolyData and add the line
+        polydata = pv.PolyData(points)
+        polydata.lines = [len(points)] + list(range(len(points)))
+        
+        return polydata
+
     @classmethod
     @check_input_types
     def fit_curve_from_points(
