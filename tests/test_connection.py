@@ -22,6 +22,7 @@
 
 import os
 import socket
+import tempfile
 
 from beartype.roar import BeartypeCallHintParamViolation
 import grpc
@@ -562,12 +563,11 @@ def test_check_port_or_get_one(port, should_raise, expected_message):
             8080,
             True,
             2,
-            "/tmp/logs",
+            None,  # Use a dynamically created temporary directory
             {
                 "API_ADDRESS": "127.0.0.1",
                 "API_PORT": "8080",
                 "LOG_LEVEL": "0",  # Trace mode overrides log level to 0
-                "ANS_DSCO_REMOTE_LOGS_FOLDER": "/tmp/logs",
                 "ENABLE_TRACE": "1",
             },
         ),
@@ -589,21 +589,28 @@ def test_get_common_env(
     host, port, enable_trace, server_log_level, server_logs_folder, expected_env
 ):
     """Test the _get_common_env function with various scenarios."""
-    # Call the function
-    env = _get_common_env(
-        host=host,
-        port=port,
-        enable_trace=enable_trace,
-        server_log_level=server_log_level,
-        server_logs_folder=server_logs_folder,
-    )
+    # Dynamically create a temporary directory for logs if server_logs_folder is None
+    with tempfile.TemporaryDirectory() as temp_logs_folder:
+        if server_logs_folder is None:
+            server_logs_folder = temp_logs_folder
 
-    # Assert environment variables are correctly set
-    for key, value in expected_env.items():
-        assert env[key] == value
+        # Call the function
+        env = _get_common_env(
+            host=host,
+            port=port,
+            enable_trace=enable_trace,
+            server_log_level=server_log_level,
+            server_logs_folder=server_logs_folder,
+        )
 
-    # Assert keys that should not exist in the environment
-    if server_logs_folder is None:
-        assert "ANS_DSCO_REMOTE_LOGS_FOLDER" not in env
-    if not enable_trace:
-        assert "ENABLE_TRACE" not in env
+        # Update expected_env with the dynamically created logs folder
+        if enable_trace:
+            expected_env["ANS_DSCO_REMOTE_LOGS_FOLDER"] = server_logs_folder
+
+        # Assert environment variables are correctly set
+        for key, value in expected_env.items():
+            assert env[key] == value
+
+        # Assert keys that should not exist in the environment
+        if not enable_trace:
+            assert "ENABLE_TRACE" not in env
