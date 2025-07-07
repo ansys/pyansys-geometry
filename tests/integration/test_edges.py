@@ -22,6 +22,7 @@
 """Test edges."""
 
 import numpy as np
+import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import Point2D, Vector3D
@@ -79,3 +80,12 @@ def test_edges_get_vertices(modeler: Modeler):
         for vertex in vertices:
             print(vertex.position)
             assert any(np.allclose(vertex.position, v.position) for v in body_vertices)
+
+
+    # Test that the vertices are immutable
+    vertices = body.edges[0].vertices
+    with pytest.raises(AttributeError):
+        vertices[0].position = np.array([1, 2, 3])  # Attempt to modify position should raise error
+    
+    with pytest.raises(AttributeError):
+        vertices[0].id = "new_id"
