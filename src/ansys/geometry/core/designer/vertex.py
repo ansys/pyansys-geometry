@@ -22,9 +22,8 @@
 """Module for managing a vertex."""
 
 import numpy as np
-from pint import Unit
 
-from ansys.geometry.core.math.point import DEFAULT_POINT3D_VALUES, Point3D
+from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.typing import RealSequence
 
 
