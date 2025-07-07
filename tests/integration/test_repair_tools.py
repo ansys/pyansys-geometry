@@ -402,12 +402,11 @@ def test_find_and_fix_missing_faces(modeler: Modeler):
         missing_faces = modeler.repair_tools.find_missing_faces(components.bodies)
         for face in missing_faces:
             face.fix()
-    
-    # Todo : Add surface body check from backend. Issue is being tracked in #2031.
+
+    # TODO : Add surface body check from backend. Issue is being tracked in #2031.
     # assert not design.bodies[0].is_surface
     # for comp in design.components:
     #    assert not comp.bodies[0].is_surface
-    
 
 
 def test_find_and_fix_missing_faces_angle_distance(modeler: Modeler):
