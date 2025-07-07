@@ -1255,184 +1255,129 @@ class Design(Component):
         # Read the existing design
         self.__read_existing_design()
 
-    def _update_from_tracker(self, tracker_response):
+    def _update_from_tracker(self, tracker_response: list[dict]):
         """
         Update the design with the changed bodies while preserving unchanged ones.
-
-        Parameters
-        ----------
-        tracker_response : list[dict]
-            A list of dictionaries representing tracker response information.
         """
-        self._grpc_client.log.debug(
-            f"Starting _update_from_tracker with response: {tracker_response}"
-        )
+        self._grpc_client.log.debug(f"Starting _update_from_tracker with response: {tracker_response}")
+        self._handle_modified_bodies(tracker_response.get("modified_bodies", []))
+        self._handle_deleted_bodies(tracker_response.get("deleted_bodies", []))
+        self._handle_created_bodies(tracker_response.get("created_bodies", []))
 
-        # Function to update a body if it exists
-        def update_body(existing_body, body_info):
-            self._grpc_client.log.debug(
-                f"Updating body '{existing_body.name}' (ID: {existing_body.id}) "
-                f"with new info: {body_info}"
-            )
-            existing_body.name = body_info["name"]
-            existing_body._template._is_surface = body_info.get("is_surface", False)
 
-        # Function to find and add bodies within components recursively
-        def find_and_add_body(body_info, components):
-            self._grpc_client.log.debug(
-                f"Searching for parent_id {body_info.get('parent_id')} to "
-                f"add body '{body_info['name']}' (ID: {body_info['id']}) within components list."
-            )
-            for component in components:
-                if component.id == body_info["parent_id"]:
-                    new_body = MasterBody(
-                        body_info["id"],
-                        body_info["name"],
-                        self._grpc_client,
-                        is_surface=body_info.get("is_surface", False),
-                    )
-                    component.bodies.append(new_body)
-                    self._grpc_client.log.debug(
-                        f"Added new body '{new_body.name}' (ID: {new_body.id}) "
-                        f"to component '{component.name}' (ID: {component.id})."
-                    )
-
-                    return True  # Found and added
-
-                # Recursively search in subcomponents
-                if find_and_add_body(body_info, component.components):
-                    return True
-
-            return False  # Not found
-
-        # Function to find and update bodies within components recursively
-        def find_and_update_body(body_info, component):
-            self._grpc_client.log.debug(
-                f"Searching for body ID {body_info['id']} to update within components list."
-            )
-
-            if component == []:
-                return False
-            for body in component.bodies:
-                if body.id == body_info["id"]:
-                    update_body(body, body_info)
-                    self._grpc_client.log.debug(
-                        f"Updated body '{body.name}' (ID: {body.id}) found in"
-                        f" component '{component.name}' (ID: {component.id})."
-                    )
-                    return True  # Found and updated
-
-                # Recursively search in subcomponents
-                if find_and_update_body(body_info, component.components):
-                    return True
-
-            return False  # Not found
-
-            # Function to find and remove bodies within components recursively
-
-        def find_and_remove_body(body_info, component):
-            self._grpc_client.log.debug(
-                f"Searching for body ID {body_info['id']} to remove within components list."
-            )
-            if component == []:
-                return False
-            for body in component.bodies:
-                if body.id == body_info["id"]:
-                    # Remove the body from the component
-                    body._is_alive = False  # Mark as dead
-                    component.bodies.remove(body)
-                    self._grpc_client.log.debug(
-                        f"Removed body '{body_info['name']}' (ID: {body_info['id']}) "
-                        f"from component '{component.name}' (ID: {component.id})."
-                    )
-
-                    return True  # Found and removed
-
-                # Recursively search in subcomponents
-                if find_and_remove_body(body_info, component.components):
-                    return True
-
-            return False  # Not found
-
-        # Loop through all changed bodies from the tracker
-        for body_info in tracker_response["modified_bodies"]:
+    def _handle_modified_bodies(self, modified_bodies):
+        for body_info in modified_bodies:
             body_id = body_info["id"]
             body_name = body_info["name"]
-            self._grpc_client.log.debug(
-                f"Processing modified body: ID={body_id}, Name='{body_name}'"
-            )
-            is_surface = body_info.get(
-                "is_surface", False
-            )  # Default to False if "is_surface" is missing
-            updated = False  # Track if a body was updated
+            self._grpc_client.log.debug(f"Processing modified body: ID={body_id}, Name='{body_name}'")
+            updated = False
 
-            # First, check bodies at the root level
             for body in self.bodies:
                 if body.id == body_id:
-                    update_body(body, body_info)
+                    self._update_body(body, body_info)
                     updated = True
-                    self._grpc_client.log.debug(
-                        f"Modified body '{body_name}' (ID: {body_id}) "
-                        "found and updated at root level."
-                    )
+                    self._grpc_client.log.debug(f"Modified body '{body_name}' (ID: {body_id}) updated at root level.")
                     break
 
-            # If not found in root, search within components
             if not updated:
                 for component in self.components:
-                    updated = find_and_update_body(body_info, component)
+                    if self._find_and_update_body(body_info, component):
+                        break
 
-        # Loop through all deleted bodies from the tracker
-        for body_info in tracker_response["deleted_bodies"]:
+
+    def _handle_deleted_bodies(self, deleted_bodies):
+        for body_info in deleted_bodies:
             body_id = body_info["id"]
             self._grpc_client.log.debug(f"Processing deleted body: ID={body_id}")
-            removed = False  # Track if a body was removed
+            removed = False
 
-            # First, check bodies at the root level
             for body in self.bodies:
                 if body.id == body_id:
-                    body._is_alive = False  # Mark as dead
+                    body._is_alive = False
                     self.bodies.remove(body)
                     removed = True
-                    self._grpc_client.log.info(
-                        f"Deleted body (ID: {body_id}) removed from root level."
-                    )
+                    self._grpc_client.log.info(f"Deleted body (ID: {body_id}) removed from root level.")
                     break
 
-            # If not found in root, search within components
             if not removed:
-                removed = find_and_remove_body(body_info, self.components)
+                for component in self.components:
+                    if self._find_and_remove_body(body_info, component):
+                        break
 
-        # Loop through all added bodies from the tracker
-        for body_info in tracker_response["created_bodies"]:
-            self._grpc_client.log.debug(
-                f"Processing created body: ID={body_id}, Name='{body_name}'"
-            )
+
+    def _handle_created_bodies(self, created_bodies):
+        for body_info in created_bodies:
             body_id = body_info["id"]
             body_name = body_info["name"]
-            is_surface = body_info["is_surface"]
+            is_surface = body_info.get("is_surface", False)
+            self._grpc_client.log.debug(f"Processing created body: ID={body_id}, Name='{body_name}'")
 
-            added = False  # Track if a body was added
+            if any(body.id == body_id for body in self.bodies):
+                self._grpc_client.log.debug(f"Created body '{body_name}' (ID: {body_id}) already exists at root level.")
+                continue
 
-            # First, check if the body already exists at the root level
-            for body in self.bodies:
-                if body.id == body_id:
-                    added = True
-                    self._grpc_client.log.debug(
-                        f"Created body '{body_name}' (ID: {body_id}) "
-                        "already exists at root level (skipped adding)."
-                    )
-                    break
-
-            # If not found in root, search within components
-            if not added:
-                added = find_and_add_body(body_info, self.components)
-
-            # If still not found, add it as a new body at the root level
+            added = any(self._find_and_add_body(body_info, self.components))
             if not added:
                 new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
                 self.bodies.append(new_body)
-                self._grpc_client.log.debug(
-                    f"Added new body '{new_body.name}' (ID: {new_body.id}) "
-                    "to root level as no parent was found."
+                self._grpc_client.log.debug(f"Added new body '{body_name}' (ID: {body_id}) to root level.")
+
+
+    def _update_body(self, existing_body, body_info):
+        self._grpc_client.log.debug(
+            f"Updating body '{existing_body.name}' (ID: {existing_body.id}) with new info: {body_info}"
+        )
+        existing_body.name = body_info["name"]
+        existing_body._template._is_surface = body_info.get("is_surface", False)
+
+
+    def _find_and_add_body(self, body_info, components):
+        for component in components:
+            if component.id == body_info["parent_id"]:
+                new_body = MasterBody(
+                    body_info["id"], body_info["name"], self._grpc_client,
+                    is_surface=body_info.get("is_surface", False)
                 )
+                component.bodies.append(new_body)
+                self._grpc_client.log.debug(
+                    f"Added new body '{new_body.name}' (ID: {new_body.id}) to component '{component.name}' (ID: {component.id})"
+                )
+                return True
+
+            if self._find_and_add_body(body_info, component.components):
+                return True
+
+        return False
+
+
+    def _find_and_update_body(self, body_info, component):
+        for body in component.bodies:
+            if body.id == body_info["id"]:
+                self._update_body(body, body_info)
+                self._grpc_client.log.debug(
+                    f"Updated body '{body.name}' (ID: {body.id}) in component '{component.name}' (ID: {component.id})"
+                )
+                return True
+
+        for subcomponent in component.components:
+            if self._find_and_update_body(body_info, subcomponent):
+                return True
+
+        return False
+
+
+    def _find_and_remove_body(self, body_info, component):
+        for body in component.bodies:
+            if body.id == body_info["id"]:
+                body._is_alive = False
+                component.bodies.remove(body)
+                self._grpc_client.log.debug(
+                    f"Removed body '{body_info['name']}' (ID: {body_info['id']}) from component '{component.name}' (ID: {component.id})"
+                )
+                return True
+
+        for subcomponent in component.components:
+            if self._find_and_remove_body(body_info, subcomponent):
+                return True
+
+        return False
