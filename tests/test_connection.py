@@ -20,13 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
+
 from beartype.roar import BeartypeCallHintParamViolation
 import grpc
 import numpy as np
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.connection.backend import ApiVersions
+from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient, wait_until_healthy
 from ansys.geometry.core.connection.conversions import (
     frame_to_grpc_frame,
@@ -39,6 +41,10 @@ from ansys.geometry.core.connection.conversions import (
     sketch_polygon_to_grpc_polygon,
     sketch_segment_to_grpc_line,
     unit_vector_to_grpc_direction,
+)
+from ansys.geometry.core.connection.product_instance import (
+    ProductInstance,
+    prepare_and_start_backend,
 )
 from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import UNITS, Angle
@@ -360,3 +366,54 @@ def test_api_versions_reader():
 
     with pytest.raises(ValueError, match="0 is not a valid ApiVersions"):  # Invalid version number
         ApiVersions.parse_input(0)
+
+
+def test_product_instance_initialization():
+    """Test the initialization of the ProductInstance class."""
+    pid = -1234  # Example process ID
+    product_instance = ProductInstance(pid)
+    # Assert that the _pid attribute is correctly set
+    assert product_instance._pid == pid
+    assert product_instance.close() is False
+
+
+def test_prepare_and_start_backend_conflicting_versions():
+    """Test that providing both 'product_version' and 'version' raises a ValueError."""
+    with pytest.raises(
+        ValueError,
+        match="Both 'product_version' and 'version' arguments are provided."
+        " Please use only 'version'.",
+    ):
+        prepare_and_start_backend(
+            backend_type=BackendType.WINDOWS_SERVICE, version=1900, product_version=1901
+        )
+
+
+@pytest.mark.skipif(
+    os.name != "nt",
+    reason="Test skipped on Linux because it is specific to Windows backends.",
+)
+def test_prepare_and_start_backend_unavailable_version():
+    """Test that an unavailable product version raises a SystemError."""
+    with pytest.raises(
+        SystemError,
+        match="The requested Ansys product's version 1901 is not available,"
+        " please specify a different version.",
+    ):
+        prepare_and_start_backend(backend_type=BackendType.WINDOWS_SERVICE, product_version=1901)
+
+
+@pytest.mark.skipif(
+    os.name != "nt",
+    reason="Test skipped on Linux because it is specific to Windows backends.",
+)
+def test_prepare_and_start_backend_invalid_version():
+    """Test that a non-integer 'version' raises a ValueError."""
+    with pytest.raises(
+        ValueError,
+        match="The 'version' argument must be an integer representing the product version.",
+    ):
+        prepare_and_start_backend(
+            backend_type=BackendType.WINDOWS_SERVICE,
+            version="invalid_version",  # Pass a non-integer value for version
+        )
