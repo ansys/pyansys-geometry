@@ -44,12 +44,11 @@ class Vertex(Point3D):
     def __new__(
         cls,
         id: str,
-        position: np.ndarray | RealSequence = DEFAULT_POINT3D_VALUES,
-        unit: Unit | None = None,
+        position: np.ndarray | RealSequence,
     ):
         """Initialize ``Vertex`` class."""
         # Only pass position and unit to Point3D.__new__
-        obj = super().__new__(cls, position, unit)
+        obj = super().__new__(cls, position)
         return obj
 
     def __init__(
