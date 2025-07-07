@@ -293,6 +293,11 @@ class Point3D(np.ndarray, PhysicalQuantity):
         """Set the Z plane component value."""
         self.__set_value(z, 2)
 
+    @property
+    def position(self) -> np.ndarray:
+        """Get the position of the point as a numpy array."""
+        return self.view(type=np.ndarray)
+
     @PhysicalQuantity.unit.getter
     def unit(self) -> Unit:
         """Get the unit of the object."""
