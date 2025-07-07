@@ -1259,31 +1259,35 @@ class Design(Component):
         """
         Update the design with the changed bodies while preserving unchanged ones.
         """
-        self._grpc_client.log.debug(f"Starting _update_from_tracker with response: {tracker_response}")
+        self._grpc_client.log.debug(
+            f"Starting _update_from_tracker with response: {tracker_response}"
+        )
         self._handle_modified_bodies(tracker_response.get("modified_bodies", []))
         self._handle_deleted_bodies(tracker_response.get("deleted_bodies", []))
         self._handle_created_bodies(tracker_response.get("created_bodies", []))
-
 
     def _handle_modified_bodies(self, modified_bodies):
         for body_info in modified_bodies:
             body_id = body_info["id"]
             body_name = body_info["name"]
-            self._grpc_client.log.debug(f"Processing modified body: ID={body_id}, Name='{body_name}'")
+            self._grpc_client.log.debug(
+                f"Processing modified body: ID={body_id}, Name='{body_name}'"
+            )
             updated = False
 
             for body in self.bodies:
                 if body.id == body_id:
                     self._update_body(body, body_info)
                     updated = True
-                    self._grpc_client.log.debug(f"Modified body '{body_name}' (ID: {body_id}) updated at root level.")
+                    self._grpc_client.log.debug(
+                        f"Modified body '{body_name}' (ID: {body_id}) updated at root level."
+                    )
                     break
 
             if not updated:
                 for component in self.components:
                     if self._find_and_update_body(body_info, component):
                         break
-
 
     def _handle_deleted_bodies(self, deleted_bodies):
         for body_info in deleted_bodies:
@@ -1296,7 +1300,9 @@ class Design(Component):
                     body._is_alive = False
                     self.bodies.remove(body)
                     removed = True
-                    self._grpc_client.log.info(f"Deleted body (ID: {body_id}) removed from root level.")
+                    self._grpc_client.log.info(
+                        f"Deleted body (ID: {body_id}) removed from root level."
+                    )
                     break
 
             if not removed:
@@ -1304,24 +1310,28 @@ class Design(Component):
                     if self._find_and_remove_body(body_info, component):
                         break
 
-
     def _handle_created_bodies(self, created_bodies):
         for body_info in created_bodies:
             body_id = body_info["id"]
             body_name = body_info["name"]
             is_surface = body_info.get("is_surface", False)
-            self._grpc_client.log.debug(f"Processing created body: ID={body_id}, Name='{body_name}'")
+            self._grpc_client.log.debug(
+                f"Processing created body: ID={body_id}, Name='{body_name}'"
+            )
 
             if any(body.id == body_id for body in self.bodies):
-                self._grpc_client.log.debug(f"Created body '{body_name}' (ID: {body_id}) already exists at root level.")
+                self._grpc_client.log.debug(
+                    f"Created body '{body_name}' (ID: {body_id}) already exists at root level."
+                )
                 continue
 
             added = any(self._find_and_add_body(body_info, self.components))
             if not added:
                 new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
                 self.bodies.append(new_body)
-                self._grpc_client.log.debug(f"Added new body '{body_name}' (ID: {body_id}) to root level.")
-
+                self._grpc_client.log.debug(
+                    f"Added new body '{body_name}' (ID: {body_id}) to root level."
+                )
 
     def _update_body(self, existing_body, body_info):
         self._grpc_client.log.debug(
@@ -1330,13 +1340,14 @@ class Design(Component):
         existing_body.name = body_info["name"]
         existing_body._template._is_surface = body_info.get("is_surface", False)
 
-
     def _find_and_add_body(self, body_info, components):
         for component in components:
             if component.id == body_info["parent_id"]:
                 new_body = MasterBody(
-                    body_info["id"], body_info["name"], self._grpc_client,
-                    is_surface=body_info.get("is_surface", False)
+                    body_info["id"],
+                    body_info["name"],
+                    self._grpc_client,
+                    is_surface=body_info.get("is_surface", False),
                 )
                 component.bodies.append(new_body)
                 self._grpc_client.log.debug(
@@ -1348,7 +1359,6 @@ class Design(Component):
                 return True
 
         return False
-
 
     def _find_and_update_body(self, body_info, component):
         for body in component.bodies:
@@ -1364,7 +1374,6 @@ class Design(Component):
                 return True
 
         return False
-
 
     def _find_and_remove_body(self, body_info, component):
         for body in component.bodies:
