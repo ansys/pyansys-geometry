@@ -1278,12 +1278,12 @@ class Design(Component):
             existing_body._template._is_surface = body_info.get("is_surface", False)
 
         # Function to find and add bodies within components recursively
-        def find_and_add_body(body_info, component):
+        def find_and_add_body(body_info, components):
             self._grpc_client.log.debug(
                 f"Searching for parent_id {body_info.get('parent_id')} to "
                 f"add body '{body_info['name']}' (ID: {body_info['id']}) within components list."
             )
-            for component in component:
+            for component in components:
                 if component.id == body_info["parent_id"]:
                     new_body = MasterBody(
                         body_info["id"],
