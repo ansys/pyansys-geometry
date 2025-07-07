@@ -266,6 +266,7 @@ class Face:
 
     @property
     @ensure_design_is_active
+    @min_backend_version(26, 1, 0)
     def vertices(self) -> list[Vertex]:
         """List of all vertices of the face."""
         self._grpc_client.log.debug("Requesting face vertices from server.")

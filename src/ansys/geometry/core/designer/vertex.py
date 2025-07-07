@@ -37,12 +37,8 @@ class Vertex(Point3D):
     ----------
     id : str
         The unique identifier for the vertex.
-    position : np.ndarray or RealSequence, optional
+    position : np.ndarray or RealSequence
         The position of the vertex in 3D space.
-        Defaults to `DEFAULT_POINT3D_VALUES`.
-    unit : pint.Unit, optional
-        The unit of measurement for the vertex position.
-        If not provided, the default unit from the Geometry service is used.
     """
 
     def __new__(
@@ -59,12 +55,14 @@ class Vertex(Point3D):
     def __init__(
         self,
         id: str,
-        position: np.ndarray | RealSequence = DEFAULT_POINT3D_VALUES,
-        unit: Unit | None = None,
+        position: np.ndarray | RealSequence,
     ):
         """Initialize the Vertex with a unique identifier."""
         self._id = id
-        super().__init__(position, unit)
+        super().__init__(position)
+
+        # Make position immutable
+        self.position.flags.writeable = False
 
     @property
     def id(self) -> str:
@@ -73,4 +71,7 @@ class Vertex(Point3D):
 
     def __repr__(self) -> str:
         """Return a string representation of the vertex."""
-        return f"Vertex(id={self.id})"
+        lines = [f"ansys.geometry.core.designer.Vertex {hex(id(self))}"]
+        lines.append(f"  Id                   : {self.id}")
+        lines.append(f"  Position                 : {self.position}")
+        return "\n".join(lines)

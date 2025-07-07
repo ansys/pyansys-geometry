@@ -179,6 +179,7 @@ class Edge:
 
     @property
     @ensure_design_is_active
+    @min_backend_version(26, 1, 0)
     def vertices(self) -> list["Vertex"]:
         """Vertices that define the edge."""
         from ansys.geometry.core.designer.vertex import Vertex

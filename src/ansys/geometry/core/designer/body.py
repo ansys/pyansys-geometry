@@ -1001,6 +1001,7 @@ class MasterBody(IBody):
         ]
 
     @property
+    @min_backend_version(26, 1, 0)
     def vertices(self) -> list[Vertex]:  # noqa: D102
         return self._get_vertices_from_id(self)
 

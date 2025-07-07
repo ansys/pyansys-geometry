@@ -77,4 +77,5 @@ def test_edges_get_vertices(modeler: Modeler):
 
         # Check the location of each vertex
         for vertex in vertices:
+            print(vertex.position)
             assert any(np.allclose(vertex.position, v.position) for v in body_vertices)

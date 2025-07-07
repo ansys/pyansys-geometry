@@ -296,7 +296,7 @@ class Point3D(np.ndarray, PhysicalQuantity):
     @property
     def position(self) -> np.ndarray:
         """Get the position of the point as a numpy array."""
-        return np.array([self.x.magnitude, self.y.magnitude, self.z.magnitude])
+        return self.view(type=np.ndarray)
 
     @PhysicalQuantity.unit.getter
     def unit(self) -> Unit:
