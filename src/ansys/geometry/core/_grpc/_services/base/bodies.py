@@ -120,6 +120,11 @@ class GRPCBodyService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def get_vertices(self, **kwargs) -> dict:
+        """Get the vertices of a body."""
+        pass
+
+    @abstractmethod
     def get_volume(self, **kwargs) -> dict:
         """Get the volume of a body."""
         pass

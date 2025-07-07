@@ -22,6 +22,7 @@
 """Test design interaction."""
 
 import os
+from pathlib import Path
 
 import matplotlib.colors as mcolors
 import numpy as np
@@ -40,7 +41,7 @@ from ansys.geometry.core.designer import (
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.designer.part import MasterComponent, Part
-from ansys.geometry.core.errors import GeometryExitedError
+from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     IDENTITY_MATRIX44,
@@ -54,7 +55,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance, checks
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
@@ -75,6 +76,20 @@ from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
 from .conftest import FILES_DIR
+
+
+def test_design_is_close(modeler: Modeler):
+    # Testing to see if design is closed and whether more operations can be performed on it
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design = modeler.create_design("Box")
+    design.extrude_sketch("Box", sketch, 2)
+    design.close()
+    with pytest.raises(
+        GeometryRuntimeError,
+        match="The design has been closed on the backend. Cannot perform any operations on it.",
+    ):
+        checks.ensure_design_is_active(design.bodies[0].edges)
 
 
 def test_design_selection(modeler: Modeler):
@@ -393,6 +408,7 @@ def test_component_body(modeler: Modeler):
     assert len(design.components) == 0
     assert len(design.bodies) == 1
     assert len(body.edges) == 15  # 5 top + 5 bottom + 5 sides
+    assert len(body.vertices) == 10  # 5 top + 5 bottom
 
     # We have created this body on the base component. Let's add a new component
     # and add a planar surface to it
@@ -490,6 +506,13 @@ def test_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 3
 
 
+def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
+    # Try to vefify name selection using earlier backend version
+    design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
+    hello = design.named_selections
+    assert hello[0].faces == []
+
+
 def test_empty_named_selection(modeler: Modeler):
     """Test for verifying the creation of an empty ``NamedSelection``."""
     # Create your design on the server side
@@ -524,9 +547,17 @@ def test_named_selection_contents(modeler: Modeler):
         Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
     )
 
+    # Pick vertices from the box to add to the named selection
+    vertices = box.vertices[0:2]
+
     # Create the NamedSelection
     ns = design.create_named_selection(
-        "MyNamedSelection", bodies=[box, box_2], faces=[face], edges=[edge], beams=[beam]
+        "MyNamedSelection",
+        bodies=[box, box_2],
+        faces=[face],
+        edges=[edge],
+        beams=[beam],
+        vertices=vertices,
     )
 
     # Check that the named selection has everything
@@ -543,6 +574,9 @@ def test_named_selection_contents(modeler: Modeler):
     assert ns.beams[0].id == beam.id
 
     assert len(ns.design_points) == 0
+
+    assert len(ns.vertices) == 2
+    assert (ns.vertices[0].id == vertices[0].id) and (ns.vertices[1].id == vertices[1].id)
 
 
 def test_add_component_with_instance_name(modeler: Modeler):
@@ -620,6 +654,28 @@ def test_faces_edges(modeler: Modeler):
     assert any(
         [face.id == faces[0].id for face in faces_of_edge]
     )  # The bottom face must be one of them
+
+
+def test_faces_vertices(modeler: Modeler):
+    """Test for getting the vertices of a face."""
+    # Create your design on the server side
+    design = modeler.create_design("FacesVertices_Test")
+
+    # Create a Sketch object and draw a polygon (all client side)
+    sketch = Sketch()
+    sketch.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+
+    # Extrude the sketch to create a Body
+    polygon_comp = design.add_component("PolygonComponent")
+    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch, Quantity(30, UNITS.mm))
+
+    # Get all its faces
+    faces = body_polygon_comp.faces
+    assert len(faces) == 7  # top + bottom + sides
+
+    # Get the vertices of one of the faces
+    vertices = faces[0].vertices
+    assert len(vertices) == 5  # pentagon
 
 
 def test_coordinate_system_creation(modeler: Modeler):
@@ -1693,6 +1749,29 @@ def test_named_selections_design_points(modeler: Modeler):
 
     # Try deleting this named selection
     design.delete_named_selection(ns_despoint)
+    assert len(design.named_selections) == 0
+
+
+def test_named_selections_components(modeler: Modeler):
+    """Test for verifying the correct creation of ``NamedSelection`` with
+    components.
+    """
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelectionComponents_Test")
+
+    # Test creating a named selection out of components
+    comp1 = design.add_component("Comp1")
+    comp2 = design.add_component("Comp2")
+    ns_components = design.create_named_selection("Components", components=[comp1, comp2])
+    assert len(design.named_selections) == 1
+    assert design.named_selections[0].name == "Components"
+
+    # Fetch the component from the named selection
+    assert ns_components.components[0].id == comp1.id
+    assert ns_components.components[1].id == comp2.id
+
+    # Try deleting this named selection
+    design.delete_named_selection(ns_components)
     assert len(design.named_selections) == 0
 
 

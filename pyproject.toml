@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.62",
+    "ansys-api-geometry==0.4.65",
     "ansys-tools-path>=0.3,<1",
     "beartype>=0.11.0,<0.22",
     "geomdl>=5,<6",
@@ -42,14 +42,14 @@ dependencies = [
 
 [project.optional-dependencies]
 graphics = [
-    "ansys-tools-visualization-interface>=0.10.0,<1",
+    "ansys-tools-visualization-interface>=0.2.6",
     "pygltflib>=1.16,<2",
     "pyvista[jupyter]>=0.38.1,<1",
     "vtk>=9,<10",
 ]
 all = [
     "ansys-platform-instancemanagement>=1.0.3,<2",
-    "ansys-tools-visualization-interface>=0.10.0,<1",
+    "ansys-tools-visualization-interface>=0.2.6",
     "docker>=6.0.1,<8",
     "pygltflib>=1.16,<2",
     "pyvista[jupyter]>=0.38.1,<1",
@@ -58,7 +58,7 @@ all = [
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
     "ansys-tools-path==0.7.3",
-    "ansys-tools-visualization-interface==0.10.0",
+    "ansys-tools-visualization-interface==0.11.0",
     "beartype==0.21.0",
     "docker==7.1.0",
     "geomdl==5.4.0",
@@ -85,9 +85,9 @@ tests-minimal = [
     "pytest-pyvista==0.1.9",
 ]
 doc = [
-    "ansys-sphinx-theme[autoapi]==1.5.2",
+    "ansys-sphinx-theme[autoapi]==1.5.3",
     "ansys-tools-path==0.7.3",
-    "ansys-tools-visualization-interface==0.10.0",
+    "ansys-tools-visualization-interface==0.11.0",
     "beartype==0.21.0",
     "docker==7.1.0",
     "geomdl==5.4.0",
@@ -100,10 +100,10 @@ doc = [
     "myst-parser==4.0.1",
     "nbconvert==7.16.6",
     "nbsphinx==0.9.6",
-    "notebook==7.4.3",
-    "numpydoc==1.8.0",
+    "notebook==7.4.4",
+    "numpydoc==1.9.0",
     "numpy==2.2.6",
-    "panel==1.7.1",
+    "panel==1.7.2",
     "pdf2image==1.17.0",
     "Pint==0.24.4",
     "protobuf==5.29.3",
@@ -118,7 +118,7 @@ doc = [
     "sphinx-autodoc-typehints==3.1.0",
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
-    "trame-vtk==2.8.17",
+    "trame-vtk==2.9.0",
     "vtk==9.4.2",
 ]
 
