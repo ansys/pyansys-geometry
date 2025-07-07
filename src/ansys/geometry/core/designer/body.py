@@ -52,6 +52,7 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
+from ansys.geometry.core.designer.vertex import Vertex
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.bbox import BoundingBox
@@ -236,6 +237,16 @@ class IBody(ABC):
         Returns
         -------
         list[Edge]
+        """
+        return
+
+    @abstractmethod
+    def vertices(self) -> list[Vertex]:
+        """Get a list of all vertices within the body.
+
+        Returns
+        -------
+        list[Vertex]
         """
         return
 
@@ -990,6 +1001,24 @@ class MasterBody(IBody):
         ]
 
     @property
+    @min_backend_version(26, 1, 0)
+    def vertices(self) -> list[Vertex]:  # noqa: D102
+        return self._get_vertices_from_id(self)
+
+    def _get_vertices_from_id(self, body: Union["Body", "MasterBody"]) -> list[Vertex]:
+        """Retrieve vertices from a body ID."""
+        self._grpc_client.log.debug(f"Retrieving vertices for body {body.id} from server.")
+        response = self._grpc_client.services.bodies.get_vertices(id=body.id)
+
+        return [
+            Vertex(
+                vertex_resp.get("id"),
+                vertex_resp.get("position"),
+            )
+            for vertex_resp in response.get("vertices")
+        ]
+
+    @property
     def is_alive(self) -> bool:  # noqa: D102
         return self._is_alive
 
@@ -1484,6 +1513,11 @@ class Body(IBody):
     @ensure_design_is_active
     def edges(self) -> list[Edge]:  # noqa: D102
         return self._template._get_edges_from_id(self)
+
+    @property
+    @ensure_design_is_active
+    def vertices(self) -> list[Vertex]:  # noqa: D102
+        return self._template._get_vertices_from_id(self)
 
     @property
     def _is_alive(self) -> bool:  # noqa: D102
