@@ -60,7 +60,7 @@ class Vertex(Point3D):
         super().__init__(position)
 
         # Make position immutable
-        self.position.flags.writeable = False
+        self.flags.writeable = False
 
     @property
     def id(self) -> str:
