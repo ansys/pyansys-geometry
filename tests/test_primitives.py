@@ -908,7 +908,7 @@ def test_torus():
     assert np.allclose(torus_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
     # Attempt to create a Torus and expect a ValueError
     with pytest.raises(
-        ValueError, match="Torus reference \(dir_x\) and axis \(dir_z\) must be perpendicular."
+        ValueError, match=r"Torus reference \(dir_x\) and axis \(dir_z\) must be perpendicular."
     ):
         Torus(origin, major_radius, minor_radius, UnitVector3D([1, 0, 0]), UnitVector3D([1, 0, 0]))
 
