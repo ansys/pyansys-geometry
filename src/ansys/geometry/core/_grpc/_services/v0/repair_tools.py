@@ -626,7 +626,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             """Serialize an EntityIdentifier object into a dictionary."""
             return {
                 "id": entity.id,
-                "type": entity.type,
             }
 
         return {
