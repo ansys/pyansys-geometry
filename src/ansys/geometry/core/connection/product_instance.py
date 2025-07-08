@@ -561,13 +561,14 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
     The optional argument is the ip address where to check port availability.
     Its default is ``localhost``.
     """
-    if port != 0:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            try:
-                sock.bind((host, port))
-                return True
-            except socket.error:
-                return False
+    if port == 0:
+        return False  # Port 0 is reserved and cannot be used directly.
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        try:
+            sock.bind((host, port))
+            return True
+        except socket.error:
+            return False
 
 
 def _manifest_path_provider(
