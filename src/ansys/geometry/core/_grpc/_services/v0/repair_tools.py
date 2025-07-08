@@ -383,6 +383,10 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixStitchFaces(request)
 
+        serialized_tracker_response = self._serialize_tracker_command_response(
+            response.complete_command_response
+        )
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.success,
@@ -390,6 +394,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "modified_bodies_monikers": response.modified_bodies_monikers,
             "found": response.found,
             "repaired": response.repaired,
+            "complete_command_response": serialized_tracker_response,
+
         }
 
     @protect_grpc
