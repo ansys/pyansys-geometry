@@ -482,3 +482,37 @@ def test_design_import_inventor2026(modeler: Modeler):
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "Inventor/ai_param_dsdm_part1_2026.ipt"))
     assert len(design.bodies) == 1
     assert len(design.bodies[0].faces) == 9
+
+
+def test_design_import_stride_with_named_selections(modeler: Modeler):
+    """Test importing a .stride file with named selections."""
+    # Open stride file
+    design = modeler.open_file(Path(FILES_DIR, "WithNamedSelections.stride"))
+    assert len(design.named_selections) == 4
+
+    # Expected named selections and their properties
+    expected_named_selections = {
+        "Edges": {"bodies": 0, "faces": 0, "edges": 3, "vertices": 0},
+        "Faces": {"bodies": 0, "faces": 2, "edges": 0, "vertices": 0},
+        "Body": {"bodies": 1, "faces": 0, "edges": 0, "vertices": 0},
+        "Mixed": {"bodies": 1, "faces": 0, "edges": 2, "vertices": 0},
+    }
+
+    # Verify named selections
+    for named_selection in design.named_selections:
+        assert named_selection.name in expected_named_selections, (
+            f"Unexpected named selection: {named_selection.name}"
+        )
+        expected_properties = expected_named_selections[named_selection.name]
+        assert len(named_selection.bodies) == expected_properties["bodies"], (
+            f"Mismatch in bodies for {named_selection.name}"
+        )
+        assert len(named_selection.faces) == expected_properties["faces"], (
+            f"Mismatch in faces for {named_selection.name}"
+        )
+        assert len(named_selection.edges) == expected_properties["edges"], (
+            f"Mismatch in edges for {named_selection.name}"
+        )
+        assert len(named_selection.vertices) == expected_properties["vertices"], (
+            f"Mismatch in vertices for {named_selection.name}"
+        )
