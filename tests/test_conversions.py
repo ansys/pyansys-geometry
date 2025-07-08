@@ -554,7 +554,6 @@ def test_from_curve_to_grpc_curve_nurbs():
         Point3D([1, 1, 0]),
         Point3D([2, 0, 0]),
     ]
-    weights = [1.0, 0.5, 1.0]
     nurbs_curve = NURBSCurve.fit_curve_from_points(control_points, 2)
 
     # Call the function

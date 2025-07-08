@@ -51,8 +51,7 @@ from ansys.geometry.core.shapes.parameterization import (
     ParamForm,
     ParamType,
 )
-from ansys.geometry.core.shapes.surfaces.sphere import Sphere, SphereEvaluation
-from ansys.geometry.core.shapes.surfaces.torus import Torus
+from ansys.geometry.core.shapes.surfaces.sphere import SphereEvaluation
 
 
 def test_cylinder():
