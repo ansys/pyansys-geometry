@@ -27,14 +27,18 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import grpc_point_to_point3d
 from ansys.geometry.core.designer.beam import Beam
 from ansys.geometry.core.designer.body import Body
+from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.designer.vertex import Vertex
 from ansys.geometry.core.misc.auxiliary import (
     get_beams_from_ids,
     get_bodies_from_ids,
+    get_components_from_ids,
     get_edges_from_ids,
     get_faces_from_ids,
+    get_vertices_from_ids,
 )
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -67,6 +71,8 @@ class NamedSelection:
         All beams to include in the named selection.
     design_points : list[DesignPoints], default: None
         All design points to include in the named selection.
+    components: list[Component], default: None
+        All components to include in the named selection.
     """
 
     def __init__(
@@ -79,6 +85,8 @@ class NamedSelection:
         edges: list[Edge] | None = None,
         beams: list[Beam] | None = None,
         design_points: list[DesignPoint] | None = None,
+        components: list[Component] | None = None,
+        vertices: list[Vertex] | None = None,
         preexisting_id: str | None = None,
     ):
         """Initialize the ``NamedSelection`` class."""
@@ -97,6 +105,10 @@ class NamedSelection:
             beams = []
         if design_points is None:
             design_points = []
+        if components is None:
+            components = []
+        if vertices is None:
+            vertices = []
 
         # Instantiate
         self._bodies = bodies
@@ -104,6 +116,8 @@ class NamedSelection:
         self._edges = edges
         self._beams = beams
         self._design_points = design_points
+        self._components = components
+        self._vertices = vertices
 
         # Store ids for later use... when verifying if the NS changed.
         self._ids_cached = {
@@ -112,6 +126,8 @@ class NamedSelection:
             "edges": [edge.id for edge in edges],
             "beams": [beam.id for beam in beams],
             "design_points": [dp.id for dp in design_points],
+            "components": [component.id for component in components],
+            "vertices": [vertex.id for vertex in vertices],
         }
 
         if preexisting_id:
@@ -194,6 +210,38 @@ class NamedSelection:
 
         return self._design_points
 
+    @property
+    def components(self) -> list[Component]:
+        """All components in the named selection."""
+        self.__verify_ns()
+        if self._grpc_client.backend_version < (26, 1, 0):
+            self._grpc_client.log.warning(
+                "Accessing components in named selections is only"
+                " consistent starting in version 2026 R1."
+            )
+            return []
+        if self._components is None:
+            # Get all components from the named selection
+            self._components = get_components_from_ids(self._design, self._ids_cached["components"])
+
+        return self._components
+
+    @property
+    def vertices(self) -> list[Vertex]:
+        """All vertices in the named selection."""
+        self.__verify_ns()
+        if self._grpc_client.backend_version < (26, 1, 0):
+            self._grpc_client.log.warning(
+                "Accessing vertices of named selections is only"
+                " consistent starting in version 2026 R1."
+            )
+            return []
+        if self._vertices is None:
+            # Get all vertices from the named selection
+            self._vertices = get_vertices_from_ids(self._design, self._ids_cached["vertices"])
+
+        return self._vertices
+
     def __verify_ns(self) -> None:
         """Verify that the contents of the named selection are up to date."""
         if self._grpc_client.backend_version < (25, 2, 0):
@@ -213,6 +261,8 @@ class NamedSelection:
             "edges": response.get("edges"),
             "beams": response.get("beams"),
             "design_points": response.get("design_points"),
+            "components": response.get("components"),
+            "vertices": response.get("vertices"),
         }
 
         for key in ids:
@@ -232,4 +282,6 @@ class NamedSelection:
         lines.append(f"  N Edges              : {len(self.edges)}")
         lines.append(f"  N Beams              : {len(self.beams)}")
         lines.append(f"  N Design Points      : {len(self.design_points)}")
+        lines.append(f"  N Components         : {len(self.components)}")
+        lines.append(f"  N Vertices           : {len(self.vertices)}")
         return "\n".join(lines)

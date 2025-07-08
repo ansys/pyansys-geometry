@@ -33,6 +33,7 @@ from ansys.api.geometry.v0.commands_pb2 import FaceOffsetRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.edge import Edge
+from ansys.geometry.core.designer.vertex import Vertex
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.point import Point3D
@@ -261,6 +262,22 @@ class Face:
                 edge.get("is_reversed"),
             )
             for edge in response.get("edges")
+        ]
+
+    @property
+    @ensure_design_is_active
+    @min_backend_version(26, 1, 0)
+    def vertices(self) -> list[Vertex]:
+        """List of all vertices of the face."""
+        self._grpc_client.log.debug("Requesting face vertices from server.")
+        response = self._grpc_client.services.faces.get_vertices(id=self.id)
+
+        return [
+            Vertex(
+                vertex_resp.get("id"),
+                vertex_resp.get("position"),
+            )
+            for vertex_resp in response.get("vertices")
         ]
 
     @property
@@ -565,7 +582,6 @@ class Face:
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
-        show_options: dict | None = {},
         **plotting_options: dict | None,
     ) -> None:
         """Plot the face.
@@ -582,8 +598,6 @@ class Face:
             Whether to use the colors assigned to the face in the service. The default
             is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
             global setting is used.
-        show_options : dict, default: {}
-            Keyword arguments for the show method of the plotter.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
@@ -605,4 +619,4 @@ class Face:
         mesh_object = self if use_service_colors else MeshObjectPlot(self, self.tessellate())
         pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
         pl.plot(mesh_object, **plotting_options)
-        pl.show(screenshot=screenshot, **show_options)
+        pl.show(screenshot=screenshot, **plotting_options)
