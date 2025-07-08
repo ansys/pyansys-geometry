@@ -23,11 +23,28 @@
 from pint import Quantity
 import pytest
 
+from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
+from ansys.api.dbu.v0.dbumodels_pb2 import PartExportFormat as GRPCPartExportFormat
 from ansys.api.geometry.v0.models_pb2 import (
     CurveGeometry as GRPCCurve,
+    CurveGeometry as GRPCCurveGeometry,
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
+    Surface as GRPCSurface,
+    SurfaceType as GRPCSurfaceType,
 )
+from ansys.geometry.core._grpc._services.v0.conversions import (
+    from_curve_to_grpc_curve,
+    from_design_file_format_to_grpc_part_export_format,
+    from_grpc_backend_type_to_backend_type,
+    from_grpc_curve_to_curve,
+    from_grpc_material_property_to_material_property,
+    from_grpc_surface_to_surface,
+    from_sketch_shapes_to_grpc_geometries,
+    from_surface_to_grpc_surface,
+    from_tess_options_to_grpc_tess_options,
+)
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
     curve_to_grpc_curve,
     grpc_curve_to_curve,
@@ -36,11 +53,14 @@ from ansys.geometry.core.connection.conversions import (
     grpc_surface_to_surface,
     sketch_shapes_to_grpc_geometries,
 )
+from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.designer.face import SurfaceType
 from ansys.geometry.core.materials.material import MaterialPropertyType
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, UNITS
-from ansys.geometry.core.shapes.curves import Circle, Ellipse, Line
+from ansys.geometry.core.misc.options import TessellationOptions
+from ansys.geometry.core.shapes.curves import Circle, Curve, Ellipse, Line
+from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 from ansys.geometry.core.shapes.surfaces import Cone, Cylinder, PlaneSurface, Sphere, Torus
 from ansys.geometry.core.sketch import Arc, Polygon, SketchCircle, SketchEdge, SketchEllipse
 
@@ -412,3 +432,357 @@ def test_grpc_material_property_to_material_property_invalid_units():
     # Assert fallback logic
     assert material_property.type == "Density"
     assert material_property.quantity == 7850  # Fallback to value
+
+
+def test_material_property_type_from_id_valid():
+    """Test that MaterialPropertyType.from_id correctly handles valid IDs."""
+    # Create a GRPCMaterialProperty with a valid ID
+    valid_material_property = GRPCMaterialProperty(
+        id=MaterialPropertyType.DENSITY.value,
+        display_name="Density",
+        value=7850,
+        units="kg/m^3",
+    )
+
+    # Call the function
+    material_property = from_grpc_material_property_to_material_property(valid_material_property)
+
+    # Assert that the type is correctly set
+    assert material_property.type == "Density"
+
+
+def test_material_property_type_from_id_invalid():
+    """Test that MaterialPropertyType.from_id correctly handles invalid IDs."""
+    # Create a GRPCMaterialProperty with an invalid ID
+    invalid_material_property = GRPCMaterialProperty(
+        id="INVALID_ID",
+        display_name="Invalid Property",
+        value=100,
+        units="unitless",
+    )
+
+    # Call the function
+    material_property = from_grpc_material_property_to_material_property(invalid_material_property)
+
+    # Assert that the type falls back to the raw ID
+    assert material_property.type == "INVALID_ID"
+
+
+def test_from_tess_options_to_grpc_tess_options():
+    """Test conversion of TessellationOptions to GRPCTessellationOptions."""
+    # Create a TessellationOptions object
+    tess_options = TessellationOptions(
+        surface_deviation=0.01,
+        angle_deviation=5.0,
+        max_aspect_ratio=10.0,
+        max_edge_length=100.0,
+        watertight=True,
+    )
+
+    # Call the function
+    grpc_tess_options = from_tess_options_to_grpc_tess_options(tess_options)
+
+    # Assert that the GRPCTessellationOptions object is correctly created
+    assert grpc_tess_options.surface_deviation == tess_options.surface_deviation
+    assert grpc_tess_options.angle_deviation == tess_options.angle_deviation
+    assert grpc_tess_options.maximum_aspect_ratio == tess_options.max_aspect_ratio
+    assert grpc_tess_options.maximum_edge_length == tess_options.max_edge_length
+    assert grpc_tess_options.watertight == tess_options.watertight
+
+
+@pytest.mark.parametrize(
+    "curve_data, expected_type, expected_attributes",
+    [
+        # Test for Circle
+        (
+            SketchCircle(Point2D([0, 0]), radius=Quantity(5, UNITS.m)),
+            Circle,
+            {"radius": 5},
+        ),
+        # Test for Ellipse
+        (
+            SketchEllipse(
+                Point2D([0, 0]),
+                major_radius=Quantity(10, UNITS.m),
+                minor_radius=Quantity(5, UNITS.m),
+                angle=0,
+            ),
+            Ellipse,
+            {"majorradius": 10, "minorradius": 5},  # Updated attribute names
+        ),
+    ],
+)
+def test_from_sketch_shapes_to_grpc_geometries(curve_data, expected_type, expected_attributes):
+    """Test from_sketch_shapes_to_grpc_geometries for various curve types."""
+    # Create a plane for positioning
+    plane = Plane()
+
+    # Call the function
+    if isinstance(curve_data, SketchCircle) or isinstance(curve_data, SketchEllipse):
+        faces = [curve_data]
+        edges = []
+    else:
+        faces = []
+        edges = [curve_data]
+
+    grpc_geometries = from_sketch_shapes_to_grpc_geometries(
+        plane, edges=edges, faces=faces, only_one_curve=True
+    )
+
+    # Assert the result type
+    if expected_type == Circle:
+        assert len(grpc_geometries.circles) == 1
+        result = grpc_geometries.circles[0]
+    elif expected_type == Ellipse:
+        assert len(grpc_geometries.ellipses) == 1
+        result = grpc_geometries.ellipses[0]
+
+    # Assert the attributes of the result
+    for attr, value in expected_attributes.items():
+        if isinstance(value, dict):  # For nested attributes like direction
+            for sub_attr, sub_value in value.items():
+                assert getattr(result.direction, sub_attr) == sub_value
+        else:
+            assert getattr(result, attr) == value
+
+
+def test_from_curve_to_grpc_curve_nurbs():
+    """Test conversion of a NURBSCurve to GRPCCurveGeometry."""
+    # Create a NURBSCurve object
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([1, 1, 0]),
+        Point3D([2, 0, 0]),
+    ]
+    weights = [1.0, 0.5, 1.0]
+    nurbs_curve = NURBSCurve.fit_curve_from_points(control_points, 2)
+
+    # Call the function
+    grpc_curve = from_curve_to_grpc_curve(nurbs_curve)
+
+    # Assert the result is a GRPCCurveGeometry with a NURBSCurve
+    assert isinstance(grpc_curve, GRPCCurveGeometry)
+    assert len(grpc_curve.nurbs_curve.control_points) == len(control_points)
+
+
+def test_from_curve_to_grpc_curve_unsupported_type():
+    """Test that an unsupported curve type raises a ValueError."""
+
+    # Create an unsupported curve type by implementing abstract methods
+    class UnsupportedCurve(Curve):
+        def __eq__(self, other):
+            return False
+
+        def contains_param(self, param):
+            return False
+
+        def contains_point(self, point):
+            return False
+
+        def evaluate(self, param):
+            return Point3D([0, 0, 0])
+
+        def parameterization(self):
+            return (0, 1)
+
+        def project_point(self, point):
+            return Point3D([0, 0, 0])
+
+        def transformed_copy(self, transformation):
+            return self
+
+    unsupported_curve = UnsupportedCurve()
+
+    # Assert that calling the function raises a ValueError
+    with pytest.raises(ValueError, match=f"Unsupported curve type: {type(unsupported_curve)}"):
+        from_curve_to_grpc_curve(unsupported_curve)
+
+
+def test_from_grpc_curve_to_curve_ellipse():
+    """Test conversion of GRPCCurveGeometry to Ellipse."""
+    # Create GRPCCurveGeometry with Ellipse attributes
+    grpc_curve = GRPCCurveGeometry(
+        origin={"x": 0, "y": 0, "z": 0},
+        reference={"x": 1, "y": 0, "z": 0},
+        axis={"x": 0, "y": 0, "z": 1},
+        major_radius=10.0,
+        minor_radius=5.0,
+    )
+
+    # Call the function
+    result = from_grpc_curve_to_curve(grpc_curve)
+
+    # Assert the result is an Ellipse
+    assert isinstance(result, Ellipse)
+    assert result.origin.x == grpc_curve.origin.x
+    assert result.origin.y == grpc_curve.origin.y
+    assert result.origin.z == grpc_curve.origin.z
+    assert result.major_radius == Quantity(grpc_curve.major_radius, UNITS.m)
+    assert result.minor_radius == Quantity(grpc_curve.minor_radius, UNITS.m)
+    assert result.dir_x.x == grpc_curve.reference.x
+    assert result.dir_x.y == grpc_curve.reference.y
+    assert result.dir_x.z == grpc_curve.reference.z
+    assert result.dir_z.x == grpc_curve.axis.x
+    assert result.dir_z.y == grpc_curve.axis.y
+    assert result.dir_z.z == grpc_curve.axis.z
+
+
+def test_from_surface_to_grpc_surface_plane():
+    """Test conversion of a PlaneSurface to GRPCSurface and GRPCSurfaceType."""
+    # Create a PlaneSurface object
+    origin = Point3D([0, 0, 0])
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+    plane_surface = PlaneSurface(origin, reference, axis)
+
+    # Call the function
+    grpc_surface, surface_type = from_surface_to_grpc_surface(plane_surface)
+
+    # Assert the GRPCSurface attributes
+    assert isinstance(grpc_surface, GRPCSurface)
+    assert grpc_surface.origin.x == origin.x
+    assert grpc_surface.origin.y == origin.y
+    assert grpc_surface.origin.z == origin.z
+    assert grpc_surface.reference.x == reference.x
+    assert grpc_surface.reference.y == reference.y
+    assert grpc_surface.reference.z == reference.z
+    assert grpc_surface.axis.x == axis.x
+    assert grpc_surface.axis.y == axis.y
+    assert grpc_surface.axis.z == axis.z
+
+    # Assert the surface type
+    assert surface_type == GRPCSurfaceType.SURFACETYPE_PLANE
+
+
+def test_from_grpc_surface_to_surface_cone():
+    """Test conversion of GRPCSurface to Cone."""
+    # Create GRPCSurface for Cone
+    grpc_surface = GRPCSurface(
+        origin={"x": 0, "y": 0, "z": 0},
+        axis={"x": 0, "y": 0, "z": 1},
+        reference={"x": 1, "y": 0, "z": 0},
+        radius=5.0,
+        half_angle=30.0,
+    )
+
+    # Call the function
+    result = from_grpc_surface_to_surface(grpc_surface, SurfaceType.SURFACETYPE_CONE)
+
+    # Assert the result is a Cone
+    assert isinstance(result, Cone)
+    assert result.origin.x == grpc_surface.origin.x
+    assert result.origin.y == grpc_surface.origin.y
+    assert result.origin.z == grpc_surface.origin.z
+    assert result.radius == Quantity(grpc_surface.radius, UNITS.m)
+    assert result.half_angle == grpc_surface.half_angle
+
+
+def test_from_grpc_surface_to_surface_sphere():
+    """Test conversion of GRPCSurface to Sphere."""
+    # Create GRPCSurface for Sphere
+    grpc_surface = GRPCSurface(
+        origin={"x": 0, "y": 0, "z": 0},
+        axis={"x": 0, "y": 0, "z": 1},
+        reference={"x": 1, "y": 0, "z": 0},
+        radius=10.0,
+    )
+
+    # Call the function
+    result = from_grpc_surface_to_surface(grpc_surface, SurfaceType.SURFACETYPE_SPHERE)
+
+    # Assert the result is a Sphere
+    assert isinstance(result, Sphere)
+    assert result.origin.x == grpc_surface.origin.x
+    assert result.origin.y == grpc_surface.origin.y
+    assert result.origin.z == grpc_surface.origin.z
+    assert result.radius == Quantity(grpc_surface.radius, UNITS.m)
+
+
+def test_from_grpc_surface_to_surface_torus():
+    """Test conversion of GRPCSurface to Torus."""
+    # Create GRPCSurface for Torus
+    grpc_surface = GRPCSurface(
+        origin={"x": 0, "y": 0, "z": 0},
+        axis={"x": 0, "y": 0, "z": 1},
+        reference={"x": 1, "y": 0, "z": 0},
+        major_radius=15.0,
+        minor_radius=5.0,
+    )
+
+    # Call the function
+    result = from_grpc_surface_to_surface(grpc_surface, SurfaceType.SURFACETYPE_TORUS)
+
+    # Assert the result is a Torus
+    assert isinstance(result, Torus)
+    assert result.origin.x == grpc_surface.origin.x
+    assert result.origin.y == grpc_surface.origin.y
+    assert result.origin.z == grpc_surface.origin.z
+    assert result.major_radius == Quantity(grpc_surface.major_radius, UNITS.m)
+    assert result.minor_radius == Quantity(grpc_surface.minor_radius, UNITS.m)
+
+
+def test_from_grpc_surface_to_surface_none():
+    """Test that an unsupported surface type returns None."""
+    # Create GRPCSurface with valid attributes
+    grpc_surface = GRPCSurface(
+        origin={"x": 0, "y": 0, "z": 0},
+        axis={"x": 0, "y": 0, "z": 1},
+        reference={"x": 1, "y": 0, "z": 0},
+    )
+
+    # Call the function with an unsupported surface type
+    result = from_grpc_surface_to_surface(grpc_surface, "UnsupportedType")
+
+    # Assert the result is None
+    assert result is None
+
+
+@pytest.mark.parametrize(
+    "grpc_backend_type, expected_backend_type",
+    [
+        (GRPCBackendType.DISCOVERY, BackendType.DISCOVERY),
+        (GRPCBackendType.SPACECLAIM, BackendType.SPACECLAIM),
+        (GRPCBackendType.WINDOWS_DMS, BackendType.WINDOWS_SERVICE),
+        (GRPCBackendType.LINUX_DMS, BackendType.LINUX_SERVICE),
+        (GRPCBackendType.CORE_SERVICE_LINUX, BackendType.CORE_LINUX),
+        (GRPCBackendType.CORE_SERVICE_WINDOWS, BackendType.CORE_WINDOWS),
+        (GRPCBackendType.DISCOVERY_HEADLESS, BackendType.DISCOVERY_HEADLESS),
+    ],
+)
+def test_from_grpc_backend_type_to_backend_type_valid(grpc_backend_type, expected_backend_type):
+    """Test valid mappings from GRPCBackendType to BackendType."""
+    backend_type = from_grpc_backend_type_to_backend_type(grpc_backend_type)
+    assert backend_type == expected_backend_type
+
+
+def test_from_grpc_backend_type_to_backend_type_invalid():
+    """Test that an invalid GRPCBackendType raises a ValueError."""
+    invalid_backend_type = 999  # An invalid backend type not defined in GRPCBackendType
+
+    with pytest.raises(ValueError, match=f"Invalid backend type: {invalid_backend_type}"):
+        from_grpc_backend_type_to_backend_type(invalid_backend_type)
+
+
+@pytest.mark.parametrize(
+    "design_file_format, expected_export_format",
+    [
+        (DesignFileFormat.STEP, GRPCPartExportFormat.PARTEXPORTFORMAT_STEP),
+        (DesignFileFormat.IGES, GRPCPartExportFormat.PARTEXPORTFORMAT_IGES),
+    ],
+)
+def test_from_design_file_format_to_grpc_part_export_format_valid(
+    design_file_format, expected_export_format
+):
+    """Test valid mappings from DesignFileFormat to GRPCPartExportFormat."""
+    export_format = from_design_file_format_to_grpc_part_export_format(design_file_format)
+    assert export_format == expected_export_format
+
+
+def test_from_design_file_format_to_grpc_part_export_format_none():
+    """Test that an unsupported DesignFileFormat returns None."""
+    unsupported_format = "UnsupportedFormat"  # An invalid format not defined in DesignFileFormat
+
+    export_format = from_design_file_format_to_grpc_part_export_format(unsupported_format)
+
+    # Assert that the result is None
+    assert export_format is None

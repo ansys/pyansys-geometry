@@ -46,6 +46,13 @@ from ansys.geometry.core.shapes import (
     Sphere,
     Torus,
 )
+from ansys.geometry.core.shapes.parameterization import (
+    Parameterization,
+    ParamForm,
+    ParamType,
+)
+from ansys.geometry.core.shapes.surfaces.sphere import Sphere, SphereEvaluation
+from ansys.geometry.core.shapes.surfaces.torus import Torus
 
 
 def test_cylinder():
@@ -182,6 +189,126 @@ def test_cylinder_evaluation():
     assert np.allclose(eval2.v_derivative, Vector3D([0, 0, 1]))
 
 
+def test_cylinder_radius_not_positive():
+    """Test that a ValueError is raised when the radius is not positive."""
+    origin = Point3D([0, 0, 0])
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Test with zero radius
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Cylinder(origin, 0, reference, axis)
+
+    # Test with negative radius
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Cylinder(origin, -5, reference, axis)
+
+
+def test_cylinder_surface_area_height_not_positive():
+    """Test that a ValueError is raised when the height is not positive in surface_area."""
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a cylinder instance
+    cylinder = Cylinder(origin, radius, reference, axis)
+
+    # Test with zero height
+    with pytest.raises(ValueError, match="Height must be a real positive value."):
+        cylinder.surface_area(0)
+
+    # Test with negative height
+    with pytest.raises(ValueError, match="Height must be a real positive value."):
+        cylinder.surface_area(-5)
+
+
+def test_cylinder_volume_height_not_positive():
+    """Test that a ValueError is raised when the height is not positive in volume."""
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a cylinder instance
+    cylinder = Cylinder(origin, radius, reference, axis)
+
+    # Test with zero height
+    with pytest.raises(ValueError, match="Height must be a real positive value."):
+        cylinder.volume(0)
+
+    # Test with negative height
+    with pytest.raises(ValueError, match="Height must be a real positive value."):
+        cylinder.volume(-5)
+
+
+def test_cylinder_parameterization():
+    """Test the parameterization method of the Cylinder class."""
+    # Define valid inputs for the cylinder
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a cylinder instance
+    cylinder = Cylinder(origin, radius, reference, axis)
+
+    # Call the parameterization method
+    u, v = cylinder.parameterization()
+
+    # Validate the u parameterization
+    assert isinstance(u, Parameterization)
+    assert u.form == ParamForm.PERIODIC
+    assert u.type == ParamType.CIRCULAR
+    assert u.interval.start == 0
+    assert u.interval.end == 2 * np.pi
+
+    # Validate the v parameterization
+    assert isinstance(v, Parameterization)
+    assert v.form == ParamForm.OPEN
+    assert v.type == ParamType.LINEAR
+    assert v.interval.start == -np.inf
+    assert v.interval.end == np.inf
+
+
+def test_cylinder_contains_param_not_implemented():
+    """Test that contains_param raises NotImplementedError."""
+    # Define valid inputs for the cylinder
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a cylinder instance
+    cylinder = Cylinder(origin, radius, reference, axis)
+
+    # Define a parameter
+    param_uv = ParamUV(0.5, 0.5)
+
+    # Assert that contains_param raises NotImplementedError
+    with pytest.raises(NotImplementedError, match="contains_param\\(\\) is not implemented."):
+        cylinder.contains_param(param_uv)
+
+
+def test_cylinder_contains_point_not_implemented():
+    """Test that contains_point raises NotImplementedError."""
+    # Define valid inputs for the cylinder
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a cylinder instance
+    cylinder = Cylinder(origin, radius, reference, axis)
+
+    # Define a point
+    point = Point3D([5, 5, 5])
+
+    # Assert that contains_point raises NotImplementedError
+    with pytest.raises(NotImplementedError, match="contains_point\\(\\) is not implemented."):
+        cylinder.contains_point(point)
+
+
 def test_sphere():
     """``Sphere`` construction and equivalency."""
     # Create two Sphere objects
@@ -285,6 +412,124 @@ def test_sphere_evaluation():
     assert np.allclose(eval2.normal, UnitVector3D([1, 1, 1]))
     assert np.allclose(eval2.u_derivative.normalize(), UnitVector3D([-1, 1, 0]))
     assert np.allclose(eval2.v_derivative.normalize(), UnitVector3D([-1, -1, 2]))
+
+
+def test_sphere_reference_and_axis_not_perpendicular():
+    """Test that a ValueError is raised when the reference and axis are not perpendicular."""
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([1, 0, 0])  # Same direction as reference
+
+    with pytest.raises(
+        ValueError, match="Circle reference \\(dir_x\\) and axis \\(dir_z\\) must be perpendicular."
+    ):
+        Sphere(origin, radius, reference, axis)
+
+
+def test_sphere_radius_not_positive():
+    """Test that a ValueError is raised when the radius is not positive."""
+    origin = Point3D([0, 0, 0])
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Test with zero radius
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Sphere(origin, 0, reference, axis)
+
+    # Test with negative radius
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Sphere(origin, -5, reference, axis)
+
+
+def test_sphere_project_point_origin():
+    """Test the project_point method when the point is at the sphere's origin."""
+    # Define valid inputs for the sphere
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a sphere instance
+    sphere = Sphere(origin, radius, reference, axis)
+
+    # Define a point at the sphere's origin
+    point = Point3D([0, 0, 0])
+
+    # Call the project_point method
+    evaluation = sphere.project_point(point)
+
+    # Validate the result
+    assert isinstance(evaluation, SphereEvaluation)
+    assert evaluation.parameter.u == 0
+    assert evaluation.parameter.v == np.pi / 2
+
+
+def test_sphere_parameterization():
+    """Test the parameterization method of the Sphere class."""
+    # Define valid inputs for the sphere
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a sphere instance
+    sphere = Sphere(origin, radius, reference, axis)
+
+    # Call the parameterization method
+    u, v = sphere.parameterization()
+
+    # Validate the u parameterization
+    assert isinstance(u, Parameterization)
+    assert u.form == ParamForm.PERIODIC
+    assert u.type == ParamType.CIRCULAR
+    assert u.interval.start == 0
+    assert u.interval.end == 2 * np.pi
+
+    # Validate the v parameterization
+    assert isinstance(v, Parameterization)
+    assert v.form == ParamForm.CLOSED
+    assert v.type == ParamType.OTHER
+    assert v.interval.start == -np.pi / 2
+    assert v.interval.end == np.pi / 2
+
+
+def test_sphere_contains_param_not_implemented():
+    """Test that contains_param raises NotImplementedError."""
+    # Define valid inputs for the sphere
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a sphere instance
+    sphere = Sphere(origin, radius, reference, axis)
+
+    # Define a parameter
+    param_uv = ParamUV(0.5, 0.5)
+
+    # Assert that contains_param raises NotImplementedError
+    with pytest.raises(NotImplementedError, match="contains_param\\(\\) is not implemented."):
+        sphere.contains_param(param_uv)
+
+
+def test_sphere_contains_point_not_implemented():
+    """Test that contains_point raises NotImplementedError."""
+    # Define valid inputs for the sphere
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a sphere instance
+    sphere = Sphere(origin, radius, reference, axis)
+
+    # Define a point
+    point = Point3D([5, 5, 5])
+
+    # Assert that contains_point raises NotImplementedError
+    with pytest.raises(NotImplementedError, match="contains_point\\(\\) is not implemented."):
+        sphere.contains_point(point)
 
 
 def test_cone():
@@ -455,6 +700,119 @@ def test_cone_evaluation():
     assert np.allclose(eval2.v_derivative, Vector3D([0.70710678, 0.70710678, 1]))
 
 
+def test_cone_radius_not_positive():
+    """Test that a ValueError is raised when the radius is not positive."""
+    origin = Point3D([0, 0, 0])
+    half_angle = 45.0  # Valid half angle
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Test with zero radius
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Cone(origin, 0, half_angle, reference, axis)
+
+    # Test with negative radius
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Cone(origin, -5, half_angle, reference, axis)
+
+
+def test_cone_project_point_u_normalization():
+    """Test the normalization of the u parameter in the project_point method."""
+    # Define valid inputs for the cone
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    half_angle = 45.0  # Valid half angle
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a cone instance
+    cone = Cone(origin, radius, half_angle, reference, axis)
+
+    # Define a point to project onto the cone that results in u < 0
+    point_negative_u = Point3D([-5, -5, 5])
+    evaluation_negative_u = cone.project_point(point_negative_u)
+    assert 0 <= evaluation_negative_u.parameter.u <= 2 * np.pi, (
+        "u parameter is not normalized within [0, 2*pi]"
+    )
+
+    # Define a point to project onto the cone that results in u > 2 * np.pi
+    point_large_u = Point3D([100, 100, 5])
+    evaluation_large_u = cone.project_point(point_large_u)
+    assert 0 <= evaluation_large_u.parameter.u <= 2 * np.pi, (
+        "u parameter is not normalized within [0, 2*pi]"
+    )
+
+
+def test_cone_parameterization():
+    """Test the parameterization method of the Cone class."""
+    # Define valid inputs for the cone
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    half_angle = 45.0  # Valid half angle
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a cone instance
+    cone = Cone(origin, radius, half_angle, reference, axis)
+
+    # Call the parameterization method
+    u, v = cone.parameterization()
+
+    # Validate the u parameterization
+    assert isinstance(u, Parameterization)
+    assert u.form == ParamForm.PERIODIC
+    assert u.type == ParamType.CIRCULAR
+    assert u.interval.start == 0
+    assert u.interval.end == 2 * np.pi
+
+    # Validate the v parameterization
+    assert isinstance(v, Parameterization)
+    assert v.form == ParamForm.OPEN
+    assert v.type == ParamType.LINEAR
+    assert v.interval.start == cone.apex_param
+    assert v.interval.end == np.inf if cone.apex_param < 0 else cone.apex_param
+
+
+def test_cone_contains_param_not_implemented():
+    """Test that contains_param raises NotImplementedError."""
+    # Define valid inputs for the cone
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    half_angle = 45.0  # Valid half angle
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a cone instance
+    cone = Cone(origin, radius, half_angle, reference, axis)
+
+    # Define a parameter
+    param_uv = ParamUV(0.5, 0.5)
+
+    # Assert that contains_param raises NotImplementedError
+    with pytest.raises(NotImplementedError, match="contains_param\\(\\) is not implemented."):
+        cone.contains_param(param_uv)
+
+
+def test_cone_contains_point_not_implemented():
+    """Test that contains_point raises NotImplementedError."""
+    # Define valid inputs for the cone
+    origin = Point3D([0, 0, 0])
+    radius = 10.0
+    half_angle = 45.0  # Valid half angle
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a cone instance
+    cone = Cone(origin, radius, half_angle, reference, axis)
+
+    # Define a point
+    point = Point3D([5, 5, 5])
+
+    # Assert that contains_point raises NotImplementedError
+    with pytest.raises(NotImplementedError, match="contains_point\\(\\) is not implemented."):
+        cone.contains_point(point)
+
+
 def test_torus():
     """``Torus`` construction and equivalency."""
     # Create two Torus objects
@@ -549,6 +907,11 @@ def test_torus():
         torus_mirror._reference, UnitVector3D([-0.11490753, -0.29684446, -0.94798714])
     )
     assert np.allclose(torus_mirror._axis, UnitVector3D([0, -0.9543083, 0.29882381]))
+    # Attempt to create a Torus and expect a ValueError
+    with pytest.raises(
+        ValueError, match="Torus reference \(dir_x\) and axis \(dir_z\) must be perpendicular."
+    ):
+        Torus(origin, major_radius, minor_radius, UnitVector3D([1, 0, 0]), UnitVector3D([1, 0, 0]))
 
 
 def test_torus_units():
@@ -680,6 +1043,76 @@ def test_torus_evaluation():
         UnitVector3D([0.182574185835055, 0.365148371670111, -0.912870929175277]),
     )
     assert isinstance(eval3.max_curvature_direction, UnitVector3D)
+
+
+def test_torus_parameterization():
+    """Test the parameterization method of the Torus class."""
+    # Define valid inputs for the torus
+    origin = Point3D([0, 0, 0])
+    major_radius = 10.0
+    minor_radius = 5.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a torus instance
+    torus = Torus(origin, major_radius, minor_radius, reference, axis)
+
+    # Call the parameterization method
+    u, v = torus.parameterization()
+
+    # Validate the u parameterization
+    assert isinstance(u, Parameterization)
+    assert u.form == ParamForm.PERIODIC
+    assert u.type == ParamType.CIRCULAR
+    assert u.interval.start == 0
+    assert u.interval.end == 2 * np.pi
+
+    # Validate the v parameterization
+    assert isinstance(v, Parameterization)
+    assert v.form == ParamForm.PERIODIC
+    assert v.type == ParamType.CIRCULAR
+    assert v.interval.start == -np.pi / 2
+    assert v.interval.end == np.pi / 2
+
+
+def test_torus_contains_param_not_implemented():
+    """Test that contains_param raises NotImplementedError."""
+    # Define valid inputs for the torus
+    origin = Point3D([0, 0, 0])
+    major_radius = 10.0
+    minor_radius = 5.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a torus instance
+    torus = Torus(origin, major_radius, minor_radius, reference, axis)
+
+    # Define a parameter
+    param_uv = ParamUV(0.5, 0.5)
+
+    # Assert that contains_param raises NotImplementedError
+    with pytest.raises(NotImplementedError, match="contains_param\\(\\) is not implemented."):
+        torus.contains_param(param_uv)
+
+
+def test_torus_contains_point_not_implemented():
+    """Test that contains_point raises NotImplementedError."""
+    # Define valid inputs for the torus
+    origin = Point3D([0, 0, 0])
+    major_radius = 10.0
+    minor_radius = 5.0
+    reference = UnitVector3D([1, 0, 0])
+    axis = UnitVector3D([0, 0, 1])
+
+    # Create a torus instance
+    torus = Torus(origin, major_radius, minor_radius, reference, axis)
+
+    # Define a point
+    point = Point3D([5, 5, 5])
+
+    # Assert that contains_point raises NotImplementedError
+    with pytest.raises(NotImplementedError, match="contains_point\\(\\) is not implemented."):
+        torus.contains_point(point)
 
 
 def test_circle():
@@ -1054,3 +1487,100 @@ def test_nurbs_curve_point_projection():
     assert projection.is_set() is True
     assert np.allclose(projection.position, Point3D([1, 0.5, 0]))
     assert np.isclose(projection.parameter, 0.5)
+
+
+def test_nurbs_curve_equality_with_non_nurbs_object():
+    """Test that __eq__ returns False when comparing with a non-NURBSCurve object."""
+    # Create a valid NURBSCurve instance
+    control_points = [Point3D([0, 0, 0]), Point3D([1, 1, 1]), Point3D([2, 2, 2])]
+    degree = 2
+    knots = [0, 0, 0, 1, 1, 1]
+    nurbs_curve = NURBSCurve.from_control_points(control_points, degree, knots)
+
+    # Compare with a non-NURBSCurve object
+    non_nurbs_object = "Not a NURBSCurve"
+    assert nurbs_curve != non_nurbs_object, (
+        "__eq__ should return False when comparing with a non-NURBSCurve object."
+    )
+
+
+def test_nurbs_curve_parameterization():
+    """Test the parameterization method of the NURBSCurve class."""
+    # Define valid inputs for the NURBS curve
+    control_points = [Point3D([0, 0, 0]), Point3D([1, 1, 1]), Point3D([2, 2, 2])]
+    degree = 2
+    knots = [0, 0, 0, 1, 1, 1]
+
+    # Create a NURBS curve instance
+    nurbs_curve = NURBSCurve.from_control_points(control_points, degree, knots)
+
+    # Call the parameterization method
+    parameterization = nurbs_curve.parameterization()
+
+    # Validate the parameterization
+    assert isinstance(parameterization, Parameterization)
+    assert parameterization.form == ParamForm.OTHER
+    assert parameterization.type == ParamType.OTHER
+    assert parameterization.interval.start == nurbs_curve.geomdl_nurbs_curve.domain[0]
+    assert parameterization.interval.end == nurbs_curve.geomdl_nurbs_curve.domain[1]
+
+
+def test_nurbs_curve_transformed_copy():
+    """Test the transformed_copy method of the NURBSCurve class."""
+    # Define valid inputs for the NURBS curve
+    control_points = [Point3D([0, 0, 0]), Point3D([1, 1, 1]), Point3D([2, 2, 2])]
+    degree = 2
+    knots = [0, 0, 0, 1, 1, 1]
+
+    # Create a NURBS curve instance
+    nurbs_curve = NURBSCurve.from_control_points(control_points, degree, knots)
+
+    # Define a transformation matrix (e.g., rotation + translation)
+    transformation_matrix = Matrix44(
+        [
+            [1, 0, 0, 10],  # Translate x by 10
+            [0, 1, 0, 20],  # Translate y by 20
+            [0, 0, 1, 30],  # Translate z by 30
+            [0, 0, 0, 1],
+        ]
+    )
+
+    # Call the transformed_copy method
+    transformed_curve = nurbs_curve.transformed_copy(transformation_matrix)
+    assert isinstance(transformed_curve, NURBSCurve)
+
+
+def test_nurbs_curve_contains_param_not_implemented():
+    """Test that contains_param raises NotImplementedError."""
+    # Define valid inputs for the NURBS curve
+    control_points = [Point3D([0, 0, 0]), Point3D([1, 1, 1]), Point3D([2, 2, 2])]
+    degree = 2
+    knots = [0, 0, 0, 1, 1, 1]
+
+    # Create a NURBS curve instance
+    nurbs_curve = NURBSCurve.from_control_points(control_points, degree, knots)
+
+    # Define a parameter
+    param = 0.5
+
+    # Assert that contains_param raises NotImplementedError
+    with pytest.raises(NotImplementedError, match="contains_param\\(\\) is not implemented."):
+        nurbs_curve.contains_param(param)
+
+
+def test_nurbs_curve_contains_point_not_implemented():
+    """Test that contains_point raises NotImplementedError."""
+    # Define valid inputs for the NURBS curve
+    control_points = [Point3D([0, 0, 0]), Point3D([1, 1, 1]), Point3D([2, 2, 2])]
+    degree = 2
+    knots = [0, 0, 0, 1, 1, 1]
+
+    # Create a NURBS curve instance
+    nurbs_curve = NURBSCurve.from_control_points(control_points, degree, knots)
+
+    # Define a point
+    point = Point3D([1, 1, 1])
+
+    # Assert that contains_point raises NotImplementedError
+    with pytest.raises(NotImplementedError, match="contains_point\\(\\) is not implemented."):
+        nurbs_curve.contains_point(point)
