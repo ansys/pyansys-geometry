@@ -85,7 +85,7 @@ tests-minimal = [
     "pytest-pyvista==0.1.9",
 ]
 doc = [
-    "ansys-sphinx-theme[autoapi]==1.5.2",
+    "ansys-sphinx-theme[autoapi]==1.5.3",
     "ansys-tools-path==0.7.3",
     "ansys-tools-visualization-interface==0.11.0",
     "beartype==0.21.0",
