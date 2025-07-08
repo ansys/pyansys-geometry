@@ -1256,9 +1256,7 @@ class Design(Component):
         self.__read_existing_design()
 
     def _update_from_tracker(self, tracker_response: list[dict]):
-        """
-        Update the design with the changed bodies while preserving unchanged ones.
-        """
+        """Update the design with the changed bodies while preserving unchanged ones."""
         self._grpc_client.log.debug(
             f"Starting _update_from_tracker with response: {tracker_response}"
         )
@@ -1335,7 +1333,8 @@ class Design(Component):
 
     def _update_body(self, existing_body, body_info):
         self._grpc_client.log.debug(
-            f"Updating body '{existing_body.name}' (ID: {existing_body.id}) with new info: {body_info}"
+            f"Updating body '{existing_body.name}' "
+            f"(ID: {existing_body.id}) with new info: {body_info}"
         )
         existing_body.name = body_info["name"]
         existing_body._template._is_surface = body_info.get("is_surface", False)
@@ -1351,7 +1350,8 @@ class Design(Component):
                 )
                 component.bodies.append(new_body)
                 self._grpc_client.log.debug(
-                    f"Added new body '{new_body.name}' (ID: {new_body.id}) to component '{component.name}' (ID: {component.id})"
+                    f"Added new body '{new_body.name}' (ID: {new_body.id}) "
+                    f"to component '{component.name}' (ID: {component.id})"
                 )
                 return True
 
@@ -1365,7 +1365,8 @@ class Design(Component):
             if body.id == body_info["id"]:
                 self._update_body(body, body_info)
                 self._grpc_client.log.debug(
-                    f"Updated body '{body.name}' (ID: {body.id}) in component '{component.name}' (ID: {component.id})"
+                    f"Updated body '{body.name}' (ID: {body.id}) in component "
+                    f"'{component.name}' (ID: {component.id})"
                 )
                 return True
 
@@ -1381,7 +1382,8 @@ class Design(Component):
                 body._is_alive = False
                 component.bodies.remove(body)
                 self._grpc_client.log.debug(
-                    f"Removed body '{body_info['name']}' (ID: {body_info['id']}) from component '{component.name}' (ID: {component.id})"
+                    f"Removed body '{body_info['name']}' (ID: {body_info['id']}) from component "
+                    f"'{component.name}' (ID: {component.id})"
                 )
                 return True
 
