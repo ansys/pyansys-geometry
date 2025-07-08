@@ -395,7 +395,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "found": response.found,
             "repaired": response.repaired,
             "complete_command_response": serialized_tracker_response,
-
         }
 
     @protect_grpc
