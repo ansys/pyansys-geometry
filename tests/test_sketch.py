@@ -363,6 +363,10 @@ def test_sketch_nurbs():
     assert len(nurbs1_retrieved) == 1
     assert nurbs1_retrieved[0] == sketch.edges[0]
 
+    # Check if the curve contains a point
+    assert sketch.edges[0].contains_point(Point2D([4, 7]))
+    assert not sketch.edges[0].contains_point(Point2D([5, 5]))
+
 
 def test_sketch_triangle_face():
     """Test Triangle SketchFace sketching."""
