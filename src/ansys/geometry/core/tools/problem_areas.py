@@ -116,7 +116,7 @@ class ProblemArea:
         def serialize_entity_identifier(entity):
             """Serialize an EntityIdentifier object into a dictionary."""
             return {
-                "id": entity.id,         
+                "id": entity.id,
             }
 
         # Safely serialize each field, defaulting to an empty list if the field is missing
