@@ -21,6 +21,8 @@
 # SOFTWARE.
 
 import os
+import socket
+import tempfile
 
 from beartype.roar import BeartypeCallHintParamViolation
 import grpc
@@ -44,6 +46,11 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.connection.product_instance import (
     ProductInstance,
+    _check_minimal_versions,
+    _check_port_or_get_one,
+    _get_common_env,
+    _is_port_available,
+    _manifest_path_provider,
     prepare_and_start_backend,
 )
 from ansys.geometry.core.math import Frame, Plane, Point2D, Point3D, UnitVector3D
@@ -417,3 +424,189 @@ def test_prepare_and_start_backend_invalid_version():
             backend_type=BackendType.WINDOWS_SERVICE,
             version="invalid_version",  # Pass a non-integer value for version
         )
+
+
+def test_is_port_available():
+    """Test that _is_port_available correctly detects available and unavailable ports."""
+    host = "localhost"
+
+    # Test an available port
+    available_port = 5000
+    assert _is_port_available(available_port, host) is True
+
+    # Test an unavailable port by binding it
+    unavailable_port = 5001
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((host, unavailable_port))  # Bind the port to make it unavailable
+        assert _is_port_available(unavailable_port, host) is False
+
+    # Test port 0 (invalid port)
+    assert _is_port_available(0, host) is False
+
+
+def test_manifest_path_exists(tmp_path):
+    """Test when the manifest path exists."""
+    # Create a temporary manifest file
+    manifest_path = tmp_path / "test_manifest.xml"
+    manifest_path.touch()  # Create the file
+
+    # Call the function
+    result = _manifest_path_provider(
+        version=241, available_installations={}, manifest_path=str(manifest_path)
+    )
+
+    # Assert the returned path is the same as the input
+    assert result == str(manifest_path)
+
+
+def test_manifest_path_does_not_exist(tmp_path, caplog):
+    """Test when the manifest path does not exist and handle RuntimeError."""
+
+    # Define a non-existent manifest path
+    manifest_path = tmp_path / "non_existent_manifest.xml"
+
+    # Provide a valid `available_installations` dictionary with the required version key
+    available_installations = {241: str(tmp_path)}
+
+    # Simulate the default manifest file path
+    default_manifest_path = tmp_path / "Addins" / "ApiServer" / "manifest.xml"
+    default_manifest_path.parent.mkdir(
+        parents=True, exist_ok=True
+    )  # Create the directory structure
+
+    # Ensure the default manifest file does not exist
+    assert not default_manifest_path.exists()
+
+    # Call the function and expect a RuntimeError
+    with pytest.raises(RuntimeError, match="Default manifest file's path does not exist."):
+        _manifest_path_provider(
+            version=241,
+            available_installations=available_installations,
+            manifest_path=str(manifest_path),
+        )
+
+    # Assert the warning message is logged
+    assert (
+        "Specified manifest file's path does not exist. Taking install default path." in caplog.text
+    )
+
+
+@pytest.mark.parametrize(
+    "latest_installed_version, specific_minimum_version, should_raise, expected_message",
+    [
+        (
+            240,
+            None,
+            True,
+            "PyAnsys Geometry is compatible with Ansys Products from version 24.1.0.",
+        ),
+        (242, None, False, None),
+        (250, 251, True, "PyAnsys Geometry is compatible with Ansys Products from version 25.1.0."),
+        (252, 251, False, None),
+    ],
+)
+def test_check_minimal_versions(
+    latest_installed_version, specific_minimum_version, should_raise, expected_message
+):
+    """Test _check_minimal_versions with various scenarios."""
+    if should_raise:
+        with pytest.raises(SystemError, match=expected_message):
+            _check_minimal_versions(latest_installed_version, specific_minimum_version)
+    else:
+        try:
+            _check_minimal_versions(latest_installed_version, specific_minimum_version)
+        except SystemError:
+            pytest.fail("SystemError raised unexpectedly.")
+
+
+@pytest.mark.parametrize(
+    "port, should_raise, expected_message",
+    [
+        (5000, False, None),  # Test for an available port
+        (
+            5001,
+            True,
+            "Port 5001 is already in use. Please specify a different one.",
+        ),  # Test for an unavailable port
+    ],
+)
+def test_check_port_or_get_one(port, should_raise, expected_message):
+    """Test _check_port_or_get_one with various port availability scenarios."""
+    host = "localhost"
+
+    if should_raise:
+        # Bind the port to make it unavailable
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind((host, port))
+            s.listen(1)  # Start listening on the port
+
+            # Call the function and expect a ConnectionError
+            with pytest.raises(ConnectionError, match=expected_message):
+                _check_port_or_get_one(port)
+    else:
+        # Ensure the port is available
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            assert s.connect_ex((host, port)) != 0  # Port should not be in use
+
+        # Call the function
+        result = _check_port_or_get_one(port)
+
+        # Assert the returned port is the same as the input
+        assert result == port
+
+
+@pytest.mark.parametrize(
+    "host, port, enable_trace, server_log_level, server_logs_folder, expected_env",
+    [
+        (
+            "127.0.0.1",
+            8080,
+            True,
+            2,
+            None,  # Use a dynamically created temporary directory
+            {
+                "API_ADDRESS": "127.0.0.1",
+                "API_PORT": "8080",
+                "LOG_LEVEL": "0",  # Trace mode overrides log level to 0
+                "ENABLE_TRACE": "1",
+            },
+        ),
+        (
+            "localhost",
+            9090,
+            False,
+            3,
+            None,
+            {
+                "API_ADDRESS": "localhost",
+                "API_PORT": "9090",
+                "LOG_LEVEL": "3",  # Log level remains unchanged
+            },
+        ),
+    ],
+)
+def test_get_common_env(
+    host, port, enable_trace, server_log_level, server_logs_folder, expected_env
+):
+    """Test the _get_common_env function with various scenarios."""
+    # Dynamically create a temporary directory for logs if server_logs_folder is None
+    with tempfile.TemporaryDirectory() as temp_logs_folder:
+        if server_logs_folder is None:
+            server_logs_folder = temp_logs_folder
+
+        # Call the function
+        env = _get_common_env(
+            host=host,
+            port=port,
+            enable_trace=enable_trace,
+            server_log_level=server_log_level,
+            server_logs_folder=server_logs_folder,
+        )
+
+        # Update expected_env with the dynamically created logs folder
+        if enable_trace:
+            expected_env["ANS_DSCO_REMOTE_LOGS_FOLDER"] = server_logs_folder
+
+        # Assert environment variables are correctly set
+        for key, value in expected_env.items():
+            assert env[key] == value
