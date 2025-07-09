@@ -1940,7 +1940,16 @@ class Body(IBody):
             for b in other_bodies:
                 b.parent_component.delete_body(b)
 
-        parent_design._update_design_inplace()
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
+
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
+            # and update the parent design with the serialized response.
+            tracker_response = response.result.complete_command_response
+            serialized_response = self._serialize_tracker_command_response(tracker_response)
+            parent_design._update_from_tracker(serialized_response)
 
     @reset_tessellation_cache
     @ensure_design_is_active
