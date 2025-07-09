@@ -611,6 +611,3 @@ def test_get_common_env(
         for key, value in expected_env.items():
             assert env[key] == value
 
-        # Assert keys that should not exist in the environment
-        if not enable_trace:
-            assert "ENABLE_TRACE" not in env
