@@ -80,7 +80,7 @@ class SketchEdge:
         Notes
         -----
         This implies that their 3D definition might suffer changes. By default, this
-        metho does nothing. It is required to be implemented in child ``SketchEdge``
+        method does nothing. It is required to be implemented in child ``SketchEdge``
         classes.
         """
         pass
