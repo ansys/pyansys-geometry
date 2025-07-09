@@ -340,6 +340,14 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {"result": resp.result}
+    
+    @protect_grpc
+    def is_surface_body(self, **kwargs) -> dict:  # noqa: D102
+        # Call the gRPC service
+        resp = self.stub.IsSurfaceBody(request=build_grpc_id(kwargs["id"]))
+
+        # Return the response - formatted as a dictionary
+        return {"result": resp.result}
 
     @protect_grpc
     def get_color(self, **kwargs) -> dict:  # noqa: D102

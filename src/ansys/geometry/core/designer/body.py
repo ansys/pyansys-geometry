@@ -181,6 +181,16 @@ class IBody(ABC):
         This method is only available starting on Ansys release 25R2.
         """
         return
+    
+    @abstractmethod
+    def is_surface_body(self) -> bool:
+        """Get the if the body is a surface body.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        return
 
     @abstractmethod
     def set_suppressed(self, suppressed: bool) -> None:
