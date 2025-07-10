@@ -1,0 +1,562 @@
+
+
+
+
+
+
+:class:`NURBSCurve`
+===================
+
+
+.. py:class:: ansys.geometry.core.shapes.curves.nurbs.NURBSCurve
+
+   Bases: :py:obj:`ansys.geometry.core.shapes.curves.curve.Curve`
+
+
+   
+   Represents a NURBS curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This class is a wrapper around the NURBS curve class from the `geomdl` library.
+   By leveraging the `geomdl` library, this class provides a high-level interface
+   to create and manipulate NURBS curves. The `geomdl` library is a powerful
+   library for working with NURBS curves and surfaces. For more information, see
+   https://pypi.org/project/geomdl/.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+.. py:currentmodule:: NURBSCurve
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~contains_param`
+            - Check a parameter is within the parametric range of the curve.
+          * - :py:attr:`~contains_point`
+            - Check a point is contained by the curve.
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~from_control_points`
+            - Create a NURBS curve from control points.
+          * - :py:attr:`~fit_curve_from_points`
+            - Fit a NURBS curve to a set of points.
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~parameterization`
+            - Get the parametrization of the NURBS curve.
+          * - :py:attr:`~transformed_copy`
+            - Create a transformed copy of the curve.
+          * - :py:attr:`~evaluate`
+            - Evaluate the curve at the given parameter.
+          * - :py:attr:`~project_point`
+            - Project a point to the NURBS curve.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~geomdl_nurbs_curve`
+            - Get the underlying NURBS curve.
+          * - :py:attr:`~control_points`
+            - Get the control points of the curve.
+          * - :py:attr:`~degree`
+            - Get the degree of the curve.
+          * - :py:attr:`~knots`
+            - Get the knot vector of the curve.
+          * - :py:attr:`~weights`
+            - Get the weights of the control points.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Determine if two curves are equal.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
+
+Property detail
+---------------
+
+.. py:property:: geomdl_nurbs_curve
+   :type: geomdl.NURBS.Curve
+
+
+   
+   Get the underlying NURBS curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This property gives access to the full functionality of the NURBS curve
+   coming from the `geomdl` library. Use with caution.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: control_points
+   :type: list[ansys.geometry.core.math.Point3D]
+
+
+   
+   Get the control points of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: degree
+   :type: int
+
+
+   
+   Get the degree of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: knots
+   :type: list[ansys.geometry.core.typing.Real]
+
+
+   
+   Get the knot vector of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: weights
+   :type: list[ansys.geometry.core.typing.Real]
+
+
+   
+   Get the weights of the control points.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: from_control_points(control_points: list[ansys.geometry.core.math.Point3D], degree: int, knots: list[ansys.geometry.core.typing.Real], weights: list[ansys.geometry.core.typing.Real] = None) -> NURBSCurve
+   :classmethod:
+
+
+   
+   Create a NURBS curve from control points.
+
+
+   :Parameters:
+
+       **control_points** : :class:`python:list`\[:obj:`Point3D`]
+           Control points of the curve.
+
+       **degree** : :class:`python:int`
+           Degree of the curve.
+
+       **knots** : :class:`python:list`\[:obj:`Real`]
+           Knot vector of the curve.
+
+       **weights** : :class:`python:list`\[:obj:`Real`], :obj:`optional`
+           Weights of the control points.
+
+
+
+   :Returns:
+
+       :obj:`NURBSCurve`
+           NURBS curve.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: fit_curve_from_points(points: list[ansys.geometry.core.math.Point3D], degree: int) -> NURBSCurve
+   :classmethod:
+
+
+   
+   Fit a NURBS curve to a set of points.
+
+
+   :Parameters:
+
+       **points** : :class:`python:list`\[:obj:`Point3D`]
+           Points to fit the curve to.
+
+       **degree** : :class:`python:int`
+           Degree of the curve.
+
+
+
+   :Returns:
+
+       :obj:`NURBSCurve`
+           Fitted NURBS curve.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __eq__(other: NURBSCurve) -> bool
+
+   
+   Determine if two curves are equal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: parameterization() -> ansys.geometry.core.shapes.parameterization.Parameterization
+
+   
+   Get the parametrization of the NURBS curve.
+
+   The parameter is defined in the interval [0, 1] by default. Information
+   is provided about the parameter type and form.
+
+
+
+
+   :Returns:
+
+       :obj:`Parameterization`
+           Information about how the NURBS curve is parameterized.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.Matrix44) -> NURBSCurve
+
+   
+   Create a transformed copy of the curve.
+
+
+   :Parameters:
+
+       **matrix** : :obj:`Matrix44`
+           Transformation matrix.
+
+
+
+   :Returns:
+
+       :obj:`NURBSCurve`
+           Transformed copy of the curve.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate(parameter: ansys.geometry.core.typing.Real) -> ansys.geometry.core.shapes.curves.curve_evaluation.CurveEvaluation
+
+   
+   Evaluate the curve at the given parameter.
+
+
+   :Parameters:
+
+       **parameter** : :obj:`Real`
+           Parameter to evaluate the curve at.
+
+
+
+   :Returns:
+
+       :obj:`CurveEvaluation`
+           Evaluation of the curve at the given parameter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_param(param: ansys.geometry.core.typing.Real) -> bool
+   :abstractmethod:
+
+
+   
+   Check a parameter is within the parametric range of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.Point3D) -> bool
+   :abstractmethod:
+
+
+   
+   Check a point is contained by the curve.
+
+   The point can either lie within the curve or on its boundary.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: project_point(point: ansys.geometry.core.math.Point3D, initial_guess: Optional[ansys.geometry.core.typing.Real] = None) -> ansys.geometry.core.shapes.curves.curve_evaluation.CurveEvaluation
+
+   
+   Project a point to the NURBS curve.
+
+   This method returns the evaluation at the closest point.
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Point to project to the curve.
+
+       **initial_guess** : :obj:`Real`, :obj:`optional`
+           Initial guess for the optimization algorithm. If not provided, the midpoint
+           of the domain is used.
+
+
+
+   :Returns:
+
+       :obj:`CurveEvaluation`
+           Evaluation at the closest point on the curve.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Based on `the NURBS book <https://link.springer.com/book/10.1007/978-3-642-59223-2>`_,
+   the projection of a point to a NURBS curve is the solution to the following optimization
+   problem: minimize the distance between the point and the curve. The distance is defined
+   as the Euclidean distance squared. For more information, please refer to
+   the implementation of the `distance_squared` function.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
