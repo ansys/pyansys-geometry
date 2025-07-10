@@ -39,6 +39,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ExtrudeFacesRequest,
     ExtrudeFacesUpToRequest,
     FilletRequest,
+    FillRequest,
     FullFilletRequest,
     ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
@@ -62,6 +63,7 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
+from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
     AlignCondition,
@@ -93,8 +95,10 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.sketch import Sketch
 
 
 @unique
@@ -1635,3 +1639,54 @@ class GeometryCommands:
             result.is_reversed,
             result.is_valid,
         )
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def fill(
+        self,
+        sketch: "Sketch",
+        design: "Design",
+    ) -> Body:
+        """Fill the given sketch on the specified plane within the design.
+        
+        Parameters
+        ----------
+        sketch : Sketch
+            The sketch to fill.
+        design : Design
+            The design in which the sketch resides.
+
+        Returns
+        -------
+        Body
+            The surface body created by filling the sketch.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        from ansys.geometry.core.connection.conversions import (
+            plane_to_grpc_plane,
+            sketch_shapes_to_grpc_geometries,
+        )
+
+        # Create the gRPC request
+        request = FillRequest(
+            geometries=sketch_shapes_to_grpc_geometries(sketch.plane, sketch.edges, sketch.faces),
+            plane=plane_to_grpc_plane(sketch.plane),
+            parent=design._grpc_id
+        )
+
+        # Call the gRPC service
+        response = self._commands_stub.Fill(request)
+
+        # If successful, create and return the Body object
+        if response.success:
+            tb = MasterBody(
+                response.created_body.id,
+                response.created_body.name,
+                self._grpc_client,
+                is_surface=response.created_body.is_surface,
+            )
+
+            return Body(response.created_body.id, response.created_body.name, design, tb)

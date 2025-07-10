@@ -33,10 +33,12 @@ from ansys.api.geometry.v0.models_pb2 import (
     Ellipse as GRPCEllipse,
     Frame as GRPCFrame,
     Geometries as GRPCGeometries,
+    Knot as GRPCKnot,
     Line as GRPCLine,
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
     Matrix as GRPCMatrix,
+    NurbsCurve as GRPCNurbsCurve,
     Plane as GRPCPlane,
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
@@ -69,6 +71,7 @@ from ansys.geometry.core.sketch.circle import SketchCircle
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.ellipse import SketchEllipse
 from ansys.geometry.core.sketch.face import SketchFace
+from ansys.geometry.core.sketch.nurbs import SketchNurbs
 from ansys.geometry.core.sketch.polygon import Polygon
 from ansys.geometry.core.sketch.segment import SketchSegment
 
@@ -160,11 +163,16 @@ def sketch_shapes_to_grpc_geometries(
     GRPCGeometries
         Geometry service gRPC geometries message. The unit is meters.
     """
+    from ansys.geometry.core.sketch.circle import SketchCircle
+    from ansys.geometry.core.sketch.ellipse import SketchEllipse
+    from ansys.geometry.core.sketch.polygon import Polygon
+
     geometries = GRPCGeometries()
 
     converted_sketch_edges = sketch_edges_to_grpc_geometries(edges, plane)
     geometries.lines.extend(converted_sketch_edges[0])
     geometries.arcs.extend(converted_sketch_edges[1])
+    geometries.nurbs_curves.extend(converted_sketch_edges[2])
 
     for face in faces:
         if isinstance(face, SketchCircle):
@@ -190,6 +198,8 @@ def sketch_shapes_to_grpc_geometries(
             one_curve_geometry.ellipses.append(geometries.ellipses[0])
         elif len(geometries.polygons) > 0:
             one_curve_geometry.polygons.append(geometries.polygons[0])
+        elif len(geometries.nurbs_curves) > 0:
+            one_curve_geometry.nurbs_curves.append(geometries.nurbs_curves[0])
         return one_curve_geometry
 
     else:
@@ -197,9 +207,9 @@ def sketch_shapes_to_grpc_geometries(
 
 
 def sketch_edges_to_grpc_geometries(
-    edges: list[SketchEdge],
-    plane: Plane,
-) -> tuple[list[GRPCLine], list[GRPCArc]]:
+    edges: list["SketchEdge"],
+    plane: "Plane",
+) -> tuple[list[GRPCLine], list[GRPCArc], list[GRPCNurbsCurve]]:
     """Convert a list of ``SketchEdge`` to a gRPC message.
 
     Parameters
@@ -211,18 +221,25 @@ def sketch_edges_to_grpc_geometries(
 
     Returns
     -------
-    tuple[list[GRPCLine], list[GRPCArc]]
-        Geometry service gRPC line and arc messages. The unit is meters.
+    tuple[list[GRPCLine], list[GRPCArc], list[GRPCNurbsCurve]]
+        Geometry service gRPC line, arc, and NURBS curve messages. The unit is meters.
     """
+    from ansys.geometry.core.sketch.arc import Arc
+    from ansys.geometry.core.sketch.nurbs import SketchNurbs
+    from ansys.geometry.core.sketch.segment import SketchSegment
+
     arcs = []
     segments = []
+    nurbs_curves = []
     for edge in edges:
         if isinstance(edge, SketchSegment):
             segments.append(sketch_segment_to_grpc_line(edge, plane))
         elif isinstance(edge, Arc):
             arcs.append(sketch_arc_to_grpc_arc(edge, plane))
+        elif isinstance(edge, SketchNurbs):
+            nurbs_curves.append(sketch_nurbs_to_grpc_nurbs_curve(edge, plane))
 
-    return (segments, arcs)
+    return (segments, arcs, nurbs_curves)
 
 
 def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
@@ -252,6 +269,82 @@ def sketch_arc_to_grpc_arc(arc: Arc, plane: Plane) -> GRPCArc:
         end=point2d_to_grpc_point(plane, arc.end),
         axis=axis,
     )
+
+
+def sketch_nurbs_to_grpc_nurbs_curve(curve: "SketchNurbs", plane: "Plane") -> GRPCNurbsCurve:
+    """Convert a ``SketchNurbs`` class to a NURBS curve gRPC message.
+
+    Parameters
+    ----------
+    nurbs : SketchNurbs
+        Source NURBS data.
+    plane : Plane
+        Plane for positioning the NURBS curve.
+
+    Returns
+    -------
+    GRPCNurbsCurve
+        Geometry service gRPC NURBS curve message. The unit is meters.
+    """
+    from ansys.api.geometry.v0.models_pb2 import (
+        ControlPoint as GRPCControlPoint,
+        NurbsData as GRPCNurbsData,
+    )
+
+    # Convert control points
+    control_points = [
+        GRPCControlPoint(
+            position=point2d_to_grpc_point(plane, pt),
+            weight=curve.weights[i],
+        )
+        for i, pt in enumerate(curve.control_points)
+    ]
+
+    # Convert nurbs data
+    nurbs_data = GRPCNurbsData(
+        degree=curve.degree,
+        knots=knots_to_grpc_knots(curve.knots),
+        order=curve.degree + 1,
+    )
+
+    return GRPCNurbsCurve(
+        control_points=control_points,
+        nurbs_data=nurbs_data,
+    )
+
+
+def knots_to_grpc_knots(knots: list[float]) -> list[GRPCKnot]:
+    """Convert a list of knots to a list of gRPC knot messages.
+
+    Parameters
+    ----------
+    knots : list[float]
+        Source knots data.
+
+    Returns
+    -------
+    list[GRPCKnot]
+        Geometry service gRPC knot messages.
+    """
+    from collections import Counter
+
+    # Count multiplicities
+    multiplicities = Counter(knots)
+
+    # Get unique knots (parameters) in order
+    unique_knots = sorted(set(knots))
+    knot_multiplicities = [(knot, multiplicities[knot]) for knot in unique_knots]
+
+    # Convert to gRPC knot messages
+    grpc_knots = [
+        GRPCKnot(
+            parameter=knot,
+            multiplicity=multiplicity,
+        )
+        for knot, multiplicity in knot_multiplicities
+    ]
+
+    return grpc_knots
 
 
 def sketch_ellipse_to_grpc_ellipse(ellipse: SketchEllipse, plane: Plane) -> GRPCEllipse:

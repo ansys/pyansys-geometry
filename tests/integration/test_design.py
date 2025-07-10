@@ -3098,17 +3098,22 @@ def test_create_surface_from_nurbs_sketch(modeler: Modeler):
         tag="nurbs_sketch",
     )
     sketch.segment(
-        start=Point2D([0, 0]),
-        end=Point2D([0, 1]),
+        start=Point2D([0, -1]),
+        end=Point2D([0, 2]),
         tag="segment_1",
     )
 
     # Create a surface from the NURBS sketch
-    surface_body = design.create_surface("NURBS_Surface", sketch)
+    surface_body = modeler.geometry_commands.fill(
+        sketch=sketch,
+        design=design,
+    )
 
     assert len(design.bodies) == 1
     assert surface_body.is_surface
     assert surface_body.faces[0].area.m > 0
+
+    design.plot(screenshot="C:\\Users\\jkerstet\\Downloads\\nurbs_surface.png")
 
 
 def test_design_parameters(modeler: Modeler):
