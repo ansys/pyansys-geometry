@@ -51,6 +51,10 @@ class SketchEdge:
         """Length of the edge."""
         raise NotImplementedError("Each edge must provide the length definition.")
 
+    def contains_point(self, point: Point2D, tol: float = 1e-6) -> bool:
+        """Check if the edge contains the given point within a tolerance."""
+        raise NotImplementedError("Each edge must provide the contains_point method.")
+
     @property
     def visualization_polydata(self) -> "pv.PolyData":
         """VTK polydata representation for PyVista visualization.
@@ -76,7 +80,7 @@ class SketchEdge:
         Notes
         -----
         This implies that their 3D definition might suffer changes. By default, this
-        metho does nothing. It is required to be implemented in child ``SketchEdge``
+        method does nothing. It is required to be implemented in child ``SketchEdge``
         classes.
         """
         pass

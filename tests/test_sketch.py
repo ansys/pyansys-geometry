@@ -329,6 +329,46 @@ def test_sketch_arc_edge():
     assert arc3_retrieved[0] == sketch.edges[2]
 
 
+def test_sketch_nurbs():
+    """Test NURBS SketchEdge sketching."""
+    # Create a Sketch instance
+    sketch = Sketch()
+
+    # Create a NURBS curve through 4 points
+    points = [
+        Point2D([0, 0]),
+        Point2D([2, 2]),
+        Point2D([3, 6]),
+        Point2D([4, 7]),
+    ]
+    sketch.nurbs_from_2d_points(points, tag="Nurbs1")
+    assert len(sketch.edges) == 1
+
+    # Create another curve through 3 points
+    sketch.nurbs_from_2d_points(
+        [
+            Point2D([0, 0]),
+            Point2D([1, 1]),
+            Point2D([2, 2]),
+        ],
+        tag="Nurbs2",
+    )
+
+    curve = sketch.edges[0]
+    assert curve.start == Point2D([0, 0])
+    assert curve.end == Point2D([4, 7])
+    assert curve.degree == 3
+
+    # Check retrieving the NURBS curve by tag
+    nurbs1_retrieved = sketch.get("Nurbs1")
+    assert len(nurbs1_retrieved) == 1
+    assert nurbs1_retrieved[0] == sketch.edges[0]
+
+    # Check if the curve contains a point
+    assert sketch.edges[0].contains_point(Point2D([4, 7]))
+    assert not sketch.edges[0].contains_point(Point2D([5, 5]))
+
+
 def test_sketch_triangle_face():
     """Test Triangle SketchFace sketching."""
     # Create a Sketch instance

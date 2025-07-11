@@ -167,10 +167,7 @@ class NURBSCurve(Curve):
         from geomdl import fitting
 
         # Convert points to a format suitable for the fitting function
-        converted_points = []
-        for pt in points:
-            pt_raw = [*pt]
-            converted_points.append(pt_raw)
+        converted_points = [[*pt] for pt in points]
 
         # Fit the curve to the points
         curve = fitting.interpolate_curve(converted_points, degree)
