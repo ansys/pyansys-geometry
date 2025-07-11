@@ -610,3 +610,89 @@ def test_get_common_env(
         # Assert environment variables are correctly set
         for key, value in expected_env.items():
             assert env[key] == value
+
+
+@pytest.mark.parametrize(
+    "backend_type,os_name,version,expected_exception",
+    [
+        (BackendType.DISCOVERY, "nt", 251, TimeoutError),  # Valid DISCOVERY backend on Windows
+        (BackendType.SPACECLAIM, "nt", 241, TimeoutError),  # Valid SPACECLAIM backend on Windows
+        (
+            BackendType.WINDOWS_SERVICE,
+            "nt",
+            260,
+            TimeoutError,
+        ),  # Valid WINDOWS_SERVICE backend on Windows
+        (
+            BackendType.CORE_WINDOWS,
+            "nt",
+            200,
+            TimeoutError,
+        ),  # Valid CORE_WINDOWS backend on Windows
+        (
+            BackendType.CORE_LINUX,
+            "posix",
+            260,
+            RuntimeError,
+        ),  # CORE_LINUX backend on Linux without dotnet
+        (BackendType.DISCOVERY, "posix", 200, RuntimeError),  # DISCOVERY backend on Linux
+        (
+            BackendType.WINDOWS_SERVICE,
+            "nt",
+            230,
+            TimeoutError,
+        ),  # Invalid version for WINDOWS_SERVICE
+        (BackendType.SPACECLAIM, "nt", "invalid", ValueError),  # Invalid version type
+    ],
+)
+def test_prepare_and_start_backend(backend_type, os_name, version, expected_exception, monkeypatch):
+    """Test the prepare_and_start_backend function with various scenarios."""
+
+    # Debugging: Print the test parameters
+    print(f"Testing backend_type={backend_type}, os_name={os_name}, version={version}")
+
+    # Mock os.name to simulate different operating systems
+    monkeypatch.setattr("os.name", os_name)
+
+    # Mock environment variables
+    monkeypatch.setenv("ANSYS_GEOMETRY_SERVICE_ROOT", "/fake/path")
+
+    # Mock required functions
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.product_instance.get_available_ansys_installations",
+        lambda: {
+            241: "/fake/path/to/ansys241",
+            251: "/fake/path/to/ansys251",
+            260: "/fake/path/to/ansys260",
+        },
+    )
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.product_instance.get_latest_ansys_installation",
+        lambda: (260, "/fake/path/to/ansys260"),
+    )
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.product_instance._is_port_available",
+        lambda port, host="localhost": True,
+    )
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.product_instance._wait_for_backend",
+        lambda host, port, timeout: 1,  # Simulate immediate success
+    )
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.product_instance.__start_program",
+        lambda args, local_env: type("MockProcess", (object,), {"pid": 1234}),
+    )
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.product_instance._manifest_path_provider",
+        lambda version,
+        available_installations,
+        manifest_path: f"/fake/path/to/ansys{version}/Addins/ApiServer/manifest.xml",
+    )
+
+    # Run the function and check for exceptions
+    if expected_exception:
+        with pytest.raises(expected_exception):
+            prepare_and_start_backend(backend_type, version=version, timeout=0.1)
+    else:
+        modeler = prepare_and_start_backend(backend_type, version=version, timeout=0.1)
+        assert modeler is not None
