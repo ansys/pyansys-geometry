@@ -39,7 +39,6 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ExtrudeFacesRequest,
     ExtrudeFacesUpToRequest,
     FilletRequest,
-    FillRequest,
     FullFilletRequest,
     ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
@@ -63,7 +62,7 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.designer.body import Body, MasterBody
+from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
     AlignCondition,
@@ -95,10 +94,8 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
-    from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
-    from ansys.geometry.core.sketch import Sketch
 
 
 @unique

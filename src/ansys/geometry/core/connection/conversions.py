@@ -219,7 +219,6 @@ def sketch_edges_to_grpc_geometries(
         Geometry service gRPC line and arc messages. The unit is meters.
     """
     from ansys.geometry.core.sketch.arc import Arc
-    from ansys.geometry.core.sketch.nurbs import SketchNurbs
     from ansys.geometry.core.sketch.segment import SketchSegment
 
     arcs = []
