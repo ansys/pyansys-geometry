@@ -442,7 +442,7 @@ class Modeler:
                 ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
             ):
                 dir = fp_path.parent
-                for file in dir.iterdir():
+                for file in dir.rglob("*"):
                     full_path = file.resolve()
                     if full_path != fp_path:
                         if full_path.stat().st_size < pygeom_defaults.MAX_MESSAGE_LENGTH:
