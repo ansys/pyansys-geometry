@@ -610,4 +610,3 @@ def test_get_common_env(
         # Assert environment variables are correctly set
         for key, value in expected_env.items():
             assert env[key] == value
-
