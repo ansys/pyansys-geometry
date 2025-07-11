@@ -105,7 +105,7 @@ class GRPCBodyService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
-    def is_suppressed(self, **kwargs) -> dict:
+    def is_surface_body(self, **kwargs) -> dict:
         """Check if a body is is a surface body."""
         pass
 

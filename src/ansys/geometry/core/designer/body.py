@@ -922,6 +922,12 @@ class MasterBody(IBody):
     def is_suppressed(self) -> bool:  # noqa: D102
         response = self._grpc_client.services.bodies.is_suppressed(id=self.id)
         return response.get("result")
+    
+    @property
+    @min_backend_version(25, 2, 0)
+    def is_surface_body(self) -> bool:  # noqa: D102
+        response = self._grpc_client.services.bodies.is_surface_body(id=self.id)
+        return response.get("result")
 
     @is_suppressed.setter
     def is_suppressed(self, value: bool):  # noqa: D102
@@ -1489,6 +1495,10 @@ class Body(IBody):
     @property
     def is_suppressed(self) -> bool:  # noqa: D102
         return self._template.is_suppressed
+    
+    @property
+    def is_surface_body(self) -> bool:  # noqa: D102
+        return self._template.is_surface_body
 
     @is_suppressed.setter
     def is_suppressed(self, suppressed: bool):  # noqa: D102
