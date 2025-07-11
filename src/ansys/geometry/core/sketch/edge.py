@@ -50,7 +50,7 @@ class SketchEdge:
     def length(self) -> Quantity:
         """Length of the edge."""
         raise NotImplementedError("Each edge must provide the length definition.")
-    
+
     def contains_point(self, point: Point2D, tol: float = 1e-6) -> bool:
         """Check if the edge contains the given point within a tolerance."""
         raise NotImplementedError("Each edge must provide the contains_point method.")
