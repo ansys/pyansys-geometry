@@ -3450,3 +3450,48 @@ def test_get_body_bounding_box(modeler: Modeler):
     assert center.x.m == 0
     assert center.y.m == 0
     assert center.z.m == 0.5
+
+
+def test_extrude_faces_failure_log_to_file(modeler: Modeler):
+    """Test that the failure to extrude faces logs the correct message to a file."""
+    # Create a design and body for testing
+    design = modeler.create_design("test_design")
+    body = design.extrude_sketch("test_body", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # Call the method with invalid parameters to trigger failure
+    result = modeler.geometry_commands.extrude_faces(
+        faces=[body.faces[0]],
+        distance=-10.0,  # Invalid distance to trigger failure
+        direction=UnitVector3D([0, 0, 1]),
+    )
+    # Assert the result is an empty list
+    assert result == []
+
+    result = modeler.geometry_commands.extrude_faces_up_to(
+        faces=[body.faces[0]],
+        up_to_selection=body.faces[0],  # Using the same face as target to trigger failure
+        direction=UnitVector3D([0, 0, 1]),
+        seed_point=Point3D([0, 0, 0]),
+    )
+    # Assert the result is an empty list
+    assert result == []
+
+
+def test_extrude_edges_missing_parameters(modeler: Modeler):
+    """Test that extrude_edges raises a ValueError when required parameters are missing."""
+    # Create a design and body for testing
+    design = modeler.create_design("test_design")
+    body = design.extrude_sketch("test_body", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # Test case: Missing both `from_face` and `from_point`/`direction`
+    with pytest.raises(
+        ValueError,
+        match="To extrude edges, either a face or a direction and point must be provided.",
+    ):
+        modeler.geometry_commands.extrude_edges(
+            edges=[body.edges[0]],  # Using the first edge of the body
+            distance=10.0,
+            from_face=None,
+            from_point=None,
+            direction=None,
+        )
