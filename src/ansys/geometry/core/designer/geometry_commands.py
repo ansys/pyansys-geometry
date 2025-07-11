@@ -1648,7 +1648,7 @@ class GeometryCommands:
         design: "Design",
     ) -> Body:
         """Fill the given sketch on the specified plane within the design.
-        
+
         Parameters
         ----------
         sketch : Sketch
@@ -1674,7 +1674,7 @@ class GeometryCommands:
         request = FillRequest(
             geometries=sketch_shapes_to_grpc_geometries(sketch.plane, sketch.edges, sketch.faces),
             plane=plane_to_grpc_plane(sketch.plane),
-            parent=design._grpc_id
+            parent=design._grpc_id,
         )
 
         # Call the gRPC service

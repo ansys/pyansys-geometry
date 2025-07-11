@@ -38,7 +38,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class SketchNurbs(SketchEdge):
     """Represents a NURBS sketch curve.
-    
+
     Notes
     -----
     This class is a wrapper around the NURBS curve class from the `geomdl` library.
@@ -48,7 +48,7 @@ class SketchNurbs(SketchEdge):
     https://pypi.org/project/geomdl/.
 
     """
-    
+
     def __init__(self):
         """Initialize the NURBS sketch curve."""
         super().__init__()
@@ -72,12 +72,12 @@ class SketchNurbs(SketchEdge):
         coming from the `geomdl` library. Use with caution.
         """
         return self._nurbs_curve
-    
+
     @property
     def control_points(self) -> list[Point2D]:
         """Get the control points of the curve."""
         return [Point2D(point) for point in self._nurbs_curve.ctrlpts]
-    
+
     @property
     def degree(self) -> int:
         """Get the degree of the curve."""
@@ -92,7 +92,7 @@ class SketchNurbs(SketchEdge):
     def weights(self) -> list[Real]:
         """Get the weights of the control points."""
         return self._nurbs_curve.weights
-    
+
     @property
     def start(self) -> Point2D:
         """Get the start point of the curve."""
@@ -118,7 +118,7 @@ class SketchNurbs(SketchEdge):
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
         """
-        #from geomdl.exchange_vtk import export_polydata
+        # from geomdl.exchange_vtk import export_polydata
         import numpy as np
         import pyvista as pv
 
@@ -132,7 +132,7 @@ class SketchNurbs(SketchEdge):
         # Create PolyData and add the line
         polydata = pv.PolyData(points)
         polydata.lines = [len(points)] + list(range(len(points)))
-        
+
         return polydata
 
     def contains_point(self, point: Point2D, tolerance: Real = 1e-6) -> bool:
@@ -153,7 +153,7 @@ class SketchNurbs(SketchEdge):
         # Sample points along the curve
         params = np.linspace(0, 1, 200)
         sampled = [self._nurbs_curve.evaluate_single(u) for u in params]
-        
+
         # Check if any sampled point is close to the target point
         return any(np.linalg.norm(np.array(pt) - np.array(point)) < tolerance for pt in sampled)
 
@@ -195,15 +195,15 @@ class SketchNurbs(SketchEdge):
         curve = fitting.interpolate_curve(
             [[*pt] for pt in points],  # Convert Point2D to list of coordinates
             degree=degree,
-        )   
-        
+        )
+
         # Construct the NURBSCurve object
         nurbs_curve = cls()
         nurbs_curve._nurbs_curve.degree = curve.degree
         nurbs_curve._nurbs_curve.ctrlpts = [Point2D(entry) for entry in curve.ctrlpts]
         nurbs_curve._nurbs_curve.knotvector = curve.knotvector
         nurbs_curve._nurbs_curve.weights = curve.weights
-        
+
         # Verify the curve is valid
         try:
             nurbs_curve._nurbs_curve._check_variables()

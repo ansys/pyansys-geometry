@@ -350,14 +350,15 @@ def test_sketch_nurbs():
             Point2D([0, 0]),
             Point2D([1, 1]),
             Point2D([2, 2]),
-        ], tag="Nurbs2"
+        ],
+        tag="Nurbs2",
     )
 
     curve = sketch.edges[0]
     assert curve.start == Point2D([0, 0])
     assert curve.end == Point2D([4, 7])
     assert curve.degree == 3
-    
+
     # Check retrieving the NURBS curve by tag
     nurbs1_retrieved = sketch.get("Nurbs1")
     assert len(nurbs1_retrieved) == 1
