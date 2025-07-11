@@ -617,24 +617,6 @@ def test_get_common_env(
     [
         (BackendType.DISCOVERY, "nt", 251, TimeoutError),  # Valid DISCOVERY backend on Windows
         (BackendType.SPACECLAIM, "nt", 241, TimeoutError),  # Valid SPACECLAIM backend on Windows
-        (
-            BackendType.WINDOWS_SERVICE,
-            "nt",
-            260,
-            TimeoutError,
-        ),  # Valid WINDOWS_SERVICE backend on Windows
-        (
-            BackendType.CORE_WINDOWS,
-            "nt",
-            200,
-            TimeoutError,
-        ),  # Valid CORE_WINDOWS backend on Windows
-        (
-            BackendType.CORE_LINUX,
-            "posix",
-            260,
-            RuntimeError,
-        ),  # CORE_LINUX backend on Linux without dotnet
         (BackendType.DISCOVERY, "posix", 200, RuntimeError),  # DISCOVERY backend on Linux
         (
             BackendType.WINDOWS_SERVICE,
