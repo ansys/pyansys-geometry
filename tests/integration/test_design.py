@@ -3104,9 +3104,9 @@ def test_create_surface_from_nurbs_sketch(modeler: Modeler):
     )
 
     # Create a surface from the NURBS sketch
-    surface_body = modeler.geometry_commands.fill(
+    surface_body = design.create_surface(
+        name="nurbs_surface",
         sketch=sketch,
-        design=design,
     )
 
     assert len(design.bodies) == 1
