@@ -32,10 +32,10 @@ from ansys.geometry.core.designer import Component, Design, DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.sketch import Sketch
-from .conftest import are_graphics_available
 
 from .conftest import (
     FILES_DIR,
+    are_graphics_available,
     skip_if_core_service,
     skip_if_spaceclaim,
     skip_if_windows,
@@ -410,6 +410,7 @@ def test_import_export_reimport_design_x_t(
     # Assertions to check the number of components and bodies
     assert len(design.components[0].bodies) == 1
     assert len(design.components[1].components[0].components[0].bodies) == 1
+
 
 @pytest.mark.skipif(
     not are_graphics_available(), reason="Skipping due to graphics requirements missing"
