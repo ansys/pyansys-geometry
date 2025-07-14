@@ -164,7 +164,7 @@ def test_contains_value():
 def test_planar_surface():
     """Test the planar surface functionality."""
     with pytest.raises(
-        ValueError, match="Plane reference (dir_x\) and axis (dir_z\) must be perpendicular."
+        ValueError, match="Plane reference (dir_x) and axis (dir_z) must be perpendicular."
     ):
         PlaneSurface(Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_X)
     plane0 = PlaneSurface(Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y)
