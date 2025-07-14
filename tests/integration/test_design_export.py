@@ -477,5 +477,6 @@ def test_import_export_open_file_design(
         f"Expected {expected_components} components, but found {len(design.components)}."
     )
     assert len(design.components[0].components[0].bodies) == expected_bodies, (
-        f"Expected {expected_bodies} bodies, but found {len(design.components[0].components[0].bodies)}."
+        f"Expected {expected_bodies} bodies, but found "
+        f"{len(design.components[0].components[0].bodies)}."
     )
