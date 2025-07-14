@@ -71,7 +71,8 @@ IMAGE_RESULTS_DIR = Path(Path(__file__).parent, "image_cache", "results")
 
 @skip_no_xserver
 def test_adding_to_plotter(modeler: Modeler, verify_image_cache):
-    """Testing out clipping plane, adding body edges and face, and if body is suppressed to an existing plotter"""
+    """Testing out clipping plane, adding body edges and face,
+    and if body is suppressed to an existing plotter"""
     plotter = GeometryPlotter(allow_picking=True)
     plane = Plane(origin=[0, 0, 0], direction_x=[1, 0, 0], direction_y=[0, 1, 0])
     box_plane = Sketch(plane=plane)
