@@ -30,7 +30,6 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design, DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
@@ -417,6 +416,8 @@ def test_import_export_reimport_design_x_t(
 )
 def test_import_export_glb(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to GLB format."""
+    from ansys.geometry.core.plotting import GeometryPlotter
+
     working_directory = tmp_path_factory.mktemp("test_import_export_glb")
     design = modeler.create_design("Assembly")
     design.add_component("Component_1")
