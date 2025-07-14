@@ -21,16 +21,23 @@
 # SOFTWARE.
 """Test design export functionality."""
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
-from ansys.geometry.core.designer import Component, Design
+from ansys.geometry.core.designer import Component, Design, DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import skip_if_core_service, skip_if_spaceclaim, skip_if_windows
+from .conftest import (
+    FILES_DIR,
+    skip_if_core_service,
+    skip_if_spaceclaim,
+    skip_if_windows,
+)
 
 
 def _create_demo_design(modeler: Modeler) -> Design:
@@ -346,3 +353,58 @@ def test_export_to_pmdb(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 
     # TODO: Check the exported file content
     # https://github.com/ansys/pyansys-geometry/issues/1146
+
+
+def test_import_export_reimport_design_scdocx(
+    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory
+):
+    """Test importing, exporting, and re-importing a design file."""
+    # Define the working directory and file paths
+    working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
+    original_file = Path(FILES_DIR, "reactorWNS.scdocx")
+    reexported_file = Path(working_directory, "reexported.scdocx")
+
+    # Create a new design
+    design = modeler.create_design("Assembly")
+
+    # Import the original file
+    design.insert_file(original_file)
+
+    # Export the design to a new file
+    design.download(reexported_file, format=DesignFileFormat.SCDOCX)
+
+    # Re-import the exported file
+    design.insert_file(reexported_file)
+
+    # Assertions to check the number of components and bodies
+    assert len(design.components) == 2
+    assert len(design.components[0].components[0].bodies) == 3
+
+
+def test_import_export_reimport_design_x_t(
+    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory
+):
+    """Test importing, exporting, and re-importing a design file in Parasolid text format."""
+    # Define the working directory and file paths
+    working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
+    original_file = Path(FILES_DIR, "rci_std.x_t")
+    reexported_file = Path(working_directory, "reexported.x_t")
+
+    # Create a new design
+    design = modeler.create_design("Assembly")
+
+    # Import the original file
+    design.insert_file(original_file)
+
+    # Export the design to a new file
+    design.download(reexported_file, format=DesignFileFormat.PARASOLID_TEXT)
+
+    # Ensure the re-exported file exists
+    assert reexported_file.exists(), f"Re-exported file {reexported_file} does not exist."
+
+    # Re-import the exported file
+    design.insert_file(reexported_file)
+
+    # Assertions to check the number of components and bodies
+    assert len(design.components[0].bodies) == 1
+    assert len(design.components[1].components[0].components[0].bodies) == 1
