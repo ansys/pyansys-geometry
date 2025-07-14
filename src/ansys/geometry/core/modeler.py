@@ -254,6 +254,7 @@ class Modeler:
     def _upload_file(
         self,
         file_path: str,
+        project_dir: Path,
         open_file: bool = False,
         import_options: ImportOptions = ImportOptions(),
     ) -> str:
@@ -263,6 +264,9 @@ class Modeler:
         ----------
         file_path : str
             Path of the file to upload. The extension of the file must be included.
+        project_dir : Path
+            Root directory of the folder being uploaded. This is used to
+            determine the relative path of the file on the server.
         open_file : bool, default: False
             Whether to open the file in the Geometry service.
         import_options : ImportOptions
@@ -287,7 +291,7 @@ class Modeler:
         if fp_path.is_dir():
             raise ValueError("File path must lead to a file, not a directory.")
 
-        file_name = fp_path.name
+        file_name = fp_path.relative_to(project_dir).as_posix()
 
         with fp_path.open(mode="rb") as file:
             data = file.read()
@@ -308,6 +312,7 @@ class Modeler:
     def _upload_file_stream(
         self,
         file_path: str,
+        project_dir: Path,
         open_file: bool = False,
         import_options: ImportOptions = ImportOptions(),
     ) -> str:
@@ -317,6 +322,9 @@ class Modeler:
         ----------
         file_path : str
             Path of the file to upload. The extension of the file must be included.
+        project_dir : Path
+            Root directory of the folder being uploaded. This is used to
+            determine the relative path of the file on the server.
         open_file : bool, default: False
             Whether to open the file in the Geometry service.
         import_options : ImportOptions
@@ -344,12 +352,12 @@ class Modeler:
         c_stub = CommandsStub(self.client.channel)
 
         response = c_stub.StreamFileUpload(
-            self._generate_file_chunks(fp_path, open_file, import_options)
+            self._generate_file_chunks(fp_path, project_dir, open_file, import_options)
         )
         return response.file_path
 
     def _generate_file_chunks(
-        self, file_path: Path, open_file: bool, import_options: ImportOptions
+        self, file_path: Path, project_dir: Path, open_file: bool, import_options: ImportOptions
     ) -> Generator[UploadFileRequest, None, None]:
         """Generate appropriate chunk sizes for uploading files.
 
@@ -357,6 +365,9 @@ class Modeler:
         ----------
         file_path : Path
             Path of the file to upload. The extension of the file must be included.
+        project_dir : Path
+            Root directory of the folder being uploaded. This is used to
+            determine the relative path of the file on the server.
         open_file : bool
             Whether to open the file in the Geometry service.
         import_options : ImportOptions
@@ -372,11 +383,12 @@ class Modeler:
             raise ValueError("MAX_MESSAGE_LENGTH is too small for file upload.")
 
         chunk_size = pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer
+        filename = file_path.relative_to(project_dir).as_posix()
         with Path.open(file_path, "rb") as file:
             while chunk := file.read(chunk_size):
                 yield UploadFileRequest(
                     data=chunk,
-                    file_name=file_path.name,
+                    file_name=filename,
                     open=open_file,
                     import_options=import_options.to_dict(),
                 )
@@ -441,14 +453,16 @@ class Modeler:
             if any(
                 ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
             ):
-                dir = fp_path.parent
-                for file in dir.rglob("*"):
+                project_dir = fp_path.parent
+                for file in project_dir.rglob("*"):
                     full_path = file.resolve()
+                    if not full_path.is_file():
+                        continue
                     if full_path != fp_path:
                         if full_path.stat().st_size < pygeom_defaults.MAX_MESSAGE_LENGTH:
-                            self._upload_file(full_path)
+                            self._upload_file(full_path, project_dir)
                         elif self.client.backend_version >= (25, 2, 0):
-                            self._upload_file_stream(full_path)
+                            self._upload_file_stream(full_path, project_dir)
                         else:  # pragma: no cover
                             raise RuntimeError(
                                 "File is too large to upload."
