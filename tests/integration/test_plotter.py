@@ -60,12 +60,37 @@ from ansys.geometry.core.sketch import (
     Trapezoid,
     Triangle,
 )
+from ansys.tools.visualization_interface import MeshObjectPlot
 
 skip_no_xserver = pytest.mark.skipif(
     not system_supports_plotting(), reason="Requires active X Server"
 )
 
 IMAGE_RESULTS_DIR = Path(Path(__file__).parent, "image_cache", "results")
+
+
+@skip_no_xserver
+def test_adding_to_plotter(modeler: Modeler, verify_image_cache):
+    """Testing out adding things to an existing plotter while changing the color and is suppressed"""
+    plotter = GeometryPlotter(allow_picking=True)
+    plane = Plane(origin=[0, 0, 0], direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+    box_plane = Sketch(plane=plane)
+    plotting_options = {"clipping_plane": True}
+    plotter.add_sketch(box_plane, show_plane=True, show_frame=True, **plotting_options)
+    design = modeler.create_design("Box")
+    box_plane.box(Point2D([0.0, 0.0]), width=1, height=1)
+    box = design.extrude_sketch("Box", box_plane, 1)
+    box_plot = MeshObjectPlot(box, mesh=None)
+    plotter.add_body_edges(box_plot)
+    box.set_suppressed(True)
+    plotter.add_body(box)
+    box.set_suppressed(False)
+    plotter.add_body(box)
+    plotter.add_face(box.faces[0])
+    plotter2 = GeometryPlotter(allow_picking=True, use_service_colors=True)
+    box.faces[0].color = "blue"
+    plotter2.add_face(box.faces[0])
+    plotter.show(plotting_object=box)
 
 
 @skip_no_xserver
@@ -934,6 +959,25 @@ def test_plot_design_face_colors(modeler: Modeler, verify_image_cache):
     )
 
 
+"""@skip_no_xserver
+def test_export_glb_nofilename(modeler: Modeler, verify_image_cache):
+    Test exporting a box to glb.
+    # Create a Sketch
+    sketch = Sketch()
+    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Create your design on the server side
+    design = modeler.create_design("GLBBoxNoName")
+
+    # Extrude the sketch to create a body
+    box_body = design.extrude_sketch("JustABoxNoName", sketch, Quantity(10, UNITS.mm))
+
+    pl = GeometryPlotter()
+    pl.plot(box_body)
+
+    pl.export_glb(filename=None)"""
+
+
 @skip_no_xserver
 def test_export_glb(modeler: Modeler, verify_image_cache):
     """Test exporting a box to glb."""
@@ -952,6 +996,8 @@ def test_export_glb(modeler: Modeler, verify_image_cache):
 
     output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb")
     pl.export_glb(filename=output_glb_path)
+
+    pl.export_glb(filename=None)
 
 
 @skip_no_xserver
