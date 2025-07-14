@@ -22,7 +22,6 @@
 """ "Testing of log module."""
 
 import logging as deflogging  # Default logging
-import os
 import re
 from typing import Callable
 
@@ -41,7 +40,7 @@ LOG_LEVELS = {"CRITICAL": 50, "ERROR": 40, "WARNING": 30, "INFO": 20, "DEBUG": 1
 
 
 def test_add_instance():
-    # Testing adding an instance logger while checking if log has certain key
+    """Testing adding an instance logger while checking if log has certain key"""
     base_name = "root"
     instance_logger_1 = LOG.add_instance_logger(
         name=base_name, client_instance=GrpcClient(), level=10
@@ -51,9 +50,9 @@ def test_add_instance():
         LOG.__getitem__("root_4")
 
 
-def test_custom_and_child_log():
-    # Testing out writing a child log and adding std handler to it
-    custom_filename = os.path.join(os.getcwd(), "custom_geometry.log")
+def test_custom_and_child_log(tmp_path_factory: pytest.TempPathFactory):
+    """Testing out writing a child log and adding std handler to it"""
+    custom_filename = tmp_path_factory.mktemp("custom_geometry") / "custom_geometry.log"
     logger1 = logger.Logger(level="DEBUG", to_file=True, filename=custom_filename)
     child_log = logger1._make_child_logger(suffix="ChildLogger", level="INFO")
     child_log.info("This is a test to child logger")
@@ -64,11 +63,10 @@ def test_custom_and_child_log():
     for handler in logger1.logger.handlers:
         if isinstance(handler, logger.logging.FileHandler):
             handler.close()
-    os.remove(custom_filename)
 
 
 def test_stdout_defined():
-    # Testing if stdout is defined already and giving a custom format
+    """Testing if stdout is defined already and giving a custom format"""
     logger_adapter = logger.PyGeometryCustomAdapter(LOG)
     with pytest.raises(
         Exception,

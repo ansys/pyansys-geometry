@@ -71,7 +71,7 @@ IMAGE_RESULTS_DIR = Path(Path(__file__).parent, "image_cache", "results")
 
 @skip_no_xserver
 def test_adding_to_plotter(modeler: Modeler, verify_image_cache):
-    """Testing out adding things to an existing plotter while changing the color and is suppressed"""
+    """Testing out clipping plane, adding body edges and face, and if body is suppressed to an existing plotter"""
     plotter = GeometryPlotter(allow_picking=True)
     plane = Plane(origin=[0, 0, 0], direction_x=[1, 0, 0], direction_y=[0, 1, 0])
     box_plane = Sketch(plane=plane)
@@ -87,10 +87,23 @@ def test_adding_to_plotter(modeler: Modeler, verify_image_cache):
     box.set_suppressed(False)
     plotter.add_body(box)
     plotter.add_face(box.faces[0])
+    plotter.show(screenshot=Path(IMAGE_RESULTS_DIR, "adding_to_plotter.png"))
+
+
+@skip_no_xserver
+def test_different_color_than_default(modeler: Modeler, verify_image_cache):
+    """Testing out adding a face to the plotter with a different color than the default."""
+    design = modeler.create_design("Box")
+    plane = Plane(origin=[0, 0, 0], direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+    box_plane = Sketch(plane=plane)
+    box_plane.box(Point2D([0.0, 0.0]), width=1, height=1)
+    box = design.extrude_sketch("Box", box_plane, 1)
     plotter2 = GeometryPlotter(allow_picking=True, use_service_colors=True)
     box.faces[0].color = "blue"
     plotter2.add_face(box.faces[0])
-    plotter.show(plotting_object=box)
+    plotter2.show(
+        plotting_object=box, screenshot=Path(IMAGE_RESULTS_DIR, "different_color_than_default.png")
+    )
 
 
 @skip_no_xserver
@@ -959,25 +972,6 @@ def test_plot_design_face_colors(modeler: Modeler, verify_image_cache):
     )
 
 
-"""@skip_no_xserver
-def test_export_glb_nofilename(modeler: Modeler, verify_image_cache):
-    Test exporting a box to glb.
-    # Create a Sketch
-    sketch = Sketch()
-    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
-
-    # Create your design on the server side
-    design = modeler.create_design("GLBBoxNoName")
-
-    # Extrude the sketch to create a body
-    box_body = design.extrude_sketch("JustABoxNoName", sketch, Quantity(10, UNITS.mm))
-
-    pl = GeometryPlotter()
-    pl.plot(box_body)
-
-    pl.export_glb(filename=None)"""
-
-
 @skip_no_xserver
 def test_export_glb(modeler: Modeler, verify_image_cache):
     """Test exporting a box to glb."""
@@ -997,7 +991,8 @@ def test_export_glb(modeler: Modeler, verify_image_cache):
     output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb")
     pl.export_glb(filename=output_glb_path)
 
-    pl.export_glb(filename=None)
+    tempglb = pl.export_glb(filename=None)
+    assert tempglb.exists()
 
 
 @skip_no_xserver
