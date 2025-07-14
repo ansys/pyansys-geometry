@@ -116,9 +116,7 @@ def test_modeler_open_files(modeler: Modeler):
             design = modeler.open_file(Path(FILES_DIR, "InspectAndRepair01.scdocx"))
     finally:
         pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
-    scfile = Path(
-        "D:\\AnsysDev\\pyansys-geometry\\tests\\integration\\files", "InspectAndRepair01.scdocx"
-    )
+    scfile = Path(FILES_DIR, "InspectAndRepair01.scdocx")
     design = modeler.open_file(scfile, upload_to_server=False)
 
 
