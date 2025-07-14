@@ -215,17 +215,3 @@ def use_grpc_client_old_backend(modeler: Modeler):
 
     # Code here runs after the test, reverting the state
     modeler._grpc_client._backend_version = currentbackend
-
-def are_graphics_available() -> bool:
-    """Determine whether graphics are available."""
-    from ansys.geometry.core.misc.checks import run_if_graphics_required
-
-    # If the imports are successful, then graphics can be handled...
-    # ...otherwise, graphics are not available.
-    try:
-        run_if_graphics_required()
-        from pyvista.plotting import system_supports_plotting
-
-        return system_supports_plotting()
-    except ImportError:
-        return False

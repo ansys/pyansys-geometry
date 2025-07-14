@@ -33,9 +33,9 @@ from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vect
 from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.sketch import Sketch
 
+from ..conftest import are_graphics_available
 from .conftest import (
     FILES_DIR,
-    are_graphics_available,
     skip_if_core_service,
     skip_if_spaceclaim,
     skip_if_windows,
