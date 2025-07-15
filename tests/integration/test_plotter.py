@@ -952,7 +952,7 @@ def test_export_glb(modeler: Modeler):
 
     output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb")
     pl.export_glb(filename=output_glb_path)
-    
+
     # Add suffix to the output path
     output_glb_path = output_glb_path.with_suffix(".glb")
     assert output_glb_path.exists(), "GLB file was not created successfully."
