@@ -935,7 +935,7 @@ def test_plot_design_face_colors(modeler: Modeler, verify_image_cache):
 
 
 @skip_no_xserver
-def test_export_glb(modeler: Modeler, verify_image_cache):
+def test_export_glb(modeler: Modeler):
     """Test exporting a box to glb."""
     # Create a Sketch
     sketch = Sketch()
@@ -953,9 +953,11 @@ def test_export_glb(modeler: Modeler, verify_image_cache):
     output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb")
     pl.export_glb(filename=output_glb_path)
 
+    assert output_glb_path.exists(), "GLB file was not created successfully."
+
 
 @skip_no_xserver
-def test_export_glb_with_color(modeler: Modeler, verify_image_cache):
+def test_export_glb_with_color(modeler: Modeler):
     """Test exporting a box to glb."""
     # Create a Sketch
     sketch = Sketch()
@@ -973,6 +975,8 @@ def test_export_glb_with_color(modeler: Modeler, verify_image_cache):
 
     output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_colored")
     pl.export_glb(filename=output_glb_path)
+
+    assert output_glb_path.exists(), "GLB file with color was not created successfully."
 
 
 @skip_no_xserver
@@ -996,9 +1000,11 @@ def test_export_glb_with_face_color(modeler: Modeler):
     output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_face_colored")
     pl.export_glb(box_body, filename=output_glb_path)
 
+    assert output_glb_path.exists(), "GLB file with face color was not created successfully."
+
 
 @skip_no_xserver
-def test_export_glb_cylinder_with_face_color(modeler: Modeler, verify_image_cache):
+def test_export_glb_cylinder_with_face_color(modeler: Modeler):
     """Test exporting a cylinder to glb."""
     # Create your design on the server side
     design = modeler.create_design("GLBCylinderWithFaceColors")
@@ -1015,6 +1021,8 @@ def test_export_glb_cylinder_with_face_color(modeler: Modeler, verify_image_cach
 
     output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_glb_face_colored")
     pl.export_glb(cyl, filename=output_glb_path)
+
+    assert output_glb_path.exists(), "GLB file with face color was not created successfully."
 
 
 @skip_no_xserver
