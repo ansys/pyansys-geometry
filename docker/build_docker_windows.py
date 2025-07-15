@@ -76,7 +76,7 @@ if ANSYS_VER >= 252:
     backend_selection = 2  # Core Service
 else:
     print(">>> Using DMS Service")
-    backend_selection = 1 # DMS Service
+    backend_selection = 1  # DMS Service
 
 # Verify that the Geometry Service is installed
 if not Path.exists(ANSYS_PATH / "GeometryService"):
