@@ -69,19 +69,14 @@ print(f">>> Using {ANSYS_VER}")
 # Get the path to the Ansys installation
 ANSYS_PATH = Path(awp_root[ANSYS_VER])
 
-# Starting on 2025R2, the user can select between DMS and Core Services
-if ANSYS_VER > 252:
-    print("Select between DMS and Core Services")
-    print("1: DMS")
-    print("2: Core Services")
-    backend_selection = input("Selection [default - 1]: ")
-    backend_selection = 1 if backend_selection == "" else int(backend_selection)
-    if backend_selection not in [1, 2]:
-        print("XXXXXXX Invalid selection XXXXXXX")
-        exit(0)
+# Starting on 2025R2, only Core Service is available
+# Before that, only DMS is available
+if ANSYS_VER >= 252:
+    print(">>> Using Core Service")
+    backend_selection = 2  # Core Service
 else:
-    # Default to DMS for older versions
-    backend_selection = 1
+    print(">>> Using DMS Service")
+    backend_selection = 1  # DMS Service
 
 # Verify that the Geometry Service is installed
 if not Path.exists(ANSYS_PATH / "GeometryService"):

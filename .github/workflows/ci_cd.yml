@@ -19,7 +19,7 @@ env:
   GEO_CONT_NAME: ans_geo
   RESET_IMAGE_CACHE: 5
   IS_WORKFLOW_RUNNING: True
-  ARTIFACTORY_VERSION: v252
+  ARTIFACTORY_VERSION: v261
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
