@@ -524,7 +524,7 @@ def test_check_minimal_versions(
 def find_available_port():
     """Find an available port for testing."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("", 0))  # Bind to an available port
+        s.bind(("127.0.0.1", 0))  # Bind to an available port on the loopback interface
         return s.getsockname()[1]  # Return the port number
 
 
