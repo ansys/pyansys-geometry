@@ -403,10 +403,9 @@ def test_find_and_fix_missing_faces(modeler: Modeler):
         for face in missing_faces:
             face.fix()
 
-    # TODO : Add surface body check from backend. Issue is being tracked in #2031.
-    # assert not design.bodies[0].is_surface
-    # for comp in design.components:
-    #    assert not comp.bodies[0].is_surface
+    assert not design.bodies[0].is_surface
+    for comp in design.components:
+        assert not comp.bodies[0].is_surface
 
 
 def test_find_and_fix_missing_faces_angle_distance(modeler: Modeler):
@@ -458,8 +457,7 @@ def test_find_and_stitch_and_missing_faces(modeler: Modeler):
     for i in stitch_faces:
         i.fix()
     assert len(design.bodies) == 1
-    # TODO : Add surface body check from backend. Issue is being tracked in #2031.
-    # assert design.bodies[0].is_surface
+    assert design.bodies[0].is_surface
     missing_faces = modeler.repair_tools.find_missing_faces(design.bodies)
     for face in missing_faces:
         face.fix()
