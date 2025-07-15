@@ -952,7 +952,9 @@ def test_export_glb(modeler: Modeler):
 
     output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb")
     pl.export_glb(filename=output_glb_path)
-
+    
+    # Add suffix to the output path
+    output_glb_path = output_glb_path.with_suffix(".glb")
     assert output_glb_path.exists(), "GLB file was not created successfully."
 
 
@@ -973,7 +975,7 @@ def test_export_glb_with_color(modeler: Modeler):
     pl = GeometryPlotter(use_service_colors=True)
     pl.plot(box_body)
 
-    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_colored")
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_colored.glb")
     pl.export_glb(filename=output_glb_path)
 
     assert output_glb_path.exists(), "GLB file with color was not created successfully."
@@ -997,7 +999,7 @@ def test_export_glb_with_face_color(modeler: Modeler):
 
     pl = GeometryPlotter(use_service_colors=True)
 
-    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_face_colored")
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_box_glb_face_colored.glb")
     pl.export_glb(box_body, filename=output_glb_path)
 
     assert output_glb_path.exists(), "GLB file with face color was not created successfully."
@@ -1019,7 +1021,7 @@ def test_export_glb_cylinder_with_face_color(modeler: Modeler):
 
     pl = GeometryPlotter(use_service_colors=True)
 
-    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_glb_face_colored")
+    output_glb_path = Path(IMAGE_RESULTS_DIR, "plot_cylinder_glb_face_colored.glb")
     pl.export_glb(cyl, filename=output_glb_path)
 
     assert output_glb_path.exists(), "GLB file with face color was not created successfully."
