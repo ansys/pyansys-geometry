@@ -254,7 +254,7 @@ class Modeler:
     def _upload_file(
         self,
         file_path: str,
-        project_dir: Path,
+        project_dir: Path = None,
         open_file: bool = False,
         import_options: ImportOptions = ImportOptions(),
     ) -> str:
@@ -264,7 +264,7 @@ class Modeler:
         ----------
         file_path : str
             Path of the file to upload. The extension of the file must be included.
-        project_dir : Path
+        project_dir : Path, default: None
             Root directory of the folder being uploaded. This is used to
             determine the relative path of the file on the server.
         open_file : bool, default: False
@@ -290,6 +290,9 @@ class Modeler:
             raise ValueError(f"Could not find file: {file_path}")
         if fp_path.is_dir():
             raise ValueError("File path must lead to a file, not a directory.")
+
+        # If project_dir is not provided, use the parent directory of the file
+        project_dir = project_dir or fp_path.parent
 
         file_name = fp_path.relative_to(project_dir).as_posix()
 
@@ -312,7 +315,7 @@ class Modeler:
     def _upload_file_stream(
         self,
         file_path: str,
-        project_dir: Path,
+        project_dir: Path = None,
         open_file: bool = False,
         import_options: ImportOptions = ImportOptions(),
     ) -> str:
@@ -322,7 +325,7 @@ class Modeler:
         ----------
         file_path : str
             Path of the file to upload. The extension of the file must be included.
-        project_dir : Path
+        project_dir : Path, default: None
             Root directory of the folder being uploaded. This is used to
             determine the relative path of the file on the server.
         open_file : bool, default: False
@@ -350,6 +353,9 @@ class Modeler:
             raise ValueError("File path must lead to a file, not a directory.")
 
         c_stub = CommandsStub(self.client.channel)
+
+        # If project_dir is not provided, use the parent directory of the file
+        project_dir = project_dir or fp_path.parent
 
         response = c_stub.StreamFileUpload(
             self._generate_file_chunks(fp_path, project_dir, open_file, import_options)
@@ -449,11 +455,11 @@ class Modeler:
         # Format-specific logic - upload the whole containing folder for assemblies
         if upload_to_server:
             fp_path = Path(file_path)
+            project_dir = fp_path.parent
             file_size_kb = fp_path.stat().st_size
             if any(
                 ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
             ):
-                project_dir = fp_path.parent
                 for file in project_dir.rglob("*"):
                     full_path = file.resolve()
                     if not full_path.is_file():
@@ -470,9 +476,9 @@ class Modeler:
                             )
 
             if file_size_kb < pygeom_defaults.MAX_MESSAGE_LENGTH:
-                self._upload_file(file_path, True, import_options)
+                self._upload_file(file_path, project_dir, True, import_options)
             elif self.client.backend_version >= (25, 2, 0):
-                self._upload_file_stream(file_path, True, import_options)
+                self._upload_file_stream(file_path, project_dir, True, import_options)
             else:  # pragma: no cover
                 raise RuntimeError(
                     "File is too large to upload. Service versions above 25R2 support streaming."
