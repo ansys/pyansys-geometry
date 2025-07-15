@@ -3113,8 +3113,6 @@ def test_create_surface_from_nurbs_sketch(modeler: Modeler):
     assert surface_body.is_surface
     assert surface_body.faces[0].area.m > 0
 
-    design.plot(screenshot="C:\\Users\\jkerstet\\Downloads\\nurbs_surface.png")
-
 
 def test_design_parameters(modeler: Modeler):
     """Test the design parameter's functionality."""
