@@ -535,3 +535,10 @@ def test_design_insert_id_bug(modeler: Modeler):
 
     assert len(design1.components[0].bodies) == 1
     assert len(design1.components[1].bodies) == 1
+
+
+def test_nested_folder_import_with_open_file(modeler: Modeler):
+    """Test importing a file from a nested folder structure."""
+    # Open the design *just verify it can be opened without errors)
+    file_path = Path(IMPORT_FILES_DIR, "nested_cat_project/car.CATProduct")
+    modeler.open_file(file_path)
