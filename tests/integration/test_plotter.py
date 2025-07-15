@@ -995,6 +995,10 @@ def test_export_glb(modeler: Modeler, verify_image_cache):
     tempglb = pl.export_glb(filename=None)
     assert tempglb.exists()
 
+    # Add suffix to the output path
+    output_glb_path = output_glb_path.with_suffix(".glb")
+    assert output_glb_path.exists(), "GLB file was not created successfully."
+
 
 @skip_no_xserver
 def test_export_glb_with_color(modeler: Modeler, verify_image_cache):
