@@ -31,6 +31,7 @@ import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
     CurveType,
     DesignFileFormat,
@@ -75,7 +76,55 @@ from ansys.geometry.core.shapes.parameterization import (
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
-from .conftest import FILES_DIR
+from .conftest import FILES_DIR, IMPORT_FILES_DIR
+
+
+def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Validating error messages when opening up files"""
+    fake_file_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file(fake_file_path)
+    file = tmp_path_factory.mktemp("test_design")
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file(file)
+    fake_file_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file_stream(fake_file_path)
+    file = tmp_path_factory.mktemp("test_design")
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file_stream(file)
+
+
+def test_modeler_open_files(modeler: Modeler):
+    """Test the modeler open files for assembly files and for too small of files."""
+    catiafile = Path(IMPORT_FILES_DIR, "CAT5/Top_Down_Assembly_SC_CATv5.CATProduct")
+    design = modeler.open_file(catiafile)
+    design.close()
+    old_value = pygeom_defaults.MAX_MESSAGE_LENGTH
+    try:
+        pygeom_defaults.MAX_MESSAGE_LENGTH = 1024  # 0.5 MB
+        with pytest.raises(
+            GeometryExitedError,
+            match="Geometry service connection terminated: Exception iterating requests!",
+        ):
+            design = modeler.open_file(catiafile)
+        pygeom_defaults.MAX_MESSAGE_LENGTH = 10  # 0.5 MB
+        with pytest.raises(
+            GeometryExitedError,
+            match="Geometry service connection terminated: Exception iterating requests!",
+        ):
+            design = modeler.open_file(Path(FILES_DIR, "InspectAndRepair01.scdocx"))
+    finally:
+        pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
+
+
+def test_disable_active_design_check(modeler: Modeler, disable_active_design_check_true: None):
+    """Validating test for disabling active design check."""
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design = modeler.create_design("Box")
+    design.extrude_sketch("Box", sketch, 2)
+    checks.ensure_design_is_active(design.bodies[0].edges)
 
 
 def test_design_is_close(modeler: Modeler):
@@ -3106,6 +3155,12 @@ def test_design_parameters(modeler: Modeler):
     test_parameters[0].dimension_value = 0.0006
     status = design.set_parameter(test_parameters[0])
     assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+
+    test_parameters[0].name = "NewName"
+    assert test_parameters[0].name == "NewName"
+
+    test_parameters[0].dimension_type = ParameterType.DIMENSIONTYPE_AREA
+    assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
 
 def test_cached_bodies(modeler: Modeler):
