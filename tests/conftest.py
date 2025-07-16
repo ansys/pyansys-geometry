@@ -43,12 +43,39 @@ def pytest_addoption(parser):
         ),
         choices=("yes", "no"),
     )
+    parser.addoption(
+        "--use-tracker",
+        action="store",
+        default="no",
+        help=(
+            "Enable the tracker to update the design. Options: 'yes' or 'no'."
+            " By default, 'no'."
+        ),
+        choices=("yes", "no"),
+    )
 
 
 @pytest.fixture(scope="session")
 def use_existing_service(request):
     value: str = request.config.getoption("--use-existing-service")
     return True if value.lower() == "yes" else False
+
+@pytest.fixture(scope="session", autouse=True)
+def use_tracker(request):
+    """Fixture to enable or disable the tracker."""
+    value: str = request.config.getoption("--use-tracker", default="no")  # Explicitly set default
+    import ansys.geometry.core as pyansys_geometry
+
+    if value.lower() == "yes":
+        pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN = True
+    else:
+        pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN = False
+
+    yield  # This allows the test to run
+
+    # Revert the state after the test session
+    pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN = False
+
 
 
 @pytest.fixture
@@ -134,3 +161,4 @@ def are_graphics_available() -> bool:
         return system_supports_plotting()
     except ImportError:
         return False
+
