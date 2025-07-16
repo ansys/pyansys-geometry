@@ -39,6 +39,10 @@ if TYPE_CHECKING:  # pragma: no cover
 class SketchNurbs(SketchEdge):
     """Represents a NURBS sketch curve.
 
+    Warnings
+    --------
+    NURBS sketching is only supported in 26R1 and later versions of Ansys.    
+
     Notes
     -----
     This class is a wrapper around the NURBS curve class from the `geomdl` library.
@@ -46,10 +50,6 @@ class SketchNurbs(SketchEdge):
     to create and manipulate NURBS curves. The `geomdl` library is a powerful
     library for working with NURBS curves and surfaces. For more information, see
     https://pypi.org/project/geomdl/.
-
-    Warnings
-    --------
-    NURBS sketching is only supported in 26R1 and later versions of Ansys.
     """
 
     def __init__(self):
