@@ -119,7 +119,7 @@ class SketchNurbs(SketchEdge):
         the standard global Cartesian coordinate system.
         """
         import pyvista as pv
-
+    
         # Sample points along the curve
         params = np.linspace(0, 1, 100)
         points = [self._nurbs_curve.evaluate_single(u) for u in params]  # For 2D: [x, y]
