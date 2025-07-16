@@ -160,10 +160,6 @@ def sketch_shapes_to_grpc_geometries(
     GRPCGeometries
         Geometry service gRPC geometries message. The unit is meters.
     """
-    from ansys.geometry.core.sketch.circle import SketchCircle
-    from ansys.geometry.core.sketch.ellipse import SketchEllipse
-    from ansys.geometry.core.sketch.polygon import Polygon
-
     geometries = GRPCGeometries()
 
     converted_sketch_edges = sketch_edges_to_grpc_geometries(edges, plane)
@@ -201,8 +197,8 @@ def sketch_shapes_to_grpc_geometries(
 
 
 def sketch_edges_to_grpc_geometries(
-    edges: list["SketchEdge"],
-    plane: "Plane",
+    edges: list[SketchEdge],
+    plane: Plane,
 ) -> tuple[list[GRPCLine], list[GRPCArc]]:
     """Convert a list of ``SketchEdge`` to a gRPC message.
 
@@ -218,9 +214,6 @@ def sketch_edges_to_grpc_geometries(
     tuple[list[GRPCLine], list[GRPCArc]]
         Geometry service gRPC line and arc messages. The unit is meters.
     """
-    from ansys.geometry.core.sketch.arc import Arc
-    from ansys.geometry.core.sketch.segment import SketchSegment
-
     arcs = []
     segments = []
     for edge in edges:

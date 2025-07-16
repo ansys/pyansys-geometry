@@ -62,7 +62,6 @@ from ansys.geometry.core.connection.conversions import (
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
-from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
     AlignCondition,

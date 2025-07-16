@@ -118,7 +118,6 @@ class SketchNurbs(SketchEdge):
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
         """
-        # from geomdl.exchange_vtk import export_polydata
         import numpy as np
         import pyvista as pv
 
