@@ -41,7 +41,7 @@ class SketchNurbs(SketchEdge):
 
     Warnings
     --------
-    NURBS sketching is only supported in 26R1 and later versions of Ansys.    
+    NURBS sketching is only supported in 26R1 and later versions of Ansys.
 
     Notes
     -----
