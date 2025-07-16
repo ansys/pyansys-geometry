@@ -124,7 +124,6 @@ def test_disable_active_design_check(modeler: Modeler, disable_active_design_che
     sketch.box(Point2D([0, 0]), 10, 10)
     design = modeler.create_design("Box")
     design.extrude_sketch("Box", sketch, 2)
-    design.bodies[0].edges
     checks.ensure_design_is_active(design.bodies[0].edges)
 
 
