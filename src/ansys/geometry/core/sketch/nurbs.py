@@ -118,7 +118,6 @@ class SketchNurbs(SketchEdge):
         The representation lies in the X/Y plane within
         the standard global Cartesian coordinate system.
         """
-        import numpy as np
         import pyvista as pv
 
         # Sample points along the curve
