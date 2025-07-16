@@ -84,6 +84,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.sketch.edge import SketchEdge
     from ansys.geometry.core.sketch.ellipse import SketchEllipse
     from ansys.geometry.core.sketch.face import SketchFace
+    from ansys.geometry.core.sketch.nurbs import SketchNurbs
     from ansys.geometry.core.sketch.polygon import Polygon
     from ansys.geometry.core.sketch.segment import SketchSegment
 
@@ -404,6 +405,7 @@ def from_sketch_shapes_to_grpc_geometries(
     converted_sketch_edges = from_sketch_edges_to_grpc_geometries(edges, plane)
     geometries.lines.extend(converted_sketch_edges[0])
     geometries.arcs.extend(converted_sketch_edges[1])
+    geometries.nurbs_curves.extend(converted_sketch_edges[2])
 
     for face in faces:
         if isinstance(face, SketchCircle):
@@ -429,6 +431,8 @@ def from_sketch_shapes_to_grpc_geometries(
             one_curve_geometry.ellipses.append(geometries.ellipses[0])
         elif len(geometries.polygons) > 0:
             one_curve_geometry.polygons.append(geometries.polygons[0])
+        elif len(geometries.nurbs_curves) > 0:
+            one_curve_geometry.nurbs_curves.append(geometries.nurbs_curves[0])
         return one_curve_geometry
 
     else:
@@ -438,7 +442,7 @@ def from_sketch_shapes_to_grpc_geometries(
 def from_sketch_edges_to_grpc_geometries(
     edges: list["SketchEdge"],
     plane: "Plane",
-) -> tuple[list[GRPCLine], list[GRPCArc]]:
+) -> tuple[list[GRPCLine], list[GRPCArc], list[GRPCNurbsCurve]]:
     """Convert a list of ``SketchEdge`` to a gRPC message.
 
     Parameters
@@ -450,21 +454,25 @@ def from_sketch_edges_to_grpc_geometries(
 
     Returns
     -------
-    tuple[list[GRPCLine], list[GRPCArc]]
-        Geometry service gRPC line and arc messages. The unit is meters.
+    tuple[list[GRPCLine], list[GRPCArc], list[GRPCNurbsCurve]]
+        Geometry service gRPC line, arc, and NURBS curve messages. The unit is meters.
     """
     from ansys.geometry.core.sketch.arc import Arc
+    from ansys.geometry.core.sketch.nurbs import SketchNurbs
     from ansys.geometry.core.sketch.segment import SketchSegment
 
     arcs = []
     segments = []
+    nurbs_curves = []
     for edge in edges:
         if isinstance(edge, SketchSegment):
             segments.append(from_sketch_segment_to_grpc_line(edge, plane))
         elif isinstance(edge, Arc):
             arcs.append(from_sketch_arc_to_grpc_arc(edge, plane))
+        elif isinstance(edge, SketchNurbs):
+            nurbs_curves.append(from_sketch_nurbs_to_grpc_nurbs_curve(edge, plane))
 
-    return (segments, arcs)
+    return (segments, arcs, nurbs_curves)
 
 
 def from_sketch_arc_to_grpc_arc(arc: "Arc", plane: "Plane") -> GRPCArc:
@@ -493,6 +501,48 @@ def from_sketch_arc_to_grpc_arc(arc: "Arc", plane: "Plane") -> GRPCArc:
         start=from_point2d_to_grpc_point(plane, arc.start),
         end=from_point2d_to_grpc_point(plane, arc.end),
         axis=axis,
+    )
+
+
+def from_sketch_nurbs_to_grpc_nurbs_curve(curve: "SketchNurbs", plane: "Plane") -> GRPCNurbsCurve:
+    """Convert a ``SketchNurbs`` class to a NURBS curve gRPC message.
+
+    Parameters
+    ----------
+    nurbs : SketchNurbs
+        Source NURBS data.
+    plane : Plane
+        Plane for positioning the NURBS curve.
+
+    Returns
+    -------
+    GRPCNurbsCurve
+        Geometry service gRPC NURBS curve message. The unit is meters.
+    """
+    from ansys.api.geometry.v0.models_pb2 import (
+        ControlPoint as GRPCControlPoint,
+        NurbsData as GRPCNurbsData,
+    )
+
+    # Convert control points
+    control_points = [
+        GRPCControlPoint(
+            position=from_point2d_to_grpc_point(plane, pt),
+            weight=curve.weights[i],
+        )
+        for i, pt in enumerate(curve.control_points)
+    ]
+
+    # Convert nurbs data
+    nurbs_data = GRPCNurbsData(
+        degree=curve.degree,
+        knots=from_knots_to_grpc_knots(curve.knots),
+        order=curve.degree + 1,
+    )
+
+    return GRPCNurbsCurve(
+        control_points=control_points,
+        nurbs_data=nurbs_data,
     )
 
 
