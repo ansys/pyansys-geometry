@@ -526,7 +526,7 @@ jobs:
           docker logs ${{ env.GEO_CONT_NAME }}
           docker rm ${{ env.GEO_CONT_NAME }}
 
-  testing-min-reqs-with-tracker:
+  testing-min-reqs-tracker:
     name: Testing with minimum requirements with tracker
     needs: [smoke-tests]
     runs-on: ubuntu-latest
