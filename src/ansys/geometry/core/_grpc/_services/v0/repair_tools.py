@@ -620,6 +620,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 },
                 "master_id": body.master_id,
                 "parent_id": body.parent_id,
+                "is_surface": body.is_surface,
             }
 
         def serialize_entity_identifier(entity):
