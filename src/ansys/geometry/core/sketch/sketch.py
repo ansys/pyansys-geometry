@@ -39,6 +39,7 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.ellipse import SketchEllipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.gears import DummyGear, SpurGear
+from ansys.geometry.core.sketch.nurbs import SketchNurbs
 from ansys.geometry.core.sketch.polygon import Polygon
 from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.sketch.slot import Slot
@@ -560,6 +561,28 @@ class Sketch:
             clockwise=clockwise,
         )
         return self.edge(arc, tag)
+
+    def nurbs_from_2d_points(
+        self,
+        points: list[Point2D],
+        tag: str | None = None,
+    ) -> "Sketch":
+        """Add a NURBS curve from a list of 2D points.
+
+        Parameters
+        ----------
+        points : list[Point2D]
+            List of 2D points to define the NURBS curve.
+        tag : str | None, default: None
+            User-defined label for identifying the curve.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+        """
+        nurbs_curve = SketchNurbs.fit_curve_from_points(points)
+        return self.edge(nurbs_curve, tag)
 
     def triangle(
         self,

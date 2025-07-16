@@ -3131,6 +3131,38 @@ def test_surface_body_creation(modeler: Modeler):
     assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
 
 
+def test_create_surface_from_nurbs_sketch(modeler: Modeler):
+    """Test creating a surface from a NURBS sketch."""
+    design = modeler.create_design("NURBS_Sketch_Surface")
+
+    # Create a NURBS sketch
+    sketch = Sketch()
+    sketch.nurbs_from_2d_points(
+        points=[
+            Point2D([0, 0]),
+            Point2D([1, 0]),
+            Point2D([1, 1]),
+            Point2D([0, 1]),
+        ],
+        tag="nurbs_sketch",
+    )
+    sketch.segment(
+        start=Point2D([0, -1]),
+        end=Point2D([0, 2]),
+        tag="segment_1",
+    )
+
+    # Create a surface from the NURBS sketch
+    surface_body = design.create_surface(
+        name="nurbs_surface",
+        sketch=sketch,
+    )
+
+    assert len(design.bodies) == 1
+    assert surface_body.is_surface
+    assert surface_body.faces[0].area.m > 0
+
+
 def test_design_parameters(modeler: Modeler):
     """Test the design parameter's functionality."""
     design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
