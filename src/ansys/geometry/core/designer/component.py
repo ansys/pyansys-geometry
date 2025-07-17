@@ -22,7 +22,6 @@
 """Provides for managing components."""
 
 from enum import Enum, unique
-from functools import cached_property
 from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
@@ -306,7 +305,14 @@ class Component:
         bodies = []
         for body in self._master_component.part.bodies:
             if body.is_alive:
-                bodies.append(Body(f"{self.id}/{body.id}" if self.parent_component else body.id, body.name, self, body))
+                bodies.append(
+                    Body(
+                        f"{self.id}/{body.id}" if self.parent_component else body.id,
+                        body.name,
+                        self,
+                        body,
+                    )
+                )
         return bodies
 
     @property
