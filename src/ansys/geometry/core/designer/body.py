@@ -1254,7 +1254,6 @@ class MasterBody(IBody):
             response.get("master_id"), copy_name, self._grpc_client, is_surface=self.is_surface
         )
         parent._master_component.part.bodies.append(tb)
-        parent._clear_cached_bodies()
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
         return Body(body_id, response.get("name"), parent, tb)
 
