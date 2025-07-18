@@ -53,6 +53,17 @@ from ansys.api.geometry.v0.commands_pb2 import (
     RevolveFacesUpToRequest,
     RoundInfoRequest,
     SplitBodyRequest,
+    RayFireRequestData,
+    RayFireRequest,
+    RayFireResponse,
+    RayFireResponseData,
+    RayFireOrderedRequestData,
+    RayFireOrderedRequest,
+    RayFireFacesRequestData,
+    RayFireFacesRequest,
+    RayFireOrderedUVRequestData,
+    RayFireAddtionalOptions,
+    RayFireOrderedUVRequest
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
@@ -61,6 +72,7 @@ from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
     point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
+    grpc_point_to_point3d,
 )
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
@@ -95,6 +107,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.tools.measurement_tools import RayImpact
 
 
 @unique
@@ -1635,3 +1648,73 @@ class GeometryCommands:
             result.is_reversed,
             result.is_valid,
         )
+        
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def ray_fire(
+        self,
+        body: "Body",
+        faces: Union["Face", list["Face"]],
+        direction: UnitVector3D ,
+        points: Union["Point3D", list["Point3D"]],
+        max_distance: Real,
+    ) -> list["RayImpact"] :
+        """Create an orient condition between two geometry objects.
+
+        This rotates the objects so that they are oriented in the same direction.
+
+        Parameters
+        ----------
+        parent_component : Component
+            The common ancestor component of the two geometry objects.
+        geometry_a : Body | Face | Edge
+            The first geometry object to orient with the second.
+        geometry_b : Body | Face | Edge
+            The geometry object to be oriented with.
+
+        Returns
+        -------
+        OrientCondition
+            The persistent orient condition that was created.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        from ansys.geometry.core.designer.body import Body
+        from ansys.geometry.core.designer.face import Face
+        from ansys.geometry.core.tools.measurement_tools import RayImpact
+
+        check_type(body, Body)
+        faces: list[Face] = faces if isinstance(faces, list) else [faces]
+        check_type_all_elements_in_iterable(faces, Face)
+        check_is_float_int(max_distance, "max_distance")
+
+        faces_ids = []
+        for face in faces:
+            faces_ids.append(face._grpc_id)
+
+        design = get_design_from_body(body)
+        response = self._commands_stub.RayFire(
+            RayFireRequest(
+                request_data= [RayFireRequestData(
+                    body=body._grpc_id,
+                    faces=[face._grpc_id for face in faces],
+                    direction= unit_vector_to_grpc_direction(direction),
+                    points=[point3d_to_grpc_point(points[0])],
+                    max_distance=max_distance,                    
+                )]
+            )
+        ).response_data
+        
+        result = []
+        for single_result in response:
+            for impact in single_result.impacts:
+                # Convert the grpc point to Point3D
+                grpc_point = grpc_point_to_point3d(impact.point)
+                result.append(RayImpact(
+                    body= get_bodies_from_ids(design, [single_result.body]),
+                    point = grpc_point
+                ))
+            
+        return result

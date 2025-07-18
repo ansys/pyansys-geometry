@@ -25,6 +25,9 @@ from pathlib import Path
 import numpy as np
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc import Distance, UNITS
 
 from .conftest import FILES_DIR
 
@@ -72,3 +75,16 @@ def test_orient_condition(modeler: Modeler):
     new_center = face1.body.bounding_box.center
 
     assert not np.allclose(old_center, new_center)
+
+def test_ray_fire(modeler: Modeler):
+    """Test the creation of an orient condition."""
+    design = modeler.open_file(Path(FILES_DIR, "gear.scdocx"))
+    dir= UnitVector3D([-1, 0, 0]) 
+    result = modeler.geometry_commands.ray_fire(
+        body=design.bodies[0], 
+        faces=[design.bodies[0].faces[0]], 
+        direction= dir,
+        points= [ Point3D([0,0,0])], 
+        max_distance=1.0)
+    assert result is not None
+    print(result)

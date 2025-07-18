@@ -24,8 +24,10 @@
 from typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.misc.checks import min_backend_version
+from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.misc.checks import min_backend_version, check_type
 from ansys.geometry.core.misc.measurements import Distance
+from beartype import beartype as check_input_types
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -92,3 +94,33 @@ class MeasurementTools:
             backend_version=self._grpc_client.backend_version,
         )
         return Gap(response.get("distance"))
+
+
+class RayImpacts:
+    """Provides the base class for handling fired ray impact throughout PyAnsys Geometry.
+
+    Parameters
+    ----------
+    body : Body
+        The impacted body.
+    impact : Point3D
+        The impact's coordinates.
+    """
+
+    @check_input_types
+    def __init__(self, body: "Body", impacts: list[Point3D]):
+        """Initialize the ``RayImpact`` class."""
+        check_type(body, Body)
+
+        self._body = body
+        self._impacts = impacts
+
+    @property
+    def body(self) -> "Body":
+        """Impacted body."""
+        return self._body
+
+    @property
+    def impacts(self) -> list[Point3D]:
+        """Impact's coordinates."""
+        return self._impacts
