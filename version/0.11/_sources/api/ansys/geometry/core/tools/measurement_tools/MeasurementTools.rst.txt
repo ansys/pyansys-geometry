@@ -1,0 +1,115 @@
+
+
+
+
+
+
+:class:`MeasurementTools`
+=========================
+
+
+.. py:class:: ansys.geometry.core.tools.measurement_tools.MeasurementTools(grpc_client: ansys.geometry.core.connection.GrpcClient)
+
+   
+   Measurement tools for PyAnsys Geometry.
+
+
+   :Parameters:
+
+       **grpc_client** : :obj:`GrpcClient`
+           gRPC client to use for the measurement tools.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: MeasurementTools
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~min_distance_between_objects`
+            - Find the gap between two bodies.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.measurement_tools import MeasurementTools
+
+
+
+Method detail
+-------------
+
+.. py:method:: min_distance_between_objects(object1: Union[ansys.geometry.core.designer.body.Body, ansys.geometry.core.designer.face.Face, ansys.geometry.core.designer.edge.Edge], object2: Union[ansys.geometry.core.designer.body.Body, ansys.geometry.core.designer.face.Face, ansys.geometry.core.designer.edge.Edge]) -> Gap
+
+   
+   Find the gap between two bodies.
+
+
+   :Parameters:
+
+       **object1** : :obj:`Union`\[:obj:`Body`, :obj:`Face`, :obj:`Edge`]
+           First object to measure the gap.
+
+       **object2** : :obj:`Union`\[:obj:`Body`, :obj:`Face`, :obj:`Edge`]
+           Second object to measure the gap.
+
+
+
+   :Returns:
+
+       :obj:`Gap`
+           Gap between two bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
