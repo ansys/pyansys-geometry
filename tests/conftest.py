@@ -27,6 +27,7 @@ import pytest
 
 # Define default pytest logging level to DEBUG and stdout
 from ansys.geometry.core import LOG
+from ansys.geometry.core.errors import GeometryRuntimeError
 
 LOG.setLevel(level="DEBUG")
 LOG.log_to_stdout()
@@ -50,6 +51,43 @@ def pytest_addoption(parser):
         help=("Enable the tracker to update the design. Options: 'yes' or 'no'. By default, 'no'."),
         choices=("yes", "no"),
     )
+
+    parser.addoption(
+        "--backwards-compatibility",
+        action="store",
+        default="no",
+        help=(
+            "Skip tests that are backwards incompatible instead of failing them."
+            " Options: 'yes' or 'no'. By default, 'no'."
+        ),
+        choices=("yes", "no"),
+    )
+
+
+def pytest_pyfunc_call(pyfuncitem):
+    config = pyfuncitem.config
+    config_value = config.getoption("--backwards-compatibility")
+    skip_on_error = True if config_value.lower() == "yes" else False
+
+    if not skip_on_error:
+        return None  # Let normal test execution proceed
+
+    testfunction = pyfuncitem.obj
+
+    def wrapped(*args, **kwargs):
+        try:
+            testfunction(*args, **kwargs)
+        except GeometryRuntimeError as e:
+            # Verify if the error is due to server incompatibility
+            if "requires a minimum Ansys release version" in str(e):
+                # If so, skip the test
+                pytest.skip(f"Skipped due to backwards incompatible backend: {e}")
+            else:
+                # If the error is not related to server incompatibility, re-raise it
+                raise e
+
+    pyfuncitem.obj = wrapped
+    return None  # Continue with normal execution
 
 
 @pytest.fixture(scope="session")
