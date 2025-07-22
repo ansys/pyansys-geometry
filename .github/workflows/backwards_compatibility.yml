@@ -27,7 +27,7 @@ jobs:
   # =================================================================================================
 
   testing-backwards-compatibility-windows:
-    name: Testing backwards compatibility (Windows "${{ matrix.backend-version }}")
+    name: Windows ${{ matrix.backend-version }}
     runs-on: [self-hosted, Windows, pygeometry]
     strategy:
       fail-fast: false
