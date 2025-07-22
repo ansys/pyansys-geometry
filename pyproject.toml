@@ -73,6 +73,7 @@ tests = [
     "pytest-cov==6.2.1",
     "pytest-pyvista==0.2.0",
     "pyvista[jupyter]==0.45.2",
+    "pyyaml==6.0.2",
     "requests==2.32.4",
     "scipy==1.15.3",
     "semver==3.0.4",
@@ -83,6 +84,7 @@ tests-minimal = [
     "pytest==8.4.1",
     "pytest-cov==6.2.1",
     "pytest-pyvista==0.2.0",
+    "pyyaml==6.0.2",
 ]
 doc = [
     "ansys-sphinx-theme[autoapi]==1.5.3",
