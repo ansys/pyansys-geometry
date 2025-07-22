@@ -27,12 +27,20 @@ jobs:
   # =================================================================================================
 
   testing-backwards-compatibility-windows:
-    name: Testing backwards compatibility
+    name: Testing backwards compatibility (Windows "${{ matrix.backend-version }}")
     runs-on: [self-hosted, Windows, pygeometry]
     strategy:
       fail-fast: false
       matrix:
-        image-tags: ["windows-24.1", "windows-24.2", "windows-25.1", "core-windows-25.2"]
+        include:
+          - image-tag: "windows-24.1"
+            backend-version: "24.1"
+          - image-tag: "windows-24.2"
+            backend-version: "24.2"
+          - image-tag: "windows-25.1"
+            backend-version: "25.1"
+          - image-tag: "core-windows-25.2"
+            backend-version: "25.2"
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -64,7 +72,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Geometry service container (if needed)
-        run: docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tags }}
+        run: docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }}
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-2'
@@ -82,13 +90,13 @@ jobs:
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tags }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest -v --backwards-compatibility=yes
+          pytest -v --backwards-compatibility=yes --backend-version=${{ matrix.backend-version }} -rf
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
