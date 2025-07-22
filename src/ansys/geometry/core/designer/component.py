@@ -594,6 +594,7 @@ class Component:
             sketch=sketch,
             distance=distance,
             direction=direction.get_multiplier(),
+            backend_version=self._grpc_client.backend_version,
         )
         created_body = self.__build_body_from_response(response)
 
@@ -653,6 +654,7 @@ class Component:
             parent_id=self.id,
             sketch=sketch,
             path=path,
+            backend_version=self._grpc_client.backend_version,
         )
         return self.__build_body_from_response(response)
 
@@ -922,7 +924,10 @@ class Component:
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
         )
         response = self._grpc_client.services.bodies.create_planar_body(
-            name=name, parent_id=self.id, sketch=sketch
+            name=name,
+            parent_id=self.id,
+            sketch=sketch,
+            backend_version=self._grpc_client.backend_version,
         )
 
         return self.__build_body_from_response(response)

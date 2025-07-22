@@ -63,6 +63,52 @@ def pytest_addoption(parser):
         choices=("yes", "no"),
     )
 
+    parser.addoption(
+        "--backend-version",
+        action="store",
+        default="latest",
+        help=("Specify the backend version to use for the tests. By default, 'latest'."),
+    )
+
+
+def pytest_configure(config):
+    """Configure pytest with custom options."""
+    # If a specific backend version is set, load the incompatible tests for that version
+    config.incompatible_tests = _load_incompatible_tests(
+        config.getoption("--backend-version").lower()
+    )
+
+
+def _load_incompatible_tests(version):
+    """Load tests that are incompatible with the specified backend version."""
+    # Load the YAML file available next to this file
+    from pathlib import Path
+
+    import yaml
+
+    current_path = Path(__file__).parent
+    incompatible_tests_file = current_path / "_incompatible_tests.yml"
+    incompatible_tests = set()
+
+    with incompatible_tests_file.open("r") as file:
+        content = yaml.safe_load(file)
+        # Search for the specified version
+        for backend in content.get("backends", []):
+            if backend.get("version") == version:
+                incompatible_tests.update(backend.get("incompatible_tests", []))
+
+    return incompatible_tests
+
+
+def pytest_collection_modifyitems(config, items):
+    incompatible = config.incompatible_tests
+    skipped = []
+
+    for item in items:
+        if item.nodeid in incompatible:
+            item.add_marker(pytest.mark.skip(reason="Skipped due to known server incompatibility"))
+            skipped.append(item.nodeid)
+
 
 def pytest_pyfunc_call(pyfuncitem):
     config = pyfuncitem.config
@@ -81,7 +127,7 @@ def pytest_pyfunc_call(pyfuncitem):
             # Verify if the error is due to server incompatibility
             if "requires a minimum Ansys release version" in str(e):
                 # If so, skip the test
-                pytest.skip(f"Skipped due to backwards incompatible backend: {e}")
+                pytest.skip("Skipped due to backwards incompatible backend version.")
             else:
                 # If the error is not related to server incompatibility, re-raise it
                 raise e

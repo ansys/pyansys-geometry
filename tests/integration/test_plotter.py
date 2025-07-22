@@ -1016,6 +1016,9 @@ def test_export_glb(modeler: Modeler):
     output_glb_path = output_glb_path.with_suffix(".glb")
     assert output_glb_path.exists(), "GLB file was not created successfully."
 
+    # Delete the temporary GLB file
+    tempglb.unlink(missing_ok=True)
+
 
 @skip_no_xserver
 def test_export_glb_with_color(modeler: Modeler):
