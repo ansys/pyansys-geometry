@@ -37,6 +37,8 @@ from ansys.api.geometry.v0.commands_pb2 import (
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.components_pb2 import (
     CreateRequest,
+    ImportGroupsRequest,
+    MakeIndependentRequest,
     SetPlacementRequest,
     SetSharedTopologyRequest,
 )
@@ -70,6 +72,7 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_component
 from ansys.geometry.core.misc.checks import (
     ensure_design_is_active,
     graphics_required,
@@ -1876,3 +1879,30 @@ class Component:
                 lines.extend([f"|{'-' * (indent - 1)}(comp) {comp.name}" for comp in comps])
 
         return lines if return_list else print("\n".join(lines))
+
+    def import_named_selections(self) -> None:
+        """Import named selections of a component.
+
+        When a design is inserted, it becomes a component. In 26R1, the named selections of that
+        component will be imported by default. If a file is opened that contains a component that
+        did not have its named selections imported, this method can be used to import them.
+        """
+        self._component_stub.ImportGroups(ImportGroupsRequest(id=self._grpc_id))
+
+        design = get_design_from_component(self)
+        design._update_design_inplace()
+
+    def make_independent(self, others: list["Component"] = None) -> None:
+        """Make a component independent if it is an instance.
+
+        If a component is an instance of another component, modifying one component modifies both.
+        When a component is made independent, it is no longer associated with other instances and
+        can be modified separately.
+
+        Parameters
+        ----------
+        others : list[Component], default: None
+            Optionally include multiple components to make them all independent.
+        """
+        ids = [self._grpc_id, *[o._grpc_id for o in others or []]]
+        self._component_stub.MakeIndependent(MakeIndependentRequest(ids=ids))
