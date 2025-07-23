@@ -1880,6 +1880,8 @@ class Component:
 
         return lines if return_list else print("\n".join(lines))
 
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
     def import_named_selections(self) -> None:
         """Import named selections of a component.
 
@@ -1892,6 +1894,8 @@ class Component:
         design = get_design_from_component(self)
         design._update_design_inplace()
 
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
     def make_independent(self, others: list["Component"] = None) -> None:
         """Make a component independent if it is an instance.
 
