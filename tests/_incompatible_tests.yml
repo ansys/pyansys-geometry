@@ -52,6 +52,8 @@ backends:
       - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges_comprehensive
       - tests/integration/test_repair_tools.py::test_find_and_fix_simplify
       - tests/integration/test_repair_tools.py::test_design_import_check_geometry
+      - tests/integration/test_design.py::test_import_component_named_selections
+      - tests/integration/test_design.py::test_component_make_independent
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -88,6 +90,15 @@ backends:
       - tests/integration/test_issues.py::test_issue_834_design_import_with_surfaces
       # Ordering of faces/edges changed from 24R2 onwards
       - tests/integration/test_design.py::test_faces_edges
+      # Due to test setup, these tests error out and are not caught by the backend version error
+      # So we will explicitly skip them in this file -- "shapes" are supported from 24R2 onwards
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_surface_properties
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_surface_normals
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_properties
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_line_translate
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_line_rotate
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_circle_translate
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_circle_rotate
 
   - version: "24.2"
     incompatible_tests:
@@ -138,6 +149,8 @@ backends:
       - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges_comprehensive
       - tests/integration/test_repair_tools.py::test_find_and_fix_simplify
       - tests/integration/test_repair_tools.py::test_design_import_check_geometry
+      - tests/integration/test_design.py::test_import_component_named_selections
+      - tests/integration/test_design.py::test_component_make_independent
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -182,6 +195,9 @@ backends:
 
   - version: "25.1"
     incompatible_tests:
+      # Model used is too new for this version
+      - tests/integration/test_design.py::test_import_component_named_selections
+      - tests/integration/test_design.py::test_component_make_independent
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -241,9 +257,12 @@ backends:
 
   - version: "25.2"
     incompatible_tests:
+      # Model used is too new for this version
+      - tests/integration/test_design.py::test_import_component_named_selections
       # Components and vertex only available on 26.1 onwards
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
+      - tests/integration/test_design.py::test_component_make_independent
       # Insert/Import file operations caused problems prior to 26.1
       - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
       - tests/integration/test_design_export.py::test_import_export_reimport_design_x_t
