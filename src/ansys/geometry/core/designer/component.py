@@ -1911,6 +1911,10 @@ class Component:
         ----------
         others : list[Component], default: None
             Optionally include multiple components to make them all independent.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
         """
         ids = [self._grpc_id, *[o._grpc_id for o in others or []]]
         self._component_stub.MakeIndependent(MakeIndependentRequest(ids=ids))
