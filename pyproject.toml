@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.67",
+    "ansys-api-geometry==0.4.68",
     "ansys-tools-path>=0.3,<1",
     "beartype>=0.11.0,<0.22",
     "geomdl>=5,<6",
