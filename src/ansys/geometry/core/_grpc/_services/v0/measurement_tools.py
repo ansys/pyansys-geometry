@@ -56,6 +56,10 @@ class GRPCMeasurementToolsServiceV0(GRPCMeasurementToolsService):
         # Request is different based on backend_version (25.2 vs. earlier)
         if kwargs["backend_version"] < (25, 2, 0):
             request = MinDistanceBetweenObjectsRequest(bodies=kwargs["selection"])
+
+            # Call the gRPC service
+            response = self.stub.MinDistanceBetweenObjects(request)
+
         else:
             from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 
@@ -63,8 +67,8 @@ class GRPCMeasurementToolsServiceV0(GRPCMeasurementToolsService):
                 selection=[EntityIdentifier(id=item) for item in kwargs["selection"]]
             )
 
-        # Call the gRPC service
-        response = self.stub.MinDistanceBetweenSelectionObjects(request)
+            # Call the gRPC service
+            response = self.stub.MinDistanceBetweenSelectionObjects(request)
 
         # Return the response - formatted as a dictionary
         return {"distance": to_distance(response.gap.distance)}

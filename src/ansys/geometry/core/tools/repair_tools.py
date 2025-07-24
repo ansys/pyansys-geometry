@@ -787,6 +787,7 @@ class RepairTools:
         # Build the response message
         return self.__build_repair_tool_message(response)
 
+    @min_backend_version(25, 2, 0)
     def inspect_geometry(self, bodies: list["Body"] = None) -> list[InspectResult]:
         """Return a list of geometry issues organized by body.
 
@@ -803,6 +804,10 @@ class RepairTools:
         -------
         list[IssuesByBody]
             List of objects representing geometry issues and the bodies where issues are found.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         parent_design = self._modeler.get_active_design()
         body_ids = [] if bodies is None else [body._grpc_id for body in bodies]

@@ -55,10 +55,12 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import graphics_required
 
 if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
+    import semver
 
     from ansys.geometry.core.connection.backend import BackendType
     from ansys.geometry.core.designer.design import DesignFileFormat
@@ -1136,3 +1138,26 @@ def from_material_to_grpc_material(
             for property in material.properties.values()
         ],
     )
+
+
+def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
+    """Check if the backend version is compatible with NURBS curves in sketches.
+
+    Parameters
+    ----------
+    backend_version : semver.Version
+        The version of the backend.
+    grpc_geometries : GRPCGeometries
+        The gRPC geometries potentially containing NURBS curves.
+
+    Raises
+    ------
+    GeometryRuntimeError
+        If the backend version is lower than 26.1.0 and NURBS curves are present.
+    """
+    if grpc_geometries.nurbs_curves and backend_version < (26, 1, 0):
+        raise GeometryRuntimeError(
+            "The usage of NURBS in sketches requires a minimum Ansys release version of "  # noqa: E501
+            + "26.1.0, but the current version used is "
+            + f"{backend_version}."
+        )

@@ -298,6 +298,7 @@ def test_assigning_and_getting_material(modeler: Modeler):
 
 
 def test_get_empty_material(modeler: Modeler):
+    """Check that the material service returns an empty material."""
     # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
     sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))

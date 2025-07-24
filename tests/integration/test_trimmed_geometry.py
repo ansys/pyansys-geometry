@@ -96,7 +96,7 @@ def create_hedgehog(modeler: Modeler):
     return design
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def hedgehog_design(modeler: Modeler):
     """A fixture of the hedgehog design to test the surface and curve properties individually."""
     h = create_hedgehog(modeler)

@@ -299,8 +299,14 @@ class Component:
         self._name = name
 
     @property
+    @min_backend_version(25, 1, 0)
     def instance_name(self) -> str:
-        """Name of the component instance."""
+        """Name of the component instance.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
+        """
         return self._instance_name
 
     @property
@@ -597,6 +603,7 @@ class Component:
             sketch=sketch,
             distance=distance,
             direction=direction.get_multiplier(),
+            backend_version=self._grpc_client.backend_version,
         )
         created_body = self.__build_body_from_response(response)
 
@@ -656,6 +663,7 @@ class Component:
             parent_id=self.id,
             sketch=sketch,
             path=path,
+            backend_version=self._grpc_client.backend_version,
         )
         return self.__build_body_from_response(response)
 
@@ -811,7 +819,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
-    @min_backend_version(24, 2, 0)
+    @min_backend_version(25, 1, 0)
     def create_sphere(self, name: str, center: Point3D, radius: Distance) -> Body:
         """Create a sphere body defined by the center point and the radius.
 
@@ -831,7 +839,7 @@ class Component:
 
         Warnings
         --------
-        This method is only available starting on Ansys release 24R2.
+        This method is only available starting on Ansys release 25R1.
         """
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id}.")
         response = self._grpc_client.services.bodies.create_sphere_body(
@@ -925,7 +933,10 @@ class Component:
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
         )
         response = self._grpc_client.services.bodies.create_planar_body(
-            name=name, parent_id=self.id, sketch=sketch
+            name=name,
+            parent_id=self.id,
+            sketch=sketch,
+            backend_version=self._grpc_client.backend_version,
         )
 
         return self.__build_body_from_response(response)

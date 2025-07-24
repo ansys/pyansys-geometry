@@ -77,7 +77,7 @@ def test_python_integrated_script(modeler: Modeler):
 
     # Waiting for some more well thought system to tag tests against a backend, we skip this one
     # when the backend is Discovery
-    if modeler.client.backend_type == BackendType.DISCOVERY:
+    if modeler.client.backend_type in (BackendType.DISCOVERY, BackendType.WINDOWS_SERVICE):
         return
 
     design = modeler.create_design("Integrated_Example")
