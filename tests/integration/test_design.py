@@ -3549,3 +3549,33 @@ def test_extrude_edges_missing_parameters(modeler: Modeler):
             from_point=None,
             direction=None,
         )
+
+
+def test_import_component_named_selections(modeler: Modeler):
+    """Test importing named selections from an inserted design component."""
+    # This file had a component inserted into it that has named selections that we need to import
+    design = modeler.open_file(Path(FILES_DIR, "import_component_groups.scdocx"))
+    component = design.components[0]
+
+    assert len(design.named_selections) == 0
+    component.import_named_selections()
+    assert len(design.named_selections) == 3
+
+
+def test_component_make_independent(modeler: Modeler):
+    """Test making components independent."""
+
+    design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
+    face = next((ns for ns in design.named_selections if ns.name == "to_pull"), None).faces[0]
+    comp = next(
+        (ns for ns in design.named_selections if ns.name == "make_independent"), None
+    ).components[0]
+
+    comp.make_independent()
+
+    assert Accuracy.length_is_equal(comp.bodies[0].volume.m, face.body.volume.m)
+
+    modeler.geometry_commands.extrude_faces(face, 1)
+    comp = design.components[0].components[-1].components[-1]  # stale from update-design-in-place
+
+    assert not Accuracy.length_is_equal(comp.bodies[0].volume.m, face.body.volume.m)
