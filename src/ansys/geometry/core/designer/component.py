@@ -1888,6 +1888,10 @@ class Component:
         When a design is inserted, it becomes a component. In 26R1, the named selections of that
         component will be imported by default. If a file is opened that contains a component that
         did not have its named selections imported, this method can be used to import them.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
         """
         self._component_stub.ImportGroups(ImportGroupsRequest(id=self._grpc_id))
 
