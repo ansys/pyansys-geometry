@@ -1,7 +1,3 @@
-permissions:
-  contents: read
-  packages: read
-  id-token: write
 name: Backwards compatibility tests
 on:
   pull_request:
@@ -23,6 +19,11 @@ env:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: read
+  id-token: write
 
 jobs:
 
