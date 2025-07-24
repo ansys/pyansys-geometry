@@ -537,6 +537,13 @@ def test_design_insert_id_bug(modeler: Modeler):
     assert len(design1.components[1].bodies) == 1
 
 
+def test_nested_folder_import_with_open_file(modeler: Modeler):
+    """Test importing a file from a nested folder structure."""
+    # Open the design *just verify it can be opened without errors)
+    file_path = Path(IMPORT_FILES_DIR, "nested_cat_project/car.CATProduct")
+    modeler.open_file(file_path)
+
+
 @pytest.mark.skip(reason="Object reference not set to an instance of an object.")
 def test_import_scdocx_with_external_docs(modeler: Modeler):
     """Test importing an SCDOCX file with external documents and verify it is internalized."""
