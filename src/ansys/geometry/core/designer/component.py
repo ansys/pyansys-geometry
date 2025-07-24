@@ -1885,9 +1885,10 @@ class Component:
     def import_named_selections(self) -> None:
         """Import named selections of a component.
 
-        When a design is inserted, it becomes a component. From 26R1 onwards, the named selections of that
-        component will be imported by default. If a file is opened that contains a component that
-        did not have its named selections imported, this method can be used to import them.
+        When a design is inserted, it becomes a component. From 26R1 onwards, the named selections
+        of that component will be imported by default. If a file is opened that contains a
+        component that did not have its named selections imported, this method can be used to
+        import them.
 
         Warnings
         --------
