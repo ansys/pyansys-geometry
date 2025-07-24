@@ -31,6 +31,7 @@ import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
     CurveType,
     DesignFileFormat,
@@ -75,7 +76,55 @@ from ansys.geometry.core.shapes.parameterization import (
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
-from .conftest import FILES_DIR
+from .conftest import FILES_DIR, IMPORT_FILES_DIR
+
+
+def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Validating error messages when opening up files"""
+    fake_file_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file(fake_file_path)
+    file = tmp_path_factory.mktemp("test_design")
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file(file)
+    fake_file_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file_stream(fake_file_path)
+    file = tmp_path_factory.mktemp("test_design")
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file_stream(file)
+
+
+def test_modeler_open_files(modeler: Modeler):
+    """Test the modeler open files for assembly files and for too small of files."""
+    catiafile = Path(IMPORT_FILES_DIR, "CAT5/Top_Down_Assembly_SC_CATv5.CATProduct")
+    design = modeler.open_file(catiafile)
+    design.close()
+    old_value = pygeom_defaults.MAX_MESSAGE_LENGTH
+    try:
+        pygeom_defaults.MAX_MESSAGE_LENGTH = 1024  # 0.5 MB
+        with pytest.raises(
+            GeometryExitedError,
+            match="Geometry service connection terminated: Exception iterating requests!",
+        ):
+            design = modeler.open_file(catiafile)
+        pygeom_defaults.MAX_MESSAGE_LENGTH = 10  # 0.5 MB
+        with pytest.raises(
+            GeometryExitedError,
+            match="Geometry service connection terminated: Exception iterating requests!",
+        ):
+            design = modeler.open_file(Path(FILES_DIR, "InspectAndRepair01.scdocx"))
+    finally:
+        pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
+
+
+def test_disable_active_design_check(modeler: Modeler, disable_active_design_check_true: None):
+    """Validating test for disabling active design check."""
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design = modeler.create_design("Box")
+    design.extrude_sketch("Box", sketch, 2)
+    checks.ensure_design_is_active(design.bodies[0].edges)
 
 
 def test_design_is_close(modeler: Modeler):
@@ -3082,6 +3131,38 @@ def test_surface_body_creation(modeler: Modeler):
     assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
 
 
+def test_create_surface_from_nurbs_sketch(modeler: Modeler):
+    """Test creating a surface from a NURBS sketch."""
+    design = modeler.create_design("NURBS_Sketch_Surface")
+
+    # Create a NURBS sketch
+    sketch = Sketch()
+    sketch.nurbs_from_2d_points(
+        points=[
+            Point2D([0, 0]),
+            Point2D([1, 0]),
+            Point2D([1, 1]),
+            Point2D([0, 1]),
+        ],
+        tag="nurbs_sketch",
+    )
+    sketch.segment(
+        start=Point2D([0, -1]),
+        end=Point2D([0, 2]),
+        tag="segment_1",
+    )
+
+    # Create a surface from the NURBS sketch
+    surface_body = design.create_surface(
+        name="nurbs_surface",
+        sketch=sketch,
+    )
+
+    assert len(design.bodies) == 1
+    assert surface_body.is_surface
+    assert surface_body.faces[0].area.m > 0
+
+
 def test_design_parameters(modeler: Modeler):
     """Test the design parameter's functionality."""
     design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
@@ -3106,6 +3187,12 @@ def test_design_parameters(modeler: Modeler):
     test_parameters[0].dimension_value = 0.0006
     status = design.set_parameter(test_parameters[0])
     assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+
+    test_parameters[0].name = "NewName"
+    assert test_parameters[0].name == "NewName"
+
+    test_parameters[0].dimension_type = ParameterType.DIMENSIONTYPE_AREA
+    assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
 
 def test_cached_bodies(modeler: Modeler):
@@ -3461,3 +3548,33 @@ def test_extrude_edges_missing_parameters(modeler: Modeler):
             from_point=None,
             direction=None,
         )
+
+
+def test_import_component_named_selections(modeler: Modeler):
+    """Test importing named selections from an inserted design component."""
+    # This file had a component inserted into it that has named selections that we need to import
+    design = modeler.open_file(Path(FILES_DIR, "import_component_groups.scdocx"))
+    component = design.components[0]
+
+    assert len(design.named_selections) == 0
+    component.import_named_selections()
+    assert len(design.named_selections) == 3
+
+
+def test_component_make_independent(modeler: Modeler):
+    """Test making components independent."""
+
+    design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
+    face = next((ns for ns in design.named_selections if ns.name == "to_pull"), None).faces[0]
+    comp = next(
+        (ns for ns in design.named_selections if ns.name == "make_independent"), None
+    ).components[0]
+
+    comp.make_independent()
+
+    assert Accuracy.length_is_equal(comp.bodies[0].volume.m, face.body.volume.m)
+
+    modeler.geometry_commands.extrude_faces(face, 1)
+    comp = design.components[0].components[-1].components[-1]  # stale from update-design-in-place
+
+    assert not Accuracy.length_is_equal(comp.bodies[0].volume.m, face.body.volume.m)

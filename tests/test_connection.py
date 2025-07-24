@@ -430,12 +430,14 @@ def test_is_port_available():
     """Test that _is_port_available correctly detects available and unavailable ports."""
     host = "localhost"
 
+    # Dynamically find an available port
+    available_port = find_available_port()
+
     # Test an available port
-    available_port = 5000
     assert _is_port_available(available_port, host) is True
 
     # Test an unavailable port by binding it
-    unavailable_port = 5001
+    unavailable_port = find_available_port()
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((host, unavailable_port))  # Bind the port to make it unavailable
         assert _is_port_available(unavailable_port, host) is False
@@ -519,14 +521,21 @@ def test_check_minimal_versions(
             pytest.fail("SystemError raised unexpectedly.")
 
 
+def find_available_port():
+    """Find an available port for testing."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("127.0.0.1", 0))  # Bind to an available port on the loopback interface
+        return s.getsockname()[1]  # Return the port number
+
+
 @pytest.mark.parametrize(
     "port, should_raise, expected_message",
     [
-        (5000, False, None),  # Test for an available port
+        (find_available_port(), False, None),  # Test for an available port
         (
-            5001,
+            find_available_port(),
             True,
-            "Port 5001 is already in use. Please specify a different one.",
+            r"Port \d+ is already in use\. Please specify a different one\.",
         ),  # Test for an unavailable port
     ],
 )

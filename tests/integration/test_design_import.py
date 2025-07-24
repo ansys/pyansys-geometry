@@ -542,3 +542,32 @@ def test_nested_folder_import_with_open_file(modeler: Modeler):
     # Open the design *just verify it can be opened without errors)
     file_path = Path(IMPORT_FILES_DIR, "nested_cat_project/car.CATProduct")
     modeler.open_file(file_path)
+
+
+@pytest.mark.skip(reason="Object reference not set to an instance of an object.")
+def test_import_scdocx_with_external_docs(modeler: Modeler):
+    """Test importing an SCDOCX file with external documents and verify it is internalized."""
+    # Create a new design
+    design = modeler.create_design("Insert External Document")
+
+    # Define the path to the external SCDOCX file
+    path_to_external_doc = Path(FILES_DIR, "external_file_scdocx", "Design1.scdocx")
+
+    # Import the external SCDOCX file
+    design.insert_file(file_location=path_to_external_doc)
+
+    # Verify that the design structure is internalized
+    # Check the number of bodies in the design
+    assert len(design.bodies) == 0
+
+    # Check the number of components in the design
+    assert len(design.components) == 1
+
+    # Check the number of bodies in the first component
+    assert len(design.components[0].bodies) == 1
+
+    # Check the number of subcomponents in the first component
+    assert len(design.components[0].components) == 5
+
+    for component in design.components[0].components:
+        assert len(component.bodies) == 1
