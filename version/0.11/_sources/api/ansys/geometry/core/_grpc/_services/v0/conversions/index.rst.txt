@@ -1,0 +1,1243 @@
+
+
+
+
+
+
+The ``conversions.py`` module
+=============================
+
+.. py:module:: ansys.geometry.core._grpc._services.v0.conversions
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: conversions
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~from_point3d_to_grpc_point`
+            - Convert a ``Point3D`` class to a point gRPC message.
+
+
+          * - :py:obj:`~from_grpc_point_to_point3d`
+            - Convert a point gRPC message class to a ``Point3D`` class.
+
+
+          * - :py:obj:`~from_point2d_to_grpc_point`
+            - Convert a ``Point2D`` class to a point gRPC message.
+
+
+          * - :py:obj:`~from_unit_vector_to_grpc_direction`
+            - Convert a ``UnitVector3D`` class to a unit vector gRPC message.
+
+
+          * - :py:obj:`~build_grpc_id`
+            - Build an EntityIdentifier gRPC message.
+
+
+          * - :py:obj:`~from_grpc_material_to_material`
+            - Convert a material gRPC message to a ``Material`` class.
+
+
+          * - :py:obj:`~from_grpc_material_property_to_material_property`
+            - Convert a material property gRPC message to a ``MaterialProperty`` class.
+
+
+          * - :py:obj:`~from_frame_to_grpc_frame`
+            - Convert a ``Frame`` class to a frame gRPC message.
+
+
+          * - :py:obj:`~from_grpc_frame_to_frame`
+            - Convert a frame gRPC message to a ``Frame`` class.
+
+
+          * - :py:obj:`~from_plane_to_grpc_plane`
+            - Convert a ``Plane`` class to a plane gRPC message.
+
+
+          * - :py:obj:`~from_grpc_tess_to_pd`
+            - Convert a ``Tessellation`` to ``pyvista.PolyData``.
+
+
+          * - :py:obj:`~from_tess_options_to_grpc_tess_options`
+            - Convert a ``TessellationOptions`` class to a tessellation options gRPC message.
+
+
+          * - :py:obj:`~from_sketch_shapes_to_grpc_geometries`
+            - Convert lists of ``SketchEdge`` and ``SketchFace`` to a gRPC message.
+
+
+          * - :py:obj:`~from_sketch_edges_to_grpc_geometries`
+            - Convert a list of ``SketchEdge`` to a gRPC message.
+
+
+          * - :py:obj:`~from_sketch_arc_to_grpc_arc`
+            - Convert an ``Arc`` class to an arc gRPC message.
+
+
+          * - :py:obj:`~from_sketch_ellipse_to_grpc_ellipse`
+            - Convert a ``SketchEllipse`` class to an ellipse gRPC message.
+
+
+          * - :py:obj:`~from_sketch_circle_to_grpc_circle`
+            - Convert a ``SketchCircle`` class to a circle gRPC message.
+
+
+          * - :py:obj:`~from_sketch_polygon_to_grpc_polygon`
+            - Convert a ``Polygon`` class to a polygon gRPC message.
+
+
+          * - :py:obj:`~from_sketch_segment_to_grpc_line`
+            - Convert a ``Segment`` class to a line gRPC message.
+
+
+          * - :py:obj:`~from_trimmed_curve_to_grpc_trimmed_curve`
+            - Convert a ``TrimmedCurve`` to a trimmed curve gRPC message.
+
+
+          * - :py:obj:`~from_curve_to_grpc_curve`
+            - Convert a ``Curve`` object to a curve gRPC message.
+
+
+          * - :py:obj:`~from_nurbs_curve_to_grpc_nurbs_curve`
+            - Convert a ``NURBSCurve`` to a NURBS curve gRPC message.
+
+
+          * - :py:obj:`~from_knots_to_grpc_knots`
+            - Convert a list of knots to a list of gRPC knot messages.
+
+
+          * - :py:obj:`~from_grpc_curve_to_curve`
+            - Convert a curve gRPC message to a ``Curve``.
+
+
+          * - :py:obj:`~from_trimmed_surface_to_grpc_trimmed_surface`
+            - Convert a ``TrimmedSurface`` to a trimmed surface gRPC message.
+
+
+          * - :py:obj:`~from_surface_to_grpc_surface`
+            - Convert a ``Surface`` object to a surface gRPC message.
+
+
+          * - :py:obj:`~from_grpc_surface_to_surface`
+            - Convert a surface gRPC message to a ``Surface`` class.
+
+
+          * - :py:obj:`~from_grpc_backend_type_to_backend_type`
+            - Convert a gRPC backend type to a backend type.
+
+
+          * - :py:obj:`~from_grpc_driving_dimension_to_driving_dimension`
+            - Convert a gRPC driving dimension to a driving dimension object.
+
+
+          * - :py:obj:`~from_driving_dimension_to_grpc_driving_dimension`
+            - Convert a driving dimension object to a gRPC driving dimension.
+
+
+          * - :py:obj:`~from_grpc_update_status_to_parameter_update_status`
+            - Convert a gRPC update status to a parameter update status.
+
+
+          * - :py:obj:`~from_design_file_format_to_grpc_part_export_format`
+            - Convert from a DesignFileFormat object to a gRPC PartExportFormat one.
+
+
+          * - :py:obj:`~from_material_to_grpc_material`
+            - Convert a ``Material`` class to a material gRPC message.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing v0 related conversions from PyAnsys Geometry objects to gRPC messages.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: from_point3d_to_grpc_point(point: ansys.geometry.core.math.point.Point3D) -> ansys.api.geometry.v0.models_pb2.Point
+
+   
+   Convert a ``Point3D`` class to a point gRPC message.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Source point data.
+
+
+
+   :Returns:
+
+       :obj:`GRPCPoint`
+           Geometry service gRPC point message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_grpc_point_to_point3d(point: ansys.api.geometry.v0.models_pb2.Point) -> ansys.geometry.core.math.point.Point3D
+
+   
+   Convert a point gRPC message class to a ``Point3D`` class.
+
+
+   :Parameters:
+
+       **point** : :obj:`GRPCPoint`
+           Source point data.
+
+
+
+   :Returns:
+
+       :obj:`Point3D`
+           Converted point.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_point2d_to_grpc_point(plane: ansys.geometry.core.math.plane.Plane, point2d: ansys.geometry.core.math.point.Point2D) -> ansys.api.geometry.v0.models_pb2.Point
+
+   
+   Convert a ``Point2D`` class to a point gRPC message.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Plane for positioning the 2D point.
+
+       **point** : :obj:`Point2D`
+           Source point data.
+
+
+
+   :Returns:
+
+       :obj:`GRPCPoint`
+           Geometry service gRPC point message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_unit_vector_to_grpc_direction(unit_vector: ansys.geometry.core.math.vector.UnitVector3D) -> ansys.api.geometry.v0.models_pb2.Direction
+
+   
+   Convert a ``UnitVector3D`` class to a unit vector gRPC message.
+
+
+   :Parameters:
+
+       **unit_vector** : :obj:`UnitVector3D`
+           Source vector data.
+
+
+
+   :Returns:
+
+       :obj:`GRPCDirection`
+           Geometry service gRPC direction message.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: build_grpc_id(id: str) -> ansys.api.dbu.v0.dbumodels_pb2.EntityIdentifier
+
+   
+   Build an EntityIdentifier gRPC message.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Source ID.
+
+
+
+   :Returns:
+
+       :obj:`EntityIdentifier`
+           Geometry service gRPC entity identifier message.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_grpc_material_to_material(material: ansys.api.geometry.v0.models_pb2.Material) -> ansys.geometry.core.materials.material.Material
+
+   
+   Convert a material gRPC message to a ``Material`` class.
+
+
+   :Parameters:
+
+       **material** : :obj:`GRPCMaterial`
+           Material gRPC message.
+
+
+
+   :Returns:
+
+       :obj:`Material`
+           Converted material.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_grpc_material_property_to_material_property(material_property: ansys.api.geometry.v0.models_pb2.MaterialProperty) -> ansys.geometry.core.materials.property.MaterialProperty
+
+   
+   Convert a material property gRPC message to a ``MaterialProperty`` class.
+
+
+   :Parameters:
+
+       **material_property** : :obj:`GRPCMaterialProperty`
+           Material property gRPC message.
+
+
+
+   :Returns:
+
+       :obj:`MaterialProperty`
+           Converted material property.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_frame_to_grpc_frame(frame: ansys.geometry.core.math.frame.Frame) -> ansys.api.geometry.v0.models_pb2.Frame
+
+   
+   Convert a ``Frame`` class to a frame gRPC message.
+
+
+   :Parameters:
+
+       **frame** : :obj:`Frame`
+           Source frame data.
+
+
+
+   :Returns:
+
+       :obj:`GRPCFrame`
+           Geometry service gRPC frame message. The unit for the frame origin is meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_grpc_frame_to_frame(frame: ansys.api.geometry.v0.models_pb2.Frame) -> ansys.geometry.core.math.frame.Frame
+
+   
+   Convert a frame gRPC message to a ``Frame`` class.
+
+
+   :Parameters:
+
+       **frame** : :obj:`GRPCFrame`
+           Source frame data.
+
+
+
+   :Returns:
+
+       :obj:`Frame`
+           Converted frame.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_plane_to_grpc_plane(plane: ansys.geometry.core.math.plane.Plane) -> ansys.api.geometry.v0.models_pb2.Plane
+
+   
+   Convert a ``Plane`` class to a plane gRPC message.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Source plane data.
+
+
+
+   :Returns:
+
+       :obj:`GRPCPlane`
+           Geometry service gRPC plane message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_grpc_tess_to_pd(tess: ansys.api.geometry.v0.models_pb2.Tessellation) -> pyvista.PolyData
+
+   
+   Convert a ``Tessellation`` to ``pyvista.PolyData``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_tess_options_to_grpc_tess_options(options: ansys.geometry.core.misc.options.TessellationOptions) -> ansys.api.geometry.v0.models_pb2.TessellationOptions
+
+   
+   Convert a ``TessellationOptions`` class to a tessellation options gRPC message.
+
+
+   :Parameters:
+
+       **options** : :obj:`TessellationOptions`
+           Source tessellation options data.
+
+
+
+   :Returns:
+
+       :obj:`GRPCTessellationOptions`
+           Geometry service gRPC tessellation options message.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_sketch_shapes_to_grpc_geometries(plane: ansys.geometry.core.math.plane.Plane, edges: list[ansys.geometry.core.sketch.edge.SketchEdge], faces: list[ansys.geometry.core.sketch.face.SketchFace], only_one_curve: bool = False) -> ansys.api.geometry.v0.models_pb2.Geometries
+
+   
+   Convert lists of ``SketchEdge`` and ``SketchFace`` to a gRPC message.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Plane for positioning the 2D sketches.
+
+       **edges** : :class:`python:list`\[:obj:`SketchEdge`]
+           Source edge data.
+
+       **faces** : :class:`python:list`\[:obj:`SketchFace`]
+           Source face data.
+
+       **only_one_curve** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to project one curve of the whole set of geometries to
+           enhance performance.
+
+
+
+   :Returns:
+
+       :obj:`GRPCGeometries`
+           Geometry service gRPC geometries message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_sketch_edges_to_grpc_geometries(edges: list[ansys.geometry.core.sketch.edge.SketchEdge], plane: ansys.geometry.core.math.plane.Plane) -> tuple[list[ansys.api.geometry.v0.models_pb2.Line], list[ansys.api.geometry.v0.models_pb2.Arc]]
+
+   
+   Convert a list of ``SketchEdge`` to a gRPC message.
+
+
+   :Parameters:
+
+       **edges** : :class:`python:list`\[:obj:`SketchEdge`]
+           Source edge data.
+
+       **plane** : :obj:`Plane`
+           Plane for positioning the 2D sketches.
+
+
+
+   :Returns:
+
+       :class:`python:tuple`\[:class:`python:list`\[:obj:`GRPCLine`], :class:`python:list`\[:obj:`GRPCArc`]]
+           Geometry service gRPC line and arc messages. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_sketch_arc_to_grpc_arc(arc: ansys.geometry.core.sketch.arc.Arc, plane: ansys.geometry.core.math.plane.Plane) -> ansys.api.geometry.v0.models_pb2.Arc
+
+   
+   Convert an ``Arc`` class to an arc gRPC message.
+
+
+   :Parameters:
+
+       **arc** : :obj:`Arc`
+           Source arc data.
+
+       **plane** : :obj:`Plane`
+           Plane for positioning the arc within.
+
+
+
+   :Returns:
+
+       :obj:`GRPCArc`
+           Geometry service gRPC arc message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_sketch_ellipse_to_grpc_ellipse(ellipse: ansys.geometry.core.sketch.ellipse.SketchEllipse, plane: ansys.geometry.core.math.plane.Plane) -> ansys.api.geometry.v0.models_pb2.Ellipse
+
+   
+   Convert a ``SketchEllipse`` class to an ellipse gRPC message.
+
+
+   :Parameters:
+
+       **ellipse** : :obj:`SketchEllipse`
+           Source ellipse data.
+
+
+
+   :Returns:
+
+       :obj:`GRPCEllipse`
+           Geometry service gRPC ellipse message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_sketch_circle_to_grpc_circle(circle: ansys.geometry.core.sketch.circle.SketchCircle, plane: ansys.geometry.core.math.plane.Plane) -> ansys.api.geometry.v0.models_pb2.Circle
+
+   
+   Convert a ``SketchCircle`` class to a circle gRPC message.
+
+
+   :Parameters:
+
+       **circle** : :obj:`SketchCircle`
+           Source circle data.
+
+       **plane** : :obj:`Plane`
+           Plane for positioning the circle.
+
+
+
+   :Returns:
+
+       :obj:`GRPCCircle`
+           Geometry service gRPC circle message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_sketch_polygon_to_grpc_polygon(polygon: ansys.geometry.core.sketch.polygon.Polygon, plane: ansys.geometry.core.math.plane.Plane) -> ansys.api.geometry.v0.models_pb2.Polygon
+
+   
+   Convert a ``Polygon`` class to a polygon gRPC message.
+
+
+   :Parameters:
+
+       **polygon** : :obj:`Polygon`
+           Source polygon data.
+
+
+
+   :Returns:
+
+       :obj:`GRPCPolygon`
+           Geometry service gRPC polygon message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_sketch_segment_to_grpc_line(segment: ansys.geometry.core.sketch.segment.SketchSegment, plane: ansys.geometry.core.math.plane.Plane) -> ansys.api.geometry.v0.models_pb2.Line
+
+   
+   Convert a ``Segment`` class to a line gRPC message.
+
+
+   :Parameters:
+
+       **segment** : :obj:`SketchSegment`
+           Source segment data.
+
+
+
+   :Returns:
+
+       :obj:`GRPCLine`
+           Geometry service gRPC line message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_trimmed_curve_to_grpc_trimmed_curve(curve: ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve) -> ansys.api.geometry.v0.models_pb2.TrimmedCurve
+
+   
+   Convert a ``TrimmedCurve`` to a trimmed curve gRPC message.
+
+
+   :Parameters:
+
+       **curve** : :obj:`TrimmedCurve`
+           Curve to convert.
+
+
+
+   :Returns:
+
+       :obj:`GRPCTrimmedCurve`
+           Geometry service gRPC ``TrimmedCurve`` message.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_curve_to_grpc_curve(curve: ansys.geometry.core.shapes.curves.curve.Curve) -> ansys.api.geometry.v0.models_pb2.CurveGeometry
+
+   
+   Convert a ``Curve`` object to a curve gRPC message.
+
+
+   :Parameters:
+
+       **curve** : :obj:`Curve`
+           Curve to convert.
+
+
+
+   :Returns:
+
+       :obj:`GRPCCurve`
+           Return ``Curve`` as a ``ansys.api.geometry.CurveGeometry`` message.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_nurbs_curve_to_grpc_nurbs_curve(curve: ansys.geometry.core.shapes.curves.nurbs.NURBSCurve) -> ansys.api.geometry.v0.models_pb2.NurbsCurve
+
+   
+   Convert a ``NURBSCurve`` to a NURBS curve gRPC message.
+
+
+   :Parameters:
+
+       **curve** : :obj:`NURBSCurve`
+           Curve to convert.
+
+
+
+   :Returns:
+
+       :obj:`GRPCNurbsCurve`
+           Geometry service gRPC ``NURBSCurve`` message.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_knots_to_grpc_knots(knots: list[float]) -> list[ansys.api.geometry.v0.models_pb2.Knot]
+
+   
+   Convert a list of knots to a list of gRPC knot messages.
+
+
+   :Parameters:
+
+       **knots** : :class:`python:list`\[:class:`python:float`]
+           Source knots data.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`GRPCKnot`]
+           Geometry service gRPC knot messages.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_grpc_curve_to_curve(curve: ansys.api.geometry.v0.models_pb2.CurveGeometry) -> ansys.geometry.core.shapes.curves.curve.Curve
+
+   
+   Convert a curve gRPC message to a ``Curve``.
+
+
+   :Parameters:
+
+       **curve** : :obj:`GRPCCurve`
+           Geometry service gRPC curve message.
+
+
+
+   :Returns:
+
+       :obj:`Curve`
+           Resulting converted curve.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_trimmed_surface_to_grpc_trimmed_surface(trimmed_surface: ansys.geometry.core.shapes.surfaces.trimmed_surface.TrimmedSurface) -> ansys.api.geometry.v0.models_pb2.TrimmedSurface
+
+   
+   Convert a ``TrimmedSurface`` to a trimmed surface gRPC message.
+
+
+   :Parameters:
+
+       **trimmed_surface** : :obj:`TrimmedSurface`
+           Surface to convert.
+
+
+
+   :Returns:
+
+       :obj:`GRPCTrimmedSurface`
+           Geometry service gRPC ``TrimmedSurface`` message.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_surface_to_grpc_surface(surface: ansys.geometry.core.shapes.surfaces.surface.Surface) -> tuple[ansys.api.geometry.v0.models_pb2.Surface, ansys.api.geometry.v0.models_pb2.SurfaceType]
+
+   
+   Convert a ``Surface`` object to a surface gRPC message.
+
+
+   :Parameters:
+
+       **surface** : :obj:`Surface`
+           Surface to convert.
+
+
+
+   :Returns:
+
+       :obj:`GRPCSurface`
+           Return ``Surface`` as a ``ansys.api.geometry.Surface`` message.
+
+       :obj:`GRPCSurfaceType`
+           Return the grpc surface type of ``Surface``.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_grpc_surface_to_surface(surface: ansys.api.geometry.v0.models_pb2.Surface, surface_type: ansys.geometry.core.designer.face.SurfaceType) -> ansys.geometry.core.shapes.surfaces.surface.Surface
+
+   
+   Convert a surface gRPC message to a ``Surface`` class.
+
+
+   :Parameters:
+
+       **surface** : :obj:`GRPCSurface`
+           Geometry service gRPC surface message.
+
+
+
+   :Returns:
+
+       :obj:`Surface`
+           Resulting converted surface.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_grpc_backend_type_to_backend_type(grpc_backend_type: ansys.api.dbu.v0.admin_pb2.BackendType) -> ansys.geometry.core.connection.backend.BackendType
+
+   
+   Convert a gRPC backend type to a backend type.
+
+
+   :Parameters:
+
+       **backend_type** : :obj:`GRPCBackendType`
+           Source backend type.
+
+
+
+   :Returns:
+
+       :obj:`BackendType`
+           Converted backend type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_grpc_driving_dimension_to_driving_dimension(driving_dimension: ansys.api.dbu.v0.dbumodels_pb2.DrivingDimension) -> ansys.geometry.core.parameters.parameter.Parameter
+
+   
+   Convert a gRPC driving dimension to a driving dimension object.
+
+
+   :Parameters:
+
+       **driving_dimension** : :obj:`GRPCDrivingDimension`
+           Source driving dimension type.
+
+
+
+   :Returns:
+
+       :obj:`Parameter`
+           Converted driving dimension.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_driving_dimension_to_grpc_driving_dimension(driving_dimension: ansys.geometry.core.parameters.parameter.Parameter) -> ansys.api.dbu.v0.dbumodels_pb2.DrivingDimension
+
+   
+   Convert a driving dimension object to a gRPC driving dimension.
+
+
+   :Parameters:
+
+       **driving_dimension** : :obj:`Parameter`
+           Source driving dimension type.
+
+
+
+   :Returns:
+
+       :obj:`GRPCDrivingDimension`
+           Converted driving dimension.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_grpc_update_status_to_parameter_update_status(update_status: ansys.api.dbu.v0.drivingdimensions_pb2.UpdateStatus) -> ansys.geometry.core.parameters.parameter.ParameterUpdateStatus
+
+   
+   Convert a gRPC update status to a parameter update status.
+
+
+   :Parameters:
+
+       **update_status** : :obj:`GRPCUpdateStatus`
+           Source update status.
+
+
+
+   :Returns:
+
+       :obj:`ParameterUpdateStatus`
+           Converted update status.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_design_file_format_to_grpc_part_export_format(design_file_format: ansys.geometry.core.designer.design.DesignFileFormat) -> ansys.api.dbu.v0.dbumodels_pb2.PartExportFormat
+
+   
+   Convert from a DesignFileFormat object to a gRPC PartExportFormat one.
+
+
+   :Parameters:
+
+       **design_file_format** : :obj:`DesignFileFormat`
+           The file format desired
+
+
+
+   :Returns:
+
+       :obj:`GRPCPartExportFormat`
+           Converted gRPC Part format
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_material_to_grpc_material(material: ansys.geometry.core.materials.material.Material) -> ansys.api.geometry.v0.models_pb2.Material
+
+   
+   Convert a ``Material`` class to a material gRPC message.
+
+
+   :Parameters:
+
+       **material** : :obj:`Material`
+           Source material data.
+
+
+
+   :Returns:
+
+       :obj:`GRPCMaterial`
+           Geometry service gRPC material message.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

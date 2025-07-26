@@ -1,0 +1,1303 @@
+
+
+
+
+
+
+:class:`GeometryCommands`
+=========================
+
+
+.. py:class:: ansys.geometry.core.designer.geometry_commands.GeometryCommands(grpc_client: ansys.geometry.core.connection.client.GrpcClient)
+
+   
+   Provides geometry commands for PyAnsys Geometry.
+
+
+   :Parameters:
+
+       **grpc_client** : :obj:`GrpcClient`
+           gRPC client to use for the geometry commands.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GeometryCommands
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~chamfer`
+            - Create a chamfer on an edge or adjust the chamfer of a face.
+          * - :py:attr:`~fillet`
+            - Create a fillet on an edge or adjust the fillet of a face.
+          * - :py:attr:`~full_fillet`
+            - Create a full fillet betweens a collection of faces.
+          * - :py:attr:`~extrude_faces`
+            - Extrude a selection of faces.
+          * - :py:attr:`~extrude_faces_up_to`
+            - Extrude a selection of faces up to another object.
+          * - :py:attr:`~extrude_edges`
+            - Extrude a selection of edges. Provide either a face or a direction and point.
+          * - :py:attr:`~extrude_edges_up_to`
+            - Extrude a selection of edges up to another object.
+          * - :py:attr:`~rename_object`
+            - Rename an object.
+          * - :py:attr:`~create_linear_pattern`
+            - Create a linear pattern. The pattern can be one or two dimensions.
+          * - :py:attr:`~modify_linear_pattern`
+            - Modify a linear pattern. Leave an argument at 0 for it to remain unchanged.
+          * - :py:attr:`~create_circular_pattern`
+            - Create a circular pattern. The pattern can be one or two dimensions.
+          * - :py:attr:`~modify_circular_pattern`
+            - Modify a circular pattern. Leave an argument at 0 for it to remain unchanged.
+          * - :py:attr:`~create_fill_pattern`
+            - Create a fill pattern.
+          * - :py:attr:`~update_fill_pattern`
+            - Update a fill pattern.
+          * - :py:attr:`~revolve_faces`
+            - Revolve face around an axis.
+          * - :py:attr:`~revolve_faces_up_to`
+            - Revolve face around an axis up to a certain object.
+          * - :py:attr:`~revolve_faces_by_helix`
+            - Revolve face around an axis in a helix shape.
+          * - :py:attr:`~replace_face`
+            - Replace a face with another face.
+          * - :py:attr:`~split_body`
+            - Split bodies with a plane, slicers, or faces.
+          * - :py:attr:`~get_round_info`
+            - Get info on the rounding of a face.
+          * - :py:attr:`~move_translate`
+            - Move a selection by a distance in a direction.
+          * - :py:attr:`~move_rotate`
+            - Rotate a selection by an angle about a given axis.
+          * - :py:attr:`~offset_faces_set_radius`
+            - Offset faces with a radius.
+          * - :py:attr:`~create_align_condition`
+            - Create an align condition between two geometry objects.
+          * - :py:attr:`~create_tangent_condition`
+            - Create a tangent condition between two geometry objects.
+          * - :py:attr:`~create_orient_condition`
+            - Create an orient condition between two geometry objects.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.geometry_commands import GeometryCommands
+
+
+
+Method detail
+-------------
+
+.. py:method:: chamfer(selection: Union[ansys.geometry.core.designer.edge.Edge, list[ansys.geometry.core.designer.edge.Edge], ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], distance: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Create a chamfer on an edge or adjust the chamfer of a face.
+
+
+   :Parameters:
+
+       **selection** : :obj:`Edge` | :class:`python:list`\[:obj:`Edge`] | :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           One or more edges or faces to act on.
+
+       **distance** : :obj:`Real`
+           Chamfer distance.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: fillet(selection: Union[ansys.geometry.core.designer.edge.Edge, list[ansys.geometry.core.designer.edge.Edge], ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], radius: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Create a fillet on an edge or adjust the fillet of a face.
+
+
+   :Parameters:
+
+       **selection** : :obj:`Edge` | :class:`python:list`\[:obj:`Edge`] | :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           One or more edges or faces to act on.
+
+       **radius** : :obj:`Real`
+           Fillet radius.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: full_fillet(faces: list[ansys.geometry.core.designer.face.Face]) -> bool
+
+   
+   Create a full fillet betweens a collection of faces.
+
+
+   :Parameters:
+
+       **faces** : :class:`python:list`\[:obj:`Face`]
+           Faces to round.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extrude_faces(faces: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], distance: ansys.geometry.core.typing.Real, direction: ansys.geometry.core.math.vector.UnitVector3D = None, extrude_type: ExtrudeType = ExtrudeType.ADD, offset_mode: OffsetMode = OffsetMode.MOVE_FACES_TOGETHER, pull_symmetric: bool = False, copy: bool = False, force_do_as_extrude: bool = False) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Extrude a selection of faces.
+
+
+   :Parameters:
+
+       **faces** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Faces to extrude.
+
+       **distance** : :obj:`Real`
+           Distance to extrude.
+
+       **direction** : :obj:`UnitVector3D`, default: :data:`python:None`
+           Direction of extrusion. If no direction is provided, it will be inferred.
+
+       **extrude_type** : :obj:`ExtrudeType`, default: :obj:`ExtrudeType.ADD`
+           Type of extrusion to be performed.
+
+       **offset_mode** : :obj:`OffsetMode`, default: :obj:`OffsetMode.MOVE_FACES_TOGETHER`
+           Mode of how to handle offset relationships.
+
+       **pull_symmetric** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Pull symmetrically on both sides if ``True``.
+
+       **copy** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Copy the face and move it instead of extruding the original face if ``True``.
+
+       **force_do_as_extrude** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Forces to do as an extrusion if ``True``, if ``False`` allows extrusion by offset.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           Bodies created by the extrusion if any.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extrude_faces_up_to(faces: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], up_to_selection: Union[ansys.geometry.core.designer.face.Face, ansys.geometry.core.designer.edge.Edge, ansys.geometry.core.designer.body.Body], seed_point: ansys.geometry.core.math.point.Point3D, direction: ansys.geometry.core.math.vector.UnitVector3D, extrude_type: ExtrudeType = ExtrudeType.ADD, offset_mode: OffsetMode = OffsetMode.MOVE_FACES_TOGETHER, pull_symmetric: bool = False, copy: bool = False, force_do_as_extrude: bool = False) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Extrude a selection of faces up to another object.
+
+
+   :Parameters:
+
+       **faces** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Faces to extrude.
+
+       **up_to_selection** : :obj:`Face` | :obj:`Edge` | :obj:`Body`
+           The object to pull the faces up to.
+
+       **seed_point** : :obj:`Point3D`
+           Origin to define the extrusion.
+
+       **direction** : :obj:`UnitVector3D`, default: :data:`python:None`
+           Direction of extrusion. If no direction is provided, it will be inferred.
+
+       **extrude_type** : :obj:`ExtrudeType`, default: :obj:`ExtrudeType.ADD`
+           Type of extrusion to be performed.
+
+       **offset_mode** : :obj:`OffsetMode`, default: :obj:`OffsetMode.MOVE_FACES_TOGETHER`
+           Mode of how to handle offset relationships.
+
+       **pull_symmetric** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Pull symmetrically on both sides if ``True``.
+
+       **copy** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Copy the face and move it instead of extruding the original face if ``True``.
+
+       **force_do_as_extrude** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Forces to do as an extrusion if ``True``, if ``False`` allows extrusion by offset.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           Bodies created by the extrusion if any.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extrude_edges(edges: Union[ansys.geometry.core.designer.edge.Edge, list[ansys.geometry.core.designer.edge.Edge]], distance: ansys.geometry.core.typing.Real, from_face: ansys.geometry.core.designer.face.Face = None, from_point: ansys.geometry.core.math.point.Point3D = None, direction: ansys.geometry.core.math.vector.UnitVector3D = None, extrude_type: ExtrudeType = ExtrudeType.ADD, pull_symmetric: bool = False, copy: bool = False, natural_extension: bool = False) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Extrude a selection of edges. Provide either a face or a direction and point.
+
+
+   :Parameters:
+
+       **edges** : :obj:`Edge` | :class:`python:list`\[:obj:`Edge`]
+           Edges to extrude.
+
+       **distance** : :obj:`Real`
+           Distance to extrude.
+
+       **from_face** : :obj:`Face`, default: :data:`python:None`
+           Face to pull normal from.
+
+       **from_point** : :obj:`Point3D`, default: :data:`python:None`
+           Point to pull from. Must be used with ``direction``.
+
+       **direction** : :obj:`UnitVector3D`, default: :data:`python:None`
+           Direction to pull. Must be used with ``from_point``.
+
+       **extrude_type** : :obj:`ExtrudeType`, default: :obj:`ExtrudeType.ADD`
+           Type of extrusion to be performed.
+
+       **pull_symmetric** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Pull symmetrically on both sides if ``True``.
+
+       **copy** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Copy the edge and move it instead of extruding the original edge if ``True``.
+
+       **natural_extension** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Surfaces will extend in a natural or linear shape after exceeding its original range.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           Bodies created by the extrusion if any.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extrude_edges_up_to(edges: Union[ansys.geometry.core.designer.edge.Edge, list[ansys.geometry.core.designer.edge.Edge]], up_to_selection: Union[ansys.geometry.core.designer.face.Face, ansys.geometry.core.designer.edge.Edge, ansys.geometry.core.designer.body.Body], seed_point: ansys.geometry.core.math.point.Point3D, direction: ansys.geometry.core.math.vector.UnitVector3D, extrude_type: ExtrudeType = ExtrudeType.ADD) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Extrude a selection of edges up to another object.
+
+
+   :Parameters:
+
+       **edges** : :obj:`Edge` | :class:`python:list`\[:obj:`Edge`]
+           Edges to extrude.
+
+       **up_to_selection** : :obj:`Face`, default: :data:`python:None`
+           The object to pull the faces up to.
+
+       **seed_point** : :obj:`Point3D`
+           Origin to define the extrusion.
+
+       **direction** : :obj:`UnitVector3D`, default: :data:`python:None`
+           Direction of extrusion.
+
+       **extrude_type** : :obj:`ExtrudeType`, default: :obj:`ExtrudeType.ADD`
+           Type of extrusion to be performed.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           Bodies created by the extrusion if any.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: rename_object(selection: Union[list[ansys.geometry.core.designer.body.Body], list[ansys.geometry.core.designer.component.Component], list[ansys.geometry.core.designer.face.Face], list[ansys.geometry.core.designer.edge.Edge]], name: str) -> bool
+
+   
+   Rename an object.
+
+
+   :Parameters:
+
+       **selection** : :class:`python:list`\[:obj:`Body`] | :class:`python:list`\[:obj:`Component`] | :class:`python:list`\[:obj:`Face`] | :class:`python:list`\[:obj:`Edge`]
+           Selection of the object to rename.
+
+       **name** : :class:`python:str`
+           New name for the object.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_linear_pattern(selection: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], linear_direction: Union[ansys.geometry.core.designer.edge.Edge, ansys.geometry.core.designer.face.Face], count_x: int, pitch_x: ansys.geometry.core.typing.Real, two_dimensional: bool = False, count_y: int = None, pitch_y: ansys.geometry.core.typing.Real = None) -> bool
+
+   
+   Create a linear pattern. The pattern can be one or two dimensions.
+
+
+   :Parameters:
+
+       **selection** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Faces to create the pattern out of.
+
+       **linear_direction** : :obj:`Edge` | :obj:`Face`
+           Direction of the linear pattern, determined by the direction of an edge or face normal.
+
+       **count_x** : :class:`python:int`
+           How many times the pattern repeats in the x direction.
+
+       **pitch_x** : :obj:`Real`
+           The spacing between each pattern member in the x direction.
+
+       **two_dimensional** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           If ``True``, create a pattern in the x and y direction.
+
+       **count_y** : :class:`python:int`, default: :data:`python:None`
+           How many times the pattern repeats in the y direction.
+
+       **pitch_y** : :obj:`Real`, default: :data:`python:None`
+           The spacing between each pattern member in the y direction.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: modify_linear_pattern(selection: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], count_x: int = 0, pitch_x: ansys.geometry.core.typing.Real = 0.0, count_y: int = 0, pitch_y: ansys.geometry.core.typing.Real = 0.0, new_seed_index: int = 0, old_seed_index: int = 0) -> bool
+
+   
+   Modify a linear pattern. Leave an argument at 0 for it to remain unchanged.
+
+
+   :Parameters:
+
+       **selection** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Faces that belong to the pattern.
+
+       **count_x** : :class:`python:int`, default: 0
+           How many times the pattern repeats in the x direction.
+
+       **pitch_x** : :obj:`Real`, default: 0.0
+           The spacing between each pattern member in the x direction.
+
+       **count_y** : :class:`python:int`, default: 0
+           How many times the pattern repeats in the y direction.
+
+       **pitch_y** : :obj:`Real`, default: 0.0
+           The spacing between each pattern member in the y direction.
+
+       **new_seed_index** : :class:`python:int`, default: 0
+           The new seed index of the member.
+
+       **old_seed_index** : :class:`python:int`, default: 0
+           The old seed index of the member.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_circular_pattern(selection: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], circular_axis: ansys.geometry.core.designer.edge.Edge, circular_count: int, circular_angle: ansys.geometry.core.typing.Real, two_dimensional: bool = False, linear_count: int = None, linear_pitch: ansys.geometry.core.typing.Real = None, radial_direction: ansys.geometry.core.math.vector.UnitVector3D = None) -> bool
+
+   
+   Create a circular pattern. The pattern can be one or two dimensions.
+
+
+   :Parameters:
+
+       **selection** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Faces to create the pattern out of.
+
+       **circular_axis** : :obj:`Edge`
+           The axis of the circular pattern, determined by the direction of an edge.
+
+       **circular_count** : :class:`python:int`
+           How many members are in the circular pattern.
+
+       **circular_angle** : :obj:`Real`
+           The angular range of the pattern.
+
+       **two_dimensional** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           If ``True``, create a two-dimensional pattern.
+
+       **linear_count** : :class:`python:int`, default: :data:`python:None`
+           How many times the circular pattern repeats along the radial lines for a
+           two-dimensional pattern.
+
+       **linear_pitch** : :obj:`Real`, default: :data:`python:None`
+           The spacing along the radial lines for a two-dimensional pattern.
+
+       **radial_direction** : :obj:`UnitVector3D`, default: :data:`python:None`
+           The direction from the center out for a two-dimensional pattern.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: modify_circular_pattern(selection: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], circular_count: int = 0, linear_count: int = 0, step_angle: ansys.geometry.core.typing.Real = 0.0, step_linear: ansys.geometry.core.typing.Real = 0.0) -> bool
+
+   
+   Modify a circular pattern. Leave an argument at 0 for it to remain unchanged.
+
+
+   :Parameters:
+
+       **selection** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Faces that belong to the pattern.
+
+       **circular_count** : :class:`python:int`, default: 0
+           How many members are in the circular pattern.
+
+       **linear_count** : :class:`python:int`, default: 0
+           How many times the circular pattern repeats along the radial lines for a
+           two-dimensional pattern.
+
+       **step_angle** : :obj:`Real`, default: 0.0
+           Defines the circular angle.
+
+       **step_linear** : :obj:`Real`, default: 0.0
+           Defines the step, along the radial lines, for a pattern dimension greater than 1.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_fill_pattern(selection: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], linear_direction: Union[ansys.geometry.core.designer.edge.Edge, ansys.geometry.core.designer.face.Face], fill_pattern_type: FillPatternType, margin: ansys.geometry.core.typing.Real, x_spacing: ansys.geometry.core.typing.Real, y_spacing: ansys.geometry.core.typing.Real, row_x_offset: ansys.geometry.core.typing.Real = 0, row_y_offset: ansys.geometry.core.typing.Real = 0, column_x_offset: ansys.geometry.core.typing.Real = 0, column_y_offset: ansys.geometry.core.typing.Real = 0) -> bool
+
+   
+   Create a fill pattern.
+
+
+   :Parameters:
+
+       **selection** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Faces to create the pattern out of.
+
+       **linear_direction** : :obj:`Edge`
+           Direction of the linear pattern, determined by the direction of an edge.
+
+       **fill_pattern_type** : :obj:`FillPatternType`
+           The type of fill pattern.
+
+       **margin** : :obj:`Real`
+           Margin defining the border of the fill pattern.
+
+       **x_spacing** : :obj:`Real`
+           Spacing between the pattern members in the x direction.
+
+       **y_spacing** : :obj:`Real`
+           Spacing between the pattern members in the x direction.
+
+       **row_x_offset** : :obj:`Real`, default: 0
+           Offset for the rows in the x direction. Only used with ``FillPattern.SKEWED``.
+
+       **row_y_offset** : :obj:`Real`, default: 0
+           Offset for the rows in the y direction. Only used with ``FillPattern.SKEWED``.
+
+       **column_x_offset** : :obj:`Real`, default: 0
+           Offset for the columns in the x direction. Only used with ``FillPattern.SKEWED``.
+
+       **column_y_offset** : :obj:`Real`, default: 0
+           Offset for the columns in the y direction. Only used with ``FillPattern.SKEWED``.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: update_fill_pattern(selection: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]]) -> bool
+
+   
+   Update a fill pattern.
+
+   When the face that a fill pattern exists upon changes in size, the
+   fill pattern can be updated to fill the new space.
+
+   :Parameters:
+
+       **selection** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Face(s) that are part of a fill pattern.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: revolve_faces(selection: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], axis: ansys.geometry.core.shapes.curves.line.Line, angle: ansys.geometry.core.typing.Real, extrude_type: ExtrudeType = ExtrudeType.ADD) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Revolve face around an axis.
+
+
+   :Parameters:
+
+       **selection** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Face(s) to revolve.
+
+       **axis** : :obj:`Line`
+           Axis of revolution.
+
+       **angle** : :obj:`Real`
+           Angular distance to revolve.
+
+       **extrude_type** : :obj:`ExtrudeType`, default: :obj:`ExtrudeType.ADD`
+           Type of extrusion to be performed.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           Bodies created by the extrusion if any.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: revolve_faces_up_to(selection: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], up_to: Union[ansys.geometry.core.designer.face.Face, ansys.geometry.core.designer.edge.Edge, ansys.geometry.core.designer.body.Body], axis: ansys.geometry.core.shapes.curves.line.Line, direction: ansys.geometry.core.math.vector.UnitVector3D, extrude_type: ExtrudeType = ExtrudeType.ADD) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Revolve face around an axis up to a certain object.
+
+
+   :Parameters:
+
+       **selection** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Face(s) to revolve.
+
+       **up_to** : :obj:`Face` | :obj:`Edge` | :obj:`Body`
+           Object to revolve the face up to.
+
+       **axis** : :obj:`Line`
+           Axis of revolution.
+
+       **direction** : :obj:`UnitVector3D`
+           Direction of extrusion.
+
+       **extrude_type** : :obj:`ExtrudeType`, default: :obj:`ExtrudeType.ADD`
+           Type of extrusion to be performed.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           Bodies created by the extrusion if any.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: revolve_faces_by_helix(selection: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], axis: ansys.geometry.core.shapes.curves.line.Line, direction: ansys.geometry.core.math.vector.UnitVector3D, height: ansys.geometry.core.typing.Real, pitch: ansys.geometry.core.typing.Real, taper_angle: ansys.geometry.core.typing.Real, right_handed: bool, both_sides: bool, extrude_type: ExtrudeType = ExtrudeType.ADD) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Revolve face around an axis in a helix shape.
+
+
+   :Parameters:
+
+       **selection** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Face(s) to revolve.
+
+       **axis** : :obj:`Line`
+           Axis of revolution.
+
+       **direction** : :obj:`UnitVector3D`
+           Direction of extrusion.
+
+       **height** : Real,
+           Height of the helix.
+
+       **pitch** : Real,
+           Pitch of the helix.
+
+       **taper_angle** : Real,
+           Tape angle of the helix.
+
+       **right_handed** : bool,
+           Right-handed helix if ``True``, left-handed if ``False``.
+
+       **both_sides** : bool,
+           Create on both sides if ``True``, one side if ``False``.
+
+       **extrude_type** : :obj:`ExtrudeType`, default: :obj:`ExtrudeType.ADD`
+           Type of extrusion to be performed.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           Bodies created by the extrusion if any.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: replace_face(target_selection: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], replacement_selection: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]]) -> bool
+
+   
+   Replace a face with another face.
+
+
+   :Parameters:
+
+       **target_selection** : :obj:`Union`\[:obj:`Face`, :class:`python:list`\[:obj:`Face`]]
+           The face or faces to replace.
+
+       **replacement_selection** : :obj:`Union`\[:obj:`Face`, :class:`python:list`\[:obj:`Face`]]
+           The face or faces to replace with.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: split_body(bodies: list[ansys.geometry.core.designer.body.Body], plane: ansys.geometry.core.math.plane.Plane, slicers: Union[ansys.geometry.core.designer.edge.Edge, list[ansys.geometry.core.designer.edge.Edge], ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], faces: list[ansys.geometry.core.designer.face.Face], extendfaces: bool) -> bool
+
+   
+   Split bodies with a plane, slicers, or faces.
+
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           Bodies to split.
+
+       **plane** : :obj:`Plane`
+           Plane to split with
+
+       **slicers** : :obj:`Edge` | :class:`python:list`\[:obj:`Edge`] | :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Slicers to split with.
+
+       **faces** : :class:`python:list`\[:obj:`Face`]
+           Faces to split with.
+
+       **extendFaces** : :ref:`bool <python:bltin-boolean-values>`
+           Extend faces if split with faces.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_round_info(face: ansys.geometry.core.designer.face.Face) -> tuple[bool, ansys.geometry.core.typing.Real]
+
+   
+   Get info on the rounding of a face.
+
+
+   :Parameters:
+
+       **Face**
+           The design face to get round info on.
+
+
+
+   :Returns:
+
+       :class:`python:tuple`\[:ref:`bool <python:bltin-boolean-values>`, :obj:`Real`]
+           ``True`` if round is aligned with face's U-parameter direction, ``False`` otherwise.
+           Radius of the round.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: move_translate(selection: ansys.geometry.core.designer.selection.NamedSelection, direction: ansys.geometry.core.math.vector.UnitVector3D, distance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real) -> bool
+
+   
+   Move a selection by a distance in a direction.
+
+
+   :Parameters:
+
+       **selection** : :obj:`NamedSelection`
+           Named selection to move.
+
+       **direction** : :obj:`UnitVector3D`
+           Direction to move in.
+
+       **distance** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           Distance to move. Default units are meters.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: move_rotate(selection: ansys.geometry.core.designer.selection.NamedSelection, axis: ansys.geometry.core.shapes.curves.line.Line, angle: ansys.geometry.core.misc.measurements.Angle | pint.Quantity | ansys.geometry.core.typing.Real) -> dict[str, Union[bool, ansys.geometry.core.typing.Real]]
+
+   
+   Rotate a selection by an angle about a given axis.
+
+
+   :Parameters:
+
+       **selection** : :obj:`NamedSelection`
+           Named selection to move.
+
+       **axis** : :obj:`Line`
+           Direction to move in.
+
+       **Angle** : :obj:`Angle` | :obj:`Quantity` | :obj:`Real`
+           Angle to rotate by. Default units are radians.
+
+
+
+   :Returns:
+
+       :class:`python:dict`\[:class:`python:str`, :obj:`Union`\[:ref:`bool <python:bltin-boolean-values>`, :obj:`Real`]]
+           Dictionary containing the useful output from the command result.
+           Keys are success, modified_bodies, modified_faces, modified_edges.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: offset_faces_set_radius(faces: Union[ansys.geometry.core.designer.face.Face, list[ansys.geometry.core.designer.face.Face]], radius: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, copy: bool = False, offset_mode: OffsetMode = OffsetMode.IGNORE_RELATIONSHIPS, extrude_type: ExtrudeType = ExtrudeType.FORCE_INDEPENDENT) -> bool
+
+   
+   Offset faces with a radius.
+
+
+   :Parameters:
+
+       **faces** : :obj:`Face` | :class:`python:list`\[:obj:`Face`]
+           Faces to offset.
+
+       **radius** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           Radius of the offset.
+
+       **copy** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Copy the face and move it instead of offsetting the original face if ``True``.
+
+       **offset_mode** : :obj:`OffsetMode`, default: :obj:`OffsetMode.MOVE_FACES_TOGETHER`
+           Mode of how to handle offset relationships.
+
+       **extrude_type** : :obj:`ExtrudeType`, default: :obj:`ExtrudeType.FORCE_INDEPENDENT`
+           Type of extrusion to be performed.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_align_condition(parent_component: ansys.geometry.core.designer.component.Component, geometry_a: Union[ansys.geometry.core.designer.body.Body, ansys.geometry.core.designer.face.Face, ansys.geometry.core.designer.edge.Edge], geometry_b: Union[ansys.geometry.core.designer.body.Body, ansys.geometry.core.designer.face.Face, ansys.geometry.core.designer.edge.Edge]) -> ansys.geometry.core.designer.mating_conditions.AlignCondition
+
+   
+   Create an align condition between two geometry objects.
+
+   This will move the objects to be aligned with each other.
+
+   :Parameters:
+
+       **parent_component** : :obj:`Component`
+           The common ancestor component of the two geometry objects.
+
+       **geometry_a** : :obj:`Body` | :obj:`Face` | :obj:`Edge`
+           The first geometry object to align to the second.
+
+       **geometry_b** : :obj:`Body` | :obj:`Face` | :obj:`Edge`
+           The geometry object to be aligned to.
+
+
+
+   :Returns:
+
+       :obj:`AlignCondition`
+           The persistent align condition that was created.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 26R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_tangent_condition(parent_component: ansys.geometry.core.designer.component.Component, geometry_a: Union[ansys.geometry.core.designer.body.Body, ansys.geometry.core.designer.face.Face, ansys.geometry.core.designer.edge.Edge], geometry_b: Union[ansys.geometry.core.designer.body.Body, ansys.geometry.core.designer.face.Face, ansys.geometry.core.designer.edge.Edge]) -> ansys.geometry.core.designer.mating_conditions.TangentCondition
+
+   
+   Create a tangent condition between two geometry objects.
+
+   This aligns the objects so that they are tangent.
+
+   :Parameters:
+
+       **parent_component** : :obj:`Component`
+           The common ancestor component of the two geometry objects.
+
+       **geometry_a** : :obj:`Body` | :obj:`Face` | :obj:`Edge`
+           The first geometry object to tangent the second.
+
+       **geometry_b** : :obj:`Body` | :obj:`Face` | :obj:`Edge`
+           The geometry object to be tangent with.
+
+
+
+   :Returns:
+
+       :obj:`TangentCondition`
+           The persistent tangent condition that was created.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 26R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_orient_condition(parent_component: ansys.geometry.core.designer.component.Component, geometry_a: Union[ansys.geometry.core.designer.body.Body, ansys.geometry.core.designer.face.Face, ansys.geometry.core.designer.edge.Edge], geometry_b: Union[ansys.geometry.core.designer.body.Body, ansys.geometry.core.designer.face.Face, ansys.geometry.core.designer.edge.Edge]) -> ansys.geometry.core.designer.mating_conditions.OrientCondition
+
+   
+   Create an orient condition between two geometry objects.
+
+   This rotates the objects so that they are oriented in the same direction.
+
+   :Parameters:
+
+       **parent_component** : :obj:`Component`
+           The common ancestor component of the two geometry objects.
+
+       **geometry_a** : :obj:`Body` | :obj:`Face` | :obj:`Edge`
+           The first geometry object to orient with the second.
+
+       **geometry_b** : :obj:`Body` | :obj:`Face` | :obj:`Edge`
+           The geometry object to be oriented with.
+
+
+
+   :Returns:
+
+       :obj:`OrientCondition`
+           The persistent orient condition that was created.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 26R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

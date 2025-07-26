@@ -1,0 +1,147 @@
+
+
+
+
+
+
+:class:`GRPCDrivingDimensionsServiceV0`
+=======================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.driving_dimensions.GRPCDrivingDimensionsServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.driving_dimensions.GRPCDrivingDimensionsService`
+
+
+   
+   Driving Dimension service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   driving dimension service. It is specifically designed for the v0 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCDrivingDimensionsServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_all_parameters`
+            - Get driving dimensions.
+          * - :py:attr:`~set_parameter`
+            - Set driving dimensions.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.driving_dimensions import GRPCDrivingDimensionsServiceV0
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_all_parameters(**kwargs) -> dict
+
+   
+   Get driving dimensions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_parameter(**kwargs) -> dict
+
+   
+   Set driving dimensions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
