@@ -19,6 +19,7 @@
 * [David Gorman](https://github.com/david-gorman)
 * [Dominik Gresch](https://github.com/greschd)
 * [German](https://github.com/germa89)
+* [github-advanced-security[bot]](https://github.com/apps/github-advanced-security)
 * [Jacob Kerstetter](https://github.com/jacobrkerstetter)
 * [JasonWelling](https://github.com/JasonWelling)
 * [Jonah Boling](https://github.com/jonahrb)
