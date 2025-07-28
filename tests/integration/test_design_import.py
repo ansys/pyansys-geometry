@@ -586,7 +586,8 @@ def test_named_selections_after_file_insert(modeler: Modeler):
     # Verify named selections count after file insertion
     updated_named_selections_count = len(design.named_selections)
     assert updated_named_selections_count == 9, (
-        f"Expected 9 named selections after file insertion, but got {updated_named_selections_count}."
+        f"Expected 9 named selections after file insertion, but got "
+        f"{updated_named_selections_count}."
     )
 
     # Expected named selections
