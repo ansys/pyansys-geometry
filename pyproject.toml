@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.67",
+    "ansys-api-geometry==0.4.68",
     "ansys-tools-path>=0.3,<1",
     "beartype>=0.11.0,<0.22",
     "geomdl>=5,<6",
@@ -72,7 +72,8 @@ tests = [
     "pytest==8.4.1",
     "pytest-cov==6.2.1",
     "pytest-pyvista==0.2.0",
-    "pyvista[jupyter]==0.45.2",
+    "pyvista[jupyter]==0.45.3",
+    "pyyaml==6.0.2",
     "requests==2.32.4",
     "scipy==1.15.3",
     "semver==3.0.4",
@@ -83,6 +84,7 @@ tests-minimal = [
     "pytest==8.4.1",
     "pytest-cov==6.2.1",
     "pytest-pyvista==0.2.0",
+    "pyyaml==6.0.2",
 ]
 doc = [
     "ansys-sphinx-theme[autoapi]==1.5.3",
@@ -103,12 +105,12 @@ doc = [
     "notebook==7.4.4",
     "numpydoc==1.9.0",
     "numpy==2.2.6",
-    "panel==1.7.4",
+    "panel==1.7.5",
     "pdf2image==1.17.0",
     "Pint==0.24.4",
     "protobuf==5.29.3",
     "pygltflib==1.16.4",
-    "pyvista[jupyter]==0.45.2",
+    "pyvista[jupyter]==0.45.3",
     "quarto-cli==1.7.32",
     "requests==2.32.4",
     "scipy==1.15.3",
@@ -118,7 +120,7 @@ doc = [
     "sphinx-autodoc-typehints==3.1.0",
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
-    "trame-vtk==2.9.0",
+    "trame-vtk==2.9.1",
     "vtk==9.4.2",
 ]
 

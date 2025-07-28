@@ -37,6 +37,8 @@ from ansys.api.geometry.v0.commands_pb2 import (
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.components_pb2 import (
     CreateRequest,
+    ImportGroupsRequest,
+    MakeIndependentRequest,
     SetPlacementRequest,
     SetSharedTopologyRequest,
 )
@@ -70,6 +72,7 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_component
 from ansys.geometry.core.misc.checks import (
     ensure_design_is_active,
     graphics_required,
@@ -296,8 +299,14 @@ class Component:
         self._name = name
 
     @property
+    @min_backend_version(25, 1, 0)
     def instance_name(self) -> str:
-        """Name of the component instance."""
+        """Name of the component instance.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
+        """
         return self._instance_name
 
     @property
@@ -594,6 +603,7 @@ class Component:
             sketch=sketch,
             distance=distance,
             direction=direction.get_multiplier(),
+            backend_version=self._grpc_client.backend_version,
         )
         created_body = self.__build_body_from_response(response)
 
@@ -653,6 +663,7 @@ class Component:
             parent_id=self.id,
             sketch=sketch,
             path=path,
+            backend_version=self._grpc_client.backend_version,
         )
         return self.__build_body_from_response(response)
 
@@ -808,7 +819,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
-    @min_backend_version(24, 2, 0)
+    @min_backend_version(25, 1, 0)
     def create_sphere(self, name: str, center: Point3D, radius: Distance) -> Body:
         """Create a sphere body defined by the center point and the radius.
 
@@ -828,7 +839,7 @@ class Component:
 
         Warnings
         --------
-        This method is only available starting on Ansys release 24R2.
+        This method is only available starting on Ansys release 25R1.
         """
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id}.")
         response = self._grpc_client.services.bodies.create_sphere_body(
@@ -922,7 +933,10 @@ class Component:
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
         )
         response = self._grpc_client.services.bodies.create_planar_body(
-            name=name, parent_id=self.id, sketch=sketch
+            name=name,
+            parent_id=self.id,
+            sketch=sketch,
+            backend_version=self._grpc_client.backend_version,
         )
 
         return self.__build_body_from_response(response)
@@ -1876,3 +1890,43 @@ class Component:
                 lines.extend([f"|{'-' * (indent - 1)}(comp) {comp.name}" for comp in comps])
 
         return lines if return_list else print("\n".join(lines))
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def import_named_selections(self) -> None:
+        """Import named selections of a component.
+
+        When a design is inserted, it becomes a component. From 26R1 onwards, the named selections
+        of that component will be imported by default. If a file is opened that contains a
+        component that did not have its named selections imported, this method can be used to
+        import them.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        self._component_stub.ImportGroups(ImportGroupsRequest(id=self._grpc_id))
+
+        design = get_design_from_component(self)
+        design._update_design_inplace()
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def make_independent(self, others: list["Component"] = None) -> None:
+        """Make a component independent if it is an instance.
+
+        If a component is an instance of another component, modifying one component modifies both.
+        When a component is made independent, it is no longer associated with other instances and
+        can be modified separately.
+
+        Parameters
+        ----------
+        others : list[Component], default: None
+            Optionally include multiple components to make them all independent.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        ids = [self._grpc_id, *[o._grpc_id for o in others or []]]
+        self._component_stub.MakeIndependent(MakeIndependentRequest(ids=ids))
