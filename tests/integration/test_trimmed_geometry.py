@@ -22,6 +22,7 @@
 """Tests trimmed geometry."""
 
 import numpy as np
+from pint import Quantity
 import pytest
 
 from ansys.api.geometry.v0.commands_pb2 import CreateSketchLineRequest
@@ -30,6 +31,7 @@ from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.face import SurfaceType
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes import Circle, Line
 from ansys.geometry.core.shapes.box_uv import LocationUV
@@ -41,19 +43,16 @@ from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
 )
 from ansys.geometry.core.sketch.sketch import Sketch
 
-"""A helper function to create a sketch line given two points and a design."""
-
 
 def create_sketch_line(design: Design, p1: Point3D, p2: Point3D):
+    """A helper function to create a sketch line given two points and a design."""
     point1 = point3d_to_grpc_point(p1)
     point2 = point3d_to_grpc_point(p2)
     design._commands_stub.CreateSketchLine(CreateSketchLineRequest(point1=point1, point2=point2))
 
 
-"""A helper function that creates the Hedgehog model."""
-
-
 def create_hedgehog(modeler: Modeler):
+    """A helper function that creates the Hedgehog model."""
     design = modeler.create_design("Hedgehog")
     sketch = Sketch().arc_from_three_points(
         Point2D([0.01, 0.01]), Point2D([0, -0.005]), Point2D([-0.01, 0.01])
@@ -97,19 +96,15 @@ def create_hedgehog(modeler: Modeler):
     return design
 
 
-"""A fixture of the hedgehog design to test the surface and curve properties individually."""
-
-
-@pytest.fixture
+@pytest.fixture(scope="function")
 def hedgehog_design(modeler: Modeler):
+    """A fixture of the hedgehog design to test the surface and curve properties individually."""
     h = create_hedgehog(modeler)
     yield h
 
 
-"""Tests the surface properties for the hedgehog design."""
-
-
 def test_trimmed_surface_properties(hedgehog_design):
+    """Tests the surface properties for the hedgehog design."""
     hedgehog_body = hedgehog_design.bodies[0]
     faces = hedgehog_body.faces
 
@@ -161,10 +156,8 @@ def test_trimmed_surface_properties(hedgehog_design):
         assert faces[i].shape.box_uv.interval_v == Interval(start=interval_v[0], end=interval_v[1])
 
 
-"""Tests the normal vectors for the hedgehog design using the BoxUV coordinates."""
-
-
 def test_trimmed_surface_normals(hedgehog_design):
+    """Tests the normal vectors for the hedgehog design using the BoxUV coordinates."""
     hedgehog_body = hedgehog_design.bodies[0]
     faces = hedgehog_body.faces
     # corners to consider
@@ -219,10 +212,8 @@ def test_trimmed_surface_normals(hedgehog_design):
         assert np.allclose(faces[i].shape.normal(corner_param.u, corner_param.v), bottom_right)
 
 
-"""Tests the curve properties for the hedgehog design."""
-
-
 def test_trimmed_curve_properties(hedgehog_design):
+    """Tests the curve properties for the hedgehog design."""
     hedgehog_body = hedgehog_design.bodies[0]
     edges = hedgehog_body.edges
 
@@ -245,3 +236,118 @@ def test_trimmed_curve_properties(hedgehog_design):
         assert isinstance(edges[i].shape.geometry, geometry_type)
         assert np.allclose(edges[i].shape.start, Point3D(start))
         assert np.allclose(edges[i].shape.end, Point3D(end))
+
+
+def test_trimmed_curve_line_translate(hedgehog_design):
+    """Tests the translation of a trimmed curve with line geometry."""
+    hedgehog_body = hedgehog_design.bodies[0]
+    edges = hedgehog_body.edges
+    edge = edges[1]
+    trimmed_curve = edge.shape
+
+    assert isinstance(trimmed_curve, TrimmedCurve)
+    assert trimmed_curve.start == Point3D([0.01, 0.01, 0.0])
+    assert trimmed_curve.end == Point3D([0.01, 0.01, 0.02])
+
+    trimmed_curve.translate(UnitVector3D([1, 0, 0]), 0.01)
+
+    assert trimmed_curve.start == Point3D([0.02, 0.01, 0.0])
+    assert trimmed_curve.end == Point3D([0.02, 0.01, 0.02])
+
+
+def test_trimmed_curve_line_rotate(hedgehog_design):
+    """Tests the rotation of a trimmed curve with line geometry."""
+    hedgehog_body = hedgehog_design.bodies[0]
+    edges = hedgehog_body.edges
+    edge = edges[1]
+    trimmed_curve = edge.shape
+
+    assert isinstance(trimmed_curve, TrimmedCurve)
+    assert trimmed_curve.start == Point3D([0.01, 0.01, 0.0])
+    assert trimmed_curve.end == Point3D([0.01, 0.01, 0.02])
+
+    # Rotate the curve in the x-direction by 90 degrees about the point (0.01, 0.01, 0.0)
+    trimmed_curve.rotate(Point3D([0.01, 0.01, 0.0]), UnitVector3D([1, 0, 0]), np.pi / 2)
+
+    assert np.allclose(trimmed_curve.start, Point3D([0.01, 0.01, 0.0]))
+    assert np.allclose(trimmed_curve.end, Point3D([0.01, -0.01, 0.0]))
+
+
+def test_trimmed_curve_circle_translate(hedgehog_design):
+    """Tests the rotation of a trimmed curve with circle geometry."""
+    hedgehog_body = hedgehog_design.bodies[0]
+    edges = hedgehog_body.edges
+    edge = edges[0]
+    trimmed_curve = edge.shape
+
+    assert isinstance(trimmed_curve, TrimmedCurve)
+    assert np.allclose(trimmed_curve.start, Point3D([0.01, 0.01, 0.02]))
+    assert np.allclose(trimmed_curve.end, Point3D([-0.01, 0.01, 0.02]))
+
+    trimmed_curve.translate(UnitVector3D([1, 0, 0]), 0.01)
+
+    assert np.allclose(trimmed_curve.start, Point3D([0.02, 0.01, 0.02]))
+    assert np.allclose(trimmed_curve.end, Point3D([0.0, 0.01, 0.02]))
+
+
+def test_trimmed_curve_circle_rotate(hedgehog_design):
+    """Tests the rotation of a trimmed curve with circle geometry."""
+    hedgehog_body = hedgehog_design.bodies[0]
+    edges = hedgehog_body.edges
+    edge = edges[0]
+    trimmed_curve = edge.shape
+
+    assert isinstance(trimmed_curve, TrimmedCurve)
+    assert np.allclose(trimmed_curve.start, Point3D([0.01, 0.01, 0.02]))
+    assert np.allclose(trimmed_curve.end, Point3D([-0.01, 0.01, 0.02]))
+
+    # Rotate the curve in the x-direction by 90 degrees about the point (0.01, 0.01, 0.02)
+    trimmed_curve.rotate(Point3D([0.01, 0.01, 0.02]), UnitVector3D([0, 1, 0]), np.pi / 2)
+
+    assert np.allclose(trimmed_curve.start, Point3D([0.01, 0.01, 0.02]))
+    assert np.allclose(trimmed_curve.end, Point3D([0.01, 0.01, 0.04]))
+
+
+def test_trimmed_curve(modeler: Modeler):
+    """Test Trimmed Curve class"""
+    design = modeler.create_design("trimmed_curve_edges")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    with pytest.raises(ValueError):
+        design.bodies[0].edges[0].shape.intersect_curve(design.bodies[0].edges[1].shape)
+    # Retrieve edges and initialize TrimmedCurve objects with the gRPC client
+    edge0 = TrimmedCurve(
+        geometry=body.edges[0].shape.geometry,
+        start=body.edges[0].shape.start,
+        end=body.edges[0].shape.end,
+        interval=body.edges[0].shape.interval,
+        length=body.edges[0].shape.length,
+        grpc_client=modeler.client,  # Pass the gRPC client here
+    )
+    edge1 = TrimmedCurve(
+        geometry=body.edges[1].shape.geometry,
+        start=body.edges[1].shape.start,
+        end=body.edges[1].shape.end,
+        interval=body.edges[1].shape.interval,
+        length=body.edges[1].shape.length,
+        grpc_client=modeler.client,  # Pass the gRPC client here
+    )
+
+    edge2 = TrimmedCurve(
+        geometry=body.edges[4].shape.geometry,
+        start=body.edges[4].shape.start,
+        end=body.edges[4].shape.end,
+        interval=body.edges[4].shape.interval,
+        length=body.edges[4].shape.length,
+        grpc_client=modeler.client,  # Pass the gRPC client here
+    )
+
+    # Perform assertions and call intersect_curve
+    assert (
+        edge0.__repr__()
+        == "TrimmedCurve(geometry: <class 'ansys.geometry.core.shapes.curves.line.Line'>, "
+        "start: [-0.5 -0.5  1. ], end: [ 0.5 -0.5  1. ], "
+        "interval: Interval(start=0.0, end=1.0), length: 1.0 meter)"
+    )
+    assert edge0.length == Quantity(1, UNITS.m)
+    assert edge0.intersect_curve(edge1) == [Point3D([-0.5, -0.5, 1.0])]
+    assert edge0.intersect_curve(edge2) == []

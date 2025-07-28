@@ -28,6 +28,7 @@ from typing import Callable
 import pytest
 
 from ansys.geometry.core import LOG  # Global logger
+from ansys.geometry.core.connection import GrpcClient
 import ansys.geometry.core.logger as logger
 
 ## Notes
@@ -36,6 +37,62 @@ import ansys.geometry.core.logger as logger
 # - caplog: for testing logging printing.
 
 LOG_LEVELS = {"CRITICAL": 50, "ERROR": 40, "WARNING": 30, "INFO": 20, "DEBUG": 10}
+
+
+def test_add_instance():
+    """Testing adding an instance logger while checking if log has certain key"""
+    base_name = "root"
+    instance_logger_1 = LOG.add_instance_logger(
+        name=base_name, client_instance=GrpcClient(), level=10
+    )
+    instance_logger_1.info("This is a message from the first instance logger.")
+    with pytest.raises(KeyError, match="There is no instances with name root_4."):
+        LOG.__getitem__("root_4")
+
+
+def test_custom_and_child_log(tmp_path_factory: pytest.TempPathFactory):
+    """Testing out writing a child log and adding std handler to it"""
+    custom_filename = tmp_path_factory.mktemp("custom_geometry") / "custom_geometry.log"
+    logger1 = logger.Logger(level="DEBUG", to_file=True, filename=custom_filename)
+    child_log = logger1._make_child_logger(suffix="ChildLogger", level="INFO")
+    child_log.info("This is a test to child logger")
+    child_log1 = logger1._make_child_logger(suffix="ChildLogger1", level=None)
+    child_log1.info("This is a test to child logger")
+    logger1.add_child_logger(suffix="ChildLogger", level="INFO")
+    logger.add_stdout_handler(child_log, level=logger.logging.INFO, write_headers=True)
+    for handler in logger1.logger.handlers:
+        if isinstance(handler, logger.logging.FileHandler):
+            handler.close()
+
+
+def test_stdout_defined():
+    """Testing if stdout is defined already and giving a custom format"""
+    logger_adapter = logger.PyGeometryCustomAdapter(LOG)
+    with pytest.raises(
+        Exception,
+        match="Stdout logger is already defined.",
+    ):
+        logger_adapter.log_to_stdout(level=logger.LOG_LEVEL)
+    formatter = logger.PyGeometryFormatter(fmt="%(levelname)s - %(instance_name)s - %(message)s")
+    stream_handler = logger.logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    logger_adapter.logger.handlers = [stream_handler]
+    logger_adapter.setLevel("ERROR")
+    defaults = {
+        "instance_name": "DefaultInstance",
+        "module": "DefaultModule",
+        "funcName": "DefaultFunction",
+    }
+    formatter = logger.PyGeometryFormatter(
+        fmt="%(levelname)s - %(instance_name)s - %(module)s - %(funcName)s - %(message)s",
+        defaults=defaults,
+    )
+    logger1 = logger.logging.getLogger("CustomLogger")
+    logger1.setLevel(logger.logging.DEBUG)
+    stream_handler = logger.logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    logger1.addHandler(stream_handler)
+    logger1.info("This is a test message without extra fields.")
 
 
 def test_stdout_reading(capfd: pytest.CaptureFixture):

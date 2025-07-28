@@ -25,6 +25,7 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Optional
 
 from beartype import beartype as check_input_types
+import numpy as np
 
 from ansys.geometry.core.math import Matrix44, Point3D
 from ansys.geometry.core.math.vector import Vector3D
@@ -141,6 +142,51 @@ class NURBSCurve(Curve):
 
         return curve
 
+    @classmethod
+    @check_input_types
+    def fit_curve_from_points(
+        cls,
+        points: list[Point3D],
+        degree: int,
+    ) -> "NURBSCurve":
+        """Fit a NURBS curve to a set of points.
+
+        Parameters
+        ----------
+        points : list[Point3D]
+            Points to fit the curve to.
+        degree : int
+            Degree of the curve.
+
+        Returns
+        -------
+        NURBSCurve
+            Fitted NURBS curve.
+
+        """
+        from geomdl import fitting
+
+        # Convert points to a format suitable for the fitting function
+        converted_points = [[*pt] for pt in points]
+
+        # Fit the curve to the points
+        curve = fitting.interpolate_curve(converted_points, degree)
+
+        # Construct the NURBSCurve object
+        nurbs_curve = cls()
+        nurbs_curve._nurbs_curve.degree = curve.degree
+        nurbs_curve._nurbs_curve.ctrlpts = [Point3D(entry) for entry in curve.ctrlpts]
+        nurbs_curve._nurbs_curve.knotvector = curve.knotvector
+        nurbs_curve._nurbs_curve.weights = curve.weights
+
+        # Verify the curve is valid
+        try:
+            nurbs_curve._nurbs_curve._check_variables()
+        except ValueError as e:
+            raise ValueError(f"Invalid NURBS curve: {e}")
+
+        return nurbs_curve
+
     def __eq__(self, other: "NURBSCurve") -> bool:
         """Determine if two curves are equal."""
         if not isinstance(other, NURBSCurve):
@@ -164,8 +210,8 @@ class NURBSCurve(Curve):
             Information about how the NURBS curve is parameterized.
         """
         return Parameterization(
-            ParamType.OTHER,
             ParamForm.OTHER,
+            ParamType.OTHER,
             Interval(start=self._nurbs_curve.domain[0], end=self._nurbs_curve.domain[1]),
         )
 
@@ -182,7 +228,12 @@ class NURBSCurve(Curve):
         NURBSCurve
             Transformed copy of the curve.
         """
-        control_points = [matrix @ point for point in self._nurbs_curve.ctrlpts]
+        control_points = []
+        for point in self._nurbs_curve.ctrlpts:
+            # Transform the control point using the transformation matrix
+            transformed_point = matrix @ np.array([*point, 1])
+            control_points.append(Point3D(transformed_point[:3]))
+
         return NURBSCurve.from_control_points(
             control_points,
             self._nurbs_curve.degree,

@@ -204,3 +204,25 @@ def use_service_colors():
 
     # Code here runs after the test, reverting the state
     pyansys_geometry.USE_SERVICE_COLORS = False
+
+
+@pytest.fixture(scope="function")
+def use_grpc_client_old_backend(modeler: Modeler):
+    currentbackend = modeler._grpc_client._backend_version
+    modeler._grpc_client._backend_version = (24, 2, 0)
+
+    yield  # This allows the test to run
+
+    # Code here runs after the test, reverting the state
+    modeler._grpc_client._backend_version = currentbackend
+
+
+@pytest.fixture(scope="function")
+def disable_active_design_check_true():
+    import ansys.geometry.core as pyansys_geometry
+
+    pyansys_geometry.DISABLE_ACTIVE_DESIGN_CHECK = True
+
+    yield
+
+    pyansys_geometry.DISABLE_ACTIVE_DESIGN_CHECK = False

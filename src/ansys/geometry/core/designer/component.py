@@ -37,6 +37,8 @@ from ansys.api.geometry.v0.commands_pb2 import (
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.api.geometry.v0.components_pb2 import (
     CreateRequest,
+    ImportGroupsRequest,
+    MakeIndependentRequest,
     SetPlacementRequest,
     SetSharedTopologyRequest,
 )
@@ -70,6 +72,7 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_component
 from ansys.geometry.core.misc.checks import (
     ensure_design_is_active,
     graphics_required,
@@ -273,21 +276,37 @@ class Component:
 
     @name.setter
     def name(self, value: str) -> None:
-        """Set the name of the component."""
+        """Set the name of the component.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
         self.set_name(value)
 
     @protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
     def set_name(self, name: str) -> None:
-        """Set the name of the component."""
+        """Set the name of the component.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
         self._grpc_client.log.debug(f"Renaming component {self.id} from '{self.name}' to '{name}'.")
         self._component_stub.SetName(SetObjectNameRequest(id=self._grpc_id, name=name))
         self._name = name
 
     @property
+    @min_backend_version(25, 1, 0)
     def instance_name(self) -> str:
-        """Name of the component instance."""
+        """Name of the component instance.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
+        """
         return self._instance_name
 
     @property
@@ -584,6 +603,7 @@ class Component:
             sketch=sketch,
             distance=distance,
             direction=direction.get_multiplier(),
+            backend_version=self._grpc_client.backend_version,
         )
         created_body = self.__build_body_from_response(response)
 
@@ -617,6 +637,8 @@ class Component:
     ) -> Body:
         """Create a body by sweeping a planar profile along a path.
 
+        The newly created body is placed under this component within the design assembly.
+
         Parameters
         ----------
         name : str
@@ -631,9 +653,9 @@ class Component:
         Body
             Created body from the given sketch.
 
-        Notes
-        -----
-        The newly created body is placed under this component within the design assembly.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         self._grpc_client.log.debug(f"Creating a sweeping profile on {self.id}. Creating body...")
         response = self._grpc_client.services.bodies.create_sweeping_profile_body(
@@ -641,6 +663,7 @@ class Component:
             parent_id=self.id,
             sketch=sketch,
             path=path,
+            backend_version=self._grpc_client.backend_version,
         )
         return self.__build_body_from_response(response)
 
@@ -654,6 +677,8 @@ class Component:
         chain: list[TrimmedCurve],
     ) -> Body:
         """Create a body by sweeping a chain of curves along a path.
+
+        The newly created body is placed under this component within the design assembly.
 
         Parameters
         ----------
@@ -669,9 +694,9 @@ class Component:
         Body
             Created body from the given sketch.
 
-        Notes
-        -----
-        The newly created body is placed under this component within the design assembly.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         self._grpc_client.log.debug(f"Creating a sweeping chain on {self.id}. Creating body...")
         response = self._grpc_client.services.bodies.create_sweeping_chain(
@@ -711,6 +736,10 @@ class Component:
         -------
         Body
             Revolved body from the given sketch.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         # Based on the reference axis and the sketch plane's normal, retrieve the orthogonal
         # vector (i.e. this is the reference vector for the Circle object). Assuming a distance of 1
@@ -790,7 +819,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
-    @min_backend_version(24, 2, 0)
+    @min_backend_version(25, 1, 0)
     def create_sphere(self, name: str, center: Point3D, radius: Distance) -> Body:
         """Create a sphere body defined by the center point and the radius.
 
@@ -807,6 +836,10 @@ class Component:
         -------
         Body
             Sphere body object.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
         """
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id}.")
         response = self._grpc_client.services.bodies.create_sphere_body(
@@ -826,24 +859,6 @@ class Component:
     ) -> Body:
         """Create a lofted body from a collection of trimmed curves.
 
-        Parameters
-        ----------
-        name : str
-            Name of the lofted body.
-        profiles : list[list[TrimmedCurve]]
-            Collection of lists of trimmed curves (profiles) defining the lofted body's shape.
-        periodic : bool, default: False
-            Whether the lofted body should have periodic continuity.
-        ruled : bool
-            Whether the lofted body should be ruled.
-
-        Returns
-        -------
-        Body
-            Created lofted body object.
-
-        Notes
-        -----
         Surfaces produced have a U parameter in the direction of the profile curves,
         and a V parameter in the direction of lofting.
         Profiles can have different numbers of segments. A minimum twist solution is
@@ -864,6 +879,26 @@ class Component:
         If ``ruled=True``, separate ruled surfaces are produced between each pair of profiles.
         If ``periodic=True``, the loft continues from the last profile back to the first
         profile, but the surfaces are not periodic.
+
+        Parameters
+        ----------
+        name : str
+            Name of the lofted body.
+        profiles : list[list[TrimmedCurve]]
+            Collection of lists of trimmed curves (profiles) defining the lofted body's shape.
+        periodic : bool, default: False
+            Whether the lofted body should have periodic continuity.
+        ruled : bool
+            Whether the lofted body should be ruled.
+
+        Returns
+        -------
+        Body
+            Created lofted body object.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         self._grpc_client.log.debug(f"Creating a loft profile body on {self.id}.")
         response = self._grpc_client.services.bodies.create_extruded_body_from_loft_profiles(
@@ -898,7 +933,10 @@ class Component:
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
         )
         response = self._grpc_client.services.bodies.create_planar_body(
-            name=name, parent_id=self.id, sketch=sketch
+            name=name,
+            parent_id=self.id,
+            sketch=sketch,
+            backend_version=self._grpc_client.backend_version,
         )
 
         return self.__build_body_from_response(response)
@@ -940,6 +978,9 @@ class Component:
     def create_body_from_surface(self, name: str, trimmed_surface: TrimmedSurface) -> Body:
         """Create a surface body from a trimmed surface.
 
+        It is possible to create a closed solid body (as opposed to an open surface body) with a
+        Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
+
         Parameters
         ----------
         name : str
@@ -952,10 +993,9 @@ class Component:
         Body
             Surface body.
 
-        Notes
-        -----
-        It is possible to create a closed solid body (as opposed to an open surface body) with a
-        Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
         """
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
@@ -985,6 +1025,10 @@ class Component:
         -------
         Body
             Surface body.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed curves provided on {self.id}. Creating body..."
@@ -1033,10 +1077,6 @@ class Component:
             Direction of the translation.
         distance: ~pint.Quantity | Distance | Real
             Magnitude of the translation.
-
-        Returns
-        -------
-        None
 
         Notes
         -----
@@ -1850,3 +1890,43 @@ class Component:
                 lines.extend([f"|{'-' * (indent - 1)}(comp) {comp.name}" for comp in comps])
 
         return lines if return_list else print("\n".join(lines))
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def import_named_selections(self) -> None:
+        """Import named selections of a component.
+
+        When a design is inserted, it becomes a component. From 26R1 onwards, the named selections
+        of that component will be imported by default. If a file is opened that contains a
+        component that did not have its named selections imported, this method can be used to
+        import them.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        self._component_stub.ImportGroups(ImportGroupsRequest(id=self._grpc_id))
+
+        design = get_design_from_component(self)
+        design._update_design_inplace()
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def make_independent(self, others: list["Component"] = None) -> None:
+        """Make a component independent if it is an instance.
+
+        If a component is an instance of another component, modifying one component modifies both.
+        When a component is made independent, it is no longer associated with other instances and
+        can be modified separately.
+
+        Parameters
+        ----------
+        others : list[Component], default: None
+            Optionally include multiple components to make them all independent.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        ids = [self._grpc_id, *[o._grpc_id for o in others or []]]
+        self._component_stub.MakeIndependent(MakeIndependentRequest(ids=ids))

@@ -25,6 +25,7 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import to_distance
 from ..base.measurement_tools import GRPCMeasurementToolsService
 
 
@@ -51,12 +52,14 @@ class GRPCMeasurementToolsServiceV0(GRPCMeasurementToolsService):
     def min_distance_between_objects(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.measuretools_pb2 import MinDistanceBetweenObjectsRequest
 
-        from ..base.conversions import to_distance
-
         # Create the request - assumes all inputs are valid and of the proper type
         # Request is different based on backend_version (25.2 vs. earlier)
         if kwargs["backend_version"] < (25, 2, 0):
             request = MinDistanceBetweenObjectsRequest(bodies=kwargs["selection"])
+
+            # Call the gRPC service
+            response = self.stub.MinDistanceBetweenObjects(request)
+
         else:
             from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 
@@ -64,8 +67,8 @@ class GRPCMeasurementToolsServiceV0(GRPCMeasurementToolsService):
                 selection=[EntityIdentifier(id=item) for item in kwargs["selection"]]
             )
 
-        # Call the gRPC service
-        response = self.stub.MinDistanceBetweenSelectionObjects(request)
+            # Call the gRPC service
+            response = self.stub.MinDistanceBetweenSelectionObjects(request)
 
         # Return the response - formatted as a dictionary
         return {"distance": to_distance(response.gap.distance)}

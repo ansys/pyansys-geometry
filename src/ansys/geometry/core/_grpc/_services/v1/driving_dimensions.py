@@ -28,7 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.driving_dimensions import GRPCDrivingDimensionsService
 
 
-class GRPCDrivingDimensionsServiceV1(GRPCDrivingDimensionsService):
+class GRPCDrivingDimensionsServiceV1(GRPCDrivingDimensionsService):  # pragma: no cover
     """Driving Dimensions service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

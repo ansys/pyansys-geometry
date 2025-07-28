@@ -24,6 +24,7 @@
 from typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.misc.measurements import Distance
 
@@ -82,7 +83,25 @@ class MeasurementTools:
         -------
         Gap
             Gap between two bodies.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
+        Also, using Face and Edge objects as inputs requires a minimum Ansys
+        release of 25R2.
         """
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
+        # Face and Edge objects are only accepted if the backend version is 25R2 or later.
+        for obj in (object1, object2):
+            if isinstance(obj, (Face, Edge)) and self._grpc_client.backend_version < (25, 2, 0):
+                raise GeometryRuntimeError(
+                    f"The method '{self.min_distance_between_objects.__name__}' using "
+                    "Face and Edge objects as inputs requires a minimum Ansys release version of "
+                    f"25.2.0, but the current version used is {self._grpc_client.backend_version}."
+                )
+
         response = self._grpc_client.services.measurement_tools.min_distance_between_objects(
             selection=[object1.id, object2.id],
             backend_version=self._grpc_client.backend_version,

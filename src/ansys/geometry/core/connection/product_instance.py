@@ -176,7 +176,7 @@ class ProductInstance:
 
 def prepare_and_start_backend(
     backend_type: BackendType,
-    product_version: int = None,
+    version: str | int = None,
     host: str = "localhost",
     port: int = None,
     enable_trace: bool = False,
@@ -189,6 +189,7 @@ def prepare_and_start_backend(
     server_logs_folder: str = None,
     client_log_file: str = None,
     specific_minimum_version: int = None,
+    product_version: int | None = None,  # Deprecated, use `version` instead.
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
 
@@ -199,7 +200,7 @@ def prepare_and_start_backend(
 
     Parameters
     ----------
-    product_version: ``int``, optional
+    version : str | int, optional
         The product version to be started. Goes from v24.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
@@ -243,6 +244,8 @@ def prepare_and_start_backend(
     specific_minimum_version : int, optional
         Sets a specific minimum version to be checked. If this is not defined,
         the minimum version will be set to 24.1.0.
+    product_version: ``int``, optional
+        The product version to be started. Deprecated, use `version` instead.
 
     Returns
     -------
@@ -259,6 +262,16 @@ def prepare_and_start_backend(
         a SystemError will be raised.
     """
     from ansys.geometry.core.modeler import Modeler
+
+    # Handle deprecated product_version argument
+    if product_version is not None and version is not None:
+        raise ValueError(
+            "Both 'product_version' and 'version' arguments are provided. "
+            "Please use only 'version'."
+        )
+    if product_version is not None:
+        LOG.warning("The 'product_version' argument is deprecated. Please use 'version' instead.")
+        version = product_version
 
     if os.name != "nt" and not BackendType.is_linux_service(backend_type):  # pragma: no cover
         raise RuntimeError(
@@ -278,29 +291,37 @@ def prepare_and_start_backend(
         # we will use it as the root folder for the Geometry Service.
         pass
     else:
-        if product_version is not None:
+        if version is not None:
+            # Sanitize the version input to ensure it's an integer.
             try:
-                _check_version_is_available(product_version, installations)
+                version = int(version)
+            except ValueError:
+                raise ValueError(
+                    "The 'version' argument must be an integer representing the product version."
+                )
+
+            try:
+                _check_version_is_available(version, installations)
             except SystemError as serr:
                 # The user requested a version as a Student version...
                 # Let's negate it and try again... if this works, we override the
-                # product_version variable.
+                # version variable.
                 try:
-                    _check_version_is_available(-product_version, installations)
+                    _check_version_is_available(-version, installations)
                 except SystemError:
                     # The student version is not installed either... raise the original error.
                     raise serr
 
-                product_version = -product_version
+                version = -version
         else:
-            product_version = get_latest_ansys_installation()[0]
+            version = get_latest_ansys_installation()[0]
 
         # Verify that the minimum version is installed.
-        _check_minimal_versions(product_version, specific_minimum_version)
+        _check_minimal_versions(version, specific_minimum_version)
 
     # If Windows Service is requested, BUT version is not 2025R1 or earlier, we will have
     # to change the backend type to CORE_WINDOWS and throw a warning.
-    if backend_type == BackendType.WINDOWS_SERVICE and product_version > 251:
+    if backend_type == BackendType.WINDOWS_SERVICE and version > 251:
         LOG.warning(
             "DMS Windows Service is not available for Ansys versions 2025R2 and later. "
             "Switching to Core Windows Service."
@@ -330,7 +351,7 @@ def prepare_and_start_backend(
     )
 
     if backend_type == BackendType.DISCOVERY:
-        args.append(Path(installations[product_version], DISCOVERY_FOLDER, DISCOVERY_EXE))
+        args.append(Path(installations[version], DISCOVERY_FOLDER, DISCOVERY_EXE))
         if hidden is True:
             args.append(BACKEND_DISCOVERY_HIDDEN)
 
@@ -338,18 +359,18 @@ def prepare_and_start_backend(
         args.append(BACKEND_SPACECLAIM_OPTIONS)
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
-            + _manifest_path_provider(product_version, installations, manifest_path)
+            + _manifest_path_provider(version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
 
     elif backend_type == BackendType.SPACECLAIM:
-        args.append(Path(installations[product_version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
+        args.append(Path(installations[version], SPACECLAIM_FOLDER, SPACECLAIM_EXE))
         if hidden is True:
             args.append(BACKEND_SPACECLAIM_HIDDEN)
             args.append(BACKEND_SPLASH_OFF)
         args.append(
             BACKEND_ADDIN_MANIFEST_ARGUMENT
-            + _manifest_path_provider(product_version, installations, manifest_path)
+            + _manifest_path_provider(version, installations, manifest_path)
         )
         env_copy[BACKEND_API_VERSION_VARIABLE] = str(api_version)
         if BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY not in env_copy:
@@ -363,9 +384,7 @@ def prepare_and_start_backend(
     elif backend_type == BackendType.WINDOWS_SERVICE:
         root_service_folder = os.getenv(ANSYS_GEOMETRY_SERVICE_ROOT)
         if root_service_folder is None:
-            root_service_folder = Path(
-                installations[product_version], WINDOWS_GEOMETRY_SERVICE_FOLDER
-            )
+            root_service_folder = Path(installations[version], WINDOWS_GEOMETRY_SERVICE_FOLDER)
         else:
             root_service_folder = Path(root_service_folder)
         args.append(
@@ -379,11 +398,12 @@ def prepare_and_start_backend(
         # Define several Ansys Geometry Core Service folders needed
         root_service_folder = os.getenv(ANSYS_GEOMETRY_SERVICE_ROOT)
         if root_service_folder is None:
-            root_service_folder = Path(installations[product_version], CORE_GEOMETRY_SERVICE_FOLDER)
+            root_service_folder = Path(installations[version], CORE_GEOMETRY_SERVICE_FOLDER)
         else:
             root_service_folder = Path(root_service_folder)
         native_folder = root_service_folder / "Native"
         cad_integration_folder = root_service_folder / "CADIntegration"
+        cad_integration_folder_bin = cad_integration_folder / "bin"
         schema_folder = root_service_folder / "Schema"
 
         # Adapt the native folder to the OS
@@ -399,17 +419,15 @@ def prepare_and_start_backend(
         env_copy["ANS_DSCO_REMOTE_PORT"] = str(port)
         env_copy["P_SCHEMA"] = schema_folder.as_posix()
         env_copy["ANSYS_CI_INSTALL"] = cad_integration_folder.as_posix()
-        if product_version:
-            env_copy[f"ANSYSCL{product_version}_DIR"] = (
-                root_service_folder / "licensingclient"
-            ).as_posix()
+        if version:
+            env_copy[f"ANSYSCL{version}_DIR"] = (root_service_folder / "licensingclient").as_posix()
         else:
             # Env var is passed... but no product version is defined. We define all of them.
             # Starting on 251... We can use the values in the enum ApiVersions.
-            for version in ApiVersions:
-                if version.value < 251:
+            for api_version in ApiVersions:
+                if api_version.value < 251:
                     continue
-                env_copy[f"ANSYSCL{version.value}_DIR"] = (
+                env_copy[f"ANSYSCL{api_version.value}_DIR"] = (
                     root_service_folder / "licensingclient"
                 ).as_posix()
 
@@ -421,15 +439,20 @@ def prepare_and_start_backend(
         else:
             env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE", "1055@localhost")
 
-        if os.name == "nt":
-            # Modify the PATH variable to include the path to the Ansys Geometry Core Service
-            env_copy["PATH"] = (
-                f"{env_copy['PATH']}"
-                + f";{root_service_folder.as_posix()}"
-                + f";{native_folder.as_posix()}"
-                + f";{cad_integration_folder.as_posix()}"
-            )
+        # Adapt the path environment variable to the OS and
+        # modify the PATH/LD_LIBRARY_PATH variable to include the path
+        # to the Ansys Geometry Core Service
+        path_env_var = "PATH" if os.name == "nt" else "LD_LIBRARY_PATH"
+        env_copy[path_env_var] = os.pathsep.join(
+            [
+                root_service_folder.as_posix(),
+                native_folder.as_posix(),
+                cad_integration_folder_bin.as_posix(),
+                env_copy.get(path_env_var, ""),
+            ]
+        )
 
+        if os.name == "nt":
             # For Windows, we need to use the exe file to launch the Core Geometry Service
             args.append(
                 Path(
@@ -455,14 +478,6 @@ def prepare_and_start_backend(
                     "Ansys Geometry Core Service requires at least dotnet 8.0. "
                     "Please install a compatible version."
                 )
-
-            # Modify the LD_LIBRARY_PATH variable to include the Ansys Geometry Core Service
-            env_copy["LD_LIBRARY_PATH"] = (
-                env_copy.get("LD_LIBRARY_PATH", "")
-                + f":{root_service_folder.as_posix()}"
-                + f":{native_folder.as_posix()}"
-                + f":{cad_integration_folder.as_posix()}"
-            )
 
             # For Linux, we need to use the dotnet command to launch the Core Geometry Service
             args.append("dotnet")
@@ -546,13 +561,14 @@ def _is_port_available(port: int, host: str = "localhost") -> bool:
     The optional argument is the ip address where to check port availability.
     Its default is ``localhost``.
     """
-    if port != 0:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            try:
-                sock.bind((host, port))
-                return True
-            except socket.error:
-                return False
+    if port == 0:
+        return False  # Port 0 is reserved and cannot be used directly.
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        try:
+            sock.bind((host, port))
+            return True
+        except socket.error:
+            return False
 
 
 def _manifest_path_provider(

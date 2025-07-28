@@ -172,9 +172,6 @@ class Interval:
         if not isinstance(other, Interval):
             # don't attempt to compare against unrelated types
             return NotImplemented
-        if self.is_empty() or other.is_empty():
-            return self.is_empty() and other.is_empty()
-
         return Accuracy.equal_doubles(self.start, other.start) and Accuracy.equal_doubles(
             self.end, other.end
         )
@@ -270,10 +267,6 @@ class Interval:
         Interval
             Union of the two intervals.
         """
-        if first.is_empty():
-            return second
-        if second.is_empty():
-            return first
         return Interval(min(first.start, second.start), max(first.end, second.end))
 
     def self_unite(self, other: "Interval") -> None:
@@ -302,10 +295,8 @@ class Interval:
         Interval
             Intersection of the two intervals.
         """
-        if first.is_empty() or second.is_empty():
-            return None  # supposed to be empty
-        intersection = Interval(max(first.start, second.start), min(first.end, second.send))
-        if not intersection.is_negative(tolerance):
+        intersection = Interval(max(first.start, second.start), min(first.end, second.end))
+        if intersection.is_negative(tolerance) == 1:
             return intersection
         return None  # supposed to be empty
 
@@ -336,8 +327,6 @@ class Interval:
         bool
             ``True`` if the interval contains the value, ``False`` otherwise.
         """
-        if self.is_empty():
-            return False
         negative_abs_accuracy = -abs(accuracy)
         if self.start > self.end:
             if self.start - t < negative_abs_accuracy:
@@ -368,9 +357,6 @@ class Interval:
 
     def inflate(self, delta: Real) -> "Interval":
         """Enlarge the current interval by the given delta value."""
-        if self.is_empty():
-            # throw Error.InvalidMethodOnEmptyObjectException(GetType())
-            raise Exception("Invalid Method On Empty Object Exception" + type(self).__name__)
         return Interval(self.start - delta, self.end + delta)
 
     def __repr__(self) -> str:

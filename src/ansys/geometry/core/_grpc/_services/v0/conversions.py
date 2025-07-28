@@ -29,6 +29,7 @@ from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
 from ansys.api.dbu.v0.dbumodels_pb2 import (
     DrivingDimension as GRPCDrivingDimension,
     EntityIdentifier,
+    PartExportFormat as GRPCPartExportFormat,
 )
 from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus as GRPCUpdateStatus
 from ansys.api.geometry.v0.models_pb2 import (
@@ -39,9 +40,11 @@ from ansys.api.geometry.v0.models_pb2 import (
     Ellipse as GRPCEllipse,
     Frame as GRPCFrame,
     Geometries as GRPCGeometries,
+    Knot as GRPCKnot,
     Line as GRPCLine,
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
+    NurbsCurve as GRPCNurbsCurve,
     Plane as GRPCPlane,
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
@@ -52,12 +55,16 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import graphics_required
 
 if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
+    import semver
 
     from ansys.geometry.core.connection.backend import BackendType
+    from ansys.geometry.core.designer.design import DesignFileFormat
+    from ansys.geometry.core.designer.face import SurfaceType
     from ansys.geometry.core.materials.material import Material
     from ansys.geometry.core.materials.property import MaterialProperty
     from ansys.geometry.core.math.frame import Frame
@@ -70,6 +77,7 @@ if TYPE_CHECKING:  # pragma: no cover
         ParameterUpdateStatus,
     )
     from ansys.geometry.core.shapes.curves.curve import Curve
+    from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
     from ansys.geometry.core.shapes.surfaces.surface import Surface
     from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
@@ -78,6 +86,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.sketch.edge import SketchEdge
     from ansys.geometry.core.sketch.ellipse import SketchEllipse
     from ansys.geometry.core.sketch.face import SketchFace
+    from ansys.geometry.core.sketch.nurbs import SketchNurbs
     from ansys.geometry.core.sketch.polygon import Polygon
     from ansys.geometry.core.sketch.segment import SketchSegment
 
@@ -398,6 +407,7 @@ def from_sketch_shapes_to_grpc_geometries(
     converted_sketch_edges = from_sketch_edges_to_grpc_geometries(edges, plane)
     geometries.lines.extend(converted_sketch_edges[0])
     geometries.arcs.extend(converted_sketch_edges[1])
+    geometries.nurbs_curves.extend(converted_sketch_edges[2])
 
     for face in faces:
         if isinstance(face, SketchCircle):
@@ -423,6 +433,8 @@ def from_sketch_shapes_to_grpc_geometries(
             one_curve_geometry.ellipses.append(geometries.ellipses[0])
         elif len(geometries.polygons) > 0:
             one_curve_geometry.polygons.append(geometries.polygons[0])
+        elif len(geometries.nurbs_curves) > 0:
+            one_curve_geometry.nurbs_curves.append(geometries.nurbs_curves[0])
         return one_curve_geometry
 
     else:
@@ -432,7 +444,7 @@ def from_sketch_shapes_to_grpc_geometries(
 def from_sketch_edges_to_grpc_geometries(
     edges: list["SketchEdge"],
     plane: "Plane",
-) -> tuple[list[GRPCLine], list[GRPCArc]]:
+) -> tuple[list[GRPCLine], list[GRPCArc], list[GRPCNurbsCurve]]:
     """Convert a list of ``SketchEdge`` to a gRPC message.
 
     Parameters
@@ -444,21 +456,25 @@ def from_sketch_edges_to_grpc_geometries(
 
     Returns
     -------
-    tuple[list[GRPCLine], list[GRPCArc]]
-        Geometry service gRPC line and arc messages. The unit is meters.
+    tuple[list[GRPCLine], list[GRPCArc], list[GRPCNurbsCurve]]
+        Geometry service gRPC line, arc, and NURBS curve messages. The unit is meters.
     """
     from ansys.geometry.core.sketch.arc import Arc
+    from ansys.geometry.core.sketch.nurbs import SketchNurbs
     from ansys.geometry.core.sketch.segment import SketchSegment
 
     arcs = []
     segments = []
+    nurbs_curves = []
     for edge in edges:
         if isinstance(edge, SketchSegment):
             segments.append(from_sketch_segment_to_grpc_line(edge, plane))
         elif isinstance(edge, Arc):
             arcs.append(from_sketch_arc_to_grpc_arc(edge, plane))
+        elif isinstance(edge, SketchNurbs):
+            nurbs_curves.append(from_sketch_nurbs_to_grpc_nurbs_curve(edge, plane))
 
-    return (segments, arcs)
+    return (segments, arcs, nurbs_curves)
 
 
 def from_sketch_arc_to_grpc_arc(arc: "Arc", plane: "Plane") -> GRPCArc:
@@ -487,6 +503,48 @@ def from_sketch_arc_to_grpc_arc(arc: "Arc", plane: "Plane") -> GRPCArc:
         start=from_point2d_to_grpc_point(plane, arc.start),
         end=from_point2d_to_grpc_point(plane, arc.end),
         axis=axis,
+    )
+
+
+def from_sketch_nurbs_to_grpc_nurbs_curve(curve: "SketchNurbs", plane: "Plane") -> GRPCNurbsCurve:
+    """Convert a ``SketchNurbs`` class to a NURBS curve gRPC message.
+
+    Parameters
+    ----------
+    nurbs : SketchNurbs
+        Source NURBS data.
+    plane : Plane
+        Plane for positioning the NURBS curve.
+
+    Returns
+    -------
+    GRPCNurbsCurve
+        Geometry service gRPC NURBS curve message. The unit is meters.
+    """
+    from ansys.api.geometry.v0.models_pb2 import (
+        ControlPoint as GRPCControlPoint,
+        NurbsData as GRPCNurbsData,
+    )
+
+    # Convert control points
+    control_points = [
+        GRPCControlPoint(
+            position=from_point2d_to_grpc_point(plane, pt),
+            weight=curve.weights[i],
+        )
+        for i, pt in enumerate(curve.control_points)
+    ]
+
+    # Convert nurbs data
+    nurbs_data = GRPCNurbsData(
+        degree=curve.degree,
+        knots=from_knots_to_grpc_knots(curve.knots),
+        order=curve.degree + 1,
+    )
+
+    return GRPCNurbsCurve(
+        control_points=control_points,
+        nurbs_data=nurbs_data,
     )
 
 
@@ -618,6 +676,7 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
     from ansys.geometry.core.shapes.curves.circle import Circle
     from ansys.geometry.core.shapes.curves.ellipse import Ellipse
     from ansys.geometry.core.shapes.curves.line import Line
+    from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 
     grpc_curve = None
 
@@ -642,10 +701,133 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
                 major_radius=curve.major_radius.m,
                 minor_radius=curve.minor_radius.m,
             )
+    elif isinstance(curve, NURBSCurve):
+        grpc_curve = GRPCCurveGeometry(nurbs_curve=from_nurbs_curve_to_grpc_nurbs_curve(curve))
     else:
         raise ValueError(f"Unsupported curve type: {type(curve)}")
 
     return grpc_curve
+
+
+def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
+    """Convert a ``NURBSCurve`` to a NURBS curve gRPC message.
+
+    Parameters
+    ----------
+    curve : NURBSCurve
+        Curve to convert.
+
+    Returns
+    -------
+    GRPCNurbsCurve
+        Geometry service gRPC ``NURBSCurve`` message.
+    """
+    from ansys.api.geometry.v0.models_pb2 import (
+        ControlPoint as GRPCControlPoint,
+        NurbsData as GRPCNurbsData,
+    )
+
+    # Convert control points
+    control_points = [
+        GRPCControlPoint(
+            position=from_point3d_to_grpc_point(pt),
+            weight=curve.weights[i],
+        )
+        for i, pt in enumerate(curve.control_points)
+    ]
+
+    # Convert nurbs data
+    nurbs_data = GRPCNurbsData(
+        degree=curve.degree,
+        knots=from_knots_to_grpc_knots(curve.knots),
+        order=curve.degree + 1,
+    )
+
+    return GRPCNurbsCurve(
+        control_points=control_points,
+        nurbs_data=nurbs_data,
+    )
+
+
+def from_knots_to_grpc_knots(knots: list[float]) -> list[GRPCKnot]:
+    """Convert a list of knots to a list of gRPC knot messages.
+
+    Parameters
+    ----------
+    knots : list[float]
+        Source knots data.
+
+    Returns
+    -------
+    list[GRPCKnot]
+        Geometry service gRPC knot messages.
+    """
+    from collections import Counter
+
+    # Count multiplicities
+    multiplicities = Counter(knots)
+
+    # Get unique knots (parameters) in order
+    unique_knots = sorted(set(knots))
+    knot_multiplicities = [(knot, multiplicities[knot]) for knot in unique_knots]
+
+    # Convert to gRPC knot messages
+    grpc_knots = [
+        GRPCKnot(
+            parameter=knot,
+            multiplicity=multiplicity,
+        )
+        for knot, multiplicity in knot_multiplicities
+    ]
+
+    return grpc_knots
+
+
+def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
+    """Convert a curve gRPC message to a ``Curve``.
+
+    Parameters
+    ----------
+    curve : GRPCCurve
+        Geometry service gRPC curve message.
+
+    Returns
+    -------
+    Curve
+        Resulting converted curve.
+    """
+    from ansys.geometry.core.math.point import Point3D
+    from ansys.geometry.core.math.vector import UnitVector3D
+    from ansys.geometry.core.shapes.curves.circle import Circle
+    from ansys.geometry.core.shapes.curves.ellipse import Ellipse
+    from ansys.geometry.core.shapes.curves.line import Line
+
+    origin = Point3D([curve.origin.x, curve.origin.y, curve.origin.z])
+    try:
+        reference = UnitVector3D([curve.reference.x, curve.reference.y, curve.reference.z])
+        axis = UnitVector3D([curve.axis.x, curve.axis.y, curve.axis.z])
+    except ValueError:
+        # curve will be a line
+        pass
+    if curve.radius != 0:
+        result = Circle(origin, curve.radius, reference, axis)
+    elif curve.major_radius != 0 and curve.minor_radius != 0:
+        result = Ellipse(origin, curve.major_radius, curve.minor_radius, reference, axis)
+    elif curve.direction is not None:
+        result = Line(
+            origin,
+            UnitVector3D(
+                [
+                    curve.direction.x,
+                    curve.direction.y,
+                    curve.direction.z,
+                ]
+            ),
+        )
+    else:
+        result = None
+
+    return result
 
 
 def from_trimmed_surface_to_grpc_trimmed_surface(
@@ -735,6 +917,46 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
         surface_type = GRPCSurfaceType.SURFACETYPE_TORUS
 
     return grpc_surface, surface_type
+
+
+def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceType") -> "Surface":
+    """Convert a surface gRPC message to a ``Surface`` class.
+
+    Parameters
+    ----------
+    surface : GRPCSurface
+        Geometry service gRPC surface message.
+
+    Returns
+    -------
+    Surface
+        Resulting converted surface.
+    """
+    from ansys.geometry.core.designer.face import SurfaceType
+    from ansys.geometry.core.math.vector import UnitVector3D
+    from ansys.geometry.core.shapes.surfaces.cone import Cone
+    from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder
+    from ansys.geometry.core.shapes.surfaces.plane import PlaneSurface
+    from ansys.geometry.core.shapes.surfaces.sphere import Sphere
+    from ansys.geometry.core.shapes.surfaces.torus import Torus
+
+    origin = from_grpc_point_to_point3d(surface.origin)
+    axis = UnitVector3D([surface.axis.x, surface.axis.y, surface.axis.z])
+    reference = UnitVector3D([surface.reference.x, surface.reference.y, surface.reference.z])
+
+    if surface_type == SurfaceType.SURFACETYPE_CONE:
+        result = Cone(origin, surface.radius, surface.half_angle, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_CYLINDER:
+        result = Cylinder(origin, surface.radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_SPHERE:
+        result = Sphere(origin, surface.radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_TORUS:
+        result = Torus(origin, surface.major_radius, surface.minor_radius, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_PLANE:
+        result = PlaneSurface(origin, reference, axis)
+    else:
+        result = None
+    return result
 
 
 def from_grpc_backend_type_to_backend_type(
@@ -848,3 +1070,94 @@ def from_grpc_update_status_to_parameter_update_status(
         GRPCUpdateStatus.CONSTRAINED_PARAMETERS: ParameterUpdateStatus.CONSTRAINED_PARAMETERS,
     }
     return status_mapping.get(update_status, ParameterUpdateStatus.UNKNOWN)
+
+
+def from_design_file_format_to_grpc_part_export_format(
+    design_file_format: "DesignFileFormat",
+) -> GRPCPartExportFormat:
+    """Convert from a DesignFileFormat object to a gRPC PartExportFormat one.
+
+    Parameters
+    ----------
+    design_file_format : DesignFileFormat
+        The file format desired
+
+    Returns
+    -------
+    GRPCPartExportFormat
+        Converted gRPC Part format
+    """
+    from ansys.geometry.core.designer.design import DesignFileFormat
+
+    if design_file_format == DesignFileFormat.SCDOCX:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_SCDOCX
+    elif design_file_format == DesignFileFormat.PARASOLID_TEXT:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
+    elif design_file_format == DesignFileFormat.PARASOLID_BIN:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
+    elif design_file_format == DesignFileFormat.FMD:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_FMD
+    elif design_file_format == DesignFileFormat.STEP:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_STEP
+    elif design_file_format == DesignFileFormat.IGES:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_IGES
+    elif design_file_format == DesignFileFormat.PMDB:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_PMDB
+    elif design_file_format == DesignFileFormat.STRIDE:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_STRIDE
+    elif design_file_format == DesignFileFormat.DISCO:
+        return GRPCPartExportFormat.PARTEXPORTFORMAT_DISCO
+    else:
+        return None
+
+
+def from_material_to_grpc_material(
+    material: "Material",
+) -> GRPCMaterial:
+    """Convert a ``Material`` class to a material gRPC message.
+
+    Parameters
+    ----------
+    material : Material
+        Source material data.
+
+    Returns
+    -------
+    GRPCMaterial
+        Geometry service gRPC material message.
+    """
+    return GRPCMaterial(
+        name=material.name,
+        material_properties=[
+            GRPCMaterialProperty(
+                id=property.type.value,
+                display_name=property.name,
+                value=property.quantity.m,
+                units=format(property.quantity.units),
+            )
+            for property in material.properties.values()
+        ],
+    )
+
+
+def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
+    """Check if the backend version is compatible with NURBS curves in sketches.
+
+    Parameters
+    ----------
+    backend_version : semver.Version
+        The version of the backend.
+    grpc_geometries : GRPCGeometries
+        The gRPC geometries potentially containing NURBS curves.
+
+    Raises
+    ------
+    GeometryRuntimeError
+        If the backend version is lower than 26.1.0 and NURBS curves are present.
+    """
+    if grpc_geometries.nurbs_curves and backend_version < (26, 1, 0):
+        raise GeometryRuntimeError(
+            "The usage of NURBS in sketches requires a minimum Ansys release version of "  # noqa: E501
+            + "26.1.0, but the current version used is "
+            + f"{backend_version}."
+        )

@@ -52,6 +52,7 @@ from ansys.geometry.core.connection.conversions import (
 )
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
+from ansys.geometry.core.designer.vertex import Vertex
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.bbox import BoundingBox
@@ -148,7 +149,12 @@ class IBody(ABC):
 
     @abstractmethod
     def set_name(self, str) -> None:
-        """Set the name of the body."""
+        """Set the name of the body.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
+        """
         return
 
     @abstractmethod
@@ -158,17 +164,32 @@ class IBody(ABC):
 
     @abstractmethod
     def set_fill_style(self, fill_style: FillStyle) -> None:
-        """Set the fill style of the body."""
+        """Set the fill style of the body.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
+        """
         return
 
     @abstractmethod
     def is_suppressed(self) -> bool:
-        """Get the body suppression state."""
+        """Get the body suppression state.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
         return
 
     @abstractmethod
     def set_suppressed(self, suppressed: bool) -> None:
-        """Set the body suppression state."""
+        """Set the body suppression state.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
         return
 
     @abstractmethod
@@ -182,14 +203,20 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def set_color(self, color: str | tuple[float, float, float]) -> None:
+    def set_color(
+        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+    ) -> None:
         """Set the color of the body.
 
         Parameters
         ----------
-        color : str | tuple[float, float, float]
+        color : str | tuple[float, float, float] | tuple[float, float, float, float]
             Color to set the body to. This can be a string representing a color name
             or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
         """
         return
 
@@ -210,6 +237,16 @@ class IBody(ABC):
         Returns
         -------
         list[Edge]
+        """
+        return
+
+    @abstractmethod
+    def vertices(self) -> list[Vertex]:
+        """Get a list of all vertices within the body.
+
+        Returns
+        -------
+        list[Vertex]
         """
         return
 
@@ -272,6 +309,10 @@ class IBody(ABC):
         -------
         BoundingBox
             Bounding box of the body.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         return
 
@@ -430,10 +471,6 @@ class IBody(ABC):
             Direction of the translation.
         distance: ~pint.Quantity | Distance | Real
             Distance (magnitude) of the translation.
-
-        Returns
-        -------
-        None
         """
         return
 
@@ -455,9 +492,9 @@ class IBody(ABC):
         angle: ~pint.Quantity | Angle | Real
             Angle (magnitude) of the rotation.
 
-        Returns
-        -------
-        None
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         return
 
@@ -465,15 +502,17 @@ class IBody(ABC):
     def scale(self, value: Real) -> None:
         """Scale the geometry body by the given value.
 
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
+
         Parameters
         ----------
         value: Real
             Value to scale the body by.
 
-        Notes
-        -----
-        The calling object is directly modified when this method is called.
-        Thus, it is important to make copies if needed.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         return
 
@@ -481,15 +520,17 @@ class IBody(ABC):
     def map(self, frame: Frame) -> None:
         """Map the geometry body to the new specified frame.
 
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
+
         Parameters
         ----------
         frame: Frame
             Structure defining the orientation of the body.
 
-        Notes
-        -----
-        The calling object is directly modified when this method is called.
-        Thus, it is important to make copies if needed.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         return
 
@@ -497,15 +538,17 @@ class IBody(ABC):
     def mirror(self, plane: Plane) -> None:
         """Mirror the geometry body across the specified plane.
 
+        The calling object is directly modified when this method is called.
+        Thus, it is important to make copies if needed.
+
         Parameters
         ----------
         plane: Plane
             Represents the mirror.
 
-        Notes
-        -----
-        The calling object is directly modified when this method is called.
-        Thus, it is important to make copies if needed.
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         return
 
@@ -522,6 +565,10 @@ class IBody(ABC):
         -------
         CollisionType
             Enum that defines the collision state between bodies.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         return
 
@@ -615,6 +662,10 @@ class IBody(ABC):
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         return
 
@@ -633,6 +684,10 @@ class IBody(ABC):
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         return
 
@@ -914,7 +969,7 @@ class MasterBody(IBody):
     def _get_faces_from_id(self, body: Union["Body", "MasterBody"]) -> list[Face]:
         """Retrieve faces from a body ID."""
         self._grpc_client.log.debug(f"Retrieving faces for body {body.id} from server.")
-        resp = self._grpc_client.services.bodies.get_faces(id=body.id)
+        response = self._grpc_client.services.bodies.get_faces(id=body.id)
         return [
             Face(
                 face_resp.get("id"),
@@ -923,7 +978,7 @@ class MasterBody(IBody):
                 self._grpc_client,
                 face_resp.get("is_reversed"),
             )
-            for face_resp in resp.get("faces")
+            for face_resp in response.get("faces")
         ]
 
     @property
@@ -933,7 +988,7 @@ class MasterBody(IBody):
     def _get_edges_from_id(self, body: Union["Body", "MasterBody"]) -> list[Edge]:
         """Retrieve edges from a body ID."""
         self._grpc_client.log.debug(f"Retrieving edges for body {body.id} from server.")
-        resp = self._grpc_client.services.bodies.get_edges(id=body.id)
+        response = self._grpc_client.services.bodies.get_edges(id=body.id)
         return [
             Edge(
                 edge_resp.get("id"),
@@ -942,7 +997,25 @@ class MasterBody(IBody):
                 self._grpc_client,
                 edge_resp.get("is_reversed"),
             )
-            for edge_resp in resp.get("edges")
+            for edge_resp in response.get("edges")
+        ]
+
+    @property
+    @min_backend_version(26, 1, 0)
+    def vertices(self) -> list[Vertex]:  # noqa: D102
+        return self._get_vertices_from_id(self)
+
+    def _get_vertices_from_id(self, body: Union["Body", "MasterBody"]) -> list[Vertex]:
+        """Retrieve vertices from a body ID."""
+        self._grpc_client.log.debug(f"Retrieving vertices for body {body.id} from server.")
+        response = self._grpc_client.services.bodies.get_vertices(id=body.id)
+
+        return [
+            Vertex(
+                vertex_resp.get("id"),
+                vertex_resp.get("position"),
+            )
+            for vertex_resp in response.get("vertices")
         ]
 
     @property
@@ -956,8 +1029,8 @@ class MasterBody(IBody):
             return Quantity(0, DEFAULT_UNITS.SERVER_VOLUME)
         else:
             self._grpc_client.log.debug(f"Retrieving volume for body {self.id} from server.")
-            resp = self._grpc_client.services.bodies.get_volume(id=self.id)
-            return resp.get("volume")
+            response = self._grpc_client.services.bodies.get_volume(id=self.id)
+            return response.get("volume")
 
     @property
     def material(self) -> Material:  # noqa: D102
@@ -971,11 +1044,11 @@ class MasterBody(IBody):
     @min_backend_version(25, 2, 0)
     def bounding_box(self) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
-        resp = self._grpc_client.services.bodies.get_bounding_box(id=self.id)
+        response = self._grpc_client.services.bodies.get_bounding_box(id=self.id)
         return BoundingBox(
-            min_corner=resp.get("min"),
-            max_corner=resp.get("max"),
-            center=resp.get("center"),
+            min_corner=response.get("min"),
+            max_corner=response.get("max"),
+            center=response.get("center"),
         )
 
     @check_input_types
@@ -985,8 +1058,8 @@ class MasterBody(IBody):
 
     def get_assigned_material(self) -> Material:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving assigned material for body {self.id}.")
-        resp = self._grpc_client.services.bodies.get_assigned_material(id=self.id)
-        return resp.get("material")
+        response = self._grpc_client.services.bodies.get_assigned_material(id=self.id)
+        return response.get("material")
 
     @protect_grpc
     @check_input_types
@@ -1094,16 +1167,14 @@ class MasterBody(IBody):
     def set_suppressed(  # noqa: D102
         self, suppressed: bool
     ) -> None:
-        """Set the body suppression state."""
         self._grpc_client.log.debug(f"Setting body {self.id}, as suppressed: {suppressed}.")
         self._grpc_client.services.bodies.set_suppressed(bodies=[self.id], is_suppressed=suppressed)
 
     @check_input_types
     @min_backend_version(25, 1, 0)
-    def set_color(
+    def set_color(  # noqa: D102
         self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
     ) -> None:
-        """Set the color of the body."""
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
         color = convert_color_to_hex(color)
         self._grpc_client.services.bodies.set_color(id=self.id, color=color)
@@ -1112,7 +1183,12 @@ class MasterBody(IBody):
     @check_input_types
     @min_backend_version(25, 2, 0)
     def set_opacity(self, opacity: float) -> None:
-        """Set the opacity of the body."""
+        """Set the opacity of the body.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
         self._grpc_client.log.debug(f"Setting body opacity of {self.id} to {opacity}.")
         opacity = convert_opacity_to_hex(opacity)
         new_color = self.color[0:7] + opacity
@@ -1157,8 +1233,8 @@ class MasterBody(IBody):
     @min_backend_version(24, 2, 0)
     def get_collision(self, body: "Body") -> CollisionType:  # noqa: D102
         self._grpc_client.log.debug(f"Get collision between body {self.id} and body {body.id}.")
-        resp = self._grpc_client.services.bodies.get_collision(id=self.id, other_id=body.id)
-        return CollisionType(resp.get("collision_type"))
+        response = self._grpc_client.services.bodies.get_collision(id=self.id, other_id=body.id)
+        return CollisionType(response.get("collision_type"))
 
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         from ansys.geometry.core.designer.component import Component
@@ -1169,18 +1245,18 @@ class MasterBody(IBody):
         check_type(copy_name, str)
 
         self._grpc_client.log.debug(f"Copying body {self.id}.")
-        resp = self._grpc_client.services.bodies.copy(
+        response = self._grpc_client.services.bodies.copy(
             id=self.id, parent_id=parent.id, name=copy_name
         )
 
         # Assign the new body to its specified parent (and return the new body)
         tb = MasterBody(
-            resp.get("master_id"), copy_name, self._grpc_client, is_surface=self.is_surface
+            response.get("master_id"), copy_name, self._grpc_client, is_surface=self.is_surface
         )
         parent._master_component.part.bodies.append(tb)
         parent._clear_cached_bodies()
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
-        return Body(body_id, resp.get("name"), parent, tb)
+        return Body(body_id, response.get("name"), parent, tb)
 
     @graphics_required
     def tessellate(  # noqa: D102
@@ -1208,17 +1284,17 @@ class MasterBody(IBody):
         # cache tessellation
         if not self._tessellation:
             if tess_options is not None:
-                resp = self._grpc_client.services.bodies.get_tesellation_with_options(
+                response = self._grpc_client.services.bodies.get_tesellation_with_options(
                     id=self.id,
                     options=tess_options,
                 )
             else:
-                resp = self._grpc_client.services.bodies.get_tesellation(
+                response = self._grpc_client.services.bodies.get_tesellation(
                     id=self.id,
                     backend_version=self._grpc_client.backend_version,
                 )
 
-            self._tessellation = resp.get("tessellation")
+            self._tessellation = response.get("tessellation")
 
         pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
         comp = pv.MultiBlock(pdata)
@@ -1439,6 +1515,11 @@ class Body(IBody):
         return self._template._get_edges_from_id(self)
 
     @property
+    @ensure_design_is_active
+    def vertices(self) -> list[Vertex]:  # noqa: D102
+        return self._template._get_vertices_from_id(self)
+
+    @property
     def _is_alive(self) -> bool:  # noqa: D102
         return self._template.is_alive
 
@@ -1494,7 +1575,15 @@ class Body(IBody):
 
     @property
     def bounding_box(self) -> BoundingBox:  # noqa: D102
-        return self._template.bounding_box
+        self._template._grpc_client.log.debug(
+            f"Retrieving bounding box for body {self.id} from server."
+        )
+        response = self._template._grpc_client.services.bodies.get_bounding_box(id=self.id)
+        return BoundingBox(
+            min_corner=response.get("min"),
+            max_corner=response.get("max"),
+            center=response.get("center"),
+        )
 
     @ensure_design_is_active
     def assign_material(self, material: Material) -> None:  # noqa: D102
@@ -1682,7 +1771,9 @@ class Body(IBody):
         return self._template.set_suppressed(suppressed)
 
     @ensure_design_is_active
-    def set_color(self, color: str | tuple[float, float, float]) -> None:  # noqa: D102
+    def set_color(  # noqa: D102
+        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+    ) -> None:
         return self._template.set_color(color)
 
     @ensure_design_is_active
@@ -1849,7 +1940,16 @@ class Body(IBody):
             for b in other_bodies:
                 b.parent_component.delete_body(b)
 
-        parent_design._update_design_inplace()
+        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
+
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
+            # and update the parent design with the serialized response.
+            tracker_response = response.result.complete_command_response
+            serialized_response = self._serialize_tracker_command_response(tracker_response)
+            parent_design._update_from_tracker(serialized_response)
 
     @reset_tessellation_cache
     @ensure_design_is_active

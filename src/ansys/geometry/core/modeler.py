@@ -27,8 +27,6 @@ from typing import TYPE_CHECKING, Generator, Optional
 
 from grpc import Channel
 
-from ansys.api.dbu.v0.designs_pb2 import OpenRequest
-from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
@@ -391,9 +389,8 @@ class Modeler:
     ) -> "Design":
         """Open a file.
 
-        This method imports a design into the service. On Windows, ``.scdocx``
-        and HOOPS Exchange formats are supported. On Linux, only the ``.scdocx``
-        format is supported.
+        This method imports a design into the service. On Windows and Linux, ``.scdocx``, ``.dsco``,
+        and reader formats are supported. Please see notes for supported reader formats.
 
         If the file is a shattered assembly with external references, the whole containing folder
         will need to be uploaded. Ensure proper folder structure in order to prevent the uploading
@@ -413,6 +410,22 @@ class Modeler:
         -------
         Design
             Newly imported design.
+
+        Notes
+        -----
+        Format and latest supported version
+            * AutoCAD 2024
+            * CATIA V5 2024
+            * CATIA V6 2024
+            * Creo Parametric 11
+            * IGES 5.3
+            * Inventor 2025
+            * JT 10.10
+            * NX 2412
+            * Rhino 8
+            * Solid Edge 2025
+            * SOLIDWORKS 2025
+            * STEP AP242
         """
         # Use str format of Path object here
         file_path = str(file_path) if isinstance(file_path, Path) else file_path
@@ -451,8 +464,9 @@ class Modeler:
                     "File is too large to upload. Service versions above 25R2 support streaming."
                 )
         else:
-            DesignsStub(self.client.channel).Open(
-                OpenRequest(filepath=file_path, import_options=import_options.to_dict())
+            self.client.services.designs.open(
+                filepath=file_path,
+                import_options=import_options,
             )
 
         return self.read_existing_design()
@@ -589,7 +603,12 @@ class Modeler:
     @property
     @min_backend_version(24, 2, 0)
     def measurement_tools(self) -> MeasurementTools:
-        """Access to measurement tools."""
+        """Access to measurement tools.
+
+        Notes
+        -----
+        This property is only available starting on Ansys release 24R2.
+        """
         return self._measurement_tools
 
     @property
@@ -638,6 +657,10 @@ class Modeler:
             parameter is set to ``True``) or the path to the log file (if only
             the current logs are retrieved). The ``dump_to_file`` parameter
             must be set to ``True``.
+
+        Notes
+        -----
+        This property is only available starting on Ansys release 25R1.
         """
         return self.client._get_service_logs(
             all_logs=all_logs, dump_to_file=dump_to_file, logs_folder=logs_folder

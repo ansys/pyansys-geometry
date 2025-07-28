@@ -30,28 +30,13 @@ from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity, UndefinedUnitError
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier, PartExportFormat
-from ansys.api.dbu.v0.designs_pb2 import (
-    DownloadExportFileRequest,
-    InsertRequest,
-    NewRequest,
-    SaveAsRequest,
-)
-from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.materials_pb2 import AddToDocumentRequest
-from ansys.api.geometry.v0.materials_pb2_grpc import MaterialsStub
-from ansys.api.geometry.v0.models_pb2 import (
-    Material as GRPCMaterial,
-    MaterialProperty as GRPCMaterialProperty,
-)
-from ansys.api.geometry.v0.parts_pb2 import ExportRequest
-from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
     grpc_curve_to_curve,
@@ -78,6 +63,7 @@ from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
+from ansys.geometry.core.designer.vertex import Vertex
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
@@ -99,16 +85,20 @@ from ansys.geometry.core.typing import RealSequence
 class DesignFileFormat(Enum):
     """Provides supported file formats that can be downloaded for designs."""
 
-    SCDOCX = "SCDOCX", PartExportFormat.PARTEXPORTFORMAT_SCDOCX
-    PARASOLID_TEXT = "PARASOLID_TEXT", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_TEXT
-    PARASOLID_BIN = "PARASOLID_BIN", PartExportFormat.PARTEXPORTFORMAT_PARASOLID_BINARY
-    FMD = "FMD", PartExportFormat.PARTEXPORTFORMAT_FMD
-    STEP = "STEP", PartExportFormat.PARTEXPORTFORMAT_STEP
-    IGES = "IGES", PartExportFormat.PARTEXPORTFORMAT_IGES
-    PMDB = "PMDB", PartExportFormat.PARTEXPORTFORMAT_PMDB
-    STRIDE = "STRIDE", PartExportFormat.PARTEXPORTFORMAT_STRIDE
-    DISCO = "DISCO", PartExportFormat.PARTEXPORTFORMAT_DISCO
-    INVALID = "INVALID", None
+    SCDOCX = "SCDOCX"
+    PARASOLID_TEXT = "PARASOLID_TEXT"
+    PARASOLID_BIN = "PARASOLID_BIN"
+    FMD = "FMD"
+    STEP = "STEP"
+    IGES = "IGES"
+    PMDB = "PMDB"
+    STRIDE = "STRIDE"
+    DISCO = "DISCO"
+    INVALID = "INVALID"
+
+    def __str__(self):
+        """Represent object in string format."""
+        return self.value
 
 
 class Design(Component):
@@ -140,10 +130,7 @@ class Design(Component):
         super().__init__(name, None, modeler.client)
 
         # Initialize the stubs needed
-        self._design_stub = DesignsStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
-        self._materials_stub = MaterialsStub(self._grpc_client.channel)
-        self._parts_stub = PartsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -158,9 +145,9 @@ class Design(Component):
             self._grpc_client.log.debug("Reading Design object from service.")
             self.__read_existing_design()
         else:
-            new_design = self._design_stub.New(NewRequest(name=name))
-            self._design_id = new_design.id
-            self._id = new_design.main_part.id
+            response = self._grpc_client.services.designs.new(name=name)
+            self._design_id = response.get("design_id")
+            self._id = response.get("main_part_id")
             self._activate(called_after_design_creation=True)
             self._grpc_client.log.debug("Design object instantiated successfully.")
 
@@ -208,7 +195,7 @@ class Design(Component):
 
         # Attempt to close the design
         try:
-            self._design_stub.Close(EntityIdentifier(id=self._design_id))
+            self._grpc_client.services.designs.close(design_id=self._design_id)
         except Exception as err:
             self._grpc_client.log.warning(f"Design {self.name} could not be closed. Error: {err}.")
             self._grpc_client.log.warning("Ignoring response and assuming the design is closed.")
@@ -216,18 +203,16 @@ class Design(Component):
         # Consider the design closed (even if the close request failed)
         self._is_active = False
 
-    @protect_grpc
     def _activate(self, called_after_design_creation: bool = False) -> None:
         """Activate the design."""
         # Activate the current design
         if not called_after_design_creation:
-            self._design_stub.PutActive(EntityIdentifier(id=self._design_id))
+            self._grpc_client.services.designs.put_active(design_id=self._design_id)
         self._is_active = True
         self._grpc_client.log.debug(f"Design {self.name} is activated.")
 
     # TODO: allow for list of materials
     # https://github.com/ansys/pyansys-geometry/issues/1319
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def add_material(self, material: Material) -> None:
@@ -238,29 +223,10 @@ class Design(Component):
         material : Material
             Material to add.
         """
-        # TODO: Add design id to the request
-        # https://github.com/ansys/pyansys-geometry/issues/1319
-        self._materials_stub.AddToDocument(
-            AddToDocumentRequest(
-                material=GRPCMaterial(
-                    name=material.name,
-                    material_properties=[
-                        GRPCMaterialProperty(
-                            id=property.type.value,
-                            display_name=property.name,
-                            value=property.quantity.m,
-                            units=format(property.quantity.units),
-                        )
-                        for property in material.properties.values()
-                    ],
-                )
-            )
-        )
+        self._grpc_client.services.materials.add_material(material=material)
         self._materials.append(material)
-
         self._grpc_client.log.debug(f"Material {material.name} is successfully added to design.")
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def save(self, file_location: Path | str) -> None:
@@ -275,7 +241,7 @@ class Design(Component):
         if isinstance(file_location, Path):
             file_location = str(file_location)
 
-        self._design_stub.SaveAs(SaveAsRequest(filepath=file_location))
+        self._grpc_client.services.designs.save_as(filepath=file_location)
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
     @protect_grpc
@@ -305,7 +271,7 @@ class Design(Component):
             file_location.parent.mkdir(parents=True, exist_ok=True)
 
         # Process response
-        self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
+        self._grpc_client.log.debug(f"Requesting design download in {format} format.")
         if self._modeler.client.backend_version < (25, 2, 0):
             received_bytes = self.__export_and_download_legacy(format=format)
         else:
@@ -334,10 +300,10 @@ class Design(Component):
         up to Ansys 25.1.1 products.
         """
         # Process response
-        self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
-        received_bytes = bytes()
+        self._grpc_client.log.debug(f"Requesting design download in {format} format.")
         if format is DesignFileFormat.SCDOCX:
             response = self._commands_stub.DownloadFile(Empty())
+            received_bytes = bytes()
             received_bytes += response.data
         elif format in [
             DesignFileFormat.PARASOLID_TEXT,
@@ -347,11 +313,11 @@ class Design(Component):
             DesignFileFormat.IGES,
             DesignFileFormat.PMDB,
         ]:
-            response = self._parts_stub.Export(ExportRequest(format=format.value[1]))
-            received_bytes += response.data
+            response = self._grpc_client.services.parts.export(format=format)
+            received_bytes = response.get("data")
         else:
             self._grpc_client.log.warning(
-                f"{format.value[0]} format requested is not supported. Ignoring download request."
+                f"{format} format requested is not supported. Ignoring download request."
             )
             return
 
@@ -371,8 +337,7 @@ class Design(Component):
             The raw data from the exported and downloaded file.
         """
         # Process response
-        self._grpc_client.log.debug(f"Requesting design download in {format.value[0]} format.")
-        received_bytes = bytes()
+        self._grpc_client.log.debug(f"Requesting design download in {format} format.")
 
         if format in [
             DesignFileFormat.PARASOLID_TEXT,
@@ -386,29 +351,21 @@ class Design(Component):
             DesignFileFormat.STRIDE,
         ]:
             try:
-                response = self._design_stub.DownloadExportFile(
-                    DownloadExportFileRequest(format=format.value[1])
-                )
-                received_bytes += response.data
+                response = self._grpc_client.services.designs.download_export(format=format)
             except Exception:
                 self._grpc_client.log.warning(
-                    f"Failed to download the file in {format.value[0]} format."
+                    f"Failed to download the file in {format} format."
                     " Attempting to stream download."
                 )
                 # Attempt to download the file via streaming
-                received_bytes = bytes()
-                responses = self._design_stub.StreamDownloadExportFile(
-                    DownloadExportFileRequest(format=format.value[1])
-                )
-                for response in responses:
-                    received_bytes += response.data
+                response = self._grpc_client.services.designs.stream_download_export(format=format)
         else:
             self._grpc_client.log.warning(
-                f"{format.value[0]} format requested is not supported. Ignoring download request."
+                f"{format} format requested is not supported. Ignoring download request."
             )
-            return
+            return None
 
-        return received_bytes
+        return response.get("data")
 
     def __build_export_file_location(self, location: Path | str | None, ext: str) -> Path:
         """Build the file location for export functions.
@@ -651,6 +608,8 @@ class Design(Component):
         edges: list[Edge] | None = None,
         beams: list[Beam] | None = None,
         design_points: list[DesignPoint] | None = None,
+        components: list[Component] | None = None,
+        vertices: list[Vertex] | None = None,
     ) -> NamedSelection:
         """Create a named selection on the active Geometry server instance.
 
@@ -668,12 +627,29 @@ class Design(Component):
             All beams to include in the named selection.
         design_points : list[DesignPoint], default: None
             All design points to include in the named selection.
+        components : list[Component], default: None
+            All components to include in the named selection.
+        vertices : list[Vertex], default: None
+            All vertices to include in the named selection.
 
         Returns
         -------
         NamedSelection
             Newly created named selection that maintains references to all target entities.
+
+        Raises
+        ------
+        ValueError
+            If no entities are provided for the named selection. At least
+            one of the optional parameters must be provided.
         """
+        # Verify that at least one entity is provided
+        if not any([bodies, faces, edges, beams, design_points, components, vertices]):
+            raise ValueError(
+                "At least one of the following must be provided: "
+                "bodies, faces, edges, beams, design_points, components, or vertices."
+            )
+
         named_selection = NamedSelection(
             name,
             self,
@@ -683,6 +659,8 @@ class Design(Component):
             edges=edges,
             beams=beams,
             design_points=design_points,
+            components=components,
+            vertices=vertices,
         )
 
         self._named_selections[named_selection.name] = named_selection
@@ -827,6 +805,10 @@ class Design(Component):
         -------
         list[Parameter]
             List of parameters for the design.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
         """
         response = self._grpc_client._services.driving_dimensions.get_all_parameters()
         return response.get("parameters")
@@ -845,6 +827,10 @@ class Design(Component):
         -------
         ParameterUpdateStatus
             Status of the update operation.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
         """
         response = self._grpc_client._services.driving_dimensions.set_parameter(
             driving_dimension=dimension
@@ -979,12 +965,16 @@ class Design(Component):
         -------
         Component
             The newly inserted component.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         # Upload the file to the server
         filepath_server = self._modeler._upload_file(file_location, import_options=import_options)
 
         # Insert the file into the design
-        self._design_stub.Insert(InsertRequest(filepath=filepath_server))
+        self._grpc_client.services.designs.insert(filepath=filepath_server)
         self._grpc_client.log.debug(f"File {file_location} successfully inserted into design.")
 
         self._update_design_inplace()
@@ -1045,28 +1035,26 @@ class Design(Component):
 
         start = time.time()
         # Grab active design
-        design = self._design_stub.GetActive(Empty())
-        if not design:
+        design_response = self._grpc_client.services.designs.get_active()
+        if not design_response:
             raise RuntimeError("No existing design available at service level.")
         else:
-            self._design_id = design.id
-            self._id = design.main_part.id
+            self._design_id = design_response.get("design_id")
+            self._id = design_response.get("main_part_id")
+            self._name = design_response.get("name")
             self._activate(called_after_design_creation=True)
-            # Here we may take the design's name instead of the main part's name.
-            # Since they're the same in the backend.
-            self._name = design.name
 
         response = self._commands_stub.GetAssembly(EntityIdentifier(id=self._design_id))
 
         # Store created objects
         created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}
         created_tps = {}
-        created_components = {design.main_part.id: self}
+        created_components = {design_response.get("main_part_id"): self}
         created_bodies = {}
 
         # Make dummy master for design since server doesn't have one
         self._master_component = MasterComponent(
-            "1", "master_design", created_parts[design.main_part.id]
+            "1", "master_design", created_parts[design_response.get("main_part_id")]
         )
 
         # Create MasterComponents
@@ -1138,7 +1126,9 @@ class Design(Component):
                 mp = MaterialProperty(mp_type, property.display_name, mp_quantity)
                 properties.append(mp)
                 if mp.type == MaterialPropertyType.DENSITY:
-                    density = mp.quantity
+                    density = (
+                        mp.quantity if isinstance(mp.quantity, Quantity) else Quantity(mp.quantity)
+                    )
 
             m = Material(material.name, density, properties)
             self.materials.append(m)
@@ -1266,3 +1256,141 @@ class Design(Component):
 
         # Read the existing design
         self.__read_existing_design()
+
+    def _update_from_tracker(self, tracker_response: list[dict]):
+        """Update the design with the changed bodies while preserving unchanged ones."""
+        self._grpc_client.log.debug(
+            f"Starting _update_from_tracker with response: {tracker_response}"
+        )
+        self._handle_modified_bodies(tracker_response.get("modified_bodies", []))
+        self._handle_deleted_bodies(tracker_response.get("deleted_bodies", []))
+        self._handle_created_bodies(tracker_response.get("created_bodies", []))
+
+    def _handle_modified_bodies(self, modified_bodies):
+        for body_info in modified_bodies:
+            body_id = body_info["id"]
+            body_name = body_info["name"]
+            self._grpc_client.log.debug(
+                f"Processing modified body: ID={body_id}, Name='{body_name}'"
+            )
+            updated = False
+
+            for body in self.bodies:
+                if body.id == body_id:
+                    self._update_body(body, body_info)
+                    updated = True
+                    self._grpc_client.log.debug(
+                        f"Modified body '{body_name}' (ID: {body_id}) updated at root level."
+                    )
+                    break
+
+            if not updated:
+                for component in self.components:
+                    if self._find_and_update_body(body_info, component):
+                        break
+
+    def _handle_deleted_bodies(self, deleted_bodies):
+        for body_info in deleted_bodies:
+            body_id = body_info["id"]
+            self._grpc_client.log.debug(f"Processing deleted body: ID={body_id}")
+            removed = False
+
+            for body in self.bodies:
+                if body.id == body_id:
+                    body._is_alive = False
+                    self.bodies.remove(body)
+                    removed = True
+                    self._grpc_client.log.info(
+                        f"Deleted body (ID: {body_id}) removed from root level."
+                    )
+                    break
+
+            if not removed:
+                for component in self.components:
+                    if self._find_and_remove_body(body_info, component):
+                        break
+
+    def _handle_created_bodies(self, created_bodies):
+        for body_info in created_bodies:
+            body_id = body_info["id"]
+            body_name = body_info["name"]
+            is_surface = body_info.get("is_surface", False)
+            self._grpc_client.log.debug(
+                f"Processing created body: ID={body_id}, Name='{body_name}'"
+            )
+
+            if any(body.id == body_id for body in self.bodies):
+                self._grpc_client.log.debug(
+                    f"Created body '{body_name}' (ID: {body_id}) already exists at root level."
+                )
+                continue
+
+            added = any(self._find_and_add_body(body_info, self.components))
+            if not added:
+                new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
+                self.bodies.append(new_body)
+                self._grpc_client.log.debug(
+                    f"Added new body '{body_name}' (ID: {body_id}) to root level."
+                )
+
+    def _update_body(self, existing_body, body_info):
+        self._grpc_client.log.debug(
+            f"Updating body '{existing_body.name}' "
+            f"(ID: {existing_body.id}) with new info: {body_info}"
+        )
+        existing_body.name = body_info["name"]
+        existing_body._template._is_surface = body_info.get("is_surface", False)
+
+    def _find_and_add_body(self, body_info, components):
+        for component in components:
+            if component.id == body_info["parent_id"]:
+                new_body = MasterBody(
+                    body_info["id"],
+                    body_info["name"],
+                    self._grpc_client,
+                    is_surface=body_info.get("is_surface", False),
+                )
+                component.bodies.append(new_body)
+                self._grpc_client.log.debug(
+                    f"Added new body '{new_body.name}' (ID: {new_body.id}) "
+                    f"to component '{component.name}' (ID: {component.id})"
+                )
+                return True
+
+            if self._find_and_add_body(body_info, component.components):
+                return True
+
+        return False
+
+    def _find_and_update_body(self, body_info, component):
+        for body in component.bodies:
+            if body.id == body_info["id"]:
+                self._update_body(body, body_info)
+                self._grpc_client.log.debug(
+                    f"Updated body '{body.name}' (ID: {body.id}) in component "
+                    f"'{component.name}' (ID: {component.id})"
+                )
+                return True
+
+        for subcomponent in component.components:
+            if self._find_and_update_body(body_info, subcomponent):
+                return True
+
+        return False
+
+    def _find_and_remove_body(self, body_info, component):
+        for body in component.bodies:
+            if body.id == body_info["id"]:
+                body._is_alive = False
+                component.bodies.remove(body)
+                self._grpc_client.log.debug(
+                    f"Removed body '{body_info['name']}' (ID: {body_info['id']}) from component "
+                    f"'{component.name}' (ID: {component.id})"
+                )
+                return True
+
+        for subcomponent in component.components:
+            if self._find_and_remove_body(body_info, subcomponent):
+                return True
+
+        return False

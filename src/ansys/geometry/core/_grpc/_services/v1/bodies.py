@@ -113,6 +113,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
+    def get_vertices(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
     def get_volume(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 

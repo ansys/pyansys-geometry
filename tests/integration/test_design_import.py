@@ -31,8 +31,8 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
-from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.misc import UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import PersistentIdType
 
@@ -255,7 +255,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     # assert the two cars are the same, excepted for the ID, which should be different
     _checker_method(design, design2, True)
 
-    # Test HOOPS formats (Windows only)
+    # Test Reader formats (Windows only)
     if not BackendType.is_core_service(modeler.client.backend_type):
         # IGES
         #
@@ -324,7 +324,7 @@ def test_design_insert(modeler: Modeler):
     assert len(design.components) == 2
     assert design.is_active is True
     assert design.components[0].name == "Component_Cylinder"
-    assert design.components[1].name == "DuplicatesDesign"
+    assert design.components[1].name == "DuplicateFacesDesignBefore"
 
 
 def test_design_insert_with_import(modeler: Modeler):
@@ -354,7 +354,7 @@ def test_design_import_with_named_selections(modeler: Modeler):
     design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
 
     # Check that there are 5 Named Selections
-    assert len(design.named_selections) == 5
+    assert len(design.named_selections) == 6
 
     # Get full body named selection
     body = design._named_selections["SolidBody"]
@@ -382,3 +382,185 @@ def test_design_import_with_named_selections(modeler: Modeler):
     ns3 = design._named_selections["Group3"]
     assert len(ns3.bodies) == 0
     assert len(ns3.design_points) == 1
+
+    # Get mixed named selection 4
+    ns4 = design._named_selections["VertexGroup"]
+    assert len(ns4.bodies) == 0
+    assert len(ns4.vertices) == 2
+    assert len(ns4.faces) == 1
+
+
+def test_design_import_acad_2024(modeler: Modeler):
+    """Test importing a 2024 AutoCAD file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "ACAD/CylinderBox_2024.dwg"))
+    assert len(design.components) == 3
+    assert len(design.components[1].bodies[0].faces) == 6
+
+
+def test_design_import_cat5_2024(modeler: Modeler):
+    """Test importing a 2024 CATIA V5 file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "CAT5/Bracket_Hole_2024.CATPart"))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 24
+
+
+def test_design_import_cat6_2023(modeler: Modeler):
+    """Test importing a CATIA V6 file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "CAT6/Skateboard A.1_2023x.3dxml"))
+    assert len(design.components) == 4
+    assert len(design.components[0].components) == 1
+    assert len(design.components[1].components) == 3
+    assert len(design.components[2].components) == 3
+    assert len(design.components[3].components) == 1
+    assert len(design.components[1].components[0].components[0].bodies) == 15
+    assert len(design.components[1].components[1].components[0].bodies) == 16
+    assert len(design.components[1].components[2].components[0].bodies) == 16
+
+
+def test_design_import_creo_11(modeler: Modeler):
+    """Test importing a Creo 11 file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "Creo/rearwheel_creo11.prt.2"))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 32
+
+
+def test_design_import_jt(modeler: Modeler):
+    """Test importing a JT file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "JT/assly_sub-assly_asso.jt"))
+    assert len(design.components) == 2
+    assert len(design.components[0].components) == 2
+    assert len(design.components[0].components[0].bodies[0].faces) == 6
+
+
+def test_design_import_rhino(modeler: Modeler):
+    """Test importing a Rhino file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "Rhino/box.3dm"))
+    assert len(design.components[0].bodies) == 1
+    assert len(design.components[0].bodies[0].faces) == 6
+
+
+def test_design_import_solid_edge2025(modeler: Modeler):
+    """Test importing a 2025 Solid Edge file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "SolidEdge/L_Solid_2025.par"))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 8
+
+
+# def test_design_import_parasolid(modeler: Modeler):
+#    """Test importing a Parasolid file."""
+#    # Open the design
+#    design = modeler.open_file(Path(IMPORT_FILES_DIR, "Parasolid/blockhole_M.x_t"))
+#    assert len(design.bodies) == 4
+
+
+def test_design_import_solidworks(modeler: Modeler):
+    """Test importing a SOLIDWORKS file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "SOLIDWORKS/Base_Plate.SLDPRT"))
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies[0].faces) == 38
+
+
+def test_design_import_nx2412(modeler: Modeler):
+    """Test importing a NX 2412 file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "NX/base_plate_2412.prt"))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 18
+
+
+def test_design_import_inventor2026(modeler: Modeler):
+    """Test importing a 2026 Inventor file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "Inventor/ai_param_dsdm_part1_2026.ipt"))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 9
+
+
+def test_design_import_stride_with_named_selections(modeler: Modeler):
+    """Test importing a .stride file with named selections."""
+    # Open stride file
+    design = modeler.open_file(Path(FILES_DIR, "WithNamedSelections.stride"))
+    assert len(design.named_selections) == 4
+
+    # Expected named selections and their properties
+    expected_named_selections = {
+        "Edges": {"bodies": 0, "faces": 0, "edges": 3, "vertices": 0},
+        "Faces": {"bodies": 0, "faces": 2, "edges": 0, "vertices": 0},
+        "Body": {"bodies": 1, "faces": 0, "edges": 0, "vertices": 0},
+        "Mixed": {"bodies": 1, "faces": 0, "edges": 2, "vertices": 0},
+    }
+
+    # Verify named selections
+    for named_selection in design.named_selections:
+        assert named_selection.name in expected_named_selections, (
+            f"Unexpected named selection: {named_selection.name}"
+        )
+        expected_properties = expected_named_selections[named_selection.name]
+        assert len(named_selection.bodies) == expected_properties["bodies"], (
+            f"Mismatch in bodies for {named_selection.name}"
+        )
+        assert len(named_selection.faces) == expected_properties["faces"], (
+            f"Mismatch in faces for {named_selection.name}"
+        )
+        assert len(named_selection.edges) == expected_properties["edges"], (
+            f"Mismatch in edges for {named_selection.name}"
+        )
+        assert len(named_selection.vertices) == expected_properties["vertices"], (
+            f"Mismatch in vertices for {named_selection.name}"
+        )
+
+
+def test_design_insert_id_bug(modeler: Modeler):
+    """Test inserting a file into the design with ID bug fix."""
+    # This fix is available in version 261 and later
+    design1 = modeler.create_design("Test")
+
+    design1.add_component("test")
+
+    design1.insert_file(Path(FILES_DIR, "bottom_mounted_imp.dsco"))
+    design1.components[1].bodies[0].copy(design1.components[0], "test")
+
+    ns = design1.create_named_selection("ComponentNS", components=[design1.components[0]])
+    modeler.geometry_commands.move_translate(
+        ns, direction=UNITVECTOR3D_Z, distance=Distance(1, UNITS.m)
+    )
+
+    assert len(design1.components[0].bodies) == 1
+    assert len(design1.components[1].bodies) == 1
+
+
+@pytest.mark.skip(reason="Object reference not set to an instance of an object.")
+def test_import_scdocx_with_external_docs(modeler: Modeler):
+    """Test importing an SCDOCX file with external documents and verify it is internalized."""
+    # Create a new design
+    design = modeler.create_design("Insert External Document")
+
+    # Define the path to the external SCDOCX file
+    path_to_external_doc = Path(FILES_DIR, "external_file_scdocx", "Design1.scdocx")
+
+    # Import the external SCDOCX file
+    design.insert_file(file_location=path_to_external_doc)
+
+    # Verify that the design structure is internalized
+    # Check the number of bodies in the design
+    assert len(design.bodies) == 0
+
+    # Check the number of components in the design
+    assert len(design.components) == 1
+
+    # Check the number of bodies in the first component
+    assert len(design.components[0].bodies) == 1
+
+    # Check the number of subcomponents in the first component
+    assert len(design.components[0].components) == 5
+
+    for component in design.components[0].components:
+        assert len(component.bodies) == 1

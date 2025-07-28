@@ -27,20 +27,18 @@ from typing import TYPE_CHECKING
 from pint import Quantity
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import grpc_curve_to_curve, grpc_point_to_point3d
-from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.curves.trimmed_curve import ReversedTrimmedCurve, TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.designer.vertex import Vertex
 
 
 @unique
@@ -87,7 +85,6 @@ class Edge:
         self._curve_type = curve_type
         self._body = body
         self._grpc_client = grpc_client
-        self._edges_stub = EdgesStub(grpc_client.channel)
         self._is_reversed = is_reversed
         self._shape = None
 
@@ -112,7 +109,6 @@ class Edge:
         return self._is_reversed
 
     @property
-    @protect_grpc
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def shape(self) -> TrimmedCurve:
@@ -121,36 +117,32 @@ class Edge:
         If the edge is reversed, its shape is the ``ReversedTrimmedCurve`` type, which swaps the
         start and end points of the curve and handles parameters to allow evaluation as if the
         curve is not reversed.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         if self._shape is None:
             self._grpc_client.log.debug("Requesting edge properties from server.")
-            response = self._edges_stub.GetCurve(self._grpc_id)
-            geometry = grpc_curve_to_curve(response)
+            geometry = self._grpc_client.services.edges.get_curve(id=self._id).get("curve")
 
-            response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
-            start = Point3D(
-                [response.start.x, response.start.y, response.start.z],
-                unit=DEFAULT_UNITS.SERVER_LENGTH,
-            )
-            end = Point3D(
-                [response.end.x, response.end.y, response.end.z], unit=DEFAULT_UNITS.SERVER_LENGTH
-            )
+            response = self._grpc_client.services.edges.get_start_and_end_points(id=self._id)
+            start = response.get("start")
+            end = response.get("end")
 
-            response = self._edges_stub.GetLength(self._grpc_id)
-            length = Quantity(response.length, DEFAULT_UNITS.SERVER_LENGTH)
+            length = self._grpc_client.services.edges.get_length(id=self._id).get("length")
 
-            response = self._edges_stub.GetInterval(self._grpc_id)
-            interval = Interval(response.start, response.end)
+            response = self._grpc_client.services.edges.get_interval(id=self._id)
+            interval = Interval(response.get("start"), response.get("end"))
 
             self._shape = (
-                ReversedTrimmedCurve(geometry, start, end, interval, length)
+                ReversedTrimmedCurve(geometry, start, end, interval, length.value)
                 if self.is_reversed
-                else TrimmedCurve(geometry, start, end, interval, length)
+                else TrimmedCurve(geometry, start, end, interval, length.value)
             )
         return self._shape
 
     @property
-    @protect_grpc
     @ensure_design_is_active
     def length(self) -> Quantity:
         """Calculated length of the edge."""
@@ -159,8 +151,7 @@ class Edge:
         except GeometryRuntimeError:  # pragma: no cover
             # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug("Requesting edge length from server.")
-            length_response = self._edges_stub.GetLength(self._grpc_id)
-            return Quantity(length_response.length, DEFAULT_UNITS.SERVER_LENGTH)
+            return self._grpc_client.services.edges.get_length(id=self._id).get("length").value
 
     @property
     def curve_type(self) -> CurveType:
@@ -168,27 +159,43 @@ class Edge:
         return self._curve_type
 
     @property
-    @protect_grpc
     @ensure_design_is_active
     def faces(self) -> list["Face"]:
         """Faces that contain the edge."""
         from ansys.geometry.core.designer.face import Face, SurfaceType
 
         self._grpc_client.log.debug("Requesting edge faces from server.")
-        grpc_faces = self._edges_stub.GetFaces(self._grpc_id).faces
+        response = self._grpc_client.services.edges.get_faces(id=self._id)
         return [
             Face(
-                grpc_face.id,
-                SurfaceType(grpc_face.surface_type),
+                face_resp.get("id"),
+                SurfaceType(face_resp.get("surface_type")),
                 self._body,
                 self._grpc_client,
-                grpc_face.is_reversed,
+                face_resp.get("is_reversed"),
             )
-            for grpc_face in grpc_faces
+            for face_resp in response.get("faces")
         ]
 
     @property
-    @protect_grpc
+    @ensure_design_is_active
+    @min_backend_version(26, 1, 0)
+    def vertices(self) -> list["Vertex"]:
+        """Vertices that define the edge."""
+        from ansys.geometry.core.designer.vertex import Vertex
+
+        self._grpc_client.log.debug("Requesting edge vertices from server.")
+        response = self._grpc_client.services.edges.get_vertices(id=self._id)
+
+        return [
+            Vertex(
+                vertex_resp.get("id"),
+                vertex_resp.get("position"),
+            )
+            for vertex_resp in response.get("vertices")
+        ]
+
+    @property
     @ensure_design_is_active
     def start(self) -> Point3D:
         """Start point of the edge."""
@@ -197,14 +204,11 @@ class Edge:
         except GeometryRuntimeError:  # pragma: no cover
             # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug("Requesting edge start point from server.")
-            response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
-            return Point3D(
-                [response.start.x, response.start.y, response.start.z],
-                unit=DEFAULT_UNITS.SERVER_LENGTH,
+            return self._grpc_client.services.edges.get_start_and_end_points(id=self._id).get(
+                "start"
             )
 
     @property
-    @protect_grpc
     @ensure_design_is_active
     def end(self) -> Point3D:
         """End point of the edge."""
@@ -213,22 +217,21 @@ class Edge:
         except GeometryRuntimeError:  # pragma: no cover
             # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug("Requesting edge end point from server.")
-            response = self._edges_stub.GetStartAndEndPoints(self._grpc_id)
-            return Point3D(
-                [response.end.x, response.end.y, response.end.z], unit=DEFAULT_UNITS.SERVER_LENGTH
-            )
+            return self._grpc_client.services.edges.get_start_and_end_points(id=self._id).get("end")
 
     @property
-    @protect_grpc
     @ensure_design_is_active
     @min_backend_version(25, 2, 0)
     def bounding_box(self) -> BoundingBox:
-        """Bounding box of the edge."""
+        """Bounding box of the edge.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
         self._grpc_client.log.debug("Requesting bounding box from server.")
 
-        result = self._edges_stub.GetBoundingBox(self._grpc_id)
-
-        min_corner = grpc_point_to_point3d(result.min)
-        max_corner = grpc_point_to_point3d(result.max)
-        center = grpc_point_to_point3d(result.center)
-        return BoundingBox(min_corner, max_corner, center)
+        response = self._grpc_client.services.edges.get_bounding_box(id=self._id)
+        return BoundingBox(
+            response.get("min_corner"), response.get("max_corner"), response.get("center")
+        )

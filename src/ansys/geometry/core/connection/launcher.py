@@ -35,7 +35,7 @@ from ansys.geometry.core.connection.docker_instance import (
 )
 from ansys.geometry.core.connection.product_instance import prepare_and_start_backend
 from ansys.geometry.core.logger import LOG
-from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.checks import check_type, deprecated_argument
 
 try:
     import ansys.platform.instancemanagement as pypim
@@ -488,8 +488,9 @@ def launch_modeler_with_spaceclaim_and_pimlight(
     )
 
 
+@deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
 def launch_modeler_with_geometry_service(
-    product_version: int = None,
+    version: str | int | None = None,
     host: str = "localhost",
     port: int = None,
     enable_trace: bool = False,
@@ -498,6 +499,7 @@ def launch_modeler_with_geometry_service(
     client_log_level: int = logging.INFO,
     server_logs_folder: str = None,
     client_log_file: str = None,
+    product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using the ``ProductInstance`` class.
@@ -509,7 +511,7 @@ def launch_modeler_with_geometry_service(
 
     Parameters
     ----------
-    product_version: int, optional
+    version: str | int, optional
         The product version to be started. Goes from v24.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
@@ -547,6 +549,8 @@ def launch_modeler_with_geometry_service(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
+    product_version: int, optional
+        The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -599,7 +603,7 @@ def launch_modeler_with_geometry_service(
 
     return prepare_and_start_backend(
         BackendType.WINDOWS_SERVICE,
-        product_version=product_version,
+        version=version,
         host=host,
         port=port,
         enable_trace=enable_trace,
@@ -609,11 +613,13 @@ def launch_modeler_with_geometry_service(
         client_log_level=client_log_level,
         server_logs_folder=server_logs_folder,
         client_log_file=client_log_file,
+        product_version=product_version,
     )
 
 
+@deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
 def launch_modeler_with_discovery(
-    product_version: int = None,
+    version: str | int | None = None,
     host: str = "localhost",
     port: int = None,
     api_version: ApiVersions = ApiVersions.LATEST,
@@ -623,6 +629,7 @@ def launch_modeler_with_discovery(
     server_log_level: int = 2,
     client_log_level: int = logging.INFO,
     client_log_file: str = None,
+    product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ):
     """Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -634,7 +641,7 @@ def launch_modeler_with_discovery(
 
     Parameters
     ----------
-    product_version: int, optional
+    version: str | int, optional
         The product version to be started. Goes from v24.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
@@ -674,6 +681,8 @@ def launch_modeler_with_discovery(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
+    product_version: int, optional
+        The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -720,7 +729,7 @@ def launch_modeler_with_discovery(
 
     return prepare_and_start_backend(
         BackendType.DISCOVERY,
-        product_version=product_version,
+        version=version,
         host=host,
         port=port,
         enable_trace=False,
@@ -731,11 +740,13 @@ def launch_modeler_with_discovery(
         server_log_level=server_log_level,
         client_log_level=client_log_level,
         client_log_file=client_log_file,
+        product_version=product_version,
     )
 
 
+@deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
 def launch_modeler_with_spaceclaim(
-    product_version: int = None,
+    version: str | int | None = None,
     host: str = "localhost",
     port: int = None,
     api_version: ApiVersions = ApiVersions.LATEST,
@@ -745,6 +756,7 @@ def launch_modeler_with_spaceclaim(
     server_log_level: int = 2,
     client_log_level: int = logging.INFO,
     client_log_file: str = None,
+    product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ):
     """Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -756,7 +768,7 @@ def launch_modeler_with_spaceclaim(
 
     Parameters
     ----------
-    product_version: int, optional
+    version: str | int, optional
         The product version to be started. Goes from v24.1 to
         the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
@@ -796,6 +808,8 @@ def launch_modeler_with_spaceclaim(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
+    product_version: int, optional
+        The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -842,7 +856,7 @@ def launch_modeler_with_spaceclaim(
 
     return prepare_and_start_backend(
         BackendType.SPACECLAIM,
-        product_version=product_version,
+        version=version,
         host=host,
         port=port,
         enable_trace=False,
@@ -853,6 +867,137 @@ def launch_modeler_with_spaceclaim(
         server_log_level=server_log_level,
         client_log_level=client_log_level,
         client_log_file=client_log_file,
+        product_version=product_version,
+    )
+
+
+@deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
+def launch_modeler_with_core_service(
+    version: str | int | None = None,
+    host: str = "localhost",
+    port: int = None,
+    enable_trace: bool = False,
+    timeout: int = 60,
+    server_log_level: int = 2,
+    client_log_level: int = logging.INFO,
+    server_logs_folder: str = None,
+    client_log_file: str = None,
+    product_version: int = None,  # DEPRECATED: use `version` instead
+    **kwargs: dict | None,
+) -> "Modeler":
+    """Start the Geometry Core service locally using the ``ProductInstance`` class.
+
+    When calling this method, a standalone Geometry Core service is started.
+    By default, if an endpoint is specified (by defining `host` and `port` parameters)
+    but the endpoint is not available, the startup will fail. Otherwise, it will try to
+    launch its own service.
+
+    Parameters
+    ----------
+    version: str | int, optional
+        The product version to be started. Goes from v25.2 to
+        the latest. Default is ``None``.
+        If a specific product version is requested but not installed locally,
+        a SystemError will be raised.
+
+        **Ansys products versions and their corresponding int values:**
+
+        * ``252`` : Ansys 25R2
+        * ``261`` : Ansys 26R1
+    host: str, optional
+        IP address at which the service will be deployed. By default,
+        its value will be ``localhost``.
+    port : int, optional
+        Port at which the service will be deployed. By default, its
+        value will be ``None``.
+    enable_trace : bool, optional
+        Boolean enabling the logs trace on the service console window.
+        By default its value is ``False``.
+    timeout : int, optional
+        Timeout for starting the backend startup process. The default is 60.
+    server_log_level : int, optional
+        Backend's log level from 0 to 3:
+            0: Chatterbox
+            1: Debug
+            2: Warning
+            3: Error
+
+        The default is ``2`` (Warning).
+    client_log_level : int, optional
+        Logging level to apply to the client. By default, INFO level is used.
+        Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+    server_logs_folder : str, optional
+        Sets the backend's logs folder path. If nothing is defined,
+        the backend will use its default path.
+    client_log_file : str, optional
+        Sets the client's log file path. If nothing is defined,
+        the client will log to the console.
+    product_version: int, optional
+        The product version to be started. Deprecated, use `version` instead.
+    **kwargs : dict, default: None
+        Placeholder to prevent errors when passing additional arguments that
+        are not compatible with this method.
+
+    Returns
+    -------
+    Modeler
+        Instance of the Geometry Core service.
+
+    Raises
+    ------
+    ConnectionError
+        If the specified endpoint is already in use, a connection
+        error will be raised.
+    SystemError
+        If there is not an Ansys product 25.2 version or later installed
+        a SystemError will be raised.
+
+    Examples
+    --------
+    Starting a geometry core service with the default parameters and getting back a ``Modeler``
+    object:
+
+    >>> from ansys.geometry.core import launch_modeler_with_core_service
+    >>> modeler = launch_modeler_with_core_service()
+
+    Starting a geometry service, on address ``10.171.22.44``, port ``5001``, with chatty
+    logs, traces enabled and a ``300`` seconds timeout:
+
+    >>> from ansys.geometry.core import launch_modeler_with_core_service
+    >>> modeler = launch_modeler_with_core_service(host="10.171.22.44",
+        port=5001,
+        enable_trace= True,
+        timeout=300,
+        server_log_level=0)
+    """
+    # if api_version is passed, throw a warning saying that it is not used
+    if "api_version" in kwargs:
+        LOG.warning(
+            "The 'api_version' parameter is not used in 'launch_modeler_with_core_service'. "
+            "Please remove it from the arguments."
+        )
+
+    # If we are in a Windows environment, we are going to write down the server
+    # logs in the %PUBLIC%/Documents/Ansys/GeometryService folder.
+    if os.name == "nt" and server_logs_folder is None:
+        # Writing to the "Public" folder by default - no write permissions specifically required.
+        server_logs_folder = Path(os.getenv("PUBLIC"), "Documents", "Ansys", "GeometryService")
+        LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
+
+    return prepare_and_start_backend(
+        BackendType.LINUX_SERVICE,
+        version=version,
+        host=host,
+        port=port,
+        enable_trace=enable_trace,
+        api_version=ApiVersions.LATEST,
+        timeout=timeout,
+        server_log_level=server_log_level,
+        client_log_level=client_log_level,
+        server_logs_folder=server_logs_folder,
+        client_log_file=client_log_file,
+        specific_minimum_version=252,
+        product_version=product_version,
     )
 
 
@@ -945,129 +1090,4 @@ def _launch_pim_instance(
         remote_instance=instance,
         logging_level=client_log_level,
         logging_file=client_log_file,
-    )
-
-
-def launch_modeler_with_core_service(
-    product_version: int = None,
-    host: str = "localhost",
-    port: int = None,
-    enable_trace: bool = False,
-    timeout: int = 60,
-    server_log_level: int = 2,
-    client_log_level: int = logging.INFO,
-    server_logs_folder: str = None,
-    client_log_file: str = None,
-    **kwargs: dict | None,
-) -> "Modeler":
-    """Start the Geometry Core service locally using the ``ProductInstance`` class.
-
-    When calling this method, a standalone Geometry Core service is started.
-    By default, if an endpoint is specified (by defining `host` and `port` parameters)
-    but the endpoint is not available, the startup will fail. Otherwise, it will try to
-    launch its own service.
-
-    Parameters
-    ----------
-    product_version: int, optional
-        The product version to be started. Goes from v25.2 to
-        the latest. Default is ``None``.
-        If a specific product version is requested but not installed locally,
-        a SystemError will be raised.
-
-        **Ansys products versions and their corresponding int values:**
-
-        * ``252`` : Ansys 25R2
-        * ``261`` : Ansys 26R1
-    host: str, optional
-        IP address at which the service will be deployed. By default,
-        its value will be ``localhost``.
-    port : int, optional
-        Port at which the service will be deployed. By default, its
-        value will be ``None``.
-    enable_trace : bool, optional
-        Boolean enabling the logs trace on the service console window.
-        By default its value is ``False``.
-    timeout : int, optional
-        Timeout for starting the backend startup process. The default is 60.
-    server_log_level : int, optional
-        Backend's log level from 0 to 3:
-            0: Chatterbox
-            1: Debug
-            2: Warning
-            3: Error
-
-        The default is ``2`` (Warning).
-    client_log_level : int, optional
-        Logging level to apply to the client. By default, INFO level is used.
-        Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
-    server_logs_folder : str, optional
-        Sets the backend's logs folder path. If nothing is defined,
-        the backend will use its default path.
-    client_log_file : str, optional
-        Sets the client's log file path. If nothing is defined,
-        the client will log to the console.
-    **kwargs : dict, default: None
-        Placeholder to prevent errors when passing additional arguments that
-        are not compatible with this method.
-
-    Returns
-    -------
-    Modeler
-        Instance of the Geometry Core service.
-
-    Raises
-    ------
-    ConnectionError
-        If the specified endpoint is already in use, a connection
-        error will be raised.
-    SystemError
-        If there is not an Ansys product 25.2 version or later installed
-        a SystemError will be raised.
-
-    Examples
-    --------
-    Starting a geometry core service with the default parameters and getting back a ``Modeler``
-    object:
-
-    >>> from ansys.geometry.core import launch_modeler_with_core_service
-    >>> modeler = launch_modeler_with_core_service()
-
-    Starting a geometry service, on address ``10.171.22.44``, port ``5001``, with chatty
-    logs, traces enabled and a ``300`` seconds timeout:
-
-    >>> from ansys.geometry.core import launch_modeler_with_core_service
-    >>> modeler = launch_modeler_with_core_service(host="10.171.22.44",
-        port=5001,
-        enable_trace= True,
-        timeout=300,
-        server_log_level=0)
-    """
-    # if api_version is passed, throw a warning saying that it is not used
-    if "api_version" in kwargs:
-        LOG.warning(
-            "The 'api_version' parameter is not used in 'launch_modeler_with_core_service'. "
-            "Please remove it from the arguments."
-        )
-
-    # If we are in a Windows environment, we are going to write down the server
-    # logs in the %PUBLIC%/Documents/Ansys/GeometryService folder.
-    if os.name == "nt" and server_logs_folder is None:
-        # Writing to the "Public" folder by default - no write permissions specifically required.
-        server_logs_folder = Path(os.getenv("PUBLIC"), "Documents", "Ansys", "GeometryService")
-        LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
-
-    return prepare_and_start_backend(
-        BackendType.LINUX_SERVICE,
-        product_version=product_version,
-        host=host,
-        port=port,
-        enable_trace=enable_trace,
-        api_version=ApiVersions.LATEST,
-        timeout=timeout,
-        server_log_level=server_log_level,
-        client_log_level=client_log_level,
-        server_logs_folder=server_logs_folder,
-        client_log_file=client_log_file,
-        specific_minimum_version=252,
     )

@@ -30,6 +30,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.designer.vertex import Vertex
 
 try:
     from ansys.tools.visualization_interface.utils.color import Color
@@ -183,6 +184,30 @@ def get_bodies_from_ids(design: "Design", body_ids: list[str]) -> list["Body"]:
     return [body for body in __traverse_all_bodies(design) if body.id in body_ids]
 
 
+def get_components_from_ids(design: "Design", component_ids: list[str]) -> list["Component"]:
+    """Find the ``Component`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the components.
+    component_ids : list[str]
+        List of component ids.
+
+    Returns
+    -------
+    list[Component]
+        List of Component objects.
+
+    Notes
+    -----
+    This method takes a design and component ids, and gets their corresponding ``Component`` object.
+    """
+    return [
+        comp for comp in __traverse_component_elem("components", design) if comp.id in component_ids
+    ]  # noqa: E501
+
+
 def get_faces_from_ids(design: "Design", face_ids: list[str]) -> list["Face"]:
     """Find the ``Face`` objects inside a ``Design`` from its ids.
 
@@ -228,6 +253,33 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     """
     return [
         edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids
+    ]  # noqa: E501
+
+
+def get_vertices_from_ids(design: "Design", vertex_ids: list[str]) -> list["Vertex"]:
+    """Find the ``Vertex`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the vertices.
+    vertex_ids : list[str]
+        List of vertex ids.
+
+    Returns
+    -------
+    list[Vertex]
+        List of Vertex objects.
+
+    Notes
+    -----
+    This method takes a design and vertex ids, and gets their corresponding ``Vertex`` objects.
+    """
+    return [
+        vertex
+        for body in __traverse_all_bodies(design)
+        for vertex in body.vertices
+        if vertex.id in vertex_ids
     ]  # noqa: E501
 
 

@@ -21,16 +21,24 @@
 # SOFTWARE.
 """Test design export functionality."""
 
+from pathlib import Path
+
 import numpy as np
 import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
-from ansys.geometry.core.designer import Component, Design
+from ansys.geometry.core.designer import Component, Design, DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import skip_if_core_service, skip_if_spaceclaim, skip_if_windows
+from ..conftest import are_graphics_available
+from .conftest import (
+    FILES_DIR,
+    skip_if_core_service,
+    skip_if_spaceclaim,
+    skip_if_windows,
+)
 
 
 def _create_demo_design(modeler: Modeler) -> Design:
@@ -346,3 +354,134 @@ def test_export_to_pmdb(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 
     # TODO: Check the exported file content
     # https://github.com/ansys/pyansys-geometry/issues/1146
+
+
+def test_import_export_reimport_design_scdocx(
+    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory
+):
+    """Test importing, exporting, and re-importing a design file."""
+    # Define the working directory and file paths
+    working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
+    original_file = Path(FILES_DIR, "reactorWNS.scdocx")
+    reexported_file = Path(working_directory, "reexported.scdocx")
+
+    # Create a new design
+    design = modeler.create_design("Assembly")
+
+    # Import the original file
+    design.insert_file(original_file)
+
+    # Export the design to a new file
+    design.download(reexported_file, format=DesignFileFormat.SCDOCX)
+
+    # Re-import the exported file
+    design.insert_file(reexported_file)
+
+    # Assertions to check the number of components and bodies
+    assert len(design.components) == 2
+    assert len(design.components[0].components[0].bodies) == 3
+
+
+def test_import_export_reimport_design_x_t(
+    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory
+):
+    """Test importing, exporting, and re-importing a design file in Parasolid text format."""
+    # Define the working directory and file paths
+    working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
+    original_file = Path(FILES_DIR, "rci_std.x_t")
+    reexported_file = Path(working_directory, "reexported.x_t")
+
+    # Create a new design
+    design = modeler.create_design("Assembly")
+
+    # Import the original file
+    design.insert_file(original_file)
+
+    # Export the design to a new file
+    design.download(reexported_file, format=DesignFileFormat.PARASOLID_TEXT)
+
+    # Ensure the re-exported file exists
+    assert reexported_file.exists(), f"Re-exported file {reexported_file} does not exist."
+
+    # Re-import the exported file
+    design.insert_file(reexported_file)
+
+    # Assertions to check the number of components and bodies
+    assert len(design.components[0].bodies) == 1
+    assert len(design.components[1].components[0].components[0].bodies) == 1
+
+
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
+def test_import_export_glb(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test exporting a design to GLB format."""
+    from ansys.geometry.core.plotting import GeometryPlotter
+
+    working_directory = tmp_path_factory.mktemp("test_import_export_glb")
+    design = modeler.create_design("Assembly")
+    design.add_component("Component_1")
+    file = Path(FILES_DIR, "reactorWNS.scdocx")
+    component = design.insert_file(file)
+    # Check that the design has components
+    assert len(design.components) == 2, "The design does not contain any components."
+
+    # Check that the imported component has bodies
+    assert len(design.components[1].components[0].bodies) == 3, (
+        "The imported component does not contain any bodies."
+    )
+    pl = GeometryPlotter()
+
+    output_glb_path = Path(working_directory, "plot_box_glb.glb")
+    pl.export_glb(plotting_object=component, filename=output_glb_path)
+    assert output_glb_path.exists(), f"GLB file {output_glb_path} does not exist."
+
+    # Check that the GLB file size is greater than 0 bytes
+    assert output_glb_path.stat().st_size > 0, f"GLB file {output_glb_path} is empty."
+
+
+@pytest.mark.parametrize(
+    "file_format, extension, original_file, expected_components, expected_bodies",
+    [
+        (DesignFileFormat.PARASOLID_TEXT, "x_t", "rci_std.x_t", 2, 1),
+        (DesignFileFormat.SCDOCX, "scdocx", "reactorWNS.scdocx", 1, 3),
+    ],
+)
+def test_import_export_open_file_design(
+    modeler: Modeler,
+    tmp_path_factory: pytest.TempPathFactory,
+    file_format,
+    extension,
+    original_file,
+    expected_components,
+    expected_bodies,
+):
+    """Test importing, exporting, and opening a file in a new design."""
+    # Define the working directory and file paths
+    working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
+    original_file_path = Path(FILES_DIR, original_file)
+    reexported_file = Path(working_directory, f"reexported.{extension}")
+
+    # Create a new design
+    design = modeler.create_design("Assembly")
+
+    # Import the original file
+    design.insert_file(original_file_path)
+
+    # Export the design to a new file
+    design.download(reexported_file, format=file_format)
+
+    # Ensure the re-exported file exists
+    assert reexported_file.exists(), f"Re-exported file {reexported_file} does not exist."
+
+    # Re-import the exported file
+    design = modeler.open_file(reexported_file)
+
+    # Assertions to check the number of components and bodies
+    assert len(design.components) == expected_components, (
+        f"Expected {expected_components} components, but found {len(design.components)}."
+    )
+    assert len(design.components[0].components[0].bodies) == expected_bodies, (
+        f"Expected {expected_bodies} bodies, but found "
+        f"{len(design.components[0].components[0].bodies)}."
+    )

@@ -93,22 +93,14 @@ class BoxUV:
 
     def is_negative(self, tolerance_u: Real, tolerance_v: Real) -> bool:
         """Check whether the BoxUV is negative."""
-        if self.is_empty():
-            return False
         return self.interval_u.is_negative(tolerance_u) or self.interval_v.is_negative(tolerance_v)
 
     def contains(self, param: ParamUV) -> bool:
         """Check whether the BoxUV contains a given u and v pair parameter."""
-        if self.is_empty():
-            # Cannot check contains for an empty box uv.
-            raise RuntimeError("Cannot check contains for an empty box uv.")
         return self.interval_u.contains(param.u) and self.interval_v.contains(param.v)
 
     def inflate(self, delta_u: Real, delta_v: Real) -> "BoxUV":
         """Enlarge the BoxUV u and v intervals by deltas."""
-        if self.is_empty():
-            # Cannot inflate an empty box uv.
-            raise RuntimeError("Cannot inflate an empty box uv.")
         return BoxUV(self.interval_u.inflate(delta_u), self.interval_v.inflate(delta_v))
 
     def get_corner(self, location: LocationUV) -> ParamUV:

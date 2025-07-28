@@ -159,7 +159,7 @@ class Vector3D(np.ndarray):
         transformation matrix and return a new ``Vector3D`` object representing the
         transformed vector.
         """
-        vector_4x1 = np.append(self, 1)
+        vector_4x1 = np.append(self, 0)
         result_4x1 = matrix * vector_4x1
         result_vector = Vector3D(result_4x1[0:3])
         return result_vector

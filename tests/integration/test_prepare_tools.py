@@ -23,7 +23,6 @@
 
 from pint import Quantity
 
-from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.measurements import UNITS
 from ansys.geometry.core.modeler import Modeler
@@ -71,6 +70,11 @@ def test_remove_rounds(modeler: Modeler):
     result = modeler.prepare_tools.remove_rounds(roundfaces)
     assert len(design.bodies[0].faces) == 6
     assert result is True
+    result = modeler.prepare_tools.remove_rounds([design.bodies[0].faces[0]])
+    # test removing a face that is not a round
+    assert result is True  # remove round always returns True for success
+    result = modeler.prepare_tools.remove_rounds(None)
+    assert result == []
 
 
 def test_share_topology(modeler: Modeler):
@@ -97,6 +101,8 @@ def test_share_topology(modeler: Modeler):
         edges += len(body.edges)
     assert faces == 13
     assert edges == 27
+    result = modeler.prepare_tools.share_topology(None)
+    assert result is False
 
 
 def test_enhanced_share_topology(modeler: Modeler):
@@ -113,45 +119,91 @@ def test_enhanced_share_topology(modeler: Modeler):
     result = modeler.prepare_tools.enhanced_share_topology(design.bodies, 0.000554167, True)
     assert result.found == 14
     assert result.repaired == 14
+    result = modeler.prepare_tools.enhanced_share_topology(None, 0, False)
+    assert result.found == 0
 
 
 def test_detect_logos(modeler: Modeler):
     """Test logos are detected and deleted."""
-    if BackendType.is_linux_service(modeler.client.backend_type):
-        # not yet available in Linux
-        return
     design = modeler.open_file(FILES_DIR / "partWithLogos.scdocx")
     component = [c for c in design.components if c.name == "Default"][0]
     body = [b for b in component.bodies if b.name == "Solid3"][0]
     assert len(body.faces) == 189
     result = modeler.prepare_tools.find_logos()
-    # no logos should be found is max height is not given
+    # no logos should be found if max height is not given
     assert len(result.face_ids) == 0
     result = modeler.prepare_tools.find_logos(max_height=0.005)
     assert len(result.face_ids) == 147
     success = modeler.prepare_tools.find_and_remove_logos(max_height=0.005)
     assert success is True
     assert len(body.faces) == 42
+    result = modeler.prepare_tools.find_and_remove_logos(None, min_height=0.001, max_height=0.005)
+    assert result is False
+    result = modeler.prepare_tools.find_and_remove_logos(
+        design.components[0].bodies, min_height=0.001, max_height=0.005
+    )
+    assert result is False
 
 
 def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
     """Test logos are detected and deleted as problem area"""
-    if BackendType.is_linux_service(modeler.client.backend_type):
-        # not yet available in Linux
-        return
     design = modeler.open_file(FILES_DIR / "partWithLogos.scdocx")
-    # Get the component named "Default"
     component = [c for c in design.components if c.name == "Default"][0]
-    # test that no issue occurs when no logos are found on body named Solid1
-    bodies = [b for b in component.bodies if b.name == "Solid1"]
-    result = modeler.prepare_tools.find_logos(bodies, max_height=0.005)
-    assert len(result.face_ids) == 0
-    success = result.fix()
-    assert success is False
-    # Remove logos from body named Solid3
-    bodies = [b for b in component.bodies if b.name == "Solid3"]
-    result = modeler.prepare_tools.find_logos(bodies, max_height=0.005)
-    assert len(result.face_ids) == 147
-    result.fix()
-    assert success is False
-    assert len(design.components[0].bodies[2].faces) == 42
+    body = [b for b in component.bodies if b.name == "Solid3"][0]
+    # Initial face count
+    assert len(body.faces) == 189
+    # Test finding logos without max height
+    result_no_max_height = modeler.prepare_tools.find_logos()
+    assert len(result_no_max_height.face_ids) == 0
+    # Test finding logos with max height
+    result_with_max_height = modeler.prepare_tools.find_logos(max_height=0.005)
+    assert len(result_with_max_height.face_ids) == 147
+    # Test removing logos with max height
+    success_remove_logos = modeler.prepare_tools.find_and_remove_logos(max_height=0.005)
+    assert success_remove_logos is True
+    assert len(body.faces) == 42
+    # Test removing logos with min and max height (no logos should be removed)
+    result_min_max_height = modeler.prepare_tools.find_and_remove_logos(
+        None, min_height=0.001, max_height=0.005
+    )
+    assert result_min_max_height is False
+    # Test removing logos from specific bodies (no logos should be removed)
+    result_specific_bodies = modeler.prepare_tools.find_and_remove_logos(
+        design.components[0].bodies, min_height=0.001, max_height=0.005
+    )
+    assert result_specific_bodies is False
+
+
+def test_volume_extract_bad_faces(modeler: Modeler):
+    """Test a volume extract with bad faces."""
+    design = modeler.open_file(FILES_DIR / "BoxWithRound_noedits.scdocx")
+
+    body = design.bodies[0]
+    inside_faces = []
+    sealing_faces = [body.faces[1], body.faces[4]]
+    created_bodies = modeler.prepare_tools.extract_volume_from_faces(sealing_faces, inside_faces)
+    assert len(created_bodies) == 0
+    inside_faces = [body.faces[6]]
+    sealing_faces = []
+    created_bodies = modeler.prepare_tools.extract_volume_from_faces(sealing_faces, inside_faces)
+    assert len(created_bodies) == 0
+    inside_faces = [body.faces[0]]
+    sealing_faces = [body.faces[1]]
+    created_bodies = modeler.prepare_tools.extract_volume_from_faces(sealing_faces, inside_faces)
+    assert len(created_bodies) == 0
+
+
+def test_volume_extract_bad_edges(modeler: Modeler):
+    """Test a volume extract with bad edges."""
+    design = modeler.open_file(FILES_DIR / "BoxWithRound_noedits.scdocx")
+    body = design.bodies[0]
+    sealing_edges = []
+    created_bodies = modeler.prepare_tools.extract_volume_from_edge_loops(
+        sealing_edges,
+    )
+    assert len(created_bodies) == 0
+    sealing_edges = [body.edges[0], body.edges[1]]
+    created_bodies = modeler.prepare_tools.extract_volume_from_edge_loops(
+        sealing_edges,
+    )
+    assert len(created_bodies) == 0

@@ -21,6 +21,8 @@
 # SOFTWARE.
 """Module containing server-version agnostic conversions."""
 
+from pint import Quantity
+
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance, Measurement
 
 
@@ -56,6 +58,22 @@ def from_measurement_to_server_angle(input: Measurement) -> float:
     return input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
 
 
+def from_measurement_to_server_area(input: Measurement) -> float:
+    """Convert a measurement to an area value.
+
+    Parameters
+    ----------
+    value : Measurement
+        Measurement value.
+
+    Returns
+    -------
+    float
+        Area value in server-defined units. By default, square meters.
+    """
+    return input.value.m_as(DEFAULT_UNITS.SERVER_AREA)
+
+
 def to_distance(value: float | int) -> Distance:
     """Convert a server value to a Distance object.
 
@@ -75,3 +93,24 @@ def to_distance(value: float | int) -> Distance:
     The value should represent a length in the server's unit system.
     """
     return Distance(value, DEFAULT_UNITS.SERVER_LENGTH)
+
+
+def to_area(value: float | int) -> Quantity:
+    """Convert a server value to an area object.
+
+    Parameters
+    ----------
+    value : float | int
+        Value to convert.
+
+    Returns
+    -------
+    Quantity
+        Converted area.
+
+    Notes
+    -----
+    The value is converted to a Quantity object using the default server area unit.
+    The value should represent an area in the server's unit system.
+    """
+    return Quantity(value, DEFAULT_UNITS.SERVER_AREA)

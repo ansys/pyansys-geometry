@@ -77,6 +77,10 @@ class PrepareTools:
         -------
         list[Body]
             List of created bodies.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -124,6 +128,10 @@ class PrepareTools:
         -------
         list[Body]
             List of created bodies.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
         """
         from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
@@ -214,6 +222,10 @@ class PrepareTools:
         -------
         bool
             ``True`` if successful, ``False`` if failed.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 24R2.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -250,11 +262,17 @@ class PrepareTools:
         -------
         RepairToolMessage
             Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
 
         if not bodies:
-            return RepairToolMessage(False, [], [], 0, 0)
+            return RepairToolMessage(
+                success=False, created_bodies=[], modified_bodies=[], found=0, repaired=0
+            )
 
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
@@ -266,11 +284,11 @@ class PrepareTools:
         )
 
         message = RepairToolMessage(
-            response.get("success"),
-            response.get("created_bodies_monikers"),
-            response.get("modified_bodies_monikers"),
-            response.get("found"),
-            response.get("repaired"),
+            success=response.get("success"),
+            created_bodies=response.get("created_bodies_monikers"),
+            modified_bodies=response.get("modified_bodies_monikers"),
+            found=response.get("found"),
+            repaired=response.get("repaired"),
         )
         return message
 
@@ -297,11 +315,17 @@ class PrepareTools:
         -------
         LogoProblemArea
             Problem area with logo faces.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
 
-        if BackendType.is_linux_service(self._grpc_client.backend_type):
-            # not yet available in Linux
+        if BackendType.is_linux_service(
+            self._grpc_client.backend_type
+        ) and self._grpc_client.backend_version < (26, 1, 0):
+            # not yet available on Linux until 26.1.0
             LOG.warning("Logo detection not available on Linux")
             return
 
@@ -343,11 +367,17 @@ class PrepareTools:
         Returns
         -------
         Boolean value indicating whether the operation was successful.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.body import Body
 
-        if BackendType.is_linux_service(self._grpc_client.backend_type):
-            # not yet available in Linux
+        if BackendType.is_linux_service(
+            self._grpc_client.backend_type
+        ) and self._grpc_client.backend_version < (26, 1, 0):
+            # not yet available on Linux until 26.1.0
             LOG.warning("Logo detection not available on Linux")
             return
 
