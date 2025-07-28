@@ -31,8 +31,8 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
-from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.misc import UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import PersistentIdType
 
@@ -516,3 +516,51 @@ def test_design_import_stride_with_named_selections(modeler: Modeler):
         assert len(named_selection.vertices) == expected_properties["vertices"], (
             f"Mismatch in vertices for {named_selection.name}"
         )
+
+
+def test_design_insert_id_bug(modeler: Modeler):
+    """Test inserting a file into the design with ID bug fix."""
+    # This fix is available in version 261 and later
+    design1 = modeler.create_design("Test")
+
+    design1.add_component("test")
+
+    design1.insert_file(Path(FILES_DIR, "bottom_mounted_imp.dsco"))
+    design1.components[1].bodies[0].copy(design1.components[0], "test")
+
+    ns = design1.create_named_selection("ComponentNS", components=[design1.components[0]])
+    modeler.geometry_commands.move_translate(
+        ns, direction=UNITVECTOR3D_Z, distance=Distance(1, UNITS.m)
+    )
+
+    assert len(design1.components[0].bodies) == 1
+    assert len(design1.components[1].bodies) == 1
+
+
+@pytest.mark.skip(reason="Object reference not set to an instance of an object.")
+def test_import_scdocx_with_external_docs(modeler: Modeler):
+    """Test importing an SCDOCX file with external documents and verify it is internalized."""
+    # Create a new design
+    design = modeler.create_design("Insert External Document")
+
+    # Define the path to the external SCDOCX file
+    path_to_external_doc = Path(FILES_DIR, "external_file_scdocx", "Design1.scdocx")
+
+    # Import the external SCDOCX file
+    design.insert_file(file_location=path_to_external_doc)
+
+    # Verify that the design structure is internalized
+    # Check the number of bodies in the design
+    assert len(design.bodies) == 0
+
+    # Check the number of components in the design
+    assert len(design.components) == 1
+
+    # Check the number of bodies in the first component
+    assert len(design.components[0].bodies) == 1
+
+    # Check the number of subcomponents in the first component
+    assert len(design.components[0].components) == 5
+
+    for component in design.components[0].components:
+        assert len(component.bodies) == 1

@@ -1126,7 +1126,9 @@ class Design(Component):
                 mp = MaterialProperty(mp_type, property.display_name, mp_quantity)
                 properties.append(mp)
                 if mp.type == MaterialPropertyType.DENSITY:
-                    density = mp.quantity
+                    density = (
+                        mp.quantity if isinstance(mp.quantity, Quantity) else Quantity(mp.quantity)
+                    )
 
             m = Material(material.name, density, properties)
             self.materials.append(m)

@@ -23,7 +23,6 @@
 
 from pint import Quantity
 
-from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.measurements import UNITS
 from ansys.geometry.core.modeler import Modeler
@@ -136,9 +135,6 @@ def test_detect_logos(modeler: Modeler):
     result = modeler.prepare_tools.find_logos(max_height=0.005)
     assert len(result.face_ids) == 147
     success = modeler.prepare_tools.find_and_remove_logos(max_height=0.005)
-    # Skip the rest of the test if running on a Linux service backend
-    if BackendType.is_linux_service(modeler.client.backend_type):
-        return
     assert success is True
     assert len(body.faces) == 42
     result = modeler.prepare_tools.find_and_remove_logos(None, min_height=0.001, max_height=0.005)
@@ -162,9 +158,6 @@ def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
     # Test finding logos with max height
     result_with_max_height = modeler.prepare_tools.find_logos(max_height=0.005)
     assert len(result_with_max_height.face_ids) == 147
-    # Skip fix-related assertions if running on a Linux service backend
-    if BackendType.is_linux_service(modeler.client.backend_type):
-        return
     # Test removing logos with max height
     success_remove_logos = modeler.prepare_tools.find_and_remove_logos(max_height=0.005)
     assert success_remove_logos is True
@@ -183,7 +176,7 @@ def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
 
 def test_volume_extract_bad_faces(modeler: Modeler):
     """Test a volume extract with bad faces."""
-    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
+    design = modeler.open_file(FILES_DIR / "BoxWithRound_noedits.scdocx")
 
     body = design.bodies[0]
     inside_faces = []
@@ -202,7 +195,7 @@ def test_volume_extract_bad_faces(modeler: Modeler):
 
 def test_volume_extract_bad_edges(modeler: Modeler):
     """Test a volume extract with bad edges."""
-    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
+    design = modeler.open_file(FILES_DIR / "BoxWithRound_noedits.scdocx")
     body = design.bodies[0]
     sealing_edges = []
     created_bodies = modeler.prepare_tools.extract_volume_from_edge_loops(

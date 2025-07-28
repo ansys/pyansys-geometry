@@ -111,6 +111,7 @@ class ProblemArea:
                 },
                 "master_id": body.master_id,
                 "parent_id": body.parent_id,
+                "is_surface": body.is_surface,
             }
 
         def serialize_entity_identifier(entity):
