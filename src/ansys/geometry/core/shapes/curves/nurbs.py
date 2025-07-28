@@ -26,6 +26,7 @@ from typing import TYPE_CHECKING, Optional
 
 from beartype import beartype as check_input_types
 import numpy as np
+from scipy.integrate import quad
 
 from ansys.geometry.core.math import Matrix44, Point3D
 from ansys.geometry.core.math.vector import Vector3D
@@ -56,7 +57,7 @@ class NURBSCurve(Curve):
 
     """
 
-    def __init__(self):
+    def __init__(self, geomdl_object: "geomdl_nurbs.Curve" = None):
         """Initialize ``NURBSCurve`` class."""
         try:
             import geomdl.NURBS as geomdl_nurbs  # noqa: N811
@@ -66,7 +67,7 @@ class NURBSCurve(Curve):
                 "Please install it using `pip install geomdl`."
             ) from e
 
-        self._nurbs_curve = geomdl_nurbs.Curve()
+        self._nurbs_curve = geomdl_object if geomdl_object else geomdl_nurbs.Curve()
 
     @property
     def geomdl_nurbs_curve(self) -> "geomdl_nurbs.Curve":
@@ -98,6 +99,33 @@ class NURBSCurve(Curve):
     def weights(self) -> list[Real]:
         """Get the weights of the control points."""
         return self._nurbs_curve.weights
+    
+    @property
+    def length(self, num_points: int = 1000) -> Real:
+        """Calculate the length of the NURBS curve.
+
+        Parameters
+        ----------
+        num_points : int, optional
+            Number of points to sample along the curve for length calculation.
+            Default is 1000.
+
+        Returns
+        -------
+        Real
+            Length of the NURBS curve.
+        """
+        self._nurbs_curve.sample_size = num_points
+        def arc_length_func(u):
+            deriv = self._nurbs_curve.derivatives(u, order=1)[1]
+            return np.linalg.norm(deriv)
+
+        # Integrate over the curve's domain
+        start_u = self._nurbs_curve.knotvector[self._nurbs_curve.degree]
+        end_u = self._nurbs_curve.knotvector[-(self._nurbs_curve.degree + 1)]
+
+        length, _ = quad(arc_length_func, start_u, end_u)
+        return length
 
     @classmethod
     @check_input_types
@@ -317,7 +345,7 @@ class NURBSCurve(Curve):
 
         # Return the evaluation at the closest point
         return self.evaluate(u_min)
-
+    
 
 class NURBSCurveEvaluation(CurveEvaluation):
     """Provides evaluation of a NURBS curve at a given parameter.
