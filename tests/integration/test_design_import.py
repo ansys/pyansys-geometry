@@ -33,9 +33,9 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS, Distance
+from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import PersistentIdType
-from ansys.geometry.core.misc.checks import min_backend_version
 
 from .conftest import FILES_DIR, IMPORT_FILES_DIR
 
