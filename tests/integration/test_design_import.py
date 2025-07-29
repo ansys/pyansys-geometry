@@ -570,9 +570,9 @@ def test_import_scdocx_with_external_docs(modeler: Modeler):
 # Define a condition to check the backend version
 backend_version_condition = not min_backend_version(26, 1, 0)
 
+
 @pytest.mark.skipif(
-    backend_version_condition,
-    reason="Test requires backend version 26.1.0 or higher."
+    backend_version_condition, reason="Test requires backend version 26.1.0 or higher."
 )
 def test_named_selections_after_file_insert(modeler: Modeler):
     """Test to verify named selections are imported during inserting a file."""
@@ -619,12 +619,13 @@ def test_named_selections_after_file_insert(modeler: Modeler):
         f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."
     )
 
+
 # Define a condition to check the backend version
 backend_version_condition = not min_backend_version(26, 1, 0)
 
+
 @pytest.mark.skipif(
-    backend_version_condition,
-    reason="Test requires backend version 26.1.0 or higher."
+    backend_version_condition, reason="Test requires backend version 26.1.0 or higher."
 )
 def test_named_selections_after_file_open(modeler: Modeler):
     """Test to verify named selections are imported during open a file."""
