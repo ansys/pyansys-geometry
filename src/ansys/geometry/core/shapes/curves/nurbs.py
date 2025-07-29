@@ -116,7 +116,7 @@ class NURBSCurve(Curve):
         if num_points is None:
             num_spans = len(self._nurbs_curve.knotvector) - (2 * self._nurbs_curve.degree) - 1
             num_points = max(num_spans * 10, 50)
-        
+
         self._nurbs_curve.sample_size = num_points
 
         def arc_length_func(u):
