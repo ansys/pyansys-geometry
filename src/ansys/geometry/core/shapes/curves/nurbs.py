@@ -100,21 +100,23 @@ class NURBSCurve(Curve):
         """Get the weights of the control points."""
         return self._nurbs_curve.weights
 
-    @property
-    def length(self, num_points: int = 1000) -> Real:
+    def length(self, num_points: int = None) -> Real:
         """Calculate the length of the NURBS curve.
 
         Parameters
         ----------
-        num_points : int, optional
+        num_points : int, default: None
             Number of points to sample along the curve for length calculation.
-            Default is 1000.
 
         Returns
         -------
         Real
             Length of the NURBS curve.
         """
+        if num_points is None:
+            num_spans = len(self._nurbs_curve.knotvector) - (2 * self._nurbs_curve.degree) - 1
+            num_points = max(num_spans * 10, 50)
+        
         self._nurbs_curve.sample_size = num_points
 
         def arc_length_func(u):
