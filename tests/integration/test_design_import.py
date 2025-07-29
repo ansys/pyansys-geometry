@@ -35,6 +35,7 @@ from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, Un
 from ansys.geometry.core.misc import UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import PersistentIdType
+from ansys.geometry.core.misc.checks import min_backend_version
 
 from .conftest import FILES_DIR, IMPORT_FILES_DIR
 
@@ -566,6 +567,7 @@ def test_import_scdocx_with_external_docs(modeler: Modeler):
         assert len(component.bodies) == 1
 
 
+@min_backend_version(26, 1, 0)
 def test_named_selections_after_file_insert(modeler: Modeler):
     """Test to verify named selections are imported during inserting a file."""
     # Create a new design
@@ -611,7 +613,7 @@ def test_named_selections_after_file_insert(modeler: Modeler):
         f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."
     )
 
-
+@min_backend_version(26, 1, 0)
 def test_named_selections_after_file_open(modeler: Modeler):
     """Test to verify named selections are imported during open a file."""
     # Open File
