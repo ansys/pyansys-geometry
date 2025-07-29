@@ -33,7 +33,6 @@ from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS, Distance
-from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import PersistentIdType
 
@@ -567,15 +566,10 @@ def test_import_scdocx_with_external_docs(modeler: Modeler):
         assert len(component.bodies) == 1
 
 
-# Define a condition to check the backend version
-backend_version_condition = not min_backend_version(26, 1, 0)
-
-
-@pytest.mark.skipif(
-    backend_version_condition, reason="Test requires backend version 26.1.0 or higher."
-)
 def test_named_selections_after_file_insert(modeler: Modeler):
     """Test to verify named selections are imported during inserting a file."""
+    if modeler.client.backend_version < "26.1.0":
+        pytest.skip("Test requires backend version 26.1.0 or higher.")
     # Create a new design
     design = modeler.create_design("BugFix_1277429")
 
@@ -620,15 +614,10 @@ def test_named_selections_after_file_insert(modeler: Modeler):
     )
 
 
-# Define a condition to check the backend version
-backend_version_condition = not min_backend_version(26, 1, 0)
-
-
-@pytest.mark.skipif(
-    backend_version_condition, reason="Test requires backend version 26.1.0 or higher."
-)
 def test_named_selections_after_file_open(modeler: Modeler):
     """Test to verify named selections are imported during open a file."""
+    if modeler.client.backend_version < "26.1.0":
+        pytest.skip("Test requires backend version 26.1.0 or higher.")
     # Open File
     file_path = Path(FILES_DIR, "reactorWNS.scdocx")
     design = modeler.open_file(file_path)
