@@ -568,8 +568,6 @@ def test_import_scdocx_with_external_docs(modeler: Modeler):
 
 def test_named_selections_after_file_insert(modeler: Modeler):
     """Test to verify named selections are imported during inserting a file."""
-    if modeler.client.backend_version < "26.1.0":
-        pytest.skip("Test requires backend version 26.1.0 or higher.")
     # Create a new design
     design = modeler.create_design("BugFix_1277429")
 
@@ -616,8 +614,6 @@ def test_named_selections_after_file_insert(modeler: Modeler):
 
 def test_named_selections_after_file_open(modeler: Modeler):
     """Test to verify named selections are imported during open a file."""
-    if modeler.client.backend_version < "26.1.0":
-        pytest.skip("Test requires backend version 26.1.0 or higher.")
     # Open File
     file_path = Path(FILES_DIR, "reactorWNS.scdocx")
     design = modeler.open_file(file_path)
