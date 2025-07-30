@@ -1587,12 +1587,7 @@ def test_nurbs_curve_contains_point_not_implemented():
 
 def test_nurbs_length_calculation():
     """Test the length calculation of a NURBS curve."""
-    points = [
-        Point3D([0, 0, 0]),
-        Point3D([2, 2, 0]),
-        Point3D([-2, 4, 0]),
-        Point3D([2, 6, 0])
-    ]
+    points = [Point3D([0, 0, 0]), Point3D([2, 2, 0]), Point3D([-2, 4, 0]), Point3D([2, 6, 0])]
     degree = 3
     nurbs_curve = NURBSCurve.fit_curve_from_points(points, degree)
 
