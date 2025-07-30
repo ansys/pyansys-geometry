@@ -1,0 +1,1147 @@
+
+
+
+
+
+
+:class:`Design`
+===============
+
+
+.. py:class:: ansys.geometry.core.designer.design.Design(name: str, modeler: ansys.geometry.core.modeler.Modeler, read_existing_design: bool = False)
+
+   Bases: :py:obj:`ansys.geometry.core.designer.component.Component`
+
+
+   
+   Provides for organizing geometry assemblies.
+
+   This class synchronizes to a supporting Geometry service instance.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the design.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting Geometry service instance for design modeling.
+
+       **read_existing_design** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether an existing design on the service should be read. This parameter is
+           only valid when connecting to an existing service session. Otherwise, avoid
+           using this optional parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: Design
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~close`
+            - Close the design.
+          * - :py:attr:`~add_material`
+            - Add a material to the design.
+          * - :py:attr:`~save`
+            - Save a design to disk on the active Geometry server instance.
+          * - :py:attr:`~download`
+            - Export and download the design from the server.
+          * - :py:attr:`~export_to_scdocx`
+            - Export the design to an scdocx file.
+          * - :py:attr:`~export_to_disco`
+            - Export the design to an dsco file.
+          * - :py:attr:`~export_to_stride`
+            - Export the design to an stride file.
+          * - :py:attr:`~export_to_parasolid_text`
+            - Export the design to a Parasolid text file.
+          * - :py:attr:`~export_to_parasolid_bin`
+            - Export the design to a Parasolid binary file.
+          * - :py:attr:`~export_to_fmd`
+            - Export the design to an FMD file.
+          * - :py:attr:`~export_to_step`
+            - Export the design to a STEP file.
+          * - :py:attr:`~export_to_iges`
+            - Export the design to an IGES file.
+          * - :py:attr:`~export_to_pmdb`
+            - Export the design to a PMDB file.
+          * - :py:attr:`~create_named_selection`
+            - Create a named selection on the active Geometry server instance.
+          * - :py:attr:`~delete_named_selection`
+            - Delete a named selection on the active Geometry server instance.
+          * - :py:attr:`~delete_component`
+            - Delete a component (itself or its children).
+          * - :py:attr:`~set_shared_topology`
+            - Set the shared topology to apply to the component.
+          * - :py:attr:`~add_beam_circular_profile`
+            - Add a new beam circular profile under the design for creating beams.
+          * - :py:attr:`~get_all_parameters`
+            - Get parameters for the design.
+          * - :py:attr:`~set_parameter`
+            - Set or update a parameter of the design.
+          * - :py:attr:`~add_midsurface_thickness`
+            - Add a mid-surface thickness to a list of bodies.
+          * - :py:attr:`~add_midsurface_offset`
+            - Add a mid-surface offset type to a list of bodies.
+          * - :py:attr:`~delete_beam_profile`
+            - Remove a beam profile on the active geometry server instance.
+          * - :py:attr:`~insert_file`
+            - Insert a file into the design.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~design_id`
+            - The design's object unique id.
+          * - :py:attr:`~materials`
+            - List of materials available for the design.
+          * - :py:attr:`~named_selections`
+            - List of named selections available for the design.
+          * - :py:attr:`~beam_profiles`
+            - List of beam profile available for the design.
+          * - :py:attr:`~parameters`
+            - List of parameters available for the design.
+          * - :py:attr:`~is_active`
+            - Whether the design is currently active.
+          * - :py:attr:`~is_closed`
+            - Whether the design is closed (i.e. not active).
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the ``Design`` as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.design import Design
+
+Property detail
+---------------
+
+.. py:property:: design_id
+   :type: str
+
+
+   
+   The design's object unique id.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: materials
+   :type: list[ansys.geometry.core.materials.material.Material]
+
+
+   
+   List of materials available for the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: named_selections
+   :type: list[ansys.geometry.core.designer.selection.NamedSelection]
+
+
+   
+   List of named selections available for the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: beam_profiles
+   :type: list[ansys.geometry.core.designer.beam.BeamProfile]
+
+
+   
+   List of beam profile available for the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parameters
+   :type: list[ansys.geometry.core.parameters.parameter.Parameter]
+
+
+   
+   List of parameters available for the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_active
+   :type: bool
+
+
+   
+   Whether the design is currently active.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_closed
+   :type: bool
+
+
+   
+   Whether the design is closed (i.e. not active).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: close() -> None
+
+   
+   Close the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_material(material: ansys.geometry.core.materials.material.Material) -> None
+
+   
+   Add a material to the design.
+
+
+   :Parameters:
+
+       **material** : :obj:`Material`
+           Material to add.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: save(file_location: pathlib.Path | str) -> None
+
+   
+   Save a design to disk on the active Geometry server instance.
+
+
+   :Parameters:
+
+       **file_location** : :obj:`~pathlib.Path` | :class:`python:str`
+           Location on disk to save the file to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: download(file_location: pathlib.Path | str, format: DesignFileFormat = DesignFileFormat.SCDOCX) -> None
+
+   
+   Export and download the design from the server.
+
+
+   :Parameters:
+
+       **file_location** : :obj:`~pathlib.Path` | :class:`python:str`
+           Location on disk to save the file to.
+
+       **format** : :obj:`DesignFileFormat`, default: :obj:`DesignFileFormat.SCDOCX`
+           Format for the file to save to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: export_to_scdocx(location: pathlib.Path | str | None = None) -> pathlib.Path
+
+   
+   Export the design to an scdocx file.
+
+
+   :Parameters:
+
+       **location** : :obj:`~pathlib.Path` | :class:`python:str`, :obj:`optional`
+           Location on disk to save the file to. If None, the file will be saved
+           in the current working directory.
+
+
+
+   :Returns:
+
+       :obj:`~pathlib.Path`
+           The path to the saved file.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: export_to_disco(location: pathlib.Path | str | None = None) -> pathlib.Path
+
+   
+   Export the design to an dsco file.
+
+
+   :Parameters:
+
+       **location** : :obj:`~pathlib.Path` | :class:`python:str`, :obj:`optional`
+           Location on disk to save the file to. If None, the file will be saved
+           in the current working directory.
+
+
+
+   :Returns:
+
+       :obj:`~pathlib.Path`
+           The path to the saved file.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: export_to_stride(location: pathlib.Path | str | None = None) -> pathlib.Path
+
+   
+   Export the design to an stride file.
+
+
+   :Parameters:
+
+       **location** : :obj:`~pathlib.Path` | :class:`python:str`, :obj:`optional`
+           Location on disk to save the file to. If None, the file will be saved
+           in the current working directory.
+
+
+
+   :Returns:
+
+       :obj:`~pathlib.Path`
+           The path to the saved file.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: export_to_parasolid_text(location: pathlib.Path | str | None = None) -> pathlib.Path
+
+   
+   Export the design to a Parasolid text file.
+
+
+   :Parameters:
+
+       **location** : :obj:`~pathlib.Path` | :class:`python:str`, :obj:`optional`
+           Location on disk to save the file to. If None, the file will be saved
+           in the current working directory.
+
+
+
+   :Returns:
+
+       :obj:`~pathlib.Path`
+           The path to the saved file.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: export_to_parasolid_bin(location: pathlib.Path | str | None = None) -> pathlib.Path
+
+   
+   Export the design to a Parasolid binary file.
+
+
+   :Parameters:
+
+       **location** : :obj:`~pathlib.Path` | :class:`python:str`, :obj:`optional`
+           Location on disk to save the file to. If None, the file will be saved
+           in the current working directory.
+
+
+
+   :Returns:
+
+       :obj:`~pathlib.Path`
+           The path to the saved file.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: export_to_fmd(location: pathlib.Path | str | None = None) -> pathlib.Path
+
+   
+   Export the design to an FMD file.
+
+
+   :Parameters:
+
+       **location** : :obj:`~pathlib.Path` | :class:`python:str`, :obj:`optional`
+           Location on disk to save the file to. If None, the file will be saved
+           in the current working directory.
+
+
+
+   :Returns:
+
+       :obj:`~pathlib.Path`
+           The path to the saved file.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: export_to_step(location: pathlib.Path | str | None = None) -> pathlib.Path
+
+   
+   Export the design to a STEP file.
+
+
+   :Parameters:
+
+       **location** : :obj:`~pathlib.Path` | :class:`python:str`, :obj:`optional`
+           Location on disk to save the file to. If None, the file will be saved
+           in the current working directory.
+
+
+
+   :Returns:
+
+       :obj:`~pathlib.Path`
+           The path to the saved file.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: export_to_iges(location: pathlib.Path | str = None) -> pathlib.Path
+
+   
+   Export the design to an IGES file.
+
+
+   :Parameters:
+
+       **location** : :obj:`~pathlib.Path` | :class:`python:str`, :obj:`optional`
+           Location on disk to save the file to. If None, the file will be saved
+           in the current working directory.
+
+
+
+   :Returns:
+
+       :obj:`~pathlib.Path`
+           The path to the saved file.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: export_to_pmdb(location: pathlib.Path | str | None = None) -> pathlib.Path
+
+   
+   Export the design to a PMDB file.
+
+
+   :Parameters:
+
+       **location** : :obj:`~pathlib.Path` | :class:`python:str`, :obj:`optional`
+           Location on disk to save the file to. If None, the file will be saved
+           in the current working directory.
+
+
+
+   :Returns:
+
+       :obj:`~pathlib.Path`
+           The path to the saved file.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_named_selection(name: str, bodies: list[ansys.geometry.core.designer.body.Body] | None = None, faces: list[ansys.geometry.core.designer.face.Face] | None = None, edges: list[ansys.geometry.core.designer.edge.Edge] | None = None, beams: list[ansys.geometry.core.designer.beam.Beam] | None = None, design_points: list[ansys.geometry.core.designer.designpoint.DesignPoint] | None = None, components: list[ansys.geometry.core.designer.component.Component] | None = None, vertices: list[ansys.geometry.core.designer.vertex.Vertex] | None = None) -> ansys.geometry.core.designer.selection.NamedSelection
+
+   
+   Create a named selection on the active Geometry server instance.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined name for the named selection.
+
+       **bodies** : :class:`python:list`\[:obj:`Body`], default: :data:`python:None`
+           All bodies to include in the named selection.
+
+       **faces** : :class:`python:list`\[:obj:`Face`], default: :data:`python:None`
+           All faces to include in the named selection.
+
+       **edges** : :class:`python:list`\[:obj:`Edge`], default: :data:`python:None`
+           All edges to include in the named selection.
+
+       **beams** : :class:`python:list`\[:obj:`Beam`], default: :data:`python:None`
+           All beams to include in the named selection.
+
+       **design_points** : :class:`python:list`\[:obj:`DesignPoint`], default: :data:`python:None`
+           All design points to include in the named selection.
+
+       **components** : :class:`python:list`\[:obj:`Component`], default: :data:`python:None`
+           All components to include in the named selection.
+
+       **vertices** : :class:`python:list`\[:obj:`Vertex`], default: :data:`python:None`
+           All vertices to include in the named selection.
+
+
+
+   :Returns:
+
+       :obj:`NamedSelection`
+           Newly created named selection that maintains references to all target entities.
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           If no entities are provided for the named selection. At least
+           one of the optional parameters must be provided.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete_named_selection(named_selection: ansys.geometry.core.designer.selection.NamedSelection | str) -> None
+
+   
+   Delete a named selection on the active Geometry server instance.
+
+
+   :Parameters:
+
+       **named_selection** : :obj:`NamedSelection` | :class:`python:str`
+           Name of the named selection or instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete_component(component: Union[ansys.geometry.core.designer.component.Component, str]) -> None
+
+   
+   Delete a component (itself or its children).
+
+
+   :Parameters:
+
+       **id** : :obj:`Union`\[:obj:`Component`, :class:`python:str`]
+           Name of the component or instance to delete.
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           The design itself cannot be deleted.
+
+
+
+
+   .. rubric:: Notes
+
+   If the component is not this component (or its children), it
+   is not deleted.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_shared_topology(share_type: ansys.geometry.core.designer.component.SharedTopologyType) -> None
+
+   
+   Set the shared topology to apply to the component.
+
+
+   :Parameters:
+
+       **share_type** : :obj:`SharedTopologyType`
+           Shared topology type to assign.
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           Shared topology does not apply to a design.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_beam_circular_profile(name: str, radius: pint.Quantity | ansys.geometry.core.misc.measurements.Distance, center: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.point.Point3D = ZERO_POINT3D, direction_x: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_X, direction_y: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_Y) -> ansys.geometry.core.designer.beam.BeamCircularProfile
+
+   
+   Add a new beam circular profile under the design for creating beams.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new beam circular profile.
+
+       **radius** : :obj:`~pint.Quantity` | :obj:`Distance`
+           Radius of the beam circular profile.
+
+       **center** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Point3D`
+           Center of the beam circular profile.
+
+       **direction_x** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`
+           X-plane direction.
+
+       **direction_y** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`
+           Y-plane direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_parameters() -> list[ansys.geometry.core.parameters.parameter.Parameter]
+
+   
+   Get parameters for the design.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Parameter`]
+           List of parameters for the design.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_parameter(dimension: ansys.geometry.core.parameters.parameter.Parameter) -> ansys.geometry.core.parameters.parameter.ParameterUpdateStatus
+
+   
+   Set or update a parameter of the design.
+
+
+   :Parameters:
+
+       **dimension** : :obj:`Parameter`
+           Parameter to set.
+
+
+
+   :Returns:
+
+       :obj:`ParameterUpdateStatus`
+           Status of the update operation.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_midsurface_thickness(thickness: pint.Quantity, bodies: list[ansys.geometry.core.designer.body.Body]) -> None
+
+   
+   Add a mid-surface thickness to a list of bodies.
+
+
+   :Parameters:
+
+       **thickness** : :obj:`~pint.Quantity`
+           Thickness to be assigned.
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           All bodies to include in the mid-surface thickness assignment.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Only surface bodies will be eligible for mid-surface thickness assignment.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_midsurface_offset(offset_type: ansys.geometry.core.designer.body.MidSurfaceOffsetType, bodies: list[ansys.geometry.core.designer.body.Body]) -> None
+
+   
+   Add a mid-surface offset type to a list of bodies.
+
+
+   :Parameters:
+
+       **offset_type** : :obj:`MidSurfaceOffsetType`
+           Surface offset to be assigned.
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           All bodies to include in the mid-surface offset assignment.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Only surface bodies will be eligible for mid-surface offset assignment.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete_beam_profile(beam_profile: ansys.geometry.core.designer.beam.BeamProfile | str) -> None
+
+   
+   Remove a beam profile on the active geometry server instance.
+
+
+   :Parameters:
+
+       **beam_profile** : :obj:`BeamProfile` | :class:`python:str`
+           A beam profile name or instance that should be deleted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: insert_file(file_location: pathlib.Path | str, import_options: ansys.geometry.core.misc.options.ImportOptions = ImportOptions()) -> ansys.geometry.core.designer.component.Component
+
+   
+   Insert a file into the design.
+
+
+   :Parameters:
+
+       **file_location** : :obj:`~pathlib.Path` | :class:`python:str`
+           Location on disk where the file is located.
+
+       **import_options** : :obj:`ImportOptions`
+           The options to pass into upload file
+
+
+
+   :Returns:
+
+       :obj:`Component`
+           The newly inserted component.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the ``Design`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

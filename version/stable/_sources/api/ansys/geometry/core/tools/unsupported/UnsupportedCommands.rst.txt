@@ -1,0 +1,225 @@
+
+
+
+
+
+
+:class:`UnsupportedCommands`
+============================
+
+
+.. py:class:: ansys.geometry.core.tools.unsupported.UnsupportedCommands(grpc_client: ansys.geometry.core.connection.GrpcClient, modeler: ansys.geometry.core.modeler.Modeler)
+
+   
+   Provides unsupported commands for PyAnsys Geometry.
+
+
+   :Parameters:
+
+       **grpc_client** : :obj:`GrpcClient`
+           gRPC client to use for the geometry commands.
+
+       **modeler** : :obj:`Modeler`
+           Modeler instance to use for the geometry commands.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: UnsupportedCommands
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_export_id`
+            - Set the persistent id for the moniker.
+          * - :py:attr:`~get_body_occurrences_from_import_id`
+            - Get all body occurrences whose master has the given import id.
+          * - :py:attr:`~get_face_occurrences_from_import_id`
+            - Get all face occurrences whose master has the given import id.
+          * - :py:attr:`~get_edge_occurrences_from_import_id`
+            - Get all edge occurrences whose master has the given import id.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.unsupported import UnsupportedCommands
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_export_id(moniker: str, id_type: PersistentIdType, value: str) -> None
+
+   
+   Set the persistent id for the moniker.
+
+
+   :Parameters:
+
+       **moniker** : :class:`python:str`
+           Moniker to set the id for.
+
+       **id_type** : :obj:`PersistentIdType`
+           Type of id.
+
+       **value** : :class:`python:str`
+           Id to set.
+
+
+
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_body_occurrences_from_import_id(import_id: str, id_type: PersistentIdType) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Get all body occurrences whose master has the given import id.
+
+
+   :Parameters:
+
+       **import_id** : :class:`python:str`
+           Persistent id
+
+       **id_type** : :obj:`PersistentIdType`
+           Type of id
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           List of body occurrences.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_face_occurrences_from_import_id(import_id: str, id_type: PersistentIdType) -> list[ansys.geometry.core.designer.face.Face]
+
+   
+   Get all face occurrences whose master has the given import id.
+
+
+   :Parameters:
+
+       **import_id** : :class:`python:str`
+           Persistent id.
+
+       **id_type** : :obj:`PersistentIdType`
+           Type of id.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Face`]
+           List of face occurrences.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edge_occurrences_from_import_id(import_id: str, id_type: PersistentIdType) -> list[ansys.geometry.core.designer.edge.Edge]
+
+   
+   Get all edge occurrences whose master has the given import id.
+
+
+   :Parameters:
+
+       **import_id** : :class:`python:str`
+           Persistent id.
+
+       **id_type** : :obj:`PersistentIdType`
+           Type of id.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Edge`]
+           List of edge occurrences.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

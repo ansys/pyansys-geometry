@@ -1,0 +1,127 @@
+
+
+
+
+
+
+The ``surfaces`` package
+============================
+
+.. py:module:: ansys.geometry.core.shapes.surfaces
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: surfaces
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.cone`
+            - Provides for creating and managing a cone.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.cylinder`
+            - Provides for creating and managing a cylinder.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.plane`
+            - Provides for creating and managing a plane.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.sphere`
+            - Provides for creating and managing a sphere.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.surface`
+            - Provides the ``Surface`` class.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.surface_evaluation`
+            - Provides for evaluating a surface.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.torus`
+            - Provides for creating and managing a torus.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.trimmed_surface`
+            - Provides the ``TrimmedSurface`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> cone</api/ansys/geometry/core/shapes/surfaces/cone/index>
+    <span class="nf nf-fa-file"></span> cylinder</api/ansys/geometry/core/shapes/surfaces/cylinder/index>
+    <span class="nf nf-fa-file"></span> plane</api/ansys/geometry/core/shapes/surfaces/plane/index>
+    <span class="nf nf-fa-file"></span> sphere</api/ansys/geometry/core/shapes/surfaces/sphere/index>
+    <span class="nf nf-fa-file"></span> surface</api/ansys/geometry/core/shapes/surfaces/surface/index>
+    <span class="nf nf-fa-file"></span> surface_evaluation</api/ansys/geometry/core/shapes/surfaces/surface_evaluation/index>
+    <span class="nf nf-fa-file"></span> torus</api/ansys/geometry/core/shapes/surfaces/torus/index>
+    <span class="nf nf-fa-file"></span> trimmed_surface</api/ansys/geometry/core/shapes/surfaces/trimmed_surface/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+Provides the PyAnsys Geometry ``surface`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

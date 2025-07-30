@@ -1,0 +1,122 @@
+
+
+
+
+
+
+The ``widgets`` package 
+===========================
+
+.. py:module:: ansys.geometry.core.plotting.widgets
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: widgets
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.button`
+            - Provides for implementing buttons in PyAnsys Geometry.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.displace_arrows`
+            - Provides the displacement arrows widget for the PyVista plotter.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.measure`
+            - Provides the ruler widget for the PyAnsys Geometry plotter.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.ruler`
+            - Provides the ruler widget for the PyAnsys Geometry plotter.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.show_design_point`
+            - Provides the ruler widget for the PyAnsys Geometry plotter.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.view_button`
+            - Provides the view button widget for changing the camera view.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.widget`
+            - Provides the abstract implementation of plotter widgets.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> button</api/ansys/geometry/core/plotting/widgets/button/index>
+    <span class="nf nf-fa-file"></span> displace_arrows</api/ansys/geometry/core/plotting/widgets/displace_arrows/index>
+    <span class="nf nf-fa-file"></span> measure</api/ansys/geometry/core/plotting/widgets/measure/index>
+    <span class="nf nf-fa-file"></span> ruler</api/ansys/geometry/core/plotting/widgets/ruler/index>
+    <span class="nf nf-fa-file"></span> show_design_point</api/ansys/geometry/core/plotting/widgets/show_design_point/index>
+    <span class="nf nf-fa-file"></span> view_button</api/ansys/geometry/core/plotting/widgets/view_button/index>
+    <span class="nf nf-fa-file"></span> widget</api/ansys/geometry/core/plotting/widgets/widget/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+Submodule providing widgets for the PyAnsys Geometry plotter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

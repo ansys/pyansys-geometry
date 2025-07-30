@@ -1,0 +1,763 @@
+
+
+
+
+
+
+:class:`RepairTools`
+====================
+
+
+.. py:class:: ansys.geometry.core.tools.repair_tools.RepairTools(grpc_client: ansys.geometry.core.connection.GrpcClient, modeler: ansys.geometry.core.modeler.Modeler)
+
+   
+   Repair tools for PyAnsys Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: RepairTools
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~find_split_edges`
+            - Find split edges in the given list of bodies.
+          * - :py:attr:`~find_extra_edges`
+            - Find the extra edges in the given list of bodies.
+          * - :py:attr:`~find_inexact_edges`
+            - Find inexact edges in the given list of bodies.
+          * - :py:attr:`~find_short_edges`
+            - Find the short edge problem areas.
+          * - :py:attr:`~find_duplicate_faces`
+            - Find the duplicate face problem areas.
+          * - :py:attr:`~find_missing_faces`
+            - Find the missing faces.
+          * - :py:attr:`~find_small_faces`
+            - Find the small face problem areas.
+          * - :py:attr:`~find_stitch_faces`
+            - Return the list of stitch face problem areas.
+          * - :py:attr:`~find_simplify`
+            - Detect faces in a body that can be simplified.
+          * - :py:attr:`~find_interferences`
+            - Find the interference problem areas.
+          * - :py:attr:`~find_and_fix_short_edges`
+            - Find and fix the short edge problem areas.
+          * - :py:attr:`~find_and_fix_extra_edges`
+            - Find and fix the extra edge problem areas.
+          * - :py:attr:`~find_and_fix_split_edges`
+            - Find and fix the split edge problem areas.
+          * - :py:attr:`~find_and_fix_simplify`
+            - Find and simplify the provided geometry.
+          * - :py:attr:`~find_and_fix_stitch_faces`
+            - Find and fix the stitch face problem areas.
+          * - :py:attr:`~inspect_geometry`
+            - Return a list of geometry issues organized by body.
+          * - :py:attr:`~repair_geometry`
+            - Attempt to repair the geometry for the given bodies.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.repair_tools import RepairTools
+
+
+
+Method detail
+-------------
+
+.. py:method:: find_split_edges(bodies: list[ansys.geometry.core.designer.body.Body], angle: ansys.geometry.core.typing.Real = 0.0, length: ansys.geometry.core.typing.Real = 0.0) -> list[ansys.geometry.core.tools.problem_areas.SplitEdgeProblemAreas]
+
+   
+   Find split edges in the given list of bodies.
+
+   This method finds the split edge problem areas and returns a list of split edge
+   problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that split edges are investigated on.
+
+       **angle** : :obj:`Real`
+           The maximum angle between edges.
+
+       **length** : :obj:`Real`
+           The maximum length of the edges.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`SplitEdgeProblemAreas`]
+           List of objects representing split edge problem areas.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_extra_edges(bodies: list[ansys.geometry.core.designer.body.Body]) -> list[ansys.geometry.core.tools.problem_areas.ExtraEdgeProblemAreas]
+
+   
+   Find the extra edges in the given list of bodies.
+
+   This method find the extra edge problem areas and returns a list of extra edge
+   problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that extra edges are investigated on.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`ExtraEdgeProblemArea`]
+           List of objects representing extra edge problem areas.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_inexact_edges(bodies: list[ansys.geometry.core.designer.body.Body]) -> list[ansys.geometry.core.tools.problem_areas.InexactEdgeProblemAreas]
+
+   
+   Find inexact edges in the given list of bodies.
+
+   This method find the inexact edge problem areas and returns a list of inexact
+   edge problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that inexact edges are investigated on.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`InExactEdgeProblemArea`]
+           List of objects representing inexact edge problem areas.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_short_edges(bodies: list[ansys.geometry.core.designer.body.Body], length: ansys.geometry.core.typing.Real = 0.0) -> list[ansys.geometry.core.tools.problem_areas.ShortEdgeProblemAreas]
+
+   
+   Find the short edge problem areas.
+
+   This method finds the short edge problem areas and returns a list of
+   these objects.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that short edges are investigated on.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`ShortEdgeProblemAreas`]
+           List of objects representing short edge problem areas.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_duplicate_faces(bodies: list[ansys.geometry.core.designer.body.Body]) -> list[ansys.geometry.core.tools.problem_areas.DuplicateFaceProblemAreas]
+
+   
+   Find the duplicate face problem areas.
+
+   This method finds the duplicate face problem areas and returns a list of
+   duplicate face problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that duplicate faces are investigated on.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`DuplicateFaceProblemAreas`]
+           List of objects representing duplicate face problem areas.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_missing_faces(bodies: list[ansys.geometry.core.designer.body.Body], angle: ansys.geometry.core.misc.measurements.Angle | pint.Quantity | ansys.geometry.core.typing.Real | None = None, distance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real | None = None) -> list[ansys.geometry.core.tools.problem_areas.MissingFaceProblemAreas]
+
+   
+   Find the missing faces.
+
+   This method find the missing face problem areas and returns a list of missing
+   face problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that missing faces are investigated on.
+
+       **angle** : :obj:`Angle` | :obj:`~pint.Quantity` | :obj:`Real`, :obj:`optional`
+           The minimum angle between faces. By default, None.
+           This option is only used if the backend version is 26.1 or higher.
+
+       **distance** : :obj:`Distance` | :obj:`~pint.Quantity` | :obj:`Real`, :obj:`optional`
+           The minimum distance between faces. By default, None.
+           This option is only used if the backend version is 26.1 or higher.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`MissingFaceProblemAreas`]
+           List of objects representing missing face problem areas.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_small_faces(bodies: list[ansys.geometry.core.designer.body.Body], area: ansys.geometry.core.misc.measurements.Area | pint.Quantity | ansys.geometry.core.typing.Real | None = None, width: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real | None = None) -> list[ansys.geometry.core.tools.problem_areas.SmallFaceProblemAreas]
+
+   
+   Find the small face problem areas.
+
+   This method finds and returns a list of ids of small face problem areas
+   objects.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that small faces are investigated on.
+
+       **area** : :obj:`Area` | :obj:`~pint.Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum area of the faces. By default, None.
+           This option is only used if the backend version is 26.1 or higher.
+
+       **width** : :obj:`Distance` | :obj:`~pint.Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum width of the faces. By default, None.
+           This option is only used if the backend version is 26.1 or higher.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`SmallFaceProblemAreas`]
+           List of objects representing small face problem areas.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_stitch_faces(bodies: list[ansys.geometry.core.designer.body.Body], max_distance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real | None = None) -> list[ansys.geometry.core.tools.problem_areas.StitchFaceProblemAreas]
+
+   
+   Return the list of stitch face problem areas.
+
+   This method find the stitch face problem areas and returns a list of ids of stitch face
+   problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that stitchable faces are investigated on.
+
+       **max_distance** : :obj:`Distance` | :obj:`~pint.Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum distance between faces. By default, None.
+           This option is only used if the backend version is 26.1 or higher.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`StitchFaceProblemAreas`]
+           List of objects representing stitch face problem areas.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_simplify(bodies: list[ansys.geometry.core.designer.body.Body]) -> list[ansys.geometry.core.tools.problem_areas.UnsimplifiedFaceProblemAreas]
+
+   
+   Detect faces in a body that can be simplified.
+
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies to search.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`UnsimplifiedFaceProblemAreas`]
+           List of objects representing unsimplified face problem areas.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_interferences(bodies: list[ansys.geometry.core.designer.body.Body], cut_smaller_body: bool = False) -> list[ansys.geometry.core.tools.problem_areas.InterferenceProblemAreas]
+
+   
+   Find the interference problem areas.
+
+   This method finds and returns a list of ids of interference problem areas
+   objects.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that small faces are investigated on.
+
+       **cut_smaller_body** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to cut the smaller body if an intererference is found.
+           By default, False.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`InterfenceProblemAreas`]
+           List of objects representing interference problem areas.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_fix_short_edges(bodies: list[ansys.geometry.core.designer.body.Body], length: ansys.geometry.core.typing.Real = 0.0, comprehensive_result: bool = False) -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Find and fix the short edge problem areas.
+
+   This method finds the short edges in the bodies and fixes them.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that short edges are investigated on.
+
+       **length** : :obj:`Real`, :obj:`optional`
+           The maximum length of the edges. By default, 0.0.
+
+       **comprehensive_result** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to fix all problem areas individually.
+           By default, False.
+
+
+
+   :Returns:
+
+       :obj:`RepairToolMessage`
+           Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_fix_extra_edges(bodies: list[ansys.geometry.core.designer.body.Body], comprehensive_result: bool = False) -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Find and fix the extra edge problem areas.
+
+   This method finds the extra edges in the bodies and fixes them.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that short edges are investigated on.
+
+       **length** : :obj:`Real`
+           The maximum length of the edges.
+
+       **comprehensive_result** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to fix all problem areas individually.
+           By default, False.
+
+
+
+   :Returns:
+
+       :obj:`RepairToolMessage`
+           Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_fix_split_edges(bodies: list[ansys.geometry.core.designer.body.Body], angle: ansys.geometry.core.typing.Real = 0.0, length: ansys.geometry.core.typing.Real = 0.0, comprehensive_result: bool = False) -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Find and fix the split edge problem areas.
+
+   This method finds the extra edges in the bodies and fixes them.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that split edges are investigated on.
+
+       **angle** : :obj:`Real`, :obj:`optional`
+           The maximum angle between edges. By default, 0.0.
+
+       **length** : :obj:`Real`, :obj:`optional`
+           The maximum length of the edges. By default, 0.0.
+
+       **comprehensive_result** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to fix all problem areas individually.
+           By default, False.
+
+
+
+   :Returns:
+
+       :obj:`RepairToolMessage`
+           Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_fix_simplify(bodies: list[ansys.geometry.core.designer.body.Body], comprehensive_result: bool = False) -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Find and simplify the provided geometry.
+
+   This method simplifies the provided geometry.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies to be simplified.
+
+       **comprehensive_result** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to fix all problem areas individually.
+           By default, False.
+
+
+
+   :Returns:
+
+       :obj:`RepairToolMessage`
+           Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_fix_stitch_faces(bodies: list[ansys.geometry.core.designer.body.Body], max_distance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real | None = None, allow_multiple_bodies: bool = False, maintain_components: bool = True, check_for_coincidence: bool = False, comprehensive_result: bool = False) -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Find and fix the stitch face problem areas.
+
+   This method finds the stitchable faces and fixes them.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies that stitchable faces are investigated on.
+
+       **max_distance** : :obj:`Distance` | :obj:`~pint.Quantity` | :obj:`Real`, :obj:`optional`
+           The maximum distance between faces to be stitched.
+           By default, 0.0001.
+
+       **allow_multiple_bodies** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to allow multiple bodies in the result.
+           By default, False.
+
+       **maintain_components** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to stitch bodies within the components.
+           By default, True.
+
+       **check_for_coincidence** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether coincidence surfaces are searched.
+           By default, False.
+
+       **comprehensive_result** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to fix all problem areas individually.
+           By default, False.
+
+
+
+   :Returns:
+
+       :obj:`RepairToolMessage`
+           Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: inspect_geometry(bodies: list[ansys.geometry.core.designer.body.Body] = None) -> list[ansys.geometry.core.tools.check_geometry.InspectResult]
+
+   
+   Return a list of geometry issues organized by body.
+
+   This method inspects the geometry and returns a list of the issues grouped by
+   the body where they are found.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies to inspect the geometry for.
+           All bodies are inspected if the argument is not given.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`IssuesByBody`]
+           List of objects representing geometry issues and the bodies where issues are found.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: repair_geometry(bodies: list[ansys.geometry.core.designer.body.Body] = None) -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Attempt to repair the geometry for the given bodies.
+
+   This method inspects the geometry for the given bodies and attempts to repair them.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies where to attempt to repair the geometry.
+           All bodies are repaired if the argument is not given.
+
+
+
+   :Returns:
+
+       :obj:`RepairToolMessage`
+           Message containing success of the operation.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
