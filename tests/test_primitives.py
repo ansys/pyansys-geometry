@@ -1583,3 +1583,21 @@ def test_nurbs_curve_contains_point_not_implemented():
     # Assert that contains_point raises NotImplementedError
     with pytest.raises(NotImplementedError, match="contains_point\\(\\) is not implemented."):
         nurbs_curve.contains_point(point)
+
+
+def test_nurbs_length_calculation():
+    """Test the length calculation of a NURBS curve."""
+    points = [
+        Point3D([0, 0, 0]),
+        Point3D([2, 2, 0]),
+        Point3D([-2, 4, 0]),
+        Point3D([2, 6, 0])
+    ]
+    degree = 3
+    nurbs_curve = NURBSCurve.fit_curve_from_points(points, degree)
+
+    # Calculate the length of the NURBS curve
+    length = nurbs_curve.length()
+
+    # Verify that the length is calculated correctly
+    assert np.isclose(length, 13.3012277924)
