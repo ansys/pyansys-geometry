@@ -170,6 +170,34 @@ class GRPCBodyServiceV0(GRPCBodyService):
             "master_id": resp.master_id,
             "is_surface": resp.is_surface,
         }
+    
+    @protect_grpc
+    def sweep_with_guide(self, **kwargs):  # noqa: D102
+        from ansys.api.geometry.v0.bodies_pb2 import SweepWithGuideRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SweepWithGuideRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent_id"],
+            plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
+            geometries=from_sketch_shapes_to_grpc_geometries(
+                kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
+            ),
+            path=from_trimmed_curve_to_grpc_trimmed_curve(kwargs["path"]),
+            guide=from_trimmed_curve_to_grpc_trimmed_curve(kwargs["guide"]),
+            tight_tolerance= kwargs["tight_tolerance"],
+        )
+
+        # Call the gRPC service
+        resp = self.stub.SweepWithGuide(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }   
 
     @protect_grpc
     def create_extruded_body_from_face_profile(self, **kwargs) -> dict:  # noqa: D102

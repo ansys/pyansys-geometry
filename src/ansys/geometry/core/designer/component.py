@@ -706,6 +706,55 @@ class Component:
             chain=chain,
         )
         return self.__build_body_from_response(response)
+    
+    @min_backend_version(26, 1, 0)
+    @check_input_types
+    @ensure_design_is_active
+    def sweep_with_guide(
+        self,
+        name: str,
+        sketch: Sketch,
+        path: TrimmedCurve,
+        guide: TrimmedCurve,
+        tight_tolerance: bool
+    ): 
+        """Create a body by sweeping a sketch along a path with a guide curve.
+
+        The newly created body is placed under this component within the design assembly.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the new solid body.
+        sketch : Sketch
+            Two-dimensional sketch source for the sweep.
+        path : TrimmedCurve
+            The path to sweep the profile along.
+        guide : TrimmedCurve
+            The guide curve to control the sweep.
+        tight_tolerance : bool
+            Whether to use tight tolerance for the sweep.
+
+        Returns
+        -------
+        Body
+            Created body from the given sketch.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        self._grpc_client.log.debug(f"Creating a sweeping profile with guide on {self.id}. Creating body...")
+        response = self._grpc_client.services.bodies.create_sweeping_profile_with_guide_body(
+            name=name,
+            parent_id=self.id,
+            sketch=sketch,
+            path=path,
+            guide=guide,
+            tight_tolerance=tight_tolerance,
+            backend_version=self._grpc_client.backend_version,
+        )
+        return self.__build_body_from_response(response)
 
     @min_backend_version(24, 2, 0)
     @check_input_types

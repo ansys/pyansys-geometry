@@ -2808,6 +2808,10 @@ def test_sweep_chain(modeler: Modeler):
     assert body.volume.m == 0
 
 
+def test_sweep_with_guide(modeler: Modeler):
+    
+
+
 def test_create_body_from_loft_profile(modeler: Modeler):
     """Test the ``create_body_from_loft_profile()`` method to create a vase
     shape.
