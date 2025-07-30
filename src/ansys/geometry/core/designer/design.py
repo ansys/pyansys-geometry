@@ -961,6 +961,8 @@ class Design(Component):
         ----------
         file_location : ~pathlib.Path | str
             Location on disk where the file is located.
+        import_named_selections : bool, default: True
+            Import the named selections associated with the file being inserted if ``True``.
         import_options : ImportOptions
             The options to pass into upload file
 
