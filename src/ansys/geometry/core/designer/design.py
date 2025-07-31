@@ -952,7 +952,6 @@ class Design(Component):
     def insert_file(
         self,
         file_location: Path | str,
-        import_named_selections=True,
         import_options: ImportOptions = ImportOptions(),
     ) -> Component:
         """Insert a file into the design.
@@ -961,8 +960,6 @@ class Design(Component):
         ----------
         file_location : ~pathlib.Path | str
             Location on disk where the file is located.
-        import_named_selections : bool, default: True
-            Import the named selections associated with the file being inserted if ``True``.
         import_options : ImportOptions
             The options to pass into upload file
 
@@ -980,7 +977,7 @@ class Design(Component):
 
         # Insert the file into the design
         self._grpc_client.services.designs.insert(
-            filepath=filepath_server, import_named_selections=import_named_selections
+            filepath=filepath_server, import_named_selections=import_options.import_named_selections
         )
         self._grpc_client.log.debug(f"File {file_location} successfully inserted into design.")
 
