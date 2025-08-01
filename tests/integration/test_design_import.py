@@ -212,6 +212,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     comp1.extrude_sketch("Top", sketch, 5)
 
     if BackendType.is_core_service(modeler.client.backend_type):
+        # Set single export ids and verify
         modeler.unsupported.set_export_id(base_body.id, PersistentIdType.PRIME_ID, "1")
         modeler.unsupported.set_export_id(wheel_body.id, PersistentIdType.PRIME_ID, "2")
 
@@ -237,6 +238,23 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
         assert base_body.faces[0].id in [f.id for f in faces]
         assert base_body.edges[0].id in [e.id for e in edges]
+
+        # Set multiple export ids at once and verify
+        modeler.unsupported.set_multiple_export_ids(
+            [base_body.faces[1].id, base_body.edges[1].id],
+            [PersistentIdType.PRIME_ID, PersistentIdType.PRIME_ID],
+            ["5", "6"]
+        )
+
+        faces2 = modeler.unsupported.get_face_occurrences_from_import_id(
+            "5", PersistentIdType.PRIME_ID
+        )
+        edges2 = modeler.unsupported.get_edge_occurrences_from_import_id(
+            "6", PersistentIdType.PRIME_ID
+        )
+
+        assert base_body.faces[1].id in [b.id for b in faces2]
+        assert base_body.edges[1].id in [b.id for b in edges2]
 
     file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
     design.download(str(file))

@@ -25,7 +25,11 @@ from enum import Enum, unique
 from typing import TYPE_CHECKING
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest, ImportIdRequest
+from ansys.api.geometry.v0.unsupported_pb2 import (
+    ExportIdRequest,
+    ImportIdRequest,
+    SetMultipleExportIdsRequest,
+)
 from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
@@ -166,6 +170,40 @@ class UnsupportedCommands:
             moniker=EntityIdentifier(id=moniker), id=value, type=id_type.value
         )
         self._unsupported_stub.SetExportId(request)
+        self.__id_map = {}
+
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def set_multiple_export_ids(
+        self,
+        monikers: list[str],
+        id_types: list[PersistentIdType],
+        values: list[str],
+    ) -> None:
+        """Set multiple persistent ids for the monikers.
+
+        Parameters
+        ----------
+        monikers : list[str]
+            List of monikers to set the ids for.
+        id_types : list[PersistentIdType]
+            List of types of ids.
+        values : list[str]
+            List of ids to set.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        request = SetMultipleExportIdsRequest(
+            monikers=[EntityIdentifier(id=moniker) for moniker in monikers],
+            ids=values,
+            types=[id_type.value for id_type in id_types],
+        )
+
+        # Call the gRPC service
+        self._unsupported_stub.SetMultipleExportIds(request)
         self.__id_map = {}
 
     def get_body_occurrences_from_import_id(
