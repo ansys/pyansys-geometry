@@ -172,7 +172,6 @@ class UnsupportedCommands:
         self._unsupported_stub.SetExportId(request)
         self.__id_map = {}
 
-
     @protect_grpc
     @min_backend_version(26, 1, 0)
     def set_multiple_export_ids(

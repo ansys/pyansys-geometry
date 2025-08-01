@@ -243,7 +243,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         modeler.unsupported.set_multiple_export_ids(
             [base_body.faces[1].id, base_body.edges[1].id],
             [PersistentIdType.PRIME_ID, PersistentIdType.PRIME_ID],
-            ["5", "6"]
+            ["5", "6"],
         )
 
         faces2 = modeler.unsupported.get_face_occurrences_from_import_id(
