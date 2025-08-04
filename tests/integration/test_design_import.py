@@ -566,7 +566,6 @@ def test_import_scdocx_with_external_docs(modeler: Modeler):
         assert len(component.bodies) == 1
 
 
-@pytest.mark.skip(reason="Temporary skip for build promotion")
 def test_named_selections_after_file_insert(modeler: Modeler):
     """Test to verify named selections are imported during inserting a file."""
     # Create a new design
