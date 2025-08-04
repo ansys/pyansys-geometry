@@ -28,7 +28,7 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.unsupported_pb2 import (
     ExportIdRequest,
     ImportIdRequest,
-    SetMultipleExportIdsRequest,
+    SetExportIdsRequest,
 )
 from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
 from ansys.geometry.core.connection import GrpcClient
@@ -195,14 +195,15 @@ class UnsupportedCommands:
         --------
         This method is only available starting on Ansys release 26R1.
         """
-        request = SetMultipleExportIdsRequest(
-            monikers=[EntityIdentifier(id=moniker) for moniker in monikers],
-            ids=values,
-            types=[id_type.value for id_type in id_types],
+        request = SetExportIdsRequest(
+            export_data=[
+                ExportIdRequest(moniker=EntityIdentifier(id=moniker), id=value, type=id_type.value)
+                for moniker, id_type, value in zip(monikers, id_types, values)
+            ]
         )
 
         # Call the gRPC service
-        self._unsupported_stub.SetMultipleExportIds(request)
+        self._unsupported_stub.SetExportIds(request)
         self.__id_map = {}
 
     def get_body_occurrences_from_import_id(
