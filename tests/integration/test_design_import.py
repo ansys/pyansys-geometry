@@ -582,3 +582,83 @@ def test_import_scdocx_with_external_docs(modeler: Modeler):
 
     for component in design.components[0].components:
         assert len(component.bodies) == 1
+
+
+@pytest.mark.skip(reason="Temporary skip for build promotion")
+def test_named_selections_after_file_insert(modeler: Modeler):
+    """Test to verify named selections are imported during inserting a file."""
+    # Create a new design
+    design = modeler.create_design("BugFix_1277429")
+
+    # Verify initial named selections count
+    initial_named_selections_count = len(design.named_selections)
+    assert initial_named_selections_count == 0, (
+        f"Expected no named selections initially, but got {initial_named_selections_count}."
+    )
+
+    # Insert the file
+    file_path = Path(FILES_DIR, "reactorWNS.scdocx")
+    design.insert_file(file_path)
+
+    # Verify named selections count after file insertion
+    updated_named_selections_count = len(design.named_selections)
+    assert updated_named_selections_count == 9, (
+        f"Expected 9 named selections after file insertion, but got "
+        f"{updated_named_selections_count}."
+    )
+
+    # Expected named selections
+    expected_named_selections = [
+        "wall_liquid_level",
+        "wall_tank",
+        "wall_probe_1",
+        "wall_probe_2",
+        "wall_shaft",
+        "wall_impeller_1",
+        "wall_shaft_1",
+        "wall_impeller_2",
+        "wall_shaft_2",
+    ]
+
+    # Verify the names of the named selections
+    actual_named_selections = [ns.name for ns in design.named_selections]
+    for ns_name in actual_named_selections:
+        assert ns_name in expected_named_selections, f"Unexpected named selection: {ns_name}"
+
+    # Verify all expected named selections are present
+    assert set(actual_named_selections) == set(expected_named_selections), (
+        f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."
+    )
+
+
+def test_named_selections_after_file_open(modeler: Modeler):
+    """Test to verify named selections are imported during open a file."""
+    # Open File
+    file_path = Path(FILES_DIR, "reactorWNS.scdocx")
+    design = modeler.open_file(file_path)
+
+    # Verify named selections count after file opening
+    named_selection_count = len(design.named_selections)
+    assert named_selection_count == 9, (
+        f"Expected 9 named selections after file opening, but got {named_selection_count}."
+    )
+    # Expected named selections
+    expected_named_selections = [
+        "wall_liquid_level",
+        "wall_tank",
+        "wall_probe_1",
+        "wall_probe_2",
+        "wall_shaft",
+        "wall_impeller_1",
+        "wall_shaft_1",
+        "wall_impeller_2",
+        "wall_shaft_2",
+    ]
+    # Verify the names of the named selections
+    actual_named_selections = [ns.name for ns in design.named_selections]
+    for ns_name in actual_named_selections:
+        assert ns_name in expected_named_selections, f"Unexpected named selection: {ns_name}"
+    # Verify all expected named selections are present
+    assert set(actual_named_selections) == set(expected_named_selections), (
+        f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."
+    )
