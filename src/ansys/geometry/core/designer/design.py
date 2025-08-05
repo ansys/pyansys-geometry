@@ -1000,6 +1000,55 @@ class Design(Component):
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         return "\n".join(lines)
 
+    def _serialize_tracker_command_response(self, response) -> dict:
+        """Serialize a TrackerCommandResponse object into a dictionary.
+
+        Parameters
+        ----------
+        response : TrackerCommandResponse
+            The gRPC TrackerCommandResponse object to serialize.
+
+        Returns
+        -------
+        dict
+            A dictionary representation of the TrackerCommandResponse object.
+        """
+
+        def serialize_body(body):
+            return {
+                "id": body.id,
+                "name": body.name,
+                "can_suppress": body.can_suppress,
+                "transform_to_master": {
+                    "m00": body.transform_to_master.m00,
+                    "m11": body.transform_to_master.m11,
+                    "m22": body.transform_to_master.m22,
+                    "m33": body.transform_to_master.m33,
+                },
+                "master_id": body.master_id,
+                "parent_id": body.parent_id,
+            }
+
+        def serialize_entity_identifier(entity):
+            """Serialize an EntityIdentifier object into a dictionary."""
+            return {
+                "id": entity.id,
+            }
+
+        return {
+            "success": response.success,
+            "created_bodies": [
+                serialize_body(body) for body in getattr(response, "created_bodies", [])
+            ],
+            "modified_bodies": [
+                serialize_body(body) for body in getattr(response, "modified_bodies", [])
+            ],
+            "deleted_bodies": [
+                serialize_entity_identifier(entity)
+                for entity in getattr(response, "deleted_bodies", [])
+            ],
+        }
+
     def __read_existing_design(self) -> None:
         """Read an existing ``Design`` located on the server."""
         #
@@ -1298,7 +1347,12 @@ class Design(Component):
             for body in self.bodies:
                 if body.id == body_id:
                     body._is_alive = False
-                    self.bodies.remove(body)
+                    # self.bodies.remove(body)
+                    for bd in self._master_component.part.bodies:
+                        if bd.id == body_id:
+                            self._master_component.part.bodies.remove(bd)
+                            break
+                    self._clear_cached_bodies()
                     removed = True
                     self._grpc_client.log.info(
                         f"Deleted body (ID: {body_id}) removed from root level."
@@ -1325,10 +1379,12 @@ class Design(Component):
                 )
                 continue
 
-            added = any(self._find_and_add_body(body_info, self.components))
+            added = self._find_and_add_body(body_info, self.components)
             if not added:
                 new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
-                self.bodies.append(new_body)
+                # self.bodies.append(new_body)
+                self._master_component.part.bodies.append(new_body)
+                self._clear_cached_bodies()
                 self._grpc_client.log.debug(
                     f"Added new body '{body_name}' (ID: {body_id}) to root level."
                 )
@@ -1343,14 +1399,17 @@ class Design(Component):
 
     def _find_and_add_body(self, body_info, components):
         for component in components:
-            if component.id == body_info["parent_id"]:
+            parent_id_for_body = component._master_component.part.id
+            if parent_id_for_body == body_info["parent_id"]:
                 new_body = MasterBody(
                     body_info["id"],
                     body_info["name"],
                     self._grpc_client,
                     is_surface=body_info.get("is_surface", False),
                 )
-                component.bodies.append(new_body)
+                # component.bodies.append(new_body)
+                component._master_component.part.bodies.append(new_body)
+                component._clear_cached_bodies()
                 self._grpc_client.log.debug(
                     f"Added new body '{new_body.name}' (ID: {new_body.id}) "
                     f"to component '{component.name}' (ID: {component.id})"
@@ -1380,11 +1439,17 @@ class Design(Component):
 
     def _find_and_remove_body(self, body_info, component):
         for body in component.bodies:
-            if body.id == body_info["id"]:
+            body_info_id = body_info["id"]
+            if body.id == f"{component.id}/{body_info_id}":
                 body._is_alive = False
-                component.bodies.remove(body)
+                # component.bodies.remove(body)
+                for bd in component._master_component.part.bodies:
+                    if bd.id == body_info_id:
+                        component._master_component.part.bodies.remove(bd)
+                        break
+                component._clear_cached_bodies()
                 self._grpc_client.log.debug(
-                    f"Removed body '{body_info['name']}' (ID: {body_info['id']}) from component "
+                    f"Removed body (ID: {body_info['id']}) from component "
                     f"'{component.name}' (ID: {component.id})"
                 )
                 return True

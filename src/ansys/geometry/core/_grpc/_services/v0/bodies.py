@@ -24,7 +24,9 @@
 import grpc
 import pint
 
+from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
@@ -658,14 +660,21 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Call the gRPC service and build the requests accordingly
         resp = 0
+        serialized_tracker_response = {}
         try:
-            resp = self.stub.Boolean(
-                request=BooleanRequest(
-                    body1=kwargs["target"].id,
-                    tool_bodies=[other.id for other in kwargs["other"]],
-                    method=kwargs["method"],
+            request = BooleanRequest(
+                body1=kwargs["target"].id,
+                tool_bodies=[other.id for other in kwargs["other"]],
+                method=kwargs["method"],
+            )
+            if USE_TRACKER_TO_UPDATE_DESIGN:
+                request.keep_other = kwargs["keep_other"]
+            resp = self.stub.Boolean(request=request)
+            if USE_TRACKER_TO_UPDATE_DESIGN:
+                parent_design = get_design_from_body(kwargs["target"])
+                serialized_tracker_response = parent_design._serialize_tracker_command_response(
+                    resp.response
                 )
-            ).empty_result
         except grpc.RpcError as err:  # pragma: no cover
             # TODO: to be deleted - old versions did not have "tool_bodies" in the request
             # This is a temporary fix to support old versions of the server - should be deleted
@@ -692,15 +701,15 @@ class GRPCBodyServiceV0(GRPCBodyService):
                         body2=kwargs["other"][0].id,
                         method=kwargs["method"],
                     )
-                ).empty_result
+                )
             else:
                 raise err
 
-        if resp == 1:
+        if resp.empty_result == 1:
             raise ValueError(
                 f"Boolean operation of type '{kwargs['method']}' failed: {kwargs['err_msg']}.\n"
                 f"Involving bodies:{kwargs['target']}, {kwargs['other']}"
             )
 
         # Return the response - formatted as a dictionary
-        return {}
+        return {"complete_command_response": serialized_tracker_response}

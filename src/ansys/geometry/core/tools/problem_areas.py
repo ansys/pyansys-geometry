@@ -83,58 +83,6 @@ class ProblemArea:
         """Fix problem area."""
         raise NotImplementedError("Fix method is not implemented in the base class.")
 
-    def _serialize_tracker_command_response(self, response) -> dict:
-        """Serialize a TrackerCommandResponse object into a dictionary.
-
-        Parameters
-        ----------
-        response : TrackerCommandResponse
-            The gRPC TrackerCommandResponse object to serialize.
-
-        Returns
-        -------
-        dict
-            A dictionary representation of the TrackerCommandResponse object.
-        """
-
-        def serialize_body(body):
-            """Serialize a Body object into a dictionary."""
-            return {
-                "id": body.id,
-                "name": body.name,
-                "can_suppress": body.can_suppress,
-                "transform_to_master": {
-                    "m00": body.transform_to_master.m00,
-                    "m11": body.transform_to_master.m11,
-                    "m22": body.transform_to_master.m22,
-                    "m33": body.transform_to_master.m33,
-                },
-                "master_id": body.master_id,
-                "parent_id": body.parent_id,
-                "is_surface": body.is_surface,
-            }
-
-        def serialize_entity_identifier(entity):
-            """Serialize an EntityIdentifier object into a dictionary."""
-            return {
-                "id": entity.id,
-            }
-
-        # Safely serialize each field, defaulting to an empty list if the field is missing
-        return {
-            "success": response.success,
-            "created_bodies": [
-                serialize_body(body) for body in getattr(response, "created_bodies", [])
-            ],
-            "modified_bodies": [
-                serialize_body(body) for body in getattr(response, "modified_bodies", [])
-            ],
-            "deleted_bodies": [
-                serialize_entity_identifier(entity)
-                for entity in getattr(response, "deleted_bodies", [])
-            ],
-        }
-
 
 class DuplicateFaceProblemAreas(ProblemArea):
     """Provides duplicate face problem area definition.
@@ -189,7 +137,9 @@ class DuplicateFaceProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
-            serialized_response = self._serialize_tracker_command_response(tracker_response)
+            serialized_response = parent_design._serialize_tracker_command_response(
+                tracker_response
+            )
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -247,7 +197,7 @@ class MissingFaceProblemAreas(ProblemArea):
             FixMissingFacesRequest(missing_face_problem_area_id=self._grpc_id)
         )
 
-        serialized_response = self._serialize_tracker_command_response(
+        serialized_response = parent_design._serialize_tracker_command_response(
             response.result.complete_command_response
         )
 
@@ -319,7 +269,9 @@ class InexactEdgeProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
-            serialized_response = self._serialize_tracker_command_response(tracker_response)
+            serialized_response = parent_design._serialize_tracker_command_response(
+                tracker_response
+            )
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -381,7 +333,9 @@ class ExtraEdgeProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
-            serialized_response = self._serialize_tracker_command_response(tracker_response)
+            serialized_response = parent_design._serialize_tracker_command_response(
+                tracker_response
+            )
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -444,7 +398,9 @@ class ShortEdgeProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_response = response.result.complete_command_response
-            serialized_response = self._serialize_tracker_command_response(tracker_response)
+            serialized_response = parent_design._serialize_tracker_command_response(
+                tracker_response
+            )
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -510,7 +466,9 @@ class SmallFaceProblemAreas(ProblemArea):
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
             tracker_response = response.result.complete_command_response
-            serialized_response = self._serialize_tracker_command_response(tracker_response)
+            serialized_response = parent_design._serialize_tracker_command_response(
+                tracker_response
+            )
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -572,7 +530,7 @@ class SplitEdgeProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
-            serialized_response = self._serialize_tracker_command_response(tracker_respone)
+            serialized_response = parent_design._serialize_tracker_command_response(tracker_respone)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -635,7 +593,7 @@ class StitchFaceProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
-            serialized_response = self._serialize_tracker_command_response(tracker_respone)
+            serialized_response = parent_design._serialize_tracker_command_response(tracker_respone)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -692,7 +650,7 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
-            serialized_response = self._serialize_tracker_command_response(tracker_respone)
+            serialized_response = parent_design._serialize_tracker_command_response(tracker_respone)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(

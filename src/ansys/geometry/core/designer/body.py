@@ -43,6 +43,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ShellRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
@@ -1948,7 +1949,9 @@ class Body(IBody):
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
             tracker_response = response.result.complete_command_response
-            serialized_response = self._serialize_tracker_command_response(tracker_response)
+            serialized_response = parent_design._serialize_tracker_command_response(
+                tracker_response
+            )
             parent_design._update_from_tracker(serialized_response)
 
     @reset_tessellation_cache
@@ -1962,20 +1965,26 @@ class Body(IBody):
         err_msg: str,
     ) -> None:
         grpc_other = other if isinstance(other, Iterable) else [other]
-        if keep_other:
-            # Make a copy of the other body to keep it...
-            # stored temporarily in the parent component - since it will be deleted
-            grpc_other = [b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other]
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
+            if keep_other:
+                # Make a copy of the other body to keep it...
+                # stored temporarily in the parent component - since it will be deleted
+                grpc_other = [
+                    b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other
+                ]
 
-        self._template._grpc_client.services.bodies.boolean(
-            target=self,
-            other=grpc_other,
-            method=method,
-            err_msg=err_msg,
+        response = self._template._grpc_client.services.bodies.boolean(
+            target=self, other=grpc_other, method=method, err_msg=err_msg, keep_other=keep_other
         )
 
-        for b in grpc_other:
-            b.parent_component.delete_body(b)
+        if not USE_TRACKER_TO_UPDATE_DESIGN:
+            for b in grpc_other:
+                b.parent_component.delete_body(b)
+        else:
+            # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
+            # and update the parent design with the serialized response.
+            parent_design = get_design_from_body(self)
+            parent_design._update_from_tracker(response["complete_command_response"])
 
     def __repr__(self) -> str:
         """Represent the ``Body`` as a string."""

@@ -344,7 +344,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndSimplify(request)
 
-        serialized_tracker_response = self._serialize_tracker_command_response(
+        serialized_tracker_response = kwargs["parent_design"]._serialize_tracker_command_response(
             response.complete_command_response
         )
 
@@ -383,7 +383,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixStitchFaces(request)
 
-        serialized_tracker_response = self._serialize_tracker_command_response(
+        serialized_tracker_response = kwargs["parent_design"]._serialize_tracker_command_response(
             response.complete_command_response
         )
 
@@ -467,7 +467,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixShortEdges(request)
 
-        serialized_tracker_response = self._serialize_tracker_command_response(
+        serialized_tracker_response = kwargs["parent_design"]._serialize_tracker_command_response(
             response.complete_command_response
         )
 
@@ -494,7 +494,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixExtraEdges(request)
 
-        serialized_tracker_response = self._serialize_tracker_command_response(
+        serialized_tracker_response = kwargs["parent_design"]._serialize_tracker_command_response(
             response.complete_command_response
         )
 
@@ -525,7 +525,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixSplitEdges(request)
 
-        serialized_tracker_response = self._serialize_tracker_command_response(
+        serialized_tracker_response = kwargs["parent_design"]._serialize_tracker_command_response(
             response.complete_command_response
         )
 
