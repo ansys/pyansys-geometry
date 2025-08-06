@@ -53,6 +53,15 @@ class PersistentIdType(Enum):
     PRIME_ID = 700
 
 
+class ExportIdData:
+    """Data for exporting persistent ids."""
+
+    def __init__(self, moniker: str, id_type: PersistentIdType, value: str):
+        self.moniker = moniker
+        self.id_type = id_type
+        self.value = value
+
+
 class UnsupportedCommands:
     """Provides unsupported commands for PyAnsys Geometry.
 
@@ -176,20 +185,14 @@ class UnsupportedCommands:
     @min_backend_version(26, 1, 0)
     def set_multiple_export_ids(
         self,
-        monikers: list[str],
-        id_types: list[PersistentIdType],
-        values: list[str],
+        export_data: list[ExportIdData],
     ) -> None:
         """Set multiple persistent ids for the monikers.
 
         Parameters
         ----------
-        monikers : list[str]
-            List of monikers to set the ids for.
-        id_types : list[PersistentIdType]
-            List of types of ids.
-        values : list[str]
-            List of ids to set.
+        export_data : list[ExportIdData]
+            List of export data containing monikers, id types, and values.
 
         Warnings
         --------
@@ -197,8 +200,12 @@ class UnsupportedCommands:
         """
         request = SetExportIdsRequest(
             export_data=[
-                ExportIdRequest(moniker=EntityIdentifier(id=moniker), id=value, type=id_type.value)
-                for moniker, id_type, value in zip(monikers, id_types, values)
+                ExportIdRequest(
+                    moniker=EntityIdentifier(id=data.moniker), 
+                    id=data.value,
+                    type=data.id_type.value
+                )
+                for data in export_data
             ]
         )
 

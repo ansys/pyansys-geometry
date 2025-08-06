@@ -34,7 +34,7 @@ from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
-from ansys.geometry.core.tools.unsupported import PersistentIdType
+from ansys.geometry.core.tools.unsupported import ExportIdData, PersistentIdType
 
 from .conftest import FILES_DIR, IMPORT_FILES_DIR
 
@@ -240,11 +240,11 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         assert base_body.edges[0].id in [e.id for e in edges]
 
         # Set multiple export ids at once and verify
-        modeler.unsupported.set_multiple_export_ids(
-            [base_body.faces[1].id, base_body.edges[1].id],
-            [PersistentIdType.PRIME_ID, PersistentIdType.PRIME_ID],
-            ["5", "6"],
-        )
+        export_data = [
+            ExportIdData(moniker=base_body.faces[1].id, id_type=PersistentIdType.PRIME_ID, value="5"),
+            ExportIdData(moniker=base_body.edges[1].id, id_type=PersistentIdType.PRIME_ID, value="6"),
+        ]
+        modeler.unsupported.set_multiple_export_ids(export_data)
 
         faces2 = modeler.unsupported.get_face_occurrences_from_import_id(
             "5", PersistentIdType.PRIME_ID
