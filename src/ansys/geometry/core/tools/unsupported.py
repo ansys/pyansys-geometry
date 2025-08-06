@@ -202,9 +202,9 @@ class UnsupportedCommands:
         request = SetExportIdsRequest(
             export_data=[
                 ExportIdRequest(
-                    moniker=EntityIdentifier(id=data.moniker), 
+                    moniker=EntityIdentifier(id=data.moniker),
                     id=data.value,
-                    type=data.id_type.value
+                    type=data.id_type.value,
                 )
                 for data in export_data
             ]
