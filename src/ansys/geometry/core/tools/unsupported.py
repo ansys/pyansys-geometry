@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Unsupported functions for the PyAnsys Geometry library."""
 
+from dataclasses import dataclass
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
@@ -53,13 +54,13 @@ class PersistentIdType(Enum):
     PRIME_ID = 700
 
 
+@dataclass
 class ExportIdData:
     """Data for exporting persistent ids."""
-
-    def __init__(self, moniker: str, id_type: PersistentIdType, value: str):
-        self.moniker = moniker
-        self.id_type = id_type
-        self.value = value
+    
+    moniker: str
+    id_type: PersistentIdType
+    value: str
 
 
 class UnsupportedCommands:
