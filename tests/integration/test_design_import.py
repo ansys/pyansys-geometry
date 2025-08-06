@@ -241,8 +241,12 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
         # Set multiple export ids at once and verify
         export_data = [
-            ExportIdData(moniker=base_body.faces[1].id, id_type=PersistentIdType.PRIME_ID, value="5"),
-            ExportIdData(moniker=base_body.edges[1].id, id_type=PersistentIdType.PRIME_ID, value="6"),
+            ExportIdData(
+                moniker=base_body.faces[1].id, id_type=PersistentIdType.PRIME_ID, value="5"
+            ),
+            ExportIdData(
+                moniker=base_body.edges[1].id, id_type=PersistentIdType.PRIME_ID, value="6"
+            ),
         ]
         modeler.unsupported.set_multiple_export_ids(export_data)
 
