@@ -57,7 +57,7 @@ class PersistentIdType(Enum):
 @dataclass
 class ExportIdData:
     """Data for exporting persistent ids."""
-    
+
     moniker: str
     id_type: PersistentIdType
     value: str
