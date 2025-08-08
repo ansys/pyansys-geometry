@@ -1,0 +1,1786 @@
+
+
+
+
+
+
+:class:`Component`
+==================
+
+
+.. py:class:: ansys.geometry.core.designer.component.Component(name: str, parent_component: Union[Component, None], grpc_client: ansys.geometry.core.connection.client.GrpcClient, template: Optional[Component] = None, instance_name: Optional[str] = None, preexisting_id: str | None = None, master_component: ansys.geometry.core.designer.part.MasterComponent | None = None, read_existing_comp: bool = False)
+
+   
+   Provides for creating and managing a component.
+
+   This class synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new component.
+
+       **parent_component** : :obj:`Component` or :data:`python:None`
+           Parent component to place the new component under within the design assembly. The
+           default is ``None`` only when dealing with a ``Design`` object.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting Geometry service instance for design modeling.
+
+       **template** : :obj:`Component`, default: :data:`python:None`
+           Template to create this component from. This creates an
+           instance component that shares a master with the template component.
+
+       **instance_name: str, default: None**
+           User defined optional name for the component instance.
+
+       **preexisting_id** : :class:`python:str`, default: :data:`python:None`
+           ID of a component pre-existing on the server side to use to create the component
+           on the client-side data model. If an ID is specified, a new component is not
+           created on the server.
+
+       **master_component** : :obj:`MasterComponent`, default: :data:`python:None`
+           Master component to use to create a nested component instance instead
+           of creating a new conponent.
+
+       **read_existing_comp** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether an existing component on the service should be read. This
+           parameter is only valid when connecting to an existing service session.
+           Otherwise, avoid using this optional parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: Component
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_name`
+            - Set the name of the component.
+          * - :py:attr:`~get_all_bodies`
+            - Get all bodies in the component hierarchy.
+          * - :py:attr:`~get_world_transform`
+            - Get the full transformation matrix of the component in world space.
+          * - :py:attr:`~modify_placement`
+            - Apply a translation and/or rotation to the placement matrix.
+          * - :py:attr:`~reset_placement`
+            - Reset a component's placement matrix to an identity matrix.
+          * - :py:attr:`~add_component`
+            - Add a new component under this component within the design assembly.
+          * - :py:attr:`~set_shared_topology`
+            - Set the shared topology to apply to the component.
+          * - :py:attr:`~extrude_sketch`
+            - Create a solid body by extruding the sketch profile a distance.
+          * - :py:attr:`~sweep_sketch`
+            - Create a body by sweeping a planar profile along a path.
+          * - :py:attr:`~sweep_chain`
+            - Create a body by sweeping a chain of curves along a path.
+          * - :py:attr:`~revolve_sketch`
+            - Create a solid body by revolving a sketch profile around an axis.
+          * - :py:attr:`~extrude_face`
+            - Extrude the face profile by a given distance to create a solid body.
+          * - :py:attr:`~create_sphere`
+            - Create a sphere body defined by the center point and the radius.
+          * - :py:attr:`~create_body_from_loft_profile`
+            - Create a lofted body from a collection of trimmed curves.
+          * - :py:attr:`~create_surface`
+            - Create a surface body with a sketch profile.
+          * - :py:attr:`~create_surface_from_face`
+            - Create a surface body based on a face.
+          * - :py:attr:`~create_body_from_surface`
+            - Create a surface body from a trimmed surface.
+          * - :py:attr:`~create_surface_from_trimmed_curves`
+            - Create a surface body from a list of trimmed curves all lying on the same plane.
+          * - :py:attr:`~create_coordinate_system`
+            - Create a coordinate system.
+          * - :py:attr:`~translate_bodies`
+            - Translate the bodies in a specified direction by a distance.
+          * - :py:attr:`~create_beams`
+            - Create beams under the component.
+          * - :py:attr:`~create_beam`
+            - Create a beam under the component.
+          * - :py:attr:`~delete_component`
+            - Delete a component (itself or its children).
+          * - :py:attr:`~delete_body`
+            - Delete a body belonging to this component (or its children).
+          * - :py:attr:`~add_design_point`
+            - Create a single design point.
+          * - :py:attr:`~add_design_points`
+            - Create a list of design points.
+          * - :py:attr:`~delete_beam`
+            - Delete an existing beam belonging to this component's scope.
+          * - :py:attr:`~search_component`
+            - Search nested components recursively for a component.
+          * - :py:attr:`~search_body`
+            - Search bodies in the component's scope.
+          * - :py:attr:`~search_beam`
+            - Search beams in the component's scope.
+          * - :py:attr:`~tessellate`
+            - Tessellate the component.
+          * - :py:attr:`~plot`
+            - Plot the component.
+          * - :py:attr:`~tree_print`
+            - Print the component in tree format.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the component.
+          * - :py:attr:`~name`
+            - Name of the component.
+          * - :py:attr:`~instance_name`
+            - Name of the component instance.
+          * - :py:attr:`~components`
+            - List of ``Component`` objects inside of the component.
+          * - :py:attr:`~bodies`
+            - List of ``Body`` objects inside of the component.
+          * - :py:attr:`~beams`
+            - List of ``Beam`` objects inside of the component.
+          * - :py:attr:`~design_points`
+            - List of ``DesignPoint`` objects inside of the component.
+          * - :py:attr:`~coordinate_systems`
+            - List of ``CoordinateSystem`` objects inside of the component.
+          * - :py:attr:`~parent_component`
+            - Parent of the component.
+          * - :py:attr:`~is_alive`
+            - Whether the component is still alive on the server side.
+          * - :py:attr:`~shared_topology`
+            - Shared topology type of the component (if any).
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the ``Component`` as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.component import Component
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   ID of the component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Name of the component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: instance_name
+   :type: str
+
+
+   
+   Name of the component instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: components
+   :type: list[Component]
+
+
+   
+   List of ``Component`` objects inside of the component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: bodies
+   :type: list[ansys.geometry.core.designer.body.Body]
+
+
+   
+   List of ``Body`` objects inside of the component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: beams
+   :type: list[ansys.geometry.core.designer.beam.Beam]
+
+
+   
+   List of ``Beam`` objects inside of the component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: design_points
+   :type: list[ansys.geometry.core.designer.designpoint.DesignPoint]
+
+
+   
+   List of ``DesignPoint`` objects inside of the component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: coordinate_systems
+   :type: list[ansys.geometry.core.designer.coordinate_system.CoordinateSystem]
+
+
+   
+   List of ``CoordinateSystem`` objects inside of the component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parent_component
+   :type: Component
+
+
+   
+   Parent of the component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_alive
+   :type: bool
+
+
+   
+   Whether the component is still alive on the server side.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: shared_topology
+   :type: SharedTopologyType | None
+
+
+   
+   Shared topology type of the component (if any).
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   If no shared topology has been set, ``None`` is returned.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_name(name: str) -> None
+
+   
+   Set the name of the component.
+
+
+
+
+
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_bodies() -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Get all bodies in the component hierarchy.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           List of all bodies in the component hierarchy.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_world_transform() -> ansys.geometry.core.math.matrix.Matrix44
+
+   
+   Get the full transformation matrix of the component in world space.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Matrix44`
+           4x4 transformation matrix of the component in world space.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: modify_placement(translation: ansys.geometry.core.math.vector.Vector3D | None = None, rotation_origin: ansys.geometry.core.math.point.Point3D | None = None, rotation_direction: ansys.geometry.core.math.vector.UnitVector3D | None = None, rotation_angle: pint.Quantity | ansys.geometry.core.misc.measurements.Angle | ansys.geometry.core.typing.Real = 0)
+
+   
+   Apply a translation and/or rotation to the placement matrix.
+
+
+   :Parameters:
+
+       **translation** : :obj:`Vector3D`, default: :data:`python:None`
+           Vector that defines the desired translation to the component.
+
+       **rotation_origin** : :obj:`Point3D`, default: :data:`python:None`
+           Origin that defines the axis to rotate the component about.
+
+       **rotation_direction** : :obj:`UnitVector3D`, default: :data:`python:None`
+           Direction of the axis to rotate the component about.
+
+       **rotation_angle** : :obj:`~pint.Quantity` | :obj:`Angle` | :obj:`Real`, default: 0
+           Angle to rotate the component around the axis.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   To reset a component's placement to an identity matrix, see
+   :func:`reset_placement()` or call :func:`modify_placement()` with no arguments.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: reset_placement()
+
+   
+   Reset a component's placement matrix to an identity matrix.
+
+   See :func:`modify_placement()`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_component(name: str, template: Optional[Component] = None, instance_name: str = None) -> Component
+
+   
+   Add a new component under this component within the design assembly.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new component.
+
+       **template** : :obj:`Component`, default: :data:`python:None`
+           Template to create this component from. This creates an
+           instance component that shares a master with the template component.
+
+
+
+   :Returns:
+
+       :obj:`Component`
+           New component with no children in the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_shared_topology(share_type: SharedTopologyType) -> None
+
+   
+   Set the shared topology to apply to the component.
+
+
+   :Parameters:
+
+       **share_type** : :obj:`SharedTopologyType`
+           Shared topology type to assign to the component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extrude_sketch(name: str, sketch: ansys.geometry.core.sketch.sketch.Sketch, distance: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, direction: ExtrusionDirection | str = ExtrusionDirection.POSITIVE, cut: bool = False) -> ansys.geometry.core.designer.body.Body | None
+
+   
+   Create a solid body by extruding the sketch profile a distance.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new solid body.
+
+       **sketch** : :obj:`Sketch`
+           Two-dimensional sketch source for the extrusion.
+
+       **distance** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Distance to extrude the solid body.
+
+       **direction** : :obj:`ExtrusionDirection` | :class:`python:str`, default: "+"
+           Direction for extruding the solid body.
+           The default is to extrude in the positive normal direction of the sketch.
+           Options are "+" and "-" as a string, or the enum values.
+
+       **cut** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to cut the extrusion from the existing component.
+           By default, the extrusion is added to the existing component.
+
+
+
+   :Returns:
+
+       :obj:`Body`
+           Extruded body from the given sketch.
+
+       :data:`python:None`
+           If the cut parameter is ``True``, the function returns ``None``.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The newly created body is placed under this component within the design assembly.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: sweep_sketch(name: str, sketch: ansys.geometry.core.sketch.sketch.Sketch, path: list[ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve]) -> ansys.geometry.core.designer.body.Body
+
+   
+   Create a body by sweeping a planar profile along a path.
+
+   The newly created body is placed under this component within the design assembly.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new solid body.
+
+       **sketch** : :obj:`Sketch`
+           Two-dimensional sketch source for the extrusion.
+
+       **path** : :class:`python:list`\[:obj:`TrimmedCurve`]
+           The path to sweep the profile along.
+
+
+
+   :Returns:
+
+       :obj:`Body`
+           Created body from the given sketch.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: sweep_chain(name: str, path: list[ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve], chain: list[ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve]) -> ansys.geometry.core.designer.body.Body
+
+   
+   Create a body by sweeping a chain of curves along a path.
+
+   The newly created body is placed under this component within the design assembly.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new solid body.
+
+       **path** : :class:`python:list`\[:obj:`TrimmedCurve`]
+           The path to sweep the chain along.
+
+       **chain** : :class:`python:list`\[:obj:`TrimmedCurve`]
+           A chain of trimmed curves.
+
+
+
+   :Returns:
+
+       :obj:`Body`
+           Created body from the given sketch.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: revolve_sketch(name: str, sketch: ansys.geometry.core.sketch.sketch.Sketch, axis: ansys.geometry.core.math.vector.Vector3D, angle: pint.Quantity | ansys.geometry.core.misc.measurements.Angle | ansys.geometry.core.typing.Real, rotation_origin: ansys.geometry.core.math.point.Point3D) -> ansys.geometry.core.designer.body.Body
+
+   
+   Create a solid body by revolving a sketch profile around an axis.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new solid body.
+
+       **sketch** : :obj:`Sketch`
+           Two-dimensional sketch source for the revolve.
+
+       **axis** : :obj:`Vector3D`
+           Axis of rotation for the revolve.
+
+       **angle** : :obj:`~pint.Quantity` | :obj:`Angle` | :obj:`Real`
+           Angle to revolve the solid body around the axis. The angle can be positive or negative.
+
+       **rotation_origin** : :obj:`Point3D`
+           Origin of the axis of rotation.
+
+
+
+   :Returns:
+
+       :obj:`Body`
+           Revolved body from the given sketch.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extrude_face(name: str, face: ansys.geometry.core.designer.face.Face, distance: pint.Quantity | ansys.geometry.core.misc.measurements.Distance, direction: ExtrusionDirection | str = ExtrusionDirection.POSITIVE) -> ansys.geometry.core.designer.body.Body
+
+   
+   Extrude the face profile by a given distance to create a solid body.
+
+   There are no modifications against the body containing the source face.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new solid body.
+
+       **face** : :obj:`Face`
+           Target face to use as the source for the new surface.
+
+       **distance** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Distance to extrude the solid body.
+
+       **direction** : :obj:`ExtrusionDirection` | :class:`python:str`, default: "+"
+           Direction for extruding the solid body's face.
+           The default is to extrude in the positive normal direction of the face.
+           Options are "+" and "-" as a string, or the enum values.
+
+
+
+   :Returns:
+
+       :obj:`Body`
+           Extruded solid body.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The source face can be anywhere within the design component hierarchy.
+   Therefore, there is no validation requiring that the face is placed under the
+   target component where the body is to be created.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_sphere(name: str, center: ansys.geometry.core.math.point.Point3D, radius: ansys.geometry.core.misc.measurements.Distance) -> ansys.geometry.core.designer.body.Body
+
+   
+   Create a sphere body defined by the center point and the radius.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           Body name.
+
+       **center** : :obj:`Point3D`
+           Center point of the sphere.
+
+       **radius** : :obj:`Distance`
+           Radius of the sphere.
+
+
+
+   :Returns:
+
+       :obj:`Body`
+           Sphere body object.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_body_from_loft_profile(name: str, profiles: list[list[ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve]], periodic: bool = False, ruled: bool = False) -> ansys.geometry.core.designer.body.Body
+
+   
+   Create a lofted body from a collection of trimmed curves.
+
+   Surfaces produced have a U parameter in the direction of the profile curves,
+   and a V parameter in the direction of lofting.
+   Profiles can have different numbers of segments. A minimum twist solution is
+   produced.
+   Profiles should be all closed or all open. Closed profiles cannot contain inner
+   loops. If closed profiles are supplied, a closed (solid) body is produced, if
+   possible. Otherwise, an open (sheet) body is produced.
+   The periodic argument applies when the profiles are closed. It is ignored if
+   the profiles are open.
+
+   If ``periodic=True``, at least three profiles must be supplied. The loft continues
+   from the last profile back to the first profile to produce surfaces that are
+   periodic in V.
+
+   If ``periodic=False``, at least two profiles must be supplied. If the first
+   and last profiles are planar, end capping faces are created. Otherwise, an open
+   (sheet) body is produced.
+   If ``ruled=True``, separate ruled surfaces are produced between each pair of profiles.
+   If ``periodic=True``, the loft continues from the last profile back to the first
+   profile, but the surfaces are not periodic.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           Name of the lofted body.
+
+       **profiles** : :class:`python:list`\[:class:`python:list`\[:obj:`TrimmedCurve`]]
+           Collection of lists of trimmed curves (profiles) defining the lofted body's shape.
+
+       **periodic** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether the lofted body should have periodic continuity.
+
+       **ruled** : :ref:`bool <python:bltin-boolean-values>`
+           Whether the lofted body should be ruled.
+
+
+
+   :Returns:
+
+       :obj:`Body`
+           Created lofted body object.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_surface(name: str, sketch: ansys.geometry.core.sketch.sketch.Sketch) -> ansys.geometry.core.designer.body.Body
+
+   
+   Create a surface body with a sketch profile.
+
+   The newly created body is placed under this component within the design assembly.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new surface body.
+
+       **sketch** : :obj:`Sketch`
+           Two-dimensional sketch source for the surface definition.
+
+
+
+   :Returns:
+
+       :obj:`Body`
+           Body (as a planar surface) from the given sketch.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_surface_from_face(name: str, face: ansys.geometry.core.designer.face.Face) -> ansys.geometry.core.designer.body.Body
+
+   
+   Create a surface body based on a face.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new surface body.
+
+       **face** : :obj:`Face`
+           Target face to use as the source for the new surface.
+
+
+
+   :Returns:
+
+       :obj:`Body`
+           Surface body.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The source face can be anywhere within the design component hierarchy.
+   Therefore, there is no validation requiring that the face is placed under the
+   target component where the body is to be created.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_body_from_surface(name: str, trimmed_surface: ansys.geometry.core.shapes.surfaces.TrimmedSurface) -> ansys.geometry.core.designer.body.Body
+
+   
+   Create a surface body from a trimmed surface.
+
+   It is possible to create a closed solid body (as opposed to an open surface body) with a
+   Sphere or Torus if they are untrimmed. This can be validated with `body.is_surface`.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new surface body.
+
+       **trimmed_surface** : :obj:`TrimmedSurface`
+           Geometry for the new surface body.
+
+
+
+   :Returns:
+
+       :obj:`Body`
+           Surface body.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_surface_from_trimmed_curves(name: str, trimmed_curves: list[ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve]) -> ansys.geometry.core.designer.body.Body
+
+   
+   Create a surface body from a list of trimmed curves all lying on the same plane.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new surface body.
+
+       **trimmed_curves** : :class:`python:list`\[:obj:`TrimmedCurve`]
+           Curves to define the plane and body.
+
+
+
+   :Returns:
+
+       :obj:`Body`
+           Surface body.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_coordinate_system(name: str, frame: ansys.geometry.core.math.frame.Frame) -> ansys.geometry.core.designer.coordinate_system.CoordinateSystem
+
+   
+   Create a coordinate system.
+
+   The newly created coordinate system is place under this component
+   within the design assembly.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new coordinate system.
+
+       **frame** : :obj:`Frame`
+           Frame defining the coordinate system bounds.
+
+
+
+   :Returns:
+
+       :obj:`CoordinateSystem`
+           ..
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: translate_bodies(bodies: list[ansys.geometry.core.designer.body.Body], direction: ansys.geometry.core.math.vector.UnitVector3D, distance: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real) -> None
+
+   
+   Translate the bodies in a specified direction by a distance.
+
+
+   :Parameters:
+
+       **bodies: list[Body]**
+           list of bodies to translate by the same distance.
+
+       **direction: UnitVector3D**
+           Direction of the translation.
+
+       **distance: ~pint.Quantity | Distance | Real**
+           Magnitude of the translation.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   If the body does not belong to this component (or its children), it
+   is not translated.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_beams(segments: list[tuple[ansys.geometry.core.math.point.Point3D, ansys.geometry.core.math.point.Point3D]], profile: ansys.geometry.core.designer.beam.BeamProfile) -> list[ansys.geometry.core.designer.beam.Beam]
+
+   
+   Create beams under the component.
+
+
+   :Parameters:
+
+       **segments** : :class:`python:list`\[:class:`python:tuple`\[:obj:`Point3D`, :obj:`Point3D`]]
+           List of start and end pairs, each specifying a single line segment.
+
+       **profile** : :obj:`BeamProfile`
+           Beam profile to use to create the beams.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Beam`]
+           A list of the created Beams.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The newly created beams synchronize to a design within a supporting
+   Geometry service instance.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_beam(start: ansys.geometry.core.math.point.Point3D, end: ansys.geometry.core.math.point.Point3D, profile: ansys.geometry.core.designer.beam.BeamProfile) -> ansys.geometry.core.designer.beam.Beam
+
+   
+   Create a beam under the component.
+
+   The newly created beam synchronizes to a design within a supporting
+   Geometry service instance.
+
+   :Parameters:
+
+       **start** : :obj:`Point3D`
+           Starting point of the beam line segment.
+
+       **end** : :obj:`Point3D`
+           Ending point of the beam line segment.
+
+       **profile** : :obj:`BeamProfile`
+           Beam profile to use to create the beam.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete_component(component: Union[Component, str]) -> None
+
+   
+   Delete a component (itself or its children).
+
+
+   :Parameters:
+
+       **component** : :obj:`Component` | :class:`python:str`
+           ID of the component or instance to delete.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   If the component is not this component (or its children), it
+   is not deleted.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete_body(body: ansys.geometry.core.designer.body.Body | str) -> None
+
+   
+   Delete a body belonging to this component (or its children).
+
+
+   :Parameters:
+
+       **body** : :obj:`Body` | :class:`python:str`
+           ID of the body or instance to delete.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   If the body does not belong to this component (or its children), it
+   is not deleted.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_design_point(name: str, point: ansys.geometry.core.math.point.Point3D) -> ansys.geometry.core.designer.designpoint.DesignPoint
+
+   
+   Create a single design point.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the design points.
+
+       **points** : :obj:`Point3D`
+           3D point constituting the design point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_design_points(name: str, points: list[ansys.geometry.core.math.point.Point3D]) -> list[ansys.geometry.core.designer.designpoint.DesignPoint]
+
+   
+   Create a list of design points.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the list of design points.
+
+       **points** : :class:`python:list`\[:obj:`Point3D`]
+           list of the 3D points that constitute the list of design points.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete_beam(beam: ansys.geometry.core.designer.beam.Beam | str) -> None
+
+   
+   Delete an existing beam belonging to this component's scope.
+
+
+   :Parameters:
+
+       **beam** : :obj:`Beam` | :class:`python:str`
+           ID of the beam or instance to delete.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   If the beam belongs to this component's children, it is deleted.
+   If the beam does not belong to this component (or its children), it
+   is not deleted.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: search_component(id: str) -> Union[Component, None]
+
+   
+   Search nested components recursively for a component.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           ID of the component to search for.
+
+
+
+   :Returns:
+
+       :obj:`Component`
+           Component with the requested ID. If this ID is not found, ``None`` is returned.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: search_body(id: str) -> ansys.geometry.core.designer.body.Body | None
+
+   
+   Search bodies in the component's scope.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           ID of the body to search for.
+
+
+
+   :Returns:
+
+       :obj:`Body` | :data:`python:None`
+           Body with the requested ID. If the ID is not found, ``None`` is returned.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method searches for bodies in the component and nested components
+   recursively.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: search_beam(id: str) -> ansys.geometry.core.designer.beam.Beam | None
+
+   
+   Search beams in the component's scope.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           ID of the beam to search for.
+
+
+
+   :Returns:
+
+       :obj:`Beam` | :data:`python:None`
+           Beam with the requested ID. If the ID is not found, ``None`` is returned.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method searches for beams in the component and nested components
+   recursively.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: tessellate(tess_options: ansys.geometry.core.misc.options.TessellationOptions | None = None, _recursive_call: bool = False) -> Union[pyvista.PolyData, list[pyvista.MultiBlock]]
+
+   
+   Tessellate the component.
+
+
+   :Parameters:
+
+       **tess_options** : :obj:`TessellationOptions` | :data:`python:None`, default: :data:`python:None`
+           A set of options to determine the tessellation quality.
+
+       **_recursive_call: bool, default: False**
+           Internal flag to indicate if this method is being called recursively.
+           Not to be used by the user.
+
+
+
+   :Returns:
+
+       :obj:`~pyvista.PolyData`, :class:`python:list`\[:obj:`~pyvista.MultiBlock`]
+           Tessellated component as a single PolyData object.
+           If the method is called recursively, a list of MultiBlock objects is returned.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: plot(merge_component: bool = True, merge_bodies: bool = True, screenshot: str | None = None, use_trame: bool | None = None, use_service_colors: bool | None = None, allow_picking: bool | None = None, **plotting_options: dict | None) -> None | list[Any]
+
+   
+   Plot the component.
+
+
+   :Parameters:
+
+       **merge_component** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:True`
+           Whether to merge the component into a single dataset. By default, ``True``.
+           Performance improved. When ``True``, all the faces of the component are effectively
+           merged into a single dataset. If ``False``, the individual bodies are kept separate.
+
+       **merge_bodies** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:True`
+           Whether to merge each body into a single dataset. By default, ``True``.
+           Performance improved. When ``True``, all the faces of each individual body are
+           effectively merged into a single dataset. If ``False``, the individual faces are kept
+           separate.
+
+       **screenshot** : :class:`python:str`, default: :data:`python:None`
+           Path for saving a screenshot of the image being represented.
+
+       **use_trame** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:None`
+           Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
+           The default is ``None``, in which case the
+           ``ansys.tools.visualization_interface.USE_TRAME`` global setting is used.
+
+       **use_service_colors** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:None`
+           Whether to use the colors assigned to the body in the service. The default
+           is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
+           global setting is used.
+
+       **allow_picking** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:None`
+           Whether to enable picking. The default is ``None``, in which case the
+           picker is not enabled.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments for plotting. For allowable keyword arguments, see the
+
+
+
+   :Returns:
+
+       :data:`python:None` | :class:`python:list`\[:obj:`Any`]
+           If ``allow_picking=True``, a list of picked objects is returned. Otherwise, ``None``.
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   Create 25 small cylinders in a grid-like pattern on the XY plane and
+   plot them. Make the cylinders look metallic by enabling
+   physically-based rendering with ``pbr=True``.
+
+   >>> from ansys.geometry.core.misc.units import UNITS as u
+   >>> from ansys.geometry.core.sketch import Sketch
+   >>> from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
+   >>> from ansys.geometry.core import Modeler
+   >>> import numpy as np
+   >>> modeler = Modeler()
+   >>> origin = Point3D([0, 0, 0])
+   >>> plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+   >>> design = modeler.create_design("my-design")
+   >>> mycomp = design.add_component("my-comp")
+   >>> n = 5
+   >>> xx, yy = np.meshgrid(
+   ...     np.linspace(-4, 4, n),
+   ...     np.linspace(-4, 4, n),
+   ... )
+   >>> for x, y in zip(xx.ravel(), yy.ravel()):
+   ...     sketch = Sketch(plane)
+   ...     sketch.circle(Point2D([x, y]), 0.2 * u.m)
+   ...     mycomp.extrude_sketch(f"body-{x}-{y}", sketch, 1 * u.m)
+   >>> mycomp
+   ansys.geometry.core.designer.Component 0x2203cc9ec50
+       Name                 : my-comp
+       Exists               : True
+       Parent component     : my-design
+       N Bodies             : 25
+       N Components         : 0
+       N Coordinate Systems : 0
+   >>> mycomp.plot(pbr=True, metallic=1.0)
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the ``Component`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: tree_print(consider_comps: bool = True, consider_bodies: bool = True, consider_beams: bool = True, depth: int | None = None, indent: int = 4, sort_keys: bool = False, return_list: bool = False, skip_loc_header: bool = False) -> None | list[str]
+
+   
+   Print the component in tree format.
+
+
+   :Parameters:
+
+       **consider_comps** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:True`
+           Whether to print the nested components.
+
+       **consider_bodies** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:True`
+           Whether to print the bodies.
+
+       **consider_beams** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:True`
+           Whether to print the beams.
+
+       **depth** : :class:`python:int` | :data:`python:None`, default: :data:`python:None`
+           Depth level to print. If None, it prints all levels.
+
+       **indent** : :class:`python:int`, default: 4
+           Indentation level. Minimum is 2 - if less than 2, it is set to 2
+           by default.
+
+       **sort_keys** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to sort the keys alphabetically.
+
+       **return_list** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to return a list of strings or print out
+           the tree structure.
+
+       **skip_loc_header** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to skip the location header. Mostly for internal use.
+
+
+
+   :Returns:
+
+       :data:`python:None` | :class:`python:list`\[:class:`python:str`]
+           Tree-style printed component or list of strings representing the component tree.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

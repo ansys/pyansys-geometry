@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`OffsetMode`
+===================
+
+
+.. py:class:: ansys.geometry.core.designer.geometry_commands.OffsetMode(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for offset modes during extrusions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: OffsetMode
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~IGNORE_RELATIONSHIPS`
+            - 
+          * - :py:attr:`~MOVE_FACES_TOGETHER`
+            - 
+          * - :py:attr:`~MOVE_FACES_APART`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.geometry_commands import OffsetMode
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: IGNORE_RELATIONSHIPS
+   :value: 0
+
+
+.. py:attribute:: MOVE_FACES_TOGETHER
+   :value: 1
+
+
+.. py:attribute:: MOVE_FACES_APART
+   :value: 2
+
+
+
+
+
+

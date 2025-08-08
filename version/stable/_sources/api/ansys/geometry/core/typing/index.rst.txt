@@ -1,0 +1,129 @@
+
+
+
+
+
+
+The ``typing.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.typing
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: typing
+.. tab-set::
+
+
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~Real`
+            - Type used to refer to both integers and floats as possible values.
+
+
+          * - :py:obj:`~RealSequence`
+            - Type used to refer to ``Real`` types as a ``Sequence`` type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides typing of values for PyAnsys Geometry.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: Real
+
+   
+   Type used to refer to both integers and floats as possible values.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: RealSequence
+
+   
+   Type used to refer to ``Real`` types as a ``Sequence`` type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   :class:`numpy.ndarrays <numpy.ndarray>` are also accepted because they are
+   the overlaying data structure behind most PyAnsys Geometry objects.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
