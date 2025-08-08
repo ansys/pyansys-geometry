@@ -102,7 +102,7 @@ doc = [
     "myst-parser==4.0.1",
     "nbconvert==7.16.6",
     "nbsphinx==0.9.6",
-    "notebook==7.4.4",
+    "notebook==7.4.5",
     "numpydoc==1.9.0",
     "numpy==2.2.6",
     "panel==1.7.5",
