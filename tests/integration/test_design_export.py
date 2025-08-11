@@ -440,6 +440,7 @@ def test_import_export_glb(modeler: Modeler, tmp_path_factory: pytest.TempPathFa
     # Check that the GLB file size is greater than 0 bytes
     assert output_glb_path.stat().st_size > 0, f"GLB file {output_glb_path} is empty."
 
+
 @pytest.mark.skip(reason="Re-import of x_t files broke")
 @pytest.mark.parametrize(
     "file_format, extension, original_file, expected_components, expected_bodies",
