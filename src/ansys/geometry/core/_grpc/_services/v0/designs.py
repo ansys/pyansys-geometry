@@ -108,7 +108,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SaveAsRequest(
-            filepath=kwargs["filepath"], write_body_facets=["write_body_facets"]
+            filepath=kwargs["filepath"], write_body_facets=kwargs["write_body_facets"]
         )
 
         # Call the gRPC service
