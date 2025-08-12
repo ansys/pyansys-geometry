@@ -107,7 +107,9 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         from ansys.api.dbu.v0.designs_pb2 import SaveAsRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SaveAsRequest(filepath=kwargs["filepath"])
+        request = SaveAsRequest(
+            filepath=kwargs["filepath"], write_body_facets=["write_body_facets"]
+        )
 
         # Call the gRPC service
         _ = self.stub.SaveAs(request)
@@ -121,7 +123,8 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DownloadExportFileRequest(
-            format=from_design_file_format_to_grpc_part_export_format(kwargs["format"])
+            format=from_design_file_format_to_grpc_part_export_format(kwargs["format"]),
+            write_body_facets=kwargs["write_body_facets"],
         )
 
         # Call the gRPC service
@@ -138,7 +141,8 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DownloadExportFileRequest(
-            format=from_design_file_format_to_grpc_part_export_format(kwargs["format"])
+            format=from_design_file_format_to_grpc_part_export_format(kwargs["format"]),
+            write_body_facets=kwargs["write_body_facets"],
         )
 
         # Call the gRPC service

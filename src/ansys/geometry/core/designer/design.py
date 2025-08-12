@@ -251,6 +251,7 @@ class Design(Component):
         self,
         file_location: Path | str,
         format: DesignFileFormat = DesignFileFormat.SCDOCX,
+        write_body_facets: bool = False,
     ) -> None:
         """Export and download the design from the server.
 
@@ -275,7 +276,9 @@ class Design(Component):
         if self._modeler.client.backend_version < (25, 2, 0):
             received_bytes = self.__export_and_download_legacy(format=format)
         else:
-            received_bytes = self.__export_and_download(format=format)
+            received_bytes = self.__export_and_download(
+                format=format, write_body_facets=write_body_facets
+            )
 
         # Write to file
         file_location.write_bytes(received_bytes)
@@ -323,7 +326,11 @@ class Design(Component):
 
         return received_bytes
 
-    def __export_and_download(self, format: DesignFileFormat) -> bytes:
+    def __export_and_download(
+        self,
+        format: DesignFileFormat,
+        write_body_facets: bool = False,
+    ) -> bytes:
         """Export and download the design from the server.
 
         Parameters
@@ -351,14 +358,18 @@ class Design(Component):
             DesignFileFormat.STRIDE,
         ]:
             try:
-                response = self._grpc_client.services.designs.download_export(format=format)
+                response = self._grpc_client.services.designs.download_export(
+                    format=format, write_body_facets=write_body_facets
+                )
             except Exception:
                 self._grpc_client.log.warning(
                     f"Failed to download the file in {format} format."
                     " Attempting to stream download."
                 )
                 # Attempt to download the file via streaming
-                response = self._grpc_client.services.designs.stream_download_export(format=format)
+                response = self._grpc_client.services.designs.stream_download_export(
+                    format=format, write_body_facets=write_body_facets
+                )
         else:
             self._grpc_client.log.warning(
                 f"{format} format requested is not supported. Ignoring download request."
