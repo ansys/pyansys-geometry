@@ -54,6 +54,9 @@ backends:
       - tests/integration/test_repair_tools.py::test_design_import_check_geometry
       - tests/integration/test_design.py::test_import_component_named_selections
       - tests/integration/test_design.py::test_component_make_independent
+      - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
+      - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
+      - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -65,6 +68,7 @@ backends:
       # Components and vertex only available from 26.1 onwards
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
+      - tests/integration/test_design.py::test_vertices
       # Bounding box center is only available from 25R2 onwards
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
@@ -154,6 +158,9 @@ backends:
       - tests/integration/test_repair_tools.py::test_design_import_check_geometry
       - tests/integration/test_design.py::test_import_component_named_selections
       - tests/integration/test_design.py::test_component_make_independent
+      - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
+      - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
+      - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -167,6 +174,7 @@ backends:
       # Components and vertex only available from 26.1 onwards
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
+      - tests/integration/test_design.py::test_vertices
       # Bounding box center is only available from 25R2 onwards
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
@@ -204,6 +212,9 @@ backends:
       # Model used is too new for this version
       - tests/integration/test_design.py::test_import_component_named_selections
       - tests/integration/test_design.py::test_component_make_independent
+      - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
+      - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
+      - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -217,6 +228,7 @@ backends:
       # Components and vertex only available from 26.1 onwards
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
+      - tests/integration/test_design.py::test_vertices
       # Potential problem in model/reading design for importing parameters
       - tests/integration/test_design.py::test_design_parameters
       # Bounding box center is only available from 25R2 onwards
@@ -272,6 +284,7 @@ backends:
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
       - tests/integration/test_design.py::test_component_make_independent
+      - tests/integration/test_design.py::test_vertices
       # Insert/Import file operations caused problems prior to 26.1
       - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
       - tests/integration/test_design_export.py::test_import_export_reimport_design_x_t
