@@ -7,7 +7,7 @@ exclude: "tests/integration/files"
 repos:
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.12.7
+  rev: v0.12.8
   hooks:
     - id: ruff-check
     - id: ruff-format
@@ -19,7 +19,7 @@ repos:
     args: ["--ignore-words", "doc/styles/config/vocabularies/ANSYS/accept.txt", "-w"]
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v5.0.0
+  rev: v6.0.0
   hooks:
   - id: check-merge-conflict
   - id: debug-statements
