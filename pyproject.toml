@@ -111,7 +111,7 @@ doc = [
     "protobuf==5.29.3",
     "pygltflib==1.16.5",
     "pyvista[jupyter]==0.45.3",
-    "quarto-cli==1.7.32",
+    "quarto-cli==1.7.33",
     "requests==2.32.4",
     "scipy==1.15.3",
     "semver==3.0.4",
