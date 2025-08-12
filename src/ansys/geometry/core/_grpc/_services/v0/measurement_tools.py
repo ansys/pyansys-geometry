@@ -56,7 +56,7 @@ class GRPCMeasurementToolsServiceV0(GRPCMeasurementToolsService):
         if kwargs["backend_version"] < (25, 2, 0):
             # Create the request - assumes all inputs are valid and of the proper type
             request = MinDistanceBetweenObjectsRequest(bodies=kwargs["selection"])
-            
+
             # Call the gRPC service
             response = self.stub.MinDistanceBetweenObjects(request)
         else:
