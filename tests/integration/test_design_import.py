@@ -34,7 +34,7 @@ from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
-from ansys.geometry.core.tools.unsupported import PersistentIdType
+from ansys.geometry.core.tools.unsupported import ExportIdData, PersistentIdType
 
 from .conftest import FILES_DIR, IMPORT_FILES_DIR
 
@@ -212,6 +212,7 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     comp1.extrude_sketch("Top", sketch, 5)
 
     if BackendType.is_core_service(modeler.client.backend_type):
+        # Set single export ids and verify
         modeler.unsupported.set_export_id(base_body.id, PersistentIdType.PRIME_ID, "1")
         modeler.unsupported.set_export_id(wheel_body.id, PersistentIdType.PRIME_ID, "2")
 
@@ -237,6 +238,27 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
         assert base_body.faces[0].id in [f.id for f in faces]
         assert base_body.edges[0].id in [e.id for e in edges]
+
+        # Set multiple export ids at once and verify
+        export_data = [
+            ExportIdData(
+                moniker=base_body.faces[1].id, id_type=PersistentIdType.PRIME_ID, value="5"
+            ),
+            ExportIdData(
+                moniker=base_body.edges[1].id, id_type=PersistentIdType.PRIME_ID, value="6"
+            ),
+        ]
+        modeler.unsupported.set_multiple_export_ids(export_data)
+
+        faces2 = modeler.unsupported.get_face_occurrences_from_import_id(
+            "5", PersistentIdType.PRIME_ID
+        )
+        edges2 = modeler.unsupported.get_edge_occurrences_from_import_id(
+            "6", PersistentIdType.PRIME_ID
+        )
+
+        assert base_body.faces[1].id in [b.id for b in faces2]
+        assert base_body.edges[1].id in [b.id for b in edges2]
 
     file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
     design.download(str(file))
@@ -564,3 +586,83 @@ def test_import_scdocx_with_external_docs(modeler: Modeler):
 
     for component in design.components[0].components:
         assert len(component.bodies) == 1
+
+
+@pytest.mark.skip(reason="Temporary skip for build promotion")
+def test_named_selections_after_file_insert(modeler: Modeler):
+    """Test to verify named selections are imported during inserting a file."""
+    # Create a new design
+    design = modeler.create_design("BugFix_1277429")
+
+    # Verify initial named selections count
+    initial_named_selections_count = len(design.named_selections)
+    assert initial_named_selections_count == 0, (
+        f"Expected no named selections initially, but got {initial_named_selections_count}."
+    )
+
+    # Insert the file
+    file_path = Path(FILES_DIR, "reactorWNS.scdocx")
+    design.insert_file(file_path)
+
+    # Verify named selections count after file insertion
+    updated_named_selections_count = len(design.named_selections)
+    assert updated_named_selections_count == 9, (
+        f"Expected 9 named selections after file insertion, but got "
+        f"{updated_named_selections_count}."
+    )
+
+    # Expected named selections
+    expected_named_selections = [
+        "wall_liquid_level",
+        "wall_tank",
+        "wall_probe_1",
+        "wall_probe_2",
+        "wall_shaft",
+        "wall_impeller_1",
+        "wall_shaft_1",
+        "wall_impeller_2",
+        "wall_shaft_2",
+    ]
+
+    # Verify the names of the named selections
+    actual_named_selections = [ns.name for ns in design.named_selections]
+    for ns_name in actual_named_selections:
+        assert ns_name in expected_named_selections, f"Unexpected named selection: {ns_name}"
+
+    # Verify all expected named selections are present
+    assert set(actual_named_selections) == set(expected_named_selections), (
+        f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."
+    )
+
+
+def test_named_selections_after_file_open(modeler: Modeler):
+    """Test to verify named selections are imported during open a file."""
+    # Open File
+    file_path = Path(FILES_DIR, "reactorWNS.scdocx")
+    design = modeler.open_file(file_path)
+
+    # Verify named selections count after file opening
+    named_selection_count = len(design.named_selections)
+    assert named_selection_count == 9, (
+        f"Expected 9 named selections after file opening, but got {named_selection_count}."
+    )
+    # Expected named selections
+    expected_named_selections = [
+        "wall_liquid_level",
+        "wall_tank",
+        "wall_probe_1",
+        "wall_probe_2",
+        "wall_shaft",
+        "wall_impeller_1",
+        "wall_shaft_1",
+        "wall_impeller_2",
+        "wall_shaft_2",
+    ]
+    # Verify the names of the named selections
+    actual_named_selections = [ns.name for ns in design.named_selections]
+    for ns_name in actual_named_selections:
+        assert ns_name in expected_named_selections, f"Unexpected named selection: {ns_name}"
+    # Verify all expected named selections are present
+    assert set(actual_named_selections) == set(expected_named_selections), (
+        f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."
+    )
