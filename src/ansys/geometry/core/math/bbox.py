@@ -50,7 +50,7 @@ class BoundingBox2D:
     """
 
     @check_input_types
-    @deprecated_method(alternative="BoundingBox", version="0.10.0", remove="0.11.0")
+    @deprecated_method(alternative="BoundingBox", version="0.10.0", remove="0.12.0")
     def __init__(
         self,
         x_min: Real = sys.float_info.max,

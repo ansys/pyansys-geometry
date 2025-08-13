@@ -134,7 +134,7 @@ class Modeler:
         return self._design
 
     @property
-    @deprecated_method(alternative="design", version="0.9.0", remove="0.11.0")
+    @deprecated_method(alternative="design", version="0.9.0", remove="0.12.0")
     def designs(self) -> dict[str, "Design"]:
         """Retrieve the design within the modeler workspace.
 
