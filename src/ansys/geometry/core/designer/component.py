@@ -744,8 +744,8 @@ class Component:
         --------
         This method is only available starting on Ansys release 26R1.
         """
-        self._grpc_client.log.debug(f"Creating a sweeping profile with guide on {self.id}. Creating body...")
-        response = self._grpc_client.services.bodies.create_sweeping_profile_with_guide_body(
+        self._grpc_client.log.debug(f"Sweeping the profile {self.id}. Creating body...")
+        response = self._grpc_client.services.bodies.sweep_with_guide(
             name=name,
             parent_id=self.id,
             sketch=sketch,

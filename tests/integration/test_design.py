@@ -70,6 +70,7 @@ from ansys.geometry.core.shapes import (
     Torus,
 )
 from ansys.geometry.core.shapes.box_uv import BoxUV
+from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
 )
@@ -2809,7 +2810,93 @@ def test_sweep_chain(modeler: Modeler):
 
 
 def test_sweep_with_guide(modeler: Modeler):
-    
+    """Test creating a body by sweeping a profile with a guide curve."""
+    design = modeler.create_design("SweepWithGuide")
+
+    # Set up path points array
+    path_points = []
+    path_points.append(Point3D([0.0, 0.0, 0.15]))
+    path_points.append(Point3D([0.05, 0.0, 0.1]))
+    path_points.append(Point3D([0.1, 0.0, 0.05]))
+    path_points.append(Point3D([0.15, 0.0, 0.1]))
+    path_points.append(Point3D([0.2, 0.0, 0.15]))
+
+    npoints = len(path_points)
+    for i in range(2):
+        for j in range(1, npoints):
+            orgp = path_points[j]
+            p = Point3D([orgp[0] + (i + 1) * path_points[npoints - 1][0], orgp[1], orgp[2]])
+            path_points.append(p)
+
+    # Insert values at the beginning and end
+    start_point = [
+        Point3D(
+            [
+                path_points[npoints - 2][0] - path_points[npoints - 1][0],
+                path_points[npoints - 2][1],
+                path_points[npoints - 2][2],
+            ],
+        )
+    ]
+    path_points = start_point + path_points
+    end_point = Point3D(
+        [
+            path_points[2][0] + (1 + 2) * path_points[npoints][0],
+            path_points[2][1],
+            path_points[2][2],
+        ],
+    )
+    path_points.append(end_point)
+
+    # Create the NURBS curve through the points
+    nurbs_curve = NURBSCurve.fit_curve_from_points(path_points, 3)
+    n_l_points = len(path_points)
+    yarn_path = nurbs_curve.trim(
+        Interval(1.0 / (n_l_points - 1), (n_l_points - 2.0) / (n_l_points - 1))
+    )
+
+    # Create the lenticular profile sketch
+    yarn_path_eval = nurbs_curve.project_point(path_points[1])
+    p = yarn_path_eval.position
+    d = yarn_path_eval.first_derivative.normalize()
+
+    # Define Hughes-Moeller algorithm for finding orthonormal base
+    def hughes_moeller(axis_direction):
+        """Find the orthonornal base using hughes moeller algorithm."""
+        n = axis_direction
+        if np.abs(n[0]) > np.abs([n[2]]):
+            b2 = np.array(([-n[1], n[0], 0.0]))
+        else:
+            b2 = np.array((0.0, -n[2], n[1]))
+        b2 *= np.sqrt(np.dot(b2, b2))
+        b1 = np.cross(b2, n)
+        return b1, b2
+
+    a = 0.043134775028197354
+    aspect_ratio = 0.1
+    p1, p2 = hughes_moeller(np.array([d.x, d.y, d.z]))
+    plane = Plane(origin=p, direction_x=Vector3D(p1), direction_y=Vector3D(p2))
+    lenticular_profile = Sketch(plane)
+    radius = (a / aspect_ratio + a * aspect_ratio) / 2.0
+
+    c1 = Point2D([-radius + a * aspect_ratio, 0.0])
+    c2 = Point2D([radius - a * aspect_ratio, 0.0])
+    s1 = Point2D([0.0, a])
+    e1 = Point2D([0.0, -a])
+
+    lenticular_profile.arc(s1, e1, c1, True)
+    lenticular_profile.arc(e1, s1, c2, True)
+
+    # Sweep the sketch
+    sweep_body = design.sweep_with_guide(
+        name="Yarn",
+        sketch=lenticular_profile,
+        path=[yarn_path],
+        guide=None,
+        tight_tolerance=True,
+    )
+
+    sweep_body.plot(screenshot="C:\\Users\\jkerstet\\Downloads\\sweep_body.png")
 
 
 def test_create_body_from_loft_profile(modeler: Modeler):
