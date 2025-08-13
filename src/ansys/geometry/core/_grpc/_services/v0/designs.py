@@ -26,7 +26,11 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.designs import GRPCDesignsService
-from .conversions import build_grpc_id, from_design_file_format_to_grpc_part_export_format
+from .conversions import (
+    _check_write_body_facets_input,
+    build_grpc_id,
+    from_design_file_format_to_grpc_part_export_format,
+)
 
 
 class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
@@ -106,6 +110,8 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
     def save_as(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.designs_pb2 import SaveAsRequest
 
+        _check_write_body_facets_input(kwargs["backend_version"], kwargs["write_body_facets"])
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = SaveAsRequest(
             filepath=kwargs["filepath"], write_body_facets=kwargs["write_body_facets"]
@@ -120,6 +126,8 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def download_export(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.designs_pb2 import DownloadExportFileRequest
+
+        _check_write_body_facets_input(kwargs["backend_version"], kwargs["write_body_facets"])
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DownloadExportFileRequest(
@@ -138,6 +146,8 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def stream_download_export(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.designs_pb2 import DownloadExportFileRequest
+
+        _check_write_body_facets_input(kwargs["backend_version"], kwargs["write_body_facets"])
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DownloadExportFileRequest(

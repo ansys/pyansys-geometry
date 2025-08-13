@@ -244,7 +244,9 @@ class Design(Component):
             file_location = str(file_location)
 
         self._grpc_client.services.designs.save_as(
-            filepath=file_location, write_body_facets=write_body_facets
+            filepath=file_location,
+            write_body_facets=write_body_facets,
+            backend_version=self._grpc_client.backend_version,
         )
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
@@ -365,7 +367,9 @@ class Design(Component):
         ]:
             try:
                 response = self._grpc_client.services.designs.download_export(
-                    format=format, write_body_facets=write_body_facets
+                    format=format,
+                    write_body_facets=write_body_facets,
+                    backend_version=self._grpc_client.backend_version,
                 )
             except Exception:
                 self._grpc_client.log.warning(
@@ -374,7 +378,9 @@ class Design(Component):
                 )
                 # Attempt to download the file via streaming
                 response = self._grpc_client.services.designs.stream_download_export(
-                    format=format, write_body_facets=write_body_facets
+                    format=format,
+                    write_body_facets=write_body_facets,
+                    backend_version=self._grpc_client.backend_version,
                 )
         else:
             self._grpc_client.log.warning(
