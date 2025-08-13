@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Provides for managing components."""
 
+from dataclasses import dataclass
 from enum import Enum, unique
 from functools import cached_property
 from typing import TYPE_CHECKING, Any, Optional, Union
@@ -133,6 +134,17 @@ class ExtrusionDirection(Enum):
             1 if the direction is positive, -1 if negative.
         """
         return 1 if self is ExtrusionDirection.POSITIVE else -1
+
+@dataclass
+class SweepWithGuideData:
+    """Data class for sweep with guide parameters."""
+
+    name: str
+    parent_id: str
+    sketch: Sketch
+    path: TrimmedCurve
+    guide: TrimmedCurve
+    tight_tolerance: bool = False
 
 
 class Component:
@@ -710,35 +722,20 @@ class Component:
     @min_backend_version(26, 1, 0)
     @check_input_types
     @ensure_design_is_active
-    def sweep_with_guide(
-        self,
-        name: str,
-        sketch: Sketch,
-        path: TrimmedCurve,
-        guide: TrimmedCurve,
-        tight_tolerance: bool
-    ): 
+    def sweep_with_guide(self, sweep_data: list[SweepWithGuideData]) -> list[Body]:
         """Create a body by sweeping a sketch along a path with a guide curve.
 
         The newly created body is placed under this component within the design assembly.
 
         Parameters
         ----------
-        name : str
-            User-defined label for the new solid body.
-        sketch : Sketch
-            Two-dimensional sketch source for the sweep.
-        path : TrimmedCurve
-            The path to sweep the profile along.
-        guide : TrimmedCurve
-            The guide curve to control the sweep.
-        tight_tolerance : bool
-            Whether to use tight tolerance for the sweep.
+        sweep_data: SweepWithGuideData
+            Data for the sweep operation, including the sketch, path, and guide curve.
 
         Returns
         -------
-        Body
-            Created body from the given sketch.
+        list[Body]
+            Created bodies from the given sweep data.
 
         Warnings
         --------
@@ -746,15 +743,9 @@ class Component:
         """
         self._grpc_client.log.debug(f"Sweeping the profile {self.id}. Creating body...")
         response = self._grpc_client.services.bodies.sweep_with_guide(
-            name=name,
-            parent_id=self.id,
-            sketch=sketch,
-            path=path,
-            guide=guide,
-            tight_tolerance=tight_tolerance,
-            backend_version=self._grpc_client.backend_version,
+            sweep_data=sweep_data
         )
-        return self.__build_body_from_response(response)
+        return [self.__build_body_from_response(body_data) for body_data in response.get("bodies")]
 
     @min_backend_version(24, 2, 0)
     @check_input_types

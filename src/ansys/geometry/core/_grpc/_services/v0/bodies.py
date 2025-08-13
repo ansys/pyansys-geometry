@@ -173,19 +173,28 @@ class GRPCBodyServiceV0(GRPCBodyService):
     
     @protect_grpc
     def sweep_with_guide(self, **kwargs):  # noqa: D102
-        from ansys.api.geometry.v0.bodies_pb2 import SweepWithGuideRequest
+        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+        from ansys.api.geometry.v0.bodies_pb2 import (
+            SweepWithGuideRequest,
+            SweepWithGuideRequestData,
+        )
 
-        # Create the request - assumes all inputs are valid and of the proper type
+        # Create request object - assumes all inputs are valid and of the proper type
         request = SweepWithGuideRequest(
-            name=kwargs["name"],
-            parent=kwargs["parent_id"],
-            plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
-            geometries=from_sketch_shapes_to_grpc_geometries(
-                kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
-            ),
-            path=from_trimmed_curve_to_grpc_trimmed_curve(kwargs["path"]),
-            guide=from_trimmed_curve_to_grpc_trimmed_curve(kwargs["guide"]),
-            tight_tolerance= kwargs["tight_tolerance"],
+            request_data=[
+                SweepWithGuideRequestData(
+                    name=data.name,
+                    parent=EntityIdentifier(id=data.parent_id),
+                    plane=from_plane_to_grpc_plane(data.sketch.plane),
+                    geometries=from_sketch_shapes_to_grpc_geometries(
+                        data.sketch.plane, data.sketch.edges, data.sketch.faces
+                    ),
+                    path=from_trimmed_curve_to_grpc_trimmed_curve(data.path),
+                    guide=from_trimmed_curve_to_grpc_trimmed_curve(data.guide),
+                    tight_tolerance=data.tight_tolerance,
+                )
+                for data in kwargs["sweep_data"]
+            ],
         )
 
         # Call the gRPC service
@@ -193,11 +202,14 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {
-            "id": resp.id,
-            "name": resp.name,
-            "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
-        }   
+            "bodies": [{
+                "id": body.id,
+                "name": body.name,
+                "master_id": body.master_id,
+                "is_surface": body.is_surface,
+            }]
+            for body in resp.bodies
+        }
 
     @protect_grpc
     def create_extruded_body_from_face_profile(self, **kwargs) -> dict:  # noqa: D102

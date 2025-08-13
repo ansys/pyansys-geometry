@@ -40,6 +40,7 @@ from ansys.geometry.core.designer import (
     SurfaceType,
 )
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
+from ansys.geometry.core.designer.component import SweepWithGuideData
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
@@ -56,6 +57,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
+from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance, checks
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
@@ -2813,90 +2815,49 @@ def test_sweep_with_guide(modeler: Modeler):
     """Test creating a body by sweeping a profile with a guide curve."""
     design = modeler.create_design("SweepWithGuide")
 
-    # Set up path points array
-    path_points = []
-    path_points.append(Point3D([0.0, 0.0, 0.15]))
-    path_points.append(Point3D([0.05, 0.0, 0.1]))
-    path_points.append(Point3D([0.1, 0.0, 0.05]))
-    path_points.append(Point3D([0.15, 0.0, 0.1]))
-    path_points.append(Point3D([0.2, 0.0, 0.15]))
-
-    npoints = len(path_points)
-    for i in range(2):
-        for j in range(1, npoints):
-            orgp = path_points[j]
-            p = Point3D([orgp[0] + (i + 1) * path_points[npoints - 1][0], orgp[1], orgp[2]])
-            path_points.append(p)
-
-    # Insert values at the beginning and end
-    start_point = [
-        Point3D(
-            [
-                path_points[npoints - 2][0] - path_points[npoints - 1][0],
-                path_points[npoints - 2][1],
-                path_points[npoints - 2][2],
-            ],
-        )
+    # Create path points for the sweep path
+    path_points = [
+        Point3D([0.0, 0.0, 0.15]),
+        Point3D([0.05, 0.0, 0.1]),
+        Point3D([0.1, 0.0, 0.05]),
+        Point3D([0.15, 0.0, 0.1]),
+        Point3D([0.2, 0.0, 0.15]),
     ]
-    path_points = start_point + path_points
-    end_point = Point3D(
-        [
-            path_points[2][0] + (1 + 2) * path_points[npoints][0],
-            path_points[2][1],
-            path_points[2][2],
-        ],
-    )
-    path_points.append(end_point)
-
-    # Create the NURBS curve through the points
-    nurbs_curve = NURBSCurve.fit_curve_from_points(path_points, 3)
+    nurbs_path = NURBSCurve.fit_curve_from_points(path_points, degree=3)
     n_l_points = len(path_points)
-    yarn_path = nurbs_curve.trim(
-        Interval(1.0 / (n_l_points - 1), (n_l_points - 2.0) / (n_l_points - 1))
-    )
+    path_interval = Interval(1.0 / (n_l_points - 1), (n_l_points - 2.0) / (n_l_points - 1))
+    trimmed_path = nurbs_path.trim(path_interval)
 
-    # Create the lenticular profile sketch
-    yarn_path_eval = nurbs_curve.project_point(path_points[1])
-    p = yarn_path_eval.position
-    d = yarn_path_eval.first_derivative.normalize()
+    # Create a simple circular profile sketch
+    profile_plane = Plane(origin=path_points[1])
+    profile_sketch = Sketch(profile_plane)
+    profile_sketch.circle(Point2D([0, 0]), 0.01)  # 0.01 radius
 
-    # Define Hughes-Moeller algorithm for finding orthonormal base
-    def hughes_moeller(axis_direction):
-        """Find the orthonornal base using hughes moeller algorithm."""
-        n = axis_direction
-        if np.abs(n[0]) > np.abs([n[2]]):
-            b2 = np.array(([-n[1], n[0], 0.0]))
-        else:
-            b2 = np.array((0.0, -n[2], n[1]))
-        b2 *= np.sqrt(np.dot(b2, b2))
-        b1 = np.cross(b2, n)
-        return b1, b2
+    # Create guide curve points (offset from path)
+    guide_points = [Point3D([p.x.m, p.y.m + 0.01, p.z.m]) for p in path_points]
+    guide_curve = NURBSCurve.fit_curve_from_points(guide_points, degree=3)
+    guide_interval = Interval(1.0 / (n_l_points - 1), (n_l_points - 2.0) / (n_l_points - 1))
+    trimmed_guide = guide_curve.trim(guide_interval)
 
-    a = 0.043134775028197354
-    aspect_ratio = 0.1
-    p1, p2 = hughes_moeller(np.array([d.x, d.y, d.z]))
-    plane = Plane(origin=p, direction_x=Vector3D(p1), direction_y=Vector3D(p2))
-    lenticular_profile = Sketch(plane)
-    radius = (a / aspect_ratio + a * aspect_ratio) / 2.0
-
-    c1 = Point2D([-radius + a * aspect_ratio, 0.0])
-    c2 = Point2D([radius - a * aspect_ratio, 0.0])
-    s1 = Point2D([0.0, a])
-    e1 = Point2D([0.0, -a])
-
-    lenticular_profile.arc(s1, e1, c1, True)
-    lenticular_profile.arc(e1, s1, c2, True)
-
-    # Sweep the sketch
-    sweep_body = design.sweep_with_guide(
-        name="Yarn",
-        sketch=lenticular_profile,
-        path=[yarn_path],
-        guide=None,
+    # Sweep the profile along the path with the guide curve
+    sweep_data = [SweepWithGuideData(
+        name="SweptBody",
+        parent_id=design.id,
+        sketch=profile_sketch,
+        path=trimmed_path,
+        guide=trimmed_guide,
         tight_tolerance=True,
-    )
+    )]
+    sweep_body = design.sweep_with_guide(sweep_data=sweep_data)[0]
 
-    sweep_body.plot(screenshot="C:\\Users\\jkerstet\\Downloads\\sweep_body.png")
+    design.export_to_scdocx("C:\\Users\\jkerstet\\Downloads\\sweep_body.scdocx")
+
+    assert sweep_body is not None
+    assert sweep_body.name == "SweptBody"
+    assert sweep_body.is_surface
+    assert len(sweep_body.faces) == 1
+    assert len(sweep_body.edges) == 2
+    assert len(sweep_body.vertices) == 0
 
 
 def test_create_body_from_loft_profile(modeler: Modeler):
