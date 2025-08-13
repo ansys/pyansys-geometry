@@ -337,6 +337,11 @@ class IBody(ABC):
             Material assigned to the body.
         """
         return
+    
+    @abstractmethod
+    def remove_assigned_material(self) -> None:
+        """Remove the material assigned to the body."""
+        return
 
     @abstractmethod
     def add_midsurface_thickness(self, thickness: Quantity) -> None:
@@ -1060,6 +1065,10 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Retrieving assigned material for body {self.id}.")
         response = self._grpc_client.services.bodies.get_assigned_material(id=self.id)
         return response.get("material")
+    
+    def remove_assigned_material(self) -> None:  # noqa: D102
+        self._grpc_client.log.debug(f"Removing assigned material for body {self.id}.")
+        self._grpc_client.services.bodies.remove_assigned_material(ids=[self.id])
 
     @protect_grpc
     @check_input_types
@@ -1592,6 +1601,10 @@ class Body(IBody):
     @ensure_design_is_active
     def get_assigned_material(self) -> Material:  # noqa: D102
         return self._template.get_assigned_material()
+    
+    @ensure_design_is_active
+    def remove_assigned_material(self):  # noqa: D102
+        self._template.remove_assigned_material()
 
     @ensure_design_is_active
     def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102

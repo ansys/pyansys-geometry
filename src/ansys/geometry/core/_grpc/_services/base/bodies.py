@@ -145,6 +145,11 @@ class GRPCBodyService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def remove_assigned_material(self, **kwargs) -> dict:
+        """Remove the assigned material of a body."""
+        pass
+
+    @abstractmethod
     def set_name(self, **kwargs) -> dict:
         """Set the name of a body."""
         pass

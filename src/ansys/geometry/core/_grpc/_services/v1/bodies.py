@@ -131,6 +131,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def get_assigned_material(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+    
+    @protect_grpc
+    def remove_assigned_material(self, **kwargs):  # noqa: D102
+        raise NotImplementedError
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102

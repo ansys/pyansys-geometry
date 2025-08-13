@@ -320,6 +320,37 @@ def test_get_empty_material(modeler: Modeler):
     assert len(mat_service.properties) == 1
 
 
+def test_remove_material_from_body(modeler: Modeler):
+    """Test removing a material from a body."""
+    # Create a design and a sketch
+    design = modeler.create_design("RemoveMaterialTest")
+    sketch = Sketch()
+    sketch.circle(Point2D([0, 0], UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Extrude the sketch to create a body
+    body = design.extrude_sketch("CircleBody", sketch, Quantity(10, UNITS.mm))
+
+    # Create and assign a material
+    density = Quantity(7850, UNITS.kg / (UNITS.m ** 3))
+    material = Material(
+        "Steel",
+        density,
+        [MaterialProperty(MaterialPropertyType.POISSON_RATIO, "Poisson", Quantity(0.3))],
+    )
+    design.add_material(material)
+    body.assign_material(material)
+    assert body.material.name == "Steel"
+
+    # Remove the material from the body
+    body.remove_assigned_material()
+
+    # Check that the body no longer has a material assigned
+    assert body.material.name == ""
+    assert len(body.material.properties) == 1
+    assert body.material.properties[MaterialPropertyType.DENSITY].quantity == Quantity(
+        0, UNITS.kg / (UNITS.m ** 3))
+
+
 def test_face_to_body_creation(modeler: Modeler):
     """Test in charge of validating the extrusion of an existing face."""
     # Create a Sketch and draw a circle (all client side)
@@ -850,378 +881,598 @@ def test_delete_body_component(modeler: Modeler):
     _ = comp_2.add_component("Nested_1_Component_2")
 
     # Create the bodies
-    body_1 = comp_3.extrude_sketch(name="comp_3_circle", sketch=sketch, distance=distance)
-    body_2 = nested_2_comp_1.extrude_sketch(
+    _ = comp_3.extrude_sketch(name="comp_3_circle", sketch=sketch, distance=distance)
+    _ = nested_2_comp_1.extrude_sketch(
         name="nested_2_comp_1_circle", sketch=sketch, distance=distance
     )
     _ = nested_1_nested_1_comp_1.extrude_sketch(
         name="nested_1_nested_1_comp_1_circle", sketch=sketch, distance=distance
     )
 
-    # Let's start by doing something impossible - trying to delete body_1 from comp_1
-    comp_1.delete_body(body_1)
+    # Create beams (in design)
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    _ = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
 
-    # Check that all the underlying objects are still alive
-    assert comp_1.is_alive
-    assert comp_1.components[0].is_alive
-    assert comp_1.components[0].components[0].is_alive
-    assert comp_1.components[0].components[0].bodies[0].is_alive
-    assert comp_1.components[1].is_alive
-    assert comp_1.components[1].bodies[0].is_alive
-    assert comp_2.is_alive
-    assert comp_2.components[0].is_alive
-    assert comp_3.is_alive
-    assert comp_3.bodies[0].is_alive
+    # Test the tree print - by default
+    ##################################
+    lines = design.tree_print(return_list=True)
+    ref = [
+        ">>> Tree print view of component 'TreePrintComponent'",
+        "",
+        "Location",
+        "--------",
+        "Root component (Design)",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) TreePrintComponent",
+        "|---(beam) 0:",
+        "|---(comp) Component_1",
+        ":   |---(comp) Nested_1_Component_1",
+        ":   :   |---(comp) Nested_1_Nested_1_Component_1",
+        ":   :       |---(body) nested_1_nested_1_comp_1_circle",
+        ":   |---(comp) Nested_2_Component_1",
+        ":       |---(body) nested_2_comp_1_circle",
+        "|---(comp) Component_2",
+        ":   |---(comp) Nested_1_Component_2",
+        "|---(comp) Component_3",
+        "    |---(body) comp_3_circle",
+    ]
+    assert check_list_equality(lines, ref) is True
 
-    # Do the same checks but calling them from the design object
-    assert design.is_alive
-    assert design.components[0].is_alive
-    assert design.components[0].components[0].is_alive
-    assert design.components[0].components[0].components[0].is_alive
-    assert design.components[0].components[0].components[0].bodies[0].is_alive
-    assert design.components[0].components[1].is_alive
-    assert design.components[0].components[1].bodies[0].is_alive
-    assert design.components[1].is_alive
-    assert design.components[1].components[0].is_alive
-    assert design.components[2].is_alive
-    assert design.components[2].bodies[0].is_alive
+    # Test - request depth 1, and show only components
+    ##################################################
+    lines = design.tree_print(
+        return_list=True, depth=1, consider_bodies=False, consider_beams=False
+    )
+    ref = [
+        ">>> Tree print view of component 'TreePrintComponent'",
+        "",
+        "Location",
+        "--------",
+        "Root component (Design)",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) TreePrintComponent",
+        "|---(comp) Component_1",
+        "|---(comp) Component_2",
+        "|---(comp) Component_3",
+    ]
+    assert check_list_equality(lines, ref) is True
 
-    # Let's do another impossible thing - trying to delete comp_3 from comp_1
-    comp_1.delete_component(comp_3)
+    # Test - request depth 2, indent 1 (which will default to 2)
+    # and sort the components alphabetically
+    ############################################################
+    lines = design.tree_print(return_list=True, depth=2, indent=1, sort_keys=True)
+    ref = [
+        ">>> Tree print view of component 'TreePrintComponent'",
+        "",
+        "Location",
+        "--------",
+        "Root component (Design)",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) TreePrintComponent",
+        "|-(beam) 0:",
+        "|-(comp) Component_1",
+        ": |-(comp) Nested_1_Component_1",
+        ": |-(comp) Nested_2_Component_1",
+        "|-(comp) Component_2",
+        ": |-(comp) Nested_1_Component_2",
+        "|-(comp) Component_3",
+        "  |-(body) comp_3_circle",
+    ]
+    assert check_list_equality(lines, ref) is True
 
-    # Check that all the underlying objects are still alive
-    assert comp_1.is_alive
-    assert comp_1.components[0].is_alive
-    assert comp_1.components[0].components[0].is_alive
-    assert comp_1.components[0].components[0].bodies[0].is_alive
-    assert comp_1.components[1].is_alive
-    assert comp_1.components[1].bodies[0].is_alive
-    assert comp_2.is_alive
-    assert comp_2.components[0].is_alive
-    assert comp_3.is_alive
-    assert comp_3.bodies[0].is_alive
-
-    # Do the same checks but calling them from the design object
-    assert design.is_alive
-    assert design.components[0].is_alive
-    assert design.components[0].components[0].is_alive
-    assert design.components[0].components[0].components[0].is_alive
-    assert design.components[0].components[0].components[0].bodies[0].is_alive
-    assert design.components[0].components[1].is_alive
-    assert design.components[0].components[1].bodies[0].is_alive
-    assert design.components[1].is_alive
-    assert design.components[1].components[0].is_alive
-    assert design.components[2].is_alive
-    assert design.components[2].bodies[0].is_alive
-
-    # Let's delete now the entire comp_2 component
-    comp_2.delete_component(comp_2)
-
-    # Check that all the underlying objects are still alive except for comp_2
-    assert comp_1.is_alive
-    assert comp_1.components[0].is_alive
-    assert comp_1.components[0].components[0].is_alive
-    assert comp_1.components[0].components[0].bodies[0].is_alive
-    assert comp_1.components[1].is_alive
-    assert comp_1.components[1].bodies[0].is_alive
-    assert not comp_2.is_alive
-    assert not comp_2.components[0].is_alive
-    assert comp_3.is_alive
-    assert comp_3.bodies[0].is_alive
-
-    # Do the same checks but calling them from the design object
-    assert design.is_alive
-    assert design.components[0].is_alive
-    assert design.components[0].components[0].is_alive
-    assert design.components[0].components[0].components[0].is_alive
-    assert design.components[0].components[0].components[0].bodies[0].is_alive
-    assert design.components[0].components[1].is_alive
-    assert design.components[0].components[1].bodies[0].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert design.components[2].is_alive
-    assert design.components[2].bodies[0].is_alive
-
-    # Let's delete now the body_2 object
-    design.delete_body(body_2)
-
-    # Check that all the underlying objects are still alive except for comp_2 and body_2
-    assert comp_1.is_alive
-    assert comp_1.components[0].is_alive
-    assert comp_1.components[0].components[0].is_alive
-    assert comp_1.components[0].components[0].bodies[0].is_alive
-    assert comp_1.components[1].is_alive
-    assert not body_2.is_alive
-    assert not comp_2.is_alive
-    assert not comp_2.components[0].is_alive
-    assert comp_3.is_alive
-
-    # Do the same checks but calling them from the design object
-    assert design.is_alive
-    assert design.components[0].is_alive
-    assert design.components[0].components[0].is_alive
-    assert design.components[0].components[0].components[0].is_alive
-    assert design.components[0].components[0].components[0].bodies[0].is_alive
-    assert design.components[0].components[1].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert design.components[2].is_alive
-    assert design.components[2].bodies[0].is_alive
-
-    # Finally, let's delete the most complex one - comp_1
-    design.delete_component(comp_1)
-
-    # Check that all the underlying objects are still alive except for comp_2, body_2 and comp_1
-    assert not comp_1.is_alive
-    assert not comp_1.components[0].is_alive
-    assert not comp_1.components[0].components[0].is_alive
-    assert not comp_1.components[1].is_alive
-    assert not comp_2.is_alive
-    assert not comp_2.components[0].is_alive
-    assert comp_3.is_alive
-    assert comp_3.bodies[0].is_alive
-
-    # Do the same checks but calling them from the design object
-    assert design.is_alive
-    assert not design.components[0].is_alive
-    assert not design.components[0].components[0].is_alive
-    assert not design.components[0].components[0].components[0].is_alive
-    assert not design.components[0].components[1].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert design.components[2].is_alive
-    assert design.components[2].bodies[0].is_alive
-
-    # Finally, let's delete the entire design
-    design.delete_component(comp_3)
-
-    # Check everything is dead
-    assert design.is_alive
-    assert not design.components[0].is_alive
-    assert not design.components[0].components[0].is_alive
-    assert not design.components[0].components[0].components[0].is_alive
-    assert not design.components[0].components[1].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert not design.components[2].is_alive
-
-    # Try deleting the Design object itself - this is forbidden
-    with pytest.raises(ValueError, match="The design itself cannot be deleted."):
-        design.delete_component(design)
-
-    # Let's try out the representation methods
-    design_str = str(design)
-    assert "ansys.geometry.core.designer.Design" in design_str
-    assert "Name                 : Deletion_Test" in design_str
-    assert "N Bodies             : 0" in design_str
-    assert "N Components         : 0" in design_str
-    assert "N Coordinate Systems : 0" in design_str
-    assert "N Named Selections   : 0" in design_str
-    assert "N Materials          : 0" in design_str
-    assert "N Beam Profiles      : 0" in design_str
-    assert "N Design Points      : 0" in design_str
-
-    comp_1_str = str(comp_1)
-    assert "ansys.geometry.core.designer.Component" in comp_1_str
-    assert "Name                 : Component_1" in comp_1_str
-    assert "Exists               : False" in comp_1_str
-    assert "Parent component     : Deletion_Test" in comp_1_str
-    assert "N Bodies             : 0" in comp_1_str
-    assert "N Beams              : 0" in comp_1_str
-    assert "N Components         : 0" in comp_1_str
-    assert "N Design Points      : 0" in comp_1_str
-    assert "N Coordinate Systems : 0" in comp_1_str
-
-    body_1_str = str(body_1)
-    assert "ansys.geometry.core.designer.Body" in body_1_str
-    assert "Name                 : comp_3_circle" in body_1_str
-    assert "Exists               : False" in body_1_str
-    assert "Surface body         : False" in body_1_str
-    assert "Parent component     : Component_3" in body_1_str
-    assert "Color                : None" in body_1_str
+    # Test - request from Nested_1_Component_1
+    ##########################################
+    lines = nested_1_comp_1.tree_print(return_list=True)
+    ref = [
+        ">>> Tree print view of component 'Nested_1_Component_1'",
+        "",
+        "Location",
+        "--------",
+        "TreePrintComponent > Component_1 > Nested_1_Component_1",
+        "",
+        "Subtree",
+        "-------",
+        "(comp) Nested_1_Component_1",
+        "|---(comp) Nested_1_Nested_1_Component_1",
+        "    |---(body) nested_1_nested_1_comp_1_circle",
+    ]
+    assert check_list_equality(lines, ref) is True
 
 
-def test_shared_topology(modeler: Modeler):
-    """Test for checking the correct setting of shared topology on the server.
+def test_surface_body_creation(modeler: Modeler):
+    """Test surface body creation from trimmed surfaces."""
+    design = modeler.create_design("Design1")
 
-    Notes
-    -----
-    Requires storing scdocx file and checking manually (for now).
-    """
-    # Create your design on the server side
-    design = modeler.create_design("SharedTopology_Test")
+    # half sphere
+    surface = Sphere([0, 0, 0], 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi / 2)))
+    body = design.create_body_from_surface("sphere", trimmed_surface)
+    assert len(design.bodies) == 1
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(np.pi * 2)
 
-    # Create a Sketch object and draw a circle (all client side)
+    # cylinder
+    surface = Cylinder([0, 0, 0], 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, 1)))
+    body = design.create_body_from_surface("cylinder", trimmed_surface)
+
+    assert len(design.bodies) == 2
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(np.pi * 2)
+
+    # cone
+    surface = Cone([0, 0, 0], 1, np.pi / 4)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(surface.apex.z.m, 0)))
+    body = design.create_body_from_surface("cone", trimmed_surface)
+
+    assert len(design.bodies) == 3
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(4.44288293816)
+
+    # half torus
+    surface = Torus([0, 0, 0], 2, 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi), Interval(0, np.pi * 2)))
+    body = design.create_body_from_surface("torus", trimmed_surface)
+
+    assert len(design.bodies) == 4
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(39.4784176044)
+
+    # SOLID BODIES
+
+    # sphere
+    surface = Sphere([0, 0, 0], 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(-np.pi / 2, np.pi / 2)))
+    body = design.create_body_from_surface("sphere_solid", trimmed_surface)
+    assert len(design.bodies) == 5
+    assert not body.is_surface
+    assert body.faces[0].area.m == pytest.approx(np.pi * 4)
+
+    # torus
+    surface = Torus([0, 0, 0], 2, 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi * 2)))
+    body = design.create_body_from_surface("torus_solid", trimmed_surface)
+
+    assert len(design.bodies) == 6
+    assert not body.is_surface
+    assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
+
+
+def test_create_surface_from_nurbs_sketch(modeler: Modeler):
+    """Test creating a surface from a NURBS sketch."""
+    design = modeler.create_design("NURBS_Sketch_Surface")
+
+    # Create a NURBS sketch
     sketch = Sketch()
-    sketch.circle(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm))
-    distance = Quantity(30, UNITS.mm)
+    sketch.nurbs_from_2d_points(
+        points=[
+            Point2D([0, 0]),
+            Point2D([1, 0]),
+            Point2D([1, 1]),
+            Point2D([0, 1]),
+        ],
+        tag="nurbs_sketch",
+    )
+    sketch.segment(
+        start=Point2D([0, -1]),
+        end=Point2D([0, 2]),
+        tag="segment_1",
+    )
 
-    # Create a component
-    comp_1 = design.add_component("Component_1")
-    comp_1.extrude_sketch(name="Body_1", sketch=sketch, distance=distance)
+    # Create a surface from the NURBS sketch
+    surface_body = design.create_surface(
+        name="nurbs_surface",
+        sketch=sketch,
+    )
 
-    # Now that the component is created, let's try to assign a SharedTopology
-    assert comp_1.shared_topology is None
-
-    # Set the shared topology
-    comp_1.set_shared_topology(SharedTopologyType.SHARETYPE_SHARE)
-    assert comp_1.shared_topology == SharedTopologyType.SHARETYPE_SHARE
-
-    # Try to assign it to the entire design
-    assert design.shared_topology is None
-    with pytest.raises(ValueError, match="The design itself cannot have a shared topology."):
-        design.set_shared_topology(SharedTopologyType.SHARETYPE_NONE)
+    assert len(design.bodies) == 1
+    assert surface_body.is_surface
+    assert surface_body.faces[0].area.m > 0
 
 
-def test_single_body_translation(modeler: Modeler):
-    """Test for verifying the correct translation of a ``Body``.
+def test_design_parameters(modeler: Modeler):
+    """Test the design parameter's functionality."""
+    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
+    test_parameters = design.parameters
 
-    Notes
-    -----
-    Requires storing scdocx file and checking manually (for now).
+    # Verify the initial parameters
+    assert len(test_parameters) == 2
+    assert test_parameters[0].name == "p1"
+    assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
+    assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    assert test_parameters[1].name == "p2"
+    assert abs(test_parameters[1].dimension_value - 0.0002552758322160813) < 1e-8
+    assert test_parameters[1].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    # Update the second parameter and verify the status
+    test_parameters[1].dimension_value = 0.0006
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.SUCCESS
+
+    # Attempt to update the first parameter and expect a constrained status
+    test_parameters[0].dimension_value = 0.0006
+    status = design.set_parameter(test_parameters[0])
+    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+
+    test_parameters[0].name = "NewName"
+    assert test_parameters[0].name == "NewName"
+
+    test_parameters[0].dimension_type = ParameterType.DIMENSIONTYPE_AREA
+    assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+
+def test_cached_bodies(modeler: Modeler):
+    """Test that bodies are cached correctly.
+
+    Whenever a new body is created, modified etc. we should make sure that the cache is updated.
     """
-    # Create your design on the server side
-    design = modeler.create_design("SingleBodyTranslation_Test")
+    design = modeler.create_design("ModelingDemo")
 
-    # Create 2 Sketch objects and draw a circle and a polygon (all client side)
-    sketch_1 = Sketch()
-    sketch_1.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
-    sketch_2 = Sketch()
-    sketch_2.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+    # Define a sketch
+    origin = Point3D([0, 0, 10])
+    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
 
-    # Build 2 independent components and bodies
-    circle_comp = design.add_component("CircleComponent")
-    body_circle_comp = circle_comp.extrude_sketch("Circle", sketch_1, Quantity(50, UNITS.mm))
-    polygon_comp = design.add_component("PolygonComponent")
-    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
+    # Create a sketch
+    sketch_box = Sketch(plane)
+    sketch_box.box(Point2D([20, 20]), 30 * UNITS.m, 30 * UNITS.m)
 
-    body_circle_comp.translate(UnitVector3D([1, 0, 0]), Distance(50, UNITS.mm))
-    body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), Quantity(88, UNITS.mm))
-    body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), 101)
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([20, 20]), 5 * UNITS.m)
+
+    design.extrude_sketch(name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m))
+    design.extrude_sketch(
+        name="CylinderBody",
+        sketch=sketch_cylinder,
+        distance=Distance(60, unit=UNITS.m),
+    )
+
+    my_bodies = design.bodies
+    my_bodies_2 = design.bodies
+
+    # We should make sure that the object memory addresses are the same
+    for body1, body2 in zip(my_bodies, my_bodies_2):
+        assert body1 is body2  # We are comparing the memory addresses
+        assert id(body1) == id(body2)
+
+    design.extrude_sketch(
+        name="CylinderBody2",
+        sketch=sketch_cylinder,
+        distance=Distance(20, unit=UNITS.m),
+        direction="-",
+    )
+    my_bodies_3 = design.bodies
+
+    for body1, body3 in zip(my_bodies, my_bodies_3):
+        assert body1 is not body3
+        assert id(body1) != id(body3)
 
 
-def test_bodies_translation(modeler: Modeler):
-    """Test for verifying the correct translation of list of ``Body``.
+def test_extrude_sketch_with_cut_request(modeler: Modeler):
+    """Test the cut argument when performing a sketch extrusion.
 
-    Notes
-    -----
-    Requires storing scdocx file and checking manually (for now).
+    This method mimics a cut operation.
+
+    Behind the scenes, a subtraction operation is performed on the bodies. After extruding the
+    sketch, the resulting body should be a cut body.
     """
-    # Create your design on the server side
-    design = modeler.create_design("MultipleBodyTranslation_Test")
+    # Define a sketch
+    origin = Point3D([0, 0, 10])
+    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
 
-    # Create 2 Sketch objects and draw a circle and a polygon (all client side)
-    sketch_1 = Sketch()
-    sketch_1.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
-    sketch_2 = Sketch()
-    sketch_2.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+    # Create a sketch
+    sketch_box = Sketch(plane)
+    sketch_box.box(Point2D([20, 20]), 30 * UNITS.m, 30 * UNITS.m)
 
-    # Build 2 independent components and bodies
-    circle_comp = design.add_component("CircleComponent")
-    body_circle_comp = circle_comp.extrude_sketch("Circle", sketch_1, Quantity(50, UNITS.mm))
-    polygon_comp = design.add_component("PolygonComponent")
-    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([20, 20]), 5 * UNITS.m)
 
-    design.translate_bodies(
-        [body_circle_comp, body_polygon_comp], UnitVector3D([1, 0, 0]), Distance(48, UNITS.mm)
+    # Create a design
+    design = modeler.create_design("ExtrudeSketchWithCut")
+
+    box_body = design.extrude_sketch(
+        name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m)
     )
-    design.translate_bodies(
-        [body_circle_comp, body_polygon_comp], UnitVector3D([0, -1, 1]), Quantity(88, UNITS.mm)
-    )
-    design.translate_bodies([body_circle_comp, body_polygon_comp], UnitVector3D([0, -1, 1]), 101)
-
-    # Try translating a body that does not belong to this component - no error thrown,
-    # but no operation performed either.
-    circle_comp.translate_bodies(
-        [body_polygon_comp], UnitVector3D([0, -1, 1]), Quantity(88, UNITS.mm)
+    design.extrude_sketch(
+        name="CylinderBody", sketch=sketch_cylinder, distance=Distance(60, unit=UNITS.m), cut=True
     )
 
+    # Verify there is only one body
+    assert len(design.bodies) == 1
 
-def test_body_rotation(modeler: Modeler):
-    """Test for verifying the correct rotation of a ``Body``."""
-    # Create your design on the server side
-    design = modeler.create_design("BodyRotation_Test")
+    # Verify the volume of the resulting body is less than the volume of the box
+    assert design.bodies[0].volume.m < box_body.volume.m
 
+
+def test_extrude_sketch_with_cut_request_no_collision(modeler: Modeler):
+    """Test the cut argument when performing a sketch extrusion (with no collision).
+
+    This method mimics an unsuccessful cut operation.
+
+    The sketch extrusion should not result in a cut body since there is no collision between the
+    original body and the extruded body.
+    """
+    # Define a sketch
+    origin = Point3D([0, 0, 10])
+    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+
+    # Create a sketch
+    sketch_box = Sketch(plane)
+    sketch_box.box(Point2D([20, 20]), 30 * UNITS.m, 30 * UNITS.m)
+
+    sketch_cylinder = Sketch(plane)
+    sketch_cylinder.circle(Point2D([100, 100]), 5 * UNITS.m)
+
+    # Create a design
+    design = modeler.create_design("ExtrudeSketchWithCutNoCollision")
+
+    box_body = design.extrude_sketch(
+        name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m)
+    )
+    design.extrude_sketch(
+        name="CylinderBody", sketch=sketch_cylinder, distance=Distance(60, unit=UNITS.m), cut=True
+    )
+
+    # Verify there is only one body... the cut operation should delete it
+    assert len(design.bodies) == 1
+
+    # Verify the volume of the resulting body is exactly the same
+    assert design.bodies[0].volume.m == box_body.volume.m
+
+
+def test_create_surface_body_from_trimmed_curves(modeler: Modeler):
+    design = modeler.create_design("surface")
+
+    # pill shape
+    circle1 = Circle(Point3D([0, 0, 0]), 1).trim(Interval(0, np.pi))
+    line1 = Line(Point3D([-1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
+    circle2 = Circle(Point3D([0, -1, 0]), 1).trim(Interval(np.pi, np.pi * 2))
+    line2 = Line(Point3D([1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
+
+    body = design.create_surface_from_trimmed_curves("body", [circle1, line1, line2, circle2])
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(
+        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+
+    # create from edges (by getting their trimmed curves)
+    trimmed_curves_from_edges = [edge.shape for edge in body.edges]
+    body = design.create_surface_from_trimmed_curves("body2", trimmed_curves_from_edges)
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(
+        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_shell_body(modeler: Modeler):
+    """Test shell command."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.shell_body(0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 12
+
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    success = base.shell_body(-0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.488, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 12
+
+
+def test_shell_faces(modeler: Modeler):
+    """Test shell commands for a single face."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.remove_faces(base.faces[0], 0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.584, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 11
+
+
+def test_shell_multiple_faces(modeler: Modeler):
+    """Test shell commands for multiple faces."""
+    design = modeler.create_design("shell")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 6
+
+    # shell
+    success = base.remove_faces([base.faces[0], base.faces[2]], 0.1)
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 10
+
+
+def test_set_component_name(modeler: Modeler):
+    """Test the setting of component names."""
+
+    design = modeler.create_design("ComponentNameTest")
+    component = design.add_component("Component1")
+    assert component.name == "Component1"
+
+    component.name = "ChangedComponentName"
+    assert component.name == "ChangedComponentName"
+
+
+def test_get_face_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a face."""
+    design = modeler.create_design("face_bounding_box")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    original_vertices = []
-    for edge in body.edges:
-        original_vertices.extend([edge.shape.start, edge.shape.end])
+    bounding_box = body.faces[0].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.max_corner.x.m == 0.5
+    assert bounding_box.max_corner.y.m == 0.5
 
-    body.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi / 4)
-
-    new_vertices = []
-    for edge in body.edges:
-        new_vertices.extend([edge.shape.start, edge.shape.end])
-
-    # Make sure no vertices are in the same position as in before rotation
-    for old_vertex, new_vertex in zip(original_vertices, new_vertices):
-        assert not np.allclose(old_vertex, new_vertex)
+    bounding_box = body.faces[1].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.max_corner.x.m == 0.5
+    assert bounding_box.max_corner.y.m == -0.5
 
 
-def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    """Test for downloading a design in multiple modes and verifying the
-    correct download.
-    """
-    # Create your design on the server side
-    design = modeler.create_design("MultipleBodyTranslation_Test")
+def test_get_edge_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of an edge."""
+    design = modeler.create_design("edge_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    # Create a Sketch object and draw a circle
-    sketch = Sketch()
-    sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+    # Edge 0 goes from (-0.5, -0.5, 1) to (0.5, -0.5, 1)
+    bounding_box = body.edges[0].bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.min_corner.z.m == 1
+    assert bounding_box.max_corner.x.m == 0.5
+    assert bounding_box.max_corner.y.m == -0.5
+    assert bounding_box.max_corner.z.m == 1
 
-    # Extrude the sketch
-    design.extrude_sketch(name="MyCylinder", sketch=sketch, distance=Quantity(50, UNITS.mm))
+    # Test center
+    center = bounding_box.center
+    assert center.x.m == 0
+    assert center.y.m == -0.5
+    assert center.z.m == 1
 
-    # Download the design
-    file = tmp_path_factory.mktemp("scdoc_files_download") / "dummy_folder" / "cylinder.scdocx"
-    design.download(file)
 
-    # Check that the file exists
-    assert file.exists()
+def test_get_body_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a body."""
+    design = modeler.create_design("body_bounding_box")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    # Check that we can also save it (even if it is not accessible on the server)
-    if BackendType.is_linux_service(modeler.client.backend_type):
-        file_save = "/tmp/cylinder-temp.scdocx"
-    else:
-        file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
+    bounding_box = body.bounding_box
+    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
+    assert bounding_box.min_corner.z.m == 0
+    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
+    assert bounding_box.max_corner.z.m == 1
 
-    design.save(file_location=file_save)
+    # Test center
+    center = bounding_box.center
+    assert center.x.m == 0
+    assert center.y.m == 0
+    assert center.z.m == 0.5
 
-    # Check for other exports - Windows backend...
-    if not BackendType.is_core_service(modeler.client.backend_type):
-        binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
-        text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
-        # Windows-only HOOPS exports for now
-        step_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.stp"
-        design.download(step_file, format=DesignFileFormat.STEP)
-        assert step_file.exists()
+def test_extrude_faces_failure_log_to_file(modeler: Modeler):
+    """Test that the failure to extrude faces logs the correct message to a file."""
+    # Create a design and a body for testing
+    design = modeler.create_design("test_design")
+    body = design.extrude_sketch("test_body", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-        iges_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.igs"
-        design.download(iges_file, format=DesignFileFormat.IGES)
-        assert iges_file.exists()
+    # Call the method with invalid parameters to trigger failure
+    result = modeler.geometry_commands.extrude_faces(
+        faces=[body.faces[0]],
+        distance=-10.0,  # Invalid distance to trigger failure
+        direction=UnitVector3D([0, 0, 1]),
+    )
+    # Assert the result is an empty list
+    assert result == []
 
-    # Linux backend...
-    else:
-        binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
-        text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
+    result = modeler.geometry_commands.extrude_faces_up_to(
+        faces=[body.faces[0]],
+        up_to_selection=body.faces[0],  # Using the same face as target to trigger failure
+        direction=UnitVector3D([0, 0, 1]),
+        seed_point=Point3D([0, 0, 0]),
+    )
+    # Assert the result is an empty list
+    assert result == []
 
-    # FMD
-    fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
-    design.download(fmd_file, format=DesignFileFormat.FMD)
-    assert fmd_file.exists()
 
-    # PMDB
-    pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
+def test_extrude_edges_missing_parameters(modeler: Modeler):
+    """Test that extrude_edges raises a ValueError when required parameters are missing."""
+    # Create a design and body for testing
+    design = modeler.create_design("test_design")
+    body = design.extrude_sketch("test_body", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN)
-    design.download(text_parasolid_file, format=DesignFileFormat.PARASOLID_TEXT)
-    design.download(pmdb_file, format=DesignFileFormat.PMDB)
+    # Test case: Missing both `from_face` and `from_point`/`direction`
+    with pytest.raises(
+        ValueError,
+        match="To extrude edges, either a face or a direction and point must be provided.",
+    ):
+        modeler.geometry_commands.extrude_edges(
+            edges=[body.edges[0]],  # Using the first edge of the body
+            distance=10.0,
+            from_face=None,
+            from_point=None,
+            direction=None,
+        )
 
-    assert binary_parasolid_file.exists()
-    assert text_parasolid_file.exists()
-    assert pmdb_file.exists()
+
+def test_import_component_named_selections(modeler: Modeler):
+    """Test importing named selections from an inserted design component."""
+    # This file had a component inserted into it that has named selections that we need to import
+    design = modeler.open_file(Path(FILES_DIR, "import_component_groups.scdocx"))
+    component = design.components[0]
+
+    assert len(design.named_selections) == 0
+    component.import_named_selections()
+    assert len(design.named_selections) == 3
+
+
+def test_component_make_independent(modeler: Modeler):
+    """Test making components independent."""
+
+    design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
+    face = next((ns for ns in design.named_selections if ns.name == "to_pull"), None).faces[0]
+    comp = next(
+        (ns for ns in design.named_selections if ns.name == "make_independent"), None
+    ).components[0]
+
+    comp.make_independent()
+
+    assert Accuracy.length_is_equal(comp.bodies[0].volume.m, face.body.volume.m)
+
+    modeler.geometry_commands.extrude_faces(face, 1)
+    comp = design.components[0].components[-1].components[-1]  # stale from update-design-in-place
+
+    assert not Accuracy.length_is_equal(comp.bodies[0].volume.m, face.body.volume.m)
+
+
+def test_write_body_facets_on_save(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
+
+    # First file without body facets
+    filepath_no_facets = tmp_path_factory.mktemp("test_design") / "cars_no_facets.scdocx"
+    design.download(filepath_no_facets)
+
+    # Second file with body facets
+    filepath_with_facets = tmp_path_factory.mktemp("test_design") / "cars_with_facets.scdocx"
+    design.download(filepath_with_facets, write_body_facets=True)
+
+    # Compare file sizes
+    size_no_facets = filepath_no_facets.stat().st_size
+    size_with_facets = filepath_with_facets.stat().st_size
+
+    assert size_with_facets > size_no_facets
+
+    # Ensure facets.bin and renderlist.xml files exist
+    with zipfile.ZipFile(filepath_with_facets, "r") as zip_ref:
+        namelist = set(zip_ref.namelist())
+
+    expected_files = {
+        "SpaceClaim/Graphics/facets.bin",
+        "SpaceClaim/Graphics/renderlist.xml",
+    }
+
+    missing = expected_files - namelist
+    assert not missing
 
 
 def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
@@ -2035,115 +2286,6 @@ def test_boolean_body_operations(modeler: Modeler):
     assert body3.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
 
-    # Test instance/instance
-    comp1_i = design.add_component("Comp1_i", comp1)
-    comp2_i = design.add_component("Comp2_i", comp2)
-    comp3_i = design.add_component("Comp3_i", comp3)
-
-    comp1_i.modify_placement(
-        Vector3D([52, 61, -43]), Point3D([-4, 26, 66]), UnitVector3D([-21, 20, 87]), np.pi / 4
-    )
-    comp2_i.modify_placement(
-        Vector3D([52, 61, -43]), Point3D([-4, 26, 66]), UnitVector3D([-21, 20, 87]), np.pi / 4
-    )
-    comp3_i.modify_placement(
-        Vector3D([52, 61, -43]), Point3D([-4, 26, 66]), UnitVector3D([-21, 20, 87]), np.pi / 4
-    )
-
-    body1 = comp1_i.bodies[0]
-    body2 = comp2_i.bodies[0]
-    body3 = comp3_i.bodies[0]
-
-    # 2.a.i.x
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy1.intersect(copy2)
-
-    assert not copy2.is_alive
-    assert body2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.5)
-
-    # 2.a.i.y
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
-    copy1.intersect(copy2)
-
-    assert not copy2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.25)
-
-    # 2.a.ii
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy3 = body3.copy(comp3_i, "Copy3")
-    with pytest.raises(ValueError, match="bodies do not intersect"):
-        copy1.intersect(copy3)
-
-    assert copy1.is_alive
-    assert copy3.is_alive
-
-    # 2.b.i.x
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy1.subtract(copy2)
-
-    assert not copy2.is_alive
-    assert body2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.5)
-
-    # 2.b.i.y
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
-    copy1.subtract(copy2)
-
-    assert not copy2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.75)
-
-    # 2.b.ii
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy1a = body1.copy(comp1_i, "Copy1a")
-    with pytest.raises(ValueError):
-        copy1.subtract(copy1a)
-
-    assert copy1.is_alive
-    assert copy1a.is_alive
-
-    # 2.b.iii
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy3 = body3.copy(comp3_i, "Copy3")
-    copy1.subtract(copy3)
-
-    assert Accuracy.length_is_equal(copy1.volume.m, 1)
-    assert copy1.volume
-    assert not copy3.is_alive
-
-    # 2.c.i.x
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy1.unite(copy2)
-
-    assert not copy2.is_alive
-    assert body2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 1.5)
-
-    # 2.c.i.y
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
-    copy1.unite(copy2)
-
-    assert not copy2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 1.75)
-
-    # 2.c.ii
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy3 = body3.copy(comp3_i, "Copy3")
-    copy1.unite(copy3)
-
-    assert not copy3.is_alive
-    assert body3.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 1)
-
 
 def test_multiple_bodies_boolean_operations(modeler: Modeler):
     """Test boolean operations with multiple bodies."""
@@ -2184,7 +2326,7 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     assert not copy2_uni.is_alive
     assert not copy3_uni.is_alive
     assert body2.is_alive
-    assert body3.is_alive
+    assert body3 is not None and body3.is_alive
     assert len(comp1.bodies) == 2
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 1
@@ -2518,109 +2660,6 @@ def test_body_mapping(modeler: Modeler):
         .segment_to_point(Point2D([1, 1])),
         1,
     )
-
-    # Test 1: identity mapping - everything should be the same
-    copy = body.copy(body.parent_component, "copy")
-    copy.map(Frame(Point3D([0, 0, 0]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0])))
-
-    vertices = []
-    for edge in body.edges:
-        vertices.extend([edge.shape.start, edge.shape.end])
-
-    copy_vertices = []
-    for edge in copy.edges:
-        copy_vertices.extend([edge.shape.start, edge.shape.end])
-
-    assert np.allclose(vertices, copy_vertices)
-
-    # Test 2: mirror the body - flips only the x direction
-    copy = body.copy(body.parent_component, "copy")
-    copy.map(Frame(Point3D([-4, 0, 1]), UnitVector3D([-1, 0, 0]), UnitVector3D([0, 1, 0])))
-
-    copy_vertices = []
-    for edge in copy.edges:
-        copy_vertices.extend([edge.shape.start, edge.shape.end])
-
-    # expected vertices from confirmed mirror
-    expected_vertices = [
-        Point3D([-3.0, -1.0, 0.0]),
-        Point3D([-5.0, -1.0, 0.0]),
-        Point3D([-3.0, -1.0, 1.0]),
-        Point3D([-3.0, -1.0, 0.0]),
-        Point3D([-4.0, 0.5, 0.0]),
-        Point3D([-3.0, -1.0, 0.0]),
-        Point3D([-4.0, 0.5, 1.0]),
-        Point3D([-4.0, 0.5, 0.0]),
-        Point3D([-3.0, 1.0, 0.0]),
-        Point3D([-4.0, 0.5, 0.0]),
-        Point3D([-3.0, 1.0, 1.0]),
-        Point3D([-3.0, 1.0, 0.0]),
-        Point3D([-5.0, 1.0, 0.0]),
-        Point3D([-3.0, 1.0, 0.0]),
-        Point3D([-5.0, 1.0, 1.0]),
-        Point3D([-5.0, 1.0, 0.0]),
-        Point3D([-5.0, -1.0, 0.0]),
-        Point3D([-5.0, 1.0, 0.0]),
-        Point3D([-5.0, -1.0, 1.0]),
-        Point3D([-5.0, -1.0, 0.0]),
-        Point3D([-3.0, -1.0, 1.0]),
-        Point3D([-5.0, -1.0, 1.0]),
-        Point3D([-4.0, 0.5, 1.0]),
-        Point3D([-3.0, -1.0, 1.0]),
-        Point3D([-3.0, 1.0, 1.0]),
-        Point3D([-4.0, 0.5, 1.0]),
-        Point3D([-5.0, 1.0, 1.0]),
-        Point3D([-3.0, 1.0, 1.0]),
-        Point3D([-5.0, -1.0, 1.0]),
-        Point3D([-5.0, 1.0, 1.0]),
-    ]
-
-    assert np.allclose(expected_vertices, copy_vertices)
-
-    # Test 3: rotate body 180 degrees - flip x and y direction
-    map_copy = body.copy(body.parent_component, "copy")
-    map_copy.map(Frame(Point3D([0, 0, 0]), UnitVector3D([-1, 0, 0]), UnitVector3D([0, -1, 0])))
-
-    rotate_copy = body.copy(body.parent_component, "copy")
-    rotate_copy.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi)
-
-    map_vertices = []
-    for edge in map_copy.edges:
-        map_vertices.extend([edge.shape.start, edge.shape.end])
-
-    rotate_vertices = []
-    for edge in rotate_copy.edges:
-        rotate_vertices.extend([edge.shape.start, edge.shape.end])
-
-    assert np.allclose(map_vertices, rotate_vertices)
-
-
-def test_sphere_creation(modeler: Modeler):
-    """Test the creation of a sphere body with a given radius."""
-    design = modeler.create_design("Spheretest")
-    center_point = Point3D([10, 10, 10], UNITS.m)
-    radius = Distance(1, UNITS.m)
-    spherebody = design.create_sphere("testspherebody", center_point, radius)
-    assert spherebody.name == "testspherebody"
-    assert len(spherebody.faces) == 1
-    assert round(spherebody.volume._magnitude, 3) == round(4.1887902, 3)
-
-
-def test_body_mirror(modeler: Modeler):
-    """Test the mirroring of a body."""
-    design = modeler.create_design("Design1")
-
-    # Create shape with no lines of symmetry in any axis
-    body = design.extrude_sketch(
-        "box",
-        Sketch()
-        .segment(Point2D([1, 1]), Point2D([-1, 1]))
-        .segment_to_point(Point2D([0, 0.5]))
-        .segment_to_point(Point2D([-1, -1]))
-        .segment_to_point(Point2D([1, -1]))
-        .segment_to_point(Point2D([1, 1])),
-        1,
-    )
     top = design.extrude_sketch(
         "top", Sketch(Plane(Point3D([0, 0, 1]))).box(Point2D([0.5, 0.5]), 0.1, 0.1), 0.1
     )
@@ -2740,6 +2779,7 @@ def test_sweep_sketch(modeler: Modeler):
     # create a circle on the XY-plane centered at (0, 0, 0) with radius 5
     path = [Circle(Point3D([0, 0, 0]), path_radius).trim(Interval(0, 2 * np.pi))]
 
+    # create the donut body
     body = design_sketch.sweep_sketch("donutsweep", profile, path)
 
     assert body.is_surface is False
@@ -2758,78 +2798,6 @@ def test_sweep_sketch(modeler: Modeler):
     assert body.faces[0].area.m == pytest.approx(expected_face_area)
 
     assert Accuracy.length_is_equal(body.volume.m, 394.7841760435743)
-
-
-def test_sweep_chain(modeler: Modeler):
-    """Test revolving a semi-elliptical profile around a circular axis to make
-    a bowl.
-    """
-    design_chain = modeler.create_design("bowl")
-
-    radius = 10
-
-    # create quarter-ellipse profile with major radius = 10, minor radius = 5
-    profile = [
-        Ellipse(
-            Point3D([0, 0, radius / 2]), radius, radius / 2, reference=[1, 0, 0], axis=[0, 1, 0]
-        ).trim(Interval(0, np.pi / 2))
-    ]
-
-    # create circle on the plane parallel to the XY-plane but moved up by 5 units with radius 10
-    path = [Circle(Point3D([0, 0, radius / 2]), radius).trim(Interval(0, 2 * np.pi))]
-
-    # create the bowl body
-    body = design_chain.sweep_chain("bowlsweep", path, profile)
-
-    assert body.is_surface is True
-
-    # check edges
-    assert len(body.edges) == 1
-
-    # check length of edge
-    # compute expected circumference (circle with radius 10)
-    expected_edge_cirumference = 2 * np.pi * 10
-    assert body.edges[0].length.m == pytest.approx(expected_edge_cirumference)
-
-    # check faces
-    assert len(body.faces) == 1
-
-    # check area of face
-    # compute expected area (half a spheroid)
-    minor_rad = radius / 2
-    e_squared = 1 - (minor_rad**2 / radius**2)
-    e = np.sqrt(e_squared)
-    expected_face_area = (
-        2 * np.pi * radius**2 + (minor_rad**2 / e) * np.pi * np.log((1 + e) / (1 - e))
-    ) / 2
-    assert body.faces[0].area.m == pytest.approx(expected_face_area)
-
-    # check volume of body
-    # expected is 0 since it's not a closed surface
-    assert body.volume.m == 0
-
-
-def test_create_body_from_loft_profile(modeler: Modeler):
-    """Test the ``create_body_from_loft_profile()`` method to create a vase
-    shape.
-    """
-    design_sketch = modeler.create_design("loftprofile")
-
-    profile1 = Circle(origin=[0, 0, 0], radius=8).trim(Interval(0, 2 * np.pi))
-    profile2 = Circle(origin=[0, 0, 10], radius=10).trim(Interval(0, 2 * np.pi))
-    profile3 = Circle(origin=[0, 0, 20], radius=5).trim(Interval(0, 2 * np.pi))
-
-    # Call the method
-    result = design_sketch.create_body_from_loft_profile(
-        "vase", [[profile1], [profile2], [profile3]], False, False
-    )
-
-    # Assert that the resulting body has only one face.
-    assert len(result.faces) == 1
-
-    # check volume of body
-    # expected is 0 since it's not a closed surface
-    assert result.volume.m == 0
 
 
 def test_revolve_sketch(modeler: Modeler):
@@ -2955,6 +2923,7 @@ def test_component_tree_print(modeler: Modeler):
     # Now, only "comp_3", "nested_2_comp_1" and "nested_1_nested_1_comp_1"
     # will have a body associated.
     #
+    #
 
     # Create the components
     comp_1 = design.add_component("Component_1")
@@ -3072,541 +3041,3 @@ def test_component_tree_print(modeler: Modeler):
         "    |---(body) nested_1_nested_1_comp_1_circle",
     ]
     assert check_list_equality(lines, ref) is True
-
-
-def test_surface_body_creation(modeler: Modeler):
-    """Test surface body creation from trimmed surfaces."""
-    design = modeler.create_design("Design1")
-
-    # half sphere
-    surface = Sphere([0, 0, 0], 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi / 2)))
-    body = design.create_body_from_surface("sphere", trimmed_surface)
-    assert len(design.bodies) == 1
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(np.pi * 2)
-
-    # cylinder
-    surface = Cylinder([0, 0, 0], 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, 1)))
-    body = design.create_body_from_surface("cylinder", trimmed_surface)
-
-    assert len(design.bodies) == 2
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(np.pi * 2)
-
-    # cone
-    surface = Cone([0, 0, 0], 1, np.pi / 4)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(surface.apex.z.m, 0)))
-    body = design.create_body_from_surface("cone", trimmed_surface)
-
-    assert len(design.bodies) == 3
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(4.44288293816)
-
-    # half torus
-    surface = Torus([0, 0, 0], 2, 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi), Interval(0, np.pi * 2)))
-    body = design.create_body_from_surface("torus", trimmed_surface)
-
-    assert len(design.bodies) == 4
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(39.4784176044)
-
-    # SOLID BODIES
-
-    # sphere
-    surface = Sphere([0, 0, 0], 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(-np.pi / 2, np.pi / 2)))
-    body = design.create_body_from_surface("sphere_solid", trimmed_surface)
-    assert len(design.bodies) == 5
-    assert not body.is_surface
-    assert body.faces[0].area.m == pytest.approx(np.pi * 4)
-
-    # torus
-    surface = Torus([0, 0, 0], 2, 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi * 2)))
-    body = design.create_body_from_surface("torus_solid", trimmed_surface)
-
-    assert len(design.bodies) == 6
-    assert not body.is_surface
-    assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
-
-
-def test_create_surface_from_nurbs_sketch(modeler: Modeler):
-    """Test creating a surface from a NURBS sketch."""
-    design = modeler.create_design("NURBS_Sketch_Surface")
-
-    # Create a NURBS sketch
-    sketch = Sketch()
-    sketch.nurbs_from_2d_points(
-        points=[
-            Point2D([0, 0]),
-            Point2D([1, 0]),
-            Point2D([1, 1]),
-            Point2D([0, 1]),
-        ],
-        tag="nurbs_sketch",
-    )
-    sketch.segment(
-        start=Point2D([0, -1]),
-        end=Point2D([0, 2]),
-        tag="segment_1",
-    )
-
-    # Create a surface from the NURBS sketch
-    surface_body = design.create_surface(
-        name="nurbs_surface",
-        sketch=sketch,
-    )
-
-    assert len(design.bodies) == 1
-    assert surface_body.is_surface
-    assert surface_body.faces[0].area.m > 0
-
-
-def test_design_parameters(modeler: Modeler):
-    """Test the design parameter's functionality."""
-    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
-    test_parameters = design.parameters
-
-    # Verify the initial parameters
-    assert len(test_parameters) == 2
-    assert test_parameters[0].name == "p1"
-    assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
-    assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
-
-    assert test_parameters[1].name == "p2"
-    assert abs(test_parameters[1].dimension_value - 0.0002552758322160813) < 1e-8
-    assert test_parameters[1].dimension_type == ParameterType.DIMENSIONTYPE_AREA
-
-    # Update the second parameter and verify the status
-    test_parameters[1].dimension_value = 0.0006
-    status = design.set_parameter(test_parameters[1])
-    assert status == ParameterUpdateStatus.SUCCESS
-
-    # Attempt to update the first parameter and expect a constrained status
-    test_parameters[0].dimension_value = 0.0006
-    status = design.set_parameter(test_parameters[0])
-    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
-
-    test_parameters[0].name = "NewName"
-    assert test_parameters[0].name == "NewName"
-
-    test_parameters[0].dimension_type = ParameterType.DIMENSIONTYPE_AREA
-    assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
-
-
-def test_cached_bodies(modeler: Modeler):
-    """Test that bodies are cached correctly.
-
-    Whenever a new body is created, modified etc. we should make sure that the cache is updated.
-    """
-    design = modeler.create_design("ModelingDemo")
-
-    # Define a sketch
-    origin = Point3D([0, 0, 10])
-    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
-
-    # Create a sketch
-    sketch_box = Sketch(plane)
-    sketch_box.box(Point2D([20, 20]), 30 * UNITS.m, 30 * UNITS.m)
-
-    sketch_cylinder = Sketch(plane)
-    sketch_cylinder.circle(Point2D([20, 20]), 5 * UNITS.m)
-
-    design.extrude_sketch(name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m))
-    design.extrude_sketch(
-        name="CylinderBody",
-        sketch=sketch_cylinder,
-        distance=Distance(60, unit=UNITS.m),
-    )
-
-    my_bodies = design.bodies
-    my_bodies_2 = design.bodies
-
-    # We should make sure that the object memory addresses are the same
-    for body1, body2 in zip(my_bodies, my_bodies_2):
-        assert body1 is body2  # We are comparing the memory addresses
-        assert id(body1) == id(body2)
-
-    design.extrude_sketch(
-        name="CylinderBody2",
-        sketch=sketch_cylinder,
-        distance=Distance(20, unit=UNITS.m),
-        direction="-",
-    )
-    my_bodies_3 = design.bodies
-
-    for body1, body3 in zip(my_bodies, my_bodies_3):
-        assert body1 is not body3
-        assert id(body1) != id(body3)
-
-
-def test_extrude_sketch_with_cut_request(modeler: Modeler):
-    """Test the cut argument when performing a sketch extrusion.
-
-    This method mimics a cut operation.
-
-    Behind the scenes, a subtraction operation is performed on the bodies. After extruding the
-    sketch, the resulting body should be a cut body.
-    """
-    # Define a sketch
-    origin = Point3D([0, 0, 10])
-    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
-
-    # Create a sketch
-    sketch_box = Sketch(plane)
-    sketch_box.box(Point2D([20, 20]), 30 * UNITS.m, 30 * UNITS.m)
-
-    sketch_cylinder = Sketch(plane)
-    sketch_cylinder.circle(Point2D([20, 20]), 5 * UNITS.m)
-
-    # Create a design
-    design = modeler.create_design("ExtrudeSketchWithCut")
-
-    box_body = design.extrude_sketch(
-        name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m)
-    )
-    volume_box = box_body.volume
-
-    design.extrude_sketch(
-        name="CylinderBody", sketch=sketch_cylinder, distance=Distance(60, unit=UNITS.m), cut=True
-    )
-
-    # Verify there is only one body
-    assert len(design.bodies) == 1
-
-    # Verify the volume of the resulting body is less than the volume of the box
-    assert design.bodies[0].volume < volume_box
-
-
-def test_extrude_sketch_with_cut_request_no_collision(modeler: Modeler):
-    """Test the cut argument when performing a sketch extrusion (with no collision).
-
-    This method mimics an unsuccessful cut operation.
-
-    The sketch extrusion should not result in a cut body since there is no collision between the
-    original body and the extruded body.
-    """
-    # Define a sketch
-    origin = Point3D([0, 0, 10])
-    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
-
-    # Create a sketch
-    sketch_box = Sketch(plane)
-    sketch_box.box(Point2D([20, 20]), 30 * UNITS.m, 30 * UNITS.m)
-
-    sketch_cylinder = Sketch(plane)
-    sketch_cylinder.circle(Point2D([100, 100]), 5 * UNITS.m)
-
-    # Create a design
-    design = modeler.create_design("ExtrudeSketchWithCutNoCollision")
-
-    box_body = design.extrude_sketch(
-        name="BoxBody", sketch=sketch_box, distance=Distance(30, unit=UNITS.m)
-    )
-    volume_box = box_body.volume
-
-    design.extrude_sketch(
-        name="CylinderBody", sketch=sketch_cylinder, distance=Distance(60, unit=UNITS.m), cut=True
-    )
-
-    # Verify there is only one body... the cut operation should delete it
-    assert len(design.bodies) == 1
-
-    # Verify the volume of the resulting body is exactly the same
-    assert design.bodies[0].volume == volume_box
-
-
-def test_create_surface_body_from_trimmed_curves(modeler: Modeler):
-    design = modeler.create_design("surface")
-
-    # pill shape
-    circle1 = Circle(Point3D([0, 0, 0]), 1).trim(Interval(0, np.pi))
-    line1 = Line(Point3D([-1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
-    circle2 = Circle(Point3D([0, -1, 0]), 1).trim(Interval(np.pi, np.pi * 2))
-    line2 = Line(Point3D([1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
-
-    body = design.create_surface_from_trimmed_curves("body", [circle1, line1, line2, circle2])
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(
-        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
-    )
-
-    # create from edges (by getting their trimmed curves)
-    trimmed_curves_from_edges = [edge.shape for edge in body.edges]
-    body = design.create_surface_from_trimmed_curves("body2", trimmed_curves_from_edges)
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(
-        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
-    )
-
-
-def test_shell_body(modeler: Modeler):
-    """Test shell command."""
-    design = modeler.create_design("shell")
-    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-    assert len(base.faces) == 6
-
-    # shell
-    success = base.shell_body(0.1)
-    assert success
-    assert base.volume.m == pytest.approx(Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-    assert len(base.faces) == 12
-
-    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    success = base.shell_body(-0.1)
-    assert success
-    assert base.volume.m == pytest.approx(Quantity(0.488, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-    assert len(base.faces) == 12
-
-
-def test_shell_faces(modeler: Modeler):
-    """Test shell commands for a single face."""
-    design = modeler.create_design("shell")
-    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-    assert len(base.faces) == 6
-
-    # shell
-    success = base.remove_faces(base.faces[0], 0.1)
-    assert success
-    assert base.volume.m == pytest.approx(Quantity(0.584, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-    assert len(base.faces) == 11
-
-
-def test_shell_multiple_faces(modeler: Modeler):
-    """Test shell commands for multiple faces."""
-    design = modeler.create_design("shell")
-    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-    assert len(base.faces) == 6
-
-    # shell
-    success = base.remove_faces([base.faces[0], base.faces[2]], 0.1)
-    assert success
-    assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-    assert len(base.faces) == 10
-
-
-def test_set_face_color(modeler: Modeler):
-    """Test the getting and setting of face colors."""
-
-    design = modeler.create_design("FaceColorTest")
-    box = design.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    faces = box.faces
-    assert len(faces) == 6
-
-    # Default body color is if it is not set on server side.
-    assert faces[0].color == DEFAULT_COLOR
-
-    # Set the color of the body using hex code.
-    faces[0].color = "#0000ffff"
-    assert faces[0].color == "#0000ffff"
-
-    faces[1].color = "#ffc000ff"
-    assert faces[1].color == "#ffc000ff"
-
-    # Set the color of the body using color name.
-    faces[2].set_color("green")
-    assert faces[2].color == "#008000ff"
-
-    # Set the color of the body using RGB values between (0,1) as floats.
-    faces[0].set_color((1.0, 0.0, 0.0))
-    assert faces[0].color == "#ff0000ff"
-
-    # Set the color of the body using RGB values between (0,255) as integers).
-    faces[1].set_color((0, 255, 0))
-    assert faces[1].color == "#00ff00ff"
-
-    # Assigning color object directly
-    blue_color = mcolors.to_rgba("#0000FF")
-    faces[2].color = blue_color
-    assert faces[2].color == "#0000ffff"
-
-    # Assign a color with opacity
-    faces[3].color = (255, 0, 0, 80)
-    assert faces[3].color == "#ff000050"
-
-    # Test setting the opacity separately
-    faces[3].opacity = 0.8
-    assert faces[3].color == "#ff0000cc"
-
-    # Try setting the opacity to an invalid value
-    with pytest.raises(
-        ValueError, match="Invalid color value: Opacity value must be between 0 and 1."
-    ):
-        faces[3].opacity = 255
-
-
-def test_set_component_name(modeler: Modeler):
-    """Test the setting of component names."""
-
-    design = modeler.create_design("ComponentNameTest")
-    component = design.add_component("Component1")
-    assert component.name == "Component1"
-
-    component.name = "ChangedComponentName"
-    assert component.name == "ChangedComponentName"
-
-
-def test_get_face_bounding_box(modeler: Modeler):
-    """Test getting the bounding box of a face."""
-    design = modeler.create_design("face_bounding_box")
-    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    bounding_box = body.faces[0].bounding_box
-    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
-    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
-
-    bounding_box = body.faces[1].bounding_box
-    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
-    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
-
-
-def test_get_edge_bounding_box(modeler: Modeler):
-    """Test getting the bounding box of an edge."""
-    design = modeler.create_design("edge_bounding_box")
-    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    # Edge 0 goes from (-0.5, -0.5, 1) to (0.5, -0.5, 1)
-    bounding_box = body.edges[0].bounding_box
-    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
-    assert bounding_box.min_corner.z.m == 1
-    assert bounding_box.max_corner.x.m == 0.5
-    assert bounding_box.max_corner.y.m == -0.5
-    assert bounding_box.max_corner.z.m == 1
-
-    # Test center
-    center = bounding_box.center
-    assert center.x.m == 0
-    assert center.y.m == -0.5
-    assert center.z.m == 1
-
-
-def test_get_body_bounding_box(modeler: Modeler):
-    """Test getting the bounding box of a body."""
-    design = modeler.create_design("body_bounding_box")
-    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    bounding_box = body.bounding_box
-    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
-    assert bounding_box.min_corner.z.m == 0
-    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
-    assert bounding_box.max_corner.z.m == 1
-
-    # Test center
-    center = bounding_box.center
-    assert center.x.m == 0
-    assert center.y.m == 0
-    assert center.z.m == 0.5
-
-
-def test_extrude_faces_failure_log_to_file(modeler: Modeler):
-    """Test that the failure to extrude faces logs the correct message to a file."""
-    # Create a design and body for testing
-    design = modeler.create_design("test_design")
-    body = design.extrude_sketch("test_body", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    # Call the method with invalid parameters to trigger failure
-    result = modeler.geometry_commands.extrude_faces(
-        faces=[body.faces[0]],
-        distance=-10.0,  # Invalid distance to trigger failure
-        direction=UnitVector3D([0, 0, 1]),
-    )
-    # Assert the result is an empty list
-    assert result == []
-
-    result = modeler.geometry_commands.extrude_faces_up_to(
-        faces=[body.faces[0]],
-        up_to_selection=body.faces[0],  # Using the same face as target to trigger failure
-        direction=UnitVector3D([0, 0, 1]),
-        seed_point=Point3D([0, 0, 0]),
-    )
-    # Assert the result is an empty list
-    assert result == []
-
-
-def test_extrude_edges_missing_parameters(modeler: Modeler):
-    """Test that extrude_edges raises a ValueError when required parameters are missing."""
-    # Create a design and body for testing
-    design = modeler.create_design("test_design")
-    body = design.extrude_sketch("test_body", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    # Test case: Missing both `from_face` and `from_point`/`direction`
-    with pytest.raises(
-        ValueError,
-        match="To extrude edges, either a face or a direction and point must be provided.",
-    ):
-        modeler.geometry_commands.extrude_edges(
-            edges=[body.edges[0]],  # Using the first edge of the body
-            distance=10.0,
-            from_face=None,
-            from_point=None,
-            direction=None,
-        )
-
-
-def test_import_component_named_selections(modeler: Modeler):
-    """Test importing named selections from an inserted design component."""
-    # This file had a component inserted into it that has named selections that we need to import
-    design = modeler.open_file(Path(FILES_DIR, "import_component_groups.scdocx"))
-    component = design.components[0]
-
-    assert len(design.named_selections) == 0
-    component.import_named_selections()
-    assert len(design.named_selections) == 3
-
-
-def test_component_make_independent(modeler: Modeler):
-    """Test making components independent."""
-
-    design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
-    face = next((ns for ns in design.named_selections if ns.name == "to_pull"), None).faces[0]
-    comp = next(
-        (ns for ns in design.named_selections if ns.name == "make_independent"), None
-    ).components[0]
-
-    comp.make_independent()
-
-    assert Accuracy.length_is_equal(comp.bodies[0].volume.m, face.body.volume.m)
-
-    modeler.geometry_commands.extrude_faces(face, 1)
-    comp = design.components[0].components[-1].components[-1]  # stale from update-design-in-place
-
-    assert not Accuracy.length_is_equal(comp.bodies[0].volume.m, face.body.volume.m)
-
-
-def test_write_body_facets_on_save(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
-
-    # First file without body facets
-    filepath_no_facets = tmp_path_factory.mktemp("test_design") / "cars_no_facets.scdocx"
-    design.download(filepath_no_facets)
-
-    # Second file with body facets
-    filepath_with_facets = tmp_path_factory.mktemp("test_design") / "cars_with_facets.scdocx"
-    design.download(filepath_with_facets, write_body_facets=True)
-
-    # Compare file sizes
-    size_no_facets = filepath_no_facets.stat().st_size
-    size_with_facets = filepath_with_facets.stat().st_size
-
-    assert size_with_facets > size_no_facets
-
-    # Ensure facets.bin and renderlist.xml files exist
-    with zipfile.ZipFile(filepath_with_facets, "r") as zip_ref:
-        namelist = set(zip_ref.namelist())
-
-    expected_files = {
-        "SpaceClaim/Graphics/facets.bin",
-        "SpaceClaim/Graphics/renderlist.xml",
-    }
-
-    missing = expected_files - namelist
-    assert not missing
