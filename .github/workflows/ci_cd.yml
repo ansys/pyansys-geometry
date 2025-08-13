@@ -264,6 +264,7 @@ jobs:
 
       - name: Testing
         if: env.SKIP_UNSTABLE == 'false'
+        timeout-minutes: 20  # On Windows self-hosted runners, sometimes hangs...
         run: |
           .\.venv\Scripts\Activate.ps1
           pytest -v
@@ -781,6 +782,7 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
+        timeout-minutes: 20  # On Windows self-hosted runners, sometimes hangs...
         run: |
           .\.venv\Scripts\Activate.ps1
           pytest -v --use-existing-service=yes
