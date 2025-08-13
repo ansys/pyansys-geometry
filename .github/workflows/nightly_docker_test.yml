@@ -141,6 +141,7 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run PyAnsys Geometry tests
+        timeout-minutes: 20  # On Windows self-hosted runners, sometimes hangs...
         run: |
           .\.venv\Scripts\Activate.ps1
           pytest -v
