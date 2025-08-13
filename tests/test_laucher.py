@@ -125,7 +125,27 @@ def test_docker_not_available(monkeypatch):
     # Replace the launch_docker_modeler function with a dummy function
     monkeypatch.setattr(
         "ansys.geometry.core.connection.launcher.launch_docker_modeler",
-        dummy_launch_docker_modeler,
+        lambda **kwargs: (_ for _ in ()).throw(NotImplementedError("Docker not available")),
+    )
+
+    # Monkeypatch other fallback methods to simulate failure
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.launcher.launch_modeler_with_core_service",
+        lambda **kwargs: (_ for _ in ()).throw(NotImplementedError("Core service not available")),
+    )
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.launcher.launch_modeler_with_geometry_service",
+        lambda **kwargs: (_ for _ in ()).throw(
+            NotImplementedError("Geometry service not available")
+        ),
+    )
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.launcher.launch_modeler_with_spaceclaim",
+        lambda **kwargs: (_ for _ in ()).throw(NotImplementedError("SpaceClaim not available")),
+    )
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.launcher.launch_modeler_with_discovery",
+        lambda **kwargs: (_ for _ in ()).throw(NotImplementedError("Discovery not available")),
     )
 
     # Call the function and verify that it raises NotImplementedError

@@ -176,7 +176,7 @@ def test_detect_and_fix_logo_as_problem_area(modeler: Modeler):
 
 def test_volume_extract_bad_faces(modeler: Modeler):
     """Test a volume extract with bad faces."""
-    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
+    design = modeler.open_file(FILES_DIR / "BoxWithRound_noedits.scdocx")
 
     body = design.bodies[0]
     inside_faces = []
@@ -195,7 +195,7 @@ def test_volume_extract_bad_faces(modeler: Modeler):
 
 def test_volume_extract_bad_edges(modeler: Modeler):
     """Test a volume extract with bad edges."""
-    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
+    design = modeler.open_file(FILES_DIR / "BoxWithRound_noedits.scdocx")
     body = design.bodies[0]
     sealing_edges = []
     created_bodies = modeler.prepare_tools.extract_volume_from_edge_loops(

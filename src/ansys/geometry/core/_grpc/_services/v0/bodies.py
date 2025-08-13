@@ -30,6 +30,7 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
 from .conversions import (
+    _nurbs_curves_compatibility,
     build_grpc_id,
     from_frame_to_grpc_frame,
     from_grpc_material_to_material,
@@ -102,6 +103,10 @@ class GRPCBodyServiceV0(GRPCBodyService):
             ),
         )
 
+        # HACK: we should inform the user that NURBS curve sketches are not supported
+        # prior to 26R1... and if passed, raise an error
+        _nurbs_curves_compatibility(kwargs["backend_version"], request.geometries)
+
         # Call the gRPC service
         resp = self.stub.CreateExtrudedBody(request=request)
 
@@ -127,6 +132,10 @@ class GRPCBodyServiceV0(GRPCBodyService):
             ),
             path=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["path"]],
         )
+
+        # HACK: we should inform the user that NURBS curve sketches are not supported
+        # prior to 26R1... and if passed, raise an error
+        _nurbs_curves_compatibility(kwargs["backend_version"], request.geometries)
 
         # Call the gRPC service
         resp = self.stub.CreateSweepingProfile(request=request)
@@ -228,6 +237,10 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
             ),
         )
+
+        # HACK: we should inform the user that NURBS curve sketches are not supported
+        # prior to 26R1... and if passed, raise an error
+        _nurbs_curves_compatibility(kwargs["backend_version"], request.geometries)
 
         # Call the gRPC service
         resp = self.stub.CreatePlanarBody(request=request)

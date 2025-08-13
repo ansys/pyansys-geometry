@@ -585,6 +585,8 @@ class GeometryCommands:
         )
         return result.success
 
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
     def create_linear_pattern(
         self,
         selection: Union["Face", list["Face"]],
@@ -618,6 +620,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.face import Face
 
@@ -1173,6 +1179,8 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to revolve faces.")
             return []
 
+    @protect_grpc
+    @min_backend_version(25, 2, 0)
     def replace_face(
         self,
         target_selection: Union["Face", list["Face"]],
@@ -1191,6 +1199,10 @@ class GeometryCommands:
         -------
         bool
             ``True`` when successful, ``False`` when failed.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
         """
         target_selection: list["Face"] = (
             target_selection if isinstance(target_selection, list) else [target_selection]

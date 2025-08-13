@@ -1,0 +1,294 @@
+# Keep in mind that all tests raising a minimum backend version error
+# will be automatically skipped. This set of incompatible tests
+# is an additional list of tests that are known to be incompatible
+# for different reasons.
+backends:
+  - version: "24.1"
+    incompatible_tests:
+      # Model used is too new for this version
+      - tests/integration/test_design.py::test_design_parameters
+      - tests/integration/test_design.py::test_old_backend_version
+      - tests/integration/test_design_import.py::test_design_import_with_named_selections
+      - tests/integration/test_design_import.py::test_design_import_stride_with_named_selections
+      - tests/integration/test_geometry_commands.py::test_split_body_by_slicer_edge
+      - tests/integration/test_geometry_commands.py::test_linear_pattern_on_imported_geometry_faces
+      - tests/integration/test_geometry_commands.py::test_modify_linear_pattern_on_imported_geometry_faces
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_on_imported_geometry_faces
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_on_imported_geometry_faces_modify
+      - tests/integration/test_geometry_commands.py::test_fill_pattern_on_imported_geometry_faces
+      - tests/integration/test_geometry_commands.py::test_update_fill_pattern_on_imported_geometry_faces
+      - tests/integration/test_mating_conditions.py::test_align_condition
+      - tests/integration/test_mating_conditions.py::test_tangent_condition
+      - tests/integration/test_mating_conditions.py::test_orient_condition
+      - tests/integration/test_prepare_tools.py::test_volume_extract_from_faces
+      - tests/integration/test_prepare_tools.py::test_volume_extract_from_edge_loops
+      - tests/integration/test_prepare_tools.py::test_remove_rounds
+      - tests/integration/test_prepare_tools.py::test_detect_logos
+      - tests/integration/test_prepare_tools.py::test_detect_and_fix_logo_as_problem_area
+      - tests/integration/test_prepare_tools.py::test_volume_extract_bad_faces
+      - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
+      - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
+      - tests/integration/test_repair_tools.py::test_fix_small_face
+      - tests/integration/test_repair_tools.py::test_find_interference
+      - tests/integration/test_repair_tools.py::test_fix_interference
+      - tests/integration/test_repair_tools.py::test_find_and_fix_stitch_faces
+      - tests/integration/test_repair_tools.py::test_find_and_fix_stitch_faces_comprehensive
+      - tests/integration/test_repair_tools.py::test_find_and_fix_duplicate_faces
+      - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges_problem_areas
+      - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges_in_components
+      - tests/integration/test_repair_tools.py::test_find_and_fix_inexact_edges
+      - tests/integration/test_repair_tools.py::test_find_and_fix_missing_faces
+      - tests/integration/test_repair_tools.py::test_find_and_fix_missing_faces_angle_distance
+      - tests/integration/test_repair_tools.py::test_find_and_fix_short_edges_problem_areas
+      - tests/integration/test_repair_tools.py::test_find_and_fix_split_edges_problem_areas
+      - tests/integration/test_repair_tools.py::test_find_and_stitch_and_missing_faces
+      - tests/integration/test_repair_tools.py::test_find_simplify
+      - tests/integration/test_repair_tools.py::test_fix_simplify
+      - tests/integration/test_repair_tools.py::test_find_and_fix_short_edges
+      - tests/integration/test_repair_tools.py::test_find_and_fix_split_edges
+      - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges
+      - tests/integration/test_repair_tools.py::test_find_and_fix_short_edges_comprehensive
+      - tests/integration/test_repair_tools.py::test_find_and_fix_split_edges_comprehensive
+      - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges_comprehensive
+      - tests/integration/test_repair_tools.py::test_find_and_fix_simplify
+      - tests/integration/test_repair_tools.py::test_design_import_check_geometry
+      - tests/integration/test_design.py::test_import_component_named_selections
+      - tests/integration/test_design.py::test_component_make_independent
+      # Opening large files through streaming is only available from 25.2 onwards
+      - tests/integration/test_design.py::test_modeler_open_files
+      # Named selections elements are only consistent from 25.2 onwards
+      - tests/integration/test_design.py::test_design_selection
+      # Empty materials are only supported from 25.2 onwards
+      - tests/integration/test_design.py::test_get_empty_material
+      # File streaming is only available from 25.2 onwards
+      - tests/integration/test_design.py::test_stream_upload_file
+      # Components and vertex only available from 26.1 onwards
+      - tests/integration/test_design.py::test_named_selection_contents
+      - tests/integration/test_design.py::test_named_selections_components
+      # Bounding box center is only available from 25R2 onwards
+      - tests/integration/test_design.py::test_get_body_bounding_box
+      # Export to DSCO files is only available from 25R2 onwards
+      - tests/integration/test_design_export.py::test_export_to_disco
+      # Insert/Import file operations caused problems prior to 26.1
+      - tests/integration/test_design_import.py::test_design_import_acad_2024
+      - tests/integration/test_design_import.py::test_design_import_cat5_2024
+      - tests/integration/test_design_import.py::test_design_import_cat6_2023
+      - tests/integration/test_design_import.py::test_design_import_creo_11
+      - tests/integration/test_design_import.py::test_design_import_jt
+      - tests/integration/test_design_import.py::test_design_import_solid_edge2025
+      - tests/integration/test_design_import.py::test_design_import_nx2412
+      - tests/integration/test_design_import.py::test_design_import_inventor2026
+      # Bug fix included from 25.2 onwards
+      - tests/integration/test_issues.py::test_issue_1192_temp_body_on_empty_intersect
+      # Enhancements on tool results from 25.2 onwards
+      - tests/integration/test_repair_tools.py::test_fix_extra_edge
+      # Issues in log retrieval from server when empty log are solved from 25R1 onwards
+      - tests/integration/test_client.py::test_client_get_service_logs
+      # body.is_surface property is only available from 24R2 onwards
+      - tests/integration/test_design.py::test_component_body
+      - tests/integration/test_design.py::test_midsurface_properties
+      - tests/integration/test_issues.py::test_issue_834_design_import_with_surfaces
+      # Ordering of faces/edges changed from 24R2 onwards
+      - tests/integration/test_design.py::test_faces_edges
+      # Due to test setup, these tests error out and are not caught by the backend version error
+      # So we will explicitly skip them in this file -- "shapes" are supported from 24R2 onwards
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_surface_properties
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_surface_normals
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_properties
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_line_translate
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_line_rotate
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_circle_translate
+      - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_circle_rotate
+      # Bug fix included from 26.1 onwards
+      - tests/integration/test_design_import.py::test_named_selections_after_file_insert
+      - tests/integration/test_design_import.py::test_named_selections_after_file_open
+
+  - version: "24.2"
+    incompatible_tests:
+      # Model used is too new for this version
+      - tests/integration/test_design.py::test_design_parameters
+      - tests/integration/test_design.py::test_old_backend_version
+      - tests/integration/test_design_import.py::test_design_import_with_named_selections
+      - tests/integration/test_design_import.py::test_design_import_stride_with_named_selections
+      - tests/integration/test_geometry_commands.py::test_split_body_by_slicer_edge
+      - tests/integration/test_geometry_commands.py::test_linear_pattern_on_imported_geometry_faces
+      - tests/integration/test_geometry_commands.py::test_modify_linear_pattern_on_imported_geometry_faces
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_on_imported_geometry_faces
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_on_imported_geometry_faces_modify
+      - tests/integration/test_geometry_commands.py::test_fill_pattern_on_imported_geometry_faces
+      - tests/integration/test_geometry_commands.py::test_update_fill_pattern_on_imported_geometry_faces
+      - tests/integration/test_mating_conditions.py::test_align_condition
+      - tests/integration/test_mating_conditions.py::test_tangent_condition
+      - tests/integration/test_mating_conditions.py::test_orient_condition
+      - tests/integration/test_prepare_tools.py::test_volume_extract_from_faces
+      - tests/integration/test_prepare_tools.py::test_volume_extract_from_edge_loops
+      - tests/integration/test_prepare_tools.py::test_remove_rounds
+      - tests/integration/test_prepare_tools.py::test_detect_logos
+      - tests/integration/test_prepare_tools.py::test_detect_and_fix_logo_as_problem_area
+      - tests/integration/test_prepare_tools.py::test_volume_extract_bad_faces
+      - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
+      - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
+      - tests/integration/test_repair_tools.py::test_fix_small_face
+      - tests/integration/test_repair_tools.py::test_find_interference
+      - tests/integration/test_repair_tools.py::test_fix_interference
+      - tests/integration/test_repair_tools.py::test_find_and_fix_stitch_faces
+      - tests/integration/test_repair_tools.py::test_find_and_fix_stitch_faces_comprehensive
+      - tests/integration/test_repair_tools.py::test_find_and_fix_duplicate_faces
+      - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges_problem_areas
+      - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges_in_components
+      - tests/integration/test_repair_tools.py::test_find_and_fix_inexact_edges
+      - tests/integration/test_repair_tools.py::test_find_and_fix_missing_faces
+      - tests/integration/test_repair_tools.py::test_find_and_fix_missing_faces_angle_distance
+      - tests/integration/test_repair_tools.py::test_find_and_fix_short_edges_problem_areas
+      - tests/integration/test_repair_tools.py::test_find_and_fix_split_edges_problem_areas
+      - tests/integration/test_repair_tools.py::test_find_and_stitch_and_missing_faces
+      - tests/integration/test_repair_tools.py::test_find_simplify
+      - tests/integration/test_repair_tools.py::test_fix_simplify
+      - tests/integration/test_repair_tools.py::test_find_and_fix_short_edges
+      - tests/integration/test_repair_tools.py::test_find_and_fix_split_edges
+      - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges
+      - tests/integration/test_repair_tools.py::test_find_and_fix_short_edges_comprehensive
+      - tests/integration/test_repair_tools.py::test_find_and_fix_split_edges_comprehensive
+      - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges_comprehensive
+      - tests/integration/test_repair_tools.py::test_find_and_fix_simplify
+      - tests/integration/test_repair_tools.py::test_design_import_check_geometry
+      - tests/integration/test_design.py::test_import_component_named_selections
+      - tests/integration/test_design.py::test_component_make_independent
+      # Opening large files through streaming is only available from 25.2 onwards
+      - tests/integration/test_design.py::test_modeler_open_files
+      # Named selections elements are only consistent from 25.2 onwards
+      - tests/integration/test_design.py::test_design_selection
+      # Empty materials are only supported from 25.2 onwards
+      - tests/integration/test_design.py::test_get_empty_material
+      # File streaming is only available from 25.2 onwards
+      - tests/integration/test_design.py::test_stream_upload_file
+      # No sketch on imprinted curves is only supported from 25.2 onwards
+      - tests/integration/test_design.py::test_imprint_trimmed_curves
+      # Components and vertex only available from 26.1 onwards
+      - tests/integration/test_design.py::test_named_selection_contents
+      - tests/integration/test_design.py::test_named_selections_components
+      # Bounding box center is only available from 25R2 onwards
+      - tests/integration/test_design.py::test_get_body_bounding_box
+      # Export to DSCO files is only available from 25R2 onwards
+      - tests/integration/test_design_export.py::test_export_to_disco
+      # Insert/Import file operations caused problems prior to 26.1
+      - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
+      - tests/integration/test_design_export.py::test_import_export_reimport_design_x_t
+      - tests/integration/test_design_export.py::test_import_export_glb
+      - tests/integration/test_design_export.py::test_import_export_open_file_design[PARASOLID_TEXT-x_t-rci_std.x_t-2-1]
+      - tests/integration/test_design_export.py::test_import_export_open_file_design[SCDOCX-scdocx-reactorWNS.scdocx-1-3]
+      - tests/integration/test_design_import.py::test_design_insert_id_bug
+      - tests/integration/test_design_import.py::test_design_import_acad_2024
+      - tests/integration/test_design_import.py::test_design_import_cat5_2024
+      - tests/integration/test_design_import.py::test_design_import_cat6_2023
+      - tests/integration/test_design_import.py::test_design_import_creo_11
+      - tests/integration/test_design_import.py::test_design_import_jt
+      - tests/integration/test_design_import.py::test_design_import_solid_edge2025
+      - tests/integration/test_design_import.py::test_design_import_nx2412
+      - tests/integration/test_design_import.py::test_design_import_inventor2026
+      # Insert file naming convention changed in 26.1
+      - tests/integration/test_design_import.py::test_design_insert
+      # Bug fix included from 25.2 onwards
+      - tests/integration/test_issues.py::test_issue_1192_temp_body_on_empty_intersect
+      # Enhancements on tool results from 25.2 onwards
+      - tests/integration/test_prepare_tools.py::test_share_topology
+      - tests/integration/test_repair_tools.py::test_fix_extra_edge
+      # Issues in log retrieval from server when empty log are solved from 25R1 onwards
+      - tests/integration/test_client.py::test_client_get_service_logs
+      # Bug fix included from 26.1 onwards
+      - tests/integration/test_design_import.py::test_named_selections_after_file_insert
+      - tests/integration/test_design_import.py::test_named_selections_after_file_open
+
+  - version: "25.1"
+    incompatible_tests:
+      # Model used is too new for this version
+      - tests/integration/test_design.py::test_import_component_named_selections
+      - tests/integration/test_design.py::test_component_make_independent
+      # Opening large files through streaming is only available from 25.2 onwards
+      - tests/integration/test_design.py::test_modeler_open_files
+      # Named selections elements are only consistent from 25.2 onwards
+      - tests/integration/test_design.py::test_design_selection
+      # Empty materials are only supported from 25.2 onwards
+      - tests/integration/test_design.py::test_get_empty_material
+      # File streaming is only available from 25.2 onwards
+      - tests/integration/test_design.py::test_stream_upload_file
+      # No sketch on imprinted curves is only supported from 25.2 onwards
+      - tests/integration/test_design.py::test_imprint_trimmed_curves
+      # Components and vertex only available from 26.1 onwards
+      - tests/integration/test_design.py::test_named_selection_contents
+      - tests/integration/test_design.py::test_named_selections_components
+      # Potential problem in model/reading design for importing parameters
+      - tests/integration/test_design.py::test_design_parameters
+      # Bounding box center is only available from 25R2 onwards
+      - tests/integration/test_design.py::test_get_body_bounding_box
+      # Export to DSCO files is only available from 25R2 onwards
+      - tests/integration/test_design_export.py::test_export_to_disco
+      - tests/integration/test_repair_tools.py::test_find_and_fix_stitch_faces
+      - tests/integration/test_repair_tools.py::test_find_and_fix_stitch_faces_comprehensive
+      # Insert/Import file operations caused problems prior to 26.1
+      - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
+      - tests/integration/test_design_export.py::test_import_export_glb
+      - tests/integration/test_design_export.py::test_import_export_open_file_design[PARASOLID_TEXT-x_t-rci_std.x_t-2-1]
+      - tests/integration/test_design_export.py::test_import_export_open_file_design[SCDOCX-scdocx-reactorWNS.scdocx-1-3]
+      - tests/integration/test_design_import.py::test_design_insert_id_bug
+      - tests/integration/test_design_import.py::test_design_import_acad_2024
+      - tests/integration/test_design_import.py::test_design_import_cat6_2023
+      - tests/integration/test_design_import.py::test_design_import_jt
+      - tests/integration/test_design_import.py::test_design_import_solid_edge2025
+      - tests/integration/test_design_import.py::test_design_import_nx2412
+      # Insert file naming convention changed in 26.1
+      - tests/integration/test_design_import.py::test_design_insert
+      # Importing named selections from design was not available prior to 26.1
+      - tests/integration/test_design_import.py::test_design_import_with_named_selections
+      - tests/integration/test_design_import.py::test_design_import_stride_with_named_selections
+      # Fix small faces tests have been impacted by changes in the repair tools (improved in 26.1)
+      - tests/integration/test_repair_tools.py::test_fix_small_face
+      - tests/integration/test_repair_tools.py::test_find_and_fix_missing_faces_angle_distance
+      # Bug fix included from 25.2 onwards
+      - tests/integration/test_issues.py::test_issue_1192_temp_body_on_empty_intersect
+      # Files used require 25.2 or later
+      - tests/integration/test_mating_conditions.py::test_align_condition
+      - tests/integration/test_mating_conditions.py::test_tangent_condition
+      - tests/integration/test_mating_conditions.py::test_orient_condition
+      - tests/integration/test_repair_tools.py::test_design_import_check_geometry
+      # Enhancements on tool results from 25.2 onwards
+      - tests/integration/test_prepare_tools.py::test_share_topology
+      - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges_in_components
+      - tests/integration/test_repair_tools.py::test_find_and_fix_short_edges
+      - tests/integration/test_repair_tools.py::test_find_and_fix_split_edges
+      - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges
+      - tests/integration/test_repair_tools.py::test_find_and_fix_short_edges_comprehensive
+      - tests/integration/test_repair_tools.py::test_find_and_fix_split_edges_comprehensive
+      - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges_comprehensive
+      # Bug fix included from 26.1 onwards
+      - tests/integration/test_design_import.py::test_named_selections_after_file_insert
+      - tests/integration/test_design_import.py::test_named_selections_after_file_open
+
+  - version: "25.2"
+    incompatible_tests:
+      # Model used is too new for this version
+      - tests/integration/test_design.py::test_import_component_named_selections
+      # Components and vertex only available on 26.1 onwards
+      - tests/integration/test_design.py::test_named_selection_contents
+      - tests/integration/test_design.py::test_named_selections_components
+      - tests/integration/test_design.py::test_component_make_independent
+      # Insert/Import file operations caused problems prior to 26.1
+      - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
+      - tests/integration/test_design_export.py::test_import_export_reimport_design_x_t
+      - tests/integration/test_design_export.py::test_import_export_glb
+      - tests/integration/test_design_export.py::test_import_export_open_file_design[PARASOLID_TEXT-x_t-rci_std.x_t-2-1]
+      - tests/integration/test_design_export.py::test_import_export_open_file_design[SCDOCX-scdocx-reactorWNS.scdocx-1-3]
+      - tests/integration/test_design_import.py::test_design_insert_id_bug
+      # Insert file naming convention changed in 26.1
+      - tests/integration/test_design_import.py::test_design_insert
+      # Importing named selections from design was not available prior to 26.1
+      - tests/integration/test_design_import.py::test_design_import_with_named_selections
+      - tests/integration/test_design_import.py::test_design_import_stride_with_named_selections
+      # Fix small faces tests have been impacted by changes in the repair tools (improved in 26.1)
+      - tests/integration/test_repair_tools.py::test_fix_small_face
+      - tests/integration/test_repair_tools.py::test_find_small_faces
+      - tests/integration/test_repair_tools.py::test_find_small_face_id
+      - tests/integration/test_repair_tools.py::test_find_and_fix_missing_faces_angle_distance
+      # Bug fix included from 26.1 onwards
+      - tests/integration/test_design_import.py::test_named_selections_after_file_insert
+      - tests/integration/test_design_import.py::test_named_selections_after_file_open
