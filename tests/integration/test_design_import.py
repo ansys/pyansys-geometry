@@ -689,7 +689,7 @@ def test_file_insert_import_named_selections_post_import(modeler: Modeler):
     assert initial_named_selections_count == 0, (
         f"Expected no named selections initially, but got {initial_named_selections_count}."
     )
-    design.import_named_selections()
+    design.components[0].import_named_selections()
     # Verify named selections count after importing
     updated_named_selections_count = len(design.named_selections)
     assert updated_named_selections_count == 9, (
