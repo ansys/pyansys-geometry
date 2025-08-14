@@ -121,7 +121,7 @@ class SketchCircle(SketchFace, Circle):
         """
         import pyvista as pv
 
-        circle = pv.Circle(self.radius.m_as(DEFAULT_UNITS.LENGTH))
+        circle = pv.Circle(radius=self.radius.m_as(DEFAULT_UNITS.LENGTH))
         return circle.translate(
             [
                 self.center.x.m_as(DEFAULT_UNITS.LENGTH),
