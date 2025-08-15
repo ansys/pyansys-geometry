@@ -973,7 +973,9 @@ class Design(Component):
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def insert_file(
-        self, file_location: Path | str, import_options: ImportOptions = ImportOptions()
+        self,
+        file_location: Path | str,
+        import_options: ImportOptions = ImportOptions(),
     ) -> Component:
         """Insert a file into the design.
 
@@ -997,7 +999,9 @@ class Design(Component):
         filepath_server = self._modeler._upload_file(file_location, import_options=import_options)
 
         # Insert the file into the design
-        self._grpc_client.services.designs.insert(filepath=filepath_server)
+        self._grpc_client.services.designs.insert(
+            filepath=filepath_server, import_named_selections=import_options.import_named_selections
+        )
         self._grpc_client.log.debug(f"File {file_location} successfully inserted into design.")
 
         self._update_design_inplace()
