@@ -63,7 +63,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def create_sweeping_chain(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def sweep_with_guide(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError

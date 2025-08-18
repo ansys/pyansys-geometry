@@ -58,7 +58,6 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance, checks
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
@@ -2841,14 +2840,16 @@ def test_sweep_with_guide(modeler: Modeler):
     trimmed_guide = guide_curve.trim(guide_interval)
 
     # Sweep the profile along the path with the guide curve
-    sweep_data = [SweepWithGuideData(
-        name="SweptBody",
-        parent_id=design.id,
-        sketch=profile_sketch,
-        path=trimmed_path,
-        guide=trimmed_guide,
-        tight_tolerance=True,
-    )]
+    sweep_data = [
+        SweepWithGuideData(
+            name="SweptBody",
+            parent_id=design.id,
+            sketch=profile_sketch,
+            path=trimmed_path,
+            guide=trimmed_guide,
+            tight_tolerance=True,
+        )
+    ]
     sweep_body = design.sweep_with_guide(sweep_data=sweep_data)[0]
 
     design.export_to_scdocx("C:\\Users\\jkerstet\\Downloads\\sweep_body.scdocx")

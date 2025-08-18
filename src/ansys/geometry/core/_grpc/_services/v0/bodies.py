@@ -170,7 +170,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             "master_id": resp.master_id,
             "is_surface": resp.is_surface,
         }
-    
+
     @protect_grpc
     def sweep_with_guide(self, **kwargs):  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
@@ -202,12 +202,14 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {
-            "bodies": [{
-                "id": body.id,
-                "name": body.name,
-                "master_id": body.master_id,
-                "is_surface": body.is_surface,
-            }]
+            "bodies": [
+                {
+                    "id": body.id,
+                    "name": body.name,
+                    "master_id": body.master_id,
+                    "is_surface": body.is_surface,
+                }
+            ]
             for body in resp.bodies
         }
 

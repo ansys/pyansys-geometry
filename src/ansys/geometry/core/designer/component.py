@@ -135,6 +135,7 @@ class ExtrusionDirection(Enum):
         """
         return 1 if self is ExtrusionDirection.POSITIVE else -1
 
+
 @dataclass
 class SweepWithGuideData:
     """Data class for sweep with guide parameters."""
@@ -718,7 +719,7 @@ class Component:
             chain=chain,
         )
         return self.__build_body_from_response(response)
-    
+
     @min_backend_version(26, 1, 0)
     @check_input_types
     @ensure_design_is_active
@@ -742,9 +743,7 @@ class Component:
         This method is only available starting on Ansys release 26R1.
         """
         self._grpc_client.log.debug(f"Sweeping the profile {self.id}. Creating body...")
-        response = self._grpc_client.services.bodies.sweep_with_guide(
-            sweep_data=sweep_data
-        )
+        response = self._grpc_client.services.bodies.sweep_with_guide(sweep_data=sweep_data)
         return [self.__build_body_from_response(body_data) for body_data in response.get("bodies")]
 
     @min_backend_version(24, 2, 0)

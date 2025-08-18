@@ -765,9 +765,7 @@ def from_grpc_nurbs_curve_to_nurbs_curve(curve: GRPCNurbsCurve) -> "NURBSCurve":
     from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 
     # Extract control points
-    control_points = [
-        from_grpc_point_to_point3d(cp.position) for cp in curve.control_points
-    ]
+    control_points = [from_grpc_point_to_point3d(cp.position) for cp in curve.control_points]
 
     # Extract weights
     weights = [cp.weight for cp in curve.control_points]
