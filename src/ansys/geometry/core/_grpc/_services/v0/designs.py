@@ -170,7 +170,9 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         from ansys.api.dbu.v0.designs_pb2 import InsertRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = InsertRequest(filepath=kwargs["filepath"])
+        request = InsertRequest(
+            filepath=kwargs["filepath"], import_named_selections=kwargs["import_named_selections"]
+        )
 
         # Call the gRPC service
         _ = self.stub.Insert(request)
