@@ -31,13 +31,10 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
     CurveType,
-    DesignFileFormat,
     MidSurfaceOffsetType,
-    SharedTopologyType,
     SurfaceType,
 )
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
@@ -64,7 +61,6 @@ from ansys.geometry.core.shapes import (
     Circle,
     Cone,
     Cylinder,
-    Ellipse,
     Line,
     ParamUV,
     Sphere,
@@ -331,7 +327,7 @@ def test_remove_material_from_body(modeler: Modeler):
     body = design.extrude_sketch("CircleBody", sketch, Quantity(10, UNITS.mm))
 
     # Create and assign a material
-    density = Quantity(7850, UNITS.kg / (UNITS.m ** 3))
+    density = Quantity(7850, UNITS.kg / (UNITS.m**3))
     material = Material(
         "Steel",
         density,
@@ -348,7 +344,8 @@ def test_remove_material_from_body(modeler: Modeler):
     assert body.material.name == ""
     assert len(body.material.properties) == 1
     assert body.material.properties[MaterialPropertyType.DENSITY].quantity == Quantity(
-        0, UNITS.kg / (UNITS.m ** 3))
+        0, UNITS.kg / (UNITS.m**3)
+    )
 
 
 def test_face_to_body_creation(modeler: Modeler):

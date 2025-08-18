@@ -452,7 +452,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {"material": from_grpc_material_to_material(resp)}
-    
+
     @protect_grpc
     def remove_assigned_material(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.bodies_pb2 import RemoveAssignedMaterialRequest
@@ -464,9 +464,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         resp = self.stub.RemoveAssignedMaterial(request=request)
 
         # Return the response - formatted as a dictionary
-        return { 
-            "successfully_removed": [id for id in resp.successfully_removed]
-        }
+        return {"successfully_removed": [id for id in resp.successfully_removed]}
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
