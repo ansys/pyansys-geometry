@@ -21,11 +21,16 @@
 # SOFTWARE.
 """Unsupported functions for the PyAnsys Geometry library."""
 
+from dataclasses import dataclass
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest, ImportIdRequest
+from ansys.api.geometry.v0.unsupported_pb2 import (
+    ExportIdRequest,
+    ImportIdRequest,
+    SetExportIdsRequest,
+)
 from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
@@ -47,6 +52,15 @@ class PersistentIdType(Enum):
 
     PNAME = 1
     PRIME_ID = 700
+
+
+@dataclass
+class ExportIdData:
+    """Data for exporting persistent ids."""
+
+    moniker: str
+    id_type: PersistentIdType
+    value: str
 
 
 class UnsupportedCommands:
@@ -166,6 +180,38 @@ class UnsupportedCommands:
             moniker=EntityIdentifier(id=moniker), id=value, type=id_type.value
         )
         self._unsupported_stub.SetExportId(request)
+        self.__id_map = {}
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def set_multiple_export_ids(
+        self,
+        export_data: list[ExportIdData],
+    ) -> None:
+        """Set multiple persistent ids for the monikers.
+
+        Parameters
+        ----------
+        export_data : list[ExportIdData]
+            List of export data containing monikers, id types, and values.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        request = SetExportIdsRequest(
+            export_data=[
+                ExportIdRequest(
+                    moniker=EntityIdentifier(id=data.moniker),
+                    id=data.value,
+                    type=data.id_type.value,
+                )
+                for data in export_data
+            ]
+        )
+
+        # Call the gRPC service
+        self._unsupported_stub.SetExportIds(request)
         self.__id_map = {}
 
     def get_body_occurrences_from_import_id(

@@ -23,6 +23,7 @@
 
 import os
 from pathlib import Path
+import zipfile
 
 import matplotlib.colors as mcolors
 import numpy as np
@@ -3701,3 +3702,33 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
     exportedtestns = design_read._named_selections["Test"]
     assert len(exportedtestns.vertices) == 2
+
+
+def test_write_body_facets_on_save(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
+
+    # First file without body facets
+    filepath_no_facets = tmp_path_factory.mktemp("test_design") / "cars_no_facets.scdocx"
+    design.download(filepath_no_facets)
+
+    # Second file with body facets
+    filepath_with_facets = tmp_path_factory.mktemp("test_design") / "cars_with_facets.scdocx"
+    design.download(filepath_with_facets, write_body_facets=True)
+
+    # Compare file sizes
+    size_no_facets = filepath_no_facets.stat().st_size
+    size_with_facets = filepath_with_facets.stat().st_size
+
+    assert size_with_facets > size_no_facets
+
+    # Ensure facets.bin and renderlist.xml files exist
+    with zipfile.ZipFile(filepath_with_facets, "r") as zip_ref:
+        namelist = set(zip_ref.namelist())
+
+    expected_files = {
+        "SpaceClaim/Graphics/facets.bin",
+        "SpaceClaim/Graphics/renderlist.xml",
+    }
+
+    missing = expected_files - namelist
+    assert not missing

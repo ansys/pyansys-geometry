@@ -106,6 +106,9 @@ backends:
       # Bug fix included from 26.1 onwards
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
+      - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      # Export body facets add in 26.1
+      - tests/integration/test_design.py::test_write_body_facets_on_save
 
   - version: "24.2"
     incompatible_tests:
@@ -206,6 +209,9 @@ backends:
       # Bug fix included from 26.1 onwards
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
+      - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      # Export body facets add in 26.1
+      - tests/integration/test_design.py::test_write_body_facets_on_save
 
   - version: "25.1"
     incompatible_tests:
@@ -275,6 +281,9 @@ backends:
       # Bug fix included from 26.1 onwards
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
+      - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      # Export body facets add in 26.1
+      - tests/integration/test_design.py::test_write_body_facets_on_save
 
   - version: "25.2"
     incompatible_tests:
@@ -305,3 +314,6 @@ backends:
       # Bug fix included from 26.1 onwards
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
+      - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      # Export body facets add in 26.1
+      - tests/integration/test_design.py::test_write_body_facets_on_save
