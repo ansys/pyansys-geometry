@@ -84,3 +84,41 @@ def test_material_creation(modeler: Modeler):
         design.materials[0].properties[MaterialPropertyType.POISSON_RATIO].quantity
         == mat_prop_quantity
     )
+
+
+def test_material_removal(modeler: Modeler):
+    """Test the removal of a material from a design."""
+    design = modeler.create_design("my_design")
+
+    mat_name = "mat_1"
+    density = 1000 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m)
+    material = Material(mat_name, density)
+    design.add_material(material)
+
+    assert design.materials[0].name == mat_name
+
+    design.remove_material(material)
+
+    assert len(design.materials) == 0
+
+
+def test_remove_multiple_materials(modeler: Modeler):
+    """Test the removal of multiple materials from a design."""
+    design = modeler.create_design("my_design")
+
+    mat_name_1 = "mat_1"
+    density_1 = 1000 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m)
+    material_1 = Material(mat_name_1, density_1)
+    design.add_material(material_1)
+
+    mat_name_2 = "mat_2"
+    density_2 = 2000 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m)
+    material_2 = Material(mat_name_2, density_2)
+    design.add_material(material_2)
+
+    assert design.materials[0].name == mat_name_1
+    assert design.materials[1].name == mat_name_2
+
+    design.remove_material([material_1, material_2])
+
+    assert len(design.materials) == 0
