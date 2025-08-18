@@ -32,7 +32,7 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.misc import UNITS, Distance
+from ansys.geometry.core.misc import UNITS, Distance, ImportOptions
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import ExportIdData, PersistentIdType
 
@@ -588,7 +588,6 @@ def test_import_scdocx_with_external_docs(modeler: Modeler):
         assert len(component.bodies) == 1
 
 
-@pytest.mark.skip(reason="Temporary skip for build promotion")
 def test_named_selections_after_file_insert(modeler: Modeler):
     """Test to verify named selections are imported during inserting a file."""
     # Create a new design
@@ -662,6 +661,60 @@ def test_named_selections_after_file_open(modeler: Modeler):
     actual_named_selections = [ns.name for ns in design.named_selections]
     for ns_name in actual_named_selections:
         assert ns_name in expected_named_selections, f"Unexpected named selection: {ns_name}"
+    # Verify all expected named selections are present
+    assert set(actual_named_selections) == set(expected_named_selections), (
+        f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."
+    )
+
+
+def test_file_insert_import_named_selections_post_import(modeler: Modeler):
+    """Test to verify named selections can be imported after inserting a file."""
+    # Create a new design
+    design = modeler.create_design("BugFix_1277429")
+
+    # Verify initial named selections count
+    initial_named_selections_count = len(design.named_selections)
+    assert initial_named_selections_count == 0, (
+        f"Expected no named selections initially, but got {initial_named_selections_count}."
+    )
+
+    # Insert the file
+    file_path = Path(FILES_DIR, "reactorWNS.scdocx")
+    options = ImportOptions()
+    options.import_named_selections = False
+    design.insert_file(file_path, import_options=options)
+
+    # Verify initial named selections count
+    initial_named_selections_count = len(design.named_selections)
+    assert initial_named_selections_count == 0, (
+        f"Expected no named selections initially, but got {initial_named_selections_count}."
+    )
+    design.components[0].import_named_selections()
+    # Verify named selections count after importing
+    updated_named_selections_count = len(design.named_selections)
+    assert updated_named_selections_count == 9, (
+        f"Expected 9 named selections after file insertion, but got "
+        f"{updated_named_selections_count}."
+    )
+
+    # Expected named selections
+    expected_named_selections = [
+        "wall_liquid_level",
+        "wall_tank",
+        "wall_probe_1",
+        "wall_probe_2",
+        "wall_shaft",
+        "wall_impeller_1",
+        "wall_shaft_1",
+        "wall_impeller_2",
+        "wall_shaft_2",
+    ]
+
+    # Verify the names of the named selections
+    actual_named_selections = [ns.name for ns in design.named_selections]
+    for ns_name in actual_named_selections:
+        assert ns_name in expected_named_selections, f"Unexpected named selection: {ns_name}"
+
     # Verify all expected named selections are present
     assert set(actual_named_selections) == set(expected_named_selections), (
         f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."

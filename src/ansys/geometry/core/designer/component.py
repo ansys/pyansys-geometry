@@ -1945,6 +1945,14 @@ class Component:
         --------
         This method is only available starting on Ansys release 26R1.
         """
+        from ansys.geometry.core.designer import Design
+
+        if isinstance(self, Design):
+            raise ValueError(
+                "import_named_selections() cannot be used on a Design object, "
+                "it can only be used on a pure Component object."
+            )
+
         self._component_stub.ImportGroups(ImportGroupsRequest(id=self._grpc_id))
 
         design = get_design_from_component(self)
