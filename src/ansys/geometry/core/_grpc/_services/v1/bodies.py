@@ -65,6 +65,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
+    def sweep_with_guide(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
     def create_extruded_body_from_face_profile(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 

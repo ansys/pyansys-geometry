@@ -41,6 +41,7 @@ from ansys.geometry.core.designer import (
     SurfaceType,
 )
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
+from ansys.geometry.core.designer.component import SweepWithGuideData
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
@@ -71,6 +72,7 @@ from ansys.geometry.core.shapes import (
     Torus,
 )
 from ansys.geometry.core.shapes.box_uv import BoxUV
+from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
 )
@@ -2839,6 +2841,55 @@ def test_sweep_chain(modeler: Modeler):
     # check volume of body
     # expected is 0 since it's not a closed surface
     assert body.volume.m == 0
+
+
+def test_sweep_with_guide(modeler: Modeler):
+    """Test creating a body by sweeping a profile with a guide curve."""
+    design = modeler.create_design("SweepWithGuide")
+
+    # Create path points for the sweep path
+    path_points = [
+        Point3D([0.0, 0.0, 0.15]),
+        Point3D([0.05, 0.0, 0.1]),
+        Point3D([0.1, 0.0, 0.05]),
+        Point3D([0.15, 0.0, 0.1]),
+        Point3D([0.2, 0.0, 0.15]),
+    ]
+    nurbs_path = NURBSCurve.fit_curve_from_points(path_points, degree=3)
+    n_l_points = len(path_points)
+    path_interval = Interval(1.0 / (n_l_points - 1), (n_l_points - 2.0) / (n_l_points - 1))
+    trimmed_path = nurbs_path.trim(path_interval)
+
+    # Create a simple circular profile sketch
+    profile_plane = Plane(origin=path_points[1])
+    profile_sketch = Sketch(profile_plane)
+    profile_sketch.circle(Point2D([0, 0]), 0.01)  # 0.01 radius
+
+    # Create guide curve points (offset from path)
+    guide_points = [Point3D([p.x.m, p.y.m + 0.01, p.z.m]) for p in path_points]
+    guide_curve = NURBSCurve.fit_curve_from_points(guide_points, degree=3)
+    guide_interval = Interval(1.0 / (n_l_points - 1), (n_l_points - 2.0) / (n_l_points - 1))
+    trimmed_guide = guide_curve.trim(guide_interval)
+
+    # Sweep the profile along the path with the guide curve
+    sweep_data = [
+        SweepWithGuideData(
+            name="SweptBody",
+            parent_id=design.id,
+            sketch=profile_sketch,
+            path=trimmed_path,
+            guide=trimmed_guide,
+            tight_tolerance=True,
+        )
+    ]
+    sweep_body = design.sweep_with_guide(sweep_data=sweep_data)[0]
+
+    assert sweep_body is not None
+    assert sweep_body.name == "SweptBody"
+    assert sweep_body.is_surface
+    assert len(sweep_body.faces) == 1
+    assert len(sweep_body.edges) == 2
+    assert len(sweep_body.vertices) == 0
 
 
 def test_create_body_from_loft_profile(modeler: Modeler):
