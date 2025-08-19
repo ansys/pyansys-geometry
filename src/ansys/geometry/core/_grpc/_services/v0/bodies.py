@@ -172,7 +172,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         }
 
     @protect_grpc
-    def sweep_with_guide(self, **kwargs):  # noqa: D102
+    def sweep_with_guide(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.bodies_pb2 import (
             SweepWithGuideRequest,

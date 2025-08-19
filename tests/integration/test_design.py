@@ -2852,8 +2852,6 @@ def test_sweep_with_guide(modeler: Modeler):
     ]
     sweep_body = design.sweep_with_guide(sweep_data=sweep_data)[0]
 
-    design.export_to_scdocx("C:\\Users\\jkerstet\\Downloads\\sweep_body.scdocx")
-
     assert sweep_body is not None
     assert sweep_body.name == "SweptBody"
     assert sweep_body.is_surface
