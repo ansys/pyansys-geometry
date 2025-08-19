@@ -139,7 +139,7 @@ class ExtrusionDirection(Enum):
 @dataclass
 class SweepWithGuideData:
     """Data class for sweep with guide parameters.
-    
+
     Parameters
     ----------
     name : str
