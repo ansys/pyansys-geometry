@@ -746,7 +746,7 @@ class Component:
 
         Parameters
         ----------
-        sweep_data: SweepWithGuideData
+        sweep_data: list[SweepWithGuideData]
             Data for the sweep operation, including the sketch, path, and guide curve.
 
         Returns
