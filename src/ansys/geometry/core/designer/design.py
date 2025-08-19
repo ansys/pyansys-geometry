@@ -227,6 +227,7 @@ class Design(Component):
         self._materials.append(material)
         self._grpc_client.log.debug(f"Material {material.name} is successfully added to design.")
 
+    @min_backend_version(26, 1, 0)
     @check_input_types
     @ensure_design_is_active
     def remove_material(self, material: Material | list[Material]) -> None:

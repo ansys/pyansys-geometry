@@ -1066,6 +1066,7 @@ class MasterBody(IBody):
         response = self._grpc_client.services.bodies.get_assigned_material(id=self.id)
         return response.get("material")
 
+    @min_backend_version(26, 1, 0)
     def remove_assigned_material(self) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Removing assigned material for body {self.id}.")
         self._grpc_client.services.bodies.remove_assigned_material(ids=[self.id])
