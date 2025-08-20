@@ -62,3 +62,18 @@ class GRPCMaterialsServiceV0(GRPCMaterialsService):
 
         # Convert the response to a dictionary
         return {}
+
+    @protect_grpc
+    def remove_material(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.materials_pb2 import RemoveFromDocumentRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RemoveFromDocumentRequest(
+            request_data=[from_material_to_grpc_material(mat) for mat in kwargs["materials"]]
+        )
+
+        # Call the gRPC service
+        _ = self.stub.RemoveFromDocument(request=request)
+
+        # Convert the response to a dictionary
+        return {}
