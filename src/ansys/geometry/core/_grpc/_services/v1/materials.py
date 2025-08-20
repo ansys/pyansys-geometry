@@ -50,3 +50,7 @@ class GRPCMaterialsServiceV1(GRPCMaterialsService):  # pragma: no cover
     @protect_grpc
     def add_material(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def remove_material(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError

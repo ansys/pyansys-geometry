@@ -322,6 +322,38 @@ def test_get_empty_material(modeler: Modeler):
     assert len(mat_service.properties) == 1
 
 
+def test_remove_material_from_body(modeler: Modeler):
+    """Test removing a material from a body."""
+    # Create a design and a sketch
+    design = modeler.create_design("RemoveMaterialTest")
+    sketch = Sketch()
+    sketch.circle(Point2D([0, 0], UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Extrude the sketch to create a body
+    body = design.extrude_sketch("CircleBody", sketch, Quantity(10, UNITS.mm))
+
+    # Create and assign a material
+    density = Quantity(7850, UNITS.kg / (UNITS.m**3))
+    material = Material(
+        "Steel",
+        density,
+        [MaterialProperty(MaterialPropertyType.POISSON_RATIO, "Poisson", Quantity(0.3))],
+    )
+    design.add_material(material)
+    body.assign_material(material)
+    assert body.material.name == "Steel"
+
+    # Remove the material from the body
+    body.remove_assigned_material()
+
+    # Check that the body no longer has a material assigned
+    assert body.material.name == ""
+    assert len(body.material.properties) == 1
+    assert body.material.properties[MaterialPropertyType.DENSITY].quantity == Quantity(
+        0, UNITS.kg / (UNITS.m**3)
+    )
+
+
 def test_face_to_body_creation(modeler: Modeler):
     """Test in charge of validating the extrusion of an existing face."""
     # Create a Sketch and draw a circle (all client side)
