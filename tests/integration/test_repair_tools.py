@@ -731,8 +731,7 @@ def test_problem_area_fix_no_data(modeler: Modeler, problem_area_class, kwargs):
 )
 def test_repair_tools_no_bodies(modeler: Modeler, method_name):
     """Test RepairTools methods when bodies is empty or None."""
-    grpc_client = modeler.client
-    repair_tools = RepairTools(grpc_client, modeler)
+    repair_tools = modeler.repair_tools
     method = getattr(repair_tools, method_name)
 
     # Test with an empty list of bodies
