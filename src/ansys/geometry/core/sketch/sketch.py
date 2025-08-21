@@ -516,7 +516,7 @@ class Sketch:
         -------
         Sketch
             Revised sketch state ready for further sketch actions.
-        
+
         Warnings
         --------
         This method may not produce the exact same radius, depending on the input parameters.
