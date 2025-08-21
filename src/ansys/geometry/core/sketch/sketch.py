@@ -516,9 +516,9 @@ class Sketch:
         -------
         Sketch
             Revised sketch state ready for further sketch actions.
-
-        Warning
-        -------
+        
+        Warnings
+        --------
         This method may not produce the exact same radius, depending on the input parameters.
         This is due to the mathematical approximations involved in the arc creation.
         """
