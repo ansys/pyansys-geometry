@@ -38,7 +38,6 @@ from ansys.geometry.core.tools.problem_areas import (
     UnsimplifiedFaceProblemAreas,
 )
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
-from ansys.geometry.core.tools.repair_tools import RepairTools
 
 from .conftest import FILES_DIR
 
