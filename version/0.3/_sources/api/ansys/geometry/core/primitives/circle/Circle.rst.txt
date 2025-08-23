@@ -1,0 +1,539 @@
+
+
+
+
+Circle
+======
+
+.. py:class:: Circle(origin: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point3D], radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], reference: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_X, axis: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_Z)
+   :canonical: ansys.geometry.core.primitives.circle.Circle
+
+
+
+
+Provides 3D circle representation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Circle
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~evaluate`
+            - Evaluate the circle at a given parameter.
+          * - :py:attr:`~transformed_copy`
+            - Create a transformed copy of the circle based on a transformation matrix.
+          * - :py:attr:`~mirrored_copy`
+            - Create a mirrored copy of the circle along the y-axis.
+          * - :py:attr:`~project_point`
+            - Project a point onto the circle and evauate the circle.
+          * - :py:attr:`~is_coincident_circle`
+            - Determine if the circle is coincident with another.
+          * - :py:attr:`~get_parameterization`
+            - Get the parametrization of the circle.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~origin`
+            - Origin of the circle.
+          * - :py:attr:`~radius`
+            - Radius of the circle.
+          * - :py:attr:`~diameter`
+            - Diameter of the circle.
+          * - :py:attr:`~perimeter`
+            - Perimeter of the circle.
+          * - :py:attr:`~area`
+            - Area of the circle.
+          * - :py:attr:`~dir_x`
+            - X-direction of the circle.
+          * - :py:attr:`~dir_y`
+            - Y-direction of the circle.
+          * - :py:attr:`~dir_z`
+            - Z-direction of the circle.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Circle`` class.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.circle import Circle
+
+
+Property detail
+---------------
+.. py:property:: origin
+   :canonical: ansys.geometry.core.primitives.circle.Circle.origin
+   :type: Point3D
+
+
+   
+   Origin of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: radius
+   :canonical: ansys.geometry.core.primitives.circle.Circle.radius
+   :type: pint.Quantity
+
+
+   
+   Radius of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: diameter
+   :canonical: ansys.geometry.core.primitives.circle.Circle.diameter
+   :type: pint.Quantity
+
+
+   
+   Diameter of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: perimeter
+   :canonical: ansys.geometry.core.primitives.circle.Circle.perimeter
+   :type: pint.Quantity
+
+
+   
+   Perimeter of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: area
+   :canonical: ansys.geometry.core.primitives.circle.Circle.area
+   :type: pint.Quantity
+
+
+   
+   Area of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_x
+   :canonical: ansys.geometry.core.primitives.circle.Circle.dir_x
+   :type: UnitVector3D
+
+
+   
+   X-direction of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_y
+   :canonical: ansys.geometry.core.primitives.circle.Circle.dir_y
+   :type: UnitVector3D
+
+
+   
+   Y-direction of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_z
+   :canonical: ansys.geometry.core.primitives.circle.Circle.dir_z
+   :type: UnitVector3D
+
+
+   
+   Z-direction of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __eq__(other: Circle) -> bool
+
+   
+   Equals operator for the ``Circle`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: evaluate(parameter: ansys.geometry.core.typing.Real) -> CircleEvaluation
+
+   
+   Evaluate the circle at a given parameter.
+
+
+   :Parameters:
+
+       **parameter** : :obj:`Real`
+           Parameter to evaluate the circle at.
+
+   :Returns:
+
+       :obj:`CircleEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Circle
+
+   
+   Create a transformed copy of the circle based on a transformation matrix.
+
+
+   :Parameters:
+
+       **matrix** : :obj:`Matrix44`
+           4x4 transformation matrix to apply to the circle.
+
+   :Returns:
+
+       :obj:`Circle`
+           New circle that is the transformed copy of the original circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: mirrored_copy() -> Circle
+
+   
+   Create a mirrored copy of the circle along the y-axis.
+
+
+
+   :Returns:
+
+       :obj:`Circle`
+           A new circle that is a mirrored copy of the original circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> CircleEvaluation
+
+   
+   Project a point onto the circle and evauate the circle.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Point to project onto the circle.
+
+   :Returns:
+
+       :obj:`CircleEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: is_coincident_circle(other: Circle) -> bool
+
+   
+   Determine if the circle is coincident with another.
+
+
+   :Parameters:
+
+       **other** : :obj:`Circle`
+           Circle to determine coincidence with.
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if this circle is coincident with the other, ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: get_parameterization() -> ansys.geometry.core.primitives.parameterization.Parameterization
+
+   
+   Get the parametrization of the circle.
+
+   The parameter of a circle specifies the clockwise angle around the axis
+   (right-hand corkscrew law), with a zero parameter at ``dir_x`` and a
+   period of 2*pi.
+
+
+   :Returns:
+
+       :obj:`Parameterization`
+           Information about how the circle is parameterized.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

@@ -1,0 +1,367 @@
+
+
+
+
+
+
+:class:`PrepareTools`
+=====================
+
+
+.. py:class:: ansys.geometry.core.tools.prepare_tools.PrepareTools(grpc_client: ansys.geometry.core.connection.GrpcClient)
+
+   
+   Prepare tools for PyAnsys Geometry.
+
+
+   :Parameters:
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting geometry service instance for design modeling.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PrepareTools
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~extract_volume_from_faces`
+            - Extract a volume from input faces.
+          * - :py:attr:`~extract_volume_from_edge_loops`
+            - Extract a volume from input edge loops.
+          * - :py:attr:`~remove_rounds`
+            - Remove rounds from geometry.
+          * - :py:attr:`~share_topology`
+            - Share topology between the chosen bodies.
+          * - :py:attr:`~enhanced_share_topology`
+            - Share topology between the chosen bodies.
+          * - :py:attr:`~find_logos`
+            - Detect logos in geometry.
+          * - :py:attr:`~find_and_remove_logos`
+            - Detect and remove logos in geometry.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.prepare_tools import PrepareTools
+
+
+
+Method detail
+-------------
+
+.. py:method:: extract_volume_from_faces(sealing_faces: list[ansys.geometry.core.designer.face.Face], inside_faces: list[ansys.geometry.core.designer.face.Face]) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Extract a volume from input faces.
+
+   Creates a volume (typically a flow volume) from a list of faces that seal the volume
+   and one or more faces that define the wetted surface (inside faces of the solid).
+
+   :Parameters:
+
+       **sealing_faces** : :class:`python:list`\[:obj:`Face`]
+           List of faces that seal the volume.
+
+       **inside_faces** : :class:`python:list`\[:obj:`Face`]
+           List of faces that define the interior of the solid.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           List of created bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extract_volume_from_edge_loops(sealing_edges: list[ansys.geometry.core.designer.edge.Edge], inside_faces: list[ansys.geometry.core.designer.face.Face] = None) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Extract a volume from input edge loops.
+
+   Creates a volume (typically a flow volume) from a list of edge loops that seal the volume.
+   and one or more faces that define the wetted surface (inside faces of the solid).
+
+   :Parameters:
+
+       **sealing_edges** : :class:`python:list`\[:obj:`Edge`]
+           List of faces that seal the volume.
+
+       **inside_faces** : :class:`python:list`\[:obj:`Face`], :obj:`optional`
+           List of faces that define the interior of the solid (not always necessary).
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           List of created bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: remove_rounds(faces: list[ansys.geometry.core.designer.face.Face], auto_shrink: bool = False) -> bool
+
+   
+   Remove rounds from geometry.
+
+   Tries to remove rounds from geometry. Faces to be removed are input to the method.
+
+   :Parameters:
+
+       **round_faces** : :class:`python:list`\[:obj:`Face`]
+           List of rounds faces to be removed
+
+       **auto_shrink** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to shrink the geometry after removing rounds. Fills in the gaps
+           left by the removed rounds.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if successful, ``False`` if failed.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: share_topology(bodies: list[ansys.geometry.core.designer.body.Body], tol: ansys.geometry.core.typing.Real = 0.0, preserve_instances: bool = False) -> bool
+
+   
+   Share topology between the chosen bodies.
+
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies to share topology between.
+
+       **tol** : :obj:`Real`
+           Maximum distance between bodies.
+
+       **preserve_instances** : :ref:`bool <python:bltin-boolean-values>`
+           Whether instances are preserved.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if successful, ``False`` if failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: enhanced_share_topology(bodies: list[ansys.geometry.core.designer.body.Body], tol: ansys.geometry.core.typing.Real = 0.0, preserve_instances: bool = False) -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Share topology between the chosen bodies.
+
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies to share topology between.
+
+       **tol** : :obj:`Real`
+           Maximum distance between bodies.
+
+       **preserve_instances** : :ref:`bool <python:bltin-boolean-values>`
+           Whether instances are preserved.
+
+
+
+   :Returns:
+
+       :obj:`RepairToolMessage`
+           Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_logos(bodies: list[ansys.geometry.core.designer.body.Body] = None, min_height: ansys.geometry.core.typing.Real = None, max_height: ansys.geometry.core.typing.Real = None) -> ansys.geometry.core.tools.problem_areas.LogoProblemArea
+
+   
+   Detect logos in geometry.
+
+   Detects logos, using a list of bodies if provided.
+   The logos are returned as a list of faces.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`], :obj:`optional`
+           List of bodies where logos should be detected
+
+       **min_height** : :obj:`real`, :obj:`optional`
+           The minimum height when searching for logos
+
+       **max_height: real, optional**
+           The minimum height when searching for logos
+
+
+
+   :Returns:
+
+       :obj:`LogoProblemArea`
+           Problem area with logo faces.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_remove_logos(bodies: list[ansys.geometry.core.designer.body.Body] = None, min_height: ansys.geometry.core.typing.Real = None, max_height: ansys.geometry.core.typing.Real = None) -> bool
+
+   
+   Detect and remove logos in geometry.
+
+   Detects and remove logos, using a list of bodies if provided.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`], :obj:`optional`
+           List of bodies where logos should be detected and removed.
+
+       **min_height** : :obj:`real`, :obj:`optional`
+           The minimum height when searching for logos
+
+       **max_height: real, optional**
+           The minimum height when searching for logos
+
+
+
+   :Returns:
+
+       :obj:`Boolean` :obj:`value` :obj:`indicating` :obj:`whether` :obj:`the` :obj:`operation` :obj:`was` successful.
+           ..
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

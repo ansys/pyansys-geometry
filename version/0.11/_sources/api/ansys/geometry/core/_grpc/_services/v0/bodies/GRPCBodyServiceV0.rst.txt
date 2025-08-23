@@ -1,0 +1,947 @@
+
+
+
+
+
+
+:class:`GRPCBodyServiceV0`
+==========================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.bodies.GRPCBodyServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.bodies.GRPCBodyService`
+
+
+   
+   Body service for gRPC communication with the Geometry server.
+
+   This class provides methods to create and manipulate bodies in the
+   Geometry server using gRPC. It is specifically designed for the v0
+   version of the Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCBodyServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_sphere_body`
+            - Create a sphere body.
+          * - :py:attr:`~create_extruded_body`
+            - Create an extruded body.
+          * - :py:attr:`~create_sweeping_profile_body`
+            - Create a sweeping profile body.
+          * - :py:attr:`~create_sweeping_chain`
+            - Create a sweeping chain.
+          * - :py:attr:`~create_extruded_body_from_face_profile`
+            - Create an extruded body from a face profile.
+          * - :py:attr:`~create_extruded_body_from_loft_profiles`
+            - Create an extruded body from loft profiles.
+          * - :py:attr:`~create_planar_body`
+            - Create a planar body.
+          * - :py:attr:`~create_body_from_face`
+            - Create a body from a face.
+          * - :py:attr:`~create_surface_body`
+            - Create a surface body.
+          * - :py:attr:`~create_surface_body_from_trimmed_curves`
+            - Create a surface body from trimmed curves.
+          * - :py:attr:`~translate`
+            - Translate a body.
+          * - :py:attr:`~delete`
+            - Delete a body.
+          * - :py:attr:`~is_suppressed`
+            - Check if a body is suppressed.
+          * - :py:attr:`~get_color`
+            - Get the color of a body.
+          * - :py:attr:`~get_faces`
+            - Get the faces of a body.
+          * - :py:attr:`~get_edges`
+            - Get the edges of a body.
+          * - :py:attr:`~get_vertices`
+            - Get the vertices of a body.
+          * - :py:attr:`~get_volume`
+            - Get the volume of a body.
+          * - :py:attr:`~get_bounding_box`
+            - Get the bounding box of a body.
+          * - :py:attr:`~set_assigned_material`
+            - Set the assigned material of a body.
+          * - :py:attr:`~get_assigned_material`
+            - Get the assigned material of a body.
+          * - :py:attr:`~set_name`
+            - Set the name of a body.
+          * - :py:attr:`~set_fill_style`
+            - Set the fill style of a body.
+          * - :py:attr:`~set_suppressed`
+            - Set the suppressed state of a body.
+          * - :py:attr:`~set_color`
+            - Set the color of a body.
+          * - :py:attr:`~rotate`
+            - Rotate a body.
+          * - :py:attr:`~scale`
+            - Scale a body.
+          * - :py:attr:`~mirror`
+            - Mirror a body.
+          * - :py:attr:`~map`
+            - Map a body.
+          * - :py:attr:`~get_collision`
+            - Get the collision of a body.
+          * - :py:attr:`~copy`
+            - Copy a body.
+          * - :py:attr:`~get_tesellation`
+            - Get the tessellation of a body.
+          * - :py:attr:`~get_tesellation_with_options`
+            - Get the tessellation of a body with options.
+          * - :py:attr:`~boolean`
+            - Boolean operation.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.bodies import GRPCBodyServiceV0
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_sphere_body(**kwargs) -> dict
+
+   
+   Create a sphere body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_extruded_body(**kwargs) -> dict
+
+   
+   Create an extruded body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_sweeping_profile_body(**kwargs) -> dict
+
+   
+   Create a sweeping profile body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_sweeping_chain(**kwargs) -> dict
+
+   
+   Create a sweeping chain.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_extruded_body_from_face_profile(**kwargs) -> dict
+
+   
+   Create an extruded body from a face profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_extruded_body_from_loft_profiles(**kwargs) -> dict
+
+   
+   Create an extruded body from loft profiles.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_planar_body(**kwargs) -> dict
+
+   
+   Create a planar body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_body_from_face(**kwargs) -> dict
+
+   
+   Create a body from a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_surface_body(**kwargs) -> dict
+
+   
+   Create a surface body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_surface_body_from_trimmed_curves(**kwargs) -> dict
+
+   
+   Create a surface body from trimmed curves.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: translate(**kwargs) -> dict
+
+   
+   Translate a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete(**kwargs) -> dict
+
+   
+   Delete a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_suppressed(**kwargs) -> dict
+
+   
+   Check if a body is suppressed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_color(**kwargs) -> dict
+
+   
+   Get the color of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces(**kwargs) -> dict
+
+   
+   Get the faces of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges(**kwargs) -> dict
+
+   
+   Get the edges of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_vertices(**kwargs) -> dict
+
+   
+   Get the vertices of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_volume(**kwargs) -> dict
+
+   
+   Get the volume of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bounding_box(**kwargs) -> dict
+
+   
+   Get the bounding box of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_assigned_material(**kwargs) -> dict
+
+   
+   Set the assigned material of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_assigned_material(**kwargs) -> dict
+
+   
+   Get the assigned material of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_name(**kwargs) -> dict
+
+   
+   Set the name of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_fill_style(**kwargs) -> dict
+
+   
+   Set the fill style of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_suppressed(**kwargs) -> dict
+
+   
+   Set the suppressed state of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_color(**kwargs) -> dict
+
+   
+   Set the color of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: rotate(**kwargs) -> dict
+
+   
+   Rotate a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: scale(**kwargs) -> dict
+
+   
+   Scale a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: mirror(**kwargs) -> dict
+
+   
+   Mirror a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: map(**kwargs) -> dict
+
+   
+   Map a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_collision(**kwargs) -> dict
+
+   
+   Get the collision of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: copy(**kwargs) -> dict
+
+   
+   Copy a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_tesellation(**kwargs) -> dict
+
+   
+   Get the tessellation of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_tesellation_with_options(**kwargs) -> dict
+
+   
+   Get the tessellation of a body with options.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: boolean(**kwargs) -> dict
+
+   
+   Boolean operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
