@@ -27,6 +27,7 @@ from beartype import beartype as check_input_types
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.backend import BackendType
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
@@ -51,10 +52,28 @@ class PrepareTools:
     ----------
     grpc_client : GrpcClient
         Active supporting geometry service instance for design modeling.
+    _internal_use : bool, optional
+        Internal flag to prevent direct instantiation by users.
+        This parameter is for internal use only.
+
+    Raises
+    ------
+    GeometryRuntimeError
+        If the class is instantiated directly by users instead of through the modeler.
+
+    Notes
+    -----
+    This class should not be instantiated directly. Use
+    ``modeler.prepare_tools`` instead.
     """
 
-    def __init__(self, grpc_client: GrpcClient):
+    def __init__(self, grpc_client: GrpcClient, _internal_use: bool = False):
         """Initialize Prepare Tools class."""
+        if not _internal_use:
+            raise GeometryRuntimeError(
+                "PrepareTools should not be instantiated directly. "
+                "Use 'modeler.prepare_tools' to access prepare tools."
+            )
         self._grpc_client = grpc_client
 
     @min_backend_version(25, 1, 0)

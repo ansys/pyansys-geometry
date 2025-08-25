@@ -33,7 +33,7 @@ from ansys.api.geometry.v0.unsupported_pb2 import (
 )
 from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.misc.auxiliary import get_all_bodies_from_design
 from ansys.geometry.core.misc.checks import (
     min_backend_version,
@@ -72,10 +72,29 @@ class UnsupportedCommands:
         gRPC client to use for the geometry commands.
     modeler : Modeler
         Modeler instance to use for the geometry commands.
+    _internal_use : bool, optional
+        Internal flag to prevent direct instantiation by users.
+        This parameter is for internal use only.
+
+    Raises
+    ------
+    GeometryRuntimeError
+        If the class is instantiated directly by users instead of through the modeler.
+
+    Notes
+    -----
+    This class should not be instantiated directly. Use
+    ``modeler.unsupported`` instead.
+
     """
 
-    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler"):
+    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler", _internal_use: bool = False):
         """Initialize an instance of the ``UnsupportedCommands`` class."""
+        if not _internal_use:
+            raise GeometryRuntimeError(
+                "UnsupportedCommands should not be instantiated directly. "
+                "Use 'modeler.unsupported' to access unsupported commands."
+            )
         self._grpc_client = grpc_client
         self._unsupported_stub = UnsupportedStub(self._grpc_client.channel)
         self.__id_map = {}

@@ -24,7 +24,10 @@
 from pathlib import Path
 
 import numpy as np
+import pytest
 
+from ansys.geometry.core.designer.geometry_commands import GeometryCommands
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
@@ -37,6 +40,13 @@ from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.sketch.arc import Arc
+from ansys.geometry.core.tools import (
+    MeasurementTools,
+    PrepareTools,
+    RepairTools,
+    UnsupportedCommands,
+)
 
 from .conftest import FILES_DIR
 
@@ -325,3 +335,62 @@ def test_issue_1813_edge_start_end_non_default_units(modeler: Modeler):
     finally:
         # Reset the default units to meters
         DEFAULT_UNITS.LENGTH = UNITS.meter
+
+
+def test_issue_2184_prevent_raw_instantiation_of_tools_and_commands():
+    """Test that raw instantiation of tools and commands is prevented.
+
+    For more info see
+    https://github.com/ansys/pyansys-geometry/issues/2184
+    """
+    # Test UnsupportedCommands
+    with pytest.raises(
+        GeometryRuntimeError, match="UnsupportedCommands should not be instantiated directly"
+    ):
+        UnsupportedCommands(None, None)
+
+    # Test RepairTools
+    with pytest.raises(
+        GeometryRuntimeError, match="RepairTools should not be instantiated directly"
+    ):
+        RepairTools(None, None)
+
+    # Test PrepareTools
+    with pytest.raises(
+        GeometryRuntimeError, match="PrepareTools should not be instantiated directly"
+    ):
+        PrepareTools(None)
+
+    # Test MeasurementTools
+    with pytest.raises(
+        GeometryRuntimeError, match="MeasurementTools should not be instantiated directly"
+    ):
+        MeasurementTools(None)
+
+    # Test GeometryCommands
+    with pytest.raises(
+        GeometryRuntimeError, match="GeometryCommands should not be instantiated directly"
+    ):
+        GeometryCommands(None)
+
+
+def test_issue_2074_rounding_math_errors():
+    """Test that rounding errors in math operations do not cause issues.
+
+    For more info see
+    https://github.com/ansys/pyansys-geometry/issues/2074
+    """
+    sketch1 = Sketch()
+    width = 7
+    start = Point2D([width / 2, 0], UNITS.mm)
+    end = Point2D([-width / 2, 0], UNITS.mm)
+    radius = width / 2 * UNITS.mm
+    sketch1.arc_from_start_end_and_radius(start, end, radius)
+
+    arc: Arc = sketch1.edges[-1]
+
+    assert arc.center is not None
+    assert np.allclose(arc.center, Point2D([0, 0], UNITS.mm))
+    assert np.isclose(arc.radius.to_base_units().m, radius.to_base_units().m)
+    assert arc.start == start
+    assert arc.end == end

@@ -69,7 +69,7 @@ from ansys.geometry.core.designer.mating_conditions import (
     TangentCondition,
 )
 from ansys.geometry.core.designer.selection import NamedSelection
-from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
@@ -135,11 +135,30 @@ class GeometryCommands:
     ----------
     grpc_client : GrpcClient
         gRPC client to use for the geometry commands.
+    _internal_use : bool, optional
+        Internal flag to prevent direct instantiation by users.
+        This parameter is for internal use only.
+
+    Raises
+    ------
+    GeometryRuntimeError
+        If the class is instantiated directly by users instead
+        of through the modeler.
+
+    Notes
+    -----
+    This class should not be instantiated directly. Use
+    ``modeler.geometry_commands`` instead.
     """
 
     @protect_grpc
-    def __init__(self, grpc_client: GrpcClient):
+    def __init__(self, grpc_client: GrpcClient, _internal_use: bool = False):
         """Initialize an instance of the ``GeometryCommands`` class."""
+        if not _internal_use:
+            raise GeometryRuntimeError(
+                "GeometryCommands should not be instantiated directly. "
+                "Use 'modeler.geometry_commands' to access geometry commands."
+            )
         self._grpc_client = grpc_client
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
