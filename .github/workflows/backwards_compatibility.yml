@@ -42,10 +42,8 @@ jobs:
             backend-version: "24.1"
           - image-tag: "windows-24.2"
             backend-version: "24.2"
-          # TODO: This has to be reverted once the issue with 25.1 has been solved
-          # https://github.com/ansys/pyansys-geometry/issues/2167
-          # - image-tag: "windows-25.1"
-          #   backend-version: "25.1"
+          - image-tag: "windows-25.1"
+            backend-version: "25.1"
           - image-tag: "core-windows-25.2"
             backend-version: "25.2"
     steps:
