@@ -227,21 +227,45 @@ class Design(Component):
         self._materials.append(material)
         self._grpc_client.log.debug(f"Material {material.name} is successfully added to design.")
 
+    @min_backend_version(26, 1, 0)
     @check_input_types
     @ensure_design_is_active
-    def save(self, file_location: Path | str) -> None:
+    def remove_material(self, material: Material | list[Material]) -> None:
+        """Remove a material from the design.
+
+        Parameters
+        ----------
+        material : Material | list[Material]
+            Material or list of materials to remove.
+        """
+        material = material if isinstance(material, list) else [material]
+
+        self._grpc_client.services.materials.remove_material(materials=material)
+        for mat in material:
+            self._materials.remove(mat)
+            self._grpc_client.log.debug(f"Material {mat.name} is successfully removed from design.")
+
+    @check_input_types
+    @ensure_design_is_active
+    def save(self, file_location: Path | str, write_body_facets: bool = False) -> None:
         """Save a design to disk on the active Geometry server instance.
 
         Parameters
         ----------
         file_location : ~pathlib.Path | str
             Location on disk to save the file to.
+        write_body_facets : bool, default: False
+            Option to write body facets into the saved file. 26R1 and later.
         """
         # Sanity checks on inputs
         if isinstance(file_location, Path):
             file_location = str(file_location)
 
-        self._grpc_client.services.designs.save_as(filepath=file_location)
+        self._grpc_client.services.designs.save_as(
+            filepath=file_location,
+            write_body_facets=write_body_facets,
+            backend_version=self._grpc_client.backend_version,
+        )
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
     @protect_grpc
@@ -251,6 +275,7 @@ class Design(Component):
         self,
         file_location: Path | str,
         format: DesignFileFormat = DesignFileFormat.SCDOCX,
+        write_body_facets: bool = False,
     ) -> None:
         """Export and download the design from the server.
 
@@ -260,6 +285,8 @@ class Design(Component):
             Location on disk to save the file to.
         format : DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
+        write_body_facets : bool, default: False
+            Option to write body facets into the saved file. SCDOCX only, 26R1 and later.
         """
         # Sanity checks on inputs
         if isinstance(file_location, str):
@@ -275,7 +302,9 @@ class Design(Component):
         if self._modeler.client.backend_version < (25, 2, 0):
             received_bytes = self.__export_and_download_legacy(format=format)
         else:
-            received_bytes = self.__export_and_download(format=format)
+            received_bytes = self.__export_and_download(
+                format=format, write_body_facets=write_body_facets
+            )
 
         # Write to file
         file_location.write_bytes(received_bytes)
@@ -323,7 +352,11 @@ class Design(Component):
 
         return received_bytes
 
-    def __export_and_download(self, format: DesignFileFormat) -> bytes:
+    def __export_and_download(
+        self,
+        format: DesignFileFormat,
+        write_body_facets: bool = False,
+    ) -> bytes:
         """Export and download the design from the server.
 
         Parameters
@@ -351,14 +384,22 @@ class Design(Component):
             DesignFileFormat.STRIDE,
         ]:
             try:
-                response = self._grpc_client.services.designs.download_export(format=format)
+                response = self._grpc_client.services.designs.download_export(
+                    format=format,
+                    write_body_facets=write_body_facets,
+                    backend_version=self._grpc_client.backend_version,
+                )
             except Exception:
                 self._grpc_client.log.warning(
                     f"Failed to download the file in {format} format."
                     " Attempting to stream download."
                 )
                 # Attempt to download the file via streaming
-                response = self._grpc_client.services.designs.stream_download_export(format=format)
+                response = self._grpc_client.services.designs.stream_download_export(
+                    format=format,
+                    write_body_facets=write_body_facets,
+                    backend_version=self._grpc_client.backend_version,
+                )
         else:
             self._grpc_client.log.warning(
                 f"{format} format requested is not supported. Ignoring download request."
@@ -950,7 +991,9 @@ class Design(Component):
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
     def insert_file(
-        self, file_location: Path | str, import_options: ImportOptions = ImportOptions()
+        self,
+        file_location: Path | str,
+        import_options: ImportOptions = ImportOptions(),
     ) -> Component:
         """Insert a file into the design.
 
@@ -974,7 +1017,9 @@ class Design(Component):
         filepath_server = self._modeler._upload_file(file_location, import_options=import_options)
 
         # Insert the file into the design
-        self._grpc_client.services.designs.insert(filepath=filepath_server)
+        self._grpc_client.services.designs.insert(
+            filepath=filepath_server, import_named_selections=import_options.import_named_selections
+        )
         self._grpc_client.log.debug(f"File {file_location} successfully inserted into design.")
 
         self._update_design_inplace()

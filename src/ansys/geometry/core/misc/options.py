@@ -48,6 +48,8 @@ class ImportOptions:
         Import planes.
     import_points : bool = False
         Import points.
+    import_named_selections : bool = True
+        Import the named selections associated with the root component being inserted.
     """
 
     cleanup_bodies: bool = False
@@ -57,6 +59,7 @@ class ImportOptions:
     import_names: bool = False
     import_planes: bool = False
     import_points: bool = False
+    import_named_selections: bool = True
 
     def to_dict(self):
         """Provide the dictionary representation of the ImportOptions class."""

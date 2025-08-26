@@ -749,6 +749,44 @@ def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
     )
 
 
+def from_grpc_nurbs_curve_to_nurbs_curve(curve: GRPCNurbsCurve) -> "NURBSCurve":
+    """Convert a NURBS curve gRPC message to a ``NURBSCurve``.
+
+    Parameters
+    ----------
+    curve : GRPCNurbsCurve
+        Geometry service gRPC NURBS curve message.
+
+    Returns
+    -------
+    NURBSCurve
+        Resulting converted NURBS curve.
+    """
+    from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
+
+    # Extract control points
+    control_points = [from_grpc_point_to_point3d(cp.position) for cp in curve.control_points]
+
+    # Extract weights
+    weights = [cp.weight for cp in curve.control_points]
+
+    # Extract degree
+    degree = curve.nurbs_data.degree
+
+    # Convert gRPC knots to full knot vector
+    knots = []
+    for grpc_knot in curve.nurbs_data.knots:
+        knots.extend([grpc_knot.parameter] * grpc_knot.multiplicity)
+
+    # Create and return the NURBS curve
+    return NURBSCurve.from_control_points(
+        control_points=control_points,
+        degree=degree,
+        knots=knots,
+        weights=weights,
+    )
+
+
 def from_knots_to_grpc_knots(knots: list[float]) -> list[GRPCKnot]:
     """Convert a list of knots to a list of gRPC knot messages.
 
@@ -813,6 +851,8 @@ def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
         result = Circle(origin, curve.radius, reference, axis)
     elif curve.major_radius != 0 and curve.minor_radius != 0:
         result = Ellipse(origin, curve.major_radius, curve.minor_radius, reference, axis)
+    elif curve.nurbs_curve.nurbs_data.degree != 0:
+        result = from_grpc_nurbs_curve_to_nurbs_curve(curve.nurbs_curve)
     elif curve.direction is not None:
         result = Line(
             origin,
@@ -1158,6 +1198,26 @@ def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometri
     if grpc_geometries.nurbs_curves and backend_version < (26, 1, 0):
         raise GeometryRuntimeError(
             "The usage of NURBS in sketches requires a minimum Ansys release version of "  # noqa: E501
+            + "26.1.0, but the current version used is "
+            + f"{backend_version}."
+        )
+
+
+def _check_write_body_facets_input(backend_version: "semver.Version", write_body_facets: bool):
+    """Check if the backend version is compatible with NURBS curves in sketches.
+
+    Parameters
+    ----------
+    backend_version : semver.Version
+        The version of the backend.
+    write_body_facets : bool
+        Option to write out body facets.
+    """
+    if write_body_facets and backend_version < (26, 1, 0):
+        from ansys.geometry.core.logger import LOG
+
+        LOG.warning(
+            "The usage of write_body_facets requires a minimum Ansys release version of "
             + "26.1.0, but the current version used is "
             + f"{backend_version}."
         )

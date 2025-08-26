@@ -516,6 +516,11 @@ class Sketch:
         -------
         Sketch
             Revised sketch state ready for further sketch actions.
+
+        Warnings
+        --------
+        This method may not produce the exact same radius, depending on the input parameters.
+        This is due to the mathematical approximations involved in the arc creation.
         """
         arc = Arc.from_start_end_and_radius(
             start,
