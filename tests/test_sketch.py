@@ -393,6 +393,8 @@ def test_sketch_nurbs_misc():
         Point2D([1.0, 1.0]),
     ]
     nurbs_curve = nurbs.SketchNurbs.fit_curve_from_points(points=control_points)
+    assert nurbs_curve.control_points[0].x == 0.0
+    assert nurbs_curve.degree == 1
 
 
 def test_sketch_triangle_face():
