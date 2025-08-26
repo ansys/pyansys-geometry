@@ -535,7 +535,7 @@ def test_intersect_example(modeler: Modeler):
 
     faces_to_split_with = [
         design.bodies[0].faces[1],
-        design.bodies[0].faces[2],
+        design.bodies[0].faces[3],
         design.bodies[0].faces[4],
     ]
     modeler.geometry_commands.split_body(
