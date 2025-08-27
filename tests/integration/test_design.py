@@ -3786,7 +3786,7 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     exportedtestns = design_read._named_selections["Test"]
     assert len(exportedtestns.vertices) == 2
 
-    
+
 @pytest.mark.parametrize(
     "file_extension, design_format",
     [
