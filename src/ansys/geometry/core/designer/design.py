@@ -227,6 +227,24 @@ class Design(Component):
         self._materials.append(material)
         self._grpc_client.log.debug(f"Material {material.name} is successfully added to design.")
 
+    @min_backend_version(26, 1, 0)
+    @check_input_types
+    @ensure_design_is_active
+    def remove_material(self, material: Material | list[Material]) -> None:
+        """Remove a material from the design.
+
+        Parameters
+        ----------
+        material : Material | list[Material]
+            Material or list of materials to remove.
+        """
+        material = material if isinstance(material, list) else [material]
+
+        self._grpc_client.services.materials.remove_material(materials=material)
+        for mat in material:
+            self._materials.remove(mat)
+            self._grpc_client.log.debug(f"Material {mat.name} is successfully removed from design.")
+
     @check_input_types
     @ensure_design_is_active
     def save(self, file_location: Path | str, write_body_facets: bool = False) -> None:
@@ -268,7 +286,7 @@ class Design(Component):
         format : DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
         write_body_facets : bool, default: False
-            Option to write body facets into the saved file. SCDOCX only, 26R1 and later.
+            Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
         """
         # Sanity checks on inputs
         if isinstance(file_location, str):

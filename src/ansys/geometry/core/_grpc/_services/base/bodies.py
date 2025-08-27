@@ -60,6 +60,11 @@ class GRPCBodyService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def sweep_with_guide(self, **kwargs) -> dict:
+        """Sweep with a guide."""
+        pass
+
+    @abstractmethod
     def create_extruded_body_from_face_profile(self, **kwargs) -> dict:
         """Create an extruded body from a face profile."""
         pass
@@ -142,6 +147,11 @@ class GRPCBodyService(ABC):  # pragma: no cover
     @abstractmethod
     def get_assigned_material(self, **kwargs) -> dict:
         """Get the assigned material of a body."""
+        pass
+
+    @abstractmethod
+    def remove_assigned_material(self, **kwargs) -> dict:
+        """Remove the assigned material of a body."""
         pass
 
     @abstractmethod

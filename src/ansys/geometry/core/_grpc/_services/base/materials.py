@@ -43,3 +43,8 @@ class GRPCMaterialsService(ABC):  # pragma: no cover
     def add_material(self, **kwargs) -> dict:
         """Add material to the service design."""
         pass
+
+    @abstractmethod
+    def remove_material(self, **kwargs) -> dict:
+        """Remove material from the service design."""
+        pass

@@ -172,6 +172,48 @@ class GRPCBodyServiceV0(GRPCBodyService):
         }
 
     @protect_grpc
+    def sweep_with_guide(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+        from ansys.api.geometry.v0.bodies_pb2 import (
+            SweepWithGuideRequest,
+            SweepWithGuideRequestData,
+        )
+
+        # Create request object - assumes all inputs are valid and of the proper type
+        request = SweepWithGuideRequest(
+            request_data=[
+                SweepWithGuideRequestData(
+                    name=data.name,
+                    parent=EntityIdentifier(id=data.parent_id),
+                    plane=from_plane_to_grpc_plane(data.sketch.plane),
+                    geometries=from_sketch_shapes_to_grpc_geometries(
+                        data.sketch.plane, data.sketch.edges, data.sketch.faces
+                    ),
+                    path=from_trimmed_curve_to_grpc_trimmed_curve(data.path),
+                    guide=from_trimmed_curve_to_grpc_trimmed_curve(data.guide),
+                    tight_tolerance=data.tight_tolerance,
+                )
+                for data in kwargs["sweep_data"]
+            ],
+        )
+
+        # Call the gRPC service
+        resp = self.stub.SweepWithGuide(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "bodies": [
+                {
+                    "id": body.id,
+                    "name": body.name,
+                    "master_id": body.master_id,
+                    "is_surface": body.is_surface,
+                }
+            ]
+            for body in resp.bodies
+        }
+
+    @protect_grpc
     def create_extruded_body_from_face_profile(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.bodies_pb2 import CreateExtrudedBodyFromFaceProfileRequest
 
@@ -452,6 +494,19 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {"material": from_grpc_material_to_material(resp)}
+
+    @protect_grpc
+    def remove_assigned_material(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.bodies_pb2 import RemoveAssignedMaterialRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RemoveAssignedMaterialRequest(ids=[build_grpc_id(id) for id in kwargs["ids"]])
+
+        # Call the gRPC service
+        resp = self.stub.RemoveAssignedMaterial(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {"successfully_removed": [id for id in resp.successfully_removed]}
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
