@@ -3665,16 +3665,33 @@ def test_component_make_independent(modeler: Modeler):
     assert not Accuracy.length_is_equal(comp.bodies[0].volume.m, face.body.volume.m)
 
 
-def test_write_body_facets_on_save(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+@pytest.mark.parametrize(
+    "file_extension, design_format",
+    [
+        ("scdocx", None),  # For .scdocx files
+        ("dsco", DesignFileFormat.DISCO),  # For .dsco files
+    ],
+)
+def test_write_body_facets_on_save(
+    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, file_extension: str, design_format
+):
     design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
 
     # First file without body facets
-    filepath_no_facets = tmp_path_factory.mktemp("test_design") / "cars_no_facets.scdocx"
-    design.download(filepath_no_facets)
+    filepath_no_facets = tmp_path_factory.mktemp("test_design") / f"cars_no_facets.{file_extension}"
+    if design_format:
+        design.download(filepath_no_facets, design_format)
+    else:
+        design.download(filepath_no_facets)
 
     # Second file with body facets
-    filepath_with_facets = tmp_path_factory.mktemp("test_design") / "cars_with_facets.scdocx"
-    design.download(filepath_with_facets, write_body_facets=True)
+    filepath_with_facets = (
+        tmp_path_factory.mktemp("test_design") / f"cars_with_facets.{file_extension}"
+    )
+    if design_format:
+        design.download(filepath_with_facets, design_format, write_body_facets=True)
+    else:
+        design.download(filepath_with_facets, write_body_facets=True)
 
     # Compare file sizes
     size_no_facets = filepath_no_facets.stat().st_size
