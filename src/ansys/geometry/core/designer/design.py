@@ -286,7 +286,7 @@ class Design(Component):
         format : DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
         write_body_facets : bool, default: False
-            Option to write body facets into the saved file. SCDOCX only, 26R1 and later.
+            Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
         """
         # Sanity checks on inputs
         if isinstance(file_location, str):
