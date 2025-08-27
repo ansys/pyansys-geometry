@@ -48,6 +48,7 @@ from ansys.geometry.core.sketch import (
     Slot,
     SpurGear,
     Triangle,
+    nurbs,
 )
 
 from .conftest import are_graphics_available
@@ -367,6 +368,33 @@ def test_sketch_nurbs():
     # Check if the curve contains a point
     assert sketch.edges[0].contains_point(Point2D([4, 7]))
     assert not sketch.edges[0].contains_point(Point2D([5, 5]))
+
+
+def test_sketch_nurbs_misc():
+    """Test NURBS Sketch for code coverage"""
+    control_points = [
+        Point2D([0.0, 0.0]),
+        Point2D([1.0, 2.0]),
+        Point2D([2.0, 0.0]),
+        Point2D([3.0, 3.0]),
+    ]
+    # Checking geomdl_nurbs_curve usage
+    nurbs_curve = nurbs.SketchNurbs.fit_curve_from_points(points=control_points, degree=3)
+    assert nurbs_curve.geomdl_nurbs_curve.ctrlpts[0][0] == 0.0
+    # Checking value error for degrees less than 1
+    with pytest.raises(
+        ValueError,
+        match="Degree must be at least 1",
+    ):
+        nurbs.SketchNurbs.fit_curve_from_points(points=control_points, degree=0)
+    # Checking Force linear interpolation
+    control_points = [
+        Point2D([0.0, 0.0]),
+        Point2D([1.0, 1.0]),
+    ]
+    nurbs_curve = nurbs.SketchNurbs.fit_curve_from_points(points=control_points)
+    assert nurbs_curve.control_points[0].x == 0.0
+    assert nurbs_curve.degree == 1
 
 
 def test_sketch_triangle_face():
