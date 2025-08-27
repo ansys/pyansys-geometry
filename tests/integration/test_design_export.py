@@ -382,7 +382,6 @@ def test_import_export_reimport_design_scdocx(
     assert len(design.components[0].components[0].bodies) == 3
 
 
-@pytest.mark.skip(reason="Re-import of x_t files broke")
 def test_import_export_reimport_design_x_t(
     modeler: Modeler, tmp_path_factory: pytest.TempPathFactory
 ):
@@ -441,7 +440,6 @@ def test_import_export_glb(modeler: Modeler, tmp_path_factory: pytest.TempPathFa
     assert output_glb_path.stat().st_size > 0, f"GLB file {output_glb_path} is empty."
 
 
-@pytest.mark.skip(reason="Re-import of x_t files broke")
 @pytest.mark.parametrize(
     "file_format, extension, original_file, expected_components, expected_bodies",
     [
