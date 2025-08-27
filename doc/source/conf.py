@@ -138,6 +138,9 @@ html_context = {
     "github_repo": "pyansys-geometry",
     "github_version": "main",
     "doc_path": "doc/source",
+    "pyansys_tags": [
+        "CAD"
+    ]
 }
 html_theme_options = {
     "header_links_before_dropdown": 4,
