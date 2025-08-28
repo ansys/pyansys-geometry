@@ -41,6 +41,7 @@ from ansys.geometry.core.designer import (
     SurfaceType,
 )
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
+from ansys.geometry.core.designer.component import SweepWithGuideData
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
@@ -71,6 +72,7 @@ from ansys.geometry.core.shapes import (
     Torus,
 )
 from ansys.geometry.core.shapes.box_uv import BoxUV
+from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
 )
@@ -318,6 +320,38 @@ def test_get_empty_material(modeler: Modeler):
         0, UNITS.kg / (UNITS.m**3)
     )
     assert len(mat_service.properties) == 1
+
+
+def test_remove_material_from_body(modeler: Modeler):
+    """Test removing a material from a body."""
+    # Create a design and a sketch
+    design = modeler.create_design("RemoveMaterialTest")
+    sketch = Sketch()
+    sketch.circle(Point2D([0, 0], UNITS.mm), Quantity(10, UNITS.mm))
+
+    # Extrude the sketch to create a body
+    body = design.extrude_sketch("CircleBody", sketch, Quantity(10, UNITS.mm))
+
+    # Create and assign a material
+    density = Quantity(7850, UNITS.kg / (UNITS.m**3))
+    material = Material(
+        "Steel",
+        density,
+        [MaterialProperty(MaterialPropertyType.POISSON_RATIO, "Poisson", Quantity(0.3))],
+    )
+    design.add_material(material)
+    body.assign_material(material)
+    assert body.material.name == "Steel"
+
+    # Remove the material from the body
+    body.remove_assigned_material()
+
+    # Check that the body no longer has a material assigned
+    assert body.material.name == ""
+    assert len(body.material.properties) == 1
+    assert body.material.properties[MaterialPropertyType.DENSITY].quantity == Quantity(
+        0, UNITS.kg / (UNITS.m**3)
+    )
 
 
 def test_face_to_body_creation(modeler: Modeler):
@@ -2809,6 +2843,55 @@ def test_sweep_chain(modeler: Modeler):
     assert body.volume.m == 0
 
 
+def test_sweep_with_guide(modeler: Modeler):
+    """Test creating a body by sweeping a profile with a guide curve."""
+    design = modeler.create_design("SweepWithGuide")
+
+    # Create path points for the sweep path
+    path_points = [
+        Point3D([0.0, 0.0, 0.15]),
+        Point3D([0.05, 0.0, 0.1]),
+        Point3D([0.1, 0.0, 0.05]),
+        Point3D([0.15, 0.0, 0.1]),
+        Point3D([0.2, 0.0, 0.15]),
+    ]
+    nurbs_path = NURBSCurve.fit_curve_from_points(path_points, degree=3)
+    n_l_points = len(path_points)
+    path_interval = Interval(1.0 / (n_l_points - 1), (n_l_points - 2.0) / (n_l_points - 1))
+    trimmed_path = nurbs_path.trim(path_interval)
+
+    # Create a simple circular profile sketch
+    profile_plane = Plane(origin=path_points[1])
+    profile_sketch = Sketch(profile_plane)
+    profile_sketch.circle(Point2D([0, 0]), 0.01)  # 0.01 radius
+
+    # Create guide curve points (offset from path)
+    guide_points = [Point3D([p.x.m, p.y.m + 0.01, p.z.m]) for p in path_points]
+    guide_curve = NURBSCurve.fit_curve_from_points(guide_points, degree=3)
+    guide_interval = Interval(1.0 / (n_l_points - 1), (n_l_points - 2.0) / (n_l_points - 1))
+    trimmed_guide = guide_curve.trim(guide_interval)
+
+    # Sweep the profile along the path with the guide curve
+    sweep_data = [
+        SweepWithGuideData(
+            name="SweptBody",
+            parent_id=design.id,
+            sketch=profile_sketch,
+            path=trimmed_path,
+            guide=trimmed_guide,
+            tight_tolerance=True,
+        )
+    ]
+    sweep_body = design.sweep_with_guide(sweep_data=sweep_data)[0]
+
+    assert sweep_body is not None
+    assert sweep_body.name == "SweptBody"
+    assert sweep_body.is_surface
+    assert len(sweep_body.faces) == 1
+    assert len(sweep_body.edges) == 2
+    assert len(sweep_body.vertices) == 0
+
+
 def test_create_body_from_loft_profile(modeler: Modeler):
     """Test the ``create_body_from_loft_profile()`` method to create a vase
     shape.
@@ -3704,16 +3787,33 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     assert len(exportedtestns.vertices) == 2
 
 
-def test_write_body_facets_on_save(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+@pytest.mark.parametrize(
+    "file_extension, design_format",
+    [
+        ("scdocx", None),  # For .scdocx files
+        ("dsco", DesignFileFormat.DISCO),  # For .dsco files
+    ],
+)
+def test_write_body_facets_on_save(
+    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, file_extension: str, design_format
+):
     design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
 
     # First file without body facets
-    filepath_no_facets = tmp_path_factory.mktemp("test_design") / "cars_no_facets.scdocx"
-    design.download(filepath_no_facets)
+    filepath_no_facets = tmp_path_factory.mktemp("test_design") / f"cars_no_facets.{file_extension}"
+    if design_format:
+        design.download(filepath_no_facets, design_format)
+    else:
+        design.download(filepath_no_facets)
 
     # Second file with body facets
-    filepath_with_facets = tmp_path_factory.mktemp("test_design") / "cars_with_facets.scdocx"
-    design.download(filepath_with_facets, write_body_facets=True)
+    filepath_with_facets = (
+        tmp_path_factory.mktemp("test_design") / f"cars_with_facets.{file_extension}"
+    )
+    if design_format:
+        design.download(filepath_with_facets, design_format, write_body_facets=True)
+    else:
+        design.download(filepath_with_facets, write_body_facets=True)
 
     # Compare file sizes
     size_no_facets = filepath_no_facets.stat().st_size

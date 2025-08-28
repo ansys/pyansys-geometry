@@ -27,6 +27,7 @@ import pint
 
 import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_body,
@@ -61,10 +62,37 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class RepairTools:
-    """Repair tools for PyAnsys Geometry."""
+    """Repair tools for PyAnsys Geometry.
 
-    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler"):
+    Parameters
+    ----------
+    grpc_client : GrpcClient
+        Active supporting geometry service instance for design modeling.
+    modeler : Modeler
+        The parent modeler instance.
+    _internal_use : bool, optional
+        Internal flag to prevent direct instantiation by users.
+        This parameter is for internal use only.
+
+    Raises
+    ------
+    GeometryRuntimeError
+        If the class is instantiated directly by users instead
+        of through the modeler.
+
+    Notes
+    -----
+    This class should not be instantiated directly. Use
+    ``modeler.repair_tools`` instead.
+    """
+
+    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler", _internal_use: bool = False):
         """Initialize a new instance of the ``RepairTools`` class."""
+        if not _internal_use:
+            raise GeometryRuntimeError(
+                "RepairTools should not be instantiated directly. "
+                "Use 'modeler.repair_tools' to access repair tools."
+            )
         self._modeler = modeler
         self._grpc_client = grpc_client
 

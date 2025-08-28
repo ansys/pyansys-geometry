@@ -42,10 +42,8 @@ jobs:
             backend-version: "24.1"
           - image-tag: "windows-24.2"
             backend-version: "24.2"
-          # TODO: This has to be reverted once the issue with 25.1 has been solved
-          # https://github.com/ansys/pyansys-geometry/issues/2167
-          # - image-tag: "windows-25.1"
-          #   backend-version: "25.1"
+          - image-tag: "windows-25.1"
+            backend-version: "25.1"
           - image-tag: "core-windows-25.2"
             backend-version: "25.2"
     steps:
@@ -107,7 +105,7 @@ jobs:
           pytest -v --backwards-compatibility=yes --backend-version=${{ matrix.backend-version }} -rf
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
+        uses: codecov/codecov-action@fdcc8476540edceab3de004e990f80d881c6cc00 # v5.5.0
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
