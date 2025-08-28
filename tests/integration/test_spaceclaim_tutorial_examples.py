@@ -235,7 +235,7 @@ def test_robot_example(modeler: Modeler):
 def test_combine_example(modeler: Modeler):
     """Test creating combine example from Sp1ceClaim trainings"""
 
-    scfile = Path(FILES_DIR, "Basic_Combine_2014.0.scdocx")
+    scfile = Path(FILES_DIR, "Basic_Combine_2014.0.dsco")
     design = modeler.open_file(file_path=scfile)
 
     part_one = design.components[0].bodies[0]
@@ -451,7 +451,7 @@ def test_pull_example(modeler: Modeler):
 def test_intersect_example(modeler: Modeler):
     """Test intersect example from Sp1ceClaim trainings"""
 
-    scfile = Path(FILES_DIR, "Intersect.scdocx")
+    scfile = Path(FILES_DIR, "Intersect.dsco")
     design = modeler.open_file(file_path=scfile)
     plane = Plane(
         origin=Point3D([0, 0, 0]), direction_x=Point3D([1, 0, 0]), direction_y=Point3D([0, 0, 1])
