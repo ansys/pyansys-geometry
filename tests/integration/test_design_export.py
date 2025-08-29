@@ -462,7 +462,7 @@ def test_import_export_open_file_design(
     expected_bodies,
 ):
     """Test importing, exporting, and opening a file in a new design."""
-    skip_if_discovery(modeler, test_export_to_fmd.__name__, "design")  # Skip test on Discovery
+    skip_if_discovery(modeler, test_import_export_open_file_design.__name__, "design")  # Skip test on Discovery
     # Define the working directory and file paths
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file_path = Path(FILES_DIR, original_file)
