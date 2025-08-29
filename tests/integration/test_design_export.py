@@ -364,7 +364,9 @@ def test_import_export_reimport_design_scdocx(
     modeler: Modeler, tmp_path_factory: pytest.TempPathFactory
 ):
     """Test importing, exporting, and re-importing a design file."""
-    skip_if_discovery(modeler, test_import_export_reimport_design_scdocx.__name__, "design")  # Skip test on Discovery
+    skip_if_discovery(
+        modeler, test_import_export_reimport_design_scdocx.__name__, "design"
+    )  # Skip test on Discovery
     # Define the working directory and file paths
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")
