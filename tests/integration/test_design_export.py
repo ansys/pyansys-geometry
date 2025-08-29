@@ -36,9 +36,9 @@ from ..conftest import are_graphics_available
 from .conftest import (
     FILES_DIR,
     skip_if_core_service,
+    skip_if_discovery,
     skip_if_spaceclaim,
     skip_if_windows,
-    skip_if_discovery,
 )
 
 
@@ -162,7 +162,7 @@ def _checker_method(comp: Component, comp_ref: Component, precise_check: bool = 
 def test_export_to_scdocx(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to scdocx format."""
     skip_if_discovery(modeler, test_export_to_scdocx.__name__, "design")  # Skip test on Discovery
-    
+
     # Create a demo design
     design = _create_demo_design(modeler)
 

@@ -89,10 +89,14 @@ def skip_if_spaceclaim(modeler: Modeler, test_name: str, element_not_available: 
 
 def skip_if_discovery(modeler: Modeler, test_name: str, element_not_available: str):
     """Skip test if running on Discovery."""
-    if modeler.client.backend_type == BackendType.DISCOVERY or modeler.client.backend_type == BackendType.DISCOVERY_HEADLESS:
+    if (
+        modeler.client.backend_type == BackendType.DISCOVERY
+        or modeler.client.backend_type == BackendType.DISCOVERY_HEADLESS
+    ):
         pytest.skip(
             reason=f"Skipping '{test_name}'. '{element_not_available}' not on Discovery."
         )  # skip!
+
 
 @pytest.fixture(scope="session")
 def docker_instance(use_existing_service):
