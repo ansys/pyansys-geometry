@@ -322,7 +322,7 @@ def test_export_to_iges(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 
 def test_export_to_fmd(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to FMD format."""
-    skip_if_discovery(modeler, test_export_to_fmd.__name__, "design")  # Skip test on Discovery
+    skip_if_discovery(modeler, test_export_to_fmd.__name__, "FMD format")  # Skip test on Discovery
 
     # Create a demo design
     design = _create_demo_design(modeler)
