@@ -365,7 +365,7 @@ def test_import_export_reimport_design_scdocx(
 ):
     """Test importing, exporting, and re-importing a design file."""
     skip_if_discovery(
-        modeler, test_import_export_reimport_design_scdocx.__name__, "design"
+        modeler, test_import_export_reimport_design_scdocx.__name__, "SCDOCX format"
     )  # Skip test on Discovery
     # Define the working directory and file paths
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
