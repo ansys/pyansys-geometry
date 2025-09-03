@@ -80,7 +80,9 @@ def get_two_circle_intersections(
         return None
     else:
         a = (r0**2 - r1**2 + d**2) / (2 * d)
-        h = np.sqrt(r0**2 - a**2)
+        # abs is used to ensure non-negative value - close to zero
+        # conditions might occur if circles are nearly tangent
+        h = np.sqrt(abs(r0**2 - a**2))
         x2 = x0 + a * (x1 - x0) / d
         y2 = y0 + a * (y1 - y0) / d
 

@@ -99,6 +99,13 @@ backends:
       - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_line_rotate
       - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_circle_translate
       - tests/integration/test_trimmed_geometry.py::test_trimmed_curve_circle_rotate
+      # Bug fix included from 26.1 onwards
+      - tests/integration/test_design_import.py::test_named_selections_after_file_insert
+      - tests/integration/test_design_import.py::test_named_selections_after_file_open
+      - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      # Export body facets add in 26.1
+      - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
+      - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
 
   - version: "24.2"
     incompatible_tests:
@@ -192,6 +199,13 @@ backends:
       - tests/integration/test_repair_tools.py::test_fix_extra_edge
       # Issues in log retrieval from server when empty log are solved from 25R1 onwards
       - tests/integration/test_client.py::test_client_get_service_logs
+      # Bug fix included from 26.1 onwards
+      - tests/integration/test_design_import.py::test_named_selections_after_file_insert
+      - tests/integration/test_design_import.py::test_named_selections_after_file_open
+      - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      # Export body facets add in 26.1
+      - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
+      - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
 
   - version: "25.1"
     incompatible_tests:
@@ -254,6 +268,13 @@ backends:
       - tests/integration/test_repair_tools.py::test_find_and_fix_short_edges_comprehensive
       - tests/integration/test_repair_tools.py::test_find_and_fix_split_edges_comprehensive
       - tests/integration/test_repair_tools.py::test_find_and_fix_extra_edges_comprehensive
+      # Bug fix included from 26.1 onwards
+      - tests/integration/test_design_import.py::test_named_selections_after_file_insert
+      - tests/integration/test_design_import.py::test_named_selections_after_file_open
+      - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      # Export body facets add in 26.1
+      - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
+      - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
 
   - version: "25.2"
     incompatible_tests:
@@ -280,3 +301,10 @@ backends:
       - tests/integration/test_repair_tools.py::test_find_small_faces
       - tests/integration/test_repair_tools.py::test_find_small_face_id
       - tests/integration/test_repair_tools.py::test_find_and_fix_missing_faces_angle_distance
+      # Bug fix included from 26.1 onwards
+      - tests/integration/test_design_import.py::test_named_selections_after_file_insert
+      - tests/integration/test_design_import.py::test_named_selections_after_file_open
+      - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      # Export body facets add in 26.1
+      - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
+      - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]

@@ -21,14 +21,19 @@
 # SOFTWARE.
 """Unsupported functions for the PyAnsys Geometry library."""
 
+from dataclasses import dataclass
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest, ImportIdRequest
+from ansys.api.geometry.v0.unsupported_pb2 import (
+    ExportIdRequest,
+    ImportIdRequest,
+    SetExportIdsRequest,
+)
 from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.misc.auxiliary import get_all_bodies_from_design
 from ansys.geometry.core.misc.checks import (
     min_backend_version,
@@ -49,6 +54,15 @@ class PersistentIdType(Enum):
     PRIME_ID = 700
 
 
+@dataclass
+class ExportIdData:
+    """Data for exporting persistent ids."""
+
+    moniker: str
+    id_type: PersistentIdType
+    value: str
+
+
 class UnsupportedCommands:
     """Provides unsupported commands for PyAnsys Geometry.
 
@@ -58,10 +72,29 @@ class UnsupportedCommands:
         gRPC client to use for the geometry commands.
     modeler : Modeler
         Modeler instance to use for the geometry commands.
+    _internal_use : bool, optional
+        Internal flag to prevent direct instantiation by users.
+        This parameter is for internal use only.
+
+    Raises
+    ------
+    GeometryRuntimeError
+        If the class is instantiated directly by users instead of through the modeler.
+
+    Notes
+    -----
+    This class should not be instantiated directly. Use
+    ``modeler.unsupported`` instead.
+
     """
 
-    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler"):
+    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler", _internal_use: bool = False):
         """Initialize an instance of the ``UnsupportedCommands`` class."""
+        if not _internal_use:
+            raise GeometryRuntimeError(
+                "UnsupportedCommands should not be instantiated directly. "
+                "Use 'modeler.unsupported' to access unsupported commands."
+            )
         self._grpc_client = grpc_client
         self._unsupported_stub = UnsupportedStub(self._grpc_client.channel)
         self.__id_map = {}
@@ -166,6 +199,38 @@ class UnsupportedCommands:
             moniker=EntityIdentifier(id=moniker), id=value, type=id_type.value
         )
         self._unsupported_stub.SetExportId(request)
+        self.__id_map = {}
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def set_multiple_export_ids(
+        self,
+        export_data: list[ExportIdData],
+    ) -> None:
+        """Set multiple persistent ids for the monikers.
+
+        Parameters
+        ----------
+        export_data : list[ExportIdData]
+            List of export data containing monikers, id types, and values.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        request = SetExportIdsRequest(
+            export_data=[
+                ExportIdRequest(
+                    moniker=EntityIdentifier(id=data.moniker),
+                    id=data.value,
+                    type=data.id_type.value,
+                )
+                for data in export_data
+            ]
+        )
+
+        # Call the gRPC service
+        self._unsupported_stub.SetExportIds(request)
         self.__id_map = {}
 
     def get_body_occurrences_from_import_id(

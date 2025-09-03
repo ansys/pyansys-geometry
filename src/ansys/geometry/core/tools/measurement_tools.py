@@ -60,10 +60,29 @@ class MeasurementTools:
     ----------
     grpc_client : GrpcClient
         gRPC client to use for the measurement tools.
+    _internal_use : bool, optional
+        Internal flag to prevent direct instantiation by users.
+        This parameter is for internal use only.
+
+    Raises
+    ------
+    GeometryRuntimeError
+        If the class is instantiated directly by users instead
+        of through the modeler.
+
+    Notes
+    -----
+    This class should not be instantiated directly. Use
+    ``modeler.measurement_tools`` instead.
     """
 
-    def __init__(self, grpc_client: GrpcClient):
+    def __init__(self, grpc_client: GrpcClient, _internal_use: bool = False):
         """Initialize measurement tools class."""
+        if not _internal_use:
+            raise GeometryRuntimeError(
+                "MeasurementTools should not be instantiated directly. "
+                "Use 'modeler.measurement_tools' to access measurement tools."
+            )
         self._grpc_client = grpc_client
 
     @min_backend_version(24, 2, 0)
