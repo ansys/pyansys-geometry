@@ -36,6 +36,7 @@ from ..conftest import are_graphics_available
 from .conftest import (
     FILES_DIR,
     skip_if_core_service,
+    skip_if_discovery,
     skip_if_spaceclaim,
     skip_if_windows,
 )
@@ -160,6 +161,10 @@ def _checker_method(comp: Component, comp_ref: Component, precise_check: bool = 
 
 def test_export_to_scdocx(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to scdocx format."""
+    skip_if_discovery(
+        modeler, test_export_to_scdocx.__name__, "SCDOCX format"
+    )  # Skip test on Discovery
+
     # Create a demo design
     design = _create_demo_design(modeler)
 
@@ -319,6 +324,7 @@ def test_export_to_iges(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 
 def test_export_to_fmd(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to FMD format."""
+    skip_if_discovery(modeler, test_export_to_fmd.__name__, "FMD format")  # Skip test on Discovery
 
     # Create a demo design
     design = _create_demo_design(modeler)
@@ -360,6 +366,9 @@ def test_import_export_reimport_design_scdocx(
     modeler: Modeler, tmp_path_factory: pytest.TempPathFactory
 ):
     """Test importing, exporting, and re-importing a design file."""
+    skip_if_discovery(
+        modeler, test_import_export_reimport_design_scdocx.__name__, "SCDOCX format"
+    )  # Skip test on Discovery
     # Define the working directory and file paths
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")
@@ -382,7 +391,6 @@ def test_import_export_reimport_design_scdocx(
     assert len(design.components[0].components[0].bodies) == 3
 
 
-@pytest.mark.skip(reason="Re-import of x_t files broke")
 def test_import_export_reimport_design_x_t(
     modeler: Modeler, tmp_path_factory: pytest.TempPathFactory
 ):
@@ -441,7 +449,6 @@ def test_import_export_glb(modeler: Modeler, tmp_path_factory: pytest.TempPathFa
     assert output_glb_path.stat().st_size > 0, f"GLB file {output_glb_path} is empty."
 
 
-@pytest.mark.skip(reason="Re-import of x_t files broke")
 @pytest.mark.parametrize(
     "file_format, extension, original_file, expected_components, expected_bodies",
     [
@@ -459,6 +466,9 @@ def test_import_export_open_file_design(
     expected_bodies,
 ):
     """Test importing, exporting, and opening a file in a new design."""
+    skip_if_discovery(
+        modeler, test_import_export_open_file_design.__name__, "design"
+    )  # Skip test on Discovery
     # Define the working directory and file paths
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file_path = Path(FILES_DIR, original_file)

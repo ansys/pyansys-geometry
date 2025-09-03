@@ -221,7 +221,7 @@ jobs:
         uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@1096998b81f7ebdea116b683e11f3a8bda759ca6 # v10.0.14
+        uses: ansys/actions/tests-pytest@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
         env:
           ALLOW_PLOTTING: true
         with:
