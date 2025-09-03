@@ -1315,22 +1315,20 @@ def test_move_imprint_edges(modeler: Modeler):
 def test_offset_edges(modeler: Modeler):
     """TODO: Test offsetting edges."""
     design = modeler.create_design("offset_edges")
-    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
 
-    # Create a cylinder cutting through the box
-    cylinder = design.extrude_sketch("cylinder", Sketch().circle(Point2D([0, 0]), 0.5), 2)
+    # Create rectangular surface
+    sketch = Sketch().box(Point2D([0, 0]), 2, 2)
+    surface = design.create_surface("surface", sketch)
 
-    # Imprint the top edge of the cylindrical hole
-    edges = cylinder.faces[1].edges
-    trimmed_curves = [edges[0].shape]
-    new_edges, new_faces = box.imprint_curves(faces=[box.faces[1]], trimmed_curves=trimmed_curves)
-
-    assert len(new_edges) == 1
-    assert len(new_faces) == 1
+    assert modeler.measurement_tools.min_distance_between_objects(surface.edges[0], surface.edges[2]).distance.value.m == 2
+    assert len(surface.faces) == 1
+    assert len(surface.edges) == 4
 
     # Offset the imprinted edge to create new face and edge
-    modeler.geometry_commands.offset_edges([edges[0]], 0.1)
+    modeler.geometry_commands.offset_edges([surface.edges[0], surface.edges[2]], 5)
 
     # Verify the new edges and faces
-    assert len(box.edges) == 14
-    assert len(box.faces) == 8
+    assert modeler.measurement_tools.min_distance_between_objects(surface.edges[0], surface.edges[2]).distance.value.m == 12
+    assert len(surface.faces) == 1
+    assert len(surface.edges) == 4
+    

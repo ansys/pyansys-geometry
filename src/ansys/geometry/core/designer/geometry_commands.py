@@ -1715,7 +1715,7 @@ class GeometryCommands:
     def offset_edges(
         self,
         edges: list["Edge"],
-        distance: Distance | Quantity | Real
+        offset: Distance | Quantity | Real
     ) -> bool:
         """Offset the specified edges with the specified distance.
 
@@ -1723,7 +1723,7 @@ class GeometryCommands:
         ----------
         edges : list[Edge]
             The edges to offset.
-        distance : Distance
+        offset : Distance
             The distance to offset the edges.
 
         Results
@@ -1732,13 +1732,13 @@ class GeometryCommands:
             Returns True if the edges were offset successfully, False otherwise.
         """
         # Convert the distance object
-        distance = distance if isinstance(distance, Distance) else Distance(distance)
-        offset_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        offset = offset if isinstance(offset, Distance) else Distance(offset)
+        offset_magnitude = offset.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
         # Create the request object
         request = OffsetEdgesRequest(
             edges=[edge._grpc_id for edge in edges],
-            distance=offset_magnitude,
+            value=offset_magnitude,
         )
 
         # Call the gRPC service
