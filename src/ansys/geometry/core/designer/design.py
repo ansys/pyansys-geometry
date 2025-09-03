@@ -1392,7 +1392,6 @@ class Design(Component):
             for body in self.bodies:
                 if body.id == body_id:
                     body._is_alive = False
-                    # self.bodies.remove(body)
                     for bd in self._master_component.part.bodies:
                         if bd.id == body_id:
                             self._master_component.part.bodies.remove(bd)
@@ -1427,7 +1426,6 @@ class Design(Component):
             added = self._find_and_add_body(body_info, self.components)
             if not added:
                 new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
-                # self.bodies.append(new_body)
                 self._master_component.part.bodies.append(new_body)
                 self._clear_cached_bodies()
                 self._grpc_client.log.debug(

@@ -24,7 +24,7 @@
 import grpc
 import pint
 
-from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
+import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
@@ -722,10 +722,10 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 tool_bodies=[other.id for other in kwargs["other"]],
                 method=kwargs["method"],
             )
-            if USE_TRACKER_TO_UPDATE_DESIGN:
+            if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
                 request.keep_other = kwargs["keep_other"]
             resp = self.stub.Boolean(request=request)
-            if USE_TRACKER_TO_UPDATE_DESIGN:
+            if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
                 parent_design = get_design_from_body(kwargs["target"])
                 serialized_tracker_response = parent_design._serialize_tracker_command_response(
                     resp.response
