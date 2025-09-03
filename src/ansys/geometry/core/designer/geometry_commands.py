@@ -42,6 +42,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FullFilletRequest,
     ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
+    MoveImprintEdgesRequest,
     MoveRotateRequest,
     MoveTranslateRequest,
     OffsetFacesSetRadiusRequest,
@@ -1666,3 +1667,44 @@ class GeometryCommands:
             result.is_reversed,
             result.is_valid,
         )
+    
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def move_imprint_edges(
+        self,
+        edges: list["Edge"],
+        direction: UnitVector3D,
+        distance: Distance | Quantity | Real
+    ) -> bool:
+        """Move the imprint edges in the specified direction by the specified distance.
+        
+        Parameters
+        ----------
+        edges : list[Edge]
+            The edges to move.
+        direction : UnitVector3D
+            The direction to move the edges.
+        distance : Distance
+            The distance to move the edges.
+
+        Results
+        -------
+        bool
+            Returns True if the edges were moved successfully, False otherwise.
+        """
+        # Convert the distance object
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+        move_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+
+        # Create the request object
+        request = MoveImprintEdgesRequest(
+            edges=[edge._grpc_id for edge in edges],
+            direction=unit_vector_to_grpc_direction(direction),
+            distance=move_magnitude,
+        )
+
+        # Call the gRPC service
+        response = self._commands_stub.MoveImprintEdges(request)
+
+        # Return success flag
+        return response.result.success

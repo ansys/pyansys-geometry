@@ -1286,3 +1286,28 @@ def test_offset_face_set_radius(modeler: Modeler):
     assert success
 
     assert box.volume.m == pytest.approx(Quantity(7.6073, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+
+def test_move_imprint_edges(modeler: Modeler):
+    """Test moving imprint edges."""
+    design = modeler.create_design("move_imprint_edges")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Create a cylinder cutting through the box
+    cylinder = design.extrude_sketch("cylinder", Sketch().circle(Point2D([0, 0]), 0.5), 2)
+
+    # Imprint the top edge of the cylindrical hole
+    box.faces[1].set_color("red")
+    edges = cylinder.faces[1].edges
+    trimmed_curves = [edges[0].shape]
+    new_edges, new_faces = box.imprint_curves(faces=[box.faces[1]], trimmed_curves=trimmed_curves)
+
+    assert len(new_edges) == 1
+    assert len(new_faces) == 1
+
+    # Move the imprinted edge to create new face and edge
+    modeler.geometry_commands.move_imprint_edges([edges[0]], UNITVECTOR3D_Y, 0.1)
+
+    # Verify the new edges and faces
+    assert len(box.edges) == 13
+    assert len(box.faces) == 7
