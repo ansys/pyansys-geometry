@@ -39,7 +39,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+      - uses: ansys/actions/doc-deploy-changelog@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -49,7 +49,7 @@ jobs:
     name: Vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+      - uses: ansys/actions/check-vulnerabilities@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/check-pr-title@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/doc-style@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -90,7 +90,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/build-wheelhouse@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/docker-style@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/docker-style@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
           directory: docker
           recursive: true
@@ -346,7 +346,7 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
 
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/doc-build@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
@@ -432,7 +432,7 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/tests-pytest@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         env:
           ALLOW_PLOTTING: true
         with:
@@ -640,7 +640,7 @@ jobs:
       id-token: write
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/build-library@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -871,7 +871,7 @@ jobs:
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/tests-pytest@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         env:
           ALLOW_PLOTTING: true
         with:
@@ -912,7 +912,7 @@ jobs:
       contents: write
     steps:
       - name: Release to GitHub
-        uses: ansys/actions/release-github@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/release-github@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
@@ -952,7 +952,7 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/doc-deploy-dev@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -966,7 +966,7 @@ jobs:
     needs: [release, release-pypi]
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/doc-deploy-stable@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -983,7 +983,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Automerge PRs
-        uses: ansys/actions/hk-automerge-prs@d93d46bd89025d3c78a0d18a68a9f16434c74382 # v10.0.15
+        uses: ansys/actions/hk-automerge-prs@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
