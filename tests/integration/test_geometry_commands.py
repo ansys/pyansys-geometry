@@ -1297,7 +1297,6 @@ def test_move_imprint_edges(modeler: Modeler):
     cylinder = design.extrude_sketch("cylinder", Sketch().circle(Point2D([0, 0]), 0.5), 2)
 
     # Imprint the top edge of the cylindrical hole
-    box.faces[1].set_color("red")
     edges = cylinder.faces[1].edges
     trimmed_curves = [edges[0].shape]
     new_edges, new_faces = box.imprint_curves(faces=[box.faces[1]], trimmed_curves=trimmed_curves)
@@ -1311,3 +1310,27 @@ def test_move_imprint_edges(modeler: Modeler):
     # Verify the new edges and faces
     assert len(box.edges) == 13
     assert len(box.faces) == 7
+
+
+def test_offset_edges(modeler: Modeler):
+    """TODO: Test offsetting edges."""
+    design = modeler.create_design("offset_edges")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Create a cylinder cutting through the box
+    cylinder = design.extrude_sketch("cylinder", Sketch().circle(Point2D([0, 0]), 0.5), 2)
+
+    # Imprint the top edge of the cylindrical hole
+    edges = cylinder.faces[1].edges
+    trimmed_curves = [edges[0].shape]
+    new_edges, new_faces = box.imprint_curves(faces=[box.faces[1]], trimmed_curves=trimmed_curves)
+
+    assert len(new_edges) == 1
+    assert len(new_faces) == 1
+
+    # Offset the imprinted edge to create new face and edge
+    modeler.geometry_commands.offset_edges([edges[0]], 0.1)
+
+    # Verify the new edges and faces
+    assert len(box.edges) == 14
+    assert len(box.faces) == 8

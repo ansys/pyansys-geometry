@@ -34,6 +34,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CreateCircularPatternRequest,
     CreateFillPatternRequest,
     CreateLinearPatternRequest,
+    DraftFacesRequest,
     ExtrudeEdgesRequest,
     ExtrudeEdgesUpToRequest,
     ExtrudeFacesRequest,
@@ -45,6 +46,8 @@ from ansys.api.geometry.v0.commands_pb2 import (
     MoveImprintEdgesRequest,
     MoveRotateRequest,
     MoveTranslateRequest,
+    OffsetEdgesRequest,
+    OffsetFaceCurvesRequest,
     OffsetFacesSetRadiusRequest,
     PatternRequest,
     RenameObjectRequest,
@@ -1708,3 +1711,46 @@ class GeometryCommands:
 
         # Return success flag
         return response.result.success
+
+    def offset_edges(
+        self,
+        edges: list["Edge"],
+        distance: Distance | Quantity | Real
+    ) -> bool:
+        """Offset the specified edges with the specified distance.
+
+        Parameters
+        ----------
+        edges : list[Edge]
+            The edges to offset.
+        distance : Distance
+            The distance to offset the edges.
+
+        Results
+        -------
+        bool
+            Returns True if the edges were offset successfully, False otherwise.
+        """
+        # Convert the distance object
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+        offset_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+
+        # Create the request object
+        request = OffsetEdgesRequest(
+            edges=[edge._grpc_id for edge in edges],
+            distance=offset_magnitude,
+        )
+
+        # Call the gRPC service
+        response = self._commands_stub.OffsetEdges(request)
+
+        # Return success flag
+        return response.success
+
+    def offset_faces(
+        self,
+        faces: list["Face"],
+        distance: Distance | Quantity | Real
+    ) -> bool:
+        """TODO"""
+        pass
