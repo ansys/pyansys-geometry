@@ -1680,17 +1680,14 @@ class GeometryCommands:
             result.is_reversed,
             result.is_valid,
         )
-    
+
     @protect_grpc
     @min_backend_version(26, 1, 0)
     def move_imprint_edges(
-        self,
-        edges: list["Edge"],
-        direction: UnitVector3D,
-        distance: Distance | Quantity | Real
+        self, edges: list["Edge"], direction: UnitVector3D, distance: Distance | Quantity | Real
     ) -> bool:
         """Move the imprint edges in the specified direction by the specified distance.
-        
+
         Parameters
         ----------
         edges : list[Edge]
@@ -1724,11 +1721,7 @@ class GeometryCommands:
 
     @protect_grpc
     @min_backend_version(26, 1, 0)
-    def offset_edges(
-        self,
-        edges: list["Edge"],
-        offset: Distance | Quantity | Real
-    ) -> bool:
+    def offset_edges(self, edges: list["Edge"], offset: Distance | Quantity | Real) -> bool:
         """Offset the specified edges with the specified distance.
 
         Parameters
@@ -1770,7 +1763,7 @@ class GeometryCommands:
         extrude_type: ExtrudeType,
     ) -> list["Face"]:
         """Draft the specified faces in the specified direction by the specified angle.
-        
+
         Parameters
         ----------
         faces : list[Face]

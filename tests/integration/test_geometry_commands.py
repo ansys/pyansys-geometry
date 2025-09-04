@@ -1321,7 +1321,12 @@ def test_offset_edges(modeler: Modeler):
     sketch = Sketch().box(Point2D([0, 0]), 2, 2)
     surface = design.create_surface("surface", sketch)
 
-    assert modeler.measurement_tools.min_distance_between_objects(surface.edges[0], surface.edges[2]).distance.value.m == 2
+    assert (
+        modeler.measurement_tools.min_distance_between_objects(
+            surface.edges[0], surface.edges[2]
+        ).distance.value.m
+        == 2
+    )
     assert len(surface.faces) == 1
     assert len(surface.edges) == 4
 
@@ -1329,7 +1334,12 @@ def test_offset_edges(modeler: Modeler):
     modeler.geometry_commands.offset_edges([surface.edges[0], surface.edges[2]], 5)
 
     # Verify the new edges and faces
-    assert modeler.measurement_tools.min_distance_between_objects(surface.edges[0], surface.edges[2]).distance.value.m == 12
+    assert (
+        modeler.measurement_tools.min_distance_between_objects(
+            surface.edges[0], surface.edges[2]
+        ).distance.value.m
+        == 12
+    )
     assert len(surface.faces) == 1
     assert len(surface.edges) == 4
 
@@ -1347,14 +1357,11 @@ def test_draft_faces(modeler: Modeler):
 
     # Draft the face
     drafted_faces = modeler.geometry_commands.draft_faces(
-        faces,
-        ref_faces,
-        DraftSide.NO_SPLIT,
-        Angle(10, UNITS.deg),
-        ExtrudeType.ADD
+        faces, ref_faces, DraftSide.NO_SPLIT, Angle(10, UNITS.deg), ExtrudeType.ADD
     )
 
     assert len(drafted_faces) == 0
     assert box.faces[2].area.m == pytest.approx(
-        Quantity(4.777895, UNITS.m**2).m, rel=1e-6, abs=1e-8)
+        Quantity(4.777895, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
     design.plot(screenshot="C:\\Users\\jkerstet\\Downloads\\draft_faces.png")
