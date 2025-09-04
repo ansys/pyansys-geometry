@@ -1803,6 +1803,8 @@ class GeometryCommands:
         design = get_design_from_face(faces[0])
         return get_faces_from_ids(design, [face.id for face in response.created_faces])
 
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
     def thicken_faces(
         self,
         faces: list["Face"],
