@@ -47,12 +47,10 @@ from ansys.api.geometry.v0.commands_pb2 import (
     MoveRotateRequest,
     MoveTranslateRequest,
     OffsetEdgesRequest,
-    OffsetFaceCurvesRequest,
     OffsetFacesSetRadiusRequest,
     PatternRequest,
     RenameObjectRequest,
     ReplaceFaceRequest,
-    RevolveCurvesRequest,
     RevolveFacesByHelixRequest,
     RevolveFacesRequest,
     RevolveFacesUpToRequest,
@@ -1758,56 +1756,6 @@ class GeometryCommands:
 
         # Return success flag
         return response.success
-
-    def offset_face_curves(self):
-        """TODO"""
-        pass
-
-    def offset_faces(
-        self,
-        faces: list["Face"],
-        distance: Distance | Quantity | Real
-    ) -> bool:
-        """TODO"""
-        pass
-
-    def revolve_edges(
-        self,
-        edges: list["Edge"],
-        axis: Line,
-        angle: Angle | Quantity | Real,
-        symmetric: bool = False,
-    ) -> None:
-        """Revolve the specified edges around the specified axis by the specified angle.
-
-        Parameters
-        ----------
-        edges : list[Edge]
-            The edges to revolve.
-        axis : Line
-            The axis to revolve the edges around.
-        angle : Angle
-            The angle to revolve the edges.
-        symmetric : bool, default: False
-            Whether to create a symmetric revolution.
-        """
-        # Get the TrimmedCurves from the Edges
-        trimmed_curves = [edge.shape for edge in edges]
-
-        # Convert the angle object
-        angle = angle if isinstance(angle, Angle) else Angle(angle)
-        angle_magnitude = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
-
-        # Create the request object
-        request = RevolveCurvesRequest(
-            curves=[from_trimmed_curve_to_grpc_trimmed_curve(curve) for curve in trimmed_curves],
-            axis=from_line_to_grpc_line(axis),
-            angle=angle_magnitude,
-            symmetric=symmetric,
-        )
-        
-        # Call the gRPC server
-        self._commands_stub.RevolveCurves(request)
 
     def draft_faces(
         self,
