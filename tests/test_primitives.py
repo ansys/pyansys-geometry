@@ -51,6 +51,7 @@ from ansys.geometry.core.shapes.parameterization import (
     ParamForm,
     ParamType,
 )
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 from ansys.geometry.core.shapes.surfaces.sphere import SphereEvaluation
 
 
@@ -1596,3 +1597,8 @@ def test_nurbs_length_calculation():
 
     # Verify that the length is calculated correctly
     assert np.isclose(length, 13.3012277924)
+
+
+def test_nurbs_surface_fitting():
+    """Test fitting a NURBS surface from points."""
+    
