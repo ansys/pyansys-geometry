@@ -56,6 +56,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     RevolveFacesUpToRequest,
     RoundInfoRequest,
     SplitBodyRequest,
+    ThickenFacesRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
@@ -1801,3 +1802,55 @@ class GeometryCommands:
         # Return the drafted faces
         design = get_design_from_face(faces[0])
         return get_faces_from_ids(design, [face.id for face in response.created_faces])
+
+    def thicken_faces(
+        self,
+        faces: list["Face"],
+        direction: UnitVector3D,
+        thickness: Real,
+        extrude_type: ExtrudeType,
+        pull_symmetric: bool,
+        select_direction: bool,
+    ) -> bool:
+        """Thicken the specified faces by the specified thickness in the specified direction.
+
+        Parameters
+        ----------
+        faces : list[Face]
+            The faces to thicken.
+        direction : UnitVector3D
+            The direction to thicken the faces.
+        thickness : Real
+            The thickness to apply to the faces.
+        extrude_type : ExtrudeType
+            The type of extrusion to use.
+        pull_symmetric : bool
+            Whether to pull the faces symmetrically.
+        select_direction : bool
+            Whether to select the direction.
+
+        Returns
+        -------
+        bool
+            Returns True if the faces were thickened successfully, False otherwise.
+        """
+        # Create the request object
+        request = ThickenFacesRequest(
+            faces=[face._grpc_id for face in faces],
+            direction=unit_vector_to_grpc_direction(direction),
+            value=thickness,
+            extrude_type=extrude_type.value,
+            pull_symmetric=pull_symmetric,
+            select_direction=select_direction,
+        )
+
+        # Call the gRPC service
+        response = self._commands_stub.ThickenFaces(request)
+
+        # Update design
+        design = get_design_from_face(faces[0])
+        if response.success:
+            design._update_design_inplace()
+
+        # Return success flag
+        return response.success
