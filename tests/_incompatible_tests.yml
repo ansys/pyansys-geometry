@@ -168,6 +168,7 @@ backends:
       - tests/integration/test_design.py::test_stream_upload_file
       # No sketch on imprinted curves is only supported from 25.2 onwards
       - tests/integration/test_design.py::test_imprint_trimmed_curves
+      - tests/integration/test_geometry_commands::test_move_imprint_edges
       # Components and vertex only available from 26.1 onwards
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
@@ -222,6 +223,7 @@ backends:
       - tests/integration/test_design.py::test_stream_upload_file
       # No sketch on imprinted curves is only supported from 25.2 onwards
       - tests/integration/test_design.py::test_imprint_trimmed_curves
+      - tests/integration/test_geometry_commands::test_move_imprint_edges
       # Components and vertex only available from 26.1 onwards
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
