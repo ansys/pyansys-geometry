@@ -1698,7 +1698,7 @@ class GeometryCommands:
         distance : Distance
             The distance to move the edges.
 
-        Results
+        Returns
         -------
         bool
             Returns True if the edges were moved successfully, False otherwise.
@@ -1732,7 +1732,7 @@ class GeometryCommands:
         offset : Distance
             The distance to offset the edges.
 
-        Results
+        Returns
         -------
         bool
             Returns True if the edges were offset successfully, False otherwise.
