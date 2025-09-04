@@ -1364,4 +1364,3 @@ def test_draft_faces(modeler: Modeler):
     assert box.faces[2].area.m == pytest.approx(
         Quantity(4.777895, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
-    design.plot(screenshot="C:\\Users\\jkerstet\\Downloads\\draft_faces.png")
