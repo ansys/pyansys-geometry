@@ -1378,9 +1378,10 @@ def test_thicken_faces(modeler: Modeler):
     success = modeler.geometry_commands.thicken_faces(
         [box.faces[1]], UNITVECTOR3D_Z, 0.1, ExtrudeType.ADD, False, False
     )
-    assert success  
+    assert success
 
     assert box.volume.m == pytest.approx(Quantity(8.4, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
 
 def test_thicken_surface_body(modeler: Modeler):
     """Test thickening a surface body."""
@@ -1398,7 +1399,7 @@ def test_thicken_surface_body(modeler: Modeler):
     success = modeler.geometry_commands.thicken_faces(
         [surface.faces[0]], UNITVECTOR3D_Z, 0.1, ExtrudeType.ADD, False, False
     )
-    assert success  
+    assert success
 
     assert len(design.bodies) == 1
     assert design.bodies[0].volume.m == pytest.approx(
