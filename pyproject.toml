@@ -87,7 +87,7 @@ tests-minimal = [
     "pyyaml==6.0.2",
 ]
 doc = [
-    "ansys-sphinx-theme[autoapi]==1.5.3",
+    "ansys-sphinx-theme[autoapi]==1.6.0",
     "ansys-tools-path==0.7.3",
     "ansys-tools-visualization-interface==0.11.0",
     "beartype==0.21.0",
