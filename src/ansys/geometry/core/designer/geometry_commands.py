@@ -1722,6 +1722,8 @@ class GeometryCommands:
         # Return success flag
         return response.result.success
 
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
     def offset_edges(
         self,
         edges: list["Edge"],
@@ -1757,6 +1759,8 @@ class GeometryCommands:
         # Return success flag
         return response.success
 
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
     def draft_faces(
         self,
         faces: list["Face"],
