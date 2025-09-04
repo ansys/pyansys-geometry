@@ -52,6 +52,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     PatternRequest,
     RenameObjectRequest,
     ReplaceFaceRequest,
+    RevolveCurvesRequest,
     RevolveFacesByHelixRequest,
     RevolveFacesRequest,
     RevolveFacesUpToRequest,
@@ -83,6 +84,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_component,
     get_design_from_edge,
     get_design_from_face,
+    get_faces_from_ids,
 )
 from ansys.geometry.core.misc.checks import (
     check_is_float_int,
@@ -130,6 +132,16 @@ class FillPatternType(Enum):
     GRID = 0
     OFFSET = 1
     SKEWED = 2
+
+
+@unique
+class DraftSide(Enum):
+    """Provides values for draft sides."""
+
+    NO_SPLIT = 0
+    THIS = 1
+    OTHER = 2
+    BACK = 3
 
 
 class GeometryCommands:
@@ -1747,6 +1759,10 @@ class GeometryCommands:
         # Return success flag
         return response.success
 
+    def offset_face_curves(self):
+        """TODO"""
+        pass
+
     def offset_faces(
         self,
         faces: list["Face"],
@@ -1754,3 +1770,89 @@ class GeometryCommands:
     ) -> bool:
         """TODO"""
         pass
+
+    def revolve_edges(
+        self,
+        edges: list["Edge"],
+        axis: Line,
+        angle: Angle | Quantity | Real,
+        symmetric: bool = False,
+    ) -> None:
+        """Revolve the specified edges around the specified axis by the specified angle.
+
+        Parameters
+        ----------
+        edges : list[Edge]
+            The edges to revolve.
+        axis : Line
+            The axis to revolve the edges around.
+        angle : Angle
+            The angle to revolve the edges.
+        symmetric : bool, default: False
+            Whether to create a symmetric revolution.
+        """
+        # Get the TrimmedCurves from the Edges
+        trimmed_curves = [edge.shape for edge in edges]
+
+        # Convert the angle object
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        angle_magnitude = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
+
+        # Create the request object
+        request = RevolveCurvesRequest(
+            curves=[from_trimmed_curve_to_grpc_trimmed_curve(curve) for curve in trimmed_curves],
+            axis=from_line_to_grpc_line(axis),
+            angle=angle_magnitude,
+            symmetric=symmetric,
+        )
+        
+        # Call the gRPC server
+        self._commands_stub.RevolveCurves(request)
+
+    def draft_faces(
+        self,
+        faces: list["Face"],
+        reference_faces: list["Face"],
+        draft_side: DraftSide,
+        angle: Angle | Quantity | Real,
+        extrude_type: ExtrudeType,
+    ) -> list["Face"]:
+        """Draft the specified faces in the specified direction by the specified angle.
+        
+        Parameters
+        ----------
+        faces : list[Face]
+            The faces to draft.
+        reference_faces : list[Face]
+            The reference faces to use for the draft.
+        draft_side : DraftSide
+            The side to draft.
+        angle : Angle | Quantity | Real
+            The angle to draft the faces.
+        extrude_type : ExtrudeType
+            The type of extrusion to use.
+
+        Returns
+        -------
+        list[Face]
+            The faces created by the draft operation.
+        """
+        # Convert the angle object
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        angle_magnitude = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
+
+        # Create the request object
+        request = DraftFacesRequest(
+            faces=[face._grpc_id for face in faces],
+            reference_faces=[face._grpc_id for face in reference_faces],
+            draft_side=draft_side.value,
+            draft_angle=angle_magnitude,
+            extrude_type=extrude_type.value,
+        )
+
+        # Call the gRPC server
+        response = self._commands_stub.DraftFaces(request)
+
+        # Return the drafted faces
+        design = get_design_from_face(faces[0])
+        return get_faces_from_ids(design, [face.id for face in response.created_faces])
