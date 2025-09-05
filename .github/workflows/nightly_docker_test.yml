@@ -99,7 +99,7 @@ jobs:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -221,7 +221,7 @@ jobs:
         uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@1096998b81f7ebdea116b683e11f3a8bda759ca6 # v10.0.14
+        uses: ansys/actions/tests-pytest@f044c670f4ade6e0cc77202c2b1c81f1f7acec2a # v10.0.16
         env:
           ALLOW_PLOTTING: true
         with:
