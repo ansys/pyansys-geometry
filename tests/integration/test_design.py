@@ -3665,6 +3665,128 @@ def test_component_make_independent(modeler: Modeler):
     assert not Accuracy.length_is_equal(comp.bodies[0].volume.m, face.body.volume.m)
 
 
+def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    design = modeler.open_file(Path(FILES_DIR, "DifferentShapes.scdocx"))
+
+    assert len(design.named_selections) == 4
+
+    edgevertex = design._named_selections["EdgeVertex"]
+    assert len(edgevertex.vertices) == 3
+
+    surfacevertex = design._named_selections["SurfaceVertex"]
+    assert len(surfacevertex.vertices) == 4
+
+    justedge = design._named_selections["JustEdge"]
+    assert len(justedge.vertices) == 0
+
+    spherefacevertex = design._named_selections["SphereFaceVertex"]
+    assert len(spherefacevertex.vertices) == 2
+
+    assert design.bodies[1].vertices[0].x.magnitude == pytest.approx(0.028, 1e-6, 1e-6)
+    assert design.bodies[1].vertices[0].y.magnitude == pytest.approx(-0.00288675, 1e-6, 1e-6)
+    assert design.bodies[1].vertices[0].z.magnitude == pytest.approx(0.01, 1e-6, 1e-6)
+
+    print(design.bodies[1].vertices[0].id == "S,~sEbf61ff70-bc08-477a-8a5e-a7c7dc955f40.853__")
+
+    assert design.bodies[0].vertices == []
+    assert design.bodies[1].vertices[1].position == pytest.approx(
+        Point3D([0.033, -0.0057735, 0.01]), 1e-6, 1e-6
+    )
+    assert design.bodies[1].vertices[2].position == pytest.approx(
+        Point3D([0.028, -0.00288675, 0.0]), 1e-6, 1e-6
+    )
+    assert design.bodies[1].vertices[3].position == pytest.approx(
+        Point3D([0.028, 0.00288675, 0.01]), 1e-6, 1e-6
+    )
+    assert design.bodies[1].vertices[4].position == pytest.approx(
+        Point3D([0.028, 0.00288675, 0.0]), 1e-6, 1e-6
+    )
+    assert design.bodies[1].vertices[5].position == pytest.approx(
+        Point3D([0.033, 0.0057735, 0.01]), 1e-6, 1e-6
+    )
+    assert design.bodies[1].vertices[6].position == pytest.approx(
+        Point3D([0.033, 0.0057735, 0.0]), 1e-6, 1e-6
+    )
+    assert design.bodies[1].vertices[7].position == pytest.approx(
+        Point3D([0.038, 0.00288675, 0.01]), 1e-6, 1e-6
+    )
+    assert design.bodies[1].vertices[8].position == pytest.approx(
+        Point3D([0.038, 0.00288675, 0.0]), 1e-6, 1e-6
+    )
+    assert design.bodies[1].vertices[9].position == pytest.approx(
+        Point3D([0.038, -0.00288675, 0.01]), 1e-6, 1e-6
+    )
+    assert design.bodies[1].vertices[10].position == pytest.approx(
+        Point3D([0.038, -0.00288675, 0.0]), 1e-6, 1e-6
+    )
+    assert design.bodies[1].vertices[11].position == pytest.approx(
+        Point3D([0.033, -0.0057735, 0.0]), 1e-6, 1e-6
+    )
+    assert design.bodies[2].vertices[0].position == pytest.approx(
+        Point3D([1.60966008e-02, -9.90374453e-04, 4.87404356e-19]), 1e-6, 1e-6
+    )
+    assert design.bodies[2].vertices[1].position == pytest.approx(
+        Point3D([0.00580814, 0.00425186, 0.02]), 1e-6, 1e-6
+    )
+    assert design.bodies[2].vertices[2].position == pytest.approx(
+        Point3D([0.00580814, 0.01579886, 0.0]), 1e-6, 1e-6
+    )
+    assert design.bodies[2].vertices[3].position == pytest.approx(
+        Point3D([5.80814371e-03, 4.25185629e-03, -7.12805714e-20]), 1e-6, 1e-6
+    )
+    assert design.bodies[3].vertices == []
+    assert design.bodies[4].vertices[0].position == pytest.approx(
+        Point3D([-0.03, 0.001, 0.0]), 1e-6, 1e-6
+    )
+    assert design.bodies[4].vertices[1].position == pytest.approx(
+        Point3D([-0.03, 0.02, 0.0]), 1e-6, 1e-6
+    )
+    assert design.bodies[4].vertices[2].position == pytest.approx(
+        Point3D([-0.011, 0.001, 0.0]), 1e-6, 1e-6
+    )
+    assert design.bodies[4].vertices[3].position == pytest.approx(
+        Point3D([-0.011, 0.02, 0.0]), 1e-6, 1e-6
+    )
+    assert design.bodies[5].vertices == []
+    assert design.components[0].bodies[0].vertices[0].position == pytest.approx(
+        Point3D([0.00711, 0.03182325, 0.0]), 1e-6, 1e-6
+    )
+    assert design.components[0].bodies[0].vertices[1].position == pytest.approx(
+        Point3D([0.00711, 0.03759675, 0]), 1e-6, 1e-6
+    )
+    assert design.components[0].bodies[0].vertices[2].position == pytest.approx(
+        Point3D([0.00211, 0.0404835, 0]), 1e-6, 1e-6
+    )
+    assert design.components[0].bodies[0].vertices[3].position == pytest.approx(
+        Point3D([-0.00289, 0.03759675, 0]), 1e-6, 1e-6
+    )
+    assert design.components[0].bodies[0].vertices[4].position == pytest.approx(
+        Point3D([-0.00289, 0.03182325, 0]), 1e-6, 1e-6
+    )
+    assert design.components[0].bodies[0].vertices[5].position == pytest.approx(
+        Point3D([0.00211, 0.0289365, 0]), 1e-6, 1e-6
+    )
+
+    vert = [design.bodies[1].vertices[0], design.bodies[2].vertices[3]]
+    edg = [design.bodies[1].edges[0], design.bodies[2].edges[0]]
+    fac = [design.bodies[1].faces[0], design.bodies[2].faces[1]]
+    design.create_named_selection("Test", vertices=vert, edges=edg, faces=fac)
+    assert len(design.named_selections) == 5
+
+    testns = design._named_selections["Test"]
+    assert len(testns.vertices) == 2
+
+    location = tmp_path_factory.mktemp("test_export_to_scdocx")
+    file_location = location / f"{design.name}.scdocx"
+    design.export_to_scdocx(location)
+    assert file_location.exists()
+    design_read = modeler.open_file(file_location)
+    assert len(design_read.named_selections) == 5
+
+    exportedtestns = design_read._named_selections["Test"]
+    assert len(exportedtestns.vertices) == 2
+
+
 @pytest.mark.parametrize(
     "file_extension, design_format",
     [
