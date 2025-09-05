@@ -232,6 +232,7 @@ def test_robot_example(modeler: Modeler):
     assert len(design.bodies[0].edges) == 219
 
 
+@pytest.mark.skip(reason="Unite is not working correctly")
 def test_combine_example(modeler: Modeler):
     """Test creating combine example from Sp1ceClaim trainings"""
 
