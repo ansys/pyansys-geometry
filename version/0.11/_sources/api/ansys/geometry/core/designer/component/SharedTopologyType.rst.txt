@@ -1,0 +1,99 @@
+
+
+
+
+
+
+:class:`SharedTopologyType`
+===========================
+
+
+.. py:class:: ansys.geometry.core.designer.component.SharedTopologyType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Shared topologies available.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SharedTopologyType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~SHARETYPE_NONE`
+            - 
+          * - :py:attr:`~SHARETYPE_SHARE`
+            - 
+          * - :py:attr:`~SHARETYPE_MERGE`
+            - 
+          * - :py:attr:`~SHARETYPE_GROUPS`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.component import SharedTopologyType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: SHARETYPE_NONE
+   :value: 0
+
+
+.. py:attribute:: SHARETYPE_SHARE
+   :value: 1
+
+
+.. py:attribute:: SHARETYPE_MERGE
+   :value: 2
+
+
+.. py:attribute:: SHARETYPE_GROUPS
+   :value: 3
+
+
+
+
+
+
