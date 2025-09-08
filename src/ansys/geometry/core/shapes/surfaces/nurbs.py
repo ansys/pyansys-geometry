@@ -21,12 +21,23 @@
 # SOFTWARE.
 """Provides for creating and managing a NURBS surface."""
 
+from functools import cached_property
 from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
 
 from ansys.geometry.core.math import Point3D
+from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.shapes.parameterization import (
+    Interval,
+    Parameterization,
+    ParamForm,
+    ParamType,
+    ParamUV,
+)
 from ansys.geometry.core.shapes.surfaces.surface import Surface
+from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -71,7 +82,7 @@ class NURBSSurface(Surface):
     @property
     def control_points(self) -> list[Point3D]:
         """Get the control points of the NURBS surface."""
-        return [Point3D(pt) for pt in self._nurbs_surface.ctrlpts]
+        return [Point3D(pt) for pt in self._nurbs_surface.ctrlptsw]
     
     @property
     def degree_u(self) -> int:
@@ -100,7 +111,68 @@ class NURBSSurface(Surface):
     
     @classmethod
     @check_input_types
-    def fit_curve_from_points(
+    def from_control_points(
+        cls,
+        degree_u: int,
+        degree_v: int,
+        knots_u: list[Real],
+        knots_v: list[Real],
+        control_points: list[Point3D],
+        weights: list[Real] = None,
+        delta: float = 0.01,
+    ) -> "NURBSSurface":
+        """Create a NURBS surface from control points and knot vectors.
+
+        Parameters
+        ----------
+        degree_u : int
+            Degree of the surface in the U direction.
+        degree_v : int
+            Degree of the surface in the V direction.
+        knots_u : list[Real]
+            Knot vector for the U direction.
+        knots_v : list[Real]
+            Knot vector for the V direction.
+        control_points : list[Point3D]
+            Control points for the surface.
+        weights : list[Real], optional
+            Weights for the control points. If not provided, all weights are set to 1.
+        delta : float, optional
+            Evaluation delta for the surface. Default is 0.01.
+
+        Returns
+        -------
+        NURBSSurface
+            Created NURBS surface.
+        """
+        nurbs_surface = cls()
+        nurbs_surface._nurbs_surface.degree_u = degree_u
+        nurbs_surface._nurbs_surface.degree_v = degree_v
+
+        nurbs_surface._nurbs_surface.ctrlpts_size_u = len(knots_u) - degree_u - 1
+        nurbs_surface._nurbs_surface.ctrlpts_size_v = len(knots_v) - degree_v - 1
+
+        nurbs_surface._nurbs_surface.set_ctrlpts(
+            [[*pt] for pt in control_points],
+            nurbs_surface._nurbs_surface.ctrlpts_size_u,
+            nurbs_surface._nurbs_surface.ctrlpts_size_v
+        )
+
+        nurbs_surface._nurbs_surface.knotvector_u = knots_u
+        nurbs_surface._nurbs_surface.knotvector_v = knots_v
+        if weights:
+            nurbs_surface._nurbs_surface.weights = weights
+
+        # Verify the surface is valid
+        try:
+            nurbs_surface._nurbs_surface._check_variables()
+        except ValueError as e:
+            raise ValueError(f"Invalid NURBS surface: {e}")
+        return nurbs_surface
+
+    @classmethod
+    @check_input_types
+    def fit_surface_from_points(
         cls,
         points: list[Point3D],
         size_u: int,
@@ -148,3 +220,186 @@ class NURBSSurface(Surface):
         nurbs_surface._nurbs_surface.weights = surface.weights
 
         return nurbs_surface
+    
+    def __eq__(self, other: "NURBSSurface") -> bool:
+        """Determine if two surfaces are equal."""
+        if not isinstance(other, NURBSSurface):
+            return False
+        return (
+            self._nurbs_surface.degree == other._nurbs_surface.degree
+            and self._nurbs_surface.ctrlpts == other._nurbs_surface.ctrlpts
+            and self._nurbs_surface.knotvector == other._nurbs_surface.knotvector
+            and self._nurbs_surface.weights == other._nurbs_surface.weights
+        )
+
+    def parameterization(self) -> Parameterization:
+        """Get the parametrization of the NURBS surface.
+
+        The parameter is defined in the interval [0, 1] by default. Information
+        is provided about the parameter type and form.
+
+        Returns
+        -------
+        Parameterization
+            Information about how the NURBS surface is parameterized.
+        """
+        return Parameterization(
+            ParamForm.OTHER,
+            ParamType.OTHER,
+            Interval(start=self._nurbs_surface.domain[0], end=self._nurbs_surface.domain[1]),
+        )
+
+    def transformed_copy(self, matrix: Matrix44) -> "NURBSSurface":  # noqa: D102
+        raise NotImplementedError("transformed_copy() is not implemented.")
+
+    def evaluate(self, parameter: Real) -> SurfaceEvaluation:
+        """Evaluate the surface at the given parameter.
+
+        Parameters
+        ----------
+        parameter : Real
+            Parameter to evaluate the surface at.
+
+        Returns
+        -------
+        SurfaceEvaluation
+            Evaluation of the surface at the given parameter.
+        """
+        return NURBSSurfaceEvaluation(self, parameter)
+
+    def contains_param(self, param: Real) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_param() is not implemented.")
+
+    def contains_point(self, point: Point3D) -> bool:  # noqa: D102
+        raise NotImplementedError("contains_point() is not implemented.")
+
+    def project_point(self, point: Point3D) -> SurfaceEvaluation:  # noqa: D102
+        raise NotImplementedError("project_point() is not implemented.")
+    
+
+class NURBSSurfaceEvaluation(SurfaceEvaluation):
+    """Provides evaluation of a NURBS surface at a given parameter.
+
+    Parameters
+    ----------
+    nurbs_surface: ~ansys.geometry.core.shapes.surfaces.nurbs.NURBSSurface
+        NURBS surface to evaluate.
+    parameter: Real
+        Parameter to evaluate the NURBS surface at.
+    """
+
+    def __init__(self, nurbs_surface: NURBSSurface, parameter: ParamUV) -> None:
+        """Initialize the ``NURBSsurfaceEvaluation`` class."""
+        self._surface = nurbs_surface
+        self._parameter = parameter
+        self._derivatives = nurbs_surface.geomdl_nurbs_surface.derivatives(parameter.u, parameter.v, 2)
+
+    @property
+    def surface(self) -> "NURBSSurface":
+        """Surface being evaluated."""
+        return self._surface
+
+    @property
+    def parameter_u(self) -> ParamUV:
+        """Parameter the evaluation is based upon."""
+        return self._parameter
+
+    @cached_property
+    def position(self) -> Point3D:
+        """Position of the evaluation.
+        
+        Returns
+        -------
+        Point3D
+            Point on the surface at this evaluation.
+        """
+        return Point3D(self._derivatives[0][0])
+
+    @cached_property
+    def normal(self) -> UnitVector3D:
+        """Normal to the surface.
+        
+        Returns
+        -------
+        UnitVector3D
+            Normal to the surface at this evaluation.
+        """
+        from geomdl.operations import normal
+        return UnitVector3D(
+            normal(self._surface.geomdl_nurbs_surface, [self._parameter.u, self._parameter.v])
+        )
+
+    @cached_property
+    def u_derivative(self) -> Vector3D:
+        """First derivative with respect to the U parameter.
+        
+        Returns
+        -------
+        Vector3D
+            First derivative with respect to the U parameter at this evaluation.
+        """
+        return Vector3D(self._derivatives[1][0])
+
+    @cached_property
+    def v_derivative(self) -> Vector3D:
+        """First derivative with respect to the V parameter.
+        
+        Returns
+        -------
+        Vector3D
+            First derivative with respect to the V parameter at this evaluation.
+        """
+        return Vector3D(self._derivatives[0][1])
+
+    @cached_property
+    def uu_derivative(self) -> Vector3D:
+        """Second derivative with respect to the U parameter.
+        
+        Returns
+        -------
+        Vector3D
+            Second derivative with respect to the U parameter at this evaluation.
+        """
+        return Vector3D(self._derivatives[2][0])
+
+    @cached_property
+    def uv_derivative(self) -> Vector3D:
+        """The second derivative with respect to the U and V parameters.
+        
+        Returns
+        -------
+        Vector3D
+            Second derivative with respect to the U and V parameters at this evaluation.
+        """
+        return Vector3D(self._derivatives[1][1])
+
+    @cached_property
+    def vv_derivative(self) -> Vector3D:
+        """The second derivative with respect to v.
+        
+        Returns
+        -------
+        Vector3D
+            Second derivative with respect to the V parameter at this evaluation.
+        """
+        return Vector3D(self._derivatives[0][2])
+
+    @cached_property
+    def min_curvature(self) -> Real:
+        """Minimum curvature."""
+        raise NotImplementedError("min_curvature() is not implemented.")
+
+    @cached_property
+    def min_curvature_direction(self) -> UnitVector3D:
+        """Minimum curvature direction."""
+        raise NotImplementedError("min_curvature_direction() is not implemented.")
+
+    @cached_property
+    def max_curvature(self) -> Real:
+        """Maximum curvature."""
+        raise NotImplementedError("max_curvature() is not implemented.")
+
+    @cached_property
+    def max_curvature_direction(self) -> UnitVector3D:
+        """Maximum curvature direction."""
+        raise NotImplementedError("max_curvature_direction() is not implemented.")

@@ -1599,6 +1599,37 @@ def test_nurbs_length_calculation():
     assert np.isclose(length, 13.3012277924)
 
 
-def test_nurbs_surface_fitting():
+def test_nurbs_surface_parameterization():
+    """Test """
+
+def test_nurbs_surface_from_control_points():
     """Test fitting a NURBS surface from points."""
-    
+    degree_u = 2
+    degree_v = 1
+
+    knots_u = [0, 0, 0, 1, 1, 1]
+    knots_v = [0, 0, 1, 1]
+
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 0]),
+        Point3D([0.5, 0, 0]),
+        Point3D([0.5, 1, 0]),
+        Point3D([1, 0, 0]),
+        Point3D([1, 1, 0]),
+    ]
+
+    surface = NURBSSurface.from_control_points(
+        degree_u=degree_u,
+        degree_v=degree_v,
+        knots_u=knots_u,
+        knots_v=knots_v,
+        control_points=control_points,
+    )
+
+    assert surface.degree_u == degree_u
+    assert surface.degree_v == degree_v
+    assert surface.knotvector_u == knots_u
+    assert surface.knotvector_v == knots_v
+    assert surface.control_points == control_points
+    assert surface.weights == [1.0] * len(control_points)
