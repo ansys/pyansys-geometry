@@ -82,7 +82,7 @@ class NURBSSurface(Surface):
     @property
     def control_points(self) -> list[Point3D]:
         """Get the control points of the NURBS surface."""
-        return [Point3D(pt) for pt in self._nurbs_surface.ctrlptsw]
+        return [Point3D(pt) for pt in self._nurbs_surface.ctrlpts]
     
     @property
     def degree_u(self) -> int:
@@ -119,7 +119,6 @@ class NURBSSurface(Surface):
         knots_v: list[Real],
         control_points: list[Point3D],
         weights: list[Real] = None,
-        delta: float = 0.01,
     ) -> "NURBSSurface":
         """Create a NURBS surface from control points and knot vectors.
 
@@ -152,16 +151,19 @@ class NURBSSurface(Surface):
         nurbs_surface._nurbs_surface.ctrlpts_size_u = len(knots_u) - degree_u - 1
         nurbs_surface._nurbs_surface.ctrlpts_size_v = len(knots_v) - degree_v - 1
 
+        # If no weights are provided, set all weights to 1.0
+        if not weights:
+            weights = [1.0] * len(control_points)
+        ctrlpts_homogenous = [[*pt, w] for (pt, w) in zip(control_points, weights)]
+
         nurbs_surface._nurbs_surface.set_ctrlpts(
-            [[*pt] for pt in control_points],
+            ctrlpts_homogenous,
             nurbs_surface._nurbs_surface.ctrlpts_size_u,
             nurbs_surface._nurbs_surface.ctrlpts_size_v
         )
 
         nurbs_surface._nurbs_surface.knotvector_u = knots_u
         nurbs_surface._nurbs_surface.knotvector_v = knots_v
-        if weights:
-            nurbs_surface._nurbs_surface.weights = weights
 
         # Verify the surface is valid
         try:
