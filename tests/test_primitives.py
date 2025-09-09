@@ -1638,3 +1638,29 @@ def test_nurbs_surface_from_control_points():
     assert surface.weights == [1.0] * len(control_points)
 
 
+def test_nurbs_surface_fitting():
+    """Test fitting a NURBS surface from points."""
+    points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+    degree_u = 2
+    degree_v = 2
+
+    surface = NURBSSurface.fit_surface_from_points(
+        points=points, size_u = 3, size_v = 3, degree_u=degree_u, degree_v=degree_v
+    )
+
+    assert isinstance(surface._nurbs_surface, geomdl.NURBS.Surface)
+    assert surface.degree_u == degree_u
+    assert surface.degree_v == degree_v
+    assert len(surface.knotvector_u) == 6
+    assert len(surface.knotvector_v) == 6
+    assert len(surface.control_points) == 9

@@ -217,6 +217,9 @@ class NURBSSurface(Surface):
         nurbs_surface = cls()
         nurbs_surface._nurbs_surface.degree_u = degree_u
         nurbs_surface._nurbs_surface.degree_v = degree_v
+
+        nurbs_surface._nurbs_surface.ctrlpts_size_u = surface.ctrlpts_size_u
+        nurbs_surface._nurbs_surface.ctrlpts_size_v = surface.ctrlpts_size_v
         nurbs_surface._nurbs_surface.ctrlpts = surface.ctrlpts
         nurbs_surface._nurbs_surface.knotvector = surface.knotvector
         nurbs_surface._nurbs_surface.weights = surface.weights
