@@ -534,11 +534,18 @@ def test_intersect_example(modeler: Modeler):
 
     body_to_split = design.components[7].components[3].bodies[0]
 
-    faces_to_split_with = [
-        design.bodies[0].faces[1],
-        design.bodies[0].faces[3],
-        design.bodies[0].faces[4],
-    ]
+    if modeler._grpc_client.backend_version == "25.2.0":
+        faces_to_split_with = [
+            design.bodies[0].faces[1],
+            design.bodies[0].faces[2],
+            design.bodies[0].faces[4],
+        ]
+    else:
+        faces_to_split_with = [
+            design.bodies[0].faces[1],
+            design.bodies[0].faces[3],
+            design.bodies[0].faces[4],
+        ]
     modeler.geometry_commands.split_body(
         bodies=[body_to_split],
         plane=None,
