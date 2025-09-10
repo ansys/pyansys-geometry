@@ -22,7 +22,6 @@
 
 from beartype.roar import BeartypeCallHintParamViolation
 import geomdl
-from geomdl.visualization import VisMPL
 import numpy as np
 from pint import Quantity
 import pytest
@@ -53,7 +52,7 @@ from ansys.geometry.core.shapes.parameterization import (
     ParamForm,
     ParamType,
 )
-from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface, NURBSSurfaceEvaluation
 from ansys.geometry.core.shapes.surfaces.sphere import SphereEvaluation
 
 
@@ -1664,3 +1663,143 @@ def test_nurbs_surface_fitting():
     assert len(surface.knotvector_u) == 6
     assert len(surface.knotvector_v) == 6
     assert len(surface.control_points) == 9
+
+
+def test_nurbs_surface_equality():
+    """Test if two NURBSSurface instances are equal."""
+    points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+    degree_u = 2
+    degree_v = 2
+
+    surface = NURBSSurface.fit_surface_from_points(
+        points=points, size_u = 3, size_v = 3, degree_u=degree_u, degree_v=degree_v
+    )
+    other_surface = NURBSSurface.fit_surface_from_points(
+        points=points, size_u = 3, size_v = 3, degree_u=degree_u, degree_v=degree_v
+    )
+
+    assert surface == other_surface
+
+    # Test with a different, non-equivalent, surface
+    different_points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([2, 0, 1]),
+        Point3D([2, 1, 2]),
+        Point3D([2, 2, 1]),
+        Point3D([4, 0, 0]),
+        Point3D([4, 1, 1]),
+        Point3D([4, 2, 0]),
+    ]
+    different_surface = NURBSSurface.fit_surface_from_points(
+        points=different_points, size_u=3, size_v=3, degree_u=degree_u, degree_v=degree_v
+    )
+
+    assert surface != different_surface
+    
+    # Test comparison with a non-NURBSSurface object
+    non_nurbs_object = "Not a NURBSSurface"
+    assert surface != non_nurbs_object
+
+
+def test_nurbs_surface_parameterization():
+    """Test the parameterization method of the NURBSSurface class."""
+    # Define valid inputs for the NURBS surface
+    degree_u = 2
+    degree_v = 2
+    knots_u = [0, 0, 0, 1, 1, 1]
+    knots_v = [0, 0, 0, 1, 1, 1]
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+
+    # Create a NURBS surface instance
+    nurbs_surface = NURBSSurface.from_control_points(
+        degree_u=degree_u,
+        degree_v=degree_v,
+        knots_u=knots_u,
+        knots_v=knots_v,
+        control_points=control_points,
+    )
+
+    # Call the parameterization method
+    u_param, v_param = nurbs_surface.parameterization()
+
+    # Validate the u parameterization
+    assert isinstance(u_param, Parameterization)
+    assert u_param.form == ParamForm.OTHER
+    assert u_param.type == ParamType.OTHER
+    assert u_param.interval.start == nurbs_surface._nurbs_surface.domain[0][0]
+    assert u_param.interval.end == nurbs_surface._nurbs_surface.domain[0][1]
+
+    # Validate the v parameterization
+    assert isinstance(v_param, Parameterization)
+    assert v_param.form == ParamForm.OTHER
+    assert v_param.type == ParamType.OTHER
+    assert v_param.interval.start == nurbs_surface._nurbs_surface.domain[1][0]
+    assert v_param.interval.end == nurbs_surface._nurbs_surface.domain[1][1]
+
+
+def test_nurbs_surface_simple_evaluation():
+    """Test NURBSSurface evaluation."""
+    degree_u = 2
+    degree_v = 2
+    knots_u = [0, 0, 0, 1, 1, 1]
+    knots_v = [0, 0, 0, 1, 1, 1]
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+
+    nurbs_surface = NURBSSurface.from_control_points(
+        degree_u=degree_u,
+        degree_v=degree_v,
+        knots_u=knots_u,
+        knots_v=knots_v,
+        control_points=control_points,
+    )
+
+    # Test invalid evaluation at (-1,0)
+    with pytest.raises(ValueError):
+        _ = nurbs_surface.evaluate(ParamUV(-1, 0))
+
+    # Test evaluation at (0,0)
+    eval = nurbs_surface.evaluate(ParamUV(0.5, 0.5))
+
+    assert isinstance(eval, NURBSSurfaceEvaluation)
+    assert eval.parameter.u == 0.5
+    assert eval.parameter.v == 0.5
+    assert eval.position == Point3D([1, 1, 1])
+    assert isinstance(eval.u_derivative, Vector3D)
+    assert isinstance(eval.v_derivative, Vector3D)
+    assert isinstance(eval.uu_derivative, Vector3D)
+    assert isinstance(eval.uv_derivative, Vector3D)
+    assert isinstance(eval.vv_derivative, Vector3D)
+    assert isinstance(eval.normal, UnitVector3D)
+    assert isinstance(eval.surface, NURBSSurface)

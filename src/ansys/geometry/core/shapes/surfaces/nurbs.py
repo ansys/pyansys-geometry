@@ -237,7 +237,7 @@ class NURBSSurface(Surface):
             and self._nurbs_surface.weights == other._nurbs_surface.weights
         )
 
-    def parameterization(self) -> Parameterization:
+    def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """Get the parametrization of the NURBS surface.
 
         The parameter is defined in the interval [0, 1] by default. Information
@@ -245,24 +245,37 @@ class NURBSSurface(Surface):
 
         Returns
         -------
-        Parameterization
-            Information about how the NURBS surface is parameterized.
+        tuple[Parameterization, Parameterization]
+            Parameterization in the U and V directions respectively.
         """
-        return Parameterization(
-            ParamForm.OTHER,
-            ParamType.OTHER,
-            Interval(start=self._nurbs_surface.domain[0], end=self._nurbs_surface.domain[1]),
+        return (
+            Parameterization(
+                ParamForm.OTHER,
+                ParamType.OTHER,
+                Interval(
+                    start=self._nurbs_surface.domain[0][0],
+                    end=self._nurbs_surface.domain[0][1]
+                ),
+            ),
+            Parameterization(
+                ParamForm.OTHER,
+                ParamType.OTHER,
+                Interval(
+                    start=self._nurbs_surface.domain[1][0],
+                    end=self._nurbs_surface.domain[1][1],
+                ),
+            ),
         )
 
     def transformed_copy(self, matrix: Matrix44) -> "NURBSSurface":  # noqa: D102
         raise NotImplementedError("transformed_copy() is not implemented.")
 
-    def evaluate(self, parameter: Real) -> SurfaceEvaluation:
+    def evaluate(self, parameter: ParamUV) -> SurfaceEvaluation:
         """Evaluate the surface at the given parameter.
 
         Parameters
         ----------
-        parameter : Real
+        parameter : ParamUV
             Parameter to evaluate the surface at.
 
         Returns
@@ -272,7 +285,7 @@ class NURBSSurface(Surface):
         """
         return NURBSSurfaceEvaluation(self, parameter)
 
-    def contains_param(self, param: Real) -> bool:  # noqa: D102
+    def contains_param(self, param: ParamUV) -> bool:  # noqa: D102
         raise NotImplementedError("contains_param() is not implemented.")
 
     def contains_point(self, point: Point3D) -> bool:  # noqa: D102
@@ -297,7 +310,18 @@ class NURBSSurfaceEvaluation(SurfaceEvaluation):
         """Initialize the ``NURBSsurfaceEvaluation`` class."""
         self._surface = nurbs_surface
         self._parameter = parameter
-        self._derivatives = nurbs_surface.geomdl_nurbs_surface.derivatives(parameter.u, parameter.v, 2)
+
+        u, v = parameter.u, parameter.v
+        domain = nurbs_surface._nurbs_surface.domain
+        u_start, u_end = domain[0][0], domain[0][1]
+        v_start, v_end = domain[1][0], domain[1][1]
+        
+        if not (u_start <= u <= u_end and v_start <= v <= v_end):
+            raise ValueError(
+                f"Parameter [u={u}, v={v}] is outside the surface domain: "
+                f"U[{u_start}, {u_end}], V[{v_start}, {v_end}]"
+            )
+        self._derivatives = nurbs_surface.geomdl_nurbs_surface.derivatives(u, v, 2)
 
     @property
     def surface(self) -> "NURBSSurface":
@@ -305,7 +329,7 @@ class NURBSSurfaceEvaluation(SurfaceEvaluation):
         return self._surface
 
     @property
-    def parameter_u(self) -> ParamUV:
+    def parameter(self) -> ParamUV:
         """Parameter the evaluation is based upon."""
         return self._parameter
 
@@ -330,9 +354,10 @@ class NURBSSurfaceEvaluation(SurfaceEvaluation):
             Normal to the surface at this evaluation.
         """
         from geomdl.operations import normal
-        return UnitVector3D(
-            normal(self._surface.geomdl_nurbs_surface, [self._parameter.u, self._parameter.v])
-        )
+        uv = [float(self._parameter.u), float(self._parameter.v)]
+        result = normal(self._surface.geomdl_nurbs_surface, uv)
+
+        return UnitVector3D(result[1])
 
     @cached_property
     def u_derivative(self) -> Vector3D:
@@ -408,3 +433,4 @@ class NURBSSurfaceEvaluation(SurfaceEvaluation):
     def max_curvature_direction(self) -> UnitVector3D:
         """Maximum curvature direction."""
         raise NotImplementedError("max_curvature_direction() is not implemented.")
+    
