@@ -27,9 +27,7 @@ from typing import TYPE_CHECKING, Union
 from beartype import beartype as check_input_types
 from pint import Quantity
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
-    ChamferRequest,
     CreateAlignTangentOrientGearConditionRequest,
     CreateCircularPatternRequest,
     CreateFillPatternRequest,
@@ -39,13 +37,9 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ExtrudeEdgesUpToRequest,
     ExtrudeFacesRequest,
     ExtrudeFacesUpToRequest,
-    FilletRequest,
-    FullFilletRequest,
     ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
     MoveImprintEdgesRequest,
-    MoveRotateRequest,
-    MoveTranslateRequest,
     OffsetEdgesRequest,
     OffsetFacesSetRadiusRequest,
     PatternRequest,
@@ -182,7 +176,7 @@ class GeometryCommands:
     def chamfer(
         self,
         selection: Union["Edge", list["Edge"], "Face", list["Face"]],
-        distance: Real,
+        distance: Distance | Quantity | Real,
     ) -> bool:
         """Create a chamfer on an edge or adjust the chamfer of a face.
 
@@ -190,7 +184,7 @@ class GeometryCommands:
         ----------
         selection : Edge | list[Edge] | Face | list[Face]
             One or more edges or faces to act on.
-        distance : Real
+        distance : Distance | Quantity | Real
             Chamfer distance.
 
         Returns
@@ -208,21 +202,26 @@ class GeometryCommands:
         selection: list[Edge | Face] = selection if isinstance(selection, list) else [selection]
 
         check_type_all_elements_in_iterable(selection, (Edge, Face))
-        check_is_float_int(distance, "distance")
+
+        # Convert the distance object
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
 
         for ef in selection:
             ef.body._reset_tessellation_cache()
 
-        result = self._commands_stub.Chamfer(
-            ChamferRequest(ids=[ef._grpc_id for ef in selection], distance=distance)
+        result = self._grpc_client.services.model_tools.chamfer(
+            selection_ids=[ef.id for ef in selection],
+            distance=distance,
         )
 
-        return result.success
+        return result.get("success")
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
     def fillet(
-        self, selection: Union["Edge", list["Edge"], "Face", list["Face"]], radius: Real
+        self,
+        selection: Union["Edge", list["Edge"], "Face", list["Face"]],
+        radius: Distance | Quantity | Real,
     ) -> bool:
         """Create a fillet on an edge or adjust the fillet of a face.
 
@@ -230,7 +229,7 @@ class GeometryCommands:
         ----------
         selection : Edge | list[Edge] | Face | list[Face]
             One or more edges or faces to act on.
-        radius : Real
+        radius : Distance | Quantity | Real
             Fillet radius.
 
         Returns
@@ -248,16 +247,19 @@ class GeometryCommands:
         selection: list[Edge | Face] = selection if isinstance(selection, list) else [selection]
 
         check_type_all_elements_in_iterable(selection, (Edge, Face))
-        check_is_float_int(radius, "radius")
+
+        # Convert the radius object
+        radius = radius if isinstance(radius, Distance) else Distance(radius)
 
         for ef in selection:
             ef.body._reset_tessellation_cache()
 
-        result = self._commands_stub.Fillet(
-            FilletRequest(ids=[ef._grpc_id for ef in selection], radius=radius)
+        result = self._grpc_client.services.model_tools.fillet(
+            selection_ids=[ef.id for ef in selection],
+            radius=radius,
         )
 
-        return result.success
+        return result.get("success")
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
@@ -285,11 +287,11 @@ class GeometryCommands:
         for face in faces:
             face.body._reset_tessellation_cache()
 
-        result = self._commands_stub.FullFillet(
-            FullFilletRequest(faces=[face._grpc_id for face in faces])
+        result = self._grpc_client.services.model_tools.full_fillet(
+            selection_ids=[face.id for face in faces],
         )
 
-        return result.success
+        return result.get("success")
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
@@ -1386,17 +1388,14 @@ class GeometryCommands:
         This method is only available starting on Ansys release 25R2.
         """
         distance = distance if isinstance(distance, Distance) else Distance(distance)
-        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
-        result = self._commands_stub.MoveTranslate(
-            MoveTranslateRequest(
-                selection=[EntityIdentifier(id=selection.id)],
-                direction=unit_vector_to_grpc_direction(direction),
-                distance=translation_magnitude,
-            )
+        result = self._grpc_client.services.model_tools.move_translate(
+            selection_id=selection.id,
+            direction=direction,
+            distance=distance,
         )
 
-        return result.success
+        return result.get("success")
 
     @protect_grpc
     @check_input_types
@@ -1429,21 +1428,18 @@ class GeometryCommands:
         This method is only available starting on Ansys release 25R2.
         """
         angle = angle if isinstance(angle, Angle) else Angle(angle)
-        rotation_angle = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
 
-        response = self._commands_stub.MoveRotate(
-            MoveRotateRequest(
-                selection=[EntityIdentifier(id=selection.id)],
-                axis=line_to_grpc_line(axis),
-                angle=rotation_angle,
-            )
+        response = self._grpc_client.services.model_tools.move_rotate(
+            selection_id=selection.id,
+            axis=axis,
+            angle=angle,
         )
 
         result = {}
-        result["success"] = response.success
-        result["modified_bodies"] = response.modified_bodies
-        result["modified_faces"] = response.modified_faces
-        result["modified_edges"] = response.modified_edges
+        result["success"] = response.get("success")
+        result["modified_bodies"] = response.get("modified_bodies")
+        result["modified_faces"] = response.get("modified_faces")
+        result["modified_edges"] = response.get("modified_edges")
 
         return result
 
