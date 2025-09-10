@@ -24,6 +24,7 @@ import grpc
 
 from .._version import GeometryApiProtos, set_proto_version
 from .base.admin import GRPCAdminService
+from .base.beams import GRPCBeamsService
 from .base.bodies import GRPCBodyService
 from .base.coordinate_systems import GRPCCoordinateSystemService
 from .base.dbuapplication import GRPCDbuApplicationService
@@ -78,6 +79,7 @@ class _GRPCServices:
 
         # Lazy load all the services
         self._admin = None
+        self._beams = None
         self._bodies = None
         self._coordinate_systems = None
         self._dbu_application = None
@@ -117,6 +119,32 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._admin
+    
+    @property
+    def beams(self) -> GRPCBeamsService:
+        """
+        Get the Beams service for the specified version.
+
+        Returns
+        -------
+        GRPCBeamsService
+            The Beams service for the specified version.
+        """
+        if not self._beams:
+            # Import the appropriate Beams service based on the version
+            from .v0.beams import GRPCBeamsServiceV0
+            from .v1.beams import GRPCBeamsServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._beams = GRPCBeamsServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._beams = GRPCBeamsServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._beams
 
     @property
     def bodies(self) -> GRPCBodyService:
