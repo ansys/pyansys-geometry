@@ -1654,7 +1654,7 @@ def test_nurbs_surface_fitting():
     degree_v = 2
 
     surface = NURBSSurface.fit_surface_from_points(
-        points=points, size_u = 3, size_v = 3, degree_u=degree_u, degree_v=degree_v
+        points=points, size_u=3, size_v=3, degree_u=degree_u, degree_v=degree_v
     )
 
     assert isinstance(surface._nurbs_surface, geomdl.NURBS.Surface)
@@ -1682,10 +1682,10 @@ def test_nurbs_surface_equality():
     degree_v = 2
 
     surface = NURBSSurface.fit_surface_from_points(
-        points=points, size_u = 3, size_v = 3, degree_u=degree_u, degree_v=degree_v
+        points=points, size_u=3, size_v=3, degree_u=degree_u, degree_v=degree_v
     )
     other_surface = NURBSSurface.fit_surface_from_points(
-        points=points, size_u = 3, size_v = 3, degree_u=degree_u, degree_v=degree_v
+        points=points, size_u=3, size_v=3, degree_u=degree_u, degree_v=degree_v
     )
 
     assert surface == other_surface
@@ -1707,7 +1707,7 @@ def test_nurbs_surface_equality():
     )
 
     assert surface != different_surface
-    
+
     # Test comparison with a non-NURBSSurface object
     non_nurbs_object = "Not a NURBSSurface"
     assert surface != non_nurbs_object
