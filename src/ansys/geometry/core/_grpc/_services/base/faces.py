@@ -98,3 +98,13 @@ class GRPCFacesService(ABC):  # pragma: no cover
     def create_iso_parametric_curve(self, **kwargs) -> dict:
         """Create an iso-parametric curve on a face."""
         pass
+
+    @abstractmethod
+    def extrude_faces(self, **kwargs) -> dict:
+        """Extrude a selection of faces."""
+        pass
+
+    @abstractmethod
+    def extrude_faces_up_to(self, **kwargs) -> dict:
+        """Extrude a selection of faces up to another object."""
+        pass

@@ -35,8 +35,6 @@ from ansys.api.geometry.v0.commands_pb2 import (
     DraftFacesRequest,
     ExtrudeEdgesRequest,
     ExtrudeEdgesUpToRequest,
-    ExtrudeFacesRequest,
-    ExtrudeFacesUpToRequest,
     ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
     MoveImprintEdgesRequest,
@@ -298,7 +296,7 @@ class GeometryCommands:
     def extrude_faces(
         self,
         faces: Union["Face", list["Face"]],
-        distance: Real,
+        distance: Distance | Quantity | Real,
         direction: UnitVector3D = None,
         extrude_type: ExtrudeType = ExtrudeType.ADD,
         offset_mode: OffsetMode = OffsetMode.MOVE_FACES_TOGETHER,
@@ -340,30 +338,29 @@ class GeometryCommands:
 
         faces: list[Face] = faces if isinstance(faces, list) else [faces]
         check_type_all_elements_in_iterable(faces, Face)
-        check_is_float_int(distance, "distance")
+
+        # Create distance object
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
 
         for face in faces:
             face.body._reset_tessellation_cache()
 
-        result = self._commands_stub.ExtrudeFaces(
-            ExtrudeFacesRequest(
-                faces=[face._grpc_id for face in faces],
-                distance=distance,
-                direction=None if direction is None else unit_vector_to_grpc_direction(direction),
-                extrude_type=extrude_type.value,
-                pull_symmetric=pull_symmetric,
-                offset_mode=offset_mode.value,
-                copy=copy,
-                force_do_as_extrude=force_do_as_extrude,
-            )
+        result = self._grpc_client.services.faces.extrude_faces(
+            face_ids=[face.id for face in faces],
+            distance=distance,
+            direction=direction,
+            extrude_type=extrude_type,
+            pull_symmetric=pull_symmetric,
+            offset_mode=offset_mode,
+            copy=copy,
+            force_do_as_extrude=force_do_as_extrude,
         )
 
         design = get_design_from_face(faces[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude faces.")
             return []
@@ -422,26 +419,23 @@ class GeometryCommands:
         for face in faces:
             face.body._reset_tessellation_cache()
 
-        result = self._commands_stub.ExtrudeFacesUpTo(
-            ExtrudeFacesUpToRequest(
-                faces=[face._grpc_id for face in faces],
-                up_to_selection=up_to_selection._grpc_id,
-                seed_point=point3d_to_grpc_point(seed_point),
-                direction=unit_vector_to_grpc_direction(direction),
-                extrude_type=extrude_type.value,
-                pull_symmetric=pull_symmetric,
-                offset_mode=offset_mode.value,
-                copy=copy,
-                force_do_as_extrude=force_do_as_extrude,
-            )
+        result = self._grpc_client.services.faces.extrude_faces_up_to(
+            face_ids=[face.id for face in faces],
+            up_to_selection_id=up_to_selection.id,
+            seed_point=seed_point,
+            direction=direction,
+            extrude_type=extrude_type,
+            pull_symmetric=pull_symmetric,
+            offset_mode=offset_mode,
+            copy=copy,
+            force_do_as_extrude=force_do_as_extrude,
         )
 
         design = get_design_from_face(faces[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude faces.")
             return []
@@ -451,7 +445,7 @@ class GeometryCommands:
     def extrude_edges(
         self,
         edges: Union["Edge", list["Edge"]],
-        distance: Real,
+        distance: Distance | Quantity | Real,
         from_face: "Face" = None,
         from_point: Point3D = None,
         direction: UnitVector3D = None,
@@ -466,7 +460,7 @@ class GeometryCommands:
         ----------
         edges : Edge | list[Edge]
             Edges to extrude.
-        distance : Real
+        distance : Distance | Quantity | Real
             Distance to extrude.
         from_face : Face, default: None
             Face to pull normal from.
@@ -496,7 +490,10 @@ class GeometryCommands:
 
         edges: list[Edge] = edges if isinstance(edges, list) else [edges]
         check_type_all_elements_in_iterable(edges, Edge)
-        check_is_float_int(distance, "distance")
+        
+        # Create distance object
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
         if from_face is None and None in (from_point, direction):
             raise ValueError(
                 "To extrude edges, either a face or a direction and point must be provided."
@@ -505,26 +502,23 @@ class GeometryCommands:
         for edge in edges:
             edge.body._reset_tessellation_cache()
 
-        result = self._commands_stub.ExtrudeEdges(
-            ExtrudeEdgesRequest(
-                edges=[edge._grpc_id for edge in edges],
-                distance=distance,
-                face=from_face._grpc_id,
-                point=None if from_point is None else point3d_to_grpc_point(from_point),
-                direction=None if direction is None else unit_vector_to_grpc_direction(direction),
-                extrude_type=extrude_type.value,
-                pull_symmetric=pull_symmetric,
-                copy=copy,
-                natural_extension=natural_extension,
-            )
+        result = self._grpc_client.services.edges.extrude_edges(
+            edge_ids=[edge.id for edge in edges],
+            distance=distance,
+            face=from_face.id,
+            point=from_point,
+            direction=direction,
+            extrude_type=extrude_type,
+            pull_symmetric=pull_symmetric,
+            copy=copy,
+            natural_extension=natural_extension,
         )
 
         design = get_design_from_edge(edges[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude edges.")
             return []
@@ -571,22 +565,19 @@ class GeometryCommands:
         for edge in edges:
             edge.body._reset_tessellation_cache()
 
-        result = self._commands_stub.ExtrudeEdgesUpTo(
-            ExtrudeEdgesUpToRequest(
-                edges=[edge._grpc_id for edge in edges],
-                up_to_selection=up_to_selection._grpc_id,
-                seed_point=point3d_to_grpc_point(seed_point),
-                direction=unit_vector_to_grpc_direction(direction),
-                extrude_type=extrude_type.value,
-            )
+        result = self._grpc_client.services.edges.extrude_edges_up_to(
+            edge_ids=[edge.id for edge in edges],
+            up_to_selection=up_to_selection.id,
+            seed_point=seed_point,
+            direction=direction,
+            extrude_type=extrude_type,
         )
 
         design = get_design_from_edge(edges[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude edges.")
             return []

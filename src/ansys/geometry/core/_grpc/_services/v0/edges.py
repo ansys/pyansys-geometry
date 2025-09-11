@@ -25,9 +25,15 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.conversions import to_distance
+from ..base.conversions import from_measurement_to_server_length, to_distance
 from ..base.edges import GRPCEdgesService
-from .conversions import build_grpc_id, from_grpc_curve_to_curve, from_grpc_point_to_point3d
+from .conversions import (
+    build_grpc_id,
+    from_grpc_curve_to_curve,
+    from_grpc_point_to_point3d,
+    from_point3d_to_grpc_point,
+    from_unit_vector_to_grpc_direction,
+)
 
 
 class GRPCEdgesServiceV0(GRPCEdgesService):
@@ -45,9 +51,11 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
         from ansys.api.geometry.v0.edges_pb2_grpc import EdgesStub
 
         self.stub = EdgesStub(channel)
+        self.commands_stub = CommandsStub(channel)
 
     @protect_grpc
     def get_edge(self, **kwargs) -> dict:  # noqa: D102
@@ -172,4 +180,59 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
             "min_corner": from_grpc_point_to_point3d(response.min),
             "max_corner": from_grpc_point_to_point3d(response.max),
             "center": from_grpc_point_to_point3d(response.center),
+        }
+
+    @protect_grpc
+    def extrude_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ExtrudeEdgesRequest
+
+        # Parse some optional arguments
+        point = from_point3d_to_grpc_point(kwargs["point"]) if kwargs["point"] else None
+        direction = (
+            from_unit_vector_to_grpc_direction(kwargs["direction"])
+            if kwargs["direction"] else None
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ExtrudeEdgesRequest(
+            edges=[build_grpc_id(edge_id) for edge_id in kwargs["edge_ids"]],
+            distance=from_measurement_to_server_length(kwargs["distance"]),
+            face=build_grpc_id(kwargs["face"]),
+            point=point,
+            direction=direction,
+            extrude_type=kwargs["extrude_type"].value,
+            pull_symmetric=kwargs["pull_symmetric"],
+            copy=kwargs["copy"],
+            natural_extension=kwargs["natural_extension"],
+        )
+
+        # Call the gRPC service
+        resp = self.commands_stub.ExtrudeEdges(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "created_bodies": [body.id for body in resp.created_bodies],
+            "success": resp.success,
+        }
+    
+    @protect_grpc
+    def extrude_edges_up_to(self, **kwargs):  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ExtrudeEdgesUpToRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ExtrudeEdgesUpToRequest(
+            edges=[build_grpc_id(edge_id) for edge_id in kwargs["edge_ids"]],
+            up_to_selection=build_grpc_id(kwargs["up_to_selection"]),
+            seed_point=from_point3d_to_grpc_point(kwargs["seed_point"]),
+            direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+            extrude_type=kwargs["extrude_type"].value,
+        )
+
+        # Call the gRPC service
+        resp = self.commands_stub.ExtrudeEdgesUpTo(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "created_bodies": [body.id for body in resp.created_bodies],
+            "success": resp.success,
         }

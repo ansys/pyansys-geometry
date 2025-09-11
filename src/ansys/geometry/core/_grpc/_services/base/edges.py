@@ -78,3 +78,13 @@ class GRPCEdgesService(ABC):  # pragma: no cover
     def get_bounding_box(self, **kwargs) -> dict:
         """Get the bounding box of the edge."""
         pass
+
+    @abstractmethod
+    def extrude_edges(self, **kwargs) -> dict:
+        """Extrude edges."""
+        pass
+
+    @abstractmethod
+    def extrude_edges_up_to(self, **kwargs) -> dict:
+        """Extrude edges up to a face."""
+        pass
