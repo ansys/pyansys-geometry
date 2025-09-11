@@ -37,6 +37,7 @@ from .base.measurement_tools import GRPCMeasurementToolsService
 from .base.model_tools import GRPCModelToolsService
 from .base.named_selection import GRPCNamedSelectionService
 from .base.parts import GRPCPartsService
+from .base.patterns import GRPCPatternsService
 from .base.prepare_tools import GRPCPrepareToolsService
 from .base.repair_tools import GRPCRepairToolsService
 
@@ -93,6 +94,7 @@ class _GRPCServices:
         self._model_tools = None
         self._named_selection = None
         self._parts = None
+        self._patterns = None
         self._prepare_tools = None
         self._repair_tools = None
 
@@ -459,6 +461,32 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._parts
+    
+    @property
+    def patterns(self) -> GRPCPatternsService:
+        """
+        Get the patterns service for the specified version.
+
+        Returns
+        -------
+        GRPCPatternsService
+            The patterns service for the specified version.
+        """
+        if not self._patterns:
+            # Import the appropriate patterns service based on the version
+            from .v0.patterns import GRPCPatternsServiceV0
+            from .v1.patterns import GRPCPatternsServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._patterns = GRPCPatternsServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._patterns = GRPCPatternsServiceV1(self.channel)
+            else:
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+            
+        return self._patterns
 
     @property
     def prepare_tools(self) -> GRPCPrepareToolsService:

@@ -21,13 +21,13 @@
 # SOFTWARE.
 """Module containing the model tools service implementation for v0."""
 
-from ansys.geometry.core._grpc._services.v0.conversions import from_unit_vector_to_grpc_direction
 import grpc
 
 from ansys.geometry.core._grpc._services.base.conversions import (
     from_measurement_to_server_angle,
     from_measurement_to_server_length,
 )
+from ansys.geometry.core._grpc._services.v0.conversions import from_unit_vector_to_grpc_direction
 from ansys.geometry.core.connection.conversions import line_to_grpc_line
 from ansys.geometry.core.errors import protect_grpc
 

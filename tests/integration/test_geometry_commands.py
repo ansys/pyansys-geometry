@@ -1071,7 +1071,7 @@ def test_circular_pattern_on_imported_geometry_faces_modify(modeler: Modeler):
         Quantity(0.0002373, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
     success = modeler.geometry_commands.modify_circular_pattern(
-        [design.bodies[0].faces[30]], 12, 0, 0.523598775598, None
+        [design.bodies[0].faces[30]], 12, 0, 0.523598775598
     )
     assert len(design.bodies) == 1
     assert len(design.bodies[0].faces) == 79

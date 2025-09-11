@@ -29,18 +29,10 @@ from pint import Quantity
 
 from ansys.api.geometry.v0.commands_pb2 import (
     CreateAlignTangentOrientGearConditionRequest,
-    CreateCircularPatternRequest,
-    CreateFillPatternRequest,
-    CreateLinearPatternRequest,
     DraftFacesRequest,
-    ExtrudeEdgesRequest,
-    ExtrudeEdgesUpToRequest,
-    ModifyCircularPatternRequest,
-    ModifyLinearPatternRequest,
     MoveImprintEdgesRequest,
     OffsetEdgesRequest,
     OffsetFacesSetRadiusRequest,
-    PatternRequest,
     RenameObjectRequest,
     ReplaceFaceRequest,
     RevolveFacesByHelixRequest,
@@ -619,10 +611,10 @@ class GeometryCommands:
         selection: Union["Face", list["Face"]],
         linear_direction: Union["Edge", "Face"],
         count_x: int,
-        pitch_x: Real,
+        pitch_x: Distance | Quantity | Real,
         two_dimensional: bool = False,
         count_y: int = None,
-        pitch_y: Real = None,
+        pitch_y: Distance | Quantity | Real = None,
     ) -> bool:
         """Create a linear pattern. The pattern can be one or two dimensions.
 
@@ -634,13 +626,13 @@ class GeometryCommands:
             Direction of the linear pattern, determined by the direction of an edge or face normal.
         count_x : int
             How many times the pattern repeats in the x direction.
-        pitch_x : Real
+        pitch_x : Distance | Quantity | Real
             The spacing between each pattern member in the x direction.
         two_dimensional : bool, default: False
             If ``True``, create a pattern in the x and y direction.
         count_y : int, default: None
             How many times the pattern repeats in the y direction.
-        pitch_y : Real, default: None
+        pitch_y : Distance | Quantity | Real, default: None
             The spacing between each pattern member in the y direction.
 
         Returns
@@ -672,20 +664,23 @@ class GeometryCommands:
                     "two-dimensional pattern is desired."
                 )
             )
+        
+        # Convert pitches to distance objects
+        pitch_x = pitch_x if isinstance(pitch_x, Distance) else Distance(pitch_x)
+        if pitch_y is not None:
+            pitch_y = pitch_y if isinstance(pitch_y, Distance) else Distance(pitch_y)
 
-        result = self._commands_stub.CreateLinearPattern(
-            CreateLinearPatternRequest(
-                selection=[object._grpc_id for object in selection],
-                linear_direction=linear_direction._grpc_id,
-                count_x=count_x,
-                pitch_x=pitch_x,
-                two_dimensional=two_dimensional,
-                count_y=count_y,
-                pitch_y=pitch_y,
-            )
+        result = self._grpc_client.services.patterns.create_linear_pattern(
+            selection_ids=[object.id for object in selection],
+            linear_direction_id=linear_direction.id,
+            count_x=count_x,
+            pitch_x=pitch_x,
+            two_dimensional=two_dimensional,
+            count_y=count_y,
+            pitch_y=pitch_y,
         )
 
-        return result.result.success
+        return result.get("success")
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
@@ -693,9 +688,9 @@ class GeometryCommands:
         self,
         selection: Union["Face", list["Face"]],
         count_x: int = 0,
-        pitch_x: Real = 0.0,
+        pitch_x: Distance | Quantity | Real = 0.0,
         count_y: int = 0,
-        pitch_y: Real = 0.0,
+        pitch_y: Distance | Quantity | Real = 0.0,
         new_seed_index: int = 0,
         old_seed_index: int = 0,
     ) -> bool:
@@ -707,11 +702,11 @@ class GeometryCommands:
             Faces that belong to the pattern.
         count_x : int, default: 0
             How many times the pattern repeats in the x direction.
-        pitch_x : Real, default: 0.0
+        pitch_x : Distance | Quantity | Real, default: 0.0
             The spacing between each pattern member in the x direction.
         count_y : int, default: 0
             How many times the pattern repeats in the y direction.
-        pitch_y : Real, default: 0.0
+        pitch_y : Distance | Quantity | Real, default: 0.0
             The spacing between each pattern member in the y direction.
         new_seed_index : int, default: 0
             The new seed index of the member.
@@ -735,20 +730,22 @@ class GeometryCommands:
 
         for object in selection:
             object.body._reset_tessellation_cache()
+        
+        # Convert pitches to distance objects
+        pitch_x = pitch_x if isinstance(pitch_x, Distance) else Distance(pitch_x)
+        pitch_y = pitch_y if isinstance(pitch_y, Distance) else Distance(pitch_y)
 
-        result = self._commands_stub.ModifyLinearPattern(
-            ModifyLinearPatternRequest(
-                selection=[object._grpc_id for object in selection],
-                count_x=count_x,
-                pitch_x=pitch_x,
-                count_y=count_y,
-                pitch_y=pitch_y,
-                new_seed_index=new_seed_index,
-                old_seed_index=old_seed_index,
-            )
+        result = self._grpc_client.services.patterns.modify_linear_pattern(
+            selection_ids=[object.id for object in selection],
+            count_x=count_x,
+            pitch_x=pitch_x,
+            count_y=count_y,
+            pitch_y=pitch_y,
+            new_seed_index=new_seed_index,
+            old_seed_index=old_seed_index,
         )
 
-        return result.result.success
+        return result.get("success")
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
@@ -757,10 +754,10 @@ class GeometryCommands:
         selection: Union["Face", list["Face"]],
         circular_axis: "Edge",
         circular_count: int,
-        circular_angle: Real,
+        circular_angle: Angle | Quantity | Real,
         two_dimensional: bool = False,
         linear_count: int = None,
-        linear_pitch: Real = None,
+        linear_pitch: Distance | Quantity | Real = None,
         radial_direction: UnitVector3D = None,
     ) -> bool:
         """Create a circular pattern. The pattern can be one or two dimensions.
@@ -773,14 +770,14 @@ class GeometryCommands:
             The axis of the circular pattern, determined by the direction of an edge.
         circular_count : int
             How many members are in the circular pattern.
-        circular_angle : Real
+        circular_angle : Angle | Quantity | Real
             The angular range of the pattern.
         two_dimensional : bool, default: False
             If ``True``, create a two-dimensional pattern.
         linear_count : int, default: None
             How many times the circular pattern repeats along the radial lines for a
             two-dimensional pattern.
-        linear_pitch : Real, default: None
+        linear_pitch : Distance | Quantity | Real, default: None
             The spacing along the radial lines for a two-dimensional pattern.
         radial_direction : UnitVector3D, default: None
             The direction from the center out for a two-dimensional pattern.
@@ -817,23 +814,25 @@ class GeometryCommands:
                     "a two-dimensional pattern is desired."
                 )
             )
+        
+        # Convert angle and pitch to appropriate objects
+        if not isinstance(circular_angle, Angle):
+            circular_angle = Angle(circular_angle)
+        if linear_pitch is not None and not isinstance(linear_pitch, Distance):
+            linear_pitch = Distance(linear_pitch)
 
-        result = self._commands_stub.CreateCircularPattern(
-            CreateCircularPatternRequest(
-                selection=[object._grpc_id for object in selection],
-                circular_axis=circular_axis._grpc_id,
-                circular_count=circular_count,
-                circular_angle=circular_angle,
-                two_dimensional=two_dimensional,
-                linear_count=linear_count,
-                linear_pitch=linear_pitch,
-                radial_direction=None
-                if radial_direction is None
-                else unit_vector_to_grpc_direction(radial_direction),
-            )
+        result = self._grpc_client.services.patterns.create_circular_pattern(
+            selection_ids=[object.id for object in selection],
+            circular_axis_id=circular_axis.id,
+            circular_count=circular_count,
+            circular_angle=circular_angle,
+            two_dimensional=two_dimensional,
+            linear_count=linear_count,
+            linear_pitch=linear_pitch,
+            radial_direction=radial_direction,
         )
 
-        return result.result.success
+        return result.get("success")
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
@@ -842,8 +841,8 @@ class GeometryCommands:
         selection: Union["Face", list["Face"]],
         circular_count: int = 0,
         linear_count: int = 0,
-        step_angle: Real = 0.0,
-        step_linear: Real = 0.0,
+        step_angle: Angle | Quantity | Real = 0.0,
+        step_linear: Distance | Quantity | Real = 0.0,
     ) -> bool:
         """Modify a circular pattern. Leave an argument at 0 for it to remain unchanged.
 
@@ -856,9 +855,9 @@ class GeometryCommands:
         linear_count : int, default: 0
             How many times the circular pattern repeats along the radial lines for a
             two-dimensional pattern.
-        step_angle : Real, default: 0.0
+        step_angle : Angle | Quantity | Real, default: 0.0
             Defines the circular angle.
-        step_linear : Real, default: 0.0
+        step_linear : Distance | Quantity | Real, default: 0.0
             Defines the step, along the radial lines, for a pattern dimension greater than 1.
 
         Returns
@@ -879,17 +878,20 @@ class GeometryCommands:
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.ModifyCircularPattern(
-            ModifyCircularPatternRequest(
-                selection=[object._grpc_id for object in selection],
-                circular_count=circular_count,
-                linear_count=linear_count,
-                step_angle=step_angle,
-                step_linear=step_linear,
-            )
+        # Convert angle and pitch to appropriate objects
+        step_angle = step_angle if isinstance(step_angle, Angle) else Angle(step_angle)
+        print(step_linear)
+        step_linear = step_linear if isinstance(step_linear, Distance) else Distance(step_linear)
+
+        result = self._grpc_client.services.patterns.modify_circular_pattern(
+            selection_ids=[object.id for object in selection],
+            circular_count=circular_count,
+            linear_count=linear_count,
+            step_angle=step_angle,
+            step_linear=step_linear,
         )
 
-        return result.result.success
+        return result.get("success")
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
@@ -898,13 +900,13 @@ class GeometryCommands:
         selection: Union["Face", list["Face"]],
         linear_direction: Union["Edge", "Face"],
         fill_pattern_type: FillPatternType,
-        margin: Real,
-        x_spacing: Real,
-        y_spacing: Real,
-        row_x_offset: Real = 0,
-        row_y_offset: Real = 0,
-        column_x_offset: Real = 0,
-        column_y_offset: Real = 0,
+        margin: Distance | Quantity | Real,
+        x_spacing: Distance | Quantity | Real,
+        y_spacing: Distance | Quantity | Real,
+        row_x_offset: Distance | Quantity | Real = 0,
+        row_y_offset: Distance | Quantity | Real = 0,
+        column_x_offset: Distance | Quantity | Real = 0,
+        column_y_offset: Distance | Quantity | Real = 0,
     ) -> bool:
         """Create a fill pattern.
 
@@ -916,19 +918,19 @@ class GeometryCommands:
             Direction of the linear pattern, determined by the direction of an edge.
         fill_pattern_type : FillPatternType
             The type of fill pattern.
-        margin : Real
+        margin : Distance | Quantity | Real
             Margin defining the border of the fill pattern.
-        x_spacing : Real
+        x_spacing : Distance | Quantity | Real
             Spacing between the pattern members in the x direction.
-        y_spacing : Real
+        y_spacing : Distance | Quantity | Real
             Spacing between the pattern members in the x direction.
-        row_x_offset : Real, default: 0
+        row_x_offset : Distance | Quantity | Real, default: 0
             Offset for the rows in the x direction. Only used with ``FillPattern.SKEWED``.
-        row_y_offset : Real, default: 0
+        row_y_offset : Distance | Quantity | Real, default: 0
             Offset for the rows in the y direction. Only used with ``FillPattern.SKEWED``.
-        column_x_offset : Real, default: 0
+        column_x_offset : Distance | Quantity | Real, default: 0
             Offset for the columns in the x direction. Only used with ``FillPattern.SKEWED``.
-        column_y_offset : Real, default: 0
+        column_y_offset : Distance | Quantity | Real, default: 0
             Offset for the columns in the y direction. Only used with ``FillPattern.SKEWED``.
 
         Returns
@@ -949,22 +951,35 @@ class GeometryCommands:
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.CreateFillPattern(
-            CreateFillPatternRequest(
-                selection=[object._grpc_id for object in selection],
-                linear_direction=linear_direction._grpc_id,
-                fill_pattern_type=fill_pattern_type.value,
-                margin=margin,
-                x_spacing=x_spacing,
-                y_spacing=y_spacing,
-                row_x_offset=row_x_offset,
-                row_y_offset=row_y_offset,
-                column_x_offset=column_x_offset,
-                column_y_offset=column_y_offset,
-            )
+        # Convert measurements to distance objects
+        margin = margin if isinstance(margin, Distance) else Distance(margin)
+        x_spacing = x_spacing if isinstance(x_spacing, Distance) else Distance(x_spacing)
+        y_spacing = y_spacing if isinstance(y_spacing, Distance) else Distance(y_spacing)
+        row_x_offset = row_x_offset if isinstance(row_x_offset, Distance) else Distance(row_x_offset)
+        row_y_offset = row_y_offset if isinstance(row_y_offset, Distance) else Distance(row_y_offset)
+        column_x_offset = (
+            column_x_offset if isinstance(column_x_offset, Distance)
+            else Distance(column_x_offset)
+        )
+        column_y_offset = (
+            column_y_offset if isinstance(column_y_offset, Distance)
+            else Distance(column_y_offset)
         )
 
-        return result.result.success
+        result = self._grpc_client.services.patterns.create_fill_pattern(
+            selection_ids=[object.id for object in selection],
+            linear_direction_id=linear_direction.id,
+            fill_pattern_type=fill_pattern_type,
+            margin=margin,
+            x_spacing=x_spacing,
+            y_spacing=y_spacing,
+            row_x_offset=row_x_offset,
+            row_y_offset=row_y_offset,
+            column_x_offset=column_x_offset,
+            column_y_offset=column_y_offset,
+        )
+
+        return result.get("success")
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
@@ -1000,13 +1015,11 @@ class GeometryCommands:
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.UpdateFillPattern(
-            PatternRequest(
-                selection=[object._grpc_id for object in selection],
-            )
+        result = self._grpc_client.services.patterns.update_fill_pattern(
+            selection_ids=[object.id for object in selection],
         )
 
-        return result.result.success
+        return result.get("success")
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
