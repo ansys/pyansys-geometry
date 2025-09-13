@@ -1904,7 +1904,6 @@ class Body(IBody):
         else:
             self.__generic_boolean_command(other, False, "unite", "union operation failed")
 
-    @protect_grpc
     @reset_tessellation_cache
     @ensure_design_is_active
     @check_input_types
@@ -1912,48 +1911,14 @@ class Body(IBody):
         self,
         other: Union["Body", Iterable["Body"]],
         keep_other: bool,
-        type_bool_op: str,
-        err_bool_op: str,
+        method: str,
+        err_msg: str,
     ) -> None:
         parent_design = get_design_from_body(self)
-        other_bodies = other if isinstance(other, Iterable) else [other]
-        if type_bool_op == "intersect":
-            body_ids = [body._grpc_id for body in other_bodies]
-            target_ids = [self._grpc_id]
-            request = CombineIntersectBodiesRequest(
-                target_selection=target_ids,
-                tool_selection=body_ids,
-                subtract_from_target=False,
-                keep_cutter=keep_other,
-            )
-            response = self._template._commands_stub.CombineIntersectBodies(request)
-        elif type_bool_op == "subtract":
-            body_ids = [body._grpc_id for body in other_bodies]
-            target_ids = [self._grpc_id]
-            request = CombineIntersectBodiesRequest(
-                target_selection=target_ids,
-                tool_selection=body_ids,
-                subtract_from_target=True,
-                keep_cutter=keep_other,
-            )
-            response = self._template._commands_stub.CombineIntersectBodies(request)
-        elif type_bool_op == "unite":
-            bodies = [self]
-            bodies.extend(other_bodies)
-            body_ids = [body._grpc_id for body in bodies]
-            request = CombineMergeBodiesRequest(target_selection=body_ids)
-            response = self._template._commands_stub.CombineMergeBodies(request)
-        else:
-            raise ValueError("Unknown operation requested")
-        if not response.success:
-            raise ValueError(
-                f"Operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
-                f"Involving bodies:{self}, {other_bodies}"
-            )
-
-        if not keep_other:
-            for b in other_bodies:
-                b.parent_component.delete_body(b)
+        other = other if isinstance(other, Iterable) else [other]
+        
+        response = self._template._grpc_client.services.bodies.combine(
+            target=self, other=other, type_bool_op=method, err_msg=err_msg, keep_other=keep_other)      
 
         from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 

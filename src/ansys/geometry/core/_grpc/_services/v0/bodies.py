@@ -728,7 +728,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
                 parent_design = get_design_from_body(kwargs["target"])
                 serialized_tracker_response = parent_design._serialize_tracker_command_response(
-                    resp.response
+                    response=resp.response
                 )
         except grpc.RpcError as err:  # pragma: no cover
             # TODO: to be deleted - old versions did not have "tool_bodies" in the request
@@ -768,3 +768,59 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {"complete_command_response": serialized_tracker_response}
+    
+    @protect_grpc
+    def combine(self, **kwargs) -> dict:  # noqa: D102):
+        from ansys.api.geometry.v0.bodies_pb2 import CombineIntersectBodiesRequest
+        from ansys.api.geometry.v0.bodies_pb2 import CombineMergeBodiesRequest
+
+        parent_design = get_design_from_body(self)
+        other_bodies = kwargs["other"]
+        type_bool_op = kwargs["type_bool_op"]
+        keep_other = kwargs["keep_other"]
+
+        if type_bool_op == "intersect":
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [self._grpc_id]
+            request = CombineIntersectBodiesRequest(
+                target_selection=target_ids,
+                tool_selection=body_ids,
+                subtract_from_target=False,
+                keep_cutter=keep_other,
+            )
+            response = self._template._commands_stub.CombineIntersectBodies(request)
+        elif type_bool_op == "subtract":
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [self._grpc_id]
+            request = CombineIntersectBodiesRequest(
+                target_selection=target_ids,
+                tool_selection=body_ids,
+                subtract_from_target=True,
+                keep_cutter=keep_other,
+            )
+            response = self._template._commands_stub.CombineIntersectBodies(request)
+        elif type_bool_op == "unite":
+            bodies = [self]
+            bodies.extend(other_bodies)
+            body_ids = [body._grpc_id for body in bodies]
+            request = CombineMergeBodiesRequest(target_selection=body_ids)
+            response = self._template._commands_stub.CombineMergeBodies(request)
+        else:
+            raise ValueError("Unknown operation requested")
+        if not response.success:
+            raise ValueError(
+                f"Operation of type '{type_bool_op}' failed: {kwargs['err_msg']}.\n"
+                f"Involving bodies:{self}, {other_bodies}"
+            )
+
+        if not keep_other:
+            for b in other_bodies:
+                b.parent_component.delete_body(b)
+
+        tracker_response = response.result.complete_command_response
+        serialized_tracker_response = parent_design._serialize_tracker_command_response(
+                response=tracker_response)
+        
+                # Return the response - formatted as a dictionary
+        return {"complete_command_response": serialized_tracker_response}
+                  

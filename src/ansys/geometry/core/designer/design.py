@@ -1044,8 +1044,9 @@ class Design(Component):
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         return "\n".join(lines)
+    
 
-    def _serialize_tracker_command_response(self, response) -> dict:
+    def _serialize_tracker_command_response(self, **kwargs) -> dict:
         """Serialize a TrackerCommandResponse object into a dictionary.
 
         Parameters
@@ -1058,41 +1059,7 @@ class Design(Component):
         dict
             A dictionary representation of the TrackerCommandResponse object.
         """
-
-        def serialize_body(body):
-            return {
-                "id": body.id,
-                "name": body.name,
-                "can_suppress": body.can_suppress,
-                "transform_to_master": {
-                    "m00": body.transform_to_master.m00,
-                    "m11": body.transform_to_master.m11,
-                    "m22": body.transform_to_master.m22,
-                    "m33": body.transform_to_master.m33,
-                },
-                "master_id": body.master_id,
-                "parent_id": body.parent_id,
-            }
-
-        def serialize_entity_identifier(entity):
-            """Serialize an EntityIdentifier object into a dictionary."""
-            return {
-                "id": entity.id,
-            }
-
-        return {
-            "success": response.success,
-            "created_bodies": [
-                serialize_body(body) for body in getattr(response, "created_bodies", [])
-            ],
-            "modified_bodies": [
-                serialize_body(body) for body in getattr(response, "modified_bodies", [])
-            ],
-            "deleted_bodies": [
-                serialize_entity_identifier(entity)
-                for entity in getattr(response, "deleted_bodies", [])
-            ],
-        }
+        return self._grpc_client.services.designs._serialize_tracker_command_response(response=kwargs["response"])    
 
     def __read_existing_design(self) -> None:
         """Read an existing ``Design`` located on the server."""

@@ -138,7 +138,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         else:
             tracker_response = response.result.complete_command_response
             serialized_response = parent_design._serialize_tracker_command_response(
-                tracker_response
+                response = tracker_response
             )
             parent_design._update_from_tracker(serialized_response)
 
@@ -198,7 +198,7 @@ class MissingFaceProblemAreas(ProblemArea):
         )
 
         serialized_response = parent_design._serialize_tracker_command_response(
-            response.result.complete_command_response
+            response = response.result.complete_command_response
         )
 
         from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
@@ -270,7 +270,7 @@ class InexactEdgeProblemAreas(ProblemArea):
         else:
             tracker_response = response.result.complete_command_response
             serialized_response = parent_design._serialize_tracker_command_response(
-                tracker_response
+                response = tracker_response
             )
             parent_design._update_from_tracker(serialized_response)
 
@@ -334,7 +334,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
         else:
             tracker_response = response.result.complete_command_response
             serialized_response = parent_design._serialize_tracker_command_response(
-                tracker_response
+                response = tracker_response
             )
             parent_design._update_from_tracker(serialized_response)
 
@@ -399,7 +399,7 @@ class ShortEdgeProblemAreas(ProblemArea):
         else:
             tracker_response = response.result.complete_command_response
             serialized_response = parent_design._serialize_tracker_command_response(
-                tracker_response
+                response = tracker_response
             )
             parent_design._update_from_tracker(serialized_response)
 
@@ -467,7 +467,7 @@ class SmallFaceProblemAreas(ProblemArea):
             # and update the parent design with the serialized response.
             tracker_response = response.result.complete_command_response
             serialized_response = parent_design._serialize_tracker_command_response(
-                tracker_response
+                response = tracker_response
             )
             parent_design._update_from_tracker(serialized_response)
 
@@ -530,7 +530,7 @@ class SplitEdgeProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
-            serialized_response = parent_design._serialize_tracker_command_response(tracker_respone)
+            serialized_response = parent_design._serialize_tracker_command_response(response = tracker_respone)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -593,7 +593,7 @@ class StitchFaceProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
-            serialized_response = parent_design._serialize_tracker_command_response(tracker_respone)
+            serialized_response = parent_design._serialize_tracker_command_response(response = tracker_respone)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(
@@ -650,7 +650,7 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
             parent_design._update_design_inplace()
         else:
             tracker_respone = response.result.complete_command_response
-            serialized_response = parent_design._serialize_tracker_command_response(tracker_respone)
+            serialized_response = parent_design._serialize_tracker_command_response(response = tracker_respone)
             parent_design._update_from_tracker(serialized_response)
 
         message = RepairToolMessage(

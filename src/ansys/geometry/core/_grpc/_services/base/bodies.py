@@ -218,3 +218,8 @@ class GRPCBodyService(ABC):  # pragma: no cover
     def boolean(self, **kwargs) -> dict:
         """Boolean operation."""
         pass
+
+    @abstractmethod
+    def combine(self, **kwargs) -> dict:
+        """Boolean operation."""
+        pass
