@@ -551,16 +551,16 @@ class RepairTools:
             )
 
         body_ids = [body.id for body in bodies]
+        parent_design = get_design_from_body(bodies[0])
 
         response = self._grpc_client.services.repair_tools.find_and_fix_short_edges(
             selection=body_ids,
+            parent_design=parent_design,
             length=length,
             comprehensive_result=comprehensive_result,
         )
 
         # Update existing design
-        parent_design = get_design_from_body(bodies[0])
-
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
@@ -607,14 +607,14 @@ class RepairTools:
             )
 
         body_ids = [body.id for body in bodies]
+        parent_design = get_design_from_body(bodies[0])
         response = self._grpc_client.services.repair_tools.find_and_fix_extra_edges(
             selection=body_ids,
+            parent_design=parent_design,
             comprehensive_result=comprehensive_result,
         )
 
         # Update existing design
-        parent_design = get_design_from_body(bodies[0])
-
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
@@ -669,17 +669,17 @@ class RepairTools:
             )
 
         body_ids = [body.id for body in bodies]
+        parent_design = get_design_from_body(bodies[0])
 
         response = self._grpc_client.services.repair_tools.find_and_fix_split_edges(
             bodies_or_faces=body_ids,
+            parent_design=parent_design,
             angle=angle,
             length=length,
             comprehensive_result=comprehensive_result,
         )
 
         # Update existing design
-        parent_design = get_design_from_body(bodies[0])
-
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
@@ -724,15 +724,15 @@ class RepairTools:
             )
 
         body_ids = [body.id for body in bodies]
+        parent_design = get_design_from_body(bodies[0])
 
         response = self._grpc_client.services.repair_tools.find_and_fix_simplify(
             selection=body_ids,
+            parent_design=parent_design,
             comprehensive_result=comprehensive_result,
         )
 
         # Update existing design
-        parent_design = get_design_from_body(bodies[0])
-
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
@@ -794,9 +794,11 @@ class RepairTools:
             )
 
         body_ids = [body.id for body in bodies]
+        parent_design = get_design_from_body(bodies[0])
 
         response = self._grpc_client.services.repair_tools.find_and_fix_stitch_faces(
             body_ids=body_ids,
+            parent_design=parent_design,
             max_distance=max_distance,
             allow_multiple_bodies=allow_multiple_bodies,
             maintain_components=maintain_components,
@@ -805,8 +807,6 @@ class RepairTools:
         )
 
         # Update existing design
-        parent_design = get_design_from_body(bodies[0])
-
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
