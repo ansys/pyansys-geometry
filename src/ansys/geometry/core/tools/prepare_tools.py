@@ -422,7 +422,7 @@ class PrepareTools:
         self,
         bodies: list["Body"],
         min_radius: Distance | Quantity | Real = 0.0,
-        max_radius: Distance | Quantity | Real = 1e6,
+        max_radius: Distance | Quantity | Real = 100.0,
         fit_radius_error: Distance | Quantity | Real = 0.01,
     ) -> dict["TrimmedCurve", list["Edge"]]:
         """Detect helixes in the given bodies.
@@ -449,7 +449,7 @@ class PrepareTools:
         This method is only available starting on Ansys release 26R1.
         """
         from ansys.geometry.core.designer.body import Body
-        from ansys.geometry.core.designer.edge import CurveType
+        from ansys.geometry.core.designer.edge import CurveType, Edge
 
         if not bodies:
             self._grpc_client.log.info("No bodies provided...")

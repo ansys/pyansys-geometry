@@ -231,6 +231,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.models_pb2 import DetectHelixesOptions
         from ansys.api.geometry.v0.preparetools_pb2 import DetectHelixesRequest
+
         from ansys.geometry.core.shapes.parameterization import Interval
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -245,6 +246,10 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Call the gRPC service
         response = self.stub.DetectHelixes(request)
+
+        # If no helixes, return empty dictionary
+        if all(len(h.ListFields()) == 0 for h in response.helixes):
+            return {"helixes": []}
 
         # Return the response - formatted as a dictionary
         return {
