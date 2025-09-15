@@ -1790,16 +1790,16 @@ def test_nurbs_surface_simple_evaluation():
         _ = nurbs_surface.evaluate(ParamUV(-1, 0))
 
     # Test evaluation at (0,0)
-    eval = nurbs_surface.evaluate(ParamUV(0.5, 0.5))
+    evaluation = nurbs_surface.evaluate(ParamUV(0.5, 0.5))
 
-    assert isinstance(eval, NURBSSurfaceEvaluation)
-    assert eval.parameter.u == 0.5
-    assert eval.parameter.v == 0.5
-    assert eval.position == Point3D([1, 1, 1])
-    assert isinstance(eval.u_derivative, Vector3D)
-    assert isinstance(eval.v_derivative, Vector3D)
-    assert isinstance(eval.uu_derivative, Vector3D)
-    assert isinstance(eval.uv_derivative, Vector3D)
-    assert isinstance(eval.vv_derivative, Vector3D)
-    assert isinstance(eval.normal, UnitVector3D)
-    assert isinstance(eval.surface, NURBSSurface)
+    assert isinstance(evaluation, NURBSSurfaceEvaluation)
+    assert evaluation.parameter.u == 0.5
+    assert evaluation.parameter.v == 0.5
+    assert evaluation.position == Point3D([1, 1, 1])
+    assert isinstance(evaluation.u_derivative, Vector3D)
+    assert isinstance(evaluation.v_derivative, Vector3D)
+    assert isinstance(evaluation.uu_derivative, Vector3D)
+    assert isinstance(evaluation.uv_derivative, Vector3D)
+    assert isinstance(evaluation.vv_derivative, Vector3D)
+    assert isinstance(evaluation.normal, UnitVector3D)
+    assert isinstance(evaluation.surface, NURBSSurface)
