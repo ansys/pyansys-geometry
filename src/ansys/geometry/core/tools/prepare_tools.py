@@ -489,7 +489,7 @@ class PrepareTools:
                         Edge(
                             edge.get("id"),
                             CurveType(edge.get("curve_type")),
-                            get_bodies_from_ids(parent_design, [edge.get("parent_id")]),
+                            get_bodies_from_ids(parent_design, [edge.get("parent_id")])[0],
                             self._grpc_client,
                             edge.get("is_reversed"),
                         )

@@ -248,7 +248,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         response = self.stub.DetectHelixes(request)
 
         # If no helixes, return empty dictionary
-        if all(len(h.ListFields()) == 0 for h in response.helixes):
+        if len(response.helixes) == 0:
             return {"helixes": []}
 
         # Return the response - formatted as a dictionary

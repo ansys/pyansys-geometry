@@ -227,3 +227,6 @@ def test_helix_detection(modeler: Modeler):
     # Test parameters that should yield no results
     result = modeler.prepare_tools.detect_helixes(bodies, 5.0, 10.0, 0.01)
     assert len(result["helixes"]) == 0
+
+
+# TODO: test with multiple bodies
