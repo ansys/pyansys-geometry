@@ -24,6 +24,7 @@
 from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
+from pint import Quantity
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.backend import BackendType
@@ -31,10 +32,13 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
+    get_design_from_body,
     get_design_from_edge,
     get_design_from_face,
 )
 from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
+from ansys.geometry.core.misc.measurements import Distance
+from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.tools.problem_areas import LogoProblemArea
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.typing import Real
@@ -412,3 +416,86 @@ class PrepareTools:
         )
 
         return response.get("success")
+    
+    @min_backend_version(26, 1, 0)
+    def detect_helixes(
+        self,
+        bodies: list["Body"],
+        min_radius: Distance | Quantity | Real = 0.0,
+        max_radius: Distance | Quantity | Real = 1e6,
+        fit_radius_error: Distance | Quantity | Real = 0.01,
+    ) -> dict["TrimmedCurve", list["Edge"]]:
+        """Detect helixes in the given bodies.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to detect helixes in.
+        min_radius : Distance, Quantity, or Real, default: 0.0
+            Minimum radius of the helix to be detected.
+        max_radius : Distance, Quantity, or Real, default: 1e6
+            Maximum radius of the helix to be detected.
+        fit_radius_error : Distance, Quantity, or Real, default: 0.01
+            Maximum fit radius error of the helix to be detected.
+
+        Returns
+        -------
+        dict
+            Dictionary with key "helixes" containing a list of detected helixes.
+            Each helix is represented as a dictionary with keys "trimmed_curve" and "edges".
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        from ansys.geometry.core.designer.body import Body
+        from ansys.geometry.core.designer.edge import CurveType
+
+        if not bodies:
+            self._grpc_client.log.info("No bodies provided...")
+            return {"helixes": []}
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
+        min_radius = min_radius if isinstance(min_radius, Distance) else Distance(min_radius)
+        max_radius = max_radius if isinstance(max_radius, Distance) else Distance(max_radius)
+        fit_radius_error = (
+            fit_radius_error
+            if isinstance(fit_radius_error, Distance)
+            else Distance(fit_radius_error)
+        )
+
+        response = self._grpc_client._services.prepare_tools.detect_helixes(
+            bodies=bodies,
+            min_radius=min_radius,
+            max_radius=max_radius,
+            fit_radius_error=fit_radius_error,
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+
+        return {
+            "helixes": [
+                {
+                    "trimmed_curve": TrimmedCurve(
+                        helix.get("trimmed_curve").get("geometry"),
+                        helix.get("trimmed_curve").get("start"),
+                        helix.get("trimmed_curve").get("end"),
+                        helix.get("trimmed_curve").get("interval"),
+                        helix.get("trimmed_curve").get("length"),
+                        grpc_client=self._grpc_client,
+                    ),
+                    "edges": [
+                        Edge(
+                            edge.get("id"),
+                            CurveType(edge.get("curve_type")),
+                            get_bodies_from_ids(parent_design, [edge.get("parent_id")]),
+                            self._grpc_client,
+                            edge.get("is_reversed"),
+                        )
+                        for edge in helix.get("edges")
+                    ],
+                }
+                for helix in response.get("helixes")
+            ]
+        }
