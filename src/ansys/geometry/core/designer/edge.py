@@ -24,9 +24,9 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from pint import Quantity
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.bbox import BoundingBox

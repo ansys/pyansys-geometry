@@ -38,6 +38,7 @@ except ImportError:
 
 from pathlib import Path
 
+from ansys.tools.visualization_interface import MeshObjectPlot
 import numpy as np
 from pint import Quantity
 import pytest
@@ -60,7 +61,6 @@ from ansys.geometry.core.sketch import (
     Trapezoid,
     Triangle,
 )
-from ansys.tools.visualization_interface import MeshObjectPlot
 
 skip_no_xserver = pytest.mark.skipif(
     not system_supports_plotting(), reason="Requires active X Server"

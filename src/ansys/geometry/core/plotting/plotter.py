@@ -33,6 +33,13 @@ from itertools import cycle
 from pathlib import Path
 from typing import Any
 
+from ansys.tools.visualization_interface import (
+    Color,
+    EdgePlot,
+    MeshObjectPlot,
+    Plotter as PlotterInterface,
+)
+from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
 import numpy as np
 from pygltflib.utils import gltf2glb
 import pyvista as pv
@@ -51,13 +58,6 @@ from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.sketch.sketch import Sketch
-from ansys.tools.visualization_interface import (
-    Color,
-    EdgePlot,
-    MeshObjectPlot,
-    Plotter as PlotterInterface,
-)
-from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
 
 POLYDATA_COLOR_CYCLER = cycle(pv.colors.get_cycler("matplotlib"))
 

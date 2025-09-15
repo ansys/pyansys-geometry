@@ -24,6 +24,7 @@
 import os
 from unittest.mock import create_autospec
 
+import ansys.tools.path.path as atpp
 from grpc import insecure_channel
 import pytest
 
@@ -31,7 +32,6 @@ from ansys.geometry.core import Modeler
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.launcher import launch_modeler
-import ansys.tools.path.path as atpp
 
 try:
     import ansys.platform.instancemanagement as pypim

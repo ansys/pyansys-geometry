@@ -201,6 +201,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
     @protect_grpc
     def get_normal(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.faces_pb2 import GetNormalRequest
+
         from ansys.geometry.core.math.vector import UnitVector3D
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -242,6 +243,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
     @protect_grpc
     def create_iso_parametric_curve(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.faces_pb2 import CreateIsoParamCurvesRequest
+
         from ansys.geometry.core.shapes.parameterization import Interval
 
         # Create the request - assumes all inputs are valid and of the proper type

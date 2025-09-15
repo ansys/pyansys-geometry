@@ -33,9 +33,8 @@ try:
 
     run_if_graphics_required()
 
-    import pyvista as pv
-
     import ansys.tools.visualization_interface as viz_interface
+    import pyvista as pv
 
     pv.OFF_SCREEN = True
     viz_interface.TESTING_MODE = True
