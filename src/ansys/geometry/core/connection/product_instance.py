@@ -463,6 +463,7 @@ def prepare_and_start_backend(
         else:
             # Verify dotnet is installed
             import shutil
+
             if not any(
                 CORE_GEOMETRY_SERVICE_EXE.replace(".exe", "") in file.name
                 for file in Path(root_service_folder).iterdir()
