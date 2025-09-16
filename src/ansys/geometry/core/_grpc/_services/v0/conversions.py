@@ -23,8 +23,6 @@
 
 from typing import TYPE_CHECKING
 
-import pint
-
 from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
 from ansys.api.dbu.v0.dbumodels_pb2 import (
     DrivingDimension as GRPCDrivingDimension,
@@ -55,6 +53,8 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
+import pint
+
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import graphics_required
 
