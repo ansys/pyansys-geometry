@@ -214,19 +214,23 @@ def test_helix_detection(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "bolt.scdocx")
 
     bodies = design.bodies
-    assert len(bodies) == 1
+    assert len(bodies) == 2
+
+    search_bodies = [bodies[0]]
+    assert len(search_bodies) == 1
 
     # Test default parameters
-    result = modeler.prepare_tools.detect_helixes(bodies)
+    result = modeler.prepare_tools.detect_helixes(search_bodies)
     assert len(result["helixes"]) == 1
 
     # Test with non-default parameters
-    result = modeler.prepare_tools.detect_helixes(bodies, 0, 10, 100)
+    result = modeler.prepare_tools.detect_helixes(search_bodies, 0, 10, 100)
     assert len(result["helixes"]) == 1
 
     # Test parameters that should yield no results
-    result = modeler.prepare_tools.detect_helixes(bodies, 5.0, 10.0, 0.01)
+    result = modeler.prepare_tools.detect_helixes(search_bodies, 5.0, 10.0, 0.01)
     assert len(result["helixes"]) == 0
 
-
-# TODO: test with multiple bodies
+    # Test with multiple bodies
+    result = modeler.prepare_tools.detect_helixes(bodies)
+    assert len(result["helixes"]) == 2
