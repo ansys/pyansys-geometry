@@ -26,10 +26,7 @@ from typing import TYPE_CHECKING, Union
 
 from ansys.api.geometry.v0.commands_pb2 import (
     CreateAlignTangentOrientGearConditionRequest,
-    MoveImprintEdgesRequest,
-    OffsetEdgesRequest,
     RenameObjectRequest,
-    RoundInfoRequest,
     SplitBodyRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
@@ -39,7 +36,6 @@ from pint import Quantity
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
-    unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
@@ -65,7 +61,7 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.typing import Real
 
@@ -945,8 +941,14 @@ class GeometryCommands:
         margin = margin if isinstance(margin, Distance) else Distance(margin)
         x_spacing = x_spacing if isinstance(x_spacing, Distance) else Distance(x_spacing)
         y_spacing = y_spacing if isinstance(y_spacing, Distance) else Distance(y_spacing)
-        row_x_offset = row_x_offset if isinstance(row_x_offset, Distance) else Distance(row_x_offset)
-        row_y_offset = row_y_offset if isinstance(row_y_offset, Distance) else Distance(row_y_offset)
+        row_x_offset = (
+            row_x_offset if isinstance(row_x_offset, Distance)
+            else Distance(row_x_offset)
+        )
+        row_y_offset = (
+            row_y_offset if isinstance(row_y_offset, Distance)
+            else Distance(row_y_offset)
+        )
         column_x_offset = (
             column_x_offset if isinstance(column_x_offset, Distance)
             else Distance(column_x_offset)
@@ -1343,9 +1345,11 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))
+        result = self._grpc_client._services.faces.get_round_info(
+            face_id = face.id
+        )
 
-        return (result.along_u, result.radius)
+        return (result.get("along_u"), result.get("radius"))
 
     @protect_grpc
     @check_input_types
@@ -1677,7 +1681,7 @@ class GeometryCommands:
             The edges to move.
         direction : UnitVector3D
             The direction to move the edges.
-        distance : Distance
+        distance : Distance | Quantity | Real
             The distance to move the edges.
 
         Returns
@@ -1685,22 +1689,15 @@ class GeometryCommands:
         bool
             Returns True if the edges were moved successfully, False otherwise.
         """
-        # Convert the distance object
         distance = distance if isinstance(distance, Distance) else Distance(distance)
-        move_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
-        # Create the request object
-        request = MoveImprintEdgesRequest(
-            edges=[edge._grpc_id for edge in edges],
-            direction=unit_vector_to_grpc_direction(direction),
-            distance=move_magnitude,
+        response = self._grpc_client._services.edges.move_imprint_edges(
+            edge_ids=[edge.id for edge in edges],
+            direction=direction,
+            distance=distance,
         )
 
-        # Call the gRPC service
-        response = self._commands_stub.MoveImprintEdges(request)
-
-        # Return success flag
-        return response.result.success
+        return response.get("success")
 
     @protect_grpc
     @min_backend_version(26, 1, 0)
@@ -1711,7 +1708,7 @@ class GeometryCommands:
         ----------
         edges : list[Edge]
             The edges to offset.
-        offset : Distance
+        offset : Distance | Quantity | Real
             The distance to offset the edges.
 
         Returns
@@ -1719,21 +1716,14 @@ class GeometryCommands:
         bool
             Returns True if the edges were offset successfully, False otherwise.
         """
-        # Convert the distance object
         offset = offset if isinstance(offset, Distance) else Distance(offset)
-        offset_magnitude = offset.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
-        # Create the request object
-        request = OffsetEdgesRequest(
-            edges=[edge._grpc_id for edge in edges],
-            value=offset_magnitude,
+        response = self._grpc_client._services.edges.offset_edges(
+            edge_ids=[edge.id for edge in edges],
+            offset=offset,
         )
 
-        # Call the gRPC service
-        response = self._commands_stub.OffsetEdges(request)
-
-        # Return success flag
-        return response.success
+        return response.get("success")
 
     @protect_grpc
     @min_backend_version(26, 1, 0)

@@ -236,3 +236,40 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
             "created_bodies": [body.id for body in resp.created_bodies],
             "success": resp.success,
         }
+    
+    @protect_grpc
+    def move_imprint_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import MoveImprintEdgesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MoveImprintEdgesRequest(
+            edges=[build_grpc_id(edge_id) for edge_id in kwargs["edge_ids"]],
+            direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+            distance=from_measurement_to_server_length(kwargs["distance"]),
+        )
+
+        # Call the gRPC service
+        resp = self.commands_stub.MoveImprintEdges(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": resp.result.success,
+        }
+    
+    @protect_grpc
+    def offset_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import OffsetEdgesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = OffsetEdgesRequest(
+            edges=[build_grpc_id(edge_id) for edge_id in kwargs["edge_ids"]],
+            value=from_measurement_to_server_length(kwargs["offset"]),
+        )
+
+        # Call the gRPC service
+        resp = self.commands_stub.OffsetEdges(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": resp.success,
+        }

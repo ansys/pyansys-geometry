@@ -143,3 +143,8 @@ class GRPCFacesService(ABC):  # pragma: no cover
     def draft_faces(self, **kwargs) -> dict:
         """Draft a selection of faces."""
         pass
+
+    @abstractmethod
+    def get_round_info(self, **kwargs) -> dict:
+        """Get round information for a selection of faces."""
+        pass

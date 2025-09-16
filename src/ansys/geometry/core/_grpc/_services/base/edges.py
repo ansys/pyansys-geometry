@@ -88,3 +88,13 @@ class GRPCEdgesService(ABC):  # pragma: no cover
     def extrude_edges_up_to(self, **kwargs) -> dict:
         """Extrude edges up to a face."""
         pass
+
+    @abstractmethod
+    def move_imprint_edges(self, **kwargs) -> dict:
+        """Move imprint edges."""
+        pass
+
+    @abstractmethod
+    def offset_edges(self, **kwargs) -> dict:
+        """Offset edges."""
+        pass

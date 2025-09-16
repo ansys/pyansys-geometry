@@ -130,3 +130,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
     @protect_grpc
     def draft_faces(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+    
+    @protect_grpc
+    def get_round_info(self, **kwargs):  # noqa: D102
+        raise NotImplementedError

@@ -499,3 +499,22 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
         return {
             "created_faces": [face.id for face in response.created_faces],
         }
+    
+    @protect_grpc
+    def get_round_info(self, **kwargs):  # noqa: D102
+        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+        from ansys.api.geometry.v0.commands_pb2 import RoundInfoRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RoundInfoRequest(
+            face_id=[EntityIdentifier(id=kwargs["face_id"])],
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.GetRoundInfo(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "along_u": response.along_u,
+            "radius": response.radius,
+        }
