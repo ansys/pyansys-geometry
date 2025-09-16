@@ -416,7 +416,7 @@ class PrepareTools:
         )
 
         return response.get("success")
-    
+
     @min_backend_version(26, 1, 0)
     def detect_helixes(
         self,

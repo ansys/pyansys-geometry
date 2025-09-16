@@ -26,9 +26,7 @@ from ansys.geometry.core.shapes.curves.curve import Curve
 
 class ProceduralCurve(Curve):
     """Provides a 3D procedural curve representation."""
-    
+
     def __init__(self):
         """Initialize the procedural curve."""
         super().__init__()
-
-    

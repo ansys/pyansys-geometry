@@ -241,7 +241,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
                 min_radius=from_measurement_to_server_length(kwargs["min_radius"]),
                 max_radius=from_measurement_to_server_length(kwargs["max_radius"]),
                 fit_radius_error=from_measurement_to_server_length(kwargs["fit_radius_error"]),
-            )
+            ),
         )
 
         # Call the gRPC service
@@ -253,19 +253,27 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Return the response - formatted as a dictionary
         return {
-           "helixes": [{
-               "trimmed_curve": {
-                    "geometry": from_grpc_curve_to_curve(helix.trimmed_curve.curve),
-                    "start": from_grpc_point_to_point3d(helix.trimmed_curve.start),
-                    "end": from_grpc_point_to_point3d(helix.trimmed_curve.end),
-                    "interval": Interval(helix.trimmed_curve.interval_start, helix.trimmed_curve.interval_end),
-                    "length": to_distance(helix.trimmed_curve.length).value,
-                },
-               "edges": [{
-                   "id": edge.id,
-                   "parent_id": edge.parent.id,
-                   "curve_type": edge.curve_type,
-                   "is_reversed": edge.is_reversed,
-               } for edge in helix.edges]
-           } for helix in response.helixes]
+            "helixes": [
+                {
+                    "trimmed_curve": {
+                        "geometry": from_grpc_curve_to_curve(helix.trimmed_curve.curve),
+                        "start": from_grpc_point_to_point3d(helix.trimmed_curve.start),
+                        "end": from_grpc_point_to_point3d(helix.trimmed_curve.end),
+                        "interval": Interval(
+                            helix.trimmed_curve.interval_start, helix.trimmed_curve.interval_end
+                        ),
+                        "length": to_distance(helix.trimmed_curve.length).value,
+                    },
+                    "edges": [
+                        {
+                            "id": edge.id,
+                            "parent_id": edge.parent.id,
+                            "curve_type": edge.curve_type,
+                            "is_reversed": edge.is_reversed,
+                        }
+                        for edge in helix.edges
+                    ],
+                }
+                for helix in response.helixes
+            ]
         }
