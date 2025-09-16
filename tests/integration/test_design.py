@@ -1220,7 +1220,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     else:
         file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
 
-    design.save(file_location=file_save)
+    design.save(file_location=file_save, write_body_facets=True)
 
     # Check for other exports - Windows backend...
     if not BackendType.is_core_service(modeler.client.backend_type):
@@ -3778,7 +3778,7 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
     location = tmp_path_factory.mktemp("test_export_to_scdocx")
     file_location = location / f"{design.name}.scdocx"
-    design.export_to_scdocx(location)
+    design.export_to_scdocx(location, write_body_facets=True)
     assert file_location.exists()
     design_read = modeler.open_file(file_location)
     assert len(design_read.named_selections) == 5

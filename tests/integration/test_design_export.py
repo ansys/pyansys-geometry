@@ -219,7 +219,7 @@ def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFact
     file_location = location / f"{design.name}.dsco"
 
     # Export to dsco
-    design.export_to_disco(location)
+    design.export_to_disco(location, write_body_facets=True)
 
     # Check the exported file
     assert file_location.exists()
