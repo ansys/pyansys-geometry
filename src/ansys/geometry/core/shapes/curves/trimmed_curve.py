@@ -21,10 +21,10 @@
 # SOFTWARE.
 """Trimmed curve class."""
 
-from pint import Quantity
-
 from ansys.api.geometry.v0.commands_pb2 import IntersectCurvesRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from pint import Quantity
+
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import trimmed_curve_to_grpc_trimmed_curve
 from ansys.geometry.core.math.matrix import Matrix44
