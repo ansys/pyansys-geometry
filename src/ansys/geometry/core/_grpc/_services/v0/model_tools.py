@@ -23,15 +23,17 @@
 
 import grpc
 
-from ansys.geometry.core._grpc._services.base.conversions import (
+from ansys.geometry.core.errors import protect_grpc
+
+from ..base.conversions import (
     from_measurement_to_server_angle,
     from_measurement_to_server_length,
 )
-from ansys.geometry.core._grpc._services.v0.conversions import from_unit_vector_to_grpc_direction
-from ansys.geometry.core.connection.conversions import line_to_grpc_line
-from ansys.geometry.core.errors import protect_grpc
-
 from ..base.model_tools import GRPCModelToolsService
+from .conversions import (
+    from_line_to_grpc_line,
+    from_unit_vector_to_grpc_direction,
+)
 
 
 class GRPCModelToolsServiceV0(GRPCModelToolsService):
@@ -117,7 +119,7 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
         # Create the request - assumes all inputs are valid and of the proper type
         request = MoveRotateRequest(
             selection=[EntityIdentifier(id=kwargs["selection_id"])],
-            axis=line_to_grpc_line(kwargs["axis"]),
+            axis=from_line_to_grpc_line(kwargs["axis"]),
             angle=from_measurement_to_server_angle(kwargs["angle"]),
         )
 

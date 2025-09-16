@@ -24,30 +24,21 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
+from ansys.api.geometry.v0.commands_pb2 import (
+    CreateAlignTangentOrientGearConditionRequest,
+    MoveImprintEdgesRequest,
+    OffsetEdgesRequest,
+    RenameObjectRequest,
+    RoundInfoRequest,
+    SplitBodyRequest,
+)
+from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
 from pint import Quantity
 
-from ansys.api.geometry.v0.commands_pb2 import (
-    CreateAlignTangentOrientGearConditionRequest,
-    DraftFacesRequest,
-    MoveImprintEdgesRequest,
-    OffsetEdgesRequest,
-    OffsetFacesSetRadiusRequest,
-    RenameObjectRequest,
-    ReplaceFaceRequest,
-    RevolveFacesByHelixRequest,
-    RevolveFacesRequest,
-    RevolveFacesUpToRequest,
-    RoundInfoRequest,
-    SplitBodyRequest,
-    ThickenFacesRequest,
-)
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
-    line_to_grpc_line,
     plane_to_grpc_plane,
-    point3d_to_grpc_point,
     unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.component import Component
@@ -70,7 +61,6 @@ from ansys.geometry.core.misc.auxiliary import (
     get_faces_from_ids,
 )
 from ansys.geometry.core.misc.checks import (
-    check_is_float_int,
     check_type,
     check_type_all_elements_in_iterable,
     min_backend_version,
@@ -1027,7 +1017,7 @@ class GeometryCommands:
         self,
         selection: Union["Face", list["Face"]],
         axis: Line,
-        angle: Real,
+        angle: Angle | Quantity | Real,
         extrude_type: ExtrudeType = ExtrudeType.ADD,
     ) -> list["Body"]:
         """Revolve face around an axis.
@@ -1038,7 +1028,7 @@ class GeometryCommands:
             Face(s) to revolve.
         axis : Line
             Axis of revolution.
-        angle : Real
+        angle : Angle | Quantity | Real
             Angular distance to revolve.
         extrude_type : ExtrudeType, default: ExtrudeType.ADD
             Type of extrusion to be performed.
@@ -1057,24 +1047,23 @@ class GeometryCommands:
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
         check_type_all_elements_in_iterable(selection, Face)
 
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.RevolveFaces(
-            RevolveFacesRequest(
-                selection=[object._grpc_id for object in selection],
-                axis=line_to_grpc_line(axis),
-                angle=angle,
-                extrude_type=extrude_type.value,
-            )
+        result = self._grpc_client._services.faces.revolve_faces(
+            selection_ids=[object.id for object in selection],
+            axis=axis,
+            angle=angle,
+            extrude_type=extrude_type,
         )
 
         design = get_design_from_face(selection[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to revolve faces.")
             return []
@@ -1121,22 +1110,19 @@ class GeometryCommands:
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.RevolveFacesUpTo(
-            RevolveFacesUpToRequest(
-                selection=[object._grpc_id for object in selection],
-                up_to_selection=up_to._grpc_id,
-                axis=line_to_grpc_line(axis),
-                direction=unit_vector_to_grpc_direction(direction),
-                extrude_type=extrude_type.value,
-            )
+        result = self._grpc_client._services.faces.revolve_faces_up_to(
+            selection_ids=[object.id for object in selection],
+            up_to_selection_id=up_to.id,
+            axis=axis,
+            direction=direction,
+            extrude_type=extrude_type,
         )
 
         design = get_design_from_face(selection[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to revolve faces.")
             return []
@@ -1148,9 +1134,9 @@ class GeometryCommands:
         selection: Union["Face", list["Face"]],
         axis: Line,
         direction: UnitVector3D,
-        height: Real,
-        pitch: Real,
-        taper_angle: Real,
+        height: Distance | Quantity | Real,
+        pitch: Distance | Quantity | Real,
+        taper_angle: Angle | Quantity | Real,
         right_handed: bool,
         both_sides: bool,
         extrude_type: ExtrudeType = ExtrudeType.ADD,
@@ -1165,12 +1151,12 @@ class GeometryCommands:
             Axis of revolution.
         direction : UnitVector3D
             Direction of extrusion.
-        height : Real,
+        height : Distance | Quantity | Real,
             Height of the helix.
-        pitch : Real,
+        pitch : Distance | Quantity | Real,
             Pitch of the helix.
-        taper_angle : Real,
-            Tape angle of the helix.
+        taper_angle : Angle | Quantity | Real,
+            Taper angle of the helix.
         right_handed : bool,
             Right-handed helix if ``True``, left-handed if ``False``.
         both_sides : bool,
@@ -1192,29 +1178,30 @@ class GeometryCommands:
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
         check_type_all_elements_in_iterable(selection, Face)
 
+        height = height if isinstance(height, Distance) else Distance(height)
+        pitch = pitch if isinstance(pitch, Distance) else Distance(pitch)
+        taper_angle = taper_angle if isinstance(taper_angle, Angle) else Angle(taper_angle)
+
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.RevolveFacesByHelix(
-            RevolveFacesByHelixRequest(
-                selection=[object._grpc_id for object in selection],
-                axis=line_to_grpc_line(axis),
-                direction=unit_vector_to_grpc_direction(direction),
-                height=height,
-                pitch=pitch,
-                taper_angle=taper_angle,
-                right_handed=right_handed,
-                both_sides=both_sides,
-                extrude_type=extrude_type.value,
-            )
+        result = self._grpc_client._services.faces.revolve_faces_by_helix(
+            selection_ids=[object.id for object in selection],
+            axis=axis,
+            direction=direction,
+            height=height,
+            pitch=pitch,
+            taper_angle=taper_angle,
+            right_handed=right_handed,
+            both_sides=both_sides,
+            extrude_type=extrude_type,
         )
 
         design = get_design_from_face(selection[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to revolve faces.")
             return []
@@ -1253,14 +1240,12 @@ class GeometryCommands:
             else [replacement_selection]
         )
 
-        result = self._commands_stub.ReplaceFace(
-            ReplaceFaceRequest(
-                target_selection=[selection._grpc_id for selection in target_selection],
-                replacement_selection=[selection._grpc_id for selection in replacement_selection],
-            )
+        result = self._grpc_client._services.faces.replace_faces(
+            target_ids=[selection.id for selection in target_selection],
+            replacement_ids=[selection.id for selection in replacement_selection],
         )
 
-        return result.success
+        return result.get("success")
 
     @protect_grpc
     @min_backend_version(25, 2, 0)
@@ -1491,19 +1476,16 @@ class GeometryCommands:
             face.body._reset_tessellation_cache()
 
         radius = radius if isinstance(radius, Distance) else Distance(radius)
-        radius_magnitude = radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
-        result = self._commands_stub.OffsetFacesSetRadius(
-            OffsetFacesSetRadiusRequest(
-                faces=[face._grpc_id for face in faces],
-                radius=radius_magnitude,
+        result = self._grpc_client._services.faces.offset_faces_set_radius(
+                face_ids=[face.id for face in faces],
+                radius=radius,
                 copy=copy,
-                offset_mode=offset_mode.value,
-                extrude_type=extrude_type.value,
-            )
+                offset_mode=offset_mode,
+                extrude_type=extrude_type,
         )
 
-        return result.success
+        return result.get("success")
 
     @protect_grpc
     @min_backend_version(26, 1, 0)
@@ -1783,25 +1765,19 @@ class GeometryCommands:
         list[Face]
             The faces created by the draft operation.
         """
-        # Convert the angle object
         angle = angle if isinstance(angle, Angle) else Angle(angle)
-        angle_magnitude = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
 
-        # Create the request object
-        request = DraftFacesRequest(
-            faces=[face._grpc_id for face in faces],
-            reference_faces=[face._grpc_id for face in reference_faces],
-            draft_side=draft_side.value,
-            draft_angle=angle_magnitude,
-            extrude_type=extrude_type.value,
+        response = self._grpc_client._services.faces.draft_faces(
+            face_ids=[face.id for face in faces],
+            reference_face_ids=[face.id for face in reference_faces],
+            draft_side=draft_side,
+            angle=angle,
+            extrude_type=extrude_type,
         )
-
-        # Call the gRPC server
-        response = self._commands_stub.DraftFaces(request)
 
         # Return the drafted faces
         design = get_design_from_face(faces[0])
-        return get_faces_from_ids(design, [face.id for face in response.created_faces])
+        return get_faces_from_ids(design, [face.id for face in response.get("created_faces")])
 
     @protect_grpc
     @min_backend_version(26, 1, 0)
@@ -1809,7 +1785,7 @@ class GeometryCommands:
         self,
         faces: list["Face"],
         direction: UnitVector3D,
-        thickness: Real,
+        thickness: Distance | Quantity | Real,
         extrude_type: ExtrudeType,
         pull_symmetric: bool,
         select_direction: bool,
@@ -1822,7 +1798,7 @@ class GeometryCommands:
             The faces to thicken.
         direction : UnitVector3D
             The direction to thicken the faces.
-        thickness : Real
+        thickness : Distance | Quantity | Real
             The thickness to apply to the faces.
         extrude_type : ExtrudeType
             The type of extrusion to use.
@@ -1836,23 +1812,21 @@ class GeometryCommands:
         bool
             Returns True if the faces were thickened successfully, False otherwise.
         """
-        # Create the request object
-        request = ThickenFacesRequest(
-            faces=[face._grpc_id for face in faces],
-            direction=unit_vector_to_grpc_direction(direction),
-            value=thickness,
-            extrude_type=extrude_type.value,
+        thickness = thickness if isinstance(thickness, Distance) else Distance(thickness)
+
+        result = self._grpc_client._services.faces.thicken_faces(
+            face_ids=[face.id for face in faces],
+            direction=direction,
+            thickness=thickness,
+            extrude_type=extrude_type,
             pull_symmetric=pull_symmetric,
             select_direction=select_direction,
         )
 
-        # Call the gRPC service
-        response = self._commands_stub.ThickenFaces(request)
-
         # Update design
         design = get_design_from_face(faces[0])
-        if response.success:
+        if result.get("success"):
             design._update_design_inplace()
 
         # Return success flag
-        return response.success
+        return result.get("success")
