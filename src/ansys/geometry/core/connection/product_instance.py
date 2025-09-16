@@ -493,10 +493,7 @@ def prepare_and_start_backend(
                         CORE_GEOMETRY_SERVICE_EXE.replace(".exe", ".dll"),
                     )
                 )
-            if any(
-                CORE_GEOMETRY_SERVICE_EXE.replace(".exe", "") in file.name
-                for file in Path(root_service_folder).iterdir()
-            ):
+            else:
                 # For Linux, we need to use the exe file to launch the Core Geometry Service
                 args.append(
                     Path(
