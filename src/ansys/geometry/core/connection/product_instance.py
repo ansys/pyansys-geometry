@@ -478,9 +478,9 @@ def prepare_and_start_backend(
                 # At least dotnet 8.0 is required
                 # private method and controlled input by library - excluding bandit check.
                 if (
-                    subprocess.check_output(["dotnet", "--version"]).decode("utf-8").split(".")[0] # nosec B607, B603
+                    subprocess.check_output(["dotnet", "--version"]).decode("utf-8").split(".")[0]  # nosec B607, B603
                     < "8"
-                ):  
+                ):
                     raise RuntimeError(
                         "Ansys Geometry Core Service requires at least dotnet 8.0. "
                         "Please install a compatible version."
