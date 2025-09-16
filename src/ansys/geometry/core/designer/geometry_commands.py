@@ -24,9 +24,6 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
-from beartype import beartype as check_input_types
-from pint import Quantity
-
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
@@ -59,6 +56,9 @@ from ansys.api.geometry.v0.commands_pb2 import (
     ThickenFacesRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from beartype import beartype as check_input_types
+from pint import Quantity
+
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     line_to_grpc_line,

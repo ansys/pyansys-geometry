@@ -32,6 +32,7 @@ from ansys.api.geometry.v0.unsupported_pb2 import (
     SetExportIdsRequest,
 )
 from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
+
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
 from ansys.geometry.core.misc.auxiliary import get_all_bodies_from_design
