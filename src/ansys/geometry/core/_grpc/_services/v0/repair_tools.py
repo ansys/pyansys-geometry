@@ -54,9 +54,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_split_edges(self, **kwargs) -> dict:  # noqa: D102
-        from google.protobuf.wrappers_pb2 import DoubleValue
-
         from ansys.api.geometry.v0.repairtools_pb2 import FindSplitEdgesRequest
+        from google.protobuf.wrappers_pb2 import DoubleValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSplitEdgesRequest(
@@ -123,9 +122,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_short_edges(self, **kwargs) -> dict:  # noqa: D102
-        from google.protobuf.wrappers_pb2 import DoubleValue
-
         from ansys.api.geometry.v0.repairtools_pb2 import FindShortEdgesRequest
+        from google.protobuf.wrappers_pb2 import DoubleValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindShortEdgesRequest(
@@ -170,9 +168,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_missing_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FindMissingFacesRequest
         from google.protobuf.wrappers_pb2 import DoubleValue
 
-        from ansys.api.geometry.v0.repairtools_pb2 import FindMissingFacesRequest
         from ansys.geometry.core.logger import LOG
 
         from ..base.conversions import (
@@ -221,9 +219,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_small_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FindSmallFacesRequest
         from google.protobuf.wrappers_pb2 import DoubleValue
 
-        from ansys.api.geometry.v0.repairtools_pb2 import FindSmallFacesRequest
         from ansys.geometry.core.logger import LOG
 
         from ..base.conversions import (
@@ -272,9 +270,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
         from google.protobuf.wrappers_pb2 import DoubleValue
 
-        from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
         from ansys.geometry.core.logger import LOG
 
         from ..base.conversions import from_measurement_to_server_length
@@ -360,9 +358,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_and_fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
-        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
-
         from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
+        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
         from ..base.conversions import from_measurement_to_server_length
 
@@ -427,9 +424,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_interferences(self, **kwargs) -> dict:  # noqa: D102
-        from google.protobuf.wrappers_pb2 import BoolValue
-
         from ansys.api.geometry.v0.repairtools_pb2 import FindInterferenceRequest
+        from google.protobuf.wrappers_pb2 import BoolValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindInterferenceRequest(
@@ -453,9 +449,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_and_fix_short_edges(self, **kwargs):  # noqa: D102
-        from google.protobuf.wrappers_pb2 import DoubleValue
-
         from ansys.api.geometry.v0.repairtools_pb2 import FindShortEdgesRequest
+        from google.protobuf.wrappers_pb2 import DoubleValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindShortEdgesRequest(
@@ -510,9 +505,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_and_fix_split_edges(self, **kwargs) -> dict:  # noqa: D102
-        from google.protobuf.wrappers_pb2 import DoubleValue
-
         from ansys.api.geometry.v0.repairtools_pb2 import FindSplitEdgesRequest
+        from google.protobuf.wrappers_pb2 import DoubleValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSplitEdgesRequest(

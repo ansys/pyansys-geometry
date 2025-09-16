@@ -97,10 +97,9 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def remove_rounds(self, **kwargs) -> dict:  # noqa: D102
-        from google.protobuf.wrappers_pb2 import BoolValue
-
         from ansys.api.geometry.v0.models_pb2 import Face
         from ansys.api.geometry.v0.preparetools_pb2 import RemoveRoundsRequest
+        from google.protobuf.wrappers_pb2 import BoolValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RemoveRoundsRequest(
@@ -118,10 +117,9 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def share_topology(self, **kwargs) -> dict:  # noqa: D102
-        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
-
         from ansys.api.geometry.v0.models_pb2 import Body
         from ansys.api.geometry.v0.preparetools_pb2 import ShareTopologyRequest
+        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
@@ -140,10 +138,9 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def enhanced_share_topology(self, **kwargs) -> dict:  # noqa: D102
-        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
-
         from ansys.api.geometry.v0.models_pb2 import Body
         from ansys.api.geometry.v0.preparetools_pb2 import ShareTopologyRequest
+        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
