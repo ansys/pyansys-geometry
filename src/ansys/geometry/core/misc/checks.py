@@ -445,12 +445,11 @@ def run_if_graphics_required():
     if __GRAPHICS_AVAILABLE is None:
         try:
             # Attempt to perform the imports
+            import ansys.tools.visualization_interface  # noqa: F401
             import pygltflib  # noqa: F401
             import pyvista  # noqa: F401
             import trame  # noqa: F401
             import vtk  # noqa: F401
-
-            import ansys.tools.visualization_interface  # noqa: F401
 
             __GRAPHICS_AVAILABLE = True
         except (ModuleNotFoundError, ImportError):
