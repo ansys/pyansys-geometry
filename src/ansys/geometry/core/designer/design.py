@@ -25,11 +25,6 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
-from beartype import beartype as check_input_types
-from google.protobuf.empty_pb2 import Empty
-import numpy as np
-from pint import Quantity, UndefinedUnitError
-
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
@@ -37,6 +32,11 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CreateBeamCircularProfileRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from beartype import beartype as check_input_types
+from google.protobuf.empty_pb2 import Empty
+import numpy as np
+from pint import Quantity, UndefinedUnitError
+
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
     grpc_curve_to_curve,
@@ -286,7 +286,7 @@ class Design(Component):
         format : DesignFileFormat, default: DesignFileFormat.SCDOCX
             Format for the file to save to.
         write_body_facets : bool, default: False
-            Option to write body facets into the saved file. SCDOCX only, 26R1 and later.
+            Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
         """
         # Sanity checks on inputs
         if isinstance(file_location, str):

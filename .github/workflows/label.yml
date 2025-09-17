@@ -39,7 +39,7 @@ jobs:
 
     # Label based on modified files
     - name: Label based on changed files
-      uses: actions/labeler@8558fd74291d67161a8a78ce36a881fa63b766a9 # v5.0.0
+      uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         sync-labels: true
@@ -106,7 +106,7 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-    - uses: ansys/actions/doc-changelog@1096998b81f7ebdea116b683e11f3a8bda759ca6 # v10.0.14
+    - uses: ansys/actions/doc-changelog@ed773aba3478d311decff2d4313e0cd19a945dd8 # v10.1.0
       with:
         token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
         use-conventional-commits: true

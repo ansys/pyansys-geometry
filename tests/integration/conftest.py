@@ -33,9 +33,8 @@ try:
 
     run_if_graphics_required()
 
-    import pyvista as pv
-
     import ansys.tools.visualization_interface as viz_interface
+    import pyvista as pv
 
     pv.OFF_SCREEN = True
     viz_interface.TESTING_MODE = True
@@ -84,6 +83,17 @@ def skip_if_spaceclaim(modeler: Modeler, test_name: str, element_not_available: 
     if modeler.client.backend_type == BackendType.SPACECLAIM:
         pytest.skip(
             reason=f"Skipping '{test_name}'. '{element_not_available}' not on SpaceClaim."
+        )  # skip!
+
+
+def skip_if_discovery(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on Discovery."""
+    if (
+        modeler.client.backend_type == BackendType.DISCOVERY
+        or modeler.client.backend_type == BackendType.DISCOVERY_HEADLESS
+    ):
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Discovery."
         )  # skip!
 
 

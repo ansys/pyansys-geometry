@@ -25,10 +25,10 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Generator, Optional
 
-from grpc import Channel
-
 from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from grpc import Channel
+
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
@@ -42,11 +42,12 @@ from ansys.geometry.core.tools.unsupported import UnsupportedCommands
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
+    from ansys.platform.instancemanagement import Instance
+
     from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
     from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.designer.geometry_commands import GeometryCommands
-    from ansys.platform.instancemanagement import Instance
 
 
 class Modeler:
