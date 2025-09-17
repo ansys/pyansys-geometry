@@ -24,18 +24,10 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
-from ansys.api.geometry.v0.commands_pb2 import (
-    RenameObjectRequest,
-    SplitBodyRequest,
-)
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import (
-    plane_to_grpc_plane,
-)
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
     AlignCondition,
@@ -43,7 +35,7 @@ from ansys.geometry.core.designer.mating_conditions import (
     TangentCondition,
 )
 from ansys.geometry.core.designer.selection import NamedSelection
-from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
@@ -135,7 +127,6 @@ class GeometryCommands:
     ``modeler.geometry_commands`` instead.
     """
 
-    @protect_grpc
     def __init__(self, grpc_client: GrpcClient, _internal_use: bool = False):
         """Initialize an instance of the ``GeometryCommands`` class."""
         if not _internal_use:
@@ -144,9 +135,7 @@ class GeometryCommands:
                 "Use 'modeler.geometry_commands' to access geometry commands."
             )
         self._grpc_client = grpc_client
-        self._commands_stub = CommandsStub(self._grpc_client.channel)
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def chamfer(
         self,
@@ -191,7 +180,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def fillet(
         self,
@@ -236,7 +224,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def full_fillet(self, faces: list["Face"]) -> bool:
         """Create a full fillet betweens a collection of faces.
@@ -268,7 +255,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def extrude_faces(
         self,
@@ -342,7 +328,6 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to extrude faces.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def extrude_faces_up_to(
         self,
@@ -417,7 +402,6 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to extrude faces.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def extrude_edges(
         self,
@@ -500,7 +484,6 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to extrude edges.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def extrude_edges_up_to(
         self,
@@ -559,19 +542,18 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to extrude edges.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def rename_object(
         self,
-        selection: Union[list["Body"], list["Component"], list["Face"], list["Edge"]],
+        selection: Union[list["Body"], list["Component"]],
         name: str,
     ) -> bool:
         """Rename an object.
 
         Parameters
         ----------
-        selection : list[Body] | list[Component] | list[Face] | list[Edge]
-            Selection of the object to rename.
+        selection : list[Body] | list[Component]
+            Selection of the objects to rename.
         name : str
             New name for the object.
 
@@ -584,12 +566,12 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        result = self._commands_stub.RenameObject(
-            RenameObjectRequest(selection=[object._grpc_id for object in selection], name=name)
+        result = self._grpc_client._services.commands.set_name(
+            selection_ids=[object.id for object in selection],
+            name=name
         )
-        return result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def create_linear_pattern(
         self,
@@ -667,7 +649,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def modify_linear_pattern(
         self,
@@ -732,7 +713,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def create_circular_pattern(
         self,
@@ -819,7 +799,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def modify_circular_pattern(
         self,
@@ -878,7 +857,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def create_fill_pattern(
         self,
@@ -972,7 +950,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def update_fill_pattern(
         self,
@@ -1012,7 +989,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def revolve_faces(
         self,
@@ -1069,7 +1045,6 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to revolve faces.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def revolve_faces_up_to(
         self,
@@ -1128,7 +1103,6 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to revolve faces.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def revolve_faces_by_helix(
         self,
@@ -1207,7 +1181,6 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to revolve faces.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def replace_face(
         self,
@@ -1248,7 +1221,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def split_body(
         self,
@@ -1291,40 +1263,35 @@ class GeometryCommands:
         for body in bodies:
             body._reset_tessellation_cache()
 
-        plane_item = None
         if plane is not None:
             check_type(plane, Plane)
-            plane_item = plane_to_grpc_plane(plane)
 
-        slicer_items = None
+        slicer_items = []
         if slicers is not None:
             slicers: list["Face", "Edge"] = slicers if isinstance(slicers, list) else [slicers]
             check_type_all_elements_in_iterable(slicers, (Edge, Face))
-            slicer_items = [slicer._grpc_id for slicer in slicers]
+            slicer_items = [slicer.id for slicer in slicers]
 
-        face_items = None
+        face_items = []
         if faces is not None:
             faces: list["Face"] = faces if isinstance(faces, list) else [faces]
             check_type_all_elements_in_iterable(faces, Face)
-            face_items = [face._grpc_id for face in faces]
+            face_items = [face.id for face in faces]
 
-        result = self._commands_stub.SplitBody(
-            SplitBodyRequest(
-                selection=[body._grpc_id for body in bodies],
-                split_by_plane=plane_item,
-                split_by_slicer=slicer_items,
-                split_by_faces=face_items,
-                extend_surfaces=extendfaces,
-            )
+        result = self._grpc_client._services.bodies.split_body(
+            body_ids=[body.id for body in bodies],
+            plane=plane,
+            slicer_ids=slicer_items,
+            face_ids=face_items,
+            extend_surfaces=extendfaces,
         )
 
-        if result.success:
+        if result.get("success"):
             design = get_design_from_body(bodies[0])
             design._update_design_inplace()
 
-        return result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def get_round_info(self, face: "Face") -> tuple[bool, Real]:
         """Get info on the rounding of a face.
@@ -1350,7 +1317,6 @@ class GeometryCommands:
 
         return (result.get("along_u"), result.get("radius"))
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
     def move_translate(
@@ -1389,7 +1355,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
     def move_rotate(
@@ -1435,7 +1400,6 @@ class GeometryCommands:
 
         return result
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
     def offset_faces_set_radius(
@@ -1490,7 +1454,6 @@ class GeometryCommands:
 
         return result.get("success")
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def create_align_condition(
         self,
@@ -1547,7 +1510,6 @@ class GeometryCommands:
             result.get("is_valid"),
         )
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def create_tangent_condition(
         self,
@@ -1604,7 +1566,6 @@ class GeometryCommands:
             result.get("is_valid"),
         )
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def create_orient_condition(
         self,
@@ -1661,7 +1622,6 @@ class GeometryCommands:
             result.get("is_valid"),
         )
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def move_imprint_edges(
         self, edges: list["Edge"], direction: UnitVector3D, distance: Distance | Quantity | Real
@@ -1692,7 +1652,6 @@ class GeometryCommands:
 
         return response.get("success")
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def offset_edges(self, edges: list["Edge"], offset: Distance | Quantity | Real) -> bool:
         """Offset the specified edges with the specified distance.
@@ -1718,7 +1677,6 @@ class GeometryCommands:
 
         return response.get("success")
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def draft_faces(
         self,
@@ -1762,7 +1720,6 @@ class GeometryCommands:
         design = get_design_from_face(faces[0])
         return get_faces_from_ids(design, [face.id for face in response.get("created_faces")])
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def thicken_faces(
         self,
