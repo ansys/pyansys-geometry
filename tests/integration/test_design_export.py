@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Test design export functionality."""
 
+import os
 from pathlib import Path
 
 import numpy as np
@@ -219,7 +220,10 @@ def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFact
     file_location = location / f"{design.name}.dsco"
 
     # Export to dsco
-    design.export_to_disco(location, write_body_facets=True)
+    exported_file = design.export_to_disco(location, write_body_facets=True)
+
+    # Checking file size to ensure facets are exported
+    assert os.path.getsize(exported_file) == pytest.approx(53844, 1e-3, 100)
 
     # Check the exported file
     assert file_location.exists()

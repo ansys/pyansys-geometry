@@ -3778,7 +3778,8 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
     location = tmp_path_factory.mktemp("test_export_to_scdocx")
     file_location = location / f"{design.name}.scdocx"
-    design.export_to_scdocx(location, write_body_facets=True)
+    exported_file = design.export_to_scdocx(location, write_body_facets=True)
+    assert os.path.getsize(exported_file) == pytest.approx(216642, 1e-3, 100)
     assert file_location.exists()
     design_read = modeler.open_file(file_location)
     assert len(design_read.named_selections) == 5
