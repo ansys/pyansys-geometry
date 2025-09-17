@@ -25,7 +25,6 @@ from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
 from ansys.api.geometry.v0.commands_pb2 import (
-    CreateAlignTangentOrientGearConditionRequest,
     RenameObjectRequest,
     SplitBodyRequest,
 )
@@ -1530,24 +1529,22 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._commands_stub.CreateAlignCondition(
-            CreateAlignTangentOrientGearConditionRequest(
-                parent=parent_component._grpc_id,
-                geometric_a=geometry_a._grpc_id,
-                geometric_b=geometry_b._grpc_id,
-            )
+        result = self._grpc_client._services.assembly_controls.create_align_condition(
+            parent_id=parent_component.id,
+            geometric_a_id=geometry_a.id,
+            geometric_b_id=geometry_b.id,
         )
 
         get_design_from_component(parent_component)._update_design_inplace()
 
         return AlignCondition(
-            result.condition.moniker,
-            result.condition.is_deleted,
-            result.condition.is_enabled,
-            result.condition.is_satisfied,
-            result.offset,
-            result.is_reversed,
-            result.is_valid,
+            result.get("moniker"),
+            result.get("is_deleted"),
+            result.get("is_enabled"),
+            result.get("is_satisfied"),
+            result.get("offset"),
+            result.get("is_reversed"),
+            result.get("is_valid"),
         )
 
     @protect_grpc
@@ -1589,24 +1586,22 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._commands_stub.CreateTangentCondition(
-            CreateAlignTangentOrientGearConditionRequest(
-                parent=parent_component._grpc_id,
-                geometric_a=geometry_a._grpc_id,
-                geometric_b=geometry_b._grpc_id,
-            )
+        result = self._grpc_client._services.assembly_controls.create_tangent_condition(
+            parent_id=parent_component.id,
+            geometric_a_id=geometry_a.id,
+            geometric_b_id=geometry_b.id,
         )
 
         get_design_from_component(parent_component)._update_design_inplace()
 
         return TangentCondition(
-            result.condition.moniker,
-            result.condition.is_deleted,
-            result.condition.is_enabled,
-            result.condition.is_satisfied,
-            result.offset,
-            result.is_reversed,
-            result.is_valid,
+            result.get("moniker"),
+            result.get("is_deleted"),
+            result.get("is_enabled"),
+            result.get("is_satisfied"),
+            result.get("offset"),
+            result.get("is_reversed"),
+            result.get("is_valid"),
         )
 
     @protect_grpc
@@ -1648,24 +1643,22 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._commands_stub.CreateOrientCondition(
-            CreateAlignTangentOrientGearConditionRequest(
-                parent=parent_component._grpc_id,
-                geometric_a=geometry_a._grpc_id,
-                geometric_b=geometry_b._grpc_id,
-            )
+        result = self._grpc_client.services.assembly_controls.create_orient_condition(
+            parent_id=parent_component.id,
+            geometric_a_id=geometry_a.id,
+            geometric_b_id=geometry_b.id,
         )
 
         get_design_from_component(parent_component)._update_design_inplace()
 
         return OrientCondition(
-            result.condition.moniker,
-            result.condition.is_deleted,
-            result.condition.is_enabled,
-            result.condition.is_satisfied,
-            result.offset,
-            result.is_reversed,
-            result.is_valid,
+            result.get("moniker"),
+            result.get("is_deleted"),
+            result.get("is_enabled"),
+            result.get("is_satisfied"),
+            result.get("offset"),
+            result.get("is_reversed"),
+            result.get("is_valid"),
         )
 
     @protect_grpc

@@ -507,7 +507,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RoundInfoRequest(
-            face_id=[EntityIdentifier(id=kwargs["face_id"])],
+            face=EntityIdentifier(id=kwargs["face_id"]),
         )
 
         # Call the gRPC service
