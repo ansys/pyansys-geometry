@@ -38,7 +38,7 @@ from .conversions import (
 
 class GRPCModelToolsServiceV0(GRPCModelToolsService):
     """Model tools service for gRPC communication with the Geometry server.
-    
+
     This class provides methods to interact with the Geometry server's
     model tools service. It is specifically designed for the v0 version of the
     Geometry API.
@@ -110,7 +110,7 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
         return {
             "success": response.success,
         }
-    
+
     @protect_grpc
     def move_rotate(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
@@ -133,7 +133,7 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
             "modified_faces": response.modified_faces,
             "modified_edges": response.modified_edges,
         }
-    
+
     @protect_grpc
     def move_translate(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier

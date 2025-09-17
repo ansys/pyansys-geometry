@@ -66,8 +66,7 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
             two_dimensional=kwargs["two_dimensional"],
             count_y=kwargs["count_y"],
             pitch_y=(
-                from_measurement_to_server_length(kwargs["pitch_y"])
-                if kwargs["pitch_y"] else None
+                from_measurement_to_server_length(kwargs["pitch_y"]) if kwargs["pitch_y"] else None
             ),
         )
 
@@ -125,7 +124,8 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
             linear_count=kwargs["linear_count"],
             linear_pitch=(
                 from_measurement_to_server_length(kwargs["linear_pitch"])
-                if kwargs["linear_pitch"] else None
+                if kwargs["linear_pitch"]
+                else None
             ),
             radial_direction=radial_direction,
         )
@@ -196,7 +196,7 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
         request = PatternRequest(
             selection=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],
         )
-        
+
         # Call the gRPC service
         response = self.stub.UpdateFillPattern(request)
 

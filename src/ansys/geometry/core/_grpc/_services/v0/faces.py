@@ -279,15 +279,18 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
                 for curve in response.curves
             ]
         }
-    
+
     @protect_grpc
     def extrude_faces(self, **kwargs):  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import ExtrudeFacesRequest
 
         # Assign direction
-        direction = None if kwargs["direction"] is None else from_unit_vector_to_grpc_direction(
-            kwargs["direction"])
+        direction = (
+            None
+            if kwargs["direction"] is None
+            else from_unit_vector_to_grpc_direction(kwargs["direction"])
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtrudeFacesRequest(
@@ -336,7 +339,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
             "success": response.success,
             "created_bodies": [body.id for body in response.created_bodies],
         }
-    
+
     @protect_grpc
     def offset_faces_set_radius(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
@@ -440,8 +443,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
         request = ReplaceFaceRequest(
             target_selection=[EntityIdentifier(id=object_id) for object_id in kwargs["target_ids"]],
             replacement_selection=[
-                EntityIdentifier(id=object_id)
-                for object_id in kwargs["replacement_ids"]
+                EntityIdentifier(id=object_id) for object_id in kwargs["replacement_ids"]
             ],
         )
 
@@ -494,12 +496,12 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
         # Call the gRPC server
         response = self.commands_stub.DraftFaces(request=request)
-        
+
         # Return the drafted faces
         return {
             "created_faces": [face.id for face in response.created_faces],
         }
-    
+
     @protect_grpc
     def get_round_info(self, **kwargs):  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier

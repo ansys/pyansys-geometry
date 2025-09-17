@@ -189,8 +189,7 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
         # Parse some optional arguments
         point = from_point3d_to_grpc_point(kwargs["point"]) if kwargs["point"] else None
         direction = (
-            from_unit_vector_to_grpc_direction(kwargs["direction"])
-            if kwargs["direction"] else None
+            from_unit_vector_to_grpc_direction(kwargs["direction"]) if kwargs["direction"] else None
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -214,7 +213,7 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
             "created_bodies": [body.id for body in resp.created_bodies],
             "success": resp.success,
         }
-    
+
     @protect_grpc
     def extrude_edges_up_to(self, **kwargs):  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import ExtrudeEdgesUpToRequest
@@ -236,7 +235,7 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
             "created_bodies": [body.id for body in resp.created_bodies],
             "success": resp.success,
         }
-    
+
     @protect_grpc
     def move_imprint_edges(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import MoveImprintEdgesRequest
@@ -255,7 +254,7 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
         return {
             "success": resp.result.success,
         }
-    
+
     @protect_grpc
     def offset_edges(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import OffsetEdgesRequest

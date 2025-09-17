@@ -30,7 +30,7 @@ from ..base.model_tools import GRPCModelToolsService
 
 class GRPCModelToolsServiceV1(GRPCModelToolsService):
     """Model tools service for gRPC communication with the Geometry server.
-    
+
     This class provides methods to interact with the Geometry server's
     model tools service. It is specifically designed for the v0 version of the
     Geometry API.
@@ -58,11 +58,11 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
     @protect_grpc
     def full_fillet(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def move_rotate(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def move_translate(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError

@@ -51,7 +51,7 @@ class GRPCCommandsServiceV0(GRPCCommandsService):
     def set_name(self, **kwargs):  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import RenameObjectRequest
-        
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = RenameObjectRequest(
             selection=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],

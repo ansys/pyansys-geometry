@@ -127,7 +127,7 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._admin
-    
+
     @property
     def assembly_controls(self) -> GRPCAssemblyControlsService:
         """
@@ -153,7 +153,7 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._assembly_controls
-    
+
     @property
     def beams(self) -> GRPCBeamsService:
         """
@@ -463,7 +463,7 @@ class _GRPCServices:
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
                 raise ValueError(f"Unsupported version: {self.version}")
-            
+
         return self._model_tools
 
     @property
@@ -517,7 +517,7 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._parts
-    
+
     @property
     def patterns(self) -> GRPCPatternsService:
         """
@@ -541,7 +541,7 @@ class _GRPCServices:
             else:
                 # This should never happen as the version is set in the constructor
                 raise ValueError(f"Unsupported version: {self.version}")
-            
+
         return self._patterns
 
     @property

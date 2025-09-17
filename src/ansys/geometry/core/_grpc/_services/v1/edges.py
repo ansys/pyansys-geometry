@@ -86,11 +86,11 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
     @protect_grpc
     def extrude_edges_up_to(self, **kwargs) -> dict:  # noqa: D102
         return NotImplementedError
-    
+
     @protect_grpc
     def move_imprint_edges(self, **kwargs) -> dict:  # noqa: D102
         return NotImplementedError
-    
+
     @protect_grpc
     def offset_edges(self, **kwargs) -> dict:  # noqa: D102
         return NotImplementedError

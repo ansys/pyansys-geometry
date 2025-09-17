@@ -451,7 +451,7 @@ class GeometryCommands:
 
         edges: list[Edge] = edges if isinstance(edges, list) else [edges]
         check_type_all_elements_in_iterable(edges, Edge)
-        
+
         # Create distance object
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 
@@ -567,8 +567,7 @@ class GeometryCommands:
         This method is only available starting on Ansys release 25R2.
         """
         result = self._grpc_client._services.commands.set_name(
-            selection_ids=[object.id for object in selection],
-            name=name
+            selection_ids=[object.id for object in selection], name=name
         )
         return result.get("success")
 
@@ -631,7 +630,7 @@ class GeometryCommands:
                     "two-dimensional pattern is desired."
                 )
             )
-        
+
         # Convert pitches to distance objects
         pitch_x = pitch_x if isinstance(pitch_x, Distance) else Distance(pitch_x)
         if pitch_y is not None:
@@ -696,7 +695,7 @@ class GeometryCommands:
 
         for object in selection:
             object.body._reset_tessellation_cache()
-        
+
         # Convert pitches to distance objects
         pitch_x = pitch_x if isinstance(pitch_x, Distance) else Distance(pitch_x)
         pitch_y = pitch_y if isinstance(pitch_y, Distance) else Distance(pitch_y)
@@ -779,7 +778,7 @@ class GeometryCommands:
                     "a two-dimensional pattern is desired."
                 )
             )
-        
+
         # Convert angle and pitch to appropriate objects
         if not isinstance(circular_angle, Angle):
             circular_angle = Angle(circular_angle)
@@ -919,20 +918,16 @@ class GeometryCommands:
         x_spacing = x_spacing if isinstance(x_spacing, Distance) else Distance(x_spacing)
         y_spacing = y_spacing if isinstance(y_spacing, Distance) else Distance(y_spacing)
         row_x_offset = (
-            row_x_offset if isinstance(row_x_offset, Distance)
-            else Distance(row_x_offset)
+            row_x_offset if isinstance(row_x_offset, Distance) else Distance(row_x_offset)
         )
         row_y_offset = (
-            row_y_offset if isinstance(row_y_offset, Distance)
-            else Distance(row_y_offset)
+            row_y_offset if isinstance(row_y_offset, Distance) else Distance(row_y_offset)
         )
         column_x_offset = (
-            column_x_offset if isinstance(column_x_offset, Distance)
-            else Distance(column_x_offset)
+            column_x_offset if isinstance(column_x_offset, Distance) else Distance(column_x_offset)
         )
         column_y_offset = (
-            column_y_offset if isinstance(column_y_offset, Distance)
-            else Distance(column_y_offset)
+            column_y_offset if isinstance(column_y_offset, Distance) else Distance(column_y_offset)
         )
 
         result = self._grpc_client.services.patterns.create_fill_pattern(
@@ -1311,9 +1306,7 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        result = self._grpc_client._services.faces.get_round_info(
-            face_id = face.id
-        )
+        result = self._grpc_client._services.faces.get_round_info(face_id=face.id)
 
         return (result.get("along_u"), result.get("radius"))
 
@@ -1445,11 +1438,11 @@ class GeometryCommands:
         radius = radius if isinstance(radius, Distance) else Distance(radius)
 
         result = self._grpc_client._services.faces.offset_faces_set_radius(
-                face_ids=[face.id for face in faces],
-                radius=radius,
-                copy=copy,
-                offset_mode=offset_mode,
-                extrude_type=extrude_type,
+            face_ids=[face.id for face in faces],
+            radius=radius,
+            copy=copy,
+            offset_mode=offset_mode,
+            extrude_type=extrude_type,
         )
 
         return result.get("success")

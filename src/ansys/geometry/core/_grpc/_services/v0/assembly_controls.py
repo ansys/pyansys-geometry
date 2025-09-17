@@ -54,7 +54,7 @@ class GRPCAssemblyControlsServiceV0(GRPCAssemblyControlsService):
             CreateAlignTangentOrientGearConditionRequest,
         )
 
-        # Create the request - assumes all inputs are valid and of the proper type 
+        # Create the request - assumes all inputs are valid and of the proper type
         request = CreateAlignTangentOrientGearConditionRequest(
             parent=EntityIdentifier(id=kwargs["parent_id"]),
             geometric_a=EntityIdentifier(id=kwargs["geometric_a_id"]),
@@ -82,7 +82,7 @@ class GRPCAssemblyControlsServiceV0(GRPCAssemblyControlsService):
             CreateAlignTangentOrientGearConditionRequest,
         )
 
-        # Create the request - assumes all inputs are valid and of the proper type 
+        # Create the request - assumes all inputs are valid and of the proper type
         request = CreateAlignTangentOrientGearConditionRequest(
             parent=EntityIdentifier(id=kwargs["parent_id"]),
             geometric_a=EntityIdentifier(id=kwargs["geometric_a_id"]),
@@ -110,7 +110,7 @@ class GRPCAssemblyControlsServiceV0(GRPCAssemblyControlsService):
             CreateAlignTangentOrientGearConditionRequest,
         )
 
-        # Create the request - assumes all inputs are valid and of the proper type 
+        # Create the request - assumes all inputs are valid and of the proper type
         request = CreateAlignTangentOrientGearConditionRequest(
             parent=EntityIdentifier(id=kwargs["parent_id"]),
             geometric_a=EntityIdentifier(id=kwargs["geometric_a_id"]),
