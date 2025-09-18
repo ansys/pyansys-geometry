@@ -1763,3 +1763,33 @@ class GeometryCommands:
 
         # Return success flag
         return result.get("success")
+
+    @min_backend_version(26, 1, 0)
+    def offset_faces(
+        self,
+        faces: list["Face"],
+        distance: Distance | Quantity | Real,
+        direction: UnitVector3D,
+        extrude_type: ExtrudeType,
+    ) -> None:
+        """Offset the specified faces by the specified distance in the specified direction.
+
+        Parameters
+        ----------
+        faces : list[Face]
+            The faces to offset.
+        distance : Distance | Quantity | Real
+            The distance to offset the faces.
+        direction : UnitVector3D
+            The direction to offset the faces.
+        extrude_type : ExtrudeType
+            The type of extrusion to use.
+        """
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
+        _ = self._grpc_client._services.faces.offset_faces(
+            face_ids=[face.id for face in faces],
+            distance=distance,
+            direction=direction,
+            extrude_type=extrude_type,
+        )
