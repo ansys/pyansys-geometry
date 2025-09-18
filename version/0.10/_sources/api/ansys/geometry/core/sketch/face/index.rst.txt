@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``face.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.sketch.face
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: face
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.face.SketchFace`
+            - Provides for modeling a face.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SketchFace</api/ansys/geometry/core/sketch/face/SketchFace>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a face (closed 2D sketch).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

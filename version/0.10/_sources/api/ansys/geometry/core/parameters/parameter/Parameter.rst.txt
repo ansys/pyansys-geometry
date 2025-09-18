@@ -1,0 +1,181 @@
+
+
+
+
+
+
+:class:`Parameter`
+==================
+
+
+.. py:class:: ansys.geometry.core.parameters.parameter.Parameter(id: int, name: str, dimension_type: ParameterType, dimension_value: ansys.geometry.core.typing.Real)
+
+   
+   Represents a parameter.
+
+
+   :Parameters:
+
+       **id** : :class:`python:int`
+           Unique ID for the parameter.
+
+       **name** : :class:`python:str`
+           Name of the parameter.
+
+       **dimension_type** : :obj:`ParameterType`
+           Type of the parameter.
+
+       **dimension_value** : :class:`python:float`
+           Value of the parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Parameter
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~name`
+            - Get the name of the parameter.
+          * - :py:attr:`~dimension_value`
+            - Get the value of the parameter.
+          * - :py:attr:`~dimension_type`
+            - Get the type of the parameter.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.parameters.parameter import Parameter
+
+Property detail
+---------------
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Get the name of the parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dimension_value
+   :type: ansys.geometry.core.typing.Real
+
+
+   
+   Get the value of the parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dimension_type
+   :type: ParameterType
+
+
+   
+   Get the type of the parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: id
+
+
+
+
+
