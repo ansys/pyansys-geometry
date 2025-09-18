@@ -1793,3 +1793,73 @@ class GeometryCommands:
             direction=direction,
             extrude_type=extrude_type,
         )
+
+    @min_backend_version(25, 2, 0)
+    def offset_face_curves(
+        self,
+        curves: Union["Curve", list["Curve"]],
+        offset: Distance | Quantity | Real,
+    ) -> bool:
+        """Offsets a given set of face curves by the specified distance.
+
+        Parameters
+        ----------
+        curves : Curve | list[Curve]
+            The curves to offset.
+        offset : Distance | Quantity | Real
+            The distance to offset the curves.
+        
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        curves = curves if isinstance(curves, list) else [curves]
+        offset = offset if isinstance(offset, Distance) else Distance(offset)
+
+        _ = self._grpc_client._services.curves.offset_face_curves(
+            curves=[curve.id for curve in curves], # TODO
+            offset=offset
+        )
+
+    @min_backend_version(25, 2, 0)
+    def revolve_edges(
+        self,
+        edges: Union["Edge", list["Edge"]],
+        axis: Line,
+        angle: Angle | Quantity | Real,
+        symmetric: bool,
+    ) -> None:
+        """Revolve edges around an axis.
+
+        Parameters
+        ----------
+        edges : Edge | list[Edge]
+            Edge(s) to revolve.
+        axis : Line
+            Axis of revolution.
+        angle : Angle | Quantity | Real
+            Angular distance to revolve.
+        symmetric : bool
+            Revolve symmetrically if ``True``, one side if ``False``.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
+        from ansys.geometry.core.designer.edge import Edge
+
+        edges: list[Edge] = edges if isinstance(edges, list) else [edges]
+        check_type_all_elements_in_iterable(edges, Edge)
+
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+
+        _ = self._grpc_client._services.curves.revolve_edges(
+            curves=[edge.shape for edge in edges],
+            axis=axis,
+            angle=angle,
+            symmetric=symmetric,
+        )
+
+        design = get_design_from_edge(edges[0])
+        design._update_design_inplace()
