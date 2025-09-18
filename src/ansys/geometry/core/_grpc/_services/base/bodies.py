@@ -218,3 +218,8 @@ class GRPCBodyService(ABC):  # pragma: no cover
     def boolean(self, **kwargs) -> dict:
         """Boolean operation."""
         pass
+
+    @abstractmethod
+    def split_body(self, **kwargs) -> dict:
+        """Split a body."""
+        pass

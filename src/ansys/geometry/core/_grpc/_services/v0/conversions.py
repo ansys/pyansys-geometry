@@ -77,6 +77,7 @@ if TYPE_CHECKING:  # pragma: no cover
         ParameterUpdateStatus,
     )
     from ansys.geometry.core.shapes.curves.curve import Curve
+    from ansys.geometry.core.shapes.curves.line import Line
     from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
     from ansys.geometry.core.shapes.surfaces.surface import Surface
@@ -174,6 +175,24 @@ def from_unit_vector_to_grpc_direction(unit_vector: "UnitVector3D") -> GRPCDirec
         Geometry service gRPC direction message.
     """
     return GRPCDirection(x=unit_vector.x, y=unit_vector.y, z=unit_vector.z)
+
+
+def from_line_to_grpc_line(line: "Line") -> GRPCLine:
+    """Convert a ``Line`` to a line gRPC message.
+
+    Parameters
+    ----------
+    line : Line
+        Line to convert.
+
+    Returns
+    -------
+    GRPCLine
+        Geometry service gRPC ``Line`` message.
+    """
+    start = line.origin
+    end = line.origin + line.direction
+    return GRPCLine(start=from_point3d_to_grpc_point(start), end=from_point3d_to_grpc_point(end))
 
 
 def build_grpc_id(id: str) -> EntityIdentifier:
