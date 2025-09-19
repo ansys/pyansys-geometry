@@ -1279,13 +1279,13 @@ class Component:
                 section_profile=[
                     [
                         TrimmedCurve(
-                            geometry=grpc_curve_to_curve(curve.geometry),
+                            geometry=grpc_curve_to_curve(curve.curve),
                             start=grpc_point_to_point3d(curve.start),
                             end=grpc_point_to_point3d(curve.end),
                             interval=Interval(curve.interval_start, curve.interval_end),
                             length=curve.length,
                         )
-                        for curve in curve_list
+                        for curve in curve_list.curves
                     ]
                     for curve_list in beam.cross_section.section_profile
                 ],
