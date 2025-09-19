@@ -232,7 +232,6 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
             from_grpc_point_to_point3d,
         )
 
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = DetectHelixesRequest(
             body_ids=[EntityIdentifier(id=body.id) for body in kwargs["bodies"]],
