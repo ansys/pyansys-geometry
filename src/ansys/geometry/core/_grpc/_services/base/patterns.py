@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the edges service implementation (abstraction layer)."""
+"""Module containing the patterns service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCEdgesService(ABC):  # pragma: no cover
-    """Edges service for gRPC communication with the Geometry server.
+class GRPCPatternsService(ABC):  # pragma: no cover
+    """Patterns service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,65 +36,35 @@ class GRPCEdgesService(ABC):  # pragma: no cover
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCEdgesService class."""
+        """Initialize the GRPCPatternsService class."""
         pass
 
     @abstractmethod
-    def get_edge(self, **kwargs) -> dict:
-        """Get edge."""
+    def create_linear_pattern(self, **kwargs) -> dict:
+        """Create a linear pattern of entities."""
         pass
 
     @abstractmethod
-    def get_curve(self, **kwargs) -> dict:
-        """Get curve information for the edge."""
+    def modify_linear_pattern(self, **kwargs) -> dict:
+        """Modify a linear pattern of entities."""
         pass
 
     @abstractmethod
-    def get_start_and_end_points(self, **kwargs) -> dict:
-        """Get start and end points for the edge."""
+    def create_circular_pattern(self, **kwargs) -> dict:
+        """Create a circular pattern of entities."""
         pass
 
     @abstractmethod
-    def get_length(self, **kwargs) -> dict:
-        """Get the length of the edge."""
+    def modify_circular_pattern(self, **kwargs) -> dict:
+        """Modify a circular pattern of entities."""
         pass
 
     @abstractmethod
-    def get_interval(self, **kwargs) -> dict:
-        """Get the interval of the edge."""
+    def create_fill_pattern(self, **kwargs) -> dict:
+        """Create a fill pattern of entities."""
         pass
 
     @abstractmethod
-    def get_faces(self, **kwargs) -> dict:
-        """Get the faces that are connected to the edge."""
-        pass
-
-    @abstractmethod
-    def get_vertices(self, **kwargs) -> dict:
-        """Get the vertices that are connected to the edge."""
-        pass
-
-    @abstractmethod
-    def get_bounding_box(self, **kwargs) -> dict:
-        """Get the bounding box of the edge."""
-        pass
-
-    @abstractmethod
-    def extrude_edges(self, **kwargs) -> dict:
-        """Extrude edges."""
-        pass
-
-    @abstractmethod
-    def extrude_edges_up_to(self, **kwargs) -> dict:
-        """Extrude edges up to a face."""
-        pass
-
-    @abstractmethod
-    def move_imprint_edges(self, **kwargs) -> dict:
-        """Move imprint edges."""
-        pass
-
-    @abstractmethod
-    def offset_edges(self, **kwargs) -> dict:
-        """Offset edges."""
+    def update_fill_pattern(self, **kwargs) -> dict:
+        """Update a fill pattern of entities."""
         pass
