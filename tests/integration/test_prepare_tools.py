@@ -207,3 +207,30 @@ def test_volume_extract_bad_edges(modeler: Modeler):
         sealing_edges,
     )
     assert len(created_bodies) == 0
+
+
+def test_helix_detection(modeler: Modeler):
+    """Test helix detection."""
+    design = modeler.open_file(FILES_DIR / "bolt.scdocx")
+
+    bodies = design.bodies
+    assert len(bodies) == 2
+
+    search_bodies = [bodies[0]]
+    assert len(search_bodies) == 1
+
+    # Test default parameters
+    result = modeler.prepare_tools.detect_helixes(search_bodies)
+    assert len(result["helixes"]) == 1
+
+    # Test with non-default parameters
+    result = modeler.prepare_tools.detect_helixes(search_bodies, 0, 10, 100)
+    assert len(result["helixes"]) == 1
+
+    # Test parameters that should yield no results
+    result = modeler.prepare_tools.detect_helixes(search_bodies, 5.0, 10.0, 0.01)
+    assert len(result["helixes"]) == 0
+
+    # Test with multiple bodies
+    result = modeler.prepare_tools.detect_helixes(bodies)
+    assert len(result["helixes"]) == 2

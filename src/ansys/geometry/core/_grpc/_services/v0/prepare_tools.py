@@ -214,3 +214,64 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Return the response - formatted as a dictionary
         return {"success": response.success}
+
+    @protect_grpc
+    def detect_helixes(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+        from ansys.api.geometry.v0.models_pb2 import DetectHelixesOptions
+        from ansys.api.geometry.v0.preparetools_pb2 import DetectHelixesRequest
+
+        from ansys.geometry.core.shapes.parameterization import Interval
+
+        from ..base.conversions import (
+            from_measurement_to_server_length,
+            to_distance,
+        )
+        from .conversions import (
+            from_grpc_curve_to_curve,
+            from_grpc_point_to_point3d,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DetectHelixesRequest(
+            body_ids=[EntityIdentifier(id=body.id) for body in kwargs["bodies"]],
+            options=DetectHelixesOptions(
+                min_radius=from_measurement_to_server_length(kwargs["min_radius"]),
+                max_radius=from_measurement_to_server_length(kwargs["max_radius"]),
+                fit_radius_error=from_measurement_to_server_length(kwargs["fit_radius_error"]),
+            ),
+        )
+
+        # Call the gRPC service
+        response = self.stub.DetectHelixes(request)
+
+        # If no helixes, return empty dictionary
+        if len(response.helixes) == 0:
+            return {"helixes": []}
+
+        # Return the response - formatted as a dictionary
+        return {
+            "helixes": [
+                {
+                    "trimmed_curve": {
+                        "geometry": from_grpc_curve_to_curve(helix.trimmed_curve.curve),
+                        "start": from_grpc_point_to_point3d(helix.trimmed_curve.start),
+                        "end": from_grpc_point_to_point3d(helix.trimmed_curve.end),
+                        "interval": Interval(
+                            helix.trimmed_curve.interval_start, helix.trimmed_curve.interval_end
+                        ),
+                        "length": to_distance(helix.trimmed_curve.length).value,
+                    },
+                    "edges": [
+                        {
+                            "id": edge.id,
+                            "parent_id": edge.parent.id,
+                            "curve_type": edge.curve_type,
+                            "is_reversed": edge.is_reversed,
+                        }
+                        for edge in helix.edges
+                    ],
+                }
+                for helix in response.helixes
+            ]
+        }
