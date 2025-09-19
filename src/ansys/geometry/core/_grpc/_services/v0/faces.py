@@ -281,7 +281,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
         }
 
     @protect_grpc
-    def extrude_faces(self, **kwargs):  # noqa: D102
+    def extrude_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import ExtrudeFacesRequest
 
@@ -314,7 +314,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
         }
 
     @protect_grpc
-    def extrude_faces_up_to(self, **kwargs):  # noqa: D102
+    def extrude_faces_up_to(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import ExtrudeFacesUpToRequest
 
@@ -503,7 +503,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
         }
 
     @protect_grpc
-    def get_round_info(self, **kwargs):  # noqa: D102
+    def get_round_info(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import RoundInfoRequest
 

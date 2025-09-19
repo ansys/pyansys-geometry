@@ -40,6 +40,6 @@ class GRPCCurvesService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
-    def offset_face_curves(self, **kwargs) -> dict:
-        """Offset face curves."""
+    def revolve_edges(self, **kwargs) -> dict:
+        """Revolve edges around an axis to create a surface of revolution."""
         pass

@@ -50,27 +50,7 @@ class GRPCCurvesServiceV0(GRPCCurvesService):  # pragma: no cover
         self.stub = CommandsStub(channel)
 
     @protect_grpc
-    def offset_face_curves(self, **kwargs):  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-        from ansys.api.geometry.v0.commands_pb2 import OffsetFaceCurvesRequest
-
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = OffsetFaceCurvesRequest(
-            objects=[EntityIdentifier(id=id) for id in kwargs["curve_ids"]],
-            offset=from_measurement_to_server_length(kwargs["offset"]),
-        )
-        
-        # Call the gRPC service
-        result = self.stub.OffsetFaceCurves(request)
-
-        # Return the result - formatted as a dictionary
-        return {
-            "success": result.result.success,
-            "created_curves": [curve.id for curve in result.created_curves]
-        }
-
-    @protect_grpc
-    def revolve_edges(self, **kwargs):  # noqa: D102
+    def revolve_edges(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import RevolveCurvesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
