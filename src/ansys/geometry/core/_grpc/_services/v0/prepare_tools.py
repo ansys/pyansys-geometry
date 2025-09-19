@@ -23,14 +23,6 @@
 
 import grpc
 
-from ansys.geometry.core._grpc._services.base.conversions import (
-    from_measurement_to_server_length,
-    to_distance,
-)
-from ansys.geometry.core._grpc._services.v0.conversions import (
-    from_grpc_curve_to_curve,
-    from_grpc_point_to_point3d,
-)
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.prepare_tools import GRPCPrepareToolsService
@@ -224,12 +216,22 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         return {"success": response.success}
 
     @protect_grpc
-    def detect_helixes(self, **kwargs):  # noqa: D102
+    def detect_helixes(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.models_pb2 import DetectHelixesOptions
         from ansys.api.geometry.v0.preparetools_pb2 import DetectHelixesRequest
 
         from ansys.geometry.core.shapes.parameterization import Interval
+
+        from ..base.conversions import (
+            from_measurement_to_server_length,
+            to_distance,
+        )
+        from .conversions import (
+            from_grpc_curve_to_curve,
+            from_grpc_point_to_point3d,
+        )
+
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DetectHelixesRequest(

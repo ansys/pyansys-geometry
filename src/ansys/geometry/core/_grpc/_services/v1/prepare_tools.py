@@ -80,5 +80,5 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
-    def detect_helixes(self, **kwargs):  # noqa: D102
+    def detect_helixes(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
