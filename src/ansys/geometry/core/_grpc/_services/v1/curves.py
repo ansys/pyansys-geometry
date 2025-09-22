@@ -46,7 +46,7 @@ class GRPCCurvesServiceV1(GRPCCurvesService):  # pragma: no cover
         from ansys.api.geometry.v1.curves_pb2_grpc import CurvesStub
 
         self.stub = CurvesStub(channel)
-    
+
     @protect_grpc
     def revolve_edges(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError

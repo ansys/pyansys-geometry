@@ -528,12 +528,14 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = OffsetFacesRequest(
-            request_data=[OffsetFacesRequestData(
-                faces=[EntityIdentifier(id=face_id) for face_id in kwargs["face_ids"]],
-                offset=from_measurement_to_server_length(kwargs["distance"]),
-                direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                extrude_type=kwargs["extrude_type"].value,
-            )]
+            request_data=[
+                OffsetFacesRequestData(
+                    faces=[EntityIdentifier(id=face_id) for face_id in kwargs["face_ids"]],
+                    offset=from_measurement_to_server_length(kwargs["distance"]),
+                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+                    extrude_type=kwargs["extrude_type"].value,
+                )
+            ]
         )
 
         # Call the gRPC service
@@ -543,5 +545,6 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
         return {
             "results": [
                 [face.id for face in response_data.new_faces]
-            for response_data in response.response_data]
+                for response_data in response.response_data
+            ]
         }

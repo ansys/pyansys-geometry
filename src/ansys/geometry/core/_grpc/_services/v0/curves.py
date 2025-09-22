@@ -25,7 +25,7 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
+from ..base.conversions import from_measurement_to_server_angle
 from ..base.curves import GRPCCurvesService
 from .conversions import from_line_to_grpc_line, from_trimmed_curve_to_grpc_trimmed_curve
 
