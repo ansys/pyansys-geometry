@@ -24,13 +24,13 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
+from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.api.geometry.v0.commands_pb2 import FaceOffsetRequest
+from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.commands_pb2 import FaceOffsetRequest
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.vertex import Vertex
@@ -604,11 +604,12 @@ class Face:
 
         """
         # lazy import here to improve initial module loading time
-        import ansys.geometry.core as pyansys_geometry
-        from ansys.geometry.core.plotting import GeometryPlotter
         from ansys.tools.visualization_interface.types.mesh_object_plot import (
             MeshObjectPlot,
         )
+
+        import ansys.geometry.core as pyansys_geometry
+        from ansys.geometry.core.plotting import GeometryPlotter
 
         use_service_colors = (
             use_service_colors

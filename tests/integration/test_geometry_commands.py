@@ -26,6 +26,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core.designer.geometry_commands import (
+    DraftSide,
     ExtrudeType,
     FillPatternType,
     OffsetMode,
@@ -1286,3 +1287,121 @@ def test_offset_face_set_radius(modeler: Modeler):
     assert success
 
     assert box.volume.m == pytest.approx(Quantity(7.6073, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+
+def test_move_imprint_edges(modeler: Modeler):
+    """Test moving imprint edges."""
+    design = modeler.create_design("move_imprint_edges")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Create a cylinder cutting through the box
+    cylinder = design.extrude_sketch("cylinder", Sketch().circle(Point2D([0, 0]), 0.5), 2)
+
+    # Imprint the top edge of the cylindrical hole
+    edges = cylinder.faces[1].edges
+    trimmed_curves = [edges[0].shape]
+    new_edges, new_faces = box.imprint_curves(faces=[box.faces[1]], trimmed_curves=trimmed_curves)
+
+    assert len(new_edges) == 1
+    assert len(new_faces) == 1
+
+    # Move the imprinted edge to create new face and edge
+    modeler.geometry_commands.move_imprint_edges([edges[0]], UNITVECTOR3D_Y, 0.1)
+
+    # Verify the new edges and faces
+    assert len(box.edges) == 13
+    assert len(box.faces) == 7
+
+
+def test_offset_edges(modeler: Modeler):
+    """Test offsetting edges of a surface body."""
+    design = modeler.create_design("offset_edges")
+
+    # Create rectangular surface
+    sketch = Sketch().box(Point2D([0, 0]), 2, 2)
+    surface = design.create_surface("surface", sketch)
+
+    assert (
+        modeler.measurement_tools.min_distance_between_objects(
+            surface.edges[0], surface.edges[2]
+        ).distance.value.m
+        == 2
+    )
+    assert len(surface.faces) == 1
+    assert len(surface.edges) == 4
+
+    # Offset the imprinted edge to create new face and edge
+    modeler.geometry_commands.offset_edges([surface.edges[0], surface.edges[2]], 5)
+
+    # Verify the new edges and faces
+    assert (
+        modeler.measurement_tools.min_distance_between_objects(
+            surface.edges[0], surface.edges[2]
+        ).distance.value.m
+        == 12
+    )
+    assert len(surface.faces) == 1
+    assert len(surface.edges) == 4
+
+
+def test_draft_faces(modeler: Modeler):
+    """Test drafting faces."""
+    design = modeler.create_design("draft_faces")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    assert box.faces[2].area.m == pytest.approx(Quantity(4, UNITS.m**2).m, rel=1e-6, abs=1e-8)
+
+    # Create a face to draft
+    faces = box.faces[2:]
+    ref_faces = [box.faces[1]]
+
+    # Draft the face
+    drafted_faces = modeler.geometry_commands.draft_faces(
+        faces, ref_faces, DraftSide.NO_SPLIT, Angle(10, UNITS.deg), ExtrudeType.ADD
+    )
+
+    assert len(drafted_faces) == 0
+    assert box.faces[2].area.m == pytest.approx(
+        Quantity(4.777895, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+
+
+def test_thicken_faces(modeler: Modeler):
+    """Test thickening faces."""
+    design = modeler.create_design("thicken_faces")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    assert len(box.faces) == 6
+    assert box.volume.m == pytest.approx(Quantity(8, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # Thicken the top face
+    success = modeler.geometry_commands.thicken_faces(
+        [box.faces[1]], UNITVECTOR3D_Z, 0.1, ExtrudeType.ADD, False, False
+    )
+    assert success
+
+    assert box.volume.m == pytest.approx(Quantity(8.4, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+
+def test_thicken_surface_body(modeler: Modeler):
+    """Test thickening a surface body."""
+    design = modeler.create_design("thicken_surface_body")
+
+    # Create rectangular surface
+    sketch = Sketch().box(Point2D([0, 0]), 2, 2)
+    surface = design.create_surface("surface", sketch)
+
+    assert len(surface.faces) == 1
+    assert len(surface.edges) == 4
+    assert surface.is_surface
+
+    # Thicken the surface body
+    success = modeler.geometry_commands.thicken_faces(
+        [surface.faces[0]], UNITVECTOR3D_Z, 0.1, ExtrudeType.ADD, False, False
+    )
+    assert success
+
+    assert len(design.bodies) == 1
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(0.4, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )

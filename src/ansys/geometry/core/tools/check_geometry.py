@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING
 
 from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
+
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
