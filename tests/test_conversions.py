@@ -20,9 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from pint import Quantity
-import pytest
-
 from ansys.api.dbu.v0.admin_pb2 import BackendType as GRPCBackendType
 from ansys.api.dbu.v0.dbumodels_pb2 import PartExportFormat as GRPCPartExportFormat
 from ansys.api.geometry.v0.models_pb2 import (
@@ -33,6 +30,9 @@ from ansys.api.geometry.v0.models_pb2 import (
     Surface as GRPCSurface,
     SurfaceType as GRPCSurfaceType,
 )
+from pint import Quantity
+import pytest
+
 from ansys.geometry.core._grpc._services.v0.conversions import (
     from_curve_to_grpc_curve,
     from_design_file_format_to_grpc_part_export_format,

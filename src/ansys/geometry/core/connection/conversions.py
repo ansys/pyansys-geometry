@@ -23,8 +23,6 @@
 
 from typing import TYPE_CHECKING
 
-from pint import Quantity, UndefinedUnitError
-
 from ansys.api.geometry.v0.models_pb2 import (
     Arc as GRPCArc,
     Circle as GRPCCircle,
@@ -43,6 +41,8 @@ from ansys.api.geometry.v0.models_pb2 import (
     Surface as GRPCSurface,
     TrimmedCurve as GRPCTrimmedCurve,
 )
+from pint import Quantity, UndefinedUnitError
+
 from ansys.geometry.core.materials.material import (
     Material,
     MaterialProperty,

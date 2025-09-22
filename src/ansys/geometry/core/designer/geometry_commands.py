@@ -24,9 +24,6 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
-from beartype import beartype as check_input_types
-from pint import Quantity
-
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     ChamferRequest,
@@ -34,6 +31,7 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CreateCircularPatternRequest,
     CreateFillPatternRequest,
     CreateLinearPatternRequest,
+    DraftFacesRequest,
     ExtrudeEdgesRequest,
     ExtrudeEdgesUpToRequest,
     ExtrudeFacesRequest,
@@ -42,8 +40,10 @@ from ansys.api.geometry.v0.commands_pb2 import (
     FullFilletRequest,
     ModifyCircularPatternRequest,
     ModifyLinearPatternRequest,
+    MoveImprintEdgesRequest,
     MoveRotateRequest,
     MoveTranslateRequest,
+    OffsetEdgesRequest,
     OffsetFacesSetRadiusRequest,
     PatternRequest,
     RenameObjectRequest,
@@ -53,8 +53,12 @@ from ansys.api.geometry.v0.commands_pb2 import (
     RevolveFacesUpToRequest,
     RoundInfoRequest,
     SplitBodyRequest,
+    ThickenFacesRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+from beartype import beartype as check_input_types
+from pint import Quantity
+
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     line_to_grpc_line,
@@ -79,6 +83,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_component,
     get_design_from_edge,
     get_design_from_face,
+    get_faces_from_ids,
 )
 from ansys.geometry.core.misc.checks import (
     check_is_float_int,
@@ -126,6 +131,16 @@ class FillPatternType(Enum):
     GRID = 0
     OFFSET = 1
     SKEWED = 2
+
+
+@unique
+class DraftSide(Enum):
+    """Provides values for draft sides."""
+
+    NO_SPLIT = 0
+    THIS = 1
+    OTHER = 2
+    BACK = 3
 
 
 class GeometryCommands:
@@ -1666,3 +1681,178 @@ class GeometryCommands:
             result.is_reversed,
             result.is_valid,
         )
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def move_imprint_edges(
+        self, edges: list["Edge"], direction: UnitVector3D, distance: Distance | Quantity | Real
+    ) -> bool:
+        """Move the imprint edges in the specified direction by the specified distance.
+
+        Parameters
+        ----------
+        edges : list[Edge]
+            The edges to move.
+        direction : UnitVector3D
+            The direction to move the edges.
+        distance : Distance
+            The distance to move the edges.
+
+        Returns
+        -------
+        bool
+            Returns True if the edges were moved successfully, False otherwise.
+        """
+        # Convert the distance object
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+        move_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+
+        # Create the request object
+        request = MoveImprintEdgesRequest(
+            edges=[edge._grpc_id for edge in edges],
+            direction=unit_vector_to_grpc_direction(direction),
+            distance=move_magnitude,
+        )
+
+        # Call the gRPC service
+        response = self._commands_stub.MoveImprintEdges(request)
+
+        # Return success flag
+        return response.result.success
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def offset_edges(self, edges: list["Edge"], offset: Distance | Quantity | Real) -> bool:
+        """Offset the specified edges with the specified distance.
+
+        Parameters
+        ----------
+        edges : list[Edge]
+            The edges to offset.
+        offset : Distance
+            The distance to offset the edges.
+
+        Returns
+        -------
+        bool
+            Returns True if the edges were offset successfully, False otherwise.
+        """
+        # Convert the distance object
+        offset = offset if isinstance(offset, Distance) else Distance(offset)
+        offset_magnitude = offset.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+
+        # Create the request object
+        request = OffsetEdgesRequest(
+            edges=[edge._grpc_id for edge in edges],
+            value=offset_magnitude,
+        )
+
+        # Call the gRPC service
+        response = self._commands_stub.OffsetEdges(request)
+
+        # Return success flag
+        return response.success
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def draft_faces(
+        self,
+        faces: list["Face"],
+        reference_faces: list["Face"],
+        draft_side: DraftSide,
+        angle: Angle | Quantity | Real,
+        extrude_type: ExtrudeType,
+    ) -> list["Face"]:
+        """Draft the specified faces in the specified direction by the specified angle.
+
+        Parameters
+        ----------
+        faces : list[Face]
+            The faces to draft.
+        reference_faces : list[Face]
+            The reference faces to use for the draft.
+        draft_side : DraftSide
+            The side to draft.
+        angle : Angle | Quantity | Real
+            The angle to draft the faces.
+        extrude_type : ExtrudeType
+            The type of extrusion to use.
+
+        Returns
+        -------
+        list[Face]
+            The faces created by the draft operation.
+        """
+        # Convert the angle object
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        angle_magnitude = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
+
+        # Create the request object
+        request = DraftFacesRequest(
+            faces=[face._grpc_id for face in faces],
+            reference_faces=[face._grpc_id for face in reference_faces],
+            draft_side=draft_side.value,
+            draft_angle=angle_magnitude,
+            extrude_type=extrude_type.value,
+        )
+
+        # Call the gRPC server
+        response = self._commands_stub.DraftFaces(request)
+
+        # Return the drafted faces
+        design = get_design_from_face(faces[0])
+        return get_faces_from_ids(design, [face.id for face in response.created_faces])
+
+    @protect_grpc
+    @min_backend_version(26, 1, 0)
+    def thicken_faces(
+        self,
+        faces: list["Face"],
+        direction: UnitVector3D,
+        thickness: Real,
+        extrude_type: ExtrudeType,
+        pull_symmetric: bool,
+        select_direction: bool,
+    ) -> bool:
+        """Thicken the specified faces by the specified thickness in the specified direction.
+
+        Parameters
+        ----------
+        faces : list[Face]
+            The faces to thicken.
+        direction : UnitVector3D
+            The direction to thicken the faces.
+        thickness : Real
+            The thickness to apply to the faces.
+        extrude_type : ExtrudeType
+            The type of extrusion to use.
+        pull_symmetric : bool
+            Whether to pull the faces symmetrically.
+        select_direction : bool
+            Whether to select the direction.
+
+        Returns
+        -------
+        bool
+            Returns True if the faces were thickened successfully, False otherwise.
+        """
+        # Create the request object
+        request = ThickenFacesRequest(
+            faces=[face._grpc_id for face in faces],
+            direction=unit_vector_to_grpc_direction(direction),
+            value=thickness,
+            extrude_type=extrude_type.value,
+            pull_symmetric=pull_symmetric,
+            select_direction=select_direction,
+        )
+
+        # Call the gRPC service
+        response = self._commands_stub.ThickenFaces(request)
+
+        # Update design
+        design = get_design_from_face(faces[0])
+        if response.success:
+            design._update_design_inplace()
+
+        # Return success flag
+        return response.success

@@ -7,7 +7,7 @@ exclude: "tests/integration/files"
 repos:
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.12.11
+  rev: v0.13.0
   hooks:
     - id: ruff-check
     - id: ruff-format

@@ -24,8 +24,6 @@
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
-from google.protobuf.wrappers_pb2 import Int32Value
-
 from ansys.api.geometry.v0.repairtools_pb2 import (
     FixAdjustSimplifyRequest,
     FixDuplicateFacesRequest,
@@ -39,6 +37,8 @@ from ansys.api.geometry.v0.repairtools_pb2 import (
     FixStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
+from google.protobuf.wrappers_pb2 import Int32Value
+
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
