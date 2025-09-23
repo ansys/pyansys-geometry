@@ -251,7 +251,7 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         run: |
           .\.venv\Scripts\Activate.ps1
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
@@ -343,7 +343,7 @@ jobs:
       - name: Pull and launch geometry service
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
 
       - name: Run Ansys documentation building action
         uses: ansys/actions/doc-build@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
@@ -416,7 +416,7 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
 
       - name: Checkout repository
         if: env.SKIP_UNSTABLE == 'false'
@@ -512,7 +512,7 @@ jobs:
       - name: Start Geometry service and verify start
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run pytest
@@ -564,7 +564,7 @@ jobs:
       - name: Start Geometry service and verify start
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run pytest
@@ -616,7 +616,7 @@ jobs:
       - name: Start Geometry service and verify start
         run: |
           docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run pytest
@@ -778,7 +778,7 @@ jobs:
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:windows-tmp
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:windows-tmp ${{ secrets.TRANSPORT_MODE_SELECTION }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
@@ -860,7 +860,7 @@ jobs:
 
       - name: Start Geometry service and verify start
         run: |
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:linux-tmp
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:linux-tmp ${{ secrets.TRANSPORT_MODE_SELECTION }}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
