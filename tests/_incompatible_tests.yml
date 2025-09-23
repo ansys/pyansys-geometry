@@ -28,6 +28,7 @@ backends:
       - tests/integration/test_prepare_tools.py::test_volume_extract_bad_faces
       - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
       - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
+      - tests/integration/test_prepare_tools.py::test_helix_detection
       - tests/integration/test_repair_tools.py::test_fix_small_face
       - tests/integration/test_repair_tools.py::test_find_interference
       - tests/integration/test_repair_tools.py::test_fix_interference
@@ -137,6 +138,7 @@ backends:
       - tests/integration/test_prepare_tools.py::test_volume_extract_bad_faces
       - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
       - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
+      - tests/integration/test_prepare_tools.py::test_helix_detection
       - tests/integration/test_repair_tools.py::test_fix_small_face
       - tests/integration/test_repair_tools.py::test_find_interference
       - tests/integration/test_repair_tools.py::test_fix_interference
@@ -222,6 +224,7 @@ backends:
       # Model used is too new for this version
       - tests/integration/test_design.py::test_import_component_named_selections
       - tests/integration/test_design.py::test_component_make_independent
+      - tests/integration/test_prepare_tools.py::test_helix_detection
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
