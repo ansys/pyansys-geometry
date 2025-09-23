@@ -759,3 +759,39 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {}
+
+    @protect_grpc
+    def create_body_from_loft_profiles_with_guides(self, **kwargs):  # noqa: D102
+        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+        from ansys.api.geometry.v0.bodies_pb2 import (
+            CreateBodyFromLoftWithGuidesRequest,
+            CreateBodyFromLoftWithGuidesRequestData,
+        )
+        from ansys.api.geometry.v0.models_pb2 import TrimmedCurveList
+
+        # Create request object - assumes all inputs are valid and of the proper type
+        request = CreateBodyFromLoftWithGuidesRequest(
+            request_data=CreateBodyFromLoftWithGuidesRequestData(
+                name=kwargs["name"],
+                parent=EntityIdentifier(id=kwargs["parent_id"]),
+                profiles=[TrimmedCurveList(
+                    curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile]
+                ) for profile in kwargs["profiles"]],
+                guide_ids=TrimmedCurveList(
+                    curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["guides"]]
+                ),
+            )
+        )
+
+        # Call the gRPC service
+        response = self.stub.CreateBodyFromLoftWithGuides(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            [{
+                "id": body.id,
+                "name": body.name,
+                "master_id": body.master_id,
+                "is_surface": body.is_surface,
+            }] for body in response.created_bodies
+        }
