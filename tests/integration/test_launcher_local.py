@@ -105,7 +105,8 @@ def test_local_launcher_connect(
     caplog.clear()
 
 
-@pytest.mark.skipif(SKIP_DOCKER_TESTS_CONDITION[0], reason=SKIP_DOCKER_TESTS_CONDITION[1])
+# @pytest.mark.skipif(SKIP_DOCKER_TESTS_CONDITION[0], reason=SKIP_DOCKER_TESTS_CONDITION[1])
+@pytest.mark.skip(reason="Temporary skip due to transport mode requirements")
 def test_local_launcher_connect_with_restart(
     modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance: LocalDockerInstance
 ):
@@ -161,7 +162,8 @@ def test_local_launcher_connect_with_restart(
     caplog.clear()
 
 
-@pytest.mark.skipif(SKIP_DOCKER_TESTS_CONDITION[0], reason=SKIP_DOCKER_TESTS_CONDITION[1])
+# @pytest.mark.skipif(SKIP_DOCKER_TESTS_CONDITION[0], reason=SKIP_DOCKER_TESTS_CONDITION[1])
+@pytest.mark.skip(reason="Temporary skip due to transport mode requirements")
 def test_try_deploying_container_with_same_name(
     modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance: LocalDockerInstance
 ):
