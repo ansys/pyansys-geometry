@@ -223,7 +223,7 @@ def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFact
     exported_file = design.export_to_disco(location, write_body_facets=True)
 
     # Checking file size to ensure facets are exported
-    assert os.path.getsize(exported_file) == pytest.approx(53844, 1e-3, 100)
+    assert exported_file.stat().st_size == pytest.approx(53844, 1e-3, 100)
 
     # Check the exported file
     assert file_location.exists()
