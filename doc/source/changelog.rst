@@ -9,6 +9,138 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.11.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.11.3>`_ - September 17, 2025
+===============================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Move_imprint_edges, offset_edges, draft_faces, thicken_faces implementations
+          - `#2214 <https://github.com/ansys/pyansys-geometry/pull/2214>`_
+
+        * - NURBS surface implementation
+          - `#2222 <https://github.com/ansys/pyansys-geometry/pull/2222>`_
+
+        * - For 261 dotnet 8 is included in core service
+          - `#2226 <https://github.com/ansys/pyansys-geometry/pull/2226>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump pyvista[jupyter] from 0.46.2 to 0.46.3
+          - `#2203 <https://github.com/ansys/pyansys-geometry/pull/2203>`_
+
+        * - Bump jupytext from 1.17.2 to 1.17.3 in the docs-deps group
+          - `#2206 <https://github.com/ansys/pyansys-geometry/pull/2206>`_
+
+        * - Bump vtk from 9.5.0 to 9.5.1
+          - `#2208 <https://github.com/ansys/pyansys-geometry/pull/2208>`_
+
+        * - Bump quarto-cli from 1.7.33 to 1.7.34
+          - `#2209 <https://github.com/ansys/pyansys-geometry/pull/2209>`_
+
+        * - Bump matplotlib from 3.10.5 to 3.10.6
+          - `#2211 <https://github.com/ansys/pyansys-geometry/pull/2211>`_
+
+        * - Bump ansys-sphinx-theme[autoapi] from 1.5.3 to 1.6.0 in the docs-deps group
+          - `#2213 <https://github.com/ansys/pyansys-geometry/pull/2213>`_
+
+        * - Bump pytest from 8.4.1 to 8.4.2
+          - `#2218 <https://github.com/ansys/pyansys-geometry/pull/2218>`_
+
+        * - Bump pytest-cov from 6.2.1 to 6.3.0
+          - `#2227 <https://github.com/ansys/pyansys-geometry/pull/2227>`_
+
+        * - Bump ansys-sphinx-theme[autoapi] from 1.6.0 to 1.6.1 in the docs-deps group
+          - `#2228 <https://github.com/ansys/pyansys-geometry/pull/2228>`_
+
+        * - Bump panel from 1.7.5 to 1.8.0
+          - `#2233 <https://github.com/ansys/pyansys-geometry/pull/2233>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update ``html_context`` with PyAnsys tags
+          - `#2200 <https://github.com/ansys/pyansys-geometry/pull/2200>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Add skip_if_discovery method
+          - `#2202 <https://github.com/ansys/pyansys-geometry/pull/2202>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Re-enable 25.1 testing
+          - `#2185 <https://github.com/ansys/pyansys-geometry/pull/2185>`_
+
+        * - Update CHANGELOG for v0.11.2
+          - `#2197 <https://github.com/ansys/pyansys-geometry/pull/2197>`_
+
+        * - Pre-commit automatic update
+          - `#2205 <https://github.com/ansys/pyansys-geometry/pull/2205>`_, `#2219 <https://github.com/ansys/pyansys-geometry/pull/2219>`_, `#2230 <https://github.com/ansys/pyansys-geometry/pull/2230>`_
+
+        * - Bump the actions group with 2 updates
+          - `#2207 <https://github.com/ansys/pyansys-geometry/pull/2207>`_
+
+        * - Bump ansys/actions from 10.0.15 to 10.0.16 in the actions group
+          - `#2212 <https://github.com/ansys/pyansys-geometry/pull/2212>`_
+
+        * - Bump the actions group with 4 updates
+          - `#2215 <https://github.com/ansys/pyansys-geometry/pull/2215>`_
+
+        * - Bump the actions group with 3 updates
+          - `#2216 <https://github.com/ansys/pyansys-geometry/pull/2216>`_
+
+        * - Bump github/codeql-action from 3.30.1 to 3.30.2 in the actions group
+          - `#2221 <https://github.com/ansys/pyansys-geometry/pull/2221>`_
+
+        * - Bump github/codeql-action from 3.30.2 to 3.30.3 in the actions group
+          - `#2225 <https://github.com/ansys/pyansys-geometry/pull/2225>`_
+
+        * - Bump ansys/actions from 10.0.20 to 10.1.0 in the actions group
+          - `#2229 <https://github.com/ansys/pyansys-geometry/pull/2229>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Adding test for vertex and tests based on spaceclaim tutorials
+          - `#2157 <https://github.com/ansys/pyansys-geometry/pull/2157>`_
+
+        * - Adding test for nurbs sketching
+          - `#2193 <https://github.com/ansys/pyansys-geometry/pull/2193>`_
+
+        * - New test and remove skip
+          - `#2199 <https://github.com/ansys/pyansys-geometry/pull/2199>`_
+
+
 `0.11.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.11.2>`_ - August 26, 2025
 ============================================================================================
 
