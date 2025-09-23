@@ -32,7 +32,7 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
     """Beams service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
-    beams service. It is specifically designed for the v0 version of the
+    beams service. It is specifically designed for the v1 version of the
     Geometry API.
 
     Parameters

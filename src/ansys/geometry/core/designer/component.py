@@ -1212,15 +1212,9 @@ class Component:
         -----
         This is a legacy method, which is used in versions up to Ansys 25.1.1 products.
         """
-        lines = []
-        for segment in segments:
-            lines.append(
-                Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
-            )
-
         self._grpc_client.log.debug(f"Creating beams on {self.id}...")
         response = self._grpc_client.services.beams.create_beam_segments(
-            parent_id=self.id, profile_id=profile.id, lines=lines
+            parent_id=self.id, profile_id=profile.id, segments=segments
         )
         self._grpc_client.log.debug("Beams successfully created.")
 
@@ -1257,19 +1251,12 @@ class Component:
         list[Beam]
             A list of the created Beams.
         """
-        lines = []
-        for segment in segments:
-            lines.append(
-                Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
-            )
-
         self._grpc_client.log.debug(f"Creating beams on {self.id}...")
         response = self._grpc_client.services.beams.create_descriptive_beam_segments(
-            parent_id=self.id, profile_id=profile.id, lines=lines
+            parent_id=self.id, profile_id=profile.id, segments=segments
         )
         self._grpc_client.log.debug("Beams successfully created.")
 
-        print(response)
         beams = []
         for beam in response.get("created_beams", []):
             cross_section = BeamCrossSectionInfo(
