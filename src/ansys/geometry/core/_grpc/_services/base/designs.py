@@ -88,4 +88,3 @@ class GRPCDesignsService(ABC):  # pragma: no cover
     def _serialize_tracker_command_response(self, **kwargs) -> dict:
         """Get a serialized response from the tracker."""
         pass
-    

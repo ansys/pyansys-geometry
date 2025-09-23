@@ -82,7 +82,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def get_active(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
-    def _serialize_tracker_command_response(self, **kwargs) -> dict: # noqa: D102
+
+    def _serialize_tracker_command_response(self, **kwargs) -> dict:  # noqa: D102
         """Get a serialized response from the tracker."""
         raise NotImplementedError

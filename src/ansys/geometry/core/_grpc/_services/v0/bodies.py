@@ -768,11 +768,13 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {"complete_command_response": serialized_tracker_response}
-    
+
     @protect_grpc
     def combine(self, **kwargs) -> dict:  # noqa: D102):
-        from ansys.api.geometry.v0.bodies_pb2 import CombineIntersectBodiesRequest
-        from ansys.api.geometry.v0.bodies_pb2 import CombineMergeBodiesRequest
+        from ansys.api.geometry.v0.bodies_pb2 import (
+            CombineIntersectBodiesRequest,
+            CombineMergeBodiesRequest,
+        )
 
         parent_design = get_design_from_body(self)
         other_bodies = kwargs["other"]
@@ -819,8 +821,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         tracker_response = response.result.complete_command_response
         serialized_tracker_response = parent_design._serialize_tracker_command_response(
-                response=tracker_response)
-        
-                # Return the response - formatted as a dictionary
+            response=tracker_response
+        )
+
+        # Return the response - formatted as a dictionary
         return {"complete_command_response": serialized_tracker_response}
-                  

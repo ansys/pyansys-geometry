@@ -31,8 +31,6 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
-    CombineIntersectBodiesRequest,
-    CombineMergeBodiesRequest,
     ImprintCurvesRequest,
     ProjectCurvesRequest,
     RemoveFacesRequest,
@@ -43,6 +41,7 @@ from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
 
+from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
@@ -1916,9 +1915,10 @@ class Body(IBody):
     ) -> None:
         parent_design = get_design_from_body(self)
         other = other if isinstance(other, Iterable) else [other]
-        
+
         response = self._template._grpc_client.services.bodies.combine(
-            target=self, other=other, type_bool_op=method, err_msg=err_msg, keep_other=keep_other)      
+            target=self, other=other, type_bool_op=method, err_msg=err_msg, keep_other=keep_other
+        )
 
         from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
 

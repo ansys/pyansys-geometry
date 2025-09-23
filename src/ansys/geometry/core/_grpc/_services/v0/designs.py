@@ -194,7 +194,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 "main_part_id": response.main_part.id,
                 "name": response.name,
             }
-        
+
     def _serialize_tracker_command_response(self, **kwargs) -> dict:
         """Serialize a TrackerCommandResponse object into a dictionary.
 
@@ -244,4 +244,4 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 serialize_entity_identifier(entity)
                 for entity in getattr(response, "deleted_bodies", [])
             ],
-        }        
+        }

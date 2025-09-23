@@ -490,7 +490,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FindAndFixExtraEdges(request)
 
         serialized_tracker_response = kwargs["parent_design"]._serialize_tracker_command_response(
-            response = response.complete_command_response
+            response=response.complete_command_response
         )
 
         # Return the response - formatted as a dictionary
@@ -520,7 +520,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FindAndFixSplitEdges(request)
 
         serialized_tracker_response = kwargs["parent_design"]._serialize_tracker_command_response(
-            response = response.complete_command_response
+            response=response.complete_command_response
         )
 
         # Return the response - formatted as a dictionary
