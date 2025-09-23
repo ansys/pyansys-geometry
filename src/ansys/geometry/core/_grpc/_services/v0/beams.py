@@ -57,8 +57,10 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
         lines = []
         for segment in kwargs["segments"]:
             lines.append(
-                Line(start=from_point3d_to_grpc_point(segment[0]), 
-                     end=from_point3d_to_grpc_point(segment[1]))
+                Line(
+                    start=from_point3d_to_grpc_point(segment[0]),
+                    end=from_point3d_to_grpc_point(segment[1]),
+                )
             )
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -85,8 +87,10 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
         lines = []
         for segment in kwargs["segments"]:
             lines.append(
-                Line(start=from_point3d_to_grpc_point(segment[0]), 
-                     end=from_point3d_to_grpc_point(segment[1]))
+                Line(
+                    start=from_point3d_to_grpc_point(segment[0]),
+                    end=from_point3d_to_grpc_point(segment[1]),
+                )
             )
 
         # Create the request - assumes all inputs are valid and of the proper type

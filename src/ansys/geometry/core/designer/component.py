@@ -40,7 +40,7 @@ from ansys.api.geometry.v0.components_pb2 import (
     SetSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Direction, Line, SetObjectNameRequest
+from ansys.api.geometry.v0.models_pb2 import Direction, SetObjectNameRequest
 from beartype import beartype as check_input_types
 from pint import Quantity
 
