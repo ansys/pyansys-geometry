@@ -2915,6 +2915,52 @@ def test_create_body_from_loft_profile(modeler: Modeler):
     assert result.volume.m == 0
 
 
+def test_create_body_from_loft_profile_with_guides(modeler: Modeler):
+    """Test the ``create_body_from_loft_profile_with_guides()`` method to create a vase
+    shape.
+    """
+    design_sketch = modeler.create_design("LoftProfileWithGuides")
+
+    circle1 = Circle(origin=[0, 0, 0], radius=8)
+    circle2 = Circle(origin=[0, 0, 10], radius=10)
+
+    profile1 = circle1.trim(Interval(0, 2 * np.pi))
+    profile2 = circle2.trim(Interval(0, 2 * np.pi))
+
+    def circle_point(center, radius, angle_deg):
+        # Returns a point on the circle at the given angle
+        angle_rad = np.deg2rad(angle_deg)
+        return Point3D([
+            center[0] + radius.m * np.cos(angle_rad),
+            center[1] + radius.m * np.sin(angle_rad),
+            center[2]]
+        )
+
+    angles = [0, 90, 180, 270]
+    guide_curves = []
+
+    for angle in angles:
+        pt1 = circle_point(circle1.origin, circle1.radius, angle)
+        pt2 = circle_point(circle2.origin, circle2.radius, angle)
+
+        # Create a guide curve (e.g., a line or spline) between pt1 and pt2
+        guide_curve = NURBSCurve.fit_curve_from_points([pt1, pt2], 1).trim(Interval(0, 1))
+        guide_curves.append(guide_curve)
+
+    # Call the method
+    result = design_sketch.create_body_from_loft_profiles_with_guides(
+        "vase", [[profile1], [profile2]], guide_curves
+    )
+
+    # Assert that the resulting body has only one face.
+    assert len(result.faces) == 1
+
+    # check volume of body
+    # expected is 0 since it's not a closed surface
+    assert result.volume.m == 0
+    assert result.is_surface is True
+
+
 def test_revolve_sketch(modeler: Modeler):
     """Test revolving a circular profile for a quarter donut."""
     # Initialize the donut sketch design

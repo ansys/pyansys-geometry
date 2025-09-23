@@ -997,7 +997,7 @@ class Component:
             guides=guides,
         )
 
-        return self.__build_body_from_response(response)
+        return self.__build_body_from_response(response[0])
 
     @check_input_types
     @ensure_design_is_active

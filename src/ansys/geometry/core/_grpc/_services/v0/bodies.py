@@ -771,27 +771,28 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Create request object - assumes all inputs are valid and of the proper type
         request = CreateBodyFromLoftWithGuidesRequest(
-            request_data=CreateBodyFromLoftWithGuidesRequestData(
+            request_data=[CreateBodyFromLoftWithGuidesRequestData(
                 name=kwargs["name"],
                 parent=EntityIdentifier(id=kwargs["parent_id"]),
                 profiles=[TrimmedCurveList(
                     curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile]
                 ) for profile in kwargs["profiles"]],
-                guide_ids=TrimmedCurveList(
+                guides=TrimmedCurveList(
                     curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["guides"]]
                 ),
-            )
+            )]
         )
 
         # Call the gRPC service
         response = self.stub.CreateBodyFromLoftWithGuides(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            [{
+        return [
+            {
                 "id": body.id,
                 "name": body.name,
                 "master_id": body.master_id,
                 "is_surface": body.is_surface,
-            }] for body in response.created_bodies
-        }
+            } 
+            for body in response.created_bodies
+        ]
