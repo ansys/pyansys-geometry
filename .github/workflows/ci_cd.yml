@@ -237,7 +237,7 @@ jobs:
       - name: Check location of self-hosted runner and define license server accordingly
         if: env.SKIP_UNSTABLE == 'false' && runner.name == 'pygeometry-ci-2'
         run:
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.LICENSE_SERVER_INTERNAL }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Stop any running containers
         run: |
@@ -759,7 +759,7 @@ jobs:
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-2'
         run:
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.LICENSE_SERVER_INTERNAL }}" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Validate connection using PyAnsys Geometry
         run: |
