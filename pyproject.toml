@@ -78,7 +78,7 @@ tests = [
     "scipy==1.15.3",
     "semver==3.0.4",
     "six==1.17.0",
-    "vtk==9.5.1",
+    "vtk==9.5.2",
 ]
 tests-minimal = [
     "pytest==8.4.2",
@@ -105,13 +105,13 @@ doc = [
     "notebook==7.4.5",
     "numpydoc==1.9.0",
     "numpy==2.2.6",
-    "panel==1.8.0",
+    "panel==1.8.1",
     "pdf2image==1.17.0",
     "Pint==0.24.4",
     "protobuf==5.29.3",
     "pygltflib==1.16.5",
     "pyvista[jupyter]==0.46.3",
-    "quarto-cli==1.7.34",
+    "quarto-cli==1.8.24",
     "requests==2.32.5",
     "scipy==1.15.3",
     "semver==3.0.4",
@@ -121,7 +121,7 @@ doc = [
     "sphinx-copybutton==0.5.2",
     "sphinx-jinja==2.0.2",
     "trame-vtk==2.9.1",
-    "vtk==9.5.1",
+    "vtk==9.5.2",
 ]
 
 [project.urls]
