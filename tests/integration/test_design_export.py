@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Test design export functionality."""
 
-import os
 from pathlib import Path
 
 import numpy as np
