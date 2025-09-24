@@ -25,6 +25,7 @@ import grpc
 import pint
 
 import ansys.geometry.core as pyansys_geom
+from ansys.geometry.core._grpc._services.v0.designs import GRPCDesignsServiceV0 as designV0
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
@@ -727,7 +728,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             resp = self.stub.Boolean(request=request)
             if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
                 parent_design = get_design_from_body(kwargs["target"])
-                serialized_tracker_response = parent_design._serialize_tracker_command_response(
+                serialized_tracker_response = designV0._serialize_tracker_command_response(
                     response=resp.response
                 )
         except grpc.RpcError as err:  # pragma: no cover
@@ -820,7 +821,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 b.parent_component.delete_body(b)
 
         tracker_response = response.result.complete_command_response
-        serialized_tracker_response = parent_design._serialize_tracker_command_response(
+        serialized_tracker_response = designV0._serialize_tracker_command_response(
             response=tracker_response
         )
 
