@@ -761,7 +761,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         return {}
 
     @protect_grpc
-    def create_body_from_loft_profiles_with_guides(self, **kwargs):  # noqa: D102
+    def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.bodies_pb2 import (
             CreateBodyFromLoftWithGuidesRequest,
