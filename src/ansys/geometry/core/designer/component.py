@@ -1061,7 +1061,6 @@ class Component:
         )
         return self.__build_body_from_response(response)
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def create_surface_from_trimmed_curves(
         self, name: str, trimmed_curves: list[TrimmedCurve]
@@ -1159,7 +1158,6 @@ class Component:
             distance=distance,
         )
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def create_beams(
@@ -1451,7 +1449,6 @@ class Component:
         # Finally return the list of created DesignPoint objects
         return self._design_points[-n_design_points:]
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def delete_beam(self, beam: Beam | str) -> None:

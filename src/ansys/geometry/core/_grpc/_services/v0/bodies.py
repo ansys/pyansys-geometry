@@ -763,7 +763,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         return {}
 
     @protect_grpc
-    def split_body(self, **kwargs):  # noqa: D102
+    def split_body(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import SplitBodyRequest
 
