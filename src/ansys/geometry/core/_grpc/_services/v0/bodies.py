@@ -771,7 +771,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         return {"complete_command_response": serialized_tracker_response}
 
     @protect_grpc
-    def combine(self, **kwargs) -> dict:  # noqa: D102):
+    def combine(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.bodies_pb2 import (
             CombineIntersectBodiesRequest,
             CombineMergeBodiesRequest,
