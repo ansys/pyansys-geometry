@@ -1294,7 +1294,6 @@ class Design(Component):
         # https://github.com/ansys/pyansys-geometry/issues/1319
         #
         self._components = []
-        self._clear_cached_bodies()
         self._materials = []
         self._named_selections = {}
         self._coordinate_systems = {}

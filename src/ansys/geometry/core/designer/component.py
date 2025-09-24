@@ -23,7 +23,6 @@
 
 from dataclasses import dataclass
 from enum import Enum, unique
-from functools import cached_property
 from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
@@ -283,11 +282,6 @@ class Component:
 
         self._master_component.occurrences.append(self)
 
-    def _clear_cached_bodies(self) -> None:
-        """Clear the cached bodies."""
-        if "bodies" in self.__dict__:
-            del self.__dict__["bodies"]
-
     @property
     def id(self) -> str:
         """ID of the component."""
@@ -343,14 +337,20 @@ class Component:
         """List of ``Component`` objects inside of the component."""
         return self._components
 
-    @cached_property
+    @property
     def bodies(self) -> list[Body]:
         """List of ``Body`` objects inside of the component."""
         bodies = []
         for body in self._master_component.part.bodies:
-            id = f"{self.id}/{body.id}" if self.parent_component else body.id
             if body.is_alive:
-                bodies.append(Body(id, body.name, self, body))
+                bodies.append(
+                    Body(
+                        f"{self.id}/{body.id}" if self.parent_component else body.id,
+                        body.name,
+                        self,
+                        body,
+                    )
+                )
         return bodies
 
     @property
@@ -577,7 +577,6 @@ class Component:
             is_surface=response["is_surface"],
         )
         self._master_component.part.bodies.append(tb)
-        self._clear_cached_bodies()
         return Body(response["id"], response["name"], self, tb)
 
     @check_input_types
@@ -1404,7 +1403,6 @@ class Component:
             # on the client side
             body_requested._is_alive = False
             self._grpc_client.log.debug(f"Body {body_requested.id} has been deleted.")
-            self._clear_cached_bodies()
         else:
             self._grpc_client.log.warning(
                 f"Body {id} is not found in this component (or subcomponents)."
