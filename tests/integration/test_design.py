@@ -2930,10 +2930,12 @@ def test_create_body_from_loft_profile_with_guides(modeler: Modeler):
     def circle_point(center, radius, angle_deg):
         # Returns a point on the circle at the given angle
         angle_rad = np.deg2rad(angle_deg)
-        return Point3D([
-            center[0] + radius.m * np.cos(angle_rad),
-            center[1] + radius.m * np.sin(angle_rad),
-            center[2]]
+        return Point3D(
+            [
+                center[0] + radius.m * np.cos(angle_rad),
+                center[1] + radius.m * np.sin(angle_rad),
+                center[2],
+            ]
         )
 
     angles = [0, 90, 180, 270]
