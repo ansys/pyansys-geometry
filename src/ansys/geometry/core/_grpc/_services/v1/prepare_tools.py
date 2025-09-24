@@ -78,3 +78,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
     @protect_grpc
     def remove_logo(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def detect_helixes(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
