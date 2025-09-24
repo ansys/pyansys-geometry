@@ -964,17 +964,18 @@ class Component:
             ruled=ruled,
         )
         return self.__build_body_from_response(response)
-    
+
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(26, 1, 0)
     def create_body_from_loft_profiles_with_guides(
-        self, name: str,
+        self,
+        name: str,
         profiles: list[list[TrimmedCurve]],
         guides: list[TrimmedCurve],
     ) -> Body:
         """Create a lofted body from a collection of trimmed curves with guide curves.
-        
+
         Parameters
         ----------
         name : str
