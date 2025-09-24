@@ -549,6 +549,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         serialized_tracker_response = designV0._serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
+        serialized_tracker_response["success"] = response.result.success
 
         # Return the response - formatted as a dictionary
         return {
@@ -570,6 +571,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         serialized_tracker_response = designV0._serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
+        serialized_tracker_response["success"] = response.result.success
 
         # Return the response - formatted as a dictionary
         return {
@@ -591,6 +593,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         serialized_tracker_response = designV0._serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
+        serialized_tracker_response["success"] = response.result.success
 
         # Return the response - formatted as a dictionary
         return {
@@ -612,6 +615,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         serialized_tracker_response = designV0._serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
+        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
@@ -633,6 +637,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         serialized_tracker_response = designV0._serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
+        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
@@ -654,6 +659,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         serialized_tracker_response = designV0._serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
+        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
@@ -675,6 +681,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         serialized_tracker_response = designV0._serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
+        serialized_tracker_response["success"] = response.result.success
 
         # Return the response - formatted as a dictionary
         return {
@@ -696,6 +703,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         serialized_tracker_response = designV0._serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
+        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
@@ -717,6 +725,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         serialized_tracker_response = designV0._serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
+        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
@@ -738,6 +747,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         serialized_tracker_response = designV0._serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
+        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
