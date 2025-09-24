@@ -1379,17 +1379,11 @@ class GeometryCommands:
         """
         angle = angle if isinstance(angle, Angle) else Angle(angle)
 
-        response = self._grpc_client.services.model_tools.move_rotate(
+        result = self._grpc_client.services.model_tools.move_rotate(
             selection_id=selection.id,
             axis=axis,
             angle=angle,
         )
-
-        result = {}
-        result["success"] = response.get("success")
-        result["modified_bodies"] = response.get("modified_bodies")
-        result["modified_faces"] = response.get("modified_faces")
-        result["modified_edges"] = response.get("modified_edges")
 
         return result
 
