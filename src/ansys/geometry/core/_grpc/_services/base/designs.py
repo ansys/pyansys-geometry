@@ -83,8 +83,3 @@ class GRPCDesignsService(ABC):  # pragma: no cover
     def get_active(self, **kwargs) -> dict:
         """Get the active design on the service."""
         pass
-
-    @abstractmethod
-    def _serialize_tracker_command_response(self, **kwargs) -> dict:
-        """Get a serialized response from the tracker."""
-        pass

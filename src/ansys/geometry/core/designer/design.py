@@ -1045,23 +1045,6 @@ class Design(Component):
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         return "\n".join(lines)
 
-    def _serialize_tracker_command_response(self, **kwargs) -> dict:
-        """Serialize a TrackerCommandResponse object into a dictionary.
-
-        Parameters
-        ----------
-        response : TrackerCommandResponse
-            The gRPC TrackerCommandResponse object to serialize.
-
-        Returns
-        -------
-        dict
-            A dictionary representation of the TrackerCommandResponse object.
-        """
-        return self._grpc_client.services.designs._serialize_tracker_command_response(
-            response=kwargs["response"]
-        )
-
     def __read_existing_design(self) -> None:
         """Read an existing ``Design`` located on the server."""
         #

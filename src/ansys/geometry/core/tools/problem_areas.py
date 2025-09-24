@@ -25,22 +25,13 @@ from abc import abstractmethod
 from typing import TYPE_CHECKING
 
 from ansys.api.geometry.v0.repairtools_pb2 import (
-    FixAdjustSimplifyRequest,
-    FixDuplicateFacesRequest,
-    FixExtraEdgesRequest,
-    FixInexactEdgesRequest,
     FixInterferenceRequest,
-    FixMissingFacesRequest,
-    FixShortEdgesRequest,
-    FixSmallFacesRequest,
-    FixSplitEdgesRequest,
-    FixStitchFacesRequest,
 )
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from google.protobuf.wrappers_pb2 import Int32Value
 
+import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
     get_design_from_edge,
@@ -83,6 +74,29 @@ class ProblemArea:
         """Fix problem area."""
         raise NotImplementedError("Fix method is not implemented in the base class.")
 
+    def build_repair_tool_message_from_tracker(self, response: dict) -> RepairToolMessage:
+        """Build a repair tool message from tracker response.
+
+        Parameters
+        ----------
+        response : dict
+            The response from the tracker containing information about changes
+
+        Returns
+        -------
+        RepairToolMessage
+            A message containing the success status, created, modified, deleted bodies,
+            number of found problem areas, and number of repaired problem areas.
+        """
+        return RepairToolMessage(
+            success=response.get("success"),
+            created_bodies=response.get("created_bodies", []),
+            modified_bodies=response.get("modified_bodies", []),
+            deleted_bodies=response.get("deleted_bodies", []),
+            found=response.get("found", -1),
+            repaired=response.get("repaired", -1),
+        )
+
 
 class DuplicateFaceProblemAreas(ProblemArea):
     """Provides duplicate face problem area definition.
@@ -115,7 +129,6 @@ class DuplicateFaceProblemAreas(ProblemArea):
         """The list of faces connected to this problem area."""
         return self._faces
 
-    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -128,26 +141,17 @@ class DuplicateFaceProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_face(self.faces[0])
-        response = self._repair_stub.FixDuplicateFaces(
-            FixDuplicateFacesRequest(duplicate_face_problem_area_id=self._grpc_id)
+        response = self._grpc_client.services.repair_tools.fix_duplicate_faces(
+            duplicate_face_problem_area_id=self._grpc_id
         )
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
+        tracker_response = response.get("tracker_response")
 
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            tracker_response = response.result.complete_command_response
-            serialized_response = parent_design._serialize_tracker_command_response(
-                response = tracker_response
-            )
-            parent_design._update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(tracker_response)
 
-        message = RepairToolMessage(
-            success=response.result.success,
-            created_bodies=response.result.created_bodies_monikers,
-            modified_bodies=response.result.modified_bodies_monikers,
-        )
-
+        message = self.build_repair_tool_message_from_tracker(tracker_response)
         return message
 
 
@@ -180,7 +184,6 @@ class MissingFaceProblemAreas(ProblemArea):
         """The list of edges connected to this problem area."""
         return self._edges
 
-    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -193,26 +196,17 @@ class MissingFaceProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_edge(self.edges[0])
-        response = self._repair_stub.FixMissingFaces(
-            FixMissingFacesRequest(missing_face_problem_area_id=self._grpc_id)
+        response = self._grpc_client.services.repair_tools.fix_missing_faces(
+            missing_face_problem_area_id=self._grpc_id
         )
+        tracker_response = response.get("tracker_response")
 
-        serialized_response = parent_design._serialize_tracker_command_response(
-            response = response.result.complete_command_response
-        )
-
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
-
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(tracker_response)
 
-        message = RepairToolMessage(
-            success=response.result.success,
-            created_bodies=response.result.created_bodies_monikers,
-            modified_bodies=response.result.modified_bodies_monikers,
-        )
+        message = self.build_repair_tool_message_from_tracker(tracker_response)
         return message
 
 
@@ -245,7 +239,6 @@ class InexactEdgeProblemAreas(ProblemArea):
         """The list of edges connected to this problem area."""
         return self._edges
 
-    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -259,27 +252,17 @@ class InexactEdgeProblemAreas(ProblemArea):
 
         parent_design = get_design_from_edge(self.edges[0])
 
-        response = self._repair_stub.FixInexactEdges(
-            FixInexactEdgesRequest(inexact_edge_problem_area_id=self._grpc_id)
+        response = self._grpc_client.services.repair_tools.fix_inexact_edges(
+            inexact_edge_problem_area_id=self._grpc_id
         )
+        tracker_response = response.get("tracker_response")
 
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
-
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            tracker_response = response.result.complete_command_response
-            serialized_response = parent_design._serialize_tracker_command_response(
-                response = tracker_response
-            )
-            parent_design._update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(tracker_response)
 
-        message = RepairToolMessage(
-            success=response.result.success,
-            created_bodies=response.result.created_bodies_monikers,
-            modified_bodies=response.result.modified_bodies_monikers,
-        )
-
+        message = self.build_repair_tool_message_from_tracker(tracker_response)
         return message
 
 
@@ -312,7 +295,6 @@ class ExtraEdgeProblemAreas(ProblemArea):
         """The list of edges connected to this problem area."""
         return self._edges
 
-    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -325,25 +307,17 @@ class ExtraEdgeProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_edge(self.edges[0])
-        request = FixExtraEdgesRequest(extra_edge_problem_area_id=self._grpc_id)
-        response = self._repair_stub.FixExtraEdges(request)
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
+        response = self._grpc_client.services.repair_tools.fix_extra_edges(
+            extra_edge_problem_area_id=self._grpc_id
+        )
+        tracker_response = response.get("tracker_response")
 
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            tracker_response = response.result.complete_command_response
-            serialized_response = parent_design._serialize_tracker_command_response(
-                response = tracker_response
-            )
-            parent_design._update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(tracker_response)
 
-        message = RepairToolMessage(
-            success=response.result.success,
-            created_bodies=response.result.created_bodies_monikers,
-            modified_bodies=response.result.modified_bodies_monikers,
-        )
-
+        message = self.build_repair_tool_message_from_tracker(tracker_response)
         return message
 
 
@@ -376,7 +350,6 @@ class ShortEdgeProblemAreas(ProblemArea):
         """The list of edges connected to this problem area."""
         return self._edges
 
-    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -389,26 +362,17 @@ class ShortEdgeProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_edge(self.edges[0])
-        response = self._repair_stub.FixShortEdges(
-            FixShortEdgesRequest(short_edge_problem_area_id=self._grpc_id)
+        response = self._grpc_client.services.repair_tools.fix_short_edges(
+            short_edge_problem_area_id=self._grpc_id
         )
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
+        tracker_response = response.get("tracker_response")
 
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            tracker_response = response.result.complete_command_response
-            serialized_response = parent_design._serialize_tracker_command_response(
-                response = tracker_response
-            )
-            parent_design._update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(tracker_response)
 
-        message = RepairToolMessage(
-            success=response.result.success,
-            created_bodies=response.result.created_bodies_monikers,
-            modified_bodies=response.result.modified_bodies_monikers,
-        )
-
+        message = self.build_repair_tool_message_from_tracker(tracker_response)
         return message
 
 
@@ -441,7 +405,6 @@ class SmallFaceProblemAreas(ProblemArea):
         """The list of faces connected to this problem area."""
         return self._faces
 
-    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -454,28 +417,17 @@ class SmallFaceProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_face(self.faces[0])
-        response = self._repair_stub.FixSmallFaces(
-            FixSmallFacesRequest(small_face_problem_area_id=self._grpc_id)
+        response = self._grpc_client.services.repair_tools.fix_small_faces(
+            small_face_problem_area_id=self._grpc_id
         )
+        tracker_response = response.get("tracker_response")
 
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
-
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
-            # and update the parent design with the serialized response.
-            tracker_response = response.result.complete_command_response
-            serialized_response = parent_design._serialize_tracker_command_response(
-                response = tracker_response
-            )
-            parent_design._update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(tracker_response)
 
-        message = RepairToolMessage(
-            success=response.result.success,
-            created_bodies=response.result.created_bodies_monikers,
-            modified_bodies=response.result.modified_bodies_monikers,
-        )
+        message = self.build_repair_tool_message_from_tracker(tracker_response)
         return message
 
 
@@ -508,7 +460,6 @@ class SplitEdgeProblemAreas(ProblemArea):
         """The list of edges connected to this problem area."""
         return self._edges
 
-    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -521,24 +472,17 @@ class SplitEdgeProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_edge(self.edges[0])
-        response = self._repair_stub.FixSplitEdges(
-            FixSplitEdgesRequest(split_edge_problem_area_id=self._grpc_id)
+        response = self._grpc_client.services.repair_tools.fix_split_edges(
+            split_edge_problem_area_id=self._grpc_id
         )
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
+        tracker_response = response.get("tracker_response")
 
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            tracker_respone = response.result.complete_command_response
-            serialized_response = parent_design._serialize_tracker_command_response(response = tracker_respone)
-            parent_design._update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(tracker_response)
 
-        message = RepairToolMessage(
-            success=response.result.success,
-            created_bodies=response.result.created_bodies_monikers,
-            modified_bodies=response.result.modified_bodies_monikers,
-        )
-
+        message = self.build_repair_tool_message_from_tracker(tracker_response)
         return message
 
 
@@ -571,7 +515,6 @@ class StitchFaceProblemAreas(ProblemArea):
         """The list of bodies connected to this problem area."""
         return self._bodies
 
-    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -584,23 +527,17 @@ class StitchFaceProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_body(self.bodies[0])
-        response = self._repair_stub.FixStitchFaces(
-            FixStitchFacesRequest(stitch_face_problem_area_id=self._grpc_id)
+        response = self._grpc_client.services.repair_tools.fix_stitch_faces(
+            stitch_face_problem_area_id=self._grpc_id
         )
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
+        tracker_response = response.get("tracker_response")
 
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            tracker_respone = response.result.complete_command_response
-            serialized_response = parent_design._serialize_tracker_command_response(response = tracker_respone)
-            parent_design._update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(tracker_response)
 
-        message = RepairToolMessage(
-            success=response.result.success,
-            created_bodies=response.result.created_bodies_monikers,
-            modified_bodies=response.result.modified_bodies_monikers,
-        )
+        message = self.build_repair_tool_message_from_tracker(tracker_response)
         return message
 
 
@@ -628,7 +565,6 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
         """The list of faces connected to this problem area."""
         return self._faces
 
-    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -641,23 +577,17 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_face(self.faces[0])
-        response = self._repair_stub.FixAdjustSimplify(
-            FixAdjustSimplifyRequest(adjust_simplify_problem_area_id=self._grpc_id)
+        response = self._grpc_client.services.repair_tools.fix_unsimplified_faces(
+            adjust_simplify_problem_area_id=self._grpc_id
         )
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
+        tracker_response = response.get("tracker_response")
 
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            tracker_respone = response.result.complete_command_response
-            serialized_response = parent_design._serialize_tracker_command_response(response = tracker_respone)
-            parent_design._update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(tracker_response)
 
-        message = RepairToolMessage(
-            success=response.result.success,
-            created_bodies=response.result.created_bodies_monikers,
-            modified_bodies=response.result.modified_bodies_monikers,
-        )
+        message = self.build_repair_tool_message_from_tracker(tracker_response)
         return message
 
 
@@ -685,7 +615,6 @@ class InterferenceProblemAreas(ProblemArea):
         """The list of the bodies connected to this problem area."""
         return self._bodies
 
-    @protect_grpc
     def fix(self) -> RepairToolMessage:
         """Fix the problem area.
 
@@ -710,7 +639,6 @@ class InterferenceProblemAreas(ProblemArea):
         ## The tool does not return the created or modified objects.
         ## https://github.com/ansys/pyansys-geometry/issues/1319
         message = RepairToolMessage(response.result.success, [], [])
-
         return message
 
 

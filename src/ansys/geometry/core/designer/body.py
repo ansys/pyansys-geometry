@@ -41,7 +41,7 @@ from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
 
-from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
+import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
@@ -1920,9 +1920,7 @@ class Body(IBody):
             target=self, other=other, type_bool_op=method, err_msg=err_msg, keep_other=keep_other
         )
 
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
-
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
@@ -1944,7 +1942,7 @@ class Body(IBody):
         err_msg: str,
     ) -> None:
         grpc_other = other if isinstance(other, Iterable) else [other]
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             if keep_other:
                 # Make a copy of the other body to keep it...
                 # stored temporarily in the parent component - since it will be deleted
@@ -1956,7 +1954,7 @@ class Body(IBody):
             target=self, other=grpc_other, method=method, err_msg=err_msg, keep_other=keep_other
         )
 
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             for b in grpc_other:
                 b.parent_component.delete_body(b)
         else:

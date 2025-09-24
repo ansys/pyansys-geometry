@@ -221,5 +221,5 @@ class GRPCBodyService(ABC):  # pragma: no cover
 
     @abstractmethod
     def combine(self, **kwargs) -> dict:
-        """Boolean operation."""
+        """Boolean operation through command."""
         pass

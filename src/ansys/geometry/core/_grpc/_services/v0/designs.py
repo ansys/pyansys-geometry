@@ -195,7 +195,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 "name": response.name,
             }
 
-    def _serialize_tracker_command_response(self, **kwargs) -> dict:
+    def _serialize_tracker_command_response(**kwargs) -> dict:
         """Serialize a TrackerCommandResponse object into a dictionary.
 
         Parameters
