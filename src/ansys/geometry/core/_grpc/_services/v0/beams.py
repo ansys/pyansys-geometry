@@ -26,6 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.beams import GRPCBeamsService
+from .conversions import from_point3d_to_grpc_point
 
 
 class GRPCBeamsServiceV0(GRPCBeamsService):
@@ -50,18 +51,29 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
     @protect_grpc
     def create_beam_segments(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest
+        from ansys.api.geometry.v0.models_pb2 import Line
+
+        # Create the gRPC Line objects
+        lines = []
+        for segment in kwargs["segments"]:
+            lines.append(
+                Line(
+                    start=from_point3d_to_grpc_point(segment[0]),
+                    end=from_point3d_to_grpc_point(segment[1]),
+                )
+            )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateBeamSegmentsRequest(
             profile=kwargs["profile_id"],
             parent=kwargs["parent_id"],
-            lines=kwargs["lines"],
+            lines=lines,
         )
 
         # Call the gRPC service
         resp = self.stub.CreateBeamSegments(request)
 
-        # Return the response as a dictionary
+        # Return the response - formatted as a dictionary
         return {
             "beam_ids": resp.ids,
         }
@@ -69,18 +81,29 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
     @protect_grpc
     def create_descriptive_beam_segments(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import CreateBeamSegmentsRequest
+        from ansys.api.geometry.v0.models_pb2 import Line
+
+        # Create the gRPC Line objects
+        lines = []
+        for segment in kwargs["segments"]:
+            lines.append(
+                Line(
+                    start=from_point3d_to_grpc_point(segment[0]),
+                    end=from_point3d_to_grpc_point(segment[1]),
+                )
+            )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateBeamSegmentsRequest(
             profile=kwargs["profile_id"],
             parent=kwargs["parent_id"],
-            lines=kwargs["lines"],
+            lines=lines,
         )
 
         # Call the gRPC service
         resp = self.stub.CreateDescriptiveBeamSegments(request)
 
-        # Return the response as a dictionary
+        # Return the response - formatted as a dictionary
         return {
             "created_beams": resp.created_beams,
         }
@@ -94,3 +117,6 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
 
         # Call the gRPC service
         _ = self.stub.DeleteBeam(request)
+
+        # Return the response - formatted as a dictionary
+        return {}

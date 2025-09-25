@@ -23,14 +23,14 @@
 
 import grpc
 
-from ansys.geometry.core._grpc._services.base.conversions import (
+from ansys.geometry.core.errors import protect_grpc
+
+from ..base.conversions import (
     from_measurement_to_server_angle,
     from_measurement_to_server_length,
 )
-from ansys.geometry.core._grpc._services.v0.conversions import from_unit_vector_to_grpc_direction
-from ansys.geometry.core.errors import protect_grpc
-
 from ..base.patterns import GRPCPatternsService
+from .conversions import build_grpc_id, from_unit_vector_to_grpc_direction
 
 
 class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
@@ -54,13 +54,12 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
 
     @protect_grpc
     def create_linear_pattern(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import CreateLinearPatternRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateLinearPatternRequest(
-            selection=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],
-            linear_direction=EntityIdentifier(id=kwargs["linear_direction_id"]),
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+            linear_direction=build_grpc_id(kwargs["linear_direction_id"]),
             count_x=kwargs["count_x"],
             pitch_x=from_measurement_to_server_length(kwargs["pitch_x"]),
             two_dimensional=kwargs["two_dimensional"],
@@ -80,12 +79,11 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
 
     @protect_grpc
     def modify_linear_pattern(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import ModifyLinearPatternRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ModifyLinearPatternRequest(
-            selection=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
             count_x=kwargs["count_x"],
             pitch_x=from_measurement_to_server_length(kwargs["pitch_x"]),
             count_y=kwargs["count_y"],
@@ -104,7 +102,6 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
 
     @protect_grpc
     def create_circular_pattern(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import CreateCircularPatternRequest
 
         # Create direction if not None
@@ -114,19 +111,22 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
             else None
         )
 
+        # Create linear pitch if not None
+        linear_pitch = (
+            from_measurement_to_server_length(kwargs["linear_pitch"])
+            if kwargs["linear_pitch"]
+            else None
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateCircularPatternRequest(
-            selection=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],
-            circular_axis=EntityIdentifier(id=kwargs["circular_axis_id"]),
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+            circular_axis=build_grpc_id(kwargs["circular_axis_id"]),
             circular_count=kwargs["circular_count"],
             circular_angle=from_measurement_to_server_angle(kwargs["circular_angle"]),
             two_dimensional=kwargs["two_dimensional"],
             linear_count=kwargs["linear_count"],
-            linear_pitch=(
-                from_measurement_to_server_length(kwargs["linear_pitch"])
-                if kwargs["linear_pitch"]
-                else None
-            ),
+            linear_pitch=linear_pitch,
             radial_direction=radial_direction,
         )
 
@@ -140,12 +140,11 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
 
     @protect_grpc
     def modify_circular_pattern(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import ModifyCircularPatternRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ModifyCircularPatternRequest(
-            selection=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
             circular_count=kwargs["circular_count"],
             linear_count=kwargs["linear_count"],
             step_angle=from_measurement_to_server_angle(kwargs["step_angle"]),
@@ -162,13 +161,12 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
 
     @protect_grpc
     def create_fill_pattern(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import CreateFillPatternRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateFillPatternRequest(
-            selection=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],
-            linear_direction=EntityIdentifier(id=kwargs["linear_direction_id"]),
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+            linear_direction=build_grpc_id(kwargs["linear_direction_id"]),
             fill_pattern_type=kwargs["fill_pattern_type"].value,
             margin=from_measurement_to_server_length(kwargs["margin"]),
             x_spacing=from_measurement_to_server_length(kwargs["x_spacing"]),
@@ -189,12 +187,11 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
 
     @protect_grpc
     def update_fill_pattern(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import PatternRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = PatternRequest(
-            selection=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
         )
 
         # Call the gRPC service

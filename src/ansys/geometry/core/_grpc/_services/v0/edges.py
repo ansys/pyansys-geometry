@@ -215,7 +215,7 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
         }
 
     @protect_grpc
-    def extrude_edges_up_to(self, **kwargs):  # noqa: D102
+    def extrude_edges_up_to(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import ExtrudeEdgesUpToRequest
 
         # Create the request - assumes all inputs are valid and of the proper type

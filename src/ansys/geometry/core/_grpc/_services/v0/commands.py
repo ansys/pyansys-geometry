@@ -48,7 +48,7 @@ class GRPCCommandsServiceV0(GRPCCommandsService):
         self.stub = CommandsStub(channel)
 
     @protect_grpc
-    def set_name(self, **kwargs):  # noqa: D102
+    def set_name(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import RenameObjectRequest
 

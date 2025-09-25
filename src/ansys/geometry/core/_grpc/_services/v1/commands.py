@@ -48,5 +48,5 @@ class GRPCCommandsServiceV1(GRPCCommandsService):
         self.stub = CommandsStub(channel)
 
     @protect_grpc
-    def set_name(self, **kwargs):  # noqa: D102
+    def set_name(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError

@@ -40,7 +40,7 @@ from ansys.api.geometry.v0.components_pb2 import (
     SetSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Direction, Line, SetObjectNameRequest
+from ansys.api.geometry.v0.models_pb2 import Direction, SetObjectNameRequest
 from beartype import beartype as check_input_types
 from pint import Quantity
 
@@ -966,6 +966,41 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
+    @min_backend_version(26, 1, 0)
+    def create_body_from_loft_profiles_with_guides(
+        self,
+        name: str,
+        profiles: list[list[TrimmedCurve]],
+        guides: list[TrimmedCurve],
+    ) -> Body:
+        """Create a lofted body from a collection of trimmed curves with guide curves.
+
+        Parameters
+        ----------
+        name : str
+            Name of the lofted body.
+        profiles : list[list[TrimmedCurve]]
+            Collection of lists of trimmed curves (profiles) defining the lofted body's shape.
+        guides : list[TrimmedCurve]
+            Collection of guide curves to influence the lofting process.
+
+        Returns
+        -------
+        Body
+            Created lofted body object.
+        """
+        self._grpc_client.log.debug(f"Creating a loft profile body with guides on {self.id}.")
+        response = self._grpc_client._services.bodies.create_body_from_loft_profiles_with_guides(
+            name=name,
+            parent_id=self.id,
+            profiles=profiles,
+            guides=guides,
+        )
+
+        return self.__build_body_from_response(response)
+
+    @check_input_types
+    @ensure_design_is_active
     def create_surface(self, name: str, sketch: Sketch) -> Body:
         """Create a surface body with a sketch profile.
 
@@ -1061,7 +1096,6 @@ class Component:
         )
         return self.__build_body_from_response(response)
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def create_surface_from_trimmed_curves(
         self, name: str, trimmed_curves: list[TrimmedCurve]
@@ -1159,7 +1193,6 @@ class Component:
             distance=distance,
         )
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def create_beams(
@@ -1212,15 +1245,9 @@ class Component:
         -----
         This is a legacy method, which is used in versions up to Ansys 25.1.1 products.
         """
-        lines = []
-        for segment in segments:
-            lines.append(
-                Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
-            )
-
         self._grpc_client.log.debug(f"Creating beams on {self.id}...")
         response = self._grpc_client.services.beams.create_beam_segments(
-            parent_id=self.id, profile_id=profile.id, lines=lines
+            parent_id=self.id, profile_id=profile.id, segments=segments
         )
         self._grpc_client.log.debug("Beams successfully created.")
 
@@ -1257,15 +1284,9 @@ class Component:
         list[Beam]
             A list of the created Beams.
         """
-        lines = []
-        for segment in segments:
-            lines.append(
-                Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
-            )
-
         self._grpc_client.log.debug(f"Creating beams on {self.id}...")
         response = self._grpc_client.services.beams.create_descriptive_beam_segments(
-            parent_id=self.id, profile_id=profile.id, lines=lines
+            parent_id=self.id, profile_id=profile.id, segments=segments
         )
         self._grpc_client.log.debug("Beams successfully created.")
 
@@ -1464,7 +1485,6 @@ class Component:
         # Finally return the list of created DesignPoint objects
         return self._design_points[-n_design_points:]
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def delete_beam(self, beam: Beam | str) -> None:

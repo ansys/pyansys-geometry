@@ -17,7 +17,7 @@ env:
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
-  RESET_IMAGE_CACHE: 5
+  RESET_IMAGE_CACHE: 7
   IS_WORKFLOW_RUNNING: True
   ARTIFACTORY_VERSION: v261
 
@@ -39,7 +39,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+      - uses: ansys/actions/doc-deploy-changelog@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -49,7 +49,7 @@ jobs:
     name: Vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+      - uses: ansys/actions/check-vulnerabilities@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/check-pr-title@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/doc-style@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -90,7 +90,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/build-wheelhouse@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/docker-style@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/docker-style@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
           directory: docker
           recursive: true
@@ -256,7 +256,7 @@ jobs:
 
       - name: Restore images cache
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
@@ -346,7 +346,7 @@ jobs:
           docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
 
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/doc-build@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
@@ -424,7 +424,7 @@ jobs:
 
       - name: Restore images cache
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: tests/integration/image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
@@ -432,7 +432,7 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/tests-pytest@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         env:
           ALLOW_PLOTTING: true
         with:
@@ -640,7 +640,7 @@ jobs:
       id-token: write
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/build-library@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -769,7 +769,7 @@ jobs:
           pip install -e .[tests]
 
       - name: Restore images cache
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
@@ -864,14 +864,14 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
-        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/tests-pytest@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         env:
           ALLOW_PLOTTING: true
         with:
@@ -912,7 +912,7 @@ jobs:
       contents: write
     steps:
       - name: Release to GitHub
-        uses: ansys/actions/release-github@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/release-github@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
@@ -952,7 +952,7 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/doc-deploy-dev@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -966,7 +966,7 @@ jobs:
     needs: [release, release-pypi]
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/doc-deploy-stable@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -983,7 +983,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Automerge PRs
-        uses: ansys/actions/hk-automerge-prs@e0de7dd89b2a4c100f74327666d5521cfda17950 # v10.1.1
+        uses: ansys/actions/hk-automerge-prs@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

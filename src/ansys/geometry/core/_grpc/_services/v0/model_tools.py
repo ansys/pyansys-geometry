@@ -31,6 +31,7 @@ from ..base.conversions import (
 )
 from ..base.model_tools import GRPCModelToolsService
 from .conversions import (
+    build_grpc_id,
     from_line_to_grpc_line,
     from_unit_vector_to_grpc_direction,
 )
@@ -57,12 +58,11 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
 
     @protect_grpc
     def chamfer(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import ChamferRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ChamferRequest(
-            ids=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],
+            ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
             distance=from_measurement_to_server_length(kwargs["distance"]),
         )
 
@@ -76,12 +76,11 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
 
     @protect_grpc
     def fillet(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import FilletRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FilletRequest(
-            ids=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],
+            ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
             radius=from_measurement_to_server_length(kwargs["radius"]),
         )
 
@@ -95,12 +94,11 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
 
     @protect_grpc
     def full_fillet(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import FullFilletRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FullFilletRequest(
-            faces=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],
+            faces=[build_grpc_id(id) for id in kwargs["selection_ids"]],
         )
 
         # Call the gRPC service
@@ -113,12 +111,11 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
 
     @protect_grpc
     def move_rotate(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import MoveRotateRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MoveRotateRequest(
-            selection=[EntityIdentifier(id=kwargs["selection_id"])],
+            selection=[build_grpc_id(kwargs["selection_id"])],
             axis=from_line_to_grpc_line(kwargs["axis"]),
             angle=from_measurement_to_server_angle(kwargs["angle"]),
         )
@@ -136,12 +133,11 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
 
     @protect_grpc
     def move_translate(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import MoveTranslateRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MoveTranslateRequest(
-            selection=[EntityIdentifier(id=kwargs["selection_id"])],
+            selection=[build_grpc_id(kwargs["selection_id"])],
             direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
             distance=from_measurement_to_server_length(kwargs["distance"]),
         )
