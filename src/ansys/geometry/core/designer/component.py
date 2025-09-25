@@ -967,6 +967,41 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
+    @min_backend_version(26, 1, 0)
+    def create_body_from_loft_profiles_with_guides(
+        self,
+        name: str,
+        profiles: list[list[TrimmedCurve]],
+        guides: list[TrimmedCurve],
+    ) -> Body:
+        """Create a lofted body from a collection of trimmed curves with guide curves.
+
+        Parameters
+        ----------
+        name : str
+            Name of the lofted body.
+        profiles : list[list[TrimmedCurve]]
+            Collection of lists of trimmed curves (profiles) defining the lofted body's shape.
+        guides : list[TrimmedCurve]
+            Collection of guide curves to influence the lofting process.
+
+        Returns
+        -------
+        Body
+            Created lofted body object.
+        """
+        self._grpc_client.log.debug(f"Creating a loft profile body with guides on {self.id}.")
+        response = self._grpc_client._services.bodies.create_body_from_loft_profiles_with_guides(
+            name=name,
+            parent_id=self.id,
+            profiles=profiles,
+            guides=guides,
+        )
+
+        return self.__build_body_from_response(response)
+
+    @check_input_types
+    @ensure_design_is_active
     def create_surface(self, name: str, sketch: Sketch) -> Body:
         """Create a surface body with a sketch profile.
 
