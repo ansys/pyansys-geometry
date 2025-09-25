@@ -37,7 +37,6 @@ class GRPCCurvesService(ABC):  # pragma: no cover
 
     def __init__(self, channel: grpc.Channel):
         """Initialize the GRPCCurvesService class."""
-        pass
 
     @abstractmethod
     def revolve_edges(self, **kwargs) -> dict:
