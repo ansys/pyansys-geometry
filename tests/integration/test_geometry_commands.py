@@ -25,6 +25,7 @@ import numpy as np
 from pint import Quantity
 import pytest
 
+from ansys.geometry.core.designer.geometry_commands import *
 from ansys.geometry.core.designer.geometry_commands import (
     DraftSide,
     ExtrudeType,
@@ -1405,3 +1406,86 @@ def test_thicken_surface_body(modeler: Modeler):
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(0.4, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_failures_to_extrude(modeler: Modeler):
+    """Add test that covers code for failing to extrude in different ways."""
+    # First need to create surface to extrude from
+    sketch = Sketch()
+    p1 = Point2D([0, 0])
+    p2 = Point2D([10, 0])
+    p3 = Point2D([10, 5])
+    p4 = Point2D([0, 5])
+    sketch.segment(p1, p2)
+    sketch.segment(p2, p3)
+    sketch.segment(p3, p4)
+    sketch.segment(p4, p1)
+    design = modeler.create_design("SimpleFaceDesign")
+    surface = design.create_surface("SimpleFace", sketch)
+    grpc_client = modeler.client
+    geometry_commands = GeometryCommands(grpc_client, _internal_use=True)
+
+    # Failing to extrude single face
+    geometry_commands.extrude_faces(
+        faces=surface.faces[0],
+        distance=10,
+        direction=UnitVector3D([1, 0, 0]),
+        extrude_type=ExtrudeType.ADD,
+        pull_symmetric=False,
+    )
+    # Then adding a check to ensure no new faces were made
+    assert len(design.bodies[0].faces) == 1
+    # For the rest of the failures, we need a 2nd surface so here is creating the circle
+    circle_sketch = Sketch()
+    circle_sketch.circle(Point2D([20, 20]), 5.0)
+    circle_surface = design.create_surface("CircleSurface", circle_sketch)
+    # The square surface needs to be rotate to make some of the extrustion not valid
+    surface.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 1, 0]), np.pi / 2)
+    # Failing to extrude edge
+    geometry_commands.extrude_edges(
+        edges=circle_surface.edges[0],
+        distance=10,
+        from_face=surface.faces[0],
+    )
+    assert len(design.bodies[0].faces) == 1
+    assert len(design.bodies[1].faces) == 1
+    # Failing to extrude edge up to
+    geometry_commands.extrude_edges_up_to(
+        circle_surface.edges[0],
+        surface.faces[0],
+        Point3D([0, 0, 0]),
+        UnitVector3D([1, 0, 0]),
+    )
+    assert len(design.bodies[0].faces) == 1
+    assert len(design.bodies[1].faces) == 1
+    # Failing to revolve face
+    geometry_commands.revolve_faces(
+        selection=circle_surface.faces[0],
+        axis=Line([0, 0, 1], [0, 0, 1]),
+        angle=-np.pi * 3 / 2,
+    )
+    assert len(design.bodies[0].faces) == 1
+    assert len(design.bodies[1].faces) == 1
+    # Failing to revolve face up to
+    modeler.geometry_commands.revolve_faces_up_to(
+        circle_surface.faces[0],
+        surface.faces[0],
+        Line([0.5, 0.5, 0], [0, 0, 1]),
+        UnitVector3D([1, 0, 0]),
+        ExtrudeType.FORCE_ADD,
+    )
+    assert len(design.bodies[0].faces) == 1
+    assert len(design.bodies[1].faces) == 1
+    # Failing to revolve face by helix
+    modeler.geometry_commands.revolve_faces_by_helix(
+        circle_surface.faces[0],
+        Line([0.5, 0.5, 0], [0, 0, 1]),
+        UnitVector3D([1, 0, 0]),
+        5,
+        1,
+        np.pi / 4,
+        True,
+        True,
+    )
+    assert len(design.bodies[0].faces) == 1
+    assert len(design.bodies[1].faces) == 1
