@@ -727,7 +727,6 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 request.keep_other = kwargs["keep_other"]
             resp = self.stub.Boolean(request=request)
             if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
-                parent_design = get_design_from_body(kwargs["target"])
                 serialized_tracker_response = serialize_tracker_command_response(
                     response=resp.response
                 )
@@ -777,7 +776,6 @@ class GRPCBodyServiceV0(GRPCBodyService):
             CombineMergeBodiesRequest,
         )
 
-        parent_design = get_design_from_body(self)
         other_bodies = kwargs["other"]
         type_bool_op = kwargs["type_bool_op"]
         keep_other = kwargs["keep_other"]
