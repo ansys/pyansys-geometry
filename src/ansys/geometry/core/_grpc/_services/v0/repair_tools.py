@@ -28,10 +28,12 @@ geometry issues, such as split edges, extra edges, duplicate faces etc.
 
 import grpc
 
-from ansys.geometry.core._grpc._services.v0.designs import GRPCDesignsServiceV0 as designV0
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.repair_tools import GRPCRepairToolsService
+from .conversions import (
+    serialize_tracker_command_response,
+)
 
 
 class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
@@ -343,7 +345,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndSimplify(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.complete_command_response
         )
 
@@ -381,7 +383,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixStitchFaces(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.complete_command_response
         )
 
@@ -463,7 +465,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixShortEdges(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.complete_command_response
         )
 
@@ -490,7 +492,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixExtraEdges(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.complete_command_response
         )
 
@@ -520,7 +522,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixSplitEdges(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.complete_command_response
         )
 
@@ -546,14 +548,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FixDuplicateFaces(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
-        serialized_tracker_response["success"] = response.result.success
 
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
         }
 
     @protect_grpc
@@ -568,14 +570,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FixMissingFaces(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
-        serialized_tracker_response["success"] = response.result.success
 
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
         }
 
     @protect_grpc
@@ -590,14 +592,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FixInexactEdges(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
-        serialized_tracker_response["success"] = response.result.success
 
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
         }
 
     @protect_grpc
@@ -612,14 +614,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FixExtraEdges(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
-        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
         }
 
     @protect_grpc
@@ -634,14 +636,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FixShortEdges(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
-        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
         }
 
     @protect_grpc
@@ -656,14 +658,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FixSmallFaces(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
-        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
         }
 
     @protect_grpc
@@ -678,14 +680,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FixSplitEdges(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
-        serialized_tracker_response["success"] = response.result.success
 
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
         }
 
     @protect_grpc
@@ -700,14 +702,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FixStitchFaces(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
-        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
         }
 
     @protect_grpc
@@ -722,14 +724,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FixAdjustSimplify(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
-        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
         }
 
     @protect_grpc
@@ -744,14 +746,14 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FixInterference(request)
 
-        serialized_tracker_response = designV0._serialize_tracker_command_response(
+        serialized_tracker_response = serialize_tracker_command_response(
             response=response.result.complete_command_response
         )
-        serialized_tracker_response["success"] = response.result.success        
 
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
         }
 
     def __serialize_inspect_result_response(self, response) -> dict:  # noqa: D102
@@ -806,4 +808,11 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 }
                 for body_issues in response.issues_by_body
             ]
+        }
+
+    def __serialize_message_response(self, response):
+        return {
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }

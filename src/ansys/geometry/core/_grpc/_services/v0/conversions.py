@@ -1221,3 +1221,55 @@ def _check_write_body_facets_input(backend_version: "semver.Version", write_body
             + "26.1.0, but the current version used is "
             + f"{backend_version}."
         )
+
+
+def serialize_tracker_command_response(**kwargs) -> dict:
+    """Serialize a TrackerCommandResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : TrackerCommandResponse
+        The gRPC TrackerCommandResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the TrackerCommandResponse object.
+    """
+
+    def serialize_body(body):
+        return {
+            "id": body.id,
+            "name": body.name,
+            "can_suppress": body.can_suppress,
+            "transform_to_master": {
+                "m00": body.transform_to_master.m00,
+                "m11": body.transform_to_master.m11,
+                "m22": body.transform_to_master.m22,
+                "m33": body.transform_to_master.m33,
+            },
+            "master_id": body.master_id,
+            "parent_id": body.parent_id,
+            "is_surface": body.is_surface,
+        }
+
+    def serialize_entity_identifier(entity):
+        """Serialize an EntityIdentifier object into a dictionary."""
+        return {
+            "id": entity.id,
+        }
+
+    response = kwargs["response"]
+    return {
+        "success": response.success,
+        "created_bodies": [
+            serialize_body(body) for body in getattr(response, "created_bodies", [])
+        ],
+        "modified_bodies": [
+            serialize_body(body) for body in getattr(response, "modified_bodies", [])
+        ],
+        "deleted_bodies": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response, "deleted_bodies", [])
+        ],
+    }
