@@ -761,7 +761,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {}
-	
+
     @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
@@ -783,7 +783,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         return {
             "success": resp.success,
         }
-        
+
     @protect_grpc
     def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
