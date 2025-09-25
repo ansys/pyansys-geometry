@@ -281,8 +281,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
         }
 
     @protect_grpc
-    def extrude_faces(self, **kwargs):  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+    def extrude_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import ExtrudeFacesRequest
 
         # Assign direction
@@ -294,7 +293,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtrudeFacesRequest(
-            faces=[EntityIdentifier(id=face_id) for face_id in kwargs["face_ids"]],
+            faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
             distance=from_measurement_to_server_length(kwargs["distance"]),
             direction=direction,
             extrude_type=kwargs["extrude_type"].value,
@@ -314,14 +313,13 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
         }
 
     @protect_grpc
-    def extrude_faces_up_to(self, **kwargs):  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+    def extrude_faces_up_to(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import ExtrudeFacesUpToRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtrudeFacesUpToRequest(
-            faces=[EntityIdentifier(id=face_id) for face_id in kwargs["face_ids"]],
-            up_to_selection=EntityIdentifier(id=kwargs["up_to_selection_id"]),
+            faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
+            up_to_selection=build_grpc_id(kwargs["up_to_selection_id"]),
             seed_point=from_point3d_to_grpc_point(kwargs["seed_point"]),
             direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
             extrude_type=kwargs["extrude_type"].value,
@@ -342,12 +340,11 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
     @protect_grpc
     def offset_faces_set_radius(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import OffsetFacesSetRadiusRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = OffsetFacesSetRadiusRequest(
-            faces=[EntityIdentifier(id=face_id) for face_id in kwargs["face_ids"]],
+            faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
             radius=from_measurement_to_server_length(kwargs["radius"]),
             offset_mode=kwargs["offset_mode"].value,
             copy=kwargs["copy"],
@@ -364,12 +361,11 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
     @protect_grpc
     def revolve_faces(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import RevolveFacesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RevolveFacesRequest(
-            selection=[EntityIdentifier(id=object_id) for object_id in kwargs["selection_ids"]],
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
             axis=from_line_to_grpc_line(kwargs["axis"]),
             angle=from_measurement_to_server_angle(kwargs["angle"]),
             extrude_type=kwargs["extrude_type"].value,
@@ -386,13 +382,12 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
     @protect_grpc
     def revolve_faces_up_to(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import RevolveFacesUpToRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RevolveFacesUpToRequest(
-            selection=[EntityIdentifier(id=object_id) for object_id in kwargs["selection_ids"]],
-            up_to_selection=EntityIdentifier(id=kwargs["up_to_selection_id"]),
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+            up_to_selection=build_grpc_id(kwargs["up_to_selection_id"]),
             axis=from_line_to_grpc_line(kwargs["axis"]),
             direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
             extrude_type=kwargs["extrude_type"].value,
@@ -409,12 +404,11 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
     @protect_grpc
     def revolve_faces_by_helix(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import RevolveFacesByHelixRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RevolveFacesByHelixRequest(
-            selection=[EntityIdentifier(id=object_id) for object_id in kwargs["selection_ids"]],
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
             axis=from_line_to_grpc_line(kwargs["axis"]),
             direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
             height=from_measurement_to_server_length(kwargs["height"]),
@@ -436,15 +430,12 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
     @protect_grpc
     def replace_faces(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import ReplaceFaceRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ReplaceFaceRequest(
-            target_selection=[EntityIdentifier(id=object_id) for object_id in kwargs["target_ids"]],
-            replacement_selection=[
-                EntityIdentifier(id=object_id) for object_id in kwargs["replacement_ids"]
-            ],
+            target_selection=[build_grpc_id(id) for id in kwargs["target_ids"]],
+            replacement_selection=[build_grpc_id(id) for id in kwargs["replacement_ids"]],
         )
 
         # Call the gRPC service
@@ -457,12 +448,11 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
     @protect_grpc
     def thicken_faces(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import ThickenFacesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ThickenFacesRequest(
-            faces=[EntityIdentifier(id=face_id) for face_id in kwargs["face_ids"]],
+            faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
             direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
             value=from_measurement_to_server_length(kwargs["thickness"]),
             extrude_type=kwargs["extrude_type"].value,
@@ -480,15 +470,12 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
     @protect_grpc
     def draft_faces(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import DraftFacesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DraftFacesRequest(
-            faces=[EntityIdentifier(id=face_id) for face_id in kwargs["face_ids"]],
-            reference_faces=[
-                EntityIdentifier(id=face_id) for face_id in kwargs["reference_face_ids"]
-            ],
+            faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
+            reference_faces=[build_grpc_id(id) for id in kwargs["reference_face_ids"]],
             draft_side=kwargs["draft_side"].value,
             draft_angle=from_measurement_to_server_angle(kwargs["angle"]),
             extrude_type=kwargs["extrude_type"].value,
@@ -503,14 +490,11 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
         }
 
     @protect_grpc
-    def get_round_info(self, **kwargs):  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+    def get_round_info(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import RoundInfoRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RoundInfoRequest(
-            face=EntityIdentifier(id=kwargs["face_id"]),
-        )
+        request = RoundInfoRequest(face=build_grpc_id(kwargs["face_id"]))
 
         # Call the gRPC service
         response = self.commands_stub.GetRoundInfo(request=request)

@@ -64,7 +64,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
-    def get_vertices(self, **kwargs):  # noqa: D102
+    def get_vertices(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
@@ -96,11 +96,11 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
-    def extrude_faces(self, **kwargs):  # noqa: D102
+    def extrude_faces(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
-    def extrude_faces_up_to(self, **kwargs):  # noqa: D102
+    def extrude_faces_up_to(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
@@ -132,5 +132,5 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
-    def get_round_info(self, **kwargs):  # noqa: D102
+    def get_round_info(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
