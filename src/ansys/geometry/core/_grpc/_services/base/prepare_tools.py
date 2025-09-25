@@ -78,3 +78,8 @@ class GRPCPrepareToolsService(ABC):  # pragma: no cover
     def remove_logo(self, **kwargs) -> dict:
         """Remove logos in geometry."""
         pass
+
+    @abstractmethod
+    def detect_helixes(self, **kwargs) -> dict:
+        """Detect helixes in geometry."""
+        pass
