@@ -26,7 +26,7 @@ RUN mkdir tmp_folder && \
 
 # Defining environment variables
 ENV LICENSE_SERVER=""
-ENV SERVER_ENDPOINT="0.0.0.0:50051"
+ENV SERVER_ENDPOINT="50051@0.0.0.0"
 ENV ENABLE_TRACE=0
 ENV LOG_LEVEL=2
 ENV AWP_ROOT252=C:/app/unified
