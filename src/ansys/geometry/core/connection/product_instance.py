@@ -466,7 +466,7 @@ def prepare_and_start_backend(
             import shutil
 
             if not any(
-                CORE_GEOMETRY_SERVICE_EXE.replace(".exe", "") in file.name
+                CORE_GEOMETRY_SERVICE_EXE.replace(".exe", "") == file.name
                 for file in Path(root_service_folder).iterdir()
             ):
                 if not shutil.which("dotnet"):
