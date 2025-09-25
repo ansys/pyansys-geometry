@@ -43,6 +43,7 @@ def test_python_simple_script(modeler: Modeler):
     assert pattern_db.match(result["design_body"])
     assert pattern_doc.match(result["design"])
 
+
 @pytest.mark.skip(reason="New failure to be investigated.")
 def test_python_simple_script_ignore_api_version(
     modeler: Modeler, caplog: pytest.LogCaptureFixture
