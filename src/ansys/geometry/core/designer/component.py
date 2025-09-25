@@ -1290,7 +1290,6 @@ class Component:
         )
         self._grpc_client.log.debug("Beams successfully created.")
 
-        print(response)
         beams = []
         for beam in response.get("created_beams", []):
             cross_section = BeamCrossSectionInfo(
