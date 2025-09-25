@@ -26,7 +26,6 @@ import pint
 
 import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
