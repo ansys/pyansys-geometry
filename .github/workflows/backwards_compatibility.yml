@@ -97,13 +97,11 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           # If on 24.1, 24.2 and 25.1, we need to define the SERVER_ENDPOINT variable
           if (${{ matrix.backend-version }} -in @("24.1", "24.2", "25.1")) {
-              $env:SERVER_ENDPOINT = "-e SERVER_ENDPOINT=0.0.0.0@50051"
               echo "Adding SERVER_ENDPOINT variable for backend version ${{ matrix.backend-version }}"
-              echo "SERVER_ENDPOINT variable set to: $env:SERVER_ENDPOINT"
+              docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -e SERVER_ENDPOINT=0.0.0.0@50051 -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
           } else {
-              $env:SERVER_ENDPOINT = ""
+              docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
           }
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} $env:SERVER_ENDPOINT -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
           Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
