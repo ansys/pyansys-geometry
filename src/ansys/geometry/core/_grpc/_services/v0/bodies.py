@@ -794,12 +794,10 @@ class GRPCBodyServiceV0(GRPCBodyService):
         response = self.stub.CreateBodyFromLoftWithGuides(request)
 
         # Return the response - formatted as a dictionary
-        return [
-            {
-                "id": body.id,
-                "name": body.name,
-                "master_id": body.master_id,
-                "is_surface": body.is_surface,
-            }
-            for body in response.created_bodies
-        ]
+        new_body = response.created_bodies[0]
+        return {
+            "id": new_body.id,
+            "name": new_body.name,
+            "master_id": new_body.master_id,
+            "is_surface": new_body.is_surface,
+        }
