@@ -395,6 +395,7 @@ def test_issue_2074_rounding_math_errors():
     assert arc.start == start
     assert arc.end == end
 
+
 def test_issue_2251_double_import_crash(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test that importing a file twice does not crash the program.
 
