@@ -25,13 +25,21 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.conversions import to_area, to_distance
+from ..base.conversions import (
+    from_measurement_to_server_angle,
+    from_measurement_to_server_length,
+    to_area,
+    to_distance,
+)
 from ..base.faces import GRPCFacesService
 from .conversions import (
     build_grpc_id,
     from_grpc_curve_to_curve,
     from_grpc_point_to_point3d,
     from_grpc_surface_to_surface,
+    from_line_to_grpc_line,
+    from_point3d_to_grpc_point,
+    from_unit_vector_to_grpc_direction,
 )
 
 
@@ -50,9 +58,11 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
         from ansys.api.geometry.v0.faces_pb2_grpc import FacesStub
 
         self.stub = FacesStub(channel)
+        self.commands_stub = CommandsStub(channel)
 
     @protect_grpc
     def get_surface(self, **kwargs) -> dict:  # noqa: D102
@@ -268,4 +278,229 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
                 }
                 for curve in response.curves
             ]
+        }
+
+    @protect_grpc
+    def extrude_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ExtrudeFacesRequest
+
+        # Assign direction
+        direction = (
+            None
+            if kwargs["direction"] is None
+            else from_unit_vector_to_grpc_direction(kwargs["direction"])
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ExtrudeFacesRequest(
+            faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
+            distance=from_measurement_to_server_length(kwargs["distance"]),
+            direction=direction,
+            extrude_type=kwargs["extrude_type"].value,
+            pull_symmetric=kwargs["pull_symmetric"],
+            offset_mode=kwargs["offset_mode"].value,
+            copy=kwargs["copy"],
+            force_do_as_extrude=kwargs["force_do_as_extrude"],
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.ExtrudeFaces(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+            "created_bodies": [body.id for body in response.created_bodies],
+        }
+
+    @protect_grpc
+    def extrude_faces_up_to(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ExtrudeFacesUpToRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ExtrudeFacesUpToRequest(
+            faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
+            up_to_selection=build_grpc_id(kwargs["up_to_selection_id"]),
+            seed_point=from_point3d_to_grpc_point(kwargs["seed_point"]),
+            direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+            extrude_type=kwargs["extrude_type"].value,
+            pull_symmetric=kwargs["pull_symmetric"],
+            offset_mode=kwargs["offset_mode"].value,
+            copy=kwargs["copy"],
+            force_do_as_extrude=kwargs["force_do_as_extrude"],
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.ExtrudeFacesUpTo(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+            "created_bodies": [body.id for body in response.created_bodies],
+        }
+
+    @protect_grpc
+    def offset_faces_set_radius(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import OffsetFacesSetRadiusRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = OffsetFacesSetRadiusRequest(
+            faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
+            radius=from_measurement_to_server_length(kwargs["radius"]),
+            offset_mode=kwargs["offset_mode"].value,
+            copy=kwargs["copy"],
+            extrude_type=kwargs["extrude_type"].value,
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.OffsetFacesSetRadius(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+        }
+
+    @protect_grpc
+    def revolve_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import RevolveFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RevolveFacesRequest(
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+            axis=from_line_to_grpc_line(kwargs["axis"]),
+            angle=from_measurement_to_server_angle(kwargs["angle"]),
+            extrude_type=kwargs["extrude_type"].value,
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.RevolveFaces(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+            "created_bodies": [body.id for body in response.created_bodies],
+        }
+
+    @protect_grpc
+    def revolve_faces_up_to(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import RevolveFacesUpToRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RevolveFacesUpToRequest(
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+            up_to_selection=build_grpc_id(kwargs["up_to_selection_id"]),
+            axis=from_line_to_grpc_line(kwargs["axis"]),
+            direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+            extrude_type=kwargs["extrude_type"].value,
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.RevolveFacesUpTo(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+            "created_bodies": [body.id for body in response.created_bodies],
+        }
+
+    @protect_grpc
+    def revolve_faces_by_helix(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import RevolveFacesByHelixRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RevolveFacesByHelixRequest(
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+            axis=from_line_to_grpc_line(kwargs["axis"]),
+            direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+            height=from_measurement_to_server_length(kwargs["height"]),
+            pitch=from_measurement_to_server_length(kwargs["pitch"]),
+            taper_angle=from_measurement_to_server_angle(kwargs["taper_angle"]),
+            right_handed=kwargs["right_handed"],
+            both_sides=kwargs["both_sides"],
+            extrude_type=kwargs["extrude_type"].value,
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.RevolveFacesByHelix(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+            "created_bodies": [body.id for body in response.created_bodies],
+        }
+
+    @protect_grpc
+    def replace_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ReplaceFaceRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ReplaceFaceRequest(
+            target_selection=[build_grpc_id(id) for id in kwargs["target_ids"]],
+            replacement_selection=[build_grpc_id(id) for id in kwargs["replacement_ids"]],
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.ReplaceFace(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+        }
+
+    @protect_grpc
+    def thicken_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ThickenFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ThickenFacesRequest(
+            faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
+            direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+            value=from_measurement_to_server_length(kwargs["thickness"]),
+            extrude_type=kwargs["extrude_type"].value,
+            pull_symmetric=kwargs["pull_symmetric"],
+            select_direction=kwargs["select_direction"],
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.ThickenFaces(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+        }
+
+    @protect_grpc
+    def draft_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import DraftFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DraftFacesRequest(
+            faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
+            reference_faces=[build_grpc_id(id) for id in kwargs["reference_face_ids"]],
+            draft_side=kwargs["draft_side"].value,
+            draft_angle=from_measurement_to_server_angle(kwargs["angle"]),
+            extrude_type=kwargs["extrude_type"].value,
+        )
+
+        # Call the gRPC server
+        response = self.commands_stub.DraftFaces(request=request)
+
+        # Return the drafted faces
+        return {
+            "created_faces": [face.id for face in response.created_faces],
+        }
+
+    @protect_grpc
+    def get_round_info(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import RoundInfoRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RoundInfoRequest(face=build_grpc_id(kwargs["face_id"]))
+
+        # Call the gRPC service
+        response = self.commands_stub.GetRoundInfo(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "along_u": response.along_u,
+            "radius": response.radius,
         }

@@ -29,7 +29,6 @@ import uuid
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
-    CreateBeamSegmentsRequest,
     CreateDesignPointsRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
@@ -41,7 +40,7 @@ from ansys.api.geometry.v0.components_pb2 import (
     SetSharedTopologyRequest,
 )
 from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Direction, Line, SetObjectNameRequest
+from ansys.api.geometry.v0.models_pb2 import Direction, SetObjectNameRequest
 from beartype import beartype as check_input_types
 from pint import Quantity
 
@@ -1104,7 +1103,6 @@ class Component:
         )
         return self.__build_body_from_response(response)
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def create_surface_from_trimmed_curves(
         self, name: str, trimmed_curves: list[TrimmedCurve]
@@ -1202,7 +1200,6 @@ class Component:
             distance=distance,
         )
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def create_beams(
@@ -1255,25 +1252,21 @@ class Component:
         -----
         This is a legacy method, which is used in versions up to Ansys 25.1.1 products.
         """
-        request = CreateBeamSegmentsRequest(parent=self.id, profile=profile.id)
-
-        for segment in segments:
-            request.lines.append(
-                Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
-            )
-
         self._grpc_client.log.debug(f"Creating beams on {self.id}...")
-        response = self._commands_stub.CreateBeamSegments(request)
+        response = self._grpc_client.services.beams.create_beam_segments(
+            parent_id=self.id, profile_id=profile.id, segments=segments
+        )
         self._grpc_client.log.debug("Beams successfully created.")
 
         # Note: The current gRPC API simply returns a list of IDs. There is no additional
         # information to correlate/merge against, so it is fully assumed that the list is
         # returned in order with a 1 to 1 index match to the request segments list.
         new_beams = []
-        n_beams = len(response.ids)
+        beam_ids = response.get("beam_ids", [])
+        n_beams = len(beam_ids)
         for index in range(n_beams):
             new_beams.append(
-                Beam(response.ids[index], segments[index][0], segments[index][1], profile, self)
+                Beam(beam_ids[index], segments[index][0], segments[index][1], profile, self)
             )
 
         self._beams.extend(new_beams)
@@ -1298,22 +1291,14 @@ class Component:
         list[Beam]
             A list of the created Beams.
         """
-        request = CreateBeamSegmentsRequest(
-            profile=profile.id,
-            parent=self.id,
-        )
-
-        for segment in segments:
-            request.lines.append(
-                Line(start=point3d_to_grpc_point(segment[0]), end=point3d_to_grpc_point(segment[1]))
-            )
-
         self._grpc_client.log.debug(f"Creating beams on {self.id}...")
-        response = self._commands_stub.CreateDescriptiveBeamSegments(request)
+        response = self._grpc_client.services.beams.create_descriptive_beam_segments(
+            parent_id=self.id, profile_id=profile.id, segments=segments
+        )
         self._grpc_client.log.debug("Beams successfully created.")
 
         beams = []
-        for beam in response.created_beams:
+        for beam in response.get("created_beams", []):
             cross_section = BeamCrossSectionInfo(
                 section_anchor=SectionAnchorType(beam.cross_section.section_anchor),
                 section_angle=beam.cross_section.section_angle,
@@ -1506,7 +1491,6 @@ class Component:
         # Finally return the list of created DesignPoint objects
         return self._design_points[-n_design_points:]
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def delete_beam(self, beam: Beam | str) -> None:
@@ -1533,7 +1517,7 @@ class Component:
             # Server-side, the same deletion request has to be performed
             # as for deleting a Body
             #
-            self._commands_stub.DeleteBeam(EntityIdentifier(id=beam_requested.id))
+            self._grpc_client.services.beams.delete_beam(beam_id=beam_requested.id)
 
             # If the beam was deleted from the server side... "kill" it
             # on the client side
