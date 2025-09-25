@@ -92,18 +92,17 @@ jobs:
               docker rm $dockerContainers
           }
 
+      - name: Define SERVER_ENDPOINT variable if needed
+        if: matrix.backend-version == '24.1' || matrix.backend-version == '24.2' || matrix.backend-version == '25.1'
+        run: |
+          $env:SERVER_ENDPOINT = "-e SERVER_ENDPOINT=50051@0.0.0.0"
+          echo "SERVER_ENDPOINT variable set to: $env:SERVER_ENDPOINT"
+          echo "SERVER_ENDPOINT=$env:SERVER_ENDPOINT" | Out-File -FilePath $env:GITHUB_ENV -Append
+
       - name: Start Geometry service and verify start
         run: |
           .\.venv\Scripts\Activate.ps1
-          # If on 24.1, 24.2 and 25.1, we need to define the SERVER_ENDPOINT variable
-          if (${{ matrix.backend-version }} -in @("24.1", "24.2", "25.1")) {
-              $env:SERVER_ENDPOINT = "-e SERVER_ENDPOINT=50051@0.0.0.0"
-              echo "Adding SERVER_ENDPOINT variable for backend version ${{ matrix.backend-version }}"
-              echo "SERVER_ENDPOINT variable set to: $env:SERVER_ENDPOINT"
-          } else {
-              $env:SERVER_ENDPOINT = ""
-          }
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} $env:SERVER_ENDPOINT -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} ${{ env.SERVER_ENDPOINT }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
           Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
