@@ -222,7 +222,7 @@ class GRPCBodyService(ABC):  # pragma: no cover
     @abstractmethod
     def combine(self, **kwargs) -> dict:
         """Boolean operation through command."""
-        
+
     def split_body(self, **kwargs) -> dict:
         """Split a body."""
         pass

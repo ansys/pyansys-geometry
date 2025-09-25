@@ -195,8 +195,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def combine(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-        
-    @protect_grpc        
+
+    @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
