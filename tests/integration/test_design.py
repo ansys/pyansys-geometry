@@ -3932,7 +3932,8 @@ def test_updating_design_from_tracker(modeler: Modeler):
     design.bodies[0]._id = "10"
     result = design._update_from_tracker(tracker_response)
     assert result is None
-    # Then we create particular body_into statements to hit lines not hit when calling the _update_from_tracker method
+    # Then we create particular body_into statements to hit lines not hit when calling
+    # the _update_from_tracker method
     body_info = {
         "id": "body1",
         "name": "UpdatedSubComponentBody",

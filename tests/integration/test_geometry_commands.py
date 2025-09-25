@@ -25,11 +25,11 @@ import numpy as np
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.designer.geometry_commands import *
 from ansys.geometry.core.designer.geometry_commands import (
     DraftSide,
     ExtrudeType,
     FillPatternType,
+    GeometryCommands,
     OffsetMode,
 )
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
