@@ -761,8 +761,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {}
-
-    @protect_grpc
+	@protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import SplitBodyRequest
@@ -782,4 +781,46 @@ class GRPCBodyServiceV0(GRPCBodyService):
         # Return the response - formatted as a dictionary
         return {
             "success": resp.success,
+        }
+        
+	@protect_grpc
+    def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+        from ansys.api.geometry.v0.bodies_pb2 import (
+            CreateBodyFromLoftWithGuidesRequest,
+            CreateBodyFromLoftWithGuidesRequestData,
+        )
+        from ansys.api.geometry.v0.models_pb2 import TrimmedCurveList
+
+        # Create request object - assumes all inputs are valid and of the proper type
+        request = CreateBodyFromLoftWithGuidesRequest(
+            request_data=[
+                CreateBodyFromLoftWithGuidesRequestData(
+                    name=kwargs["name"],
+                    parent=EntityIdentifier(id=kwargs["parent_id"]),
+                    profiles=[
+                        TrimmedCurveList(
+                            curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile]
+                        )
+                        for profile in kwargs["profiles"]
+                    ],
+                    guides=TrimmedCurveList(
+                        curves=[
+                            from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["guides"]
+                        ]
+                    ),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.stub.CreateBodyFromLoftWithGuides(request)
+
+        # Return the response - formatted as a dictionary
+        new_body = response.created_bodies[0]
+        return {
+            "id": new_body.id,
+            "name": new_body.name,
+            "master_id": new_body.master_id,
+            "is_surface": new_body.is_surface,
         }
