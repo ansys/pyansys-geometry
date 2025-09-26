@@ -28,7 +28,9 @@ from .base.assembly_controls import GRPCAssemblyControlsService
 from .base.beams import GRPCBeamsService
 from .base.bodies import GRPCBodyService
 from .base.commands import GRPCCommandsService
+from .base.components import GRPCComponentsService
 from .base.coordinate_systems import GRPCCoordinateSystemService
+from .base.curves import GRPCCurvesService
 from .base.dbuapplication import GRPCDbuApplicationService
 from .base.designs import GRPCDesignsService
 from .base.driving_dimensions import GRPCDrivingDimensionsService
@@ -87,7 +89,9 @@ class _GRPCServices:
         self._beams = None
         self._bodies = None
         self._commands = None
+        self._components = None
         self._coordinate_systems = None
+        self._curves = None
         self._dbu_application = None
         self._designs = None
         self._driving_dimensions = None
@@ -233,6 +237,32 @@ class _GRPCServices:
         return self._commands
 
     @property
+    def components(self) -> GRPCComponentsService:
+        """
+        Get the components service for the specified version.
+
+        Returns
+        -------
+        GRPCComponentsService
+            The components service for the specified version.
+        """
+        if not self._components:
+            # Import the appropriate components service based on the version
+            from .v0.components import GRPCComponentsServiceV0
+            from .v1.components import GRPCComponentsServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._components = GRPCComponentsServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._components = GRPCComponentsServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._components
+
+    @property
     def coordinate_systems(self) -> GRPCCoordinateSystemService:
         """
         Get the coordinate systems service for the specified version.
@@ -257,6 +287,32 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._coordinate_systems
+
+    @property
+    def curves(self) -> GRPCCurvesService:
+        """
+        Get the curves service for the specified version.
+
+        Returns
+        -------
+        GRPCCurvesService
+            The curves service for the specified version.
+        """
+        if not self._curves:
+            # Import the appropriate curves service based on the version
+            from .v0.curves import GRPCCurvesServiceV0
+            from .v1.curves import GRPCCurvesServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._curves = GRPCCurvesServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # V1 is not implemented yet
+                self._curves = GRPCCurvesServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._curves
 
     @property
     def designs(self) -> GRPCDesignsService:

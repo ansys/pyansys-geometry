@@ -1405,3 +1405,52 @@ def test_thicken_surface_body(modeler: Modeler):
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(0.4, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_offset_faces(modeler: Modeler):
+    """Test offsetting faces."""
+    design = modeler.create_design("offset_faces")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    assert len(box.faces) == 6
+    assert box.volume.m == pytest.approx(Quantity(8, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # Offset the top face
+    modeler.geometry_commands.offset_faces([box.faces[1]], 0.1, UNITVECTOR3D_Z, ExtrudeType.ADD)
+
+    assert box.volume.m == pytest.approx(Quantity(8.4, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # Test with two boxes
+    box2 = design.extrude_sketch("box2", Sketch().box(Point2D([3, 0]), 2, 2), 2)
+
+    assert len(box2.faces) == 6
+    assert box2.volume.m == pytest.approx(Quantity(8, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # Offset the top face of both boxes
+    modeler.geometry_commands.offset_faces(
+        [box.faces[1], box2.faces[1]], 0.1, UNITVECTOR3D_Z, ExtrudeType.ADD
+    )
+
+    assert box.volume.m == pytest.approx(Quantity(8.8, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert box2.volume.m == pytest.approx(Quantity(8.4, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+
+def test_revolve_edges(modeler: Modeler):
+    """Test revolving edges."""
+    design = modeler.create_design("revolve_edges")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    assert len(box.faces) == 6
+    assert box.volume.m == pytest.approx(Quantity(8, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # Revolve one edge of the box
+    edge = box.faces[2].edges[0]
+    axis = Line(Point3D([0, 0, 0], UNITS.m), UNITVECTOR3D_Z)
+    modeler.geometry_commands.revolve_edges(edge, axis, Angle(np.pi / 2, UNITS.rad), True)
+
+    assert len(design.bodies) == 2
+    assert design.bodies[0].volume.m == pytest.approx(Quantity(8, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert design.bodies[1].is_surface
+    assert design.bodies[1].faces[0].area.m == pytest.approx(
+        Quantity(8.88576587632, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )

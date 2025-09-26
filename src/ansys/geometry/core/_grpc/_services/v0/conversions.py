@@ -42,6 +42,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     Line as GRPCLine,
     Material as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
+    Matrix as GRPCMatrix,
     NurbsCurve as GRPCNurbsCurve,
     Plane as GRPCPlane,
     Point as GRPCPoint,
@@ -68,6 +69,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.materials.material import Material
     from ansys.geometry.core.materials.property import MaterialProperty
     from ansys.geometry.core.math.frame import Frame
+    from ansys.geometry.core.math.matrix import Matrix44
     from ansys.geometry.core.math.plane import Plane
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
@@ -1196,6 +1198,36 @@ def from_material_to_grpc_material(
             )
             for property in material.properties.values()
         ],
+    )
+
+
+def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
+    """Convert a gRPC matrix to a matrix.
+
+    Parameters
+    ----------
+    matrix : GRPCMatrix
+        Source gRPC matrix data.
+
+    Returns
+    -------
+    Matrix44
+        Converted matrix.
+    """
+    import numpy as np
+
+    from ansys.geometry.core.math.matrix import Matrix44
+
+    return Matrix44(
+        np.round(
+            [
+                [matrix.m00, matrix.m01, matrix.m02, matrix.m03],
+                [matrix.m10, matrix.m11, matrix.m12, matrix.m13],
+                [matrix.m20, matrix.m21, matrix.m22, matrix.m23],
+                [matrix.m30, matrix.m31, matrix.m32, matrix.m33],
+            ],
+            8,
+        )
     )
 
 

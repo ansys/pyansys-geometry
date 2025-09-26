@@ -32,27 +32,12 @@ from ansys.api.geometry.v0.commands_pb2 import (
     CreateDesignPointsRequest,
 )
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
-from ansys.api.geometry.v0.components_pb2 import (
-    CreateRequest,
-    ImportGroupsRequest,
-    MakeIndependentRequest,
-    SetPlacementRequest,
-    SetSharedTopologyRequest,
-)
-from ansys.api.geometry.v0.components_pb2_grpc import ComponentsStub
-from ansys.api.geometry.v0.models_pb2 import Direction, SetObjectNameRequest
 from beartype import beartype as check_input_types
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
-    grpc_curve_to_curve,
-    grpc_frame_to_frame,
-    grpc_material_to_material,
-    grpc_matrix_to_matrix,
-    grpc_point_to_point3d,
     point3d_to_grpc_point,
-    unit_vector_to_grpc_direction,
 )
 from ansys.geometry.core.designer.beam import (
     Beam,
@@ -82,7 +67,7 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
-from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
+from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
@@ -201,7 +186,6 @@ class Component:
     _coordinate_systems: list[CoordinateSystem]
     _design_points: list[DesignPoint]
 
-    @protect_grpc
     @check_input_types
     def __init__(
         self,
@@ -217,7 +201,6 @@ class Component:
         """Initialize the ``Component`` class."""
         # Initialize the client and stubs needed
         self._grpc_client = grpc_client
-        self._component_stub = ComponentsStub(self._grpc_client.channel)
         self._commands_stub = CommandsStub(self._grpc_client.channel)
 
         # Align instance name behavior with the server - empty string if None
@@ -230,19 +213,17 @@ class Component:
         else:
             if parent_component:
                 template_id = template.id if template else ""
-                new_component = self._component_stub.Create(
-                    CreateRequest(
-                        name=name,
-                        parent=parent_component.id,
-                        template=template_id,
-                        instance_name=instance_name,
-                    )
+                response = self._grpc_client._services.components.create(
+                    name=name,
+                    parent_id=parent_component.id,
+                    template_id=template_id,
+                    instance_name=instance_name,
                 )
 
                 # Remove this method call once we know Service sends correct ObjectPath id
-                self._id = new_component.component.id
-                self._name = new_component.component.name
-                self._instance_name = new_component.component.instance_name
+                self._id = response.get("id")
+                self._name = response.get("name")
+                self._instance_name = response.get("instance_name")
             else:
                 new_component = None
                 self._name = name
@@ -319,7 +300,6 @@ class Component:
         """
         self.set_name(value)
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
     def set_name(self, name: str) -> None:
@@ -330,7 +310,7 @@ class Component:
         This method is only available starting on Ansys release 25R2.
         """
         self._grpc_client.log.debug(f"Renaming component {self.id} from '{self.name}' to '{name}'.")
-        self._component_stub.SetName(SetObjectNameRequest(id=self._grpc_id, name=name))
+        self._grpc_client._services.components.set_name(id=self.id, name=name)
         self._name = name
 
     @property
@@ -434,7 +414,6 @@ class Component:
             return IDENTITY_MATRIX44
         return self.parent_component.get_world_transform() * self._master_component.transform
 
-    @protect_grpc
     @ensure_design_is_active
     def modify_placement(
         self,
@@ -461,29 +440,16 @@ class Component:
         To reset a component's placement to an identity matrix, see
         :func:`reset_placement()` or call :func:`modify_placement()` with no arguments.
         """
-        t = (
-            Direction(x=translation.x, y=translation.y, z=translation.z)
-            if translation is not None
-            else None
-        )
-        p = point3d_to_grpc_point(rotation_origin) if rotation_origin is not None else None
-        d = (
-            unit_vector_to_grpc_direction(rotation_direction)
-            if rotation_direction is not None
-            else None
-        )
         angle = rotation_angle if isinstance(rotation_angle, Angle) else Angle(rotation_angle)
 
-        response = self._component_stub.SetPlacement(
-            SetPlacementRequest(
-                id=self.id,
-                translation=t,
-                rotation_axis_origin=p,
-                rotation_axis_direction=d,
-                rotation_angle=angle.value.m,
-            )
+        response = self._grpc_client._services.components.set_placement(
+            id=self.id,
+            translation=translation,
+            rotation_axis_origin=rotation_origin,
+            rotation_axis_direction=rotation_direction,
+            rotation_angle=angle,
         )
-        self._master_component.transform = grpc_matrix_to_matrix(response.matrix)
+        self._master_component.transform = response.get("matrix")
 
     def reset_placement(self):
         """Reset a component's placement matrix to an identity matrix.
@@ -535,7 +501,6 @@ class Component:
         self.components.append(new_comp)
         return self._components[-1]
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def set_shared_topology(self, share_type: SharedTopologyType) -> None:
@@ -550,8 +515,8 @@ class Component:
         self._grpc_client.log.debug(
             f"Setting shared topology type {share_type.value} on {self.id}."
         )
-        self._component_stub.SetSharedTopology(
-            SetSharedTopologyRequest(id=self.id, share_type=share_type.value)
+        self._grpc_client._services.components.set_shared_topology(
+            id=self.id, share_type=share_type
         )
 
         # Store the SharedTopologyType set on the client
@@ -1298,54 +1263,58 @@ class Component:
         self._grpc_client.log.debug("Beams successfully created.")
 
         beams = []
-        for beam in response.get("created_beams", []):
+        for beam in response.get("created_beams"):
             cross_section = BeamCrossSectionInfo(
-                section_anchor=SectionAnchorType(beam.cross_section.section_anchor),
-                section_angle=beam.cross_section.section_angle,
-                section_frame=grpc_frame_to_frame(beam.cross_section.section_frame),
+                section_anchor=SectionAnchorType(beam.get("cross_section").get("section_anchor")),
+                section_angle=beam.get("cross_section").get("section_angle"),
+                section_frame=beam.get("cross_section").get("section_frame"),
                 section_profile=[
                     [
                         TrimmedCurve(
-                            geometry=grpc_curve_to_curve(curve.geometry),
-                            start=grpc_point_to_point3d(curve.start),
-                            end=grpc_point_to_point3d(curve.end),
-                            interval=Interval(curve.interval_start, curve.interval_end),
-                            length=curve.length,
+                            geometry=curve.get("geometry"),
+                            start=curve.get("start"),
+                            end=curve.get("end"),
+                            interval=curve.get("interval"),
+                            length=curve.get("length"),
                         )
                         for curve in curve_list
                     ]
-                    for curve_list in beam.cross_section.section_profile
+                    for curve_list in beam.get("cross_section").get("section_profile")
                 ],
             )
             properties = BeamProperties(
-                area=beam.properties.area,
-                centroid=ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
-                warping_constant=beam.properties.warping_constant,
-                ixx=beam.properties.ixx,
-                ixy=beam.properties.ixy,
-                iyy=beam.properties.iyy,
-                shear_center=ParamUV(
-                    beam.properties.shear_center_x, beam.properties.shear_center_y
-                ),
-                torsion_constant=beam.properties.torsional_constant,
+                area=beam.get("properties").get("area"),
+                centroid=beam.get("properties").get("centroid"),
+                warping_constant=beam.get("properties").get("warping_constant"),
+                ixx=beam.get("properties").get("ixx"),
+                ixy=beam.get("properties").get("ixy"),
+                iyy=beam.get("properties").get("iyy"),
+                shear_center=beam.get("properties").get("shear_center"),
+                torsion_constant=beam.get("properties").get("torsional_constant"),
             )
 
             beams.append(
                 Beam(
-                    id=beam.id.id,
-                    start=grpc_point_to_point3d(beam.shape.start),
-                    end=grpc_point_to_point3d(beam.shape.end),
+                    id=beam.get("id"),
+                    start=beam.get("start"),
+                    end=beam.get("end"),
                     profile=profile,
                     parent_component=self,
-                    name=beam.name,
-                    is_deleted=beam.is_deleted,
-                    is_reversed=beam.is_reversed,
-                    is_rigid=beam.is_rigid,
-                    material=grpc_material_to_material(beam.material),
+                    name=beam.get("name"),
+                    is_deleted=beam.get("is_deleted"),
+                    is_reversed=beam.get("is_reversed"),
+                    is_rigid=beam.get("is_rigid"),
+                    material=beam.get("material"),
                     cross_section=cross_section,
                     properties=properties,
-                    shape=beam.shape,
-                    beam_type=beam.type,
+                    shape=TrimmedCurve(
+                        geometry=beam.get("shape").get("geometry"),
+                        start=beam.get("shape").get("start"),
+                        end=beam.get("shape").get("end"),
+                        interval=beam.get("shape").get("interval"),
+                        length=beam.get("shape").get("length"),
+                    ),
+                    beam_type=beam.get("type"),
                 )
             )
 
@@ -1369,7 +1338,6 @@ class Component:
         """
         return self.create_beams([(start, end)], profile)[0]
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def delete_component(self, component: Union["Component", str]) -> None:
@@ -1391,7 +1359,7 @@ class Component:
         if component_requested:
             # If the component belongs to this component (or nested components)
             # call the server deletion mechanism
-            self._component_stub.Delete(EntityIdentifier(id=id))
+            self._grpc_client._services.components.delete(id=id)
 
             # If the component was deleted from the server side... "kill" it
             # on the client side
@@ -1972,7 +1940,6 @@ class Component:
 
         return lines if return_list else print("\n".join(lines))
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def import_named_selections(self) -> None:
         """Import named selections of a component.
@@ -1994,12 +1961,11 @@ class Component:
                 "it can only be used on a pure Component object."
             )
 
-        self._component_stub.ImportGroups(ImportGroupsRequest(id=self._grpc_id))
+        self._grpc_client._services.components.import_groups(id=self.id)
 
         design = get_design_from_component(self)
         design._update_design_inplace()
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def make_independent(self, others: list["Component"] = None) -> None:
         """Make a component independent if it is an instance.
@@ -2017,5 +1983,5 @@ class Component:
         --------
         This method is only available starting on Ansys release 26R1.
         """
-        ids = [self._grpc_id, *[o._grpc_id for o in others or []]]
-        self._component_stub.MakeIndependent(MakeIndependentRequest(ids=ids))
+        ids = [self.id, *[o.id for o in others or []]]
+        self._grpc_client._services.components.make_independent(ids=ids)
