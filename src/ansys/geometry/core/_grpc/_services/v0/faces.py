@@ -504,3 +504,30 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
             "along_u": response.along_u,
             "radius": response.radius,
         }
+
+    @protect_grpc
+    def offset_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.faces_pb2 import OffsetFacesRequest, OffsetFacesRequestData
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = OffsetFacesRequest(
+            request_data=[
+                OffsetFacesRequestData(
+                    faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    offset=from_measurement_to_server_length(kwargs["distance"]),
+                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+                    extrude_type=kwargs["extrude_type"].value,
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.stub.OffsetFaces(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "results": [
+                [face.id for face in response_data.new_faces]
+                for response_data in response.response_data
+            ]
+        }
