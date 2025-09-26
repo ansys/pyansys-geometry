@@ -509,8 +509,7 @@ class Component:
             f"Setting shared topology type {share_type.value} on {self.id}."
         )
         self._grpc_client._services.components.set_shared_topology(
-            id=self.id,
-            share_type=share_type
+            id=self.id, share_type=share_type
         )
 
         # Store the SharedTopologyType set on the client

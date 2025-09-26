@@ -114,50 +114,57 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
 
         # Return the response - formatted as a dictionary
         return {
-            "created_beams": [{
-                "cross_section": {
-                    "section_anchor": beam.cross_section.section_anchor,
-                    "section_angle": beam.cross_section.section_angle,
-                    "section_frame": from_grpc_frame_to_frame(beam.cross_section.section_frame),
-                    "section_profile": [[
-                        {
-                            "geometry": from_grpc_curve_to_curve(curve.curve),
-                            "start": from_grpc_point_to_point3d(curve.start),
-                            "end": from_grpc_point_to_point3d(curve.end),
-                            "interval": Interval(curve.interval_start, curve.interval_end),
-                            "length": to_distance(curve.length).value,
-                        } for curve in curve_list.curves
-                    ] for curve_list in beam.cross_section.section_profile]
-                },
-                "properties": {
-                    "area": beam.properties.area,
-                    "centroid": ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
-                    "warping_constant": beam.properties.warping_constant,
-                    "ixx": beam.properties.ixx,
-                    "ixy": beam.properties.ixy,
-                    "iyy": beam.properties.iyy,
-                    "shear_center": ParamUV(
-                        beam.properties.shear_center_x, beam.properties.shear_center_y
-                    ),
-                    "torsional_constant": beam.properties.torsional_constant,
-                },
-                "id": beam.id.id,
-                "start": from_grpc_point_to_point3d(beam.shape.start),
-                "end": from_grpc_point_to_point3d(beam.shape.end),
-                "name": beam.name,
-                "is_deleted": beam.is_deleted,
-                "is_reversed": beam.is_reversed,
-                "is_rigid": beam.is_rigid,
-                "material": from_grpc_material_to_material(beam.material),
-                "shape": {
-                    "geometry": from_grpc_curve_to_curve(beam.shape.curve),
+            "created_beams": [
+                {
+                    "cross_section": {
+                        "section_anchor": beam.cross_section.section_anchor,
+                        "section_angle": beam.cross_section.section_angle,
+                        "section_frame": from_grpc_frame_to_frame(beam.cross_section.section_frame),
+                        "section_profile": [
+                            [
+                                {
+                                    "geometry": from_grpc_curve_to_curve(curve.curve),
+                                    "start": from_grpc_point_to_point3d(curve.start),
+                                    "end": from_grpc_point_to_point3d(curve.end),
+                                    "interval": Interval(curve.interval_start, curve.interval_end),
+                                    "length": to_distance(curve.length).value,
+                                }
+                                for curve in curve_list.curves
+                            ]
+                            for curve_list in beam.cross_section.section_profile
+                        ],
+                    },
+                    "properties": {
+                        "area": beam.properties.area,
+                        "centroid": ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
+                        "warping_constant": beam.properties.warping_constant,
+                        "ixx": beam.properties.ixx,
+                        "ixy": beam.properties.ixy,
+                        "iyy": beam.properties.iyy,
+                        "shear_center": ParamUV(
+                            beam.properties.shear_center_x, beam.properties.shear_center_y
+                        ),
+                        "torsional_constant": beam.properties.torsional_constant,
+                    },
+                    "id": beam.id.id,
                     "start": from_grpc_point_to_point3d(beam.shape.start),
                     "end": from_grpc_point_to_point3d(beam.shape.end),
-                    "interval": Interval(beam.shape.interval_start, beam.shape.interval_end),
-                    "length": to_distance(beam.shape.length).value,
-                },
-                "beam_type": beam.type,
-            } for beam in resp.created_beams],
+                    "name": beam.name,
+                    "is_deleted": beam.is_deleted,
+                    "is_reversed": beam.is_reversed,
+                    "is_rigid": beam.is_rigid,
+                    "material": from_grpc_material_to_material(beam.material),
+                    "shape": {
+                        "geometry": from_grpc_curve_to_curve(beam.shape.curve),
+                        "start": from_grpc_point_to_point3d(beam.shape.start),
+                        "end": from_grpc_point_to_point3d(beam.shape.end),
+                        "interval": Interval(beam.shape.interval_start, beam.shape.interval_end),
+                        "length": to_distance(beam.shape.length).value,
+                    },
+                    "beam_type": beam.type,
+                }
+                for beam in resp.created_beams
+            ],
         }
 
     @protect_grpc

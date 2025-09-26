@@ -81,14 +81,11 @@ class GRPCComponentsServiceV0(GRPCComponentsService):
         from ansys.api.geometry.v0.models_pb2 import SetObjectNameRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SetObjectNameRequest(
-            id=build_grpc_id(kwargs["id"]),
-            name=kwargs["name"]
-        )
+        request = SetObjectNameRequest(id=build_grpc_id(kwargs["id"]), name=kwargs["name"])
 
         # Call the gRPC service
         _ = self.stub.SetName(request)
-        
+
         # Return the response - formatted as a dictionary
         return {}
 
@@ -126,9 +123,7 @@ class GRPCComponentsServiceV0(GRPCComponentsService):
         response = self.stub.SetPlacement(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "matrix": from_grpc_matrix_to_matrix(response.matrix)
-        }
+        return {"matrix": from_grpc_matrix_to_matrix(response.matrix)}
 
     @protect_grpc
     def set_shared_topology(self, **kwargs) -> dict:  # noqa: D102

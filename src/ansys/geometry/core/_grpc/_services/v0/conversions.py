@@ -1203,7 +1203,7 @@ def from_material_to_grpc_material(
 
 def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
     """Convert a gRPC matrix to a matrix.
-    
+
     Parameters
     ----------
     matrix : GRPCMatrix
@@ -1215,7 +1215,7 @@ def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
         Converted matrix.
     """
     import numpy as np
-    
+
     from ansys.geometry.core.math.matrix import Matrix44
 
     return Matrix44(
@@ -1229,6 +1229,7 @@ def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
             8,
         )
     )
+
 
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
     """Check if the backend version is compatible with NURBS curves in sketches.
