@@ -37,10 +37,6 @@ from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
-    grpc_curve_to_curve,
-    grpc_frame_to_frame,
-    grpc_material_to_material,
-    grpc_point_to_point3d,
     point3d_to_grpc_point,
 )
 from ansys.geometry.core.designer.beam import (
@@ -71,7 +67,7 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
-from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
+from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
@@ -1261,54 +1257,58 @@ class Component:
         self._grpc_client.log.debug("Beams successfully created.")
 
         beams = []
-        for beam in response.get("created_beams", []):
+        for beam in response.get("created_beams"):
             cross_section = BeamCrossSectionInfo(
-                section_anchor=SectionAnchorType(beam.cross_section.section_anchor),
-                section_angle=beam.cross_section.section_angle,
-                section_frame=grpc_frame_to_frame(beam.cross_section.section_frame),
+                section_anchor=SectionAnchorType(beam.get("cross_section").get("section_anchor")),
+                section_angle=beam.get("cross_section").get("section_angle"),
+                section_frame=beam.get("cross_section").get("section_frame"),
                 section_profile=[
                     [
                         TrimmedCurve(
-                            geometry=grpc_curve_to_curve(curve.geometry),
-                            start=grpc_point_to_point3d(curve.start),
-                            end=grpc_point_to_point3d(curve.end),
-                            interval=Interval(curve.interval_start, curve.interval_end),
-                            length=curve.length,
+                            geometry=curve.get("geometry"),
+                            start=curve.get("start"),
+                            end=curve.get("end"),
+                            interval=curve.get("interval"),
+                            length=curve.get("length"),
                         )
                         for curve in curve_list
                     ]
-                    for curve_list in beam.cross_section.section_profile
+                    for curve_list in beam.get("cross_section").get("section_profile")
                 ],
             )
             properties = BeamProperties(
-                area=beam.properties.area,
-                centroid=ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
-                warping_constant=beam.properties.warping_constant,
-                ixx=beam.properties.ixx,
-                ixy=beam.properties.ixy,
-                iyy=beam.properties.iyy,
-                shear_center=ParamUV(
-                    beam.properties.shear_center_x, beam.properties.shear_center_y
-                ),
-                torsion_constant=beam.properties.torsional_constant,
+                area=beam.get("properties").get("area"),
+                centroid=beam.get("properties").get("centroid"),
+                warping_constant=beam.get("properties").get("warping_constant"),
+                ixx=beam.get("properties").get("ixx"),
+                ixy=beam.get("properties").get("ixy"),
+                iyy=beam.get("properties").get("iyy"),
+                shear_center=beam.get("properties").get("shear_center"),
+                torsion_constant=beam.get("properties").get("torsional_constant"),
             )
 
             beams.append(
                 Beam(
-                    id=beam.id.id,
-                    start=grpc_point_to_point3d(beam.shape.start),
-                    end=grpc_point_to_point3d(beam.shape.end),
+                    id=beam.get("id"),
+                    start=beam.get("start"),
+                    end=beam.get("end"),
                     profile=profile,
                     parent_component=self,
-                    name=beam.name,
-                    is_deleted=beam.is_deleted,
-                    is_reversed=beam.is_reversed,
-                    is_rigid=beam.is_rigid,
-                    material=grpc_material_to_material(beam.material),
+                    name=beam.get("name"),
+                    is_deleted=beam.get("is_deleted"),
+                    is_reversed=beam.get("is_reversed"),
+                    is_rigid=beam.get("is_rigid"),
+                    material=beam.get("material"),
                     cross_section=cross_section,
                     properties=properties,
-                    shape=beam.shape,
-                    beam_type=beam.type,
+                    shape=TrimmedCurve(
+                        geometry=beam.get("shape").get("geometry"),
+                        start=beam.get("shape").get("start"),
+                        end=beam.get("shape").get("end"),
+                        interval=beam.get("shape").get("interval"),
+                        length=beam.get("shape").get("length"),
+                    ),
+                    beam_type=beam.get("type"),
                 )
             )
 
