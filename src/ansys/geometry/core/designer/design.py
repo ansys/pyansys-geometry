@@ -1343,7 +1343,11 @@ class Design(Component):
             for body in self.bodies:
                 if body.id == body_id:
                     body._is_alive = False
-                    self.bodies.remove(body)
+                    for bd in self._master_component.part.bodies:
+                        if bd.id == body_id:
+                            self._master_component.part.bodies.remove(bd)
+                            break
+                    self._clear_cached_bodies()
                     removed = True
                     self._grpc_client.log.info(
                         f"Deleted body (ID: {body_id}) removed from root level."
@@ -1370,10 +1374,11 @@ class Design(Component):
                 )
                 continue
 
-            added = any(self._find_and_add_body(body_info, self.components))
+            added = self._find_and_add_body(body_info, self.components)
             if not added:
                 new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
-                self.bodies.append(new_body)
+                self._master_component.part.bodies.append(new_body)
+                self._clear_cached_bodies()
                 self._grpc_client.log.debug(
                     f"Added new body '{body_name}' (ID: {body_id}) to root level."
                 )
@@ -1388,14 +1393,17 @@ class Design(Component):
 
     def _find_and_add_body(self, body_info, components):
         for component in components:
-            if component.id == body_info["parent_id"]:
+            parent_id_for_body = component._master_component.part.id
+            if parent_id_for_body == body_info["parent_id"]:
                 new_body = MasterBody(
                     body_info["id"],
                     body_info["name"],
                     self._grpc_client,
                     is_surface=body_info.get("is_surface", False),
                 )
-                component.bodies.append(new_body)
+                # component.bodies.append(new_body)
+                component._master_component.part.bodies.append(new_body)
+                component._clear_cached_bodies()
                 self._grpc_client.log.debug(
                     f"Added new body '{new_body.name}' (ID: {new_body.id}) "
                     f"to component '{component.name}' (ID: {component.id})"
@@ -1425,11 +1433,17 @@ class Design(Component):
 
     def _find_and_remove_body(self, body_info, component):
         for body in component.bodies:
-            if body.id == body_info["id"]:
+            body_info_id = body_info["id"]
+            if body.id == f"{component.id}/{body_info_id}":
                 body._is_alive = False
-                component.bodies.remove(body)
+                # component.bodies.remove(body)
+                for bd in component._master_component.part.bodies:
+                    if bd.id == body_info_id:
+                        component._master_component.part.bodies.remove(bd)
+                        break
+                component._clear_cached_bodies()
                 self._grpc_client.log.debug(
-                    f"Removed body '{body_info['name']}' (ID: {body_info['id']}) from component "
+                    f"Removed body (ID: {body_info['id']}) from component "
                     f"'{component.name}' (ID: {component.id})"
                 )
                 return True

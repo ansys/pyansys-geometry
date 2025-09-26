@@ -59,6 +59,7 @@ class RepairToolMessage:
         self._success = success
         self._created_bodies = created_bodies
         self._modified_bodies = modified_bodies
+        self._deleted_bodies = deleted_bodies
         self._found = found
         self._repaired = repaired
 
@@ -76,6 +77,11 @@ class RepairToolMessage:
     def modified_bodies(self) -> list[str]:
         """The list of the modified bodies after the repair operation."""
         return self._modified_bodies
+
+    @property
+    def deleted_bodies(self) -> list[str]:
+        """The list of the deleted bodies after the repair operation."""
+        return self._deleted_bodies
 
     @property
     def found(self) -> int:

@@ -225,6 +225,7 @@ class Component:
                 self._name = response.get("name")
                 self._instance_name = response.get("instance_name")
             else:
+                new_component = None
                 self._name = name
                 self._id = None
                 self._instance_name = instance_name
@@ -257,8 +258,14 @@ class Component:
 
         elif not read_existing_comp:
             # This is an independent Component - Create new Part and MasterComponent
-            p = Part(uuid.uuid4(), f"p_{name}", [], [])
-            master = MasterComponent(uuid.uuid4(), f"master_{name}", p)
+            p = Part(
+                uuid.uuid4() if not new_component else new_component.template, f"p_{name}", [], []
+            )
+            master = MasterComponent(
+                uuid.uuid4() if not new_component else new_component.component.master_id,
+                f"master_{name}",
+                p,
+            )
             self._master_component = master
 
         self._master_component.occurrences.append(self)

@@ -128,3 +128,53 @@ class GRPCRepairToolsService(ABC):  # pragma: no cover
     def repair_geometry(self, **kwargs) -> dict:
         """Repair the geometry by addressing identified issues."""
         pass
+
+    @abstractmethod
+    def fix_duplicate_faces(self, **kwargs) -> dict:  # noqa: D102
+        """Fix duplicate faces in the geometry."""
+        pass
+
+    @abstractmethod
+    def fix_missing_faces(self, **kwargs) -> dict:  # noqa: D102
+        """Fix missing faces in the geometry."""
+        pass
+
+    @abstractmethod
+    def fix_inexact_edges(self, **kwargs) -> dict:  # noqa: D102
+        """Fix inexact edges in the geometry."""
+        pass
+
+    @abstractmethod
+    def fix_extra_edges(self, **kwargs) -> dict:  # noqa: D102
+        """Fix extra edges in the geometry."""
+        pass
+
+    @abstractmethod
+    def fix_short_edges(self, **kwargs) -> dict:  # noqa: D102
+        """Fix short edges in the geometry."""
+        pass
+
+    @abstractmethod
+    def fix_small_faces(self, **kwargs) -> dict:  # noqa: D102
+        """Fix small faces in the geometry."""
+        pass
+
+    @abstractmethod
+    def fix_split_edges(self, **kwargs) -> dict:  # noqa: D102
+        """Fix split edges in the geometry."""
+        pass
+
+    @abstractmethod
+    def fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
+        """Fix stitch faces in the geometry."""
+        pass
+
+    @abstractmethod
+    def fix_unsimplified_faces(self, **kwargs) -> dict:  # noqa: D102
+        """Fix areas to simplify in the geometry."""
+        pass
+
+    @abstractmethod
+    def fix_interference(self, **kwargs) -> dict:  # noqa: D102
+        """Fix interferences in the geometry."""
+        pass
