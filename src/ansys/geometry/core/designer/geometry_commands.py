@@ -1778,6 +1778,10 @@ class GeometryCommands:
             The direction to offset the faces.
         extrude_type : ExtrudeType
             The type of extrusion to use.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
         """
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 

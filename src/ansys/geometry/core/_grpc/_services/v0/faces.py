@@ -507,14 +507,13 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
     @protect_grpc
     def offset_faces(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.faces_pb2 import OffsetFacesRequest, OffsetFacesRequestData
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = OffsetFacesRequest(
             request_data=[
                 OffsetFacesRequestData(
-                    faces=[EntityIdentifier(id=face_id) for face_id in kwargs["face_ids"]],
+                    faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
                     offset=from_measurement_to_server_length(kwargs["distance"]),
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     extrude_type=kwargs["extrude_type"].value,
