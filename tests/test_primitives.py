@@ -1803,3 +1803,52 @@ def test_nurbs_surface_simple_evaluation():
     assert isinstance(evaluation.vv_derivative, Vector3D)
     assert isinstance(evaluation.normal, UnitVector3D)
     assert isinstance(evaluation.surface, NURBSSurface)
+
+
+def test_nurbs_surface_not_implemented():
+    """Code coverage for methods not implemented for NURBS surfaces"""
+    # Creating the NURBS surface and parameters
+    matrix = Matrix44([[1, 0, 0, 5], [0, 1, 0, 3], [0, 0, 0.8, 2], [0, 0, 0, 1]])
+    param = ParamUV(0.5, 0.5)
+    point = Point3D([1.0, 1.0, 1.0])
+    degree_u = 2
+    degree_v = 2
+    knots_u = [0, 0, 0, 1, 1, 1]
+    knots_v = [0, 0, 0, 1, 1, 1]
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+    nurbs_surface = NURBSSurface.from_control_points(
+        degree_u=degree_u,
+        degree_v=degree_v,
+        knots_u=knots_u,
+        knots_v=knots_v,
+        control_points=control_points,
+    )
+    # Code for the not implemented methods under NURBSSurface
+    with pytest.raises(NotImplementedError):
+        nurbs_surface.transformed_copy(matrix)
+    with pytest.raises(NotImplementedError):
+        nurbs_surface.contains_param(param)
+    with pytest.raises(NotImplementedError):
+        nurbs_surface.contains_point(point)
+    with pytest.raises(NotImplementedError):
+        nurbs_surface.project_point(point)
+    # Code for the not implemented methods under NURBSSurfaceEvaluation
+    evaluation = NURBSSurfaceEvaluation(nurbs_surface, param)
+    with pytest.raises(NotImplementedError):
+        evaluation.min_curvature()
+    with pytest.raises(NotImplementedError):
+        evaluation.min_curvature_direction()
+    with pytest.raises(NotImplementedError):
+        evaluation.max_curvature()
+    with pytest.raises(NotImplementedError):
+        evaluation.max_curvature_direction()
