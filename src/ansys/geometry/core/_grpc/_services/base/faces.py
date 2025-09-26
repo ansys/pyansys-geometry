@@ -148,3 +148,8 @@ class GRPCFacesService(ABC):  # pragma: no cover
     def get_round_info(self, **kwargs) -> dict:
         """Get round information for a selection of faces."""
         pass
+
+    @abstractmethod
+    def offset_faces(self, **kwargs) -> dict:
+        """Offset a selection of faces."""
+        pass

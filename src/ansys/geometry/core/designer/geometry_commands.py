@@ -1757,3 +1757,79 @@ class GeometryCommands:
 
         # Return success flag
         return result.get("success")
+
+    @min_backend_version(26, 1, 0)
+    def offset_faces(
+        self,
+        faces: list["Face"],
+        distance: Distance | Quantity | Real,
+        direction: UnitVector3D,
+        extrude_type: ExtrudeType,
+    ) -> None:
+        """Offset the specified faces by the specified distance in the specified direction.
+
+        Parameters
+        ----------
+        faces : list[Face]
+            The faces to offset.
+        distance : Distance | Quantity | Real
+            The distance to offset the faces.
+        direction : UnitVector3D
+            The direction to offset the faces.
+        extrude_type : ExtrudeType
+            The type of extrusion to use.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
+        _ = self._grpc_client._services.faces.offset_faces(
+            face_ids=[face.id for face in faces],
+            distance=distance,
+            direction=direction,
+            extrude_type=extrude_type,
+        )
+
+    @min_backend_version(25, 2, 0)
+    def revolve_edges(
+        self,
+        edges: Union["Edge", list["Edge"]],
+        axis: Line,
+        angle: Angle | Quantity | Real,
+        symmetric: bool,
+    ) -> None:
+        """Revolve edges around an axis.
+
+        Parameters
+        ----------
+        edges : Edge | list[Edge]
+            Edge(s) to revolve.
+        axis : Line
+            Axis of revolution.
+        angle : Angle | Quantity | Real
+            Angular distance to revolve.
+        symmetric : bool
+            Revolve symmetrically if ``True``, one side if ``False``.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
+        from ansys.geometry.core.designer.edge import Edge
+
+        edges: list[Edge] = edges if isinstance(edges, list) else [edges]
+        check_type_all_elements_in_iterable(edges, Edge)
+
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+
+        _ = self._grpc_client._services.curves.revolve_edges(
+            curves=[edge.shape for edge in edges],
+            axis=axis,
+            angle=angle,
+            symmetric=symmetric,
+        )
+
+        design = get_design_from_edge(edges[0])
+        design._update_design_inplace()
