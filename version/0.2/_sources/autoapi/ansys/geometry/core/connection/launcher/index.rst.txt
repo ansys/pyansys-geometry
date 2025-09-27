@@ -1,0 +1,171 @@
+:py:mod:`ansys.geometry.core.connection.launcher`
+=================================================
+
+.. py:module:: ansys.geometry.core.connection.launcher
+
+.. autoapi-nested-parse::
+
+   Provides for connecting to Geometry service instances.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.connection.launcher.launch_modeler
+   ansys.geometry.core.connection.launcher.launch_remote_modeler
+   ansys.geometry.core.connection.launcher.launch_local_modeler
+
+
+
+.. py:function:: launch_modeler(**kwargs: beartype.typing.Optional[beartype.typing.Dict]) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Start the ``Modeler`` for PyGeometry.
+
+
+   :Parameters:
+
+       **\*\*kwargs** : :class:`python:dict`, default: :data:`python:None`
+           Launching functions keyword arguments. For allowable keyword arguments, see the
+           :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of
+           them might be unused.
+
+   :Returns:
+
+       :obj:`ansys.geometry.core.Modeler`
+           Pythonic interface for geometry modeling.
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   Launch the Ansys Geometry service.
+
+   >>> from ansys.geometry.core import launch_modeler
+   >>> modeler = launch_modeler()
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: launch_remote_modeler(version: beartype.typing.Optional[str] = None, **kwargs: beartype.typing.Optional[beartype.typing.Dict]) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Start the Geometry service remotely using the PIM API.
+
+   When calling this method, you must ensure that you are in an
+   environment where PyPIM is configured. PyPIM is the Pythonic
+   interface to communicate with the PIM (Product Instance Management)
+   API. You can use the
+   :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`
+   method to check if PyPIM is configured.
+
+   :Parameters:
+
+       **version** : :class:`python:str`, default: :data:`python:None`
+           Version of the Geometry service to run in the three-digit format.
+           For example, "212". If you do not specify the version, the server
+           chooses the version.
+
+       **\*\*kwargs** : :class:`python:dict`, default: :data:`python:None`
+           Launching functions keyword arguments. For allowable keyword arguments, see the
+           :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of
+           them might be unused.
+
+   :Returns:
+
+       :obj:`ansys.geometry.core.modeler.Modeler`
+           Instance of the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: launch_local_modeler(port: int = DEFAULT_PORT, connect_to_existing_service: bool = True, restart_if_existing_service: bool = False, name: beartype.typing.Optional[str] = None, image: beartype.typing.Optional[ansys.geometry.core.connection.local_instance.GeometryContainers] = None, **kwargs: beartype.typing.Optional[beartype.typing.Dict]) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Start the Geometry service locally using the ``LocalDockerInstance`` class.
+
+   When calling this method, a Geometry service (as a local Docker container)
+   is started. By default, if a container with the Geometry service already exists
+   at the given port, it will connect to it. Otherwise, it will try to launch its own
+   service.
+
+   :Parameters:
+
+       **port** : :class:`python:int`, :obj:`optional`
+           Localhost port at which the Geometry service will be deployed or which
+           the ``Modeler`` will connect to (if it is already deployed). By default,
+           value will be the one at ``DEFAULT_PORT``.
+
+       **connect_to_existing_service** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Boolean indicating whether if the Modeler should connect to a Geometry
+           Service already deployed at that port, by default ``True``.
+
+       **restart_if_existing_service** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Boolean indicating whether the Geometry service (which is already running)
+           should be restarted when attempting connection, by default ``False``
+
+       **name** : :obj:`Optional`\[:class:`python:str`], :obj:`optional`
+           Name of the Docker container to be deployed, by default ``None``, which
+           means that Docker will assign it a random name.
+
+       **image** : :obj:`Optional`\[:obj:`GeometryContainers`], :obj:`optional`
+           The Geometry service Docker image to be deployed, by default ``None``, which
+           means that the ``LocalDockerInstance`` class will identify the OS of your
+           Docker engine and deploy the latest version of the Geometry service for that
+           OS.
+
+       **\*\*kwargs** : :class:`python:dict`, default: :data:`python:None`
+           Launching functions keyword arguments. For allowable keyword arguments, see the
+           :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of
+           them might be unused.
+
+   :Returns:
+
+       :obj:`Modeler`
+           Instance of the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
