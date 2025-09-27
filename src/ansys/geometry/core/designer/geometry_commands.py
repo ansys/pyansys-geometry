@@ -24,48 +24,10 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.commands_pb2 import (
-    ChamferRequest,
-    CreateAlignTangentOrientGearConditionRequest,
-    CreateCircularPatternRequest,
-    CreateFillPatternRequest,
-    CreateLinearPatternRequest,
-    DraftFacesRequest,
-    ExtrudeEdgesRequest,
-    ExtrudeEdgesUpToRequest,
-    ExtrudeFacesRequest,
-    ExtrudeFacesUpToRequest,
-    FilletRequest,
-    FullFilletRequest,
-    ModifyCircularPatternRequest,
-    ModifyLinearPatternRequest,
-    MoveImprintEdgesRequest,
-    MoveRotateRequest,
-    MoveTranslateRequest,
-    OffsetEdgesRequest,
-    OffsetFacesSetRadiusRequest,
-    PatternRequest,
-    RenameObjectRequest,
-    ReplaceFaceRequest,
-    RevolveFacesByHelixRequest,
-    RevolveFacesRequest,
-    RevolveFacesUpToRequest,
-    RoundInfoRequest,
-    SplitBodyRequest,
-    ThickenFacesRequest,
-)
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import (
-    line_to_grpc_line,
-    plane_to_grpc_plane,
-    point3d_to_grpc_point,
-    unit_vector_to_grpc_direction,
-)
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
     AlignCondition,
@@ -73,7 +35,7 @@ from ansys.geometry.core.designer.mating_conditions import (
     TangentCondition,
 )
 from ansys.geometry.core.designer.selection import NamedSelection
-from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
@@ -86,12 +48,11 @@ from ansys.geometry.core.misc.auxiliary import (
     get_faces_from_ids,
 )
 from ansys.geometry.core.misc.checks import (
-    check_is_float_int,
     check_type,
     check_type_all_elements_in_iterable,
     min_backend_version,
 )
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.typing import Real
 
@@ -166,7 +127,6 @@ class GeometryCommands:
     ``modeler.geometry_commands`` instead.
     """
 
-    @protect_grpc
     def __init__(self, grpc_client: GrpcClient, _internal_use: bool = False):
         """Initialize an instance of the ``GeometryCommands`` class."""
         if not _internal_use:
@@ -175,14 +135,12 @@ class GeometryCommands:
                 "Use 'modeler.geometry_commands' to access geometry commands."
             )
         self._grpc_client = grpc_client
-        self._commands_stub = CommandsStub(self._grpc_client.channel)
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def chamfer(
         self,
         selection: Union["Edge", list["Edge"], "Face", list["Face"]],
-        distance: Real,
+        distance: Distance | Quantity | Real,
     ) -> bool:
         """Create a chamfer on an edge or adjust the chamfer of a face.
 
@@ -190,7 +148,7 @@ class GeometryCommands:
         ----------
         selection : Edge | list[Edge] | Face | list[Face]
             One or more edges or faces to act on.
-        distance : Real
+        distance : Distance | Quantity | Real
             Chamfer distance.
 
         Returns
@@ -208,21 +166,25 @@ class GeometryCommands:
         selection: list[Edge | Face] = selection if isinstance(selection, list) else [selection]
 
         check_type_all_elements_in_iterable(selection, (Edge, Face))
-        check_is_float_int(distance, "distance")
+
+        # Convert the distance object
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
 
         for ef in selection:
             ef.body._reset_tessellation_cache()
 
-        result = self._commands_stub.Chamfer(
-            ChamferRequest(ids=[ef._grpc_id for ef in selection], distance=distance)
+        result = self._grpc_client.services.model_tools.chamfer(
+            selection_ids=[ef.id for ef in selection],
+            distance=distance,
         )
 
-        return result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def fillet(
-        self, selection: Union["Edge", list["Edge"], "Face", list["Face"]], radius: Real
+        self,
+        selection: Union["Edge", list["Edge"], "Face", list["Face"]],
+        radius: Distance | Quantity | Real,
     ) -> bool:
         """Create a fillet on an edge or adjust the fillet of a face.
 
@@ -230,7 +192,7 @@ class GeometryCommands:
         ----------
         selection : Edge | list[Edge] | Face | list[Face]
             One or more edges or faces to act on.
-        radius : Real
+        radius : Distance | Quantity | Real
             Fillet radius.
 
         Returns
@@ -248,18 +210,20 @@ class GeometryCommands:
         selection: list[Edge | Face] = selection if isinstance(selection, list) else [selection]
 
         check_type_all_elements_in_iterable(selection, (Edge, Face))
-        check_is_float_int(radius, "radius")
+
+        # Convert the radius object
+        radius = radius if isinstance(radius, Distance) else Distance(radius)
 
         for ef in selection:
             ef.body._reset_tessellation_cache()
 
-        result = self._commands_stub.Fillet(
-            FilletRequest(ids=[ef._grpc_id for ef in selection], radius=radius)
+        result = self._grpc_client.services.model_tools.fillet(
+            selection_ids=[ef.id for ef in selection],
+            radius=radius,
         )
 
-        return result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def full_fillet(self, faces: list["Face"]) -> bool:
         """Create a full fillet betweens a collection of faces.
@@ -285,18 +249,17 @@ class GeometryCommands:
         for face in faces:
             face.body._reset_tessellation_cache()
 
-        result = self._commands_stub.FullFillet(
-            FullFilletRequest(faces=[face._grpc_id for face in faces])
+        result = self._grpc_client.services.model_tools.full_fillet(
+            selection_ids=[face.id for face in faces],
         )
 
-        return result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def extrude_faces(
         self,
         faces: Union["Face", list["Face"]],
-        distance: Real,
+        distance: Distance | Quantity | Real,
         direction: UnitVector3D = None,
         extrude_type: ExtrudeType = ExtrudeType.ADD,
         offset_mode: OffsetMode = OffsetMode.MOVE_FACES_TOGETHER,
@@ -338,35 +301,33 @@ class GeometryCommands:
 
         faces: list[Face] = faces if isinstance(faces, list) else [faces]
         check_type_all_elements_in_iterable(faces, Face)
-        check_is_float_int(distance, "distance")
+
+        # Create distance object
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
 
         for face in faces:
             face.body._reset_tessellation_cache()
 
-        result = self._commands_stub.ExtrudeFaces(
-            ExtrudeFacesRequest(
-                faces=[face._grpc_id for face in faces],
-                distance=distance,
-                direction=None if direction is None else unit_vector_to_grpc_direction(direction),
-                extrude_type=extrude_type.value,
-                pull_symmetric=pull_symmetric,
-                offset_mode=offset_mode.value,
-                copy=copy,
-                force_do_as_extrude=force_do_as_extrude,
-            )
+        result = self._grpc_client.services.faces.extrude_faces(
+            face_ids=[face.id for face in faces],
+            distance=distance,
+            direction=direction,
+            extrude_type=extrude_type,
+            pull_symmetric=pull_symmetric,
+            offset_mode=offset_mode,
+            copy=copy,
+            force_do_as_extrude=force_do_as_extrude,
         )
 
         design = get_design_from_face(faces[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude faces.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def extrude_faces_up_to(
         self,
@@ -420,36 +381,32 @@ class GeometryCommands:
         for face in faces:
             face.body._reset_tessellation_cache()
 
-        result = self._commands_stub.ExtrudeFacesUpTo(
-            ExtrudeFacesUpToRequest(
-                faces=[face._grpc_id for face in faces],
-                up_to_selection=up_to_selection._grpc_id,
-                seed_point=point3d_to_grpc_point(seed_point),
-                direction=unit_vector_to_grpc_direction(direction),
-                extrude_type=extrude_type.value,
-                pull_symmetric=pull_symmetric,
-                offset_mode=offset_mode.value,
-                copy=copy,
-                force_do_as_extrude=force_do_as_extrude,
-            )
+        result = self._grpc_client.services.faces.extrude_faces_up_to(
+            face_ids=[face.id for face in faces],
+            up_to_selection_id=up_to_selection.id,
+            seed_point=seed_point,
+            direction=direction,
+            extrude_type=extrude_type,
+            pull_symmetric=pull_symmetric,
+            offset_mode=offset_mode,
+            copy=copy,
+            force_do_as_extrude=force_do_as_extrude,
         )
 
         design = get_design_from_face(faces[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude faces.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def extrude_edges(
         self,
         edges: Union["Edge", list["Edge"]],
-        distance: Real,
+        distance: Distance | Quantity | Real,
         from_face: "Face" = None,
         from_point: Point3D = None,
         direction: UnitVector3D = None,
@@ -464,7 +421,7 @@ class GeometryCommands:
         ----------
         edges : Edge | list[Edge]
             Edges to extrude.
-        distance : Real
+        distance : Distance | Quantity | Real
             Distance to extrude.
         from_face : Face, default: None
             Face to pull normal from.
@@ -494,7 +451,10 @@ class GeometryCommands:
 
         edges: list[Edge] = edges if isinstance(edges, list) else [edges]
         check_type_all_elements_in_iterable(edges, Edge)
-        check_is_float_int(distance, "distance")
+
+        # Create distance object
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
         if from_face is None and None in (from_point, direction):
             raise ValueError(
                 "To extrude edges, either a face or a direction and point must be provided."
@@ -503,31 +463,27 @@ class GeometryCommands:
         for edge in edges:
             edge.body._reset_tessellation_cache()
 
-        result = self._commands_stub.ExtrudeEdges(
-            ExtrudeEdgesRequest(
-                edges=[edge._grpc_id for edge in edges],
-                distance=distance,
-                face=from_face._grpc_id,
-                point=None if from_point is None else point3d_to_grpc_point(from_point),
-                direction=None if direction is None else unit_vector_to_grpc_direction(direction),
-                extrude_type=extrude_type.value,
-                pull_symmetric=pull_symmetric,
-                copy=copy,
-                natural_extension=natural_extension,
-            )
+        result = self._grpc_client.services.edges.extrude_edges(
+            edge_ids=[edge.id for edge in edges],
+            distance=distance,
+            face=from_face.id,
+            point=from_point,
+            direction=direction,
+            extrude_type=extrude_type,
+            pull_symmetric=pull_symmetric,
+            copy=copy,
+            natural_extension=natural_extension,
         )
 
         design = get_design_from_edge(edges[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude edges.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def extrude_edges_up_to(
         self,
@@ -569,39 +525,35 @@ class GeometryCommands:
         for edge in edges:
             edge.body._reset_tessellation_cache()
 
-        result = self._commands_stub.ExtrudeEdgesUpTo(
-            ExtrudeEdgesUpToRequest(
-                edges=[edge._grpc_id for edge in edges],
-                up_to_selection=up_to_selection._grpc_id,
-                seed_point=point3d_to_grpc_point(seed_point),
-                direction=unit_vector_to_grpc_direction(direction),
-                extrude_type=extrude_type.value,
-            )
+        result = self._grpc_client.services.edges.extrude_edges_up_to(
+            edge_ids=[edge.id for edge in edges],
+            up_to_selection=up_to_selection.id,
+            seed_point=seed_point,
+            direction=direction,
+            extrude_type=extrude_type,
         )
 
         design = get_design_from_edge(edges[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude edges.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def rename_object(
         self,
-        selection: Union[list["Body"], list["Component"], list["Face"], list["Edge"]],
+        selection: Union[list["Body"], list["Component"]],
         name: str,
     ) -> bool:
         """Rename an object.
 
         Parameters
         ----------
-        selection : list[Body] | list[Component] | list[Face] | list[Edge]
-            Selection of the object to rename.
+        selection : list[Body] | list[Component]
+            Selection of the objects to rename.
         name : str
             New name for the object.
 
@@ -614,22 +566,21 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        result = self._commands_stub.RenameObject(
-            RenameObjectRequest(selection=[object._grpc_id for object in selection], name=name)
+        result = self._grpc_client._services.commands.set_name(
+            selection_ids=[object.id for object in selection], name=name
         )
-        return result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def create_linear_pattern(
         self,
         selection: Union["Face", list["Face"]],
         linear_direction: Union["Edge", "Face"],
         count_x: int,
-        pitch_x: Real,
+        pitch_x: Distance | Quantity | Real,
         two_dimensional: bool = False,
         count_y: int = None,
-        pitch_y: Real = None,
+        pitch_y: Distance | Quantity | Real = None,
     ) -> bool:
         """Create a linear pattern. The pattern can be one or two dimensions.
 
@@ -641,13 +592,13 @@ class GeometryCommands:
             Direction of the linear pattern, determined by the direction of an edge or face normal.
         count_x : int
             How many times the pattern repeats in the x direction.
-        pitch_x : Real
+        pitch_x : Distance | Quantity | Real
             The spacing between each pattern member in the x direction.
         two_dimensional : bool, default: False
             If ``True``, create a pattern in the x and y direction.
         count_y : int, default: None
             How many times the pattern repeats in the y direction.
-        pitch_y : Real, default: None
+        pitch_y : Distance | Quantity | Real, default: None
             The spacing between each pattern member in the y direction.
 
         Returns
@@ -680,29 +631,31 @@ class GeometryCommands:
                 )
             )
 
-        result = self._commands_stub.CreateLinearPattern(
-            CreateLinearPatternRequest(
-                selection=[object._grpc_id for object in selection],
-                linear_direction=linear_direction._grpc_id,
-                count_x=count_x,
-                pitch_x=pitch_x,
-                two_dimensional=two_dimensional,
-                count_y=count_y,
-                pitch_y=pitch_y,
-            )
+        # Convert pitches to distance objects
+        pitch_x = pitch_x if isinstance(pitch_x, Distance) else Distance(pitch_x)
+        if pitch_y is not None:
+            pitch_y = pitch_y if isinstance(pitch_y, Distance) else Distance(pitch_y)
+
+        result = self._grpc_client.services.patterns.create_linear_pattern(
+            selection_ids=[object.id for object in selection],
+            linear_direction_id=linear_direction.id,
+            count_x=count_x,
+            pitch_x=pitch_x,
+            two_dimensional=two_dimensional,
+            count_y=count_y,
+            pitch_y=pitch_y,
         )
 
-        return result.result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def modify_linear_pattern(
         self,
         selection: Union["Face", list["Face"]],
         count_x: int = 0,
-        pitch_x: Real = 0.0,
+        pitch_x: Distance | Quantity | Real = 0.0,
         count_y: int = 0,
-        pitch_y: Real = 0.0,
+        pitch_y: Distance | Quantity | Real = 0.0,
         new_seed_index: int = 0,
         old_seed_index: int = 0,
     ) -> bool:
@@ -714,11 +667,11 @@ class GeometryCommands:
             Faces that belong to the pattern.
         count_x : int, default: 0
             How many times the pattern repeats in the x direction.
-        pitch_x : Real, default: 0.0
+        pitch_x : Distance | Quantity | Real, default: 0.0
             The spacing between each pattern member in the x direction.
         count_y : int, default: 0
             How many times the pattern repeats in the y direction.
-        pitch_y : Real, default: 0.0
+        pitch_y : Distance | Quantity | Real, default: 0.0
             The spacing between each pattern member in the y direction.
         new_seed_index : int, default: 0
             The new seed index of the member.
@@ -743,31 +696,32 @@ class GeometryCommands:
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.ModifyLinearPattern(
-            ModifyLinearPatternRequest(
-                selection=[object._grpc_id for object in selection],
-                count_x=count_x,
-                pitch_x=pitch_x,
-                count_y=count_y,
-                pitch_y=pitch_y,
-                new_seed_index=new_seed_index,
-                old_seed_index=old_seed_index,
-            )
+        # Convert pitches to distance objects
+        pitch_x = pitch_x if isinstance(pitch_x, Distance) else Distance(pitch_x)
+        pitch_y = pitch_y if isinstance(pitch_y, Distance) else Distance(pitch_y)
+
+        result = self._grpc_client.services.patterns.modify_linear_pattern(
+            selection_ids=[object.id for object in selection],
+            count_x=count_x,
+            pitch_x=pitch_x,
+            count_y=count_y,
+            pitch_y=pitch_y,
+            new_seed_index=new_seed_index,
+            old_seed_index=old_seed_index,
         )
 
-        return result.result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def create_circular_pattern(
         self,
         selection: Union["Face", list["Face"]],
         circular_axis: "Edge",
         circular_count: int,
-        circular_angle: Real,
+        circular_angle: Angle | Quantity | Real,
         two_dimensional: bool = False,
         linear_count: int = None,
-        linear_pitch: Real = None,
+        linear_pitch: Distance | Quantity | Real = None,
         radial_direction: UnitVector3D = None,
     ) -> bool:
         """Create a circular pattern. The pattern can be one or two dimensions.
@@ -780,14 +734,14 @@ class GeometryCommands:
             The axis of the circular pattern, determined by the direction of an edge.
         circular_count : int
             How many members are in the circular pattern.
-        circular_angle : Real
+        circular_angle : Angle | Quantity | Real
             The angular range of the pattern.
         two_dimensional : bool, default: False
             If ``True``, create a two-dimensional pattern.
         linear_count : int, default: None
             How many times the circular pattern repeats along the radial lines for a
             two-dimensional pattern.
-        linear_pitch : Real, default: None
+        linear_pitch : Distance | Quantity | Real, default: None
             The spacing along the radial lines for a two-dimensional pattern.
         radial_direction : UnitVector3D, default: None
             The direction from the center out for a two-dimensional pattern.
@@ -825,32 +779,33 @@ class GeometryCommands:
                 )
             )
 
-        result = self._commands_stub.CreateCircularPattern(
-            CreateCircularPatternRequest(
-                selection=[object._grpc_id for object in selection],
-                circular_axis=circular_axis._grpc_id,
-                circular_count=circular_count,
-                circular_angle=circular_angle,
-                two_dimensional=two_dimensional,
-                linear_count=linear_count,
-                linear_pitch=linear_pitch,
-                radial_direction=None
-                if radial_direction is None
-                else unit_vector_to_grpc_direction(radial_direction),
-            )
+        # Convert angle and pitch to appropriate objects
+        if not isinstance(circular_angle, Angle):
+            circular_angle = Angle(circular_angle)
+        if linear_pitch is not None and not isinstance(linear_pitch, Distance):
+            linear_pitch = Distance(linear_pitch)
+
+        result = self._grpc_client.services.patterns.create_circular_pattern(
+            selection_ids=[object.id for object in selection],
+            circular_axis_id=circular_axis.id,
+            circular_count=circular_count,
+            circular_angle=circular_angle,
+            two_dimensional=two_dimensional,
+            linear_count=linear_count,
+            linear_pitch=linear_pitch,
+            radial_direction=radial_direction,
         )
 
-        return result.result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def modify_circular_pattern(
         self,
         selection: Union["Face", list["Face"]],
         circular_count: int = 0,
         linear_count: int = 0,
-        step_angle: Real = 0.0,
-        step_linear: Real = 0.0,
+        step_angle: Angle | Quantity | Real = 0.0,
+        step_linear: Distance | Quantity | Real = 0.0,
     ) -> bool:
         """Modify a circular pattern. Leave an argument at 0 for it to remain unchanged.
 
@@ -863,9 +818,9 @@ class GeometryCommands:
         linear_count : int, default: 0
             How many times the circular pattern repeats along the radial lines for a
             two-dimensional pattern.
-        step_angle : Real, default: 0.0
+        step_angle : Angle | Quantity | Real, default: 0.0
             Defines the circular angle.
-        step_linear : Real, default: 0.0
+        step_linear : Distance | Quantity | Real, default: 0.0
             Defines the step, along the radial lines, for a pattern dimension greater than 1.
 
         Returns
@@ -886,32 +841,34 @@ class GeometryCommands:
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.ModifyCircularPattern(
-            ModifyCircularPatternRequest(
-                selection=[object._grpc_id for object in selection],
-                circular_count=circular_count,
-                linear_count=linear_count,
-                step_angle=step_angle,
-                step_linear=step_linear,
-            )
+        # Convert angle and pitch to appropriate objects
+        step_angle = step_angle if isinstance(step_angle, Angle) else Angle(step_angle)
+        print(step_linear)
+        step_linear = step_linear if isinstance(step_linear, Distance) else Distance(step_linear)
+
+        result = self._grpc_client.services.patterns.modify_circular_pattern(
+            selection_ids=[object.id for object in selection],
+            circular_count=circular_count,
+            linear_count=linear_count,
+            step_angle=step_angle,
+            step_linear=step_linear,
         )
 
-        return result.result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def create_fill_pattern(
         self,
         selection: Union["Face", list["Face"]],
         linear_direction: Union["Edge", "Face"],
         fill_pattern_type: FillPatternType,
-        margin: Real,
-        x_spacing: Real,
-        y_spacing: Real,
-        row_x_offset: Real = 0,
-        row_y_offset: Real = 0,
-        column_x_offset: Real = 0,
-        column_y_offset: Real = 0,
+        margin: Distance | Quantity | Real,
+        x_spacing: Distance | Quantity | Real,
+        y_spacing: Distance | Quantity | Real,
+        row_x_offset: Distance | Quantity | Real = 0,
+        row_y_offset: Distance | Quantity | Real = 0,
+        column_x_offset: Distance | Quantity | Real = 0,
+        column_y_offset: Distance | Quantity | Real = 0,
     ) -> bool:
         """Create a fill pattern.
 
@@ -923,19 +880,19 @@ class GeometryCommands:
             Direction of the linear pattern, determined by the direction of an edge.
         fill_pattern_type : FillPatternType
             The type of fill pattern.
-        margin : Real
+        margin : Distance | Quantity | Real
             Margin defining the border of the fill pattern.
-        x_spacing : Real
+        x_spacing : Distance | Quantity | Real
             Spacing between the pattern members in the x direction.
-        y_spacing : Real
+        y_spacing : Distance | Quantity | Real
             Spacing between the pattern members in the x direction.
-        row_x_offset : Real, default: 0
+        row_x_offset : Distance | Quantity | Real, default: 0
             Offset for the rows in the x direction. Only used with ``FillPattern.SKEWED``.
-        row_y_offset : Real, default: 0
+        row_y_offset : Distance | Quantity | Real, default: 0
             Offset for the rows in the y direction. Only used with ``FillPattern.SKEWED``.
-        column_x_offset : Real, default: 0
+        column_x_offset : Distance | Quantity | Real, default: 0
             Offset for the columns in the x direction. Only used with ``FillPattern.SKEWED``.
-        column_y_offset : Real, default: 0
+        column_y_offset : Distance | Quantity | Real, default: 0
             Offset for the columns in the y direction. Only used with ``FillPattern.SKEWED``.
 
         Returns
@@ -956,24 +913,38 @@ class GeometryCommands:
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.CreateFillPattern(
-            CreateFillPatternRequest(
-                selection=[object._grpc_id for object in selection],
-                linear_direction=linear_direction._grpc_id,
-                fill_pattern_type=fill_pattern_type.value,
-                margin=margin,
-                x_spacing=x_spacing,
-                y_spacing=y_spacing,
-                row_x_offset=row_x_offset,
-                row_y_offset=row_y_offset,
-                column_x_offset=column_x_offset,
-                column_y_offset=column_y_offset,
-            )
+        # Convert measurements to distance objects
+        margin = margin if isinstance(margin, Distance) else Distance(margin)
+        x_spacing = x_spacing if isinstance(x_spacing, Distance) else Distance(x_spacing)
+        y_spacing = y_spacing if isinstance(y_spacing, Distance) else Distance(y_spacing)
+        row_x_offset = (
+            row_x_offset if isinstance(row_x_offset, Distance) else Distance(row_x_offset)
+        )
+        row_y_offset = (
+            row_y_offset if isinstance(row_y_offset, Distance) else Distance(row_y_offset)
+        )
+        column_x_offset = (
+            column_x_offset if isinstance(column_x_offset, Distance) else Distance(column_x_offset)
+        )
+        column_y_offset = (
+            column_y_offset if isinstance(column_y_offset, Distance) else Distance(column_y_offset)
         )
 
-        return result.result.success
+        result = self._grpc_client.services.patterns.create_fill_pattern(
+            selection_ids=[object.id for object in selection],
+            linear_direction_id=linear_direction.id,
+            fill_pattern_type=fill_pattern_type,
+            margin=margin,
+            x_spacing=x_spacing,
+            y_spacing=y_spacing,
+            row_x_offset=row_x_offset,
+            row_y_offset=row_y_offset,
+            column_x_offset=column_x_offset,
+            column_y_offset=column_y_offset,
+        )
 
-    @protect_grpc
+        return result.get("success")
+
     @min_backend_version(25, 2, 0)
     def update_fill_pattern(
         self,
@@ -1007,21 +978,18 @@ class GeometryCommands:
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.UpdateFillPattern(
-            PatternRequest(
-                selection=[object._grpc_id for object in selection],
-            )
+        result = self._grpc_client.services.patterns.update_fill_pattern(
+            selection_ids=[object.id for object in selection],
         )
 
-        return result.result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def revolve_faces(
         self,
         selection: Union["Face", list["Face"]],
         axis: Line,
-        angle: Real,
+        angle: Angle | Quantity | Real,
         extrude_type: ExtrudeType = ExtrudeType.ADD,
     ) -> list["Body"]:
         """Revolve face around an axis.
@@ -1032,7 +1000,7 @@ class GeometryCommands:
             Face(s) to revolve.
         axis : Line
             Axis of revolution.
-        angle : Real
+        angle : Angle | Quantity | Real
             Angular distance to revolve.
         extrude_type : ExtrudeType, default: ExtrudeType.ADD
             Type of extrusion to be performed.
@@ -1051,29 +1019,27 @@ class GeometryCommands:
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
         check_type_all_elements_in_iterable(selection, Face)
 
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.RevolveFaces(
-            RevolveFacesRequest(
-                selection=[object._grpc_id for object in selection],
-                axis=line_to_grpc_line(axis),
-                angle=angle,
-                extrude_type=extrude_type.value,
-            )
+        result = self._grpc_client._services.faces.revolve_faces(
+            selection_ids=[object.id for object in selection],
+            axis=axis,
+            angle=angle,
+            extrude_type=extrude_type,
         )
 
         design = get_design_from_face(selection[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to revolve faces.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def revolve_faces_up_to(
         self,
@@ -1115,36 +1081,32 @@ class GeometryCommands:
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.RevolveFacesUpTo(
-            RevolveFacesUpToRequest(
-                selection=[object._grpc_id for object in selection],
-                up_to_selection=up_to._grpc_id,
-                axis=line_to_grpc_line(axis),
-                direction=unit_vector_to_grpc_direction(direction),
-                extrude_type=extrude_type.value,
-            )
+        result = self._grpc_client._services.faces.revolve_faces_up_to(
+            selection_ids=[object.id for object in selection],
+            up_to_selection_id=up_to.id,
+            axis=axis,
+            direction=direction,
+            extrude_type=extrude_type,
         )
 
         design = get_design_from_face(selection[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to revolve faces.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def revolve_faces_by_helix(
         self,
         selection: Union["Face", list["Face"]],
         axis: Line,
         direction: UnitVector3D,
-        height: Real,
-        pitch: Real,
-        taper_angle: Real,
+        height: Distance | Quantity | Real,
+        pitch: Distance | Quantity | Real,
+        taper_angle: Angle | Quantity | Real,
         right_handed: bool,
         both_sides: bool,
         extrude_type: ExtrudeType = ExtrudeType.ADD,
@@ -1159,12 +1121,12 @@ class GeometryCommands:
             Axis of revolution.
         direction : UnitVector3D
             Direction of extrusion.
-        height : Real,
+        height : Distance | Quantity | Real,
             Height of the helix.
-        pitch : Real,
+        pitch : Distance | Quantity | Real,
             Pitch of the helix.
-        taper_angle : Real,
-            Tape angle of the helix.
+        taper_angle : Angle | Quantity | Real,
+            Taper angle of the helix.
         right_handed : bool,
             Right-handed helix if ``True``, left-handed if ``False``.
         both_sides : bool,
@@ -1186,34 +1148,34 @@ class GeometryCommands:
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
         check_type_all_elements_in_iterable(selection, Face)
 
+        height = height if isinstance(height, Distance) else Distance(height)
+        pitch = pitch if isinstance(pitch, Distance) else Distance(pitch)
+        taper_angle = taper_angle if isinstance(taper_angle, Angle) else Angle(taper_angle)
+
         for object in selection:
             object.body._reset_tessellation_cache()
 
-        result = self._commands_stub.RevolveFacesByHelix(
-            RevolveFacesByHelixRequest(
-                selection=[object._grpc_id for object in selection],
-                axis=line_to_grpc_line(axis),
-                direction=unit_vector_to_grpc_direction(direction),
-                height=height,
-                pitch=pitch,
-                taper_angle=taper_angle,
-                right_handed=right_handed,
-                both_sides=both_sides,
-                extrude_type=extrude_type.value,
-            )
+        result = self._grpc_client._services.faces.revolve_faces_by_helix(
+            selection_ids=[object.id for object in selection],
+            axis=axis,
+            direction=direction,
+            height=height,
+            pitch=pitch,
+            taper_angle=taper_angle,
+            right_handed=right_handed,
+            both_sides=both_sides,
+            extrude_type=extrude_type,
         )
 
         design = get_design_from_face(selection[0])
 
-        if result.success:
-            bodies_ids = [created_body.id for created_body in result.created_bodies]
+        if result.get("success"):
             design._update_design_inplace()
-            return get_bodies_from_ids(design, bodies_ids)
+            return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to revolve faces.")
             return []
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def replace_face(
         self,
@@ -1247,16 +1209,13 @@ class GeometryCommands:
             else [replacement_selection]
         )
 
-        result = self._commands_stub.ReplaceFace(
-            ReplaceFaceRequest(
-                target_selection=[selection._grpc_id for selection in target_selection],
-                replacement_selection=[selection._grpc_id for selection in replacement_selection],
-            )
+        result = self._grpc_client._services.faces.replace_faces(
+            target_ids=[selection.id for selection in target_selection],
+            replacement_ids=[selection.id for selection in replacement_selection],
         )
 
-        return result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def split_body(
         self,
@@ -1299,40 +1258,35 @@ class GeometryCommands:
         for body in bodies:
             body._reset_tessellation_cache()
 
-        plane_item = None
         if plane is not None:
             check_type(plane, Plane)
-            plane_item = plane_to_grpc_plane(plane)
 
-        slicer_items = None
+        slicer_items = []
         if slicers is not None:
             slicers: list["Face", "Edge"] = slicers if isinstance(slicers, list) else [slicers]
             check_type_all_elements_in_iterable(slicers, (Edge, Face))
-            slicer_items = [slicer._grpc_id for slicer in slicers]
+            slicer_items = [slicer.id for slicer in slicers]
 
-        face_items = None
+        face_items = []
         if faces is not None:
             faces: list["Face"] = faces if isinstance(faces, list) else [faces]
             check_type_all_elements_in_iterable(faces, Face)
-            face_items = [face._grpc_id for face in faces]
+            face_items = [face.id for face in faces]
 
-        result = self._commands_stub.SplitBody(
-            SplitBodyRequest(
-                selection=[body._grpc_id for body in bodies],
-                split_by_plane=plane_item,
-                split_by_slicer=slicer_items,
-                split_by_faces=face_items,
-                extend_surfaces=extendfaces,
-            )
+        result = self._grpc_client._services.bodies.split_body(
+            body_ids=[body.id for body in bodies],
+            plane=plane,
+            slicer_ids=slicer_items,
+            face_ids=face_items,
+            extend_surfaces=extendfaces,
         )
 
-        if result.success:
+        if result.get("success"):
             design = get_design_from_body(bodies[0])
             design._update_design_inplace()
 
-        return result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def get_round_info(self, face: "Face") -> tuple[bool, Real]:
         """Get info on the rounding of a face.
@@ -1352,11 +1306,10 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        result = self._commands_stub.GetRoundInfo(RoundInfoRequest(face=face._grpc_id))
+        result = self._grpc_client._services.faces.get_round_info(face_id=face.id)
 
-        return (result.along_u, result.radius)
+        return (result.get("along_u"), result.get("radius"))
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
     def move_translate(
@@ -1386,19 +1339,15 @@ class GeometryCommands:
         This method is only available starting on Ansys release 25R2.
         """
         distance = distance if isinstance(distance, Distance) else Distance(distance)
-        translation_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
-        result = self._commands_stub.MoveTranslate(
-            MoveTranslateRequest(
-                selection=[EntityIdentifier(id=selection.id)],
-                direction=unit_vector_to_grpc_direction(direction),
-                distance=translation_magnitude,
-            )
+        result = self._grpc_client.services.model_tools.move_translate(
+            selection_id=selection.id,
+            direction=direction,
+            distance=distance,
         )
 
-        return result.success
+        return result.get("success")
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
     def move_rotate(
@@ -1429,25 +1378,15 @@ class GeometryCommands:
         This method is only available starting on Ansys release 25R2.
         """
         angle = angle if isinstance(angle, Angle) else Angle(angle)
-        rotation_angle = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
 
-        response = self._commands_stub.MoveRotate(
-            MoveRotateRequest(
-                selection=[EntityIdentifier(id=selection.id)],
-                axis=line_to_grpc_line(axis),
-                angle=rotation_angle,
-            )
+        result = self._grpc_client.services.model_tools.move_rotate(
+            selection_id=selection.id,
+            axis=axis,
+            angle=angle,
         )
-
-        result = {}
-        result["success"] = response.success
-        result["modified_bodies"] = response.modified_bodies
-        result["modified_faces"] = response.modified_faces
-        result["modified_edges"] = response.modified_edges
 
         return result
 
-    @protect_grpc
     @check_input_types
     @min_backend_version(25, 2, 0)
     def offset_faces_set_radius(
@@ -1491,21 +1430,17 @@ class GeometryCommands:
             face.body._reset_tessellation_cache()
 
         radius = radius if isinstance(radius, Distance) else Distance(radius)
-        radius_magnitude = radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
-        result = self._commands_stub.OffsetFacesSetRadius(
-            OffsetFacesSetRadiusRequest(
-                faces=[face._grpc_id for face in faces],
-                radius=radius_magnitude,
-                copy=copy,
-                offset_mode=offset_mode.value,
-                extrude_type=extrude_type.value,
-            )
+        result = self._grpc_client._services.faces.offset_faces_set_radius(
+            face_ids=[face.id for face in faces],
+            radius=radius,
+            copy=copy,
+            offset_mode=offset_mode,
+            extrude_type=extrude_type,
         )
 
-        return result.success
+        return result.get("success")
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def create_align_condition(
         self,
@@ -1544,27 +1479,24 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._commands_stub.CreateAlignCondition(
-            CreateAlignTangentOrientGearConditionRequest(
-                parent=parent_component._grpc_id,
-                geometric_a=geometry_a._grpc_id,
-                geometric_b=geometry_b._grpc_id,
-            )
+        result = self._grpc_client._services.assembly_controls.create_align_condition(
+            parent_id=parent_component.id,
+            geometric_a_id=geometry_a.id,
+            geometric_b_id=geometry_b.id,
         )
 
         get_design_from_component(parent_component)._update_design_inplace()
 
         return AlignCondition(
-            result.condition.moniker,
-            result.condition.is_deleted,
-            result.condition.is_enabled,
-            result.condition.is_satisfied,
-            result.offset,
-            result.is_reversed,
-            result.is_valid,
+            result.get("moniker"),
+            result.get("is_deleted"),
+            result.get("is_enabled"),
+            result.get("is_satisfied"),
+            result.get("offset"),
+            result.get("is_reversed"),
+            result.get("is_valid"),
         )
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def create_tangent_condition(
         self,
@@ -1603,27 +1535,24 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._commands_stub.CreateTangentCondition(
-            CreateAlignTangentOrientGearConditionRequest(
-                parent=parent_component._grpc_id,
-                geometric_a=geometry_a._grpc_id,
-                geometric_b=geometry_b._grpc_id,
-            )
+        result = self._grpc_client._services.assembly_controls.create_tangent_condition(
+            parent_id=parent_component.id,
+            geometric_a_id=geometry_a.id,
+            geometric_b_id=geometry_b.id,
         )
 
         get_design_from_component(parent_component)._update_design_inplace()
 
         return TangentCondition(
-            result.condition.moniker,
-            result.condition.is_deleted,
-            result.condition.is_enabled,
-            result.condition.is_satisfied,
-            result.offset,
-            result.is_reversed,
-            result.is_valid,
+            result.get("moniker"),
+            result.get("is_deleted"),
+            result.get("is_enabled"),
+            result.get("is_satisfied"),
+            result.get("offset"),
+            result.get("is_reversed"),
+            result.get("is_valid"),
         )
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def create_orient_condition(
         self,
@@ -1662,27 +1591,24 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._commands_stub.CreateOrientCondition(
-            CreateAlignTangentOrientGearConditionRequest(
-                parent=parent_component._grpc_id,
-                geometric_a=geometry_a._grpc_id,
-                geometric_b=geometry_b._grpc_id,
-            )
+        result = self._grpc_client.services.assembly_controls.create_orient_condition(
+            parent_id=parent_component.id,
+            geometric_a_id=geometry_a.id,
+            geometric_b_id=geometry_b.id,
         )
 
         get_design_from_component(parent_component)._update_design_inplace()
 
         return OrientCondition(
-            result.condition.moniker,
-            result.condition.is_deleted,
-            result.condition.is_enabled,
-            result.condition.is_satisfied,
-            result.offset,
-            result.is_reversed,
-            result.is_valid,
+            result.get("moniker"),
+            result.get("is_deleted"),
+            result.get("is_enabled"),
+            result.get("is_satisfied"),
+            result.get("offset"),
+            result.get("is_reversed"),
+            result.get("is_valid"),
         )
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def move_imprint_edges(
         self, edges: list["Edge"], direction: UnitVector3D, distance: Distance | Quantity | Real
@@ -1695,7 +1621,7 @@ class GeometryCommands:
             The edges to move.
         direction : UnitVector3D
             The direction to move the edges.
-        distance : Distance
+        distance : Distance | Quantity | Real
             The distance to move the edges.
 
         Returns
@@ -1703,24 +1629,16 @@ class GeometryCommands:
         bool
             Returns True if the edges were moved successfully, False otherwise.
         """
-        # Convert the distance object
         distance = distance if isinstance(distance, Distance) else Distance(distance)
-        move_magnitude = distance.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
-        # Create the request object
-        request = MoveImprintEdgesRequest(
-            edges=[edge._grpc_id for edge in edges],
-            direction=unit_vector_to_grpc_direction(direction),
-            distance=move_magnitude,
+        response = self._grpc_client._services.edges.move_imprint_edges(
+            edge_ids=[edge.id for edge in edges],
+            direction=direction,
+            distance=distance,
         )
 
-        # Call the gRPC service
-        response = self._commands_stub.MoveImprintEdges(request)
+        return response.get("success")
 
-        # Return success flag
-        return response.result.success
-
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def offset_edges(self, edges: list["Edge"], offset: Distance | Quantity | Real) -> bool:
         """Offset the specified edges with the specified distance.
@@ -1729,7 +1647,7 @@ class GeometryCommands:
         ----------
         edges : list[Edge]
             The edges to offset.
-        offset : Distance
+        offset : Distance | Quantity | Real
             The distance to offset the edges.
 
         Returns
@@ -1737,23 +1655,15 @@ class GeometryCommands:
         bool
             Returns True if the edges were offset successfully, False otherwise.
         """
-        # Convert the distance object
         offset = offset if isinstance(offset, Distance) else Distance(offset)
-        offset_magnitude = offset.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
 
-        # Create the request object
-        request = OffsetEdgesRequest(
-            edges=[edge._grpc_id for edge in edges],
-            value=offset_magnitude,
+        response = self._grpc_client._services.edges.offset_edges(
+            edge_ids=[edge.id for edge in edges],
+            offset=offset,
         )
 
-        # Call the gRPC service
-        response = self._commands_stub.OffsetEdges(request)
+        return response.get("success")
 
-        # Return success flag
-        return response.success
-
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def draft_faces(
         self,
@@ -1783,33 +1693,26 @@ class GeometryCommands:
         list[Face]
             The faces created by the draft operation.
         """
-        # Convert the angle object
         angle = angle if isinstance(angle, Angle) else Angle(angle)
-        angle_magnitude = angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
 
-        # Create the request object
-        request = DraftFacesRequest(
-            faces=[face._grpc_id for face in faces],
-            reference_faces=[face._grpc_id for face in reference_faces],
-            draft_side=draft_side.value,
-            draft_angle=angle_magnitude,
-            extrude_type=extrude_type.value,
+        response = self._grpc_client._services.faces.draft_faces(
+            face_ids=[face.id for face in faces],
+            reference_face_ids=[face.id for face in reference_faces],
+            draft_side=draft_side,
+            angle=angle,
+            extrude_type=extrude_type,
         )
-
-        # Call the gRPC server
-        response = self._commands_stub.DraftFaces(request)
 
         # Return the drafted faces
         design = get_design_from_face(faces[0])
-        return get_faces_from_ids(design, [face.id for face in response.created_faces])
+        return get_faces_from_ids(design, [face.id for face in response.get("created_faces")])
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def thicken_faces(
         self,
         faces: list["Face"],
         direction: UnitVector3D,
-        thickness: Real,
+        thickness: Distance | Quantity | Real,
         extrude_type: ExtrudeType,
         pull_symmetric: bool,
         select_direction: bool,
@@ -1822,7 +1725,7 @@ class GeometryCommands:
             The faces to thicken.
         direction : UnitVector3D
             The direction to thicken the faces.
-        thickness : Real
+        thickness : Distance | Quantity | Real
             The thickness to apply to the faces.
         extrude_type : ExtrudeType
             The type of extrusion to use.
@@ -1836,23 +1739,97 @@ class GeometryCommands:
         bool
             Returns True if the faces were thickened successfully, False otherwise.
         """
-        # Create the request object
-        request = ThickenFacesRequest(
-            faces=[face._grpc_id for face in faces],
-            direction=unit_vector_to_grpc_direction(direction),
-            value=thickness,
-            extrude_type=extrude_type.value,
+        thickness = thickness if isinstance(thickness, Distance) else Distance(thickness)
+
+        result = self._grpc_client._services.faces.thicken_faces(
+            face_ids=[face.id for face in faces],
+            direction=direction,
+            thickness=thickness,
+            extrude_type=extrude_type,
             pull_symmetric=pull_symmetric,
             select_direction=select_direction,
         )
 
-        # Call the gRPC service
-        response = self._commands_stub.ThickenFaces(request)
-
         # Update design
         design = get_design_from_face(faces[0])
-        if response.success:
+        if result.get("success"):
             design._update_design_inplace()
 
         # Return success flag
-        return response.success
+        return result.get("success")
+
+    @min_backend_version(26, 1, 0)
+    def offset_faces(
+        self,
+        faces: list["Face"],
+        distance: Distance | Quantity | Real,
+        direction: UnitVector3D,
+        extrude_type: ExtrudeType,
+    ) -> None:
+        """Offset the specified faces by the specified distance in the specified direction.
+
+        Parameters
+        ----------
+        faces : list[Face]
+            The faces to offset.
+        distance : Distance | Quantity | Real
+            The distance to offset the faces.
+        direction : UnitVector3D
+            The direction to offset the faces.
+        extrude_type : ExtrudeType
+            The type of extrusion to use.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
+        _ = self._grpc_client._services.faces.offset_faces(
+            face_ids=[face.id for face in faces],
+            distance=distance,
+            direction=direction,
+            extrude_type=extrude_type,
+        )
+
+    @min_backend_version(25, 2, 0)
+    def revolve_edges(
+        self,
+        edges: Union["Edge", list["Edge"]],
+        axis: Line,
+        angle: Angle | Quantity | Real,
+        symmetric: bool,
+    ) -> None:
+        """Revolve edges around an axis.
+
+        Parameters
+        ----------
+        edges : Edge | list[Edge]
+            Edge(s) to revolve.
+        axis : Line
+            Axis of revolution.
+        angle : Angle | Quantity | Real
+            Angular distance to revolve.
+        symmetric : bool
+            Revolve symmetrically if ``True``, one side if ``False``.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
+        from ansys.geometry.core.designer.edge import Edge
+
+        edges: list[Edge] = edges if isinstance(edges, list) else [edges]
+        check_type_all_elements_in_iterable(edges, Edge)
+
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+
+        _ = self._grpc_client._services.curves.revolve_edges(
+            curves=[edge.shape for edge in edges],
+            axis=axis,
+            angle=angle,
+            symmetric=symmetric,
+        )
+
+        design = get_design_from_edge(edges[0])
+        design._update_design_inplace()

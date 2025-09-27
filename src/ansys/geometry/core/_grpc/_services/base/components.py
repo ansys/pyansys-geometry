@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the edges service implementation (abstraction layer)."""
+"""Module containing the components service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCEdgesService(ABC):  # pragma: no cover
-    """Edges service for gRPC communication with the Geometry server.
+class GRPCComponentsService(ABC):  # pragma: no cover
+    """Components service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,65 +36,39 @@ class GRPCEdgesService(ABC):  # pragma: no cover
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCEdgesService class."""
+        """Initialize the GRPCComponentsService class."""
+
+    @abstractmethod
+    def create(self, **kwargs) -> dict:
+        """Create a component."""
         pass
 
     @abstractmethod
-    def get_edge(self, **kwargs) -> dict:
-        """Get edge."""
+    def set_name(self, **kwargs) -> dict:
+        """Set the name of a component."""
         pass
 
     @abstractmethod
-    def get_curve(self, **kwargs) -> dict:
-        """Get curve information for the edge."""
+    def set_placement(self, **kwargs) -> dict:
+        """Set the placement of a component."""
         pass
 
     @abstractmethod
-    def get_start_and_end_points(self, **kwargs) -> dict:
-        """Get start and end points for the edge."""
+    def set_shared_topology(self, **kwargs) -> dict:
+        """Set the shared topology of a component."""
         pass
 
     @abstractmethod
-    def get_length(self, **kwargs) -> dict:
-        """Get the length of the edge."""
+    def delete(self, **kwargs) -> dict:
+        """Delete a component."""
         pass
 
     @abstractmethod
-    def get_interval(self, **kwargs) -> dict:
-        """Get the interval of the edge."""
+    def import_groups(self, **kwargs) -> dict:
+        """Import groups from a component."""
         pass
 
     @abstractmethod
-    def get_faces(self, **kwargs) -> dict:
-        """Get the faces that are connected to the edge."""
-        pass
-
-    @abstractmethod
-    def get_vertices(self, **kwargs) -> dict:
-        """Get the vertices that are connected to the edge."""
-        pass
-
-    @abstractmethod
-    def get_bounding_box(self, **kwargs) -> dict:
-        """Get the bounding box of the edge."""
-        pass
-
-    @abstractmethod
-    def extrude_edges(self, **kwargs) -> dict:
-        """Extrude edges."""
-        pass
-
-    @abstractmethod
-    def extrude_edges_up_to(self, **kwargs) -> dict:
-        """Extrude edges up to a face."""
-        pass
-
-    @abstractmethod
-    def move_imprint_edges(self, **kwargs) -> dict:
-        """Move imprint edges."""
-        pass
-
-    @abstractmethod
-    def offset_edges(self, **kwargs) -> dict:
-        """Offset edges."""
+    def make_independent(self, **kwargs) -> dict:
+        """Make a component independent."""
         pass

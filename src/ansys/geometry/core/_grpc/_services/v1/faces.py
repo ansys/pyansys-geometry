@@ -64,7 +64,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
-    def get_vertices(self, **kwargs):  # noqa: D102
+    def get_vertices(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
@@ -93,4 +93,48 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
 
     @protect_grpc
     def create_iso_parametric_curve(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def extrude_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def extrude_faces_up_to(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def offset_faces_set_radius(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def revolve_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def revolve_faces_up_to(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def revolve_faces_by_helix(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def replace_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def thicken_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def draft_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def get_round_info(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def offset_faces(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
