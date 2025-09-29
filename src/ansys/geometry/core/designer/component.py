@@ -264,9 +264,7 @@ class Component:
 
         elif not read_existing_comp:
             # This is an independent Component - Create new Part and MasterComponent
-            p = Part(
-                uuid.uuid4() if not self._template else self._template, f"p_{name}", [], []
-            )
+            p = Part(uuid.uuid4() if not self._template else self._template, f"p_{name}", [], [])
             master = MasterComponent(
                 uuid.uuid4() if not self._template else self._component.master_id,
                 f"master_{name}",
