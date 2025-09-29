@@ -44,6 +44,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     MaterialProperty as GRPCMaterialProperty,
     Matrix as GRPCMatrix,
     NurbsCurve as GRPCNurbsCurve,
+    NurbsSurface as GRPCNurbsSurface,
     Plane as GRPCPlane,
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
@@ -54,6 +55,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 import pint
 
 from ansys.geometry.core.errors import GeometryRuntimeError
@@ -770,6 +772,53 @@ def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
     )
 
 
+def from_nurbs_surface_to_grpc_nurbs_surface(surface: "NURBSSurface") -> GRPCNurbsSurface:
+    """Convert a ``NURBSSurface`` to a NURBS surface gRPC message.
+
+    Parameters
+    ----------
+    surface : NURBSSurface
+        Surface to convert.
+
+    Returns
+    -------
+    GRPCNurbsSurface
+        Geometry service gRPC ``NURBSSurface`` message.
+    """
+    from ansys.api.geometry.v0.models_pb2 import (
+        ControlPoint as GRPCControlPoint,
+        NurbsData as GRPCNurbsData,
+    )
+
+    # Convert control points
+    control_points = [
+        GRPCControlPoint(
+            position=from_point3d_to_grpc_point(pt),
+            weight=surface.weights[i],
+        )
+        for i, pt in enumerate(surface.control_points)
+    ]
+
+    # Convert nurbs data
+    nurbs_data_u = GRPCNurbsData(
+        degree=surface.degree_u,
+        knots=from_knots_to_grpc_knots(surface.knotvector_u),
+        order=surface.degree_u + 1,
+    )
+
+    nurbs_data_v = GRPCNurbsData(
+        degree=surface.degree_v,
+        knots=from_knots_to_grpc_knots(surface.knotvector_v),
+        order=surface.degree_v + 1,
+    )
+
+    return GRPCNurbsSurface(
+        control_points=control_points,
+        nurbs_data_u=nurbs_data_u,
+        nurbs_data_v=nurbs_data_v,
+    )
+
+
 def from_grpc_nurbs_curve_to_nurbs_curve(curve: GRPCNurbsCurve) -> "NURBSCurve":
     """Convert a NURBS curve gRPC message to a ``NURBSCurve``.
 
@@ -976,6 +1025,14 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
             minor_radius=surface.minor_radius.m,
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_TORUS
+    elif isinstance(surface, NURBSSurface):
+        grpc_surface = GRPCSurface(
+            origin=origin,
+            reference=reference,
+            axis=axis,
+            nurbs_surface=from_nurbs_surface_to_grpc_nurbs_surface(surface),
+        )
+        surface_type = GRPCSurfaceType.SURFACETYPE_NURBS
 
     return grpc_surface, surface_type
 
