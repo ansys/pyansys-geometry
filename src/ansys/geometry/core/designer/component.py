@@ -258,9 +258,7 @@ class Component:
 
         elif not read_existing_comp:
             # This is an independent Component - Create new Part and MasterComponent
-            p = Part(
-                uuid.uuid4() if not response else response.template, f"p_{name}", [], []
-            )
+            p = Part(uuid.uuid4() if not response else response.template, f"p_{name}", [], [])
             master = MasterComponent(
                 uuid.uuid4() if not response else response.component.master_id,
                 f"master_{name}",
