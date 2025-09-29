@@ -58,6 +58,9 @@ backends:
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
+      - tests/integration/test_design.py::test_legacy_export_download
+      - tests/integration/test_design.py::test_updating_design_from_tracker
+      - tests/integration/test_design.py::test_failure_for_export
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -83,6 +86,8 @@ backends:
       - tests/integration/test_design_import.py::test_design_import_solid_edge2025
       - tests/integration/test_design_import.py::test_design_import_nx2412
       - tests/integration/test_design_import.py::test_design_import_inventor2026
+      - tests/integration/test_design.py::test_legacy_export_download
+      - tests/integration/test_design.py::test_failure_for_export
       # Bug fix included from 25.2 onwards
       - tests/integration/test_issues.py::test_issue_1192_temp_body_on_empty_intersect
       # Enhancements on tool results from 25.2 onwards
@@ -168,6 +173,9 @@ backends:
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
+      - tests/integration/test_design.py::test_legacy_export_download
+      - tests/integration/test_design.py::test_updating_design_from_tracker
+      - tests/integration/test_design.py::test_failure_for_export
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -202,6 +210,8 @@ backends:
       - tests/integration/test_design_import.py::test_design_import_solid_edge2025
       - tests/integration/test_design_import.py::test_design_import_nx2412
       - tests/integration/test_design_import.py::test_design_import_inventor2026
+      - tests/integration/test_design.py::test_legacy_export_download
+      - tests/integration/test_design.py::test_failure_for_export
       # Insert file naming convention changed in 26.1
       - tests/integration/test_design_import.py::test_design_insert
       # Bug fix included from 25.2 onwards
@@ -228,6 +238,9 @@ backends:
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
+      - tests/integration/test_design.py::test_legacy_export_download
+      - tests/integration/test_design.py::test_updating_design_from_tracker
+      - tests/integration/test_design.py::test_failure_for_export
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -262,6 +275,8 @@ backends:
       - tests/integration/test_design_import.py::test_design_import_jt
       - tests/integration/test_design_import.py::test_design_import_solid_edge2025
       - tests/integration/test_design_import.py::test_design_import_nx2412
+      - tests/integration/test_design.py::test_legacy_export_download
+      - tests/integration/test_design.py::test_failure_for_export
       # Insert file naming convention changed in 26.1
       - tests/integration/test_design_import.py::test_design_insert
       # Importing named selections from design was not available prior to 26.1
@@ -310,6 +325,8 @@ backends:
       - tests/integration/test_design_export.py::test_import_export_open_file_design[PARASOLID_TEXT-x_t-rci_std.x_t-2-1]
       - tests/integration/test_design_export.py::test_import_export_open_file_design[SCDOCX-scdocx-reactorWNS.scdocx-1-3]
       - tests/integration/test_design_import.py::test_design_insert_id_bug
+      - tests/integration/test_design.py::test_legacy_export_download
+      - tests/integration/test_design.py::test_failure_for_export
       # Insert file naming convention changed in 26.1
       - tests/integration/test_design_import.py::test_design_insert
       # Importing named selections from design was not available prior to 26.1
