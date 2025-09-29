@@ -47,7 +47,7 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):  # pragma: no cover
         from ansys.api.geometry.v0.unsupported_pb2 import ImportIdRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = ImportIdRequest(selection=kwargs["id_type"].value)
+        request = ImportIdRequest(type=kwargs["id_type"].value)
 
         # Return the response - formatted as a dictionary
         response = self.stub.GetImportIdMap(request)
