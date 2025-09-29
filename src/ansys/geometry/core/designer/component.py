@@ -210,6 +210,7 @@ class Component:
             self._name = name
             self._id = preexisting_id
             self._instance_name = instance_name
+            new_component = None
         else:
             if parent_component:
                 template_id = template.id if template else ""
