@@ -1407,6 +1407,7 @@ def test_thicken_surface_body(modeler: Modeler):
         Quantity(0.4, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
 
+
 def test_failures_to_extrude(modeler: Modeler):
     """Add test that covers code for failing to extrude in different ways."""
     # First need to create surface to extrude from
@@ -1492,7 +1493,8 @@ def test_failures_to_extrude(modeler: Modeler):
         assert len(design.bodies[1].faces) == 4
     else:
         assert len(design.bodies[1].faces) == 1
-=======
+
+
 def test_offset_faces(modeler: Modeler):
     """Test offsetting faces."""
     design = modeler.create_design("offset_faces")
