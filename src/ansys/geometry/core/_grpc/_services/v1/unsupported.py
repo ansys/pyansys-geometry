@@ -49,3 +49,7 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
     @protect_grpc
     def set_export_ids(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError

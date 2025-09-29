@@ -174,8 +174,8 @@ class UnsupportedCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        self._grpc_client.services.unsupported.set_export_ids(
-            export_data=[ExportIdData(moniker=moniker, id_type=id_type, value=value)]
+        self._grpc_client.services.unsupported.set_single_export_id(
+            export_data=ExportIdData(moniker=moniker, id_type=id_type, value=value),
         )
         self.__id_map = {}
 

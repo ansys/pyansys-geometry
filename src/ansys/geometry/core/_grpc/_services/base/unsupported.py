@@ -48,3 +48,8 @@ class GRPCUnsupportedService(ABC):  # pragma: no cover
     def set_export_ids(self, **kwargs) -> dict:
         """Set the export IDs for the entities."""
         pass
+
+    @abstractmethod
+    def set_single_export_id(self, **kwargs) -> dict:
+        """Set a single export ID for an entity."""
+        pass

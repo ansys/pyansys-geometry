@@ -49,7 +49,7 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):  # pragma: no cover
         # Create the request - assumes all inputs are valid and of the proper type
         request = ImportIdRequest(type=kwargs["id_type"].value)
 
-        # Return the response - formatted as a dictionary
+        # Call the gRPC service
         response = self.stub.GetImportIdMap(request)
 
         # Return the response - formatted as a dictionary
@@ -76,8 +76,27 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):  # pragma: no cover
             ]
         )
 
-        # Return the response - formatted as a dictionary
+        # Call the gRPC service
         _ = self.stub.SetExportIds(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
+    def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest
+
+        from .conversions import build_grpc_id
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ExportIdRequest(
+            moniker=build_grpc_id(kwargs["export_data"].moniker),
+            id=kwargs["export_data"].value,
+            type=kwargs["export_data"].id_type.value,
+        )
+
+        # Call the gRPC service
+        _ = self.stub.SetExportId(request)
 
         # Return the response - formatted as a dictionary
         return {}
