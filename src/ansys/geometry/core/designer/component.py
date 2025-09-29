@@ -211,6 +211,8 @@ class Component:
             self._name = name
             self._id = preexisting_id
             self._instance_name = instance_name
+            self._template = None
+            self._component = None
         else:
             if parent_component:
                 template_id = template.id if template else ""
@@ -225,10 +227,14 @@ class Component:
                 self._id = response.get("id")
                 self._name = response.get("name")
                 self._instance_name = response.get("instance_name")
+                self._template = response.get("template")
+                self._component = response.get("component")
             else:
                 self._name = name
                 self._id = None
                 self._instance_name = instance_name
+                self._template = None
+                self._component = None
 
         # Initialize needed instance variables
         self._components = []
@@ -259,10 +265,10 @@ class Component:
         elif not read_existing_comp:
             # This is an independent Component - Create new Part and MasterComponent
             p = Part(
-                uuid.uuid4() if not response else response.template, f"p_{name}", [], []
+                uuid.uuid4() if not self._template else self._template, f"p_{name}", [], []
             )
             master = MasterComponent(
-                uuid.uuid4() if not response else response.component.master_id,
+                uuid.uuid4() if not self._template else self._component.master_id,
                 f"master_{name}",
                 p,
             )
