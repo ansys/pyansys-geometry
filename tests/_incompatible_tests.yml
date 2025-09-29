@@ -85,6 +85,7 @@ backends:
       - tests/integration/test_design_import.py::test_design_import_inventor2026
       # Bug fix included from 25.2 onwards
       - tests/integration/test_issues.py::test_issue_1192_temp_body_on_empty_intersect
+      - tests/integration/test_issues.py::test_issue_2251_double_import_crash
       # Enhancements on tool results from 25.2 onwards
       - tests/integration/test_repair_tools.py::test_fix_extra_edge
       # Issues in log retrieval from server when empty log are solved from 25R1 onwards
@@ -206,6 +207,7 @@ backends:
       - tests/integration/test_design_import.py::test_design_insert
       # Bug fix included from 25.2 onwards
       - tests/integration/test_issues.py::test_issue_1192_temp_body_on_empty_intersect
+      - tests/integration/test_issues.py::test_issue_2251_double_import_crash
       # Enhancements on tool results from 25.2 onwards
       - tests/integration/test_prepare_tools.py::test_share_topology
       - tests/integration/test_repair_tools.py::test_fix_extra_edge
@@ -272,6 +274,7 @@ backends:
       - tests/integration/test_repair_tools.py::test_find_and_fix_missing_faces_angle_distance
       # Bug fix included from 25.2 onwards
       - tests/integration/test_issues.py::test_issue_1192_temp_body_on_empty_intersect
+      - tests/integration/test_issues.py::test_issue_2251_double_import_crash
       # Files used require 25.2 or later
       - tests/integration/test_mating_conditions.py::test_align_condition
       - tests/integration/test_mating_conditions.py::test_tangent_condition
