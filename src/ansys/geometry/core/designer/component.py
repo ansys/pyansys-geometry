@@ -28,17 +28,10 @@ from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.commands_pb2 import (
-    CreateDesignPointsRequest,
-)
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import (
-    point3d_to_grpc_point,
-)
 from ansys.geometry.core.designer.beam import (
     Beam,
     BeamCrossSectionInfo,
@@ -51,7 +44,6 @@ from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
-from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
@@ -201,7 +193,6 @@ class Component:
         """Initialize the ``Component`` class."""
         # Initialize the client and stubs needed
         self._grpc_client = grpc_client
-        self._commands_stub = CommandsStub(self._grpc_client.channel)
 
         # Align instance name behavior with the server - empty string if None
         instance_name = instance_name if instance_name else ""
@@ -1416,7 +1407,6 @@ class Component:
         """
         return self.add_design_points(name, [point])[0]
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def add_design_points(
@@ -1435,16 +1425,14 @@ class Component:
         """
         # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
-        response = self._commands_stub.CreateDesignPoints(
-            CreateDesignPointsRequest(
-                points=[point3d_to_grpc_point(point) for point in points], parent=self.id
-            )
+        response = self._grpc_client.services.points.create_design_points(
+            points=points, parent_id=self.id
         )
         self._grpc_client.log.debug("Design points successfully created.")
 
         # Once created on the server, create them client side
         new_design_points = []
-        n_design_points = len(response.ids)
+        n_design_points = len(response.get("point_ids"))
         for index in range(n_design_points):
             new_design_points.append((DesignPoint(response.ids[index], name, points[index], self)))
         self._design_points.extend(new_design_points)

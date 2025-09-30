@@ -19,21 +19,20 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the parts service implementation for v0."""
+"""Module containing the points service implementation for v1."""
 
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.parts import GRPCPartsService
-from .conversions import from_design_file_format_to_grpc_part_export_format
+from ..base.points import GRPCPointsService
 
 
-class GRPCPartsServiceV0(GRPCPartsService):
-    """Parts service for gRPC communication with the Geometry server.
+class GRPCPointsServiceV1(GRPCPointsService):  # pragma: no cover
+    """Points service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
-    parts service. It is specifically designed for the v0 version of the
+    points service. It is specifically designed for the v1 version of the
     Geometry API.
 
     Parameters
@@ -44,25 +43,10 @@ class GRPCPartsServiceV0(GRPCPartsService):
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v0.parts_pb2_grpc import PartsStub
+        from ansys.api.geometry.v1.geometricentities.points_pb2_grpc import PointsStub
 
-        self.stub = PartsStub(channel)
+        self.stub = PointsStub(channel)
 
     @protect_grpc
-    def export(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v0.parts_pb2 import ExportRequest
-
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = ExportRequest(
-            format=from_design_file_format_to_grpc_part_export_format(kwargs["format"])
-        )
-
-        # Call the gRPC service
-        response = self.stub.Export(request)
-
-        # Return the response - formatted as a dictionary
-        data = bytes()
-        data += response.data
-        return {
-            "data": data,
-        }
+    def create_design_points(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
