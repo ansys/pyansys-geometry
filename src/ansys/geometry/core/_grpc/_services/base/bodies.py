@@ -220,6 +220,11 @@ class GRPCBodyService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def split_body(self, **kwargs) -> dict:
+        """Split a body."""
+        pass
+
+    @abstractmethod
     def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:
         """Create a body from loft profiles with guides."""
         pass

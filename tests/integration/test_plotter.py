@@ -968,7 +968,7 @@ def test_plot_design_multi_colors(modeler: Modeler, verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_design_face_colors(modeler: Modeler, verify_image_cache):
+def test_plot_design_face_colors(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test plotting of design with/without multi_colors."""
     design = modeler.create_design("DesignFaceColors")
     # Create a sketch of a box
@@ -982,12 +982,23 @@ def test_plot_design_face_colors(modeler: Modeler, verify_image_cache):
     design.bodies[0].faces[1].set_color((0, 255, 0))
     design.bodies[0].faces[2].set_color((0, 0, 255))
 
+    # Define file name for screenshot
+    screenshot_path = (
+        tmp_path_factory.mktemp("test_plot_design_face_colors") / "plot_design_face_colors.png"
+    )
+
+    # Assert that the file does not exist before plotting
+    assert not screenshot_path.exists()
+
     # Design plotting
     design.bodies[0].plot(
-        screenshot=Path(IMAGE_RESULTS_DIR, "plot_design_face_colors.png"),
+        screenshot=screenshot_path,
         merge=False,
-        multi_colors=True,
+        multi_colors=True,  # Results are random and thus we cannot compare screenshots easily
     )
+
+    # Assert that the file exists after plotting
+    assert screenshot_path.exists()
 
 
 @skip_no_xserver

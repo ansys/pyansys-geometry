@@ -98,3 +98,63 @@ class GRPCFacesService(ABC):  # pragma: no cover
     def create_iso_parametric_curve(self, **kwargs) -> dict:
         """Create an iso-parametric curve on a face."""
         pass
+
+    @abstractmethod
+    def extrude_faces(self, **kwargs) -> dict:
+        """Extrude a selection of faces."""
+        pass
+
+    @abstractmethod
+    def extrude_faces_up_to(self, **kwargs) -> dict:
+        """Extrude a selection of faces up to another object."""
+        pass
+
+    @abstractmethod
+    def offset_faces_set_radius(self, **kwargs) -> dict:
+        """Offset a selection of faces by a given radius."""
+        pass
+
+    @abstractmethod
+    def revolve_faces(self, **kwargs) -> dict:
+        """Revolve a selection of faces around an axis."""
+        pass
+
+    @abstractmethod
+    def revolve_faces_up_to(self, **kwargs) -> dict:
+        """Revolve a selection of faces around an axis up to another object."""
+        pass
+
+    @abstractmethod
+    def revolve_faces_by_helix(self, **kwargs) -> dict:
+        """Revolve a selection of faces around an axis by a helix."""
+        pass
+
+    @abstractmethod
+    def replace_faces(self, **kwargs) -> dict:
+        """Replace a selection of faces with new faces."""
+        pass
+
+    @abstractmethod
+    def thicken_faces(self, **kwargs) -> dict:
+        """Thicken a selection of faces."""
+        pass
+
+    @abstractmethod
+    def draft_faces(self, **kwargs) -> dict:
+        """Draft a selection of faces."""
+        pass
+
+    @abstractmethod
+    def get_round_info(self, **kwargs) -> dict:
+        """Get round information for a selection of faces."""
+        pass
+
+    @abstractmethod
+    def offset_faces(self, **kwargs) -> dict:
+        """Offset a selection of faces."""
+        pass
+
+    @abstractmethod
+    def setup_offset_relationship(self, **kwargs) -> dict:
+        """Set up an offset relationship between two faces."""
+        pass

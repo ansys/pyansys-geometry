@@ -25,8 +25,6 @@ from enum import Enum, unique
 from typing import TYPE_CHECKING
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.commands_pb2 import FaceOffsetRequest
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
@@ -34,7 +32,7 @@ from pint import Quantity
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.vertex import Vertex
-from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
@@ -178,7 +176,6 @@ class Face:
         self._surface_type = surface_type
         self._body = body
         self._grpc_client = grpc_client
-        self._commands_stub = CommandsStub(grpc_client.channel)
         self._is_reversed = is_reversed
         self._shape = None
         self._color = None
@@ -506,7 +503,6 @@ class Face:
 
         return trimmed_curves
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def setup_offset_relationship(
         self, other_face: "Face", set_baselines: bool = False, process_adjacent_faces: bool = False
@@ -531,16 +527,14 @@ class Face:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        result = self._commands_stub.FaceOffset(
-            FaceOffsetRequest(
-                face1=self._grpc_id,
-                face2=other_face._grpc_id,
-                set_baselines=set_baselines,
-                process_adjacent_faces=process_adjacent_faces,
-            )
+        result = self._grpc_client.services.faces.setup_offset_relationship(
+            face1_id=self.id,
+            face2_id=other_face.id,
+            set_baselines=set_baselines,
+            process_adjacent_faces=process_adjacent_faces,
         )
 
-        return result.success
+        return result.get("success")
 
     @graphics_required
     def tessellate(self, tess_options: TessellationOptions | None = None) -> "pv.PolyData":

@@ -23,16 +23,14 @@
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Generator, Optional
+from typing import TYPE_CHECKING, Optional
 
-from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from grpc import Channel
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
-from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
@@ -251,7 +249,6 @@ class Modeler:
         """
         self.close(close_design=close_design)
 
-    @protect_grpc
     def _upload_file(
         self,
         file_path: str,
@@ -293,19 +290,15 @@ class Modeler:
         with fp_path.open(mode="rb") as file:
             data = file.read()
 
-        c_stub = CommandsStub(self.client.channel)
-
-        response = c_stub.UploadFile(
-            UploadFileRequest(
-                data=data,
-                file_name=file_name,
-                open=open_file,
-                import_options=import_options.to_dict(),
-            )
+        response = self.client.services.designs.upload_file(
+            data=data,
+            file_name=file_name,
+            open_file=open_file,
+            import_options=import_options,
         )
-        return response.file_path
 
-    @protect_grpc
+        return response.get("file_path")
+
     def _upload_file_stream(
         self,
         file_path: str,
@@ -342,45 +335,11 @@ class Modeler:
         if fp_path.is_dir():
             raise ValueError("File path must lead to a file, not a directory.")
 
-        c_stub = CommandsStub(self.client.channel)
-
-        response = c_stub.StreamFileUpload(
-            self._generate_file_chunks(fp_path, open_file, import_options)
+        response = self.client.services.designs.upload_file_stream(
+            file_path=fp_path, open_file=open_file, import_options=import_options
         )
-        return response.file_path
 
-    def _generate_file_chunks(
-        self, file_path: Path, open_file: bool, import_options: ImportOptions
-    ) -> Generator[UploadFileRequest, None, None]:
-        """Generate appropriate chunk sizes for uploading files.
-
-        Parameters
-        ----------
-        file_path : Path
-            Path of the file to upload. The extension of the file must be included.
-        open_file : bool
-            Whether to open the file in the Geometry service.
-        import_options : ImportOptions
-            Import options that toggle certain features when opening a file.
-
-        Yields
-        ------
-        UploadFileRequest
-            Request object for uploading a file in chunks.
-        """
-        msg_buffer = 5 * 1024  # 5KB - for additional message data
-        if pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer < 0:  # pragma: no cover
-            raise ValueError("MAX_MESSAGE_LENGTH is too small for file upload.")
-
-        chunk_size = pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer
-        with Path.open(file_path, "rb") as file:
-            while chunk := file.read(chunk_size):
-                yield UploadFileRequest(
-                    data=chunk,
-                    file_name=file_path.name,
-                    open=open_file,
-                    import_options=import_options.to_dict(),
-                )
+        return response.get("file_path")
 
     def open_file(
         self,
@@ -480,7 +439,6 @@ class Modeler:
         lines.append(str(self.client))
         return "\n".join(lines)
 
-    @protect_grpc
     def run_discovery_script_file(
         self,
         file_path: str | Path,
