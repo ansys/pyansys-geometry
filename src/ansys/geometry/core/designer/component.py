@@ -1433,8 +1433,8 @@ class Component:
         # Once created on the server, create them client side
         new_design_points = []
         n_design_points = len(response.get("point_ids"))
-        for index in range(n_design_points):
-            new_design_points.append((DesignPoint(response.ids[index], name, points[index], self)))
+        for point_id, point_value in zip(response.get("point_ids"), points):
+            new_design_points.append((DesignPoint(point_id, name, point_value, self)))
         self._design_points.extend(new_design_points)
 
         # Finally return the list of created DesignPoint objects
