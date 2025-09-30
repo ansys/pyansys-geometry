@@ -716,7 +716,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         from ansys.api.geometry.v0.bodies_pb2 import BooleanRequest
 
         # Call the gRPC service and build the requests accordingly
-        resp = 0
+        response_success = 0
         serialized_tracker_response = {}
         try:
             request = BooleanRequest(
@@ -727,7 +727,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
                 request.keep_other = kwargs["keep_other"]
             resp = self.stub.Boolean(request=request)
-            print ("response normal path", resp)
+            response_success = resp.empty_result
             if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
                 serialized_tracker_response = serialize_tracker_command_response(
                     response=resp.response
@@ -750,8 +750,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                     all_resp.append(tmp_resp)
 
                 if all_resp.count(1) > 0:
-                    resp.empty_result = 1
-                    print ("response with except and other > 1", resp)
+                   response_success = 1
             elif len(kwargs["other"]) == 1:
                 resp = self.stub.Boolean(
                     request=BooleanRequest(
@@ -760,12 +759,11 @@ class GRPCBodyServiceV0(GRPCBodyService):
                         method=kwargs["method"],
                     )
                 )
-                print ("response with except and other == 1", resp)
+                response_success = resp.empty_result
             else:
                 raise err
 
-        print ("final response", resp)
-        if resp.empty_result == 1:
+        if response_success == 1:
             raise ValueError(
                 f"Boolean operation of type '{kwargs['method']}' failed: {kwargs['err_msg']}.\n"
                 f"Involving bodies:{kwargs['target']}, {kwargs['other']}"
