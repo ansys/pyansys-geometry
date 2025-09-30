@@ -3264,7 +3264,6 @@ def test_surface_body_creation(modeler: Modeler):
     assert len(design.bodies) == 5
     assert body.is_surface
     assert body.faces[0].area.m == pytest.approx(7.44626609)
-    design.export_to_scdocx("C:\\Users\\jkerstet\\Downloads\\nurbs_surface.scdocx")
 
     # SOLID BODIES
 
