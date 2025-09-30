@@ -531,3 +531,23 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
                 for response_data in response.response_data
             ]
         }
+
+    @protect_grpc
+    def setup_offset_relationship(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import FaceOffsetRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FaceOffsetRequest(
+            face1=build_grpc_id(kwargs["face1_id"]),
+            face2=build_grpc_id(kwargs["face2_id"]),
+            set_baselines=kwargs["set_baselines"],
+            process_adjacent_faces=kwargs["process_adjacent_faces"],
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.FaceOffset(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+        }
