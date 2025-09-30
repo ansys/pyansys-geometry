@@ -49,12 +49,12 @@ class GRPCPointsServiceV0(GRPCPointsService):
 
     @protect_grpc
     def create_design_points(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v0.commands_pb2 import CreateDesignPointRequest
+        from ansys.api.geometry.v0.commands_pb2 import CreateDesignPointsRequest
 
         from .conversions import from_point3d_to_grpc_point
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = CreateDesignPointRequest(
+        request = CreateDesignPointsRequest(
             points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
             parent=kwargs["parent_id"],
         )
