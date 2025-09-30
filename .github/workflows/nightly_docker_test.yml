@@ -174,21 +174,22 @@ jobs:
           # Message to send to Teams as a webhook notification in JSON Payload format
           raw: >-
             {
-              "@type": "MessageCard",
-              "@context": "http://schema.org/extensions",
-              "summary": "Unstable build tests for Windows Core Service failing",
-              "themeColor": "f44336",
-              "title": "PyAnsys Geometry unstable build tests - Windows Core Service failing",
-              "sections": [
+              "type": "message",
+              "attachments": [
                 {
-                  "activityTitle": "Windows Core Service unstable build tests are failing",
-                  "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
-                  "facts": [
-                    {
-                      "name": "Status",
-                      "value": "Failed"
-                    }
-                  ]
+                  "contentType": "application/vnd.microsoft.card.adaptive",
+                  "content": {
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "type": "AdaptiveCard",
+                    "version": "1.0",
+                    "body": [
+                      {
+                        "type": "TextBlock",
+                        "text": "**Windows Core Service unstable build tests are failing**\n\n[View details in GitHub Actions](https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }})",
+                        "wrap": true
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -242,21 +243,22 @@ jobs:
           # Message to send to Teams as a webhook notification in JSON Payload format
           raw: >-
             {
-              "@type": "MessageCard",
-              "@context": "http://schema.org/extensions",
-              "summary": "Unstable build tests for Linux Core Service failing",
-              "themeColor": "f44336",
-              "title": "PyAnsys Geometry unstable build tests - Linux Core Service failing",
-              "sections": [
+              "type": "message",
+              "attachments": [
                 {
-                  "activityTitle": "Linux Core Service unstable build tests are failing",
-                  "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
-                  "facts": [
-                    {
-                      "name": "Status",
-                      "value": "Failed"
-                    }
-                  ]
+                  "contentType": "application/vnd.microsoft.card.adaptive",
+                  "content": {
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "type": "AdaptiveCard",
+                    "version": "1.0",
+                    "body": [
+                      {
+                        "type": "TextBlock",
+                        "text": "**Linux Core Service unstable build tests are failing**\n\n[View details in GitHub Actions](https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }})",
+                        "wrap": true
+                      }
+                    ]
+                  }
                 }
               ]
             }
