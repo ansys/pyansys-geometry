@@ -57,7 +57,7 @@ jobs:
             service-name: "Linux Core Service"
     steps:
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -118,7 +118,7 @@ jobs:
           pip install .[tests]
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -174,21 +174,22 @@ jobs:
           # Message to send to Teams as a webhook notification in JSON Payload format
           raw: >-
             {
-              "@type": "MessageCard",
-              "@context": "http://schema.org/extensions",
-              "summary": "Unstable build tests for Windows Core Service failing",
-              "themeColor": "f44336",
-              "title": "PyAnsys Geometry unstable build tests - Windows Core Service failing",
-              "sections": [
+              "type": "message",
+              "attachments": [
                 {
-                  "activityTitle": "Windows Core Service unstable build tests are failing",
-                  "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
-                  "facts": [
-                    {
-                      "name": "Status",
-                      "value": "Failed"
-                    }
-                  ]
+                  "contentType": "application/vnd.microsoft.card.adaptive",
+                  "content": {
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "type": "AdaptiveCard",
+                    "version": "1.0",
+                    "body": [
+                      {
+                        "type": "TextBlock",
+                        "text": "**Windows Core Service unstable build tests are failing**\n\n[View details in GitHub Actions](https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }})",
+                        "wrap": true
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -206,7 +207,7 @@ jobs:
 
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -221,7 +222,7 @@ jobs:
         uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
+        uses: ansys/actions/tests-pytest@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
         env:
           ALLOW_PLOTTING: true
         with:
@@ -242,21 +243,22 @@ jobs:
           # Message to send to Teams as a webhook notification in JSON Payload format
           raw: >-
             {
-              "@type": "MessageCard",
-              "@context": "http://schema.org/extensions",
-              "summary": "Unstable build tests for Linux Core Service failing",
-              "themeColor": "f44336",
-              "title": "PyAnsys Geometry unstable build tests - Linux Core Service failing",
-              "sections": [
+              "type": "message",
+              "attachments": [
                 {
-                  "activityTitle": "Linux Core Service unstable build tests are failing",
-                  "activitySubtitle": "Check the run for more details: https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }}",
-                  "facts": [
-                    {
-                      "name": "Status",
-                      "value": "Failed"
-                    }
-                  ]
+                  "contentType": "application/vnd.microsoft.card.adaptive",
+                  "content": {
+                    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                    "type": "AdaptiveCard",
+                    "version": "1.0",
+                    "body": [
+                      {
+                        "type": "TextBlock",
+                        "text": "**Linux Core Service unstable build tests are failing**\n\n[View details in GitHub Actions](https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }})",
+                        "wrap": true
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -271,7 +273,7 @@ jobs:
       WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:core-windows-latest
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -296,7 +298,7 @@ jobs:
       LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:core-linux-latest
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
