@@ -3247,10 +3247,14 @@ def test_surface_body_creation(modeler: Modeler):
 
     # nurbs surface
     points = [
-        Point3D([0, 0, 0]), Point3D([0, 1, 1]),
-        Point3D([0, 2, 0]), Point3D([1, 0, 1]),
-        Point3D([1, 1, 2]), Point3D([1, 2, 1]),
-        Point3D([2, 0, 0]), Point3D([2, 1, 1]),
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
         Point3D([2, 2, 0]),
     ]
     degree_u = 2

@@ -119,17 +119,17 @@ class NURBSSurface(Surface):
     def weights(self) -> list[Real]:
         """Get the weights of the control points."""
         return self._nurbs_surface.weights
-    
+
     @property
     def origin(self) -> Point3D:
         """Get the origin of the surface."""
         return self._origin
-    
+
     @property
     def dir_x(self) -> UnitVector3D:
         """Get the reference direction of the surface."""
         return self._reference
-    
+
     @property
     def dir_z(self) -> UnitVector3D:
         """Get the axis direction of the surface."""
