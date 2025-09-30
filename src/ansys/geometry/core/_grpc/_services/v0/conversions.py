@@ -55,11 +55,11 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
-from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 import pint
 
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 
 if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
