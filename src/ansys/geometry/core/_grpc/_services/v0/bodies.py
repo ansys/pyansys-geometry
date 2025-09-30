@@ -750,7 +750,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                     all_resp.append(tmp_resp)
 
                 if all_resp.count(1) > 0:
-                   response_success = 1
+                    response_success = 1
             elif len(kwargs["other"]) == 1:
                 resp = self.stub.Boolean(
                     request=BooleanRequest(
