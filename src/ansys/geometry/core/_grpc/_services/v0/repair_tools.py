@@ -34,7 +34,7 @@ from ..base.repair_tools import GRPCRepairToolsService
 from .conversions import (
     serialize_tracker_command_response,
 )
-
+from .conversions import build_grpc_id
 
 class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
     """Repair tools service for gRPC communication with the Geometry server.
@@ -549,7 +549,23 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixDuplicateFaces(request)
 
         serialized_tracker_response = serialize_tracker_command_response(
-            response=response.result.complete_command_response
+            response=response.result.complete_command_response)
+        
+    @protect_grpc   
+    def find_and_fix_simplify(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FindAdjustSimplifyRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FindAdjustSimplifyRequest(
+            selection=kwargs["selection"],
+            comprehensive=kwargs["comprehensive_result"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FindAndSimplify(request)
+
+        serialized_tracker_response =  serialize_tracker_command_response(
+            response.complete_command_response
         )
 
         # Return the response - formatted as a dictionary
@@ -572,6 +588,40 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         serialized_tracker_response = serialize_tracker_command_response(
             response=response.result.complete_command_response
+            "success": response.success,
+            "found": response.found,
+            "repaired": response.repaired,
+            "created_bodies_monikers": [],
+            "modified_bodies_monikers": [],
+            "complete_command_response": serialized_tracker_response,
+        )
+
+    @protect_grpc
+    def find_and_fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
+        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
+
+        from ..base.conversions import from_measurement_to_server_length
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FindStitchFacesRequest(
+            faces=kwargs["body_ids"],
+            maximum_distance=DoubleValue(
+                value=from_measurement_to_server_length(kwargs["max_distance"])
+            )
+            if kwargs["max_distance"] is not None
+            else None,
+            allow_multiple_bodies=BoolValue(value=kwargs["allow_multiple_bodies"]),
+            maintain_components=BoolValue(value=kwargs["maintain_components"]),
+            check_for_coincidence=BoolValue(value=kwargs["check_for_coincidence"]),
+            comprehensive=kwargs["comprehensive_result"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FindAndFixStitchFaces(request)
+
+        serialized_tracker_response = self._serialize_tracker_command_response(
+            response.complete_command_response
         )
 
         # Return the response - formatted as a dictionary
@@ -754,6 +804,40 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         return {
             "tracker_response": serialized_tracker_response,
             "repair_tracker_response": self.__serialize_message_response(response),
+            "success": response.success,
+            "created_bodies_monikers": response.created_bodies_monikers,
+            "modified_bodies_monikers": response.modified_bodies_monikers,
+            "found": response.found,
+            "repaired": response.repaired,
+            "complete_command_response": serialized_tracker_response,
+        }
+
+    @protect_grpc
+    def inspect_geometry(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import InspectGeometryRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = InspectGeometryRequest(bodies=[build_grpc_id(b) for b in kwargs["body_ids"]])
+
+        # Call the gRPC service
+        response = self.stub.InspectGeometry(request)
+
+        # Serialize and return the response
+        return self.__serialize_inspect_result_response(response)
+
+    @protect_grpc
+    def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RepairGeometryRequest(bodies=[build_grpc_id(b) for b in kwargs["body_ids"]])
+
+        # Call the gRPC service
+        response = self.stub.RepairGeometry(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.result.success,
         }
 
     def __serialize_inspect_result_response(self, response) -> dict:  # noqa: D102

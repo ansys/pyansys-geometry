@@ -60,7 +60,7 @@ class GRPCPartsServiceV0(GRPCPartsService):
         # Call the gRPC service
         response = self.stub.Export(request)
 
-        # Return the response
+        # Return the response - formatted as a dictionary
         data = bytes()
         data += response.data
         return {

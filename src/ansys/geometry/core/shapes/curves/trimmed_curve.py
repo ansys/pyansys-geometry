@@ -21,16 +21,13 @@
 # SOFTWARE.
 """Trimmed curve class."""
 
-from ansys.api.geometry.v0.commands_pb2 import IntersectCurvesRequest
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import trimmed_curve_to_grpc_trimmed_curve
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -74,8 +71,6 @@ class TrimmedCurve:
         self._interval = interval
         self._length = length
         self._grpc_client = grpc_client
-        if grpc_client is not None:
-            self._commands_stub = CommandsStub(self._grpc_client.channel)
 
     @property
     def geometry(self) -> Curve:
@@ -141,17 +136,10 @@ class TrimmedCurve:
                 """Because this trimmed curve was not initialized with a gRPC client,
                 the method cannot be called."""
             )
-        first = trimmed_curve_to_grpc_trimmed_curve(self)
-        second = trimmed_curve_to_grpc_trimmed_curve(other)
-        res = self._commands_stub.IntersectCurves(
-            IntersectCurvesRequest(first=first, second=second)
-        )
-        if res.intersect is False:
-            return []
-        return [
-            Point3D([point.x, point.y, point.z], unit=DEFAULT_UNITS.SERVER_LENGTH)
-            for point in res.points
-        ]
+
+        response = self._grpc_client.services.curves.intersect_curves(first=self, second=other)
+
+        return [] if response.get("intersect") is False else response.get("points")
 
     def transformed_copy(self, matrix: Matrix44) -> "TrimmedCurve":
         """Return a copy of the trimmed curve transformed by the given matrix.

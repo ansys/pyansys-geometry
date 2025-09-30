@@ -394,3 +394,28 @@ def test_issue_2074_rounding_math_errors():
     assert np.isclose(arc.radius.to_base_units().m, radius.to_base_units().m)
     assert arc.start == start
     assert arc.end == end
+
+
+def test_issue_2251_double_import_crash(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test that importing a file twice does not crash the program.
+
+    For more info see
+    https://github.com/ansys/pyansys-geometry/issues/2251
+    """
+    # Open the design file
+    design = modeler.open_file(Path(FILES_DIR, "pipe_split_small_edge.dsco"))
+
+    # Export to stride
+    location = tmp_path_factory.mktemp("test_issue_2251_loc1")
+    file_location = location / f"{design.name}.stride"
+    design.export_to_stride(location)
+    assert file_location.exists()
+
+    # Open the design file
+    design = modeler.open_file(Path(FILES_DIR, "pipe_split_small_edge.dsco"))
+
+    # Export to stride
+    location = tmp_path_factory.mktemp("test_issue_2251_loc2")
+    file_location = location / f"{design.name}.stride"
+    design.export_to_stride(location)  # --> crash
+    assert file_location.exists()
