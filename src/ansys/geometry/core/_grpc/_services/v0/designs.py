@@ -228,7 +228,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
             from ansys.geometry.core.misc.options import ImportOptions
 
         def request_generator(
-            file_path: Path, open_file: bool, import_options: ImportOptions
+            file_path: Path, open_file: bool, import_options: "ImportOptions"
         ) -> Generator[UploadFileRequest, None, None]:
             """Generate requests for streaming file upload."""
             msg_buffer = 5 * 1024  # 5KB - for additional message data
