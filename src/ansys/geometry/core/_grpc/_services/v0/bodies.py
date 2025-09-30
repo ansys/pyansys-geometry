@@ -825,3 +825,26 @@ class GRPCBodyServiceV0(GRPCBodyService):
             "master_id": new_body.master_id,
             "is_surface": new_body.is_surface,
         }
+
+    @protect_grpc
+    def stitch(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.bodies_pb2 import StitchRequest, StitchRequestData
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = StitchRequest(
+            StitchRequestData(
+                ids=kwargs["body_ids"],
+                tolerance=from_measurement_to_server_length(kwargs["tolerance"]),
+            )
+        )
+
+        # Call the gRPC service
+        resp = self.stub.Stitch(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }

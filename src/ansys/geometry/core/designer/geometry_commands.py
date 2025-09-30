@@ -1833,3 +1833,39 @@ class GeometryCommands:
 
         design = get_design_from_edge(edges[0])
         design._update_design_inplace()
+
+    @min_backend_version(26, 1, 0)
+    def stitch_bodies(self, bodies: list["Body"], tolerance: Distance | Quantity | Real) -> bool:
+        """Stitch bodies together.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            Bodies to stitch.
+        tolerance : Distance | Quantity | Real
+            Tolerance to use when stitching bodies. Default units are meters.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        for body in bodies:
+            body._reset_tessellation_cache()
+
+        tolerance = tolerance if isinstance(tolerance, Distance) else Distance(tolerance)
+
+        result = self._grpc_client._services.bodies.stitch(
+            body_ids=[body.id for body in bodies],
+            tolerance=tolerance,
+        )
+
+        if result.get("success"):
+            design = get_design_from_body(bodies[0])
+            design._update_design_inplace()
+
+        return result.get("success")
