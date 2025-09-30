@@ -49,8 +49,10 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.dbu.v0.designs_pb2_grpc import DesignsStub
+        from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 
-        self.stub = DesignsStub(channel)
+        self.designs_stub = DesignsStub(channel)
+        self.commands_stub = CommandsStub(channel)
 
     @protect_grpc
     def open(self, **kwargs) -> dict:  # noqa: D102
@@ -63,7 +65,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        _ = self.stub.Open(request)
+        _ = self.designs_stub.Open(request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -76,7 +78,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         request = NewRequest(name=kwargs["name"])
 
         # Call the gRPC service
-        response = self.stub.New(request)
+        response = self.designs_stub.New(request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -90,7 +92,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         request = build_grpc_id(id=kwargs["design_id"])
 
         # Call the gRPC service
-        _ = self.stub.Close(request)
+        _ = self.designs_stub.Close(request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -101,7 +103,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         request = build_grpc_id(id=kwargs["design_id"])
 
         # Call the gRPC service
-        _ = self.stub.PutActive(request)
+        _ = self.designs_stub.PutActive(request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -118,7 +120,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        _ = self.stub.SaveAs(request)
+        _ = self.designs_stub.SaveAs(request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -136,7 +138,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.stub.DownloadExportFile(request)
+        response = self.designs_stub.DownloadExportFile(request)
 
         # Return the response - formatted as a dictionary
         data = bytes()
@@ -156,7 +158,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.stub.StreamDownloadExportFile(request)
+        response = self.designs_stub.StreamDownloadExportFile(request)
 
         # Return the response - formatted as a dictionary
         data = bytes()
@@ -175,7 +177,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        _ = self.stub.Insert(request)
+        _ = self.designs_stub.Insert(request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -185,7 +187,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         from google.protobuf.empty_pb2 import Empty
 
         # Call the gRPC service
-        response = self.stub.GetActive(request=Empty())
+        response = self.designs_stub.GetActive(request=Empty())
 
         # Return the response - formatted as a dictionary
         if response:
@@ -194,3 +196,63 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 "main_part_id": response.main_part.id,
                 "name": response.name,
             }
+
+    @protect_grpc
+    def upload_file(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = UploadFileRequest(
+            data=kwargs["data"],
+            file_name=kwargs["file_name"],
+            open=kwargs["open_file"],
+            import_options=kwargs["import_options"].to_dict(),
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.UploadFile(request)
+
+        # Return the response - formatted as a dictionary
+        return {"file_path": response.file_path}
+
+    @protect_grpc
+    def upload_file_stream(self, **kwargs) -> dict:  # noqa: D102
+        from pathlib import Path
+        from typing import TYPE_CHECKING, Generator
+
+        from ansys.api.geometry.v0.commands_pb2 import UploadFileRequest
+
+        import ansys.geometry.core.connection.defaults as pygeom_defaults
+
+        if TYPE_CHECKING:  # pragma: no cover
+            from ansys.geometry.core.misc.options import ImportOptions
+
+        def request_generator(
+            file_path: Path, open_file: bool, import_options: ImportOptions
+        ) -> Generator[UploadFileRequest, None, None]:
+            """Generate requests for streaming file upload."""
+            msg_buffer = 5 * 1024  # 5KB - for additional message data
+            if pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer < 0:  # pragma: no cover
+                raise ValueError("MAX_MESSAGE_LENGTH is too small for file upload.")
+
+            chunk_size = pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer
+            with Path.open(file_path, "rb") as file:
+                while chunk := file.read(chunk_size):
+                    yield UploadFileRequest(
+                        data=chunk,
+                        file_name=file_path.name,
+                        open=open_file,
+                        import_options=import_options.to_dict(),
+                    )
+
+        # Call the gRPC service
+        response = self.commands_stub.StreamFileUpload(
+            request_generator(
+                file_path=kwargs["file_path"],
+                open_file=kwargs["open_file"],
+                import_options=kwargs["import_options"],
+            )
+        )
+
+        # Return the response - formatted as a dictionary
+        return {"file_path": response.file_path}
