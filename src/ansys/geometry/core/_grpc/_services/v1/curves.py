@@ -50,3 +50,7 @@ class GRPCCurvesServiceV1(GRPCCurvesService):  # pragma: no cover
     @protect_grpc
     def revolve_edges(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def intersect_curves(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError

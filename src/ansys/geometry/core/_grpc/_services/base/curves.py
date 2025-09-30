@@ -42,3 +42,8 @@ class GRPCCurvesService(ABC):  # pragma: no cover
     def revolve_edges(self, **kwargs) -> dict:
         """Revolve edges around an axis to create a surface of revolution."""
         pass
+
+    @abstractmethod
+    def intersect_curves(self, **kwargs) -> dict:
+        """Get intersection points of curves."""
+        pass
