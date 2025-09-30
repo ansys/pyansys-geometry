@@ -19,20 +19,20 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the curves service implementation for v1."""
+"""Module containing the points service implementation for v0."""
 
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.curves import GRPCCurvesService
+from ..base.points import GRPCPointsService
 
 
-class GRPCCurvesServiceV1(GRPCCurvesService):  # pragma: no cover
-    """Curves service for gRPC communication with the Geometry server.
+class GRPCPointsServiceV0(GRPCPointsService):
+    """Points service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
-    curves service. It is specifically designed for the v1 version of the
+    points service. It is specifically designed for the v0 version of the
     Geometry API.
 
     Parameters
@@ -43,14 +43,24 @@ class GRPCCurvesServiceV1(GRPCCurvesService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.curves_pb2_grpc import CurvesStub
+        from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 
-        self.stub = CurvesStub(channel)
-
-    @protect_grpc
-    def revolve_edges(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        self.stub = CommandsStub(channel)
 
     @protect_grpc
-    def intersect_curves(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+    def create_design_points(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import CreateDesignPointsRequest
+
+        from .conversions import from_point3d_to_grpc_point
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateDesignPointsRequest(
+            points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
+            parent=kwargs["parent_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.CreateDesignPoints(request)
+
+        # Return the response - formatted as a dictionary
+        return {"point_ids": [p for p in response.ids]}

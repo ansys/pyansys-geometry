@@ -82,3 +82,11 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def get_active(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def upload_file(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def upload_file_stream(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError

@@ -153,3 +153,8 @@ class GRPCFacesService(ABC):  # pragma: no cover
     def offset_faces(self, **kwargs) -> dict:
         """Offset a selection of faces."""
         pass
+
+    @abstractmethod
+    def setup_offset_relationship(self, **kwargs) -> dict:
+        """Set up an offset relationship between two faces."""
+        pass
