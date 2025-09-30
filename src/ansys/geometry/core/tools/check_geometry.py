@@ -23,9 +23,6 @@
 
 from typing import TYPE_CHECKING
 
-from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
-from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
@@ -99,6 +96,8 @@ class InspectResult:
 
         Parameters
         ----------
+        grpc_client: GrpcClient
+            gRPC client to communicate with the server.
         body: Body
             Body for which issues are found.
         issues: list[GeometryIssue]
@@ -106,7 +105,7 @@ class InspectResult:
         """
         self._body = body
         self._issues = issues
-        self._repair_stub = RepairToolsStub(grpc_client.channel)
+        self._grpc_client = grpc_client
 
     @property
     def body(self) -> "Body":
@@ -129,8 +128,8 @@ class InspectResult:
         if not self.body:
             return RepairToolMessage(False, [], [])
 
-        repair_result_response = self._repair_stub.RepairGeometry(
-            RepairGeometryRequest(bodies=[self.body._grpc_id])
+        response = self._grpc_client.services.repair_tools.repair_geometry(
+            body_ids=[self.body.id],
         )
 
-        return RepairToolMessage(repair_result_response.result.success, [], [])
+        return RepairToolMessage(response.get("success"), [], [])

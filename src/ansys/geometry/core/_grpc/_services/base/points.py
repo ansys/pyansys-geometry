@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the curves service implementation (abstraction layer)."""
+"""Module containing the points service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCCurvesService(ABC):  # pragma: no cover
-    """Curves service for gRPC communication with the Geometry server.
+class GRPCPointsService(ABC):  # pragma: no cover
+    """Points service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,14 +36,10 @@ class GRPCCurvesService(ABC):  # pragma: no cover
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCCurvesService class."""
-
-    @abstractmethod
-    def revolve_edges(self, **kwargs) -> dict:
-        """Revolve edges around an axis to create a surface of revolution."""
+        """Initialize the GRPCPointsService class."""
         pass
 
     @abstractmethod
-    def intersect_curves(self, **kwargs) -> dict:
-        """Get intersection points of curves."""
+    def create_design_points(self, **kwargs) -> dict:
+        """Create design points."""
         pass
