@@ -115,7 +115,9 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           # Write command to file dbug.txt for debugging purposes
           echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:SERVER_ENDPOINT -p $env:PORT_MAPPING $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath dbug.txt -Append
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:SERVER_ENDPOINT -p $env:PORT_MAPPING $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION
+          # Read the file and execute the command
+          $command = Get-Content -Path dbug.txt | Select-String -Pattern "docker run"
+          Invoke-Expression $command.Line
           Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
