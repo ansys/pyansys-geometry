@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
 
-from ansys.geometry.core.math import Point3D
+from ansys.geometry.core.math import Point3D, ZERO_POINT3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
@@ -60,9 +60,9 @@ class NURBSSurface(Surface):
 
     def __init__(
         self,
-        origin: Point3D,
-        reference: UnitVector3D,
-        axis: UnitVector3D,
+        origin: Point3D = ZERO_POINT3D,
+        reference: UnitVector3D = UNITVECTOR3D_X,
+        axis: UnitVector3D = UNITVECTOR3D_Z,
         geomdl_object: "geomdl_nurbs.Surface" = None,
     ):
         """Initialize ``NURBSSurface`` class."""
@@ -75,9 +75,9 @@ class NURBSSurface(Surface):
             ) from e
 
         self._nurbs_surface = geomdl_object if geomdl_object else geomdl_nurbs.Surface()
-        self._origin = Point3D([0.0, 0.0, 0.0])
-        self._reference = UNITVECTOR3D_X
-        self._axis = UNITVECTOR3D_Z
+        self._origin = origin
+        self._reference = reference
+        self._axis = axis
 
     @property
     def geomdl_nurbs_surface(self) -> "geomdl_nurbs.Surface":

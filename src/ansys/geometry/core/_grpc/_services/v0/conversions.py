@@ -793,10 +793,10 @@ def from_nurbs_surface_to_grpc_nurbs_surface(surface: "NURBSSurface") -> GRPCNur
     # Convert control points
     control_points = [
         GRPCControlPoint(
-            position=from_point3d_to_grpc_point(pt),
-            weight=surface.weights[i],
+            position=from_point3d_to_grpc_point(point),
+            weight=weight,
         )
-        for i, pt in enumerate(surface.control_points)
+        for weight, point in zip(surface.weights, surface.control_points)
     ]
 
     # Convert nurbs data

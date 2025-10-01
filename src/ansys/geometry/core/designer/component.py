@@ -28,6 +28,7 @@ from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 from beartype import beartype as check_input_types
 from pint import Quantity
 
@@ -1041,7 +1042,15 @@ class Component:
         Warnings
         --------
         This method is only available starting on Ansys release 25R1.
+        NURBS surface bodies are only supported starting on Ansys release 26R1.
         """
+        if (self._grpc_client.backend_version < (26, 1, 0)) and (
+            isinstance(trimmed_surface.geometry, NURBSSurface)
+        ):
+            raise ValueError(
+                "NURBS surface bodies are only supported starting on Ansys release 26R1."
+            )
+
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
         )
