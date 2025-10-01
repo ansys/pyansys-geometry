@@ -118,7 +118,8 @@ jobs:
           $tagName = $env:IMAGE_TAG
           $fullImage = "${imageName}:${tagName}"
           Write-Host "Running Docker image: $fullImage"
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:SERVER_ENDPOINT -p $env:ANSRV_GEO_PORT:50051 $fullImage $env:TRANSPORT_MODE_SELECTION
+          $outsidePort = $env:ANSRV_GEO_PORT
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:SERVER_ENDPOINT -p ${outsidePort}:50051 $fullImage $env:TRANSPORT_MODE_SELECTION
           Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
