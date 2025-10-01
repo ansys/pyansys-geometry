@@ -216,7 +216,7 @@ class NURBSSurface(Surface):
         size_v: int,
         degree_u: int,
         degree_v: int,
-        origin: Point3D = Point3D([0.0, 0.0, 0.0]),
+        origin: Point3D = ZERO_POINT3D,
         reference: UnitVector3D = UNITVECTOR3D_X,
         axis: UnitVector3D = UNITVECTOR3D_Z,
     ) -> "NURBSSurface":
