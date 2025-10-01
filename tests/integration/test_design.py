@@ -3244,7 +3244,7 @@ def test_surface_body_creation(modeler: Modeler):
     assert len(design.bodies) == 4
     assert body.is_surface
     assert body.faces[0].area.m == pytest.approx(39.4784176044)
-    
+
     # SOLID BODIES
 
     # sphere
