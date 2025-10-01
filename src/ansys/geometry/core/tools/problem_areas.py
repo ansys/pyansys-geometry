@@ -622,9 +622,8 @@ class InterferenceProblemAreas(ProblemArea):
             return RepairToolMessage(False, [], [])
 
         parent_design = get_design_from_body(self.bodies[0])
-        response = self._repair_stub.FixInterference(
-            FixInterferenceRequest(interference_problem_area_id=self._grpc_id)
-        )
+        response = self._grpc_client.services.repair_tools.fix_interference(
+            interference_problem_area_id=self._grpc_id)        
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
@@ -633,7 +632,7 @@ class InterferenceProblemAreas(ProblemArea):
 
         ## The tool does not return the created or modified objects.
         ## https://github.com/ansys/pyansys-geometry/issues/1319
-        message = RepairToolMessage(response.result.success, [], [])
+        message = RepairToolMessage(response.get("repair_tracker_response").get("success"), [], [])
         return message
 
 
