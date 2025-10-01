@@ -79,13 +79,10 @@ jobs:
 
       - name: Download Geometry service container (if needed)
         env:
-          IMAGE_TAG: ${{ matrix.image-tag }}
+          FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }}"
         run: |
-          $imageName = $env:ANSRV_GEO_IMAGE
-          $tagName = $env:IMAGE_TAG
-          $fullImage = "${imageName}:${tagName}"
-          Write-Host "Pulling Docker image: $fullImage"
-          docker pull $fullImage
+          Write-Host "Pulling Docker image: $env:FULL_IMAGE_NAME"
+          docker pull $env:FULL_IMAGE_NAME
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-2'
@@ -111,15 +108,11 @@ jobs:
 
       - name: Start Geometry service and verify start
         env:
-          IMAGE_TAG: ${{ matrix.image-tag }}
+          FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }}"
+          PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
         run: |
           .\.venv\Scripts\Activate.ps1
-          $imageName = $env:ANSRV_GEO_IMAGE
-          $tagName = $env:IMAGE_TAG
-          $fullImage = "${imageName}:${tagName}"
-          Write-Host "Running Docker image: $fullImage"
-          $outsidePort = $env:ANSRV_GEO_PORT
-          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:SERVER_ENDPOINT -p ${outsidePort}:50051 $fullImage $env:TRANSPORT_MODE_SELECTION
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:SERVER_ENDPOINT -p $env:PORT_MAPPING $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION
           Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
