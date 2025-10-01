@@ -34,7 +34,7 @@ from ..base.repair_tools import GRPCRepairToolsService
 from .conversions import (
     serialize_tracker_command_response,
 )
-from .conversions import build_grpc_id
+
 
 class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
     """Repair tools service for gRPC communication with the Geometry server.
@@ -469,7 +469,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "modified_bodies_monikers": [],
             "complete_command_response": serialized_tracker_response,
         }
-    
+
     @protect_grpc
     def find_and_fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
@@ -506,8 +506,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "found": response.found,
             "repaired": response.repaired,
             "complete_command_response": serialized_tracker_response,
-        }  
-    
+        }
+
     @protect_grpc
     def inspect_geometry(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import InspectGeometryRequest
@@ -549,14 +549,15 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixDuplicateFaces(request)
 
         serialized_tracker_response = serialize_tracker_command_response(
-            response=response.result.complete_command_response)
-        
+            response=response.result.complete_command_response
+        )
+
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
             "repair_tracker_response": self.__serialize_message_response(response),
-        }        
-        
+        }
+
     @protect_grpc
     def fix_missing_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FixMissingFacesRequest
@@ -754,7 +755,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "tracker_response": serialized_tracker_response,
             "repair_tracker_response": self.__serialize_message_response(response),
         }
-    
+
     def __serialize_inspect_result_response(self, response) -> dict:  # noqa: D102
         def serialize_body(body):
             return {
@@ -807,7 +808,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 }
                 for body_issues in response.issues_by_body
             ]
-        }    
+        }
 
     def __serialize_message_response(self, response):
         return {
