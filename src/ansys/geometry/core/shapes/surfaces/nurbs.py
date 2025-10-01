@@ -145,7 +145,7 @@ class NURBSSurface(Surface):
         knots_v: list[Real],
         control_points: list[Point3D],
         weights: list[Real] = None,
-        origin: Point3D = Point3D([0.0, 0.0, 0.0]),
+        origin: Point3D = ZERO_POINT3D,
         reference: UnitVector3D = UNITVECTOR3D_X,
         axis: UnitVector3D = UNITVECTOR3D_Z,
     ) -> "NURBSSurface":
