@@ -23,7 +23,6 @@ concurrency:
 permissions:
   contents: read
   packages: read
-  id-token: write
 
 jobs:
 
@@ -79,12 +78,16 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Geometry service container (if needed)
-        run: docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }}
+        env:
+          IMAGE_TAG: ${{ matrix.image-tag }}
+        run: docker pull $env:ANSRV_GEO_IMAGE:$env:IMAGE_TAG
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-2'
+        env:
+          LICENSE_SERVER_INTERNAL: ${{ secrets.LICENSE_SERVER_INTERNAL }}
         run:
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.LICENSE_SERVER_INTERNAL }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "ANSRV_GEO_LICENSE_SERVER=$env:LICENSE_SERVER_INTERNAL" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Stop any running containers
         run: |
@@ -102,17 +105,21 @@ jobs:
           echo "SERVER_ENDPOINT=$env:SERVER_ENDPOINT" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Start Geometry service and verify start
+        env:
+          IMAGE_TAG: ${{ matrix.image-tag }}
         run: |
           .\.venv\Scripts\Activate.ps1
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} ${{ env.SERVER_ENDPOINT }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:SERVER_ENDPOINT -p $env:ANSRV_GEO_PORT:50051 $env:ANSRV_GEO_IMAGE:$env:IMAGE_TAG $env:TRANSPORT_MODE_SELECTION
           Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
         timeout-minutes: 20  # On Windows self-hosted runners, sometimes hangs...
+        env:
+          BACKEND_VERSION: ${{ matrix.backend-version }}
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest -v --backwards-compatibility=yes --backend-version=${{ matrix.backend-version }} -rf
+          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION -rf
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
@@ -124,9 +131,9 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
+          docker stop $env:GEO_CONT_NAME
+          docker logs $env:GEO_CONT_NAME
+          docker rm $env:GEO_CONT_NAME
 
       - name: Stop any remaining containers
         if: always()
