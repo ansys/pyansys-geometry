@@ -3244,8 +3244,31 @@ def test_surface_body_creation(modeler: Modeler):
     assert len(design.bodies) == 4
     assert body.is_surface
     assert body.faces[0].area.m == pytest.approx(39.4784176044)
+    
+    # SOLID BODIES
 
-    # nurbs surface
+    # sphere
+    surface = Sphere([0, 0, 0], 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(-np.pi / 2, np.pi / 2)))
+    body = design.create_body_from_surface("sphere_solid", trimmed_surface)
+    assert len(design.bodies) == 5
+    assert not body.is_surface
+    assert body.faces[0].area.m == pytest.approx(np.pi * 4)
+
+    # torus
+    surface = Torus([0, 0, 0], 2, 1)
+    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi * 2)))
+    body = design.create_body_from_surface("torus_solid", trimmed_surface)
+
+    assert len(design.bodies) == 6
+    assert not body.is_surface
+    assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
+
+
+def test_nurbs_surface_body_creation(modeler: Modeler):
+    """Test surface body creation from NURBS surfaces."""
+    design = modeler.create_design("Design1")
+
     points = [
         Point3D([0, 0, 0]),
         Point3D([0, 1, 1]),
@@ -3265,28 +3288,9 @@ def test_surface_body_creation(modeler: Modeler):
 
     trimmed_surface = surface.trim(BoxUV(Interval(0, 1), Interval(0, 1)))
     body = design.create_body_from_surface("nurbs_surface", trimmed_surface)
-    assert len(design.bodies) == 5
+    assert len(design.bodies) == 1
     assert body.is_surface
     assert body.faces[0].area.m == pytest.approx(7.44626609)
-
-    # SOLID BODIES
-
-    # sphere
-    surface = Sphere([0, 0, 0], 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(-np.pi / 2, np.pi / 2)))
-    body = design.create_body_from_surface("sphere_solid", trimmed_surface)
-    assert len(design.bodies) == 6
-    assert not body.is_surface
-    assert body.faces[0].area.m == pytest.approx(np.pi * 4)
-
-    # torus
-    surface = Torus([0, 0, 0], 2, 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi * 2)))
-    body = design.create_body_from_surface("torus_solid", trimmed_surface)
-
-    assert len(design.bodies) == 7
-    assert not body.is_surface
-    assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
 
 
 def test_create_surface_from_nurbs_sketch(modeler: Modeler):
