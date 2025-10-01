@@ -297,7 +297,7 @@ backends:
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
       # NURBS surface creation only available from 26.1 onwards
-      - tests/integration/test_design.py::test_create_body_from_nurbs_surface
+      - tests/integration/test_design.py::test_nurbs_surface_body_creation
 
   - version: "25.2"
     incompatible_tests:
@@ -333,4 +333,4 @@ backends:
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
       # NURBS surface creation only available from 26.1 onwards
-      - tests/integration/test_design.py::test_create_body_from_nurbs_surface
+      - tests/integration/test_design.py::test_nurbs_surface_body_creation
