@@ -14,6 +14,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: {} # Disable default permissions
+
 jobs:
 
   label-syncer:
@@ -80,6 +82,7 @@ jobs:
         labels: bug
 
   commenter:
+    name: "Suggest to add labels"
     runs-on: ubuntu-latest
     permissions:
       contents: read
