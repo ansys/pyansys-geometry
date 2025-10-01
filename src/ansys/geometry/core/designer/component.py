@@ -28,7 +28,6 @@ from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 from beartype import beartype as check_input_types
 from pint import Quantity
 
@@ -62,6 +61,7 @@ from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
