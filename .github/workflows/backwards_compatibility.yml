@@ -81,9 +81,11 @@ jobs:
         env:
           IMAGE_TAG: ${{ matrix.image-tag }}
         run: |
-          $image = "$env:ANSRV_GEO_IMAGE:$env:IMAGE_TAG"
-          Write-Host "Pulling Docker image: $image"
-          docker pull $image
+          $repoName = $env:ANSRV_GEO_IMAGE
+          $tagName = $env:IMAGE_TAG
+          $fullImage = "${repoName}:${tagName}"
+          Write-Host "Pulling Docker image: $fullImage"
+          docker pull $fullImage
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-2'
