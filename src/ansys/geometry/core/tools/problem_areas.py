@@ -24,9 +24,6 @@
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
-from ansys.api.geometry.v0.repairtools_pb2 import (
-    FixInterferenceRequest,
-)
 from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
 from google.protobuf.wrappers_pb2 import Int32Value
 
@@ -623,7 +620,8 @@ class InterferenceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_body(self.bodies[0])
         response = self._grpc_client.services.repair_tools.fix_interference(
-            interference_problem_area_id=self._grpc_id)        
+            interference_problem_area_id=self._grpc_id
+        )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
