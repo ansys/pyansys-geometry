@@ -110,6 +110,7 @@ jobs:
         env:
           FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }}"
           PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
+          TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
           .\.venv\Scripts\Activate.ps1
           docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:SERVER_ENDPOINT -p $env:PORT_MAPPING $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION
