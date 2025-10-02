@@ -310,7 +310,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: integration-test-logs-${{ matrix.docker-image }}
-          path: tests/integration/logs
+          path: tests/integration/logs/integration_tests_logs.txt
           retention-days: 7
 
       - name: Upload PyVista generated images (cache and results)
@@ -502,7 +502,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: integration-test-logs-${{ matrix.docker-image }}
-          path: tests/integration/logs
+          path: tests/integration/logs/integration_tests_logs.txt
           retention-days: 7
 
       - name: Upload PyVista generated images (cache and results)
