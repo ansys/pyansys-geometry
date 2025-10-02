@@ -256,3 +256,32 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {"file_path": response.file_path}
+
+    @protect_grpc
+    def stream_design_tessellation(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.dbu.v0.designs_pb2 import DesignTessellationRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DesignTessellationRequest(
+            chordal_deviation=kwargs["chordal_deviation"],
+            angle_deviation=kwargs["angle_deviation"],
+            max_aspect_ratio=kwargs["max_aspect_ratio"],
+            min_edge_length=kwargs["min_edge_length"],
+            max_edge_length=kwargs["max_edge_length"],
+            deflection_type=kwargs["deflection_type"],
+        )
+
+        # Call the gRPC service
+        response = self.designs_stub.StreamDesignTessellation(request)
+
+        # Return the response - formatted as a dictionary
+        points = []
+        triangles = []
+        for elem in response:
+            points.extend(elem.points)
+            triangles.extend(elem.triangles)
+
+        return {
+            "points": points,
+            "triangles": triangles,
+        }
