@@ -8,9 +8,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: write
-  packages: write
+permissions: {} # Disable default permissions
 
 jobs:
   cleanup:
@@ -18,7 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PACKAGE_DELETION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    permissions:
+      contents: write
+      packages: write
     steps:
 
     - name: "Perform versions cleanup - except certain tags"
