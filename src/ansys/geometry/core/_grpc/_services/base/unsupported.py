@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the curves service implementation (abstraction layer)."""
+"""Module containing the unsupported service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCCurvesService(ABC):  # pragma: no cover
-    """Curves service for gRPC communication with the Geometry server.
+class GRPCUnsupportedService(ABC):  # pragma: no cover
+    """Unsupported service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,14 +36,20 @@ class GRPCCurvesService(ABC):  # pragma: no cover
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCCurvesService class."""
-
-    @abstractmethod
-    def revolve_edges(self, **kwargs) -> dict:
-        """Revolve edges around an axis to create a surface of revolution."""
+        """Initialize the GRPCUnsupportedService class."""
         pass
 
     @abstractmethod
-    def intersect_curves(self, **kwargs) -> dict:
-        """Get intersection points of curves."""
+    def get_import_id_map(self, **kwargs) -> dict:
+        """Get the import ID map."""
+        pass
+
+    @abstractmethod
+    def set_export_ids(self, **kwargs) -> dict:
+        """Set the export IDs for the entities."""
+        pass
+
+    @abstractmethod
+    def set_single_export_id(self, **kwargs) -> dict:
+        """Set a single export ID for an entity."""
         pass

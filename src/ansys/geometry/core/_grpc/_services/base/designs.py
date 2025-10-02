@@ -83,3 +83,13 @@ class GRPCDesignsService(ABC):  # pragma: no cover
     def get_active(self, **kwargs) -> dict:
         """Get the active design on the service."""
         pass
+
+    @abstractmethod
+    def upload_file(self, **kwargs) -> dict:
+        """Upload a file to the server."""
+        pass
+
+    @abstractmethod
+    def upload_file_stream(self, **kwargs) -> dict:
+        """Upload a file to the server using streaming."""
+        pass

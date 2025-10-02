@@ -77,6 +77,7 @@ from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
 )
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
@@ -3263,6 +3264,34 @@ def test_surface_body_creation(modeler: Modeler):
     assert len(design.bodies) == 6
     assert not body.is_surface
     assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
+
+
+def test_nurbs_surface_body_creation(modeler: Modeler):
+    """Test surface body creation from NURBS surfaces."""
+    design = modeler.create_design("Design1")
+
+    points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+    degree_u = 2
+    degree_v = 2
+    surface = NURBSSurface.fit_surface_from_points(
+        points=points, size_u=3, size_v=3, degree_u=degree_u, degree_v=degree_v
+    )
+
+    trimmed_surface = surface.trim(BoxUV(Interval(0, 1), Interval(0, 1)))
+    body = design.create_body_from_surface("nurbs_surface", trimmed_surface)
+    assert len(design.bodies) == 1
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(7.44626609)
 
 
 def test_create_surface_from_nurbs_sketch(modeler: Modeler):

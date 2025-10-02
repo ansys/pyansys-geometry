@@ -26,7 +26,8 @@ from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
 
-from ansys.geometry.core.math import Point3D
+from ansys.geometry.core.math import ZERO_POINT3D, Point3D
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.shapes.parameterization import (
@@ -57,7 +58,13 @@ class NURBSSurface(Surface):
 
     """
 
-    def __init__(self, geomdl_object: "geomdl_nurbs.Surface" = None):
+    def __init__(
+        self,
+        origin: Point3D = ZERO_POINT3D,
+        reference: UnitVector3D = UNITVECTOR3D_X,
+        axis: UnitVector3D = UNITVECTOR3D_Z,
+        geomdl_object: "geomdl_nurbs.Surface" = None,
+    ):
         """Initialize ``NURBSSurface`` class."""
         try:
             import geomdl.NURBS as geomdl_nurbs  # noqa: N811
@@ -68,6 +75,9 @@ class NURBSSurface(Surface):
             ) from e
 
         self._nurbs_surface = geomdl_object if geomdl_object else geomdl_nurbs.Surface()
+        self._origin = origin
+        self._reference = reference
+        self._axis = axis
 
     @property
     def geomdl_nurbs_surface(self) -> "geomdl_nurbs.Surface":
@@ -110,6 +120,21 @@ class NURBSSurface(Surface):
         """Get the weights of the control points."""
         return self._nurbs_surface.weights
 
+    @property
+    def origin(self) -> Point3D:
+        """Get the origin of the surface."""
+        return self._origin
+
+    @property
+    def dir_x(self) -> UnitVector3D:
+        """Get the reference direction of the surface."""
+        return self._reference
+
+    @property
+    def dir_z(self) -> UnitVector3D:
+        """Get the axis direction of the surface."""
+        return self._axis
+
     @classmethod
     @check_input_types
     def from_control_points(
@@ -120,6 +145,9 @@ class NURBSSurface(Surface):
         knots_v: list[Real],
         control_points: list[Point3D],
         weights: list[Real] = None,
+        origin: Point3D = ZERO_POINT3D,
+        reference: UnitVector3D = UNITVECTOR3D_X,
+        axis: UnitVector3D = UNITVECTOR3D_Z,
     ) -> "NURBSSurface":
         """Create a NURBS surface from control points and knot vectors.
 
@@ -139,13 +167,19 @@ class NURBSSurface(Surface):
             Weights for the control points. If not provided, all weights are set to 1.
         delta : float, optional
             Evaluation delta for the surface. Default is 0.01.
+        origin : Point3D, optional
+            Origin of the surface. Default is (0, 0, 0).
+        reference : UnitVector3D, optional
+            Reference direction of the surface. Default is (1, 0, 0).
+        axis : UnitVector3D, optional
+            Axis direction of the surface. Default is (0, 0, 1).
 
         Returns
         -------
         NURBSSurface
             Created NURBS surface.
         """
-        nurbs_surface = cls()
+        nurbs_surface = cls(origin, reference, axis)
         nurbs_surface._nurbs_surface.degree_u = degree_u
         nurbs_surface._nurbs_surface.degree_v = degree_v
 
@@ -182,6 +216,9 @@ class NURBSSurface(Surface):
         size_v: int,
         degree_u: int,
         degree_v: int,
+        origin: Point3D = ZERO_POINT3D,
+        reference: UnitVector3D = UNITVECTOR3D_X,
+        axis: UnitVector3D = UNITVECTOR3D_Z,
     ) -> "NURBSSurface":
         """Fit a NURBS surface to a set of points.
 
@@ -197,6 +234,12 @@ class NURBSSurface(Surface):
             Degree of the surface in the U direction.
         degree_v : int
             Degree of the surface in the V direction.
+        origin : Point3D, optional
+            Origin of the surface. Default is (0, 0, 0).
+        reference : UnitVector3D, optional
+            Reference direction of the surface. Default is (1, 0, 0).
+        axis : UnitVector3D, optional
+            Axis direction of the surface. Default is (0, 0, 1).
 
         Returns
         -------
@@ -215,7 +258,7 @@ class NURBSSurface(Surface):
             degree_v=degree_v,
         )
 
-        nurbs_surface = cls()
+        nurbs_surface = cls(origin, reference, axis)
         nurbs_surface._nurbs_surface.degree_u = degree_u
         nurbs_surface._nurbs_surface.degree_v = degree_v
 
