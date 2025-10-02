@@ -61,6 +61,7 @@ from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -196,11 +197,14 @@ class Component:
 
         # Align instance name behavior with the server - empty string if None
         instance_name = instance_name if instance_name else ""
+        response = None
 
         if preexisting_id:
             self._name = name
             self._id = preexisting_id
             self._instance_name = instance_name
+            self._template = None
+            self._component = None
         else:
             if parent_component:
                 template_id = template.id if template else ""
@@ -215,10 +219,14 @@ class Component:
                 self._id = response.get("id")
                 self._name = response.get("name")
                 self._instance_name = response.get("instance_name")
+                self._template = response.get("template")
+                self._component = response.get("component")
             else:
                 self._name = name
                 self._id = None
                 self._instance_name = instance_name
+                self._template = None
+                self._component = None
 
         # Initialize needed instance variables
         self._components = []
@@ -248,8 +256,12 @@ class Component:
 
         elif not read_existing_comp:
             # This is an independent Component - Create new Part and MasterComponent
-            p = Part(uuid.uuid4(), f"p_{name}", [], [])
-            master = MasterComponent(uuid.uuid4(), f"master_{name}", p)
+            p = Part(uuid.uuid4() if not self._template else self._template, f"p_{name}", [], [])
+            master = MasterComponent(
+                uuid.uuid4() if not self._template else self._component.master_id,
+                f"master_{name}",
+                p,
+            )
             self._master_component = master
 
         self._master_component.occurrences.append(self)
@@ -1041,7 +1053,15 @@ class Component:
         Warnings
         --------
         This method is only available starting on Ansys release 25R1.
+        NURBS surface bodies are only supported starting on Ansys release 26R1.
         """
+        if (self._grpc_client.backend_version < (26, 1, 0)) and (
+            isinstance(trimmed_surface.geometry, NURBSSurface)
+        ):
+            raise ValueError(
+                "NURBS surface bodies are only supported starting on Ansys release 26R1."
+            )
+
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
         )

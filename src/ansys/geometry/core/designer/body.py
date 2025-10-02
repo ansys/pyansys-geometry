@@ -31,8 +31,6 @@ from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
     AssignMidSurfaceOffsetTypeRequest,
     AssignMidSurfaceThicknessRequest,
-    CombineIntersectBodiesRequest,
-    CombineMergeBodiesRequest,
     ImprintCurvesRequest,
     ProjectCurvesRequest,
     RemoveFacesRequest,
@@ -43,6 +41,7 @@ from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
 
+import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.connection.conversions import (
     plane_to_grpc_plane,
@@ -1904,7 +1903,6 @@ class Body(IBody):
         else:
             self.__generic_boolean_command(other, False, "unite", "union operation failed")
 
-    @protect_grpc
     @reset_tessellation_cache
     @ensure_design_is_active
     @check_input_types
@@ -1912,59 +1910,20 @@ class Body(IBody):
         self,
         other: Union["Body", Iterable["Body"]],
         keep_other: bool,
-        type_bool_op: str,
-        err_bool_op: str,
+        method: str,
+        err_msg: str,
     ) -> None:
         parent_design = get_design_from_body(self)
-        other_bodies = other if isinstance(other, Iterable) else [other]
-        if type_bool_op == "intersect":
-            body_ids = [body._grpc_id for body in other_bodies]
-            target_ids = [self._grpc_id]
-            request = CombineIntersectBodiesRequest(
-                target_selection=target_ids,
-                tool_selection=body_ids,
-                subtract_from_target=False,
-                keep_cutter=keep_other,
-            )
-            response = self._template._commands_stub.CombineIntersectBodies(request)
-        elif type_bool_op == "subtract":
-            body_ids = [body._grpc_id for body in other_bodies]
-            target_ids = [self._grpc_id]
-            request = CombineIntersectBodiesRequest(
-                target_selection=target_ids,
-                tool_selection=body_ids,
-                subtract_from_target=True,
-                keep_cutter=keep_other,
-            )
-            response = self._template._commands_stub.CombineIntersectBodies(request)
-        elif type_bool_op == "unite":
-            bodies = [self]
-            bodies.extend(other_bodies)
-            body_ids = [body._grpc_id for body in bodies]
-            request = CombineMergeBodiesRequest(target_selection=body_ids)
-            response = self._template._commands_stub.CombineMergeBodies(request)
-        else:
-            raise ValueError("Unknown operation requested")
-        if not response.success:
-            raise ValueError(
-                f"Operation of type '{type_bool_op}' failed: {err_bool_op}.\n"
-                f"Involving bodies:{self}, {other_bodies}"
-            )
+        other = other if isinstance(other, Iterable) else [other]
 
-        if not keep_other:
-            for b in other_bodies:
-                b.parent_component.delete_body(b)
+        response = self._template._grpc_client.services.bodies.combine(
+            target=self, other=other, type_bool_op=method, err_msg=err_msg, keep_other=keep_other
+        )
 
-        from ansys.geometry.core import USE_TRACKER_TO_UPDATE_DESIGN
-
-        if not USE_TRACKER_TO_UPDATE_DESIGN:
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
-            # and update the parent design with the serialized response.
-            tracker_response = response.result.complete_command_response
-            serialized_response = self._serialize_tracker_command_response(tracker_response)
-            parent_design._update_from_tracker(serialized_response)
+            parent_design._update_from_tracker(response["complete_command_response"])
 
     @reset_tessellation_cache
     @ensure_design_is_active
@@ -1977,20 +1936,26 @@ class Body(IBody):
         err_msg: str,
     ) -> None:
         grpc_other = other if isinstance(other, Iterable) else [other]
-        if keep_other:
-            # Make a copy of the other body to keep it...
-            # stored temporarily in the parent component - since it will be deleted
-            grpc_other = [b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other]
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            if keep_other:
+                # Make a copy of the other body to keep it...
+                # stored temporarily in the parent component - since it will be deleted
+                grpc_other = [
+                    b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other
+                ]
 
-        self._template._grpc_client.services.bodies.boolean(
-            target=self,
-            other=grpc_other,
-            method=method,
-            err_msg=err_msg,
+        response = self._template._grpc_client.services.bodies.boolean(
+            target=self, other=grpc_other, method=method, err_msg=err_msg, keep_other=keep_other
         )
 
-        for b in grpc_other:
-            b.parent_component.delete_body(b)
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            for b in grpc_other:
+                b.parent_component.delete_body(b)
+        else:
+            # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
+            # and update the parent design with the serialized response.
+            parent_design = get_design_from_body(self)
+            parent_design._update_from_tracker(response["complete_command_response"])
 
     def __repr__(self) -> str:
         """Represent the ``Body`` as a string."""

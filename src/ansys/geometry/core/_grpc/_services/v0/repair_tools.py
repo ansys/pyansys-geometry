@@ -31,7 +31,9 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.repair_tools import GRPCRepairToolsService
-from .conversions import build_grpc_id
+from .conversions import (
+    serialize_tracker_command_response,
+)
 
 
 class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
@@ -370,8 +372,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixShortEdges(request)
 
-        serialized_tracker_response = self._serialize_tracker_command_response(
-            response.complete_command_response
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.complete_command_response
         )
 
         # Return the response - formatted as a dictionary
@@ -397,8 +399,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixExtraEdges(request)
 
-        serialized_tracker_response = self._serialize_tracker_command_response(
-            response.complete_command_response
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.complete_command_response
         )
 
         # Return the response - formatted as a dictionary
@@ -427,8 +429,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixSplitEdges(request)
 
-        serialized_tracker_response = self._serialize_tracker_command_response(
-            response.complete_command_response
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.complete_command_response
         )
 
         # Return the response - formatted as a dictionary
@@ -454,8 +456,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndSimplify(request)
 
-        serialized_tracker_response = self._serialize_tracker_command_response(
-            response.complete_command_response
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.complete_command_response
         )
 
         # Return the response - formatted as a dictionary
@@ -492,8 +494,8 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixStitchFaces(request)
 
-        serialized_tracker_response = self._serialize_tracker_command_response(
-            response.complete_command_response
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.complete_command_response
         )
 
         # Return the response - formatted as a dictionary
@@ -511,20 +513,20 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import InspectGeometryRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = InspectGeometryRequest(bodies=[build_grpc_id(b) for b in kwargs["body_ids"]])
+        request = InspectGeometryRequest(bodies=kwargs.get("bodies", []))
 
         # Call the gRPC service
-        response = self.stub.InspectGeometry(request)
+        inspect_result_response = self.stub.InspectGeometry(request)
 
         # Serialize and return the response
-        return self.__serialize_inspect_result_response(response)
+        return self.__serialize_inspect_result_response(inspect_result_response)
 
     @protect_grpc
     def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RepairGeometryRequest(bodies=[build_grpc_id(b) for b in kwargs["body_ids"]])
+        request = RepairGeometryRequest(bodies=kwargs.get("bodies", []))
 
         # Call the gRPC service
         response = self.stub.RepairGeometry(request)
@@ -532,6 +534,226 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
         return {
             "success": response.result.success,
+        }
+
+    @protect_grpc
+    def fix_duplicate_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FixDuplicateFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FixDuplicateFacesRequest(
+            duplicate_face_problem_area_id=kwargs["duplicate_face_problem_area_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FixDuplicateFaces(request)
+
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.result.complete_command_response
+        )
+
+        # Return the response - formatted as a dictionary
+        return {
+            "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
+        }
+
+    @protect_grpc
+    def fix_missing_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FixMissingFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FixMissingFacesRequest(
+            missing_face_problem_area_id=kwargs["missing_face_problem_area_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FixMissingFaces(request)
+
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.result.complete_command_response
+        )
+
+        # Return the response - formatted as a dictionary
+        return {
+            "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
+        }
+
+    @protect_grpc
+    def fix_inexact_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FixInexactEdgesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FixInexactEdgesRequest(
+            inexact_edge_problem_area_id=kwargs["inexact_edge_problem_area_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FixInexactEdges(request)
+
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.result.complete_command_response
+        )
+
+        # Return the response - formatted as a dictionary
+        return {
+            "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
+        }
+
+    @protect_grpc
+    def fix_extra_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FixExtraEdgesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FixExtraEdgesRequest(
+            extra_edge_problem_area_id=kwargs["extra_edge_problem_area_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FixExtraEdges(request)
+
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.result.complete_command_response
+        )
+
+        # Return the response - formatted as a dictionary
+        return {
+            "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
+        }
+
+    @protect_grpc
+    def fix_short_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FixShortEdgesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FixShortEdgesRequest(
+            short_edge_problem_area_id=kwargs["short_edge_problem_area_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FixShortEdges(request)
+
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.result.complete_command_response
+        )
+
+        # Return the response - formatted as a dictionary
+        return {
+            "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
+        }
+
+    @protect_grpc
+    def fix_small_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FixSmallFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FixSmallFacesRequest(
+            small_face_problem_area_id=kwargs["small_face_problem_area_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FixSmallFaces(request)
+
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.result.complete_command_response
+        )
+
+        # Return the response - formatted as a dictionary
+        return {
+            "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
+        }
+
+    @protect_grpc
+    def fix_split_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FixSplitEdgesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FixSplitEdgesRequest(
+            split_edge_problem_area_id=kwargs["split_edge_problem_area_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FixSplitEdges(request)
+
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.result.complete_command_response
+        )
+
+        # Return the response - formatted as a dictionary
+        return {
+            "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
+        }
+
+    @protect_grpc
+    def fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FixStitchFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FixStitchFacesRequest(
+            stitch_face_problem_area_id=kwargs["stitch_face_problem_area_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FixStitchFaces(request)
+
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.result.complete_command_response
+        )
+
+        # Return the response - formatted as a dictionary
+        return {
+            "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
+        }
+
+    @protect_grpc
+    def fix_unsimplified_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FixAdjustSimplifyRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FixAdjustSimplifyRequest(
+            adjust_simplify_problem_area_id=kwargs["adjust_simplify_problem_area_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FixAdjustSimplify(request)
+
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.result.complete_command_response
+        )
+
+        # Return the response - formatted as a dictionary
+        return {
+            "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
+        }
+
+    @protect_grpc
+    def fix_interference(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.repairtools_pb2 import FixInterferenceRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FixInterferenceRequest(
+            interference_problem_area_id=kwargs["interference_problem_area_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FixInterference(request)
+
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.result.complete_command_response
+        )
+
+        # Return the response - formatted as a dictionary
+        return {
+            "tracker_response": serialized_tracker_response,
+            "repair_tracker_response": self.__serialize_message_response(response),
         }
 
     def __serialize_inspect_result_response(self, response) -> dict:  # noqa: D102
@@ -588,52 +810,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             ]
         }
 
-    def _serialize_tracker_command_response(self, response) -> dict:
-        """Serialize a TrackerCommandResponse object into a dictionary.
-
-        Parameters
-        ----------
-        response : TrackerCommandResponse
-            The gRPC TrackerCommandResponse object to serialize.
-
-        Returns
-        -------
-        dict
-            A dictionary representation of the TrackerCommandResponse object.
-        """
-
-        def serialize_body(body):
-            return {
-                "id": body.id,
-                "name": body.name,
-                "can_suppress": body.can_suppress,
-                "transform_to_master": {
-                    "m00": body.transform_to_master.m00,
-                    "m11": body.transform_to_master.m11,
-                    "m22": body.transform_to_master.m22,
-                    "m33": body.transform_to_master.m33,
-                },
-                "master_id": body.master_id,
-                "parent_id": body.parent_id,
-                "is_surface": body.is_surface,
-            }
-
-        def serialize_entity_identifier(entity):
-            """Serialize an EntityIdentifier object into a dictionary."""
-            return {
-                "id": entity.id,
-            }
-
+    def __serialize_message_response(self, response):
         return {
-            "success": response.success,
-            "created_bodies": [
-                serialize_body(body) for body in getattr(response, "created_bodies", [])
-            ],
-            "modified_bodies": [
-                serialize_body(body) for body in getattr(response, "modified_bodies", [])
-            ],
-            "deleted_bodies": [
-                serialize_entity_identifier(entity)
-                for entity in getattr(response, "deleted_bodies", [])
-            ],
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }

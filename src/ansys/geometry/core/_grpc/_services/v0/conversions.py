@@ -44,6 +44,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     MaterialProperty as GRPCMaterialProperty,
     Matrix as GRPCMatrix,
     NurbsCurve as GRPCNurbsCurve,
+    NurbsSurface as GRPCNurbsSurface,
     Plane as GRPCPlane,
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
@@ -58,6 +59,7 @@ import pint
 
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 
 if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
@@ -770,6 +772,53 @@ def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
     )
 
 
+def from_nurbs_surface_to_grpc_nurbs_surface(surface: "NURBSSurface") -> GRPCNurbsSurface:
+    """Convert a ``NURBSSurface`` to a NURBS surface gRPC message.
+
+    Parameters
+    ----------
+    surface : NURBSSurface
+        Surface to convert.
+
+    Returns
+    -------
+    GRPCNurbsSurface
+        Geometry service gRPC ``NURBSSurface`` message.
+    """
+    from ansys.api.geometry.v0.models_pb2 import (
+        ControlPoint as GRPCControlPoint,
+        NurbsData as GRPCNurbsData,
+    )
+
+    # Convert control points
+    control_points = [
+        GRPCControlPoint(
+            position=from_point3d_to_grpc_point(point),
+            weight=weight,
+        )
+        for weight, point in zip(surface.weights, surface.control_points)
+    ]
+
+    # Convert nurbs data
+    nurbs_data_u = GRPCNurbsData(
+        degree=surface.degree_u,
+        knots=from_knots_to_grpc_knots(surface.knotvector_u),
+        order=surface.degree_u + 1,
+    )
+
+    nurbs_data_v = GRPCNurbsData(
+        degree=surface.degree_v,
+        knots=from_knots_to_grpc_knots(surface.knotvector_v),
+        order=surface.degree_v + 1,
+    )
+
+    return GRPCNurbsSurface(
+        control_points=control_points,
+        nurbs_data_u=nurbs_data_u,
+        nurbs_data_v=nurbs_data_v,
+    )
+
+
 def from_grpc_nurbs_curve_to_nurbs_curve(curve: GRPCNurbsCurve) -> "NURBSCurve":
     """Convert a NURBS curve gRPC message to a ``NURBSCurve``.
 
@@ -976,6 +1025,14 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
             minor_radius=surface.minor_radius.m,
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_TORUS
+    elif isinstance(surface, NURBSSurface):
+        grpc_surface = GRPCSurface(
+            origin=origin,
+            reference=reference,
+            axis=axis,
+            nurbs_surface=from_nurbs_surface_to_grpc_nurbs_surface(surface),
+        )
+        surface_type = GRPCSurfaceType.SURFACETYPE_NURBS
 
     return grpc_surface, surface_type
 
@@ -1272,3 +1329,55 @@ def _check_write_body_facets_input(backend_version: "semver.Version", write_body
             + "26.1.0, but the current version used is "
             + f"{backend_version}."
         )
+
+
+def serialize_tracker_command_response(**kwargs) -> dict:
+    """Serialize a TrackerCommandResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : TrackerCommandResponse
+        The gRPC TrackerCommandResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the TrackerCommandResponse object.
+    """
+
+    def serialize_body(body):
+        return {
+            "id": body.id,
+            "name": body.name,
+            "can_suppress": body.can_suppress,
+            "transform_to_master": {
+                "m00": body.transform_to_master.m00,
+                "m11": body.transform_to_master.m11,
+                "m22": body.transform_to_master.m22,
+                "m33": body.transform_to_master.m33,
+            },
+            "master_id": body.master_id,
+            "parent_id": body.parent_id,
+            "is_surface": body.is_surface,
+        }
+
+    def serialize_entity_identifier(entity):
+        """Serialize an EntityIdentifier object into a dictionary."""
+        return {
+            "id": entity.id,
+        }
+
+    response = kwargs["response"]
+    return {
+        "success": response.success,
+        "created_bodies": [
+            serialize_body(body) for body in getattr(response, "created_bodies", [])
+        ],
+        "modified_bodies": [
+            serialize_body(body) for body in getattr(response, "modified_bodies", [])
+        ],
+        "deleted_bodies": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response, "deleted_bodies", [])
+        ],
+    }
