@@ -61,6 +61,7 @@ from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -1052,7 +1053,15 @@ class Component:
         Warnings
         --------
         This method is only available starting on Ansys release 25R1.
+        NURBS surface bodies are only supported starting on Ansys release 26R1.
         """
+        if (self._grpc_client.backend_version < (26, 1, 0)) and (
+            isinstance(trimmed_surface.geometry, NURBSSurface)
+        ):
+            raise ValueError(
+                "NURBS surface bodies are only supported starting on Ansys release 26R1."
+            )
+
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
         )

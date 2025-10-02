@@ -26,8 +26,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
   packages: read
 
 jobs:
@@ -39,7 +38,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+      - uses: ansys/actions/doc-deploy-changelog@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -49,12 +48,22 @@ jobs:
     name: Vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+      - uses: ansys/actions/check-vulnerabilities@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           dev-mode: ${{ github.ref != 'refs/heads/main' }}
+
+  actions-security:
+    name: Actions Security
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ansys/actions/check-actions-security@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        with:
+          generate-summary: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          auditing-level: 'high'
 
   pr-name:
     if: github.event_name == 'pull_request'
@@ -62,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/check-pr-title@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -71,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/doc-style@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
          token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -90,7 +99,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/build-wheelhouse@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
@@ -102,7 +111,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/docker-style@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/docker-style@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
           directory: docker
           recursive: true
@@ -133,24 +142,29 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check ${{ matrix.service-name }} manifest
+        env:
+          CONTAINER_STABLE: ${{ matrix.container-stable }}
+          CONTAINER_UNSTABLE: ${{ matrix.container-unstable }}
+          SERVICE: ${{ matrix.service }}
+          SERVICE_NAME: ${{ matrix.service-name }}
         id: services
         run: |
-          docker manifest inspect ghcr.io/ansys/geometry:${{ matrix.container-stable }} > ${{ matrix.container-stable }}.json
-          docker manifest inspect ghcr.io/ansys/geometry:${{ matrix.container-unstable }} > ${{ matrix.container-unstable }}.json || true
+          docker manifest inspect ghcr.io/ansys/geometry:${CONTAINER_STABLE} > ${CONTAINER_STABLE}.json
+          docker manifest inspect ghcr.io/ansys/geometry:${CONTAINER_UNSTABLE} > ${CONTAINER_UNSTABLE}.json || true
 
           # Verify that the unstable manifest exists - otherwise create an empty file
-          if [ ! -f ${{ matrix.container-unstable }}.json ]; then
-            touch ${{ matrix.container-unstable }}.json
+          if [ ! -f ${CONTAINER_UNSTABLE}.json ]; then
+            touch ${CONTAINER_UNSTABLE}.json
           fi
 
 
           # Check if the manifests are the same (and if so, create an output that will skip the next job)
-          if diff ${{ matrix.container-stable }}.json ${{ matrix.container-unstable }}.json; then
-            echo "${{ matrix.service-name }} container manifests are the same... skipping"
-            echo "skip_${{ matrix.service }}=1" >> "$GITHUB_OUTPUT"
+          if diff ${CONTAINER_STABLE}.json ${CONTAINER_UNSTABLE}.json; then
+            echo "${SERVICE_NAME} container manifests are the same... skipping"
+            echo "skip_${SERVICE}=1" >> "$GITHUB_OUTPUT"
           else
-            echo "${{ matrix.service-name }} container manifests are different"
-            echo "skip_${{ matrix.service }}=0" >> "$GITHUB_OUTPUT"
+            echo "${SERVICE_NAME} container manifests are different"
+            echo "skip_${SERVICE}=0" >> "$GITHUB_OUTPUT"
           fi
 
 # =================================================================================================
@@ -176,16 +190,20 @@ jobs:
     steps:
       - name: Calculate SKIP_UNSTABLE
         if: matrix.experimental
+        env:
+          VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}
+          SKIP_CORE_WINDOWS: ${{ needs.manifests.outputs.skip_core_windows }}
+          DOCKER_IMAGE: ${{ matrix.docker-image }}
         run: |
           # Choose the manifests output to consider based on the matrix value
-          if ("${{ matrix.docker-image }}" -eq "core-windows-latest-unstable") {
-            $ImagesAreEqual = ${{ needs.manifests.outputs.skip_core_windows }}
+          if ("$env:DOCKER_IMAGE" -eq "core-windows-latest-unstable") {
+            $ImagesAreEqual = $env:SKIP_CORE_WINDOWS
           } else {
             Write-Output "Unknown docker image"
             exit 1
           }
 
-          $A = ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }} -eq 1
+          $A = $env:VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY -eq 1
           $B = $ImagesAreEqual -eq 1
 
           # Calculate the logical expression
@@ -197,6 +215,8 @@ jobs:
 
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         if: env.SKIP_UNSTABLE == 'false'
+        with:
+          persist-credentials: false
 
       - name: Set up Python
         if: env.SKIP_UNSTABLE == 'false'
@@ -232,12 +252,18 @@ jobs:
 
       - name: Download Geometry service container (if needed)
         if: env.SKIP_UNSTABLE == 'false'
-        run: docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
+        env:
+          FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}"
+        run: |
+          Write-Host "Pulling Docker image: $env:FULL_IMAGE_NAME"
+          docker pull $env:FULL_IMAGE_NAME
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: env.SKIP_UNSTABLE == 'false' && runner.name == 'pygeometry-ci-2'
+        env:
+          LICENSE_SERVER_INTERNAL: ${{ secrets.LICENSE_SERVER_INTERNAL }}
         run:
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.LICENSE_SERVER_INTERNAL }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "ANSRV_GEO_LICENSE_SERVER=$env:LICENSE_SERVER_INTERNAL" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Stop any running containers
         run: |
@@ -249,9 +275,18 @@ jobs:
 
       - name: Start Geometry service and verify start
         if: env.SKIP_UNSTABLE == 'false'
+        env:
+          FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}"
+          PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
+          TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
           .\.venv\Scripts\Activate.ps1
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          # Write command to file launch.txt for sanitizing purposes
+          echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
+          # Read the file and execute the command
+          $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
+          Invoke-Expression $command.Line
+          Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
@@ -261,6 +296,7 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}
+          lookup-only: false  # zizmor: ignore[cache-poisoning]
 
       - name: Testing
         if: env.SKIP_UNSTABLE == 'false'
@@ -274,7 +310,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: integration-test-logs-${{ matrix.docker-image }}
-          path: tests/integration/logs
+          path: tests/integration/logs/integration_tests_logs.txt
           retention-days: 7
 
       - name: Upload PyVista generated images (cache and results)
@@ -305,11 +341,11 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          if ( "${{ env.SKIP_UNSTABLE }}" -match 'false')
+          if ( "$env:SKIP_UNSTABLE" -match 'false')
           {
-            docker stop ${{ env.GEO_CONT_NAME }}
-            docker logs ${{ env.GEO_CONT_NAME }}
-            docker rm ${{ env.GEO_CONT_NAME }}
+            docker stop $env:GEO_CONT_NAME
+            docker logs $env:GEO_CONT_NAME
+            docker rm $env:GEO_CONT_NAME
           }
 
       - name: Stop any remaining containers
@@ -341,12 +377,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull and launch geometry service
+        env:
+          TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
-          docker pull ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_DOCS_TAG }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          docker pull ${ANSRV_GEO_IMAGE_DOCS_TAG}
+          docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_DOCS_TAG} ${TRANSPORT_MODE_SELECTION}
 
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/doc-build@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
@@ -357,9 +395,9 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
+          docker stop ${GEO_CONT_NAME}
+          docker logs ${GEO_CONT_NAME}
+          docker rm ${GEO_CONT_NAME}
 
   testing-linux:
     name: Testing and coverage (Linux)
@@ -380,17 +418,21 @@ jobs:
     steps:
       - name: Calculate SKIP_UNSTABLE
         if: matrix.experimental
+        env:
+          DOCKER_IMAGE: ${{ matrix.docker-image }}
+          SKIP_CORE_LINUX: ${{ needs.manifests.outputs.skip_core_linux }}
+          VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}
         run: |
           # Choose the manifests output to consider (for Core service)
           # based on the matrix value
-          if [[ "${{ matrix.docker-image }}" == "core-linux-latest-unstable" ]]; then
-            ImagesAreEqual=${{ needs.manifests.outputs.skip_core_linux }}
+          if [[ "${DOCKER_IMAGE}" == "core-linux-latest-unstable" ]]; then
+            ImagesAreEqual=${SKIP_CORE_LINUX}
           else
             echo "Unknown docker image"
             exit 1
           fi
 
-          A=$([[ "${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}" == "1" ]] && echo true || echo false)
+          A=$([[ "${VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY}" == "1" ]] && echo true || echo false)
           B=$([[ "$ImagesAreEqual" == "1" ]] && echo true || echo false)
 
           # Calculate the logical expression
@@ -414,13 +456,19 @@ jobs:
 
       - name: Pull and launch geometry service
         if: env.SKIP_UNSTABLE == 'false'
+        env:
+          FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}"
+          TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
-          docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          echo "Pulling Docker image: ${FULL_IMAGE_NAME}"
+          docker pull ${FULL_IMAGE_NAME}
+          docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${FULL_IMAGE_NAME} ${TRANSPORT_MODE_SELECTION}
 
       - name: Checkout repository
         if: env.SKIP_UNSTABLE == 'false'
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - name: Restore images cache
         if: env.SKIP_UNSTABLE == 'false'
@@ -429,10 +477,11 @@ jobs:
           path: tests/integration/image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
+          lookup-only: false  # zizmor: ignore[cache-poisoning]
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/tests-pytest@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         env:
           ALLOW_PLOTTING: true
         with:
@@ -453,7 +502,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: integration-test-logs-${{ matrix.docker-image }}
-          path: tests/integration/logs
+          path: tests/integration/logs/integration_tests_logs.txt
           retention-days: 7
 
       - name: Upload PyVista generated images (cache and results)
@@ -467,11 +516,11 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          if [[ ${{ env.SKIP_UNSTABLE }} == 'false' ]];
+          if [[ ${SKIP_UNSTABLE} == 'false' ]];
           then
-            docker stop ${{ env.GEO_CONT_NAME }}
-            docker logs ${{ env.GEO_CONT_NAME }}
-            docker rm ${{ env.GEO_CONT_NAME }}
+            docker stop ${GEO_CONT_NAME}
+            docker logs ${GEO_CONT_NAME}
+            docker rm ${GEO_CONT_NAME}
           fi
 
   testing-min-reqs:
@@ -497,6 +546,8 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
@@ -510,9 +561,11 @@ jobs:
           pip install pytest
 
       - name: Start Geometry service and verify start
+        env:
+          TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
-          docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          docker pull ${ANSRV_GEO_IMAGE_MINREQS}
+          docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_MINREQS} ${TRANSPORT_MODE_SELECTION}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run pytest
@@ -522,9 +575,9 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
+          docker stop ${GEO_CONT_NAME}
+          docker logs ${GEO_CONT_NAME}
+          docker rm ${GEO_CONT_NAME}
 
   testing-min-reqs-tracker:
     name: Testing with minimum requirements with tracker
@@ -549,6 +602,8 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
@@ -562,9 +617,11 @@ jobs:
           pip install pytest
 
       - name: Start Geometry service and verify start
+        env:
+          TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
-          docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          docker pull ${ANSRV_GEO_IMAGE_MINREQS}
+          docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_MINREQS} ${TRANSPORT_MODE_SELECTION}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run pytest
@@ -574,9 +631,9 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
+          docker stop ${GEO_CONT_NAME}
+          docker logs ${GEO_CONT_NAME}
+          docker rm ${GEO_CONT_NAME}
 
   testing-no-graphics:
     name: Testing with minimum requirements (no graphics)
@@ -598,6 +655,8 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
@@ -614,9 +673,11 @@ jobs:
           pip install docker
 
       - name: Start Geometry service and verify start
+        env:
+          TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
-          docker pull ${{ env.ANSRV_GEO_IMAGE_MINREQS }}
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE_MINREQS }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          docker pull ${ANSRV_GEO_IMAGE_MINREQS}
+          docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_MINREQS} ${TRANSPORT_MODE_SELECTION}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run pytest
@@ -626,9 +687,9 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
+          docker stop ${GEO_CONT_NAME}
+          docker logs ${GEO_CONT_NAME}
+          docker rm ${GEO_CONT_NAME}
 
   package:
     name: Package library
@@ -640,7 +701,7 @@ jobs:
       id-token: write
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/build-library@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -666,12 +727,16 @@ jobs:
         with:
           repository: 'ansys/pyansys-geometry-binaries'
           token: ${{ secrets.BINARIES_TOKEN }}
+          persist-credentials: true
 
       - name: Download binaries (if conditions met)
         if: env.REUSE_LAST_ARTIFACTS == 'false'
+        env:
+          ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
+          ARTIFACTORY_KEY: ${{ secrets.ARTIFACTORY_KEY }}
         run: |
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerCoreWindows.zip --output windows-core-binaries.zip
-          curl.exe -X GET -H "X-JFrog-Art-Api: ${{ secrets.ARTIFACTORY_KEY }}" ${{ secrets.ARTIFACTORY_URL }}/${{ env.ARTIFACTORY_VERSION }}/DockerCoreLinux.zip --output linux-core-binaries.zip
+          curl.exe -X GET -H "X-JFrog-Art-Api: $env:ARTIFACTORY_KEY" $env:ARTIFACTORY_URL/$env:ARTIFACTORY_VERSION/DockerCoreWindows.zip --output windows-core-binaries.zip
+          curl.exe -X GET -H "X-JFrog-Art-Api: $env:ARTIFACTORY_KEY" $env:ARTIFACTORY_URL/$env:ARTIFACTORY_VERSION/DockerCoreLinux.zip --output linux-core-binaries.zip
 
       - name: Reuse last binaries (if conditions met)
         if: env.REUSE_LAST_ARTIFACTS == 'true'
@@ -710,16 +775,18 @@ jobs:
       - name: Publish the binaries to private repo
         env:
           VERSION_WITH_PREFIX: ${{ github.ref_name }}
+          BINARIES_EMAIL: ${{ secrets.BINARIES_EMAIL }}
+          BINARIES_USERNAME: ${{ secrets.BINARIES_USERNAME }}
         run: |
           $env:VERSION=$env:VERSION_WITH_PREFIX.substring(1)
           mkdir $env:VERSION -ErrorAction SilentlyContinue
           Remove-Item -Recurse -Force .\$env:VERSION\*
           mv windows-core-binaries.zip .\$env:VERSION\
           mv linux-core-binaries.zip .\$env:VERSION\
-          git config user.email ${{ secrets.BINARIES_EMAIL }}
-          git config user.name ${{ secrets.BINARIES_USERNAME }}
+          git config user.email $env:BINARIES_EMAIL
+          git config user.name $env:BINARIES_USERNAME
           git add *
-          git commit -m "adding binaries for ${{ github.ref_name }}"
+          git commit -m "adding binaries for $env:VERSION_WITH_PREFIX"
           git push origin main
 
   build-windows-container:
@@ -736,6 +803,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
@@ -753,13 +822,17 @@ jobs:
 
       - name: Build Docker image
         working-directory: docker
+        env:
+          BUILD_MODE: ${{ matrix.mode }}
         run: |
-          docker build -f windows/${{ matrix.mode }}/Dockerfile -t ghcr.io/ansys/geometry:windows-tmp .
+          docker build -f windows/$env:BUILD_MODE/Dockerfile -t ghcr.io/ansys/geometry:windows-tmp .
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-2'
+        env:
+          LICENSE_SERVER_INTERNAL: ${{ secrets.LICENSE_SERVER_INTERNAL }}
         run:
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.LICENSE_SERVER_INTERNAL }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "ANSRV_GEO_LICENSE_SERVER=$env:LICENSE_SERVER_INTERNAL" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Validate connection using PyAnsys Geometry
         run: |
@@ -774,11 +847,20 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
+          lookup-only: false  # zizmor: ignore[cache-poisoning]
 
       - name: Start Geometry service and verify start
+        env:
+          TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
         run: |
           .\.venv\Scripts\Activate.ps1
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:windows-tmp ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          # Write command to file launch.txt for sanitizing purposes
+          echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING ghcr.io/ansys/geometry:windows-tmp $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
+          # Read the file and execute the command
+          $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
+          Invoke-Expression $command.Line
+          Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
@@ -803,9 +885,9 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
+          docker stop $env:GEO_CONT_NAME
+          docker logs $env:GEO_CONT_NAME
+          docker rm $env:GEO_CONT_NAME
 
       - name: Stop any remaining containers
         if: always()
@@ -833,6 +915,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
@@ -859,8 +943,10 @@ jobs:
           pip install -e .[tests]
 
       - name: Start Geometry service and verify start
+        env:
+          TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ghcr.io/ansys/geometry:linux-tmp ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ghcr.io/ansys/geometry:linux-tmp ${TRANSPORT_MODE_SELECTION}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
@@ -869,9 +955,10 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
+          lookup-only: false  # zizmor: ignore[cache-poisoning]
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/tests-pytest@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         env:
           ALLOW_PLOTTING: true
         with:
@@ -896,9 +983,9 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
+          docker stop ${GEO_CONT_NAME}
+          docker logs ${GEO_CONT_NAME}
+          docker rm ${GEO_CONT_NAME}
 
   release:
     name: Release project to GitHub
@@ -912,7 +999,7 @@ jobs:
       contents: write
     steps:
       - name: Release to GitHub
-        uses: ansys/actions/release-github@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/release-github@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
@@ -952,7 +1039,7 @@ jobs:
     needs: [package]
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/doc-deploy-dev@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -966,7 +1053,7 @@ jobs:
     needs: [release, release-pypi]
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/doc-deploy-stable@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -983,7 +1070,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Automerge PRs
-        uses: ansys/actions/hk-automerge-prs@123a1f17d71f117e0ba29c53d6a0f602e0d8d902 # v10.1.3
+        uses: ansys/actions/hk-automerge-prs@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

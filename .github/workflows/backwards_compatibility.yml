@@ -23,7 +23,6 @@ concurrency:
 permissions:
   contents: read
   packages: read
-  id-token: write
 
 jobs:
 
@@ -48,6 +47,8 @@ jobs:
             backend-version: "25.2"
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
@@ -77,12 +78,18 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Geometry service container (if needed)
-        run: docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }}
+        env:
+          FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }}"
+        run: |
+          Write-Host "Pulling Docker image: $env:FULL_IMAGE_NAME"
+          docker pull $env:FULL_IMAGE_NAME
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-2'
+        env:
+          LICENSE_SERVER_INTERNAL: ${{ secrets.LICENSE_SERVER_INTERNAL }}
         run:
-          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.LICENSE_SERVER_INTERNAL }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "ANSRV_GEO_LICENSE_SERVER=$env:LICENSE_SERVER_INTERNAL" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Stop any running containers
         run: |
@@ -100,17 +107,27 @@ jobs:
           echo "SERVER_ENDPOINT=$env:SERVER_ENDPOINT" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Start Geometry service and verify start
+        env:
+          FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }}"
+          PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
+          TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
           .\.venv\Scripts\Activate.ps1
-          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} ${{ env.SERVER_ENDPOINT }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }} ${{ secrets.TRANSPORT_MODE_SELECTION }}
+          # Write command to file launch.txt for sanitizing purposes
+          echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:SERVER_ENDPOINT -p $env:PORT_MAPPING $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
+          # Read the file and execute the command
+          $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
+          Invoke-Expression $command.Line
           Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
         timeout-minutes: 20  # On Windows self-hosted runners, sometimes hangs...
+        env:
+          BACKEND_VERSION: ${{ matrix.backend-version }}
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest -v --backwards-compatibility=yes --backend-version=${{ matrix.backend-version }} -rf
+          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION -rf
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
@@ -122,9 +139,9 @@ jobs:
       - name: Stop the Geometry service
         if: always()
         run: |
-          docker stop ${{ env.GEO_CONT_NAME }}
-          docker logs ${{ env.GEO_CONT_NAME }}
-          docker rm ${{ env.GEO_CONT_NAME }}
+          docker stop $env:GEO_CONT_NAME
+          docker logs $env:GEO_CONT_NAME
+          docker rm $env:GEO_CONT_NAME
 
       - name: Stop any remaining containers
         if: always()
