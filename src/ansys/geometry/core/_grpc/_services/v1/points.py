@@ -19,15 +19,21 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the curves service implementation (abstraction layer)."""
-
-from abc import ABC, abstractmethod
+"""Module containing the points service implementation for v1."""
 
 import grpc
 
+from ansys.geometry.core.errors import protect_grpc
 
-class GRPCCurvesService(ABC):  # pragma: no cover
-    """Curves service for gRPC communication with the Geometry server.
+from ..base.points import GRPCPointsService
+
+
+class GRPCPointsServiceV1(GRPCPointsService):  # pragma: no cover
+    """Points service for gRPC communication with the Geometry server.
+
+    This class provides methods to interact with the Geometry server's
+    points service. It is specifically designed for the v1 version of the
+    Geometry API.
 
     Parameters
     ----------
@@ -35,15 +41,12 @@ class GRPCCurvesService(ABC):  # pragma: no cover
         The gRPC channel to the server.
     """
 
-    def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCCurvesService class."""
+    @protect_grpc
+    def __init__(self, channel: grpc.Channel):  # noqa: D102
+        from ansys.api.geometry.v1.geometricentities.points_pb2_grpc import PointsStub
 
-    @abstractmethod
-    def revolve_edges(self, **kwargs) -> dict:
-        """Revolve edges around an axis to create a surface of revolution."""
-        pass
+        self.stub = PointsStub(channel)
 
-    @abstractmethod
-    def intersect_curves(self, **kwargs) -> dict:
-        """Get intersection points of curves."""
-        pass
+    @protect_grpc
+    def create_design_points(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError

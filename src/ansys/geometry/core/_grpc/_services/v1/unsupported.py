@@ -19,15 +19,17 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the curves service implementation (abstraction layer)."""
-
-from abc import ABC, abstractmethod
+"""Module containing the unsupported service implementation for v1."""
 
 import grpc
 
+from ansys.geometry.core.errors import protect_grpc
 
-class GRPCCurvesService(ABC):  # pragma: no cover
-    """Curves service for gRPC communication with the Geometry server.
+from ..base.unsupported import GRPCUnsupportedService
+
+
+class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
+    """Unsupported service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -35,15 +37,19 @@ class GRPCCurvesService(ABC):  # pragma: no cover
         The gRPC channel to the server.
     """
 
-    def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCCurvesService class."""
+    def __init__(self, channel: grpc.Channel):  # noqa: D102
+        from ansys.api.geometry.v1.unsupported_pb2_grpc import UnsupportedStub
 
-    @abstractmethod
-    def revolve_edges(self, **kwargs) -> dict:
-        """Revolve edges around an axis to create a surface of revolution."""
-        pass
+        self.stub = UnsupportedStub(channel)
 
-    @abstractmethod
-    def intersect_curves(self, **kwargs) -> dict:
-        """Get intersection points of curves."""
-        pass
+    @protect_grpc
+    def get_import_id_map(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def set_export_ids(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError

@@ -23,27 +23,27 @@ jobs:
       labels: [Linux, pygeometry]
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull Linux latest stable container
-        run: docker pull ${{ env.LINUX_STABLE_GHCR }}
+        run: docker pull ${LINUX_STABLE_GHCR}
 
       - name: Login in AnsysLab registry
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: azwepsifujiaksacr.azurecr.io
           username: ${{ secrets.FUJI_USER }}
           password: ${{ secrets.FUJI_TOKEN }}
 
       - name: Tag container as latest (stable) for AnsysLab registry
-        run: docker tag ${{ env.LINUX_STABLE_GHCR }} ${{ env.LINUX_STABLE_FUJI }}
+        run: docker tag ${LINUX_STABLE_GHCR} ${LINUX_STABLE_FUJI}
 
       - name: Publish latest stable container in AnsysLab registry
-        run: docker push ${{ env.LINUX_STABLE_FUJI }}
+        run: docker push ${LINUX_STABLE_FUJI}
 
       - name: Remove images (free space)
-        run: docker image rm ${{ env.LINUX_STABLE_FUJI }} ${{ env.LINUX_STABLE_GHCR }}
+        run: docker image rm ${LINUX_STABLE_FUJI} ${LINUX_STABLE_GHCR}

@@ -8,9 +8,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: write
-  packages: write
+permissions: {} # Disable default permissions
 
 jobs:
   cleanup:
@@ -18,11 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PACKAGE_DELETION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    permissions:
+      contents: write
+      packages: write
     steps:
 
     - name: "Perform versions cleanup - except certain tags"
-      uses: ansys/actions/hk-package-clean-except@9de5aa715cf3c98a237b08e1a308c08599223c42 # v10.1.2
+      uses: ansys/actions/hk-package-clean-except@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
       with:
         package-name: 'geometry'
         token: ${{ secrets.GITHUB_TOKEN }}

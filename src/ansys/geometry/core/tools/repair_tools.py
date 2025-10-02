@@ -551,16 +551,16 @@ class RepairTools:
             )
 
         body_ids = [body.id for body in bodies]
+        parent_design = get_design_from_body(bodies[0])
 
         response = self._grpc_client.services.repair_tools.find_and_fix_short_edges(
             selection=body_ids,
+            parent_design=parent_design,
             length=length,
             comprehensive_result=comprehensive_result,
         )
 
         # Update existing design
-        parent_design = get_design_from_body(bodies[0])
-
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
@@ -607,14 +607,14 @@ class RepairTools:
             )
 
         body_ids = [body.id for body in bodies]
+        parent_design = get_design_from_body(bodies[0])
         response = self._grpc_client.services.repair_tools.find_and_fix_extra_edges(
             selection=body_ids,
+            parent_design=parent_design,
             comprehensive_result=comprehensive_result,
         )
 
         # Update existing design
-        parent_design = get_design_from_body(bodies[0])
-
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
@@ -669,17 +669,17 @@ class RepairTools:
             )
 
         body_ids = [body.id for body in bodies]
+        parent_design = get_design_from_body(bodies[0])
 
         response = self._grpc_client.services.repair_tools.find_and_fix_split_edges(
             bodies_or_faces=body_ids,
+            parent_design=parent_design,
             angle=angle,
             length=length,
             comprehensive_result=comprehensive_result,
         )
 
         # Update existing design
-        parent_design = get_design_from_body(bodies[0])
-
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
@@ -724,15 +724,15 @@ class RepairTools:
             )
 
         body_ids = [body.id for body in bodies]
+        parent_design = get_design_from_body(bodies[0])
 
         response = self._grpc_client.services.repair_tools.find_and_fix_simplify(
             selection=body_ids,
+            parent_design=parent_design,
             comprehensive_result=comprehensive_result,
         )
 
         # Update existing design
-        parent_design = get_design_from_body(bodies[0])
-
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
@@ -794,9 +794,11 @@ class RepairTools:
             )
 
         body_ids = [body.id for body in bodies]
+        parent_design = get_design_from_body(bodies[0])
 
         response = self._grpc_client.services.repair_tools.find_and_fix_stitch_faces(
             body_ids=body_ids,
+            parent_design=parent_design,
             max_distance=max_distance,
             allow_multiple_bodies=allow_multiple_bodies,
             maintain_components=maintain_components,
@@ -805,8 +807,6 @@ class RepairTools:
         )
 
         # Update existing design
-        parent_design = get_design_from_body(bodies[0])
-
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
@@ -837,19 +837,16 @@ class RepairTools:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        parent_design = self._modeler.get_active_design()
-        body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
-        inspect_result_response_dict = self._grpc_client.services.repair_tools.inspect_geometry(
-            parent_design=parent_design, bodies=body_ids
+        response = self._grpc_client.services.repair_tools.inspect_geometry(
+            body_ids=[] if bodies is None else [b.id for b in bodies]
         )
-        return self.__create_inspect_result_from_response(
-            parent_design, inspect_result_response_dict.get("issues_by_body")
-        )
+        return self.__create_inspect_result_from_response(response.get("issues_by_body"))
 
     def __create_inspect_result_from_response(
-        self, design, inspect_geometry_results: list[dict]
+        self, inspect_geometry_results: list[dict]
     ) -> list[InspectResult]:
         inspect_results = []
+        design = self._modeler.get_active_design()
         for inspect_geometry_result in inspect_geometry_results:
             body = get_bodies_from_ids(design, [inspect_geometry_result["body"]["id"]])
             issues = self.__create_issues_from_response(inspect_geometry_result.get("issues"))
@@ -904,12 +901,11 @@ class RepairTools:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        body_ids = [] if bodies is None else [body._grpc_id for body in bodies]
-        repair_result_response = self._grpc_client.services.repair_tools.repair_geometry(
-            bodies=body_ids
+        response = self._grpc_client.services.repair_tools.repair_geometry(
+            body_ids=[] if bodies is None else [b.id for b in bodies],
         )
 
-        return self.__build_repair_tool_message(repair_result_response)
+        return self.__build_repair_tool_message(response)
 
     def __build_repair_tool_message(self, response: dict) -> RepairToolMessage:
         """Build a repair tool message from the service response.

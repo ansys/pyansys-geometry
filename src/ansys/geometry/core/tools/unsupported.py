@@ -25,16 +25,8 @@ from dataclasses import dataclass
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.unsupported_pb2 import (
-    ExportIdRequest,
-    ImportIdRequest,
-    SetExportIdsRequest,
-)
-from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
-
 from ansys.geometry.core.connection import GrpcClient
-from ansys.geometry.core.errors import GeometryRuntimeError, protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import get_all_bodies_from_design
 from ansys.geometry.core.misc.checks import (
     min_backend_version,
@@ -97,12 +89,10 @@ class UnsupportedCommands:
                 "Use 'modeler.unsupported' to access unsupported commands."
             )
         self._grpc_client = grpc_client
-        self._unsupported_stub = UnsupportedStub(self._grpc_client.channel)
         self.__id_map = {}
         self.__modeler = modeler
         self.__current_design = modeler.get_active_design()
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def __fill_imported_id_map(self, id_type: PersistentIdType) -> None:
         """Populate the persistent id map for caching.
@@ -118,24 +108,15 @@ class UnsupportedCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        request = ImportIdRequest(type=id_type.value)
-        self.__id_map[id_type] = self._unsupported_stub.GetImportIdMap(request).id_map
+        result = self._grpc_client.services.unsupported.get_import_id_map(id_type=id_type)
+        self.__id_map[id_type] = result.get("id_map", {})
 
-    def __clear_cache(self) -> None:
-        """Clear the cache of persistent id's.
-
-        Notes
-        -----
-        This should be called on design change.
-        """
-        self.__id_map = {}
-
-    def __is_occurrence(self, master: EntityIdentifier, occ: str) -> bool:
+    def __is_occurrence(self, master: str, occ: str) -> bool:
         """Determine if the master is the master of the occurrence.
 
         Parameters
         ----------
-        master : EntityIdentifier
+        master : str
             Master moniker.
         occ : str
             Occurrence moniker.
@@ -147,11 +128,9 @@ class UnsupportedCommands:
 
         """
         master_id = occ.split("/")[-1]
-        return master.id == master_id
+        return master == master_id
 
-    def __get_moniker_from_import_id(
-        self, id_type: PersistentIdType, import_id: str
-    ) -> EntityIdentifier | None:
+    def __get_moniker_from_import_id(self, id_type: PersistentIdType, import_id: str) -> str | None:
         """Look up the moniker from the id map.
 
         Parameters
@@ -163,7 +142,7 @@ class UnsupportedCommands:
 
         Returns
         -------
-        EntityIdentifier
+        str | None
             Moniker associated with the id or None
 
         Notes
@@ -178,7 +157,6 @@ class UnsupportedCommands:
         moniker = self.__id_map[id_type].get(import_id, None)
         return moniker
 
-    @protect_grpc
     @min_backend_version(25, 2, 0)
     def set_export_id(self, moniker: str, id_type: PersistentIdType, value: str) -> None:
         """Set the persistent id for the moniker.
@@ -196,13 +174,11 @@ class UnsupportedCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        request = ExportIdRequest(
-            moniker=EntityIdentifier(id=moniker), id=value, type=id_type.value
+        self._grpc_client.services.unsupported.set_single_export_id(
+            export_data=ExportIdData(moniker=moniker, id_type=id_type, value=value),
         )
-        self._unsupported_stub.SetExportId(request)
         self.__id_map = {}
 
-    @protect_grpc
     @min_backend_version(26, 1, 0)
     def set_multiple_export_ids(
         self,
@@ -219,19 +195,8 @@ class UnsupportedCommands:
         --------
         This method is only available starting on Ansys release 26R1.
         """
-        request = SetExportIdsRequest(
-            export_data=[
-                ExportIdRequest(
-                    moniker=EntityIdentifier(id=data.moniker),
-                    id=data.value,
-                    type=data.id_type.value,
-                )
-                for data in export_data
-            ]
-        )
-
         # Call the gRPC service
-        self._unsupported_stub.SetExportIds(request)
+        _ = self._grpc_client.services.unsupported.set_export_ids(export_data=export_data)
         self.__id_map = {}
 
     def get_body_occurrences_from_import_id(

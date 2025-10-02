@@ -74,6 +74,8 @@ class GRPCComponentsServiceV0(GRPCComponentsService):
             "id": response.component.id,
             "name": response.component.name,
             "instance_name": response.component.instance_name,
+            "template": response.template,
+            "component": response.component,
         }
 
     @protect_grpc
