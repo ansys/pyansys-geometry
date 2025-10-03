@@ -892,24 +892,16 @@ class GRPCBodyServiceV0(GRPCBodyService):
         }
 
     @protect_grpc
-    def stitch(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v0.bodies_pb2 import StitchRequest, StitchRequestData
+    def combine_merge(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import CombineMergeBodiesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = StitchRequest(
-            StitchRequestData(
-                ids=kwargs["body_ids"],
-                tolerance=from_measurement_to_server_length(kwargs["tolerance"]),
-            )
+        request = CombineMergeBodiesRequest(
+            target_selection=[build_grpc_id(id) for id in kwargs["body_ids"]],
         )
 
         # Call the gRPC service
-        resp = self.stub.Stitch(request=request)
+        _ = self.command_stub.CombineMergeBodies(request=request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "id": resp.id,
-            "name": resp.name,
-            "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
-        }
+        return {}

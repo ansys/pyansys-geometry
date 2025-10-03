@@ -818,6 +818,16 @@ class IBody(ABC):
         the united body is retained.
         """
         return
+    
+    def combine_merge(self, other: Union["Body", list["Body"]]) -> None:
+        """Combine this body with another body or bodies, merging them into a single body.
+        
+        Parameters
+        ----------
+        other : Union[Body, list[Body]]
+            The body or list of bodies to combine with this body.
+        """
+        return
 
 
 class MasterBody(IBody):
@@ -1359,6 +1369,17 @@ class MasterBody(IBody):
             self._grpc_client.log.warning(f"Failed to remove faces from body {self.id}.")
 
         return result.success
+    
+    @min_backend_version(25, 2, 0)
+    @check_input_types
+    def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
+        other = other if isinstance(other, list) else [other]
+        check_type_all_elements_in_iterable(other, Body)
+
+        self._grpc_client.log.debug(f"Combining and merging to body {self.id}.")
+        self._grpc_client.services.bodies.combine_merge(
+            body_ids=[self.id] + [body.id for body in other]
+        )
 
     def plot(  # noqa: D102
         self,
@@ -1386,7 +1407,7 @@ class MasterBody(IBody):
         raise NotImplementedError(
             "MasterBody does not implement Boolean methods. Call this method on a body instead."
         )
-
+            
     def __repr__(self) -> str:
         """Represent the master body as a string."""
         lines = [f"ansys.geometry.core.designer.MasterBody {hex(id(self))}"]
@@ -1902,6 +1923,9 @@ class Body(IBody):
             self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
         else:
             self.__generic_boolean_command(other, False, "unite", "union operation failed")
+
+    def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
+        self._template.combine_merge(other)
 
     @reset_tessellation_cache
     @ensure_design_is_active

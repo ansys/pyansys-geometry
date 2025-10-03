@@ -233,6 +233,6 @@ class GRPCBodyService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
-    def stitch(self, **kwargs) -> dict:
-        """Stitch bodies."""
+    def combine_merge(self, **kwargs) -> dict:
+        """Combine and merge bodies."""
         pass
