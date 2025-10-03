@@ -231,3 +231,8 @@ class GRPCBodyService(ABC):  # pragma: no cover
     def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:
         """Create a body from loft profiles with guides."""
         pass
+
+    @abstractmethod
+    def combine_merge(self, **kwargs) -> dict:
+        """Combine and merge bodies."""
+        pass
