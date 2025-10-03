@@ -1,0 +1,162 @@
+
+
+
+
+
+
+:class:`ExtrusionDirection`
+===========================
+
+
+.. py:class:: ansys.geometry.core.designer.component.ExtrusionDirection(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Enum for extrusion direction definition.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: ExtrusionDirection
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~from_string`
+            - Convert a string to an ``ExtrusionDirection`` enum.
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_multiplier`
+            - Get the multiplier for the extrusion direction.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~POSITIVE`
+            - 
+          * - :py:attr:`~NEGATIVE`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.component import ExtrusionDirection
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: POSITIVE
+   :value: '+'
+
+
+.. py:attribute:: NEGATIVE
+   :value: '-'
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: from_string(string: str, use_default_if_error: bool = False) -> ExtrusionDirection
+   :classmethod:
+
+
+   
+   Convert a string to an ``ExtrusionDirection`` enum.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_multiplier() -> int
+
+   
+   Get the multiplier for the extrusion direction.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:int`
+           1 if the direction is positive, -1 if negative.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
