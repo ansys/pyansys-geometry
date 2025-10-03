@@ -3910,6 +3910,7 @@ def test_write_body_facets_on_save(
     missing = expected_files - namelist
     assert not missing
 
+
 def test_combine_merge(modeler: Modeler):
     design = modeler.create_design("combine_merge")
     box1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
