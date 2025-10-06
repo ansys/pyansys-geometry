@@ -826,6 +826,10 @@ class IBody(ABC):
         ----------
         other : Union[Body, list[Body]]
             The body or list of bodies to combine with this body.
+
+        Notes
+        -----
+        The ``self`` parameter is directly modified, and the ``other`` bodies are consumed.
         """
         return
 
