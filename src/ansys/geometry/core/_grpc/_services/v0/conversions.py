@@ -369,6 +369,9 @@ def from_grpc_tess_to_pd(tess: GRPCTessellation) -> "pv.PolyData":
     import numpy as np
     import pyvista as pv
 
+    if len(tess.faces) == 0 or len(tess.vertices) == 0:
+        return pv.PolyData()
+
     return pv.PolyData(var_inp=np.array(tess.vertices).reshape(-1, 3), faces=tess.faces)
 
 
