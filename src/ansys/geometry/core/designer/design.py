@@ -23,7 +23,7 @@
 
 from enum import Enum, unique
 from pathlib import Path
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -71,14 +71,21 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
+from ansys.geometry.core.misc.checks import (
+    ensure_design_is_active,
+    graphics_required,
+    min_backend_version,
+)
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
-from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.misc.options import ImportOptions, TessellationOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.typing import RealSequence
+
+if TYPE_CHECKING:  # pragma: no cover
+    from pyvista import MultiBlock, PolyData
 
 
 @unique
@@ -139,6 +146,7 @@ class Design(Component):
         self._design_id = ""
         self._is_active = False
         self._modeler = modeler
+        self._tessellation = None
 
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
@@ -1028,6 +1036,51 @@ class Design(Component):
 
         # Return the newly inserted component
         return self._components[-1]
+    
+    @min_backend_version(26, 1, 0)
+    @check_input_types
+    @graphics_required
+    def tessellate(
+        self, merge: bool = False, tess_options: TessellationOptions | None = None
+    ) -> Union["PolyData", "MultiBlock"]:
+        """Tessellate the entire design and return the geometry as triangles.
+
+        Parameters
+        ----------
+        merge : bool, default: False
+            Whether to merge all bodies into a single mesh.
+        tess_options : TessellationOptions, optional
+            Options for the tessellation. If None, default options are used.
+
+        Returns
+        -------
+        ~pyvista.PolyData | ~pyvista.MultiBlock
+            The tessellated mesh. If `merge` is True, a single PolyData is returned.
+            Otherwise, a MultiBlock is returned with each block corresponding to a body.
+        """
+        import pyvista as pv
+
+        if not self.is_alive:
+            return pv.PolyData() if merge else pv.MultiBlock()
+        
+        self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
+
+        # cache tessellation
+        if not self._tessellation:
+            response = self._grpc_client.services.designs.stream_design_tessellation(
+                options=tess_options,
+            )
+            
+            self._tessellation = response.get("tessellation")
+
+        pdata = [tess for tess in self._tessellation.values()]
+        comp = pv.MultiBlock(pdata)
+
+        if merge:
+            ugrid = comp.combine()
+            return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
+        else:
+            return comp
 
     def __repr__(self) -> str:
         """Represent the ``Design`` as a string."""
