@@ -58,7 +58,7 @@ all = [
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
     "ansys-tools-path==0.7.3",
-    "ansys-tools-visualization-interface==0.11.0",
+    "ansys-tools-visualization-interface==0.12.0",
     "beartype==0.21.0",
     "docker==7.1.0",
     "geomdl==5.4.0",
@@ -89,7 +89,7 @@ tests-minimal = [
 doc = [
     "ansys-sphinx-theme[autoapi]==1.6.1",
     "ansys-tools-path==0.7.3",
-    "ansys-tools-visualization-interface==0.11.0",
+    "ansys-tools-visualization-interface==0.12.0",
     "beartype==0.21.0",
     "docker==7.1.0",
     "geomdl==5.4.0",
