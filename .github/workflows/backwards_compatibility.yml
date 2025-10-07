@@ -193,20 +193,12 @@ jobs:
           Write-Host "Pulling Docker image: $env:FULL_IMAGE_NAME"
           docker pull $env:FULL_IMAGE_NAME
 
-      - name: Define SERVER_ENDPOINT variable if needed
-        if: matrix.backend-version == '24.1' || matrix.backend-version == '24.2' || matrix.backend-version == '25.1'
-        run: |
-          $env:SERVER_ENDPOINT = "-e SERVER_ENDPOINT=50051@0.0.0.0"
-          echo "SERVER_ENDPOINT variable set to: $env:SERVER_ENDPOINT"
-          echo "SERVER_ENDPOINT=$env:SERVER_ENDPOINT" | Out-File -FilePath $env:GITHUB_ENV -Append
-
       - name: Start Geometry service and verify start
         env:
           FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.image-tag }}"
           PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
           TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
-          .\.venv\Scripts\Activate.ps1
           # Write command to file launch.txt for sanitizing purposes
           echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER $env:SERVER_ENDPOINT -p $env:PORT_MAPPING $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
           # Read the file and execute the command
@@ -220,7 +212,6 @@ jobs:
         env:
           BACKEND_VERSION: ${{ matrix.backend-version }}
         run: |
-          .\.venv\Scripts\Activate.ps1
           pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION -rf
 
       - name: Upload coverage to Codecov
