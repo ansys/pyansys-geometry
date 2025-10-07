@@ -332,7 +332,7 @@ class IBody(ABC):
 
         Parameters
         ----------
-        thickness : ~pint.Quantity
+        thickness : Distance | Quantity | Real
             Thickness to assign.
 
         Notes
@@ -643,7 +643,7 @@ class IBody(ABC):
 
         Parameters
         ----------
-        offset : Real
+        offset : Distance | Quantity | Real
             Shell thickness.
 
         Returns
@@ -667,7 +667,7 @@ class IBody(ABC):
         ----------
         selection : Face | Iterable[Face]
             Face or faces to be removed.
-        offset : Real
+        offset : Distance | Quantity | Real
             Shell thickness.
 
         Returns
