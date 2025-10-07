@@ -17,7 +17,7 @@ env:
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
-  RESET_IMAGE_CACHE: 10
+  RESET_IMAGE_CACHE: 0
   IS_WORKFLOW_RUNNING: True
   ARTIFACTORY_VERSION: v261
 
@@ -267,8 +267,8 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: .\tests\integration\image_cache
-          key: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
-          restore-keys: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}
+          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
           lookup-only: false  # zizmor: ignore[cache-poisoning]
 
       - name: Testing
