@@ -156,7 +156,7 @@ jobs:
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # =================================================================================================
 
-  
+
   testing-backwards-compatibility-windows:
     name: Windows ${{ matrix.backend-version }}
     runs-on: ${{ matrix.windows-runner }}
