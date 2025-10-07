@@ -890,6 +890,21 @@ class GRPCBodyServiceV0(GRPCBodyService):
             "master_id": new_body.master_id,
             "is_surface": new_body.is_surface,
         }
+
+    @protect_grpc
+    def combine_merge(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import CombineMergeBodiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CombineMergeBodiesRequest(
+            target_selection=[build_grpc_id(id) for id in kwargs["body_ids"]],
+        )
+
+        # Call the gRPC service
+        _ = self.command_stub.CombineMergeBodies(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
     
     @protect_grpc
     def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102

@@ -205,6 +205,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
+    def combine_merge(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
     def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
     

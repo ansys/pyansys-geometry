@@ -233,6 +233,11 @@ class GRPCBodyService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def combine_merge(self, **kwargs) -> dict:
+        """Combine and merge bodies."""
+        pass
+
+    @abstractmethod
     def assign_midsurface_thickness(self, **kwargs) -> dict:
         """Assign a thickness to a midsurface body."""
         pass

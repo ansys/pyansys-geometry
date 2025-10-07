@@ -805,6 +805,20 @@ class IBody(ABC):
         """
         return
 
+    def combine_merge(self, other: Union["Body", list["Body"]]) -> None:
+        """Combine this body with another body or bodies, merging them into a single body.
+
+        Parameters
+        ----------
+        other : Union[Body, list[Body]]
+            The body or list of bodies to combine with this body.
+
+        Notes
+        -----
+        The ``self`` parameter is directly modified, and the ``other`` bodies are consumed.
+        """
+        return
+
 
 class MasterBody(IBody):
     """Represents solids and surfaces organized within the design assembly.
@@ -1338,6 +1352,17 @@ class MasterBody(IBody):
 
         return result.get("success")
 
+    @min_backend_version(25, 2, 0)
+    @check_input_types
+    def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
+        other = other if isinstance(other, list) else [other]
+        check_type_all_elements_in_iterable(other, Body)
+
+        self._grpc_client.log.debug(f"Combining and merging to body {self.id}.")
+        self._grpc_client.services.bodies.combine_merge(
+            body_ids=[self.id] + [body.id for body in other]
+        )
+
     def plot(  # noqa: D102
         self,
         merge: bool = True,
@@ -1853,6 +1878,9 @@ class Body(IBody):
             self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
         else:
             self.__generic_boolean_command(other, False, "unite", "union operation failed")
+
+    def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
+        self._template.combine_merge(other)
 
     @reset_tessellation_cache
     @ensure_design_is_active
