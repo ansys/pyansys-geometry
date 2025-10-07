@@ -211,11 +211,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def assign_midsurface_offset(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def shell(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError

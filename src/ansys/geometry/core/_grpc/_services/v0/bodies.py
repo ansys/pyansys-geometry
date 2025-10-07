@@ -905,7 +905,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {}
-    
+
     @protect_grpc
     def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import AssignMidSurfaceThicknessRequest
@@ -921,7 +921,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {}
-    
+
     @protect_grpc
     def assign_midsurface_offset(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import AssignMidSurfaceOffsetTypeRequest
