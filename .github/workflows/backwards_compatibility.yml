@@ -190,7 +190,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade build wheel
-          pip install .[tests]
+          pip install -e .[tests]
 
       - name: Download Geometry service container (if needed)
         env:
