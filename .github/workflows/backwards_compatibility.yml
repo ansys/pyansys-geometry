@@ -32,19 +32,23 @@ jobs:
 
   testing-backwards-compatibility-windows:
     name: Windows ${{ matrix.backend-version }}
-    runs-on: windows-latest
+    runs-on: ${{ matrix.windows-runner }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - image-tag: "windows-24.1"
             backend-version: "24.1"
+            windows-runner: "windows-2022"
           - image-tag: "windows-24.2"
             backend-version: "24.2"
+            windows-runner: "windows-2022"
           - image-tag: "windows-25.1"
             backend-version: "25.1"
+            windows-runner: "windows-2022"
           - image-tag: "core-windows-25.2"
             backend-version: "25.2"
+            windows-runner: "windows-latest"
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
