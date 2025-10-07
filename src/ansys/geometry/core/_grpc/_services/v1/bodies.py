@@ -203,3 +203,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def combine_merge(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
