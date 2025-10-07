@@ -125,9 +125,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download Geometry service container (always latest version)
+      - name: Download Geometry service container
         run: |
-          docker image rm $env:ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG
           docker pull $env:ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG
 
       - name: Start Geometry service and verify start
