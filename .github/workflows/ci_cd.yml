@@ -174,7 +174,7 @@ jobs:
   testing-windows:
     name: Testing and coverage (Windows)
     needs: [smoke-tests, manifests]
-    runs-on: [self-hosted, Windows, pygeometry]
+    runs-on: windows-latest
     continue-on-error: ${{ matrix.experimental }}
     env:
       SKIP_UNSTABLE: false
@@ -257,13 +257,6 @@ jobs:
         run: |
           Write-Host "Pulling Docker image: $env:FULL_IMAGE_NAME"
           docker pull $env:FULL_IMAGE_NAME
-
-      - name: Check location of self-hosted runner and define license server accordingly
-        if: env.SKIP_UNSTABLE == 'false' && runner.name == 'pygeometry-ci-2'
-        env:
-          LICENSE_SERVER_INTERNAL: ${{ secrets.LICENSE_SERVER_INTERNAL }}
-        run:
-          echo "ANSRV_GEO_LICENSE_SERVER=$env:LICENSE_SERVER_INTERNAL" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Stop any running containers
         run: |
@@ -661,7 +654,7 @@ jobs:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on:
       group: ansys-network
-      labels: [self-hosted, Windows, pygeometry]
+      labels: [Windows, pygeometry]
     env:
       REUSE_LAST_ARTIFACTS: ${{ vars.REUSE_LAST_ARTIFACTS == 1 }}
 

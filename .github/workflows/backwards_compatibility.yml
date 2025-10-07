@@ -32,7 +32,7 @@ jobs:
 
   testing-backwards-compatibility-windows:
     name: Windows ${{ matrix.backend-version }}
-    runs-on: [self-hosted, Windows, pygeometry]
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
@@ -83,13 +83,6 @@ jobs:
         run: |
           Write-Host "Pulling Docker image: $env:FULL_IMAGE_NAME"
           docker pull $env:FULL_IMAGE_NAME
-
-      - name: Check location of self-hosted runner and define license server accordingly
-        if: runner.name == 'pygeometry-ci-2'
-        env:
-          LICENSE_SERVER_INTERNAL: ${{ secrets.LICENSE_SERVER_INTERNAL }}
-        run:
-          echo "ANSRV_GEO_LICENSE_SERVER=$env:LICENSE_SERVER_INTERNAL" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Stop any running containers
         run: |
