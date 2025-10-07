@@ -167,10 +167,6 @@ jobs:
             echo "skip_${SERVICE}=0" >> "$GITHUB_OUTPUT"
           fi
 
-# =================================================================================================
-# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-# =================================================================================================
-
   testing-windows:
     name: Testing and coverage (Windows)
     needs: [smoke-tests, manifests]
@@ -228,19 +224,12 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
 
-      - name: Create Python venv
-        if: env.SKIP_UNSTABLE == 'false'
-        run: |
-          python -m venv .venv
-          .\.venv\Scripts\Activate.ps1
-
       - name: Install packages for testing
         if: env.SKIP_UNSTABLE == 'false'
         run: |
-          .\.venv\Scripts\Activate.ps1
           python -m pip install --upgrade pip
           pip install --upgrade build wheel
-          pip install .[tests]
+          pip install -e .[tests]
 
       - name: Login to GitHub Container Registry
         if: env.SKIP_UNSTABLE == 'false'
@@ -258,14 +247,6 @@ jobs:
           Write-Host "Pulling Docker image: $env:FULL_IMAGE_NAME"
           docker pull $env:FULL_IMAGE_NAME
 
-      - name: Stop any running containers
-        run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
-
       - name: Start Geometry service and verify start
         if: env.SKIP_UNSTABLE == 'false'
         env:
@@ -273,7 +254,6 @@ jobs:
           PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
           TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
-          .\.venv\Scripts\Activate.ps1
           # Write command to file launch.txt for sanitizing purposes
           echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
           # Read the file and execute the command
@@ -293,9 +273,8 @@ jobs:
 
       - name: Testing
         if: env.SKIP_UNSTABLE == 'false'
-        timeout-minutes: 20  # On Windows self-hosted runners, sometimes hangs...
+        timeout-minutes: 20  # Sometimes hangs...
         run: |
-          .\.venv\Scripts\Activate.ps1
           pytest -v
 
       - name: Upload integration test logs
@@ -340,19 +319,6 @@ jobs:
             docker logs $env:GEO_CONT_NAME
             docker rm $env:GEO_CONT_NAME
           }
-
-      - name: Stop any remaining containers
-        if: always()
-        run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
-
-# =================================================================================================
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# =================================================================================================
 
   docs:
     name: Documentation
