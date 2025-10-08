@@ -481,7 +481,7 @@ def graphics_required(method):
 
 
 def kwargs_passed_not_accepted(method):
-    """Decorator to check that no unexpected kwargs are passed to the method.
+    """Check that no unexpected kwargs are passed to the method.
 
     This decorator will raise a TypeError if any keyword arguments are passed
     to the decorated method that don't correspond to the method's parameters.
@@ -513,12 +513,14 @@ def kwargs_passed_not_accepted(method):
     >>> my_method(arg1=1, arg2=2)  # Works fine
     3
     >>> my_method(1, 2, invalid_arg=3)  # Raises TypeError
-    TypeError: The following keyword arguments are not accepted in the method 'my_method': invalid_arg.
+    TypeError: The following keyword arguments are not accepted
+    in the method 'my_method': invalid_arg.
     >>> @kwargs_passed_not_accepted
     ... def my_method_with_kwargs(arg1, arg2, **kwargs):
     ...     return arg1 + arg2
     >>> my_method_with_kwargs(1, 2, invalid_arg=3)  # Raises TypeError
-    TypeError: The following keyword arguments are not accepted in the method 'my_method_with_kwargs': invalid_arg.
+    TypeError: The following keyword arguments are not accepted
+    in the method 'my_method_with_kwargs': invalid_arg.
     """
     import inspect
 
@@ -545,8 +547,8 @@ def kwargs_passed_not_accepted(method):
 
             if unexpected_kwargs:
                 raise TypeError(
-                    f"The following keyword arguments are not accepted in the method '{method.__name__}': "
-                    + f"{', '.join(unexpected_kwargs)}."
+                    "The following keyword arguments are not accepted in the"
+                    + f" method '{method.__name__}': {', '.join(unexpected_kwargs)}."
                 )
 
         return method(*args, **kwargs)
