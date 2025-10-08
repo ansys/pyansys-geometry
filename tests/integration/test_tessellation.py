@@ -181,9 +181,7 @@ def test_get_design_tessellation(modeler: Modeler):
 
     for face_id, face_tess in box_tess.items():
         assert isinstance(face_id, str)
-        assert isinstance(face_tess, pv.PolyData)
-        assert face_tess.n_cells == 2
-        assert face_tess.n_points == 4
+        assert isinstance(face_tess, dict)
 
     cyl_tess = design_tess[cyl.id]
     assert isinstance(cyl_tess, dict)
@@ -191,9 +189,7 @@ def test_get_design_tessellation(modeler: Modeler):
 
     for face_id, face_tess in cyl_tess.items():
         assert isinstance(face_id, str)
-        assert isinstance(face_tess, pv.PolyData)
-        assert face_tess.n_cells > 0
-        assert face_tess.n_points > 0
+        assert isinstance(face_tess, dict)
 
 
 def test_get_body_raw_tessellation(modeler: Modeler):
@@ -211,9 +207,7 @@ def test_get_body_raw_tessellation(modeler: Modeler):
 
     for face_id, face_tess in box_tess.items():
         assert isinstance(face_id, str)
-        assert isinstance(face_tess, pv.PolyData)
-        assert face_tess.n_cells == 2
-        assert face_tess.n_points == 4
+        assert isinstance(face_tess, dict)
 
     # Get the raw tessellation from the cylinder body
     cyl_tess = cylinder.get_raw_tessellation()
@@ -222,6 +216,4 @@ def test_get_body_raw_tessellation(modeler: Modeler):
 
     for face_id, face_tess in cyl_tess.items():
         assert isinstance(face_id, str)
-        assert isinstance(face_tess, pv.PolyData)
-        assert face_tess.n_cells > 0
-        assert face_tess.n_points > 0
+        assert isinstance(face_tess, dict)

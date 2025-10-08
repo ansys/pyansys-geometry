@@ -37,6 +37,7 @@ from .conversions import (
     from_grpc_material_to_material,
     from_grpc_point_to_point3d,
     from_grpc_tess_to_pd,
+    from_grpc_tess_to_raw_data,
     from_plane_to_grpc_plane,
     from_point3d_to_grpc_point,
     from_sketch_shapes_to_grpc_geometries,
@@ -683,7 +684,11 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         for elem in resp:
             for face_id, face_tess in elem.face_tessellation.items():
-                tess_map[face_id] = from_grpc_tess_to_pd(face_tess)
+                tess_map[face_id] = (
+                    from_grpc_tess_to_raw_data(face_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_tess_to_pd(face_tess)
+                )
 
         return {"tessellation": tess_map}
 
@@ -707,7 +712,11 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         for elem in resp:
             for face_id, face_tess in elem.face_tessellation.items():
-                tess_map[face_id] = from_grpc_tess_to_pd(face_tess)
+                tess_map[face_id] = (
+                    from_grpc_tess_to_raw_data(face_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_tess_to_pd(face_tess)
+                )
 
         return {"tessellation": tess_map}
 
