@@ -543,7 +543,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixDuplicateFacesRequest(
-            duplicate_face_problem_area_id=Int32Value(value=kwargs["duplicate_face_problem_area_id"]),
+            duplicate_face_problem_area_id=Int32Value(
+                value=kwargs["duplicate_face_problem_area_id"]
+            ),
         )
 
         # Call the gRPC service
@@ -719,7 +721,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixAdjustSimplifyRequest(
-            adjust_simplify_problem_area_id=Int32Value(value=kwargs["adjust_simplify_problem_area_id"]),
+            adjust_simplify_problem_area_id=Int32Value(
+                value=kwargs["adjust_simplify_problem_area_id"]
+            ),
         )
 
         # Call the gRPC service
