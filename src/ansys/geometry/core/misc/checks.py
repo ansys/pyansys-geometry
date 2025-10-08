@@ -502,25 +502,6 @@ def kwargs_passed_not_accepted(method):
     ------
     TypeError
         If unexpected keyword arguments are passed to the decorated method.
-
-    Examples
-    --------
-    >>> @kwargs_passed_not_accepted
-    ... def my_method(arg1, arg2):
-    ...     return arg1 + arg2
-    >>> my_method(1, 2)  # Works fine
-    3
-    >>> my_method(arg1=1, arg2=2)  # Works fine
-    3
-    >>> my_method(1, 2, invalid_arg=3)  # Raises TypeError
-    TypeError: The following keyword arguments are not accepted
-    in the method 'my_method': invalid_arg.
-    >>> @kwargs_passed_not_accepted
-    ... def my_method_with_kwargs(arg1, arg2, **kwargs):
-    ...     return arg1 + arg2
-    >>> my_method_with_kwargs(1, 2, invalid_arg=3)  # Raises TypeError
-    TypeError: The following keyword arguments are not accepted
-    in the method 'my_method_with_kwargs': invalid_arg.
     """
     import inspect
 
