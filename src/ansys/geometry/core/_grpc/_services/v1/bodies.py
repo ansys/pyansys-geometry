@@ -193,9 +193,45 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
+    def combine(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
     @protect_grpc
     def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def combine_merge(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def assign_midsurface_offset(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def shell(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def remove_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def imprint_curves(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def project_curves(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def imprint_projected_curves(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError

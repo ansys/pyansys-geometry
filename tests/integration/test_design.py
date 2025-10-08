@@ -34,6 +34,7 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
+    Component,
     CurveType,
     DesignFileFormat,
     MidSurfaceOffsetType,
@@ -76,6 +77,7 @@ from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
 )
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
@@ -1739,7 +1741,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Exists               : True" in surf_repr
     assert "Parent component     : MidSurfaceProperties" in surf_repr
     assert "Surface body         : True" in surf_repr
-    assert "Surface thickness    : 30 millimeter" in surf_repr
+    assert "Surface thickness    : 30.0 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
     assert f"Color                : {DEFAULT_COLOR}" in surf_repr
 
@@ -3264,6 +3266,34 @@ def test_surface_body_creation(modeler: Modeler):
     assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
 
 
+def test_nurbs_surface_body_creation(modeler: Modeler):
+    """Test surface body creation from NURBS surfaces."""
+    design = modeler.create_design("Design1")
+
+    points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+    degree_u = 2
+    degree_v = 2
+    surface = NURBSSurface.fit_surface_from_points(
+        points=points, size_u=3, size_v=3, degree_u=degree_u, degree_v=degree_v
+    )
+
+    trimmed_surface = surface.trim(BoxUV(Interval(0, 1), Interval(0, 1)))
+    body = design.create_body_from_surface("nurbs_surface", trimmed_surface)
+    assert len(design.bodies) == 1
+    assert body.is_surface
+    assert body.faces[0].area.m == pytest.approx(7.44626609)
+
+
 def test_create_surface_from_nurbs_sketch(modeler: Modeler):
     """Test creating a surface from a NURBS sketch."""
     design = modeler.create_design("NURBS_Sketch_Surface")
@@ -3880,3 +3910,139 @@ def test_write_body_facets_on_save(
 
     missing = expected_files - namelist
     assert not missing
+
+
+def test_updating_design_from_tracker(modeler: Modeler):
+    # Adding coverage for handling the tracker response when updating the design
+    design = modeler.open_file(
+        Path(FILES_DIR, "boxes_w_mat.scdocx")
+    )  # ,read_existing_design=True))
+    # Creating the tracker response that modifies, deletes and creates bodies
+    tracker_response = {
+        "modified_bodies": [
+            {"id": "body1", "name": "ModifiedBody1", "is_surface": True},
+            {"id": "7", "name": "Fake_Mat", "is_surface": False},
+            {"id": "10", "name": "Steel", "is_surface": False},
+        ],
+        "deleted_bodies": [
+            {"id": "11:1", "name": "DeletedBody2"},
+            {"id": "7:515/7:518", "name": "DeletedBody2"},
+            {"id": "test", "name": "SubComponentBody"},
+        ],
+        "created_bodies": [
+            {
+                "id": "body100",
+                "name": "ExistingBody",
+                "is_surface": False,
+                "parent_id": "Component1",
+            },
+        ],
+    }
+    # Adding needed bodies and components that are modified
+    design.bodies.append(
+        MasterBody("body100", "ExistingBody", design._grpc_client, is_surface=False)
+    )
+    design.components[2].components.append(
+        Component("SubComponent", design.components[2], design._grpc_client, preexisting_id="sub1")
+    )
+    design.components[2].components[0].components.append(
+        Component(
+            "SubComponent2",
+            design.components[2].components[0],
+            design._grpc_client,
+            preexisting_id="sub2",
+        )
+    )
+    design.components[2].components[0].bodies.append(
+        MasterBody("test", "SubComponentBody", design._grpc_client, is_surface=True)
+    )
+    # Changing the ids of the bodies to match those in the tracker response
+    design.components[1].bodies[0]._id = "7"
+    design.bodies[0]._id = "10"
+    result = design._update_from_tracker(tracker_response)
+    assert result is None
+    # Then we create particular body_into statements to hit lines not hit when calling
+    # the _update_from_tracker method
+    body_info = {
+        "id": "body1",
+        "name": "UpdatedSubComponentBody",
+        "is_surface": False,
+        "parent_id": "sub1",
+    }
+    design._find_and_update_body(body_info, design.components[2])
+    top_component = Component("TopComponent", design, design._grpc_client, preexisting_id="top1")
+    design.components.append(top_component)
+    body_info = {
+        "id": "body1",
+        "name": "NewBody",
+        "is_surface": True,
+        "parent_id": "top1",
+    }
+    result = design._find_and_add_body(body_info, design.components)
+
+
+def test_legacy_export_download(
+    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, use_grpc_client_old_backend: Modeler
+):
+    # Test is meant to add test coverage for using an old backend to export and download
+    # Creating the directory and file to export
+    working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
+    original_file = Path(FILES_DIR, "reactorWNS.scdocx")
+    reexported_file = Path(working_directory, "reexported.scdocx")
+    design = modeler.create_design("Assembly")
+    design.insert_file(original_file)
+    # The following lines export the file to scdocx and parasolid
+    design.download(reexported_file, format=DesignFileFormat.SCDOCX)
+    reexported_file = Path(working_directory, "reexported.x_t")
+    design.download(reexported_file, format=DesignFileFormat.PARASOLID_TEXT)
+    # This is testing out exporting out to a non-supported format
+    reexported_file = Path(working_directory, "reexported.stride")
+    with pytest.raises(
+        TypeError, match="memoryview: a bytes-like object is required, not 'NoneType'"
+    ):
+        design.download(reexported_file, format=DesignFileFormat.STRIDE)
+
+
+def test_failure_for_export(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    # # Creating the directory and file to export
+    working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
+    original_file = Path(FILES_DIR, "reactorWNS.scdocx")
+    reexported_file = Path(working_directory, "reexported.scdocx")
+    design = modeler.create_design("Assembly")
+    design.insert_file(original_file)
+    # Giving the download an incorrect file extension in the file path for the chosen format
+    reexported_file = Path(working_directory, "reexported.x_t")
+    with pytest.raises(
+        GeometryExitedError,
+        match="Geometry service connection terminated: The method or operation is not implemented.",
+    ):
+        design.download(file_location=reexported_file, format=DesignFileFormat.STEP)
+    # Exporting to the invalid type to get an error
+    with pytest.raises(
+        TypeError, match="memoryview: a bytes-like object is required, not 'NoneType'"
+    ):
+        design.download(file_location=reexported_file, format=DesignFileFormat.INVALID)
+
+
+def test_combine_merge(modeler: Modeler):
+    design = modeler.create_design("combine_merge")
+    box1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    box2 = design.extrude_sketch("box2", Sketch().box(Point2D([0.5, 0.5]), 1, 1), 1)
+    assert len(design.bodies) == 2
+
+    # combine the two boxes and check body count and volume
+    box1.combine_merge([box2])
+    design._update_design_inplace()
+    assert len(design.bodies) == 1
+    assert box1.volume.m == pytest.approx(Quantity(1.75, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # create a third box
+    box1 = design.bodies[0]
+    box3 = design.extrude_sketch("box3", Sketch().box(Point2D([-0.5, -0.5]), 1, 1), 1)
+    assert len(design.bodies) == 2
+
+    # combine the two boxes and check body count and volume
+    box1.combine_merge([box3])
+    design._update_design_inplace()
+    assert len(design.bodies) == 1
+    assert box1.volume.m == pytest.approx(Quantity(2.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)

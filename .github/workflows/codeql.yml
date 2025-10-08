@@ -8,6 +8,8 @@ on:
   schedule:
     - cron: '45 22 * * 4'
 
+permissions: {} # Disable default permissions
+
 jobs:
   analyze:
     name: Analyze
@@ -20,15 +22,17 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      with:
+        persist-credentials: false
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@3599b3baa15b485a2e49ef411a7a4bb2452e7f93 # v3.30.5
+      uses: github/codeql-action/init@e296a935590eb16afc0c0108289f68c87e2a89a5 # v4.30.7
       with:
         languages: 'python'
         config-file: ./.github/codeql-config.yml
 
     - name: Autobuild
-      uses: github/codeql-action/autobuild@3599b3baa15b485a2e49ef411a7a4bb2452e7f93 # v3.30.5
+      uses: github/codeql-action/autobuild@e296a935590eb16afc0c0108289f68c87e2a89a5 # v4.30.7
 
     #   If the Autobuild fails above, remove it and uncomment the following three lines.
     #   modify them (or add more) to build your code if your project, please refer to the EXAMPLE below for guidance.
@@ -38,6 +42,6 @@ jobs:
     #     ./location_of_script_within_repo/buildscript.sh
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@3599b3baa15b485a2e49ef411a7a4bb2452e7f93 # v3.30.5
+      uses: github/codeql-action/analyze@e296a935590eb16afc0c0108289f68c87e2a89a5 # v4.30.7
       with:
         category: "/language:python"

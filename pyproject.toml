@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.77",
+    "ansys-api-geometry==0.4.80",
     "ansys-tools-path>=0.3,<1",
     "beartype>=0.11.0,<0.22",
     "geomdl>=5,<6",
@@ -58,7 +58,7 @@ all = [
 tests = [
     "ansys-platform-instancemanagement==1.1.2",
     "ansys-tools-path==0.7.3",
-    "ansys-tools-visualization-interface==0.11.0",
+    "ansys-tools-visualization-interface==0.12.1",
     "beartype==0.21.0",
     "docker==7.1.0",
     "geomdl==5.4.0",
@@ -89,7 +89,7 @@ tests-minimal = [
 doc = [
     "ansys-sphinx-theme[autoapi]==1.6.1",
     "ansys-tools-path==0.7.3",
-    "ansys-tools-visualization-interface==0.11.0",
+    "ansys-tools-visualization-interface==0.12.1",
     "beartype==0.21.0",
     "docker==7.1.0",
     "geomdl==5.4.0",
@@ -102,7 +102,7 @@ doc = [
     "myst-parser==4.0.1",
     "nbconvert==7.16.6",
     "nbsphinx==0.9.6",
-    "notebook==7.4.6",
+    "notebook==7.4.7",
     "numpydoc==1.9.0",
     "numpy==2.2.6",
     "panel==1.8.1",
@@ -111,7 +111,7 @@ doc = [
     "protobuf==6.32.1",
     "pygltflib==1.16.5",
     "pyvista[jupyter]==0.46.3",
-    "quarto-cli==1.8.24",
+    "quarto-cli==1.8.25",
     "requests==2.32.5",
     "scipy==1.15.3",
     "semver==3.0.4",

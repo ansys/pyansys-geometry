@@ -24,6 +24,7 @@
 import grpc
 import pint
 
+import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
@@ -43,6 +44,7 @@ from .conversions import (
     from_trimmed_curve_to_grpc_trimmed_curve,
     from_trimmed_surface_to_grpc_trimmed_surface,
     from_unit_vector_to_grpc_direction,
+    serialize_tracker_command_response,
 )
 
 
@@ -714,15 +716,22 @@ class GRPCBodyServiceV0(GRPCBodyService):
         from ansys.api.geometry.v0.bodies_pb2 import BooleanRequest
 
         # Call the gRPC service and build the requests accordingly
-        resp = 0
+        response_success = 0
+        serialized_tracker_response = {}
         try:
-            resp = self.stub.Boolean(
-                request=BooleanRequest(
-                    body1=kwargs["target"].id,
-                    tool_bodies=[other.id for other in kwargs["other"]],
-                    method=kwargs["method"],
+            request = BooleanRequest(
+                body1=kwargs["target"].id,
+                tool_bodies=[other.id for other in kwargs["other"]],
+                method=kwargs["method"],
+            )
+            if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                request.keep_other = kwargs["keep_other"]
+            resp = self.stub.Boolean(request=request)
+            response_success = resp.empty_result
+            if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                serialized_tracker_response = serialize_tracker_command_response(
+                    response=resp.response
                 )
-            ).empty_result
         except grpc.RpcError as err:  # pragma: no cover
             # TODO: to be deleted - old versions did not have "tool_bodies" in the request
             # This is a temporary fix to support old versions of the server - should be deleted
@@ -741,7 +750,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                     all_resp.append(tmp_resp)
 
                 if all_resp.count(1) > 0:
-                    resp = 1
+                    response_success = 1
             elif len(kwargs["other"]) == 1:
                 resp = self.stub.Boolean(
                     request=BooleanRequest(
@@ -749,18 +758,74 @@ class GRPCBodyServiceV0(GRPCBodyService):
                         body2=kwargs["other"][0].id,
                         method=kwargs["method"],
                     )
-                ).empty_result
+                )
+                response_success = resp.empty_result
             else:
                 raise err
 
-        if resp == 1:
+        if response_success == 1:
             raise ValueError(
                 f"Boolean operation of type '{kwargs['method']}' failed: {kwargs['err_msg']}.\n"
                 f"Involving bodies:{kwargs['target']}, {kwargs['other']}"
             )
 
         # Return the response - formatted as a dictionary
-        return {}
+        return {"complete_command_response": serialized_tracker_response}
+
+    @protect_grpc
+    def combine(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.bodies_pb2 import (
+            CombineIntersectBodiesRequest,
+            CombineMergeBodiesRequest,
+        )
+
+        other_bodies = kwargs["other"]
+        type_bool_op = kwargs["type_bool_op"]
+        keep_other = kwargs["keep_other"]
+
+        if type_bool_op == "intersect":
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [self._grpc_id]
+            request = CombineIntersectBodiesRequest(
+                target_selection=target_ids,
+                tool_selection=body_ids,
+                subtract_from_target=False,
+                keep_cutter=keep_other,
+            )
+            response = self._template._commands_stub.CombineIntersectBodies(request)
+        elif type_bool_op == "subtract":
+            body_ids = [body._grpc_id for body in other_bodies]
+            target_ids = [self._grpc_id]
+            request = CombineIntersectBodiesRequest(
+                target_selection=target_ids,
+                tool_selection=body_ids,
+                subtract_from_target=True,
+                keep_cutter=keep_other,
+            )
+            response = self._template._commands_stub.CombineIntersectBodies(request)
+        elif type_bool_op == "unite":
+            bodies = [self]
+            bodies.extend(other_bodies)
+            body_ids = [body._grpc_id for body in bodies]
+            request = CombineMergeBodiesRequest(target_selection=body_ids)
+            response = self._template._commands_stub.CombineMergeBodies(request)
+        else:
+            raise ValueError("Unknown operation requested")
+        if not response.success:
+            raise ValueError(
+                f"Operation of type '{type_bool_op}' failed: {kwargs['err_msg']}.\n"
+                f"Involving bodies:{self}, {other_bodies}"
+            )
+
+        if not keep_other:
+            for b in other_bodies:
+                b.parent_component.delete_body(b)
+
+        tracker_response = response.result.complete_command_response
+        serialized_tracker_response = serialize_tracker_command_response(response=tracker_response)
+
+        # Return the response - formatted as a dictionary
+        return {"complete_command_response": serialized_tracker_response}
 
     @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
@@ -824,4 +889,201 @@ class GRPCBodyServiceV0(GRPCBodyService):
             "name": new_body.name,
             "master_id": new_body.master_id,
             "is_surface": new_body.is_surface,
+        }
+
+    @protect_grpc
+    def combine_merge(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import CombineMergeBodiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CombineMergeBodiesRequest(
+            target_selection=[build_grpc_id(id) for id in kwargs["body_ids"]],
+        )
+
+        # Call the gRPC service
+        _ = self.command_stub.CombineMergeBodies(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
+    def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import AssignMidSurfaceThicknessRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = AssignMidSurfaceThicknessRequest(
+            bodies_or_faces=kwargs["ids"],
+            thickness=from_measurement_to_server_length(kwargs["thickness"]),
+        )
+
+        # Call the gRPC service
+        self.command_stub.AssignMidSurfaceThickness(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
+    def assign_midsurface_offset(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import AssignMidSurfaceOffsetTypeRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = AssignMidSurfaceOffsetTypeRequest(
+            bodies_or_faces=kwargs["ids"],
+            offset_type=kwargs["offset_type"].value,
+        )
+
+        # Call the gRPC service
+        self.command_stub.AssignMidSurfaceOffsetType(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
+    def shell(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ShellRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ShellRequest(
+            selection=build_grpc_id(kwargs["id"]),
+            offset=from_measurement_to_server_length(kwargs["offset"]),
+        )
+
+        # Call the gRPC service
+        response = self.command_stub.Shell(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+        }
+
+    @protect_grpc
+    def remove_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import RemoveFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RemoveFacesRequest(
+            selection=[build_grpc_id(id) for id in kwargs["face_ids"]],
+            offset=from_measurement_to_server_length(kwargs["offset"]),
+        )
+
+        # Call the gRPC service
+        response = self.command_stub.RemoveFaces(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+        }
+
+    @protect_grpc
+    def imprint_curves(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest
+
+        # Convert sketch and trimmed curves to gRPC format
+        sketch = kwargs["sketch"]
+        curves = None
+        if sketch:
+            curves = from_sketch_shapes_to_grpc_geometries(sketch.plane, sketch.edges, sketch.faces)
+
+        trimmed_curves = None
+        if kwargs["tc"]:
+            trimmed_curves = [from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["tc"]]
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ImprintCurvesRequest(
+            body=kwargs["id"],
+            curves=curves,
+            faces=kwargs["face_ids"],
+            plane=from_plane_to_grpc_plane(sketch.plane) if sketch else None,
+            trimmed_curves=trimmed_curves,
+        )
+
+        # Call the gRPC service
+        response = self.command_stub.ImprintCurves(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "edges": [
+                {
+                    "id": edge.id,
+                    "curve_type": edge.curve_type,
+                    "is_reversed": edge.is_reversed,
+                }
+                for edge in response.edges
+            ],
+            "faces": [
+                {
+                    "id": face.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
+                }
+                for face in response.faces
+            ],
+        }
+
+    @protect_grpc
+    def project_curves(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ProjectCurvesRequest
+
+        # Convert sketch and trimmed curves to gRPC format
+        sketch = kwargs["sketch"]
+        curves = from_sketch_shapes_to_grpc_geometries(
+            sketch.plane, sketch.edges, sketch.faces, kwargs["only_one_curve"]
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ProjectCurvesRequest(
+            body=kwargs["id"],
+            curves=curves,
+            direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+            closest_face=kwargs["closest_face"],
+            plane=from_plane_to_grpc_plane(sketch.plane),
+        )
+
+        # Call the gRPC service
+        response = self.command_stub.ProjectCurves(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "faces": [
+                {
+                    "id": face.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
+                }
+                for face in response.faces
+            ],
+        }
+
+    @protect_grpc
+    def imprint_projected_curves(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ProjectCurvesRequest
+
+        # Convert sketch and trimmed curves to gRPC format
+        sketch = kwargs["sketch"]
+        curves = from_sketch_shapes_to_grpc_geometries(
+            sketch.plane, sketch.edges, sketch.faces, kwargs["only_one_curve"]
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ProjectCurvesRequest(
+            body=kwargs["id"],
+            curves=curves,
+            direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+            closest_face=kwargs["closest_face"],
+            plane=from_plane_to_grpc_plane(sketch.plane),
+        )
+
+        # Call the gRPC service
+        response = self.command_stub.ImprintProjectedCurves(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "faces": [
+                {
+                    "id": face.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
+                }
+                for face in response.faces
+            ],
         }

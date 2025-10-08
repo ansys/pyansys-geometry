@@ -220,6 +220,9 @@ class GRPCBodyService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def combine(self, **kwargs) -> dict:
+        """Boolean operation through command."""
+
     def split_body(self, **kwargs) -> dict:
         """Split a body."""
         pass
@@ -227,4 +230,44 @@ class GRPCBodyService(ABC):  # pragma: no cover
     @abstractmethod
     def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:
         """Create a body from loft profiles with guides."""
+        pass
+
+    @abstractmethod
+    def combine_merge(self, **kwargs) -> dict:
+        """Combine and merge bodies."""
+        pass
+
+    @abstractmethod
+    def assign_midsurface_thickness(self, **kwargs) -> dict:
+        """Assign a thickness to a midsurface body."""
+        pass
+
+    @abstractmethod
+    def assign_midsurface_offset(self, **kwargs) -> dict:
+        """Assign a offset to a midsurface body."""
+        pass
+
+    @abstractmethod
+    def shell(self, **kwargs) -> dict:
+        """Shell a body."""
+        pass
+
+    @abstractmethod
+    def remove_faces(self, **kwargs) -> dict:
+        """Remove faces from a body."""
+        pass
+
+    @abstractmethod
+    def imprint_curves(self, **kwargs) -> dict:
+        """Imprint curves on a body."""
+        pass
+
+    @abstractmethod
+    def project_curves(self, **kwargs) -> dict:
+        """Project curves on a body."""
+        pass
+
+    @abstractmethod
+    def imprint_projected_curves(self, **kwargs) -> dict:
+        """Imprint projected curves on a body."""
         pass
