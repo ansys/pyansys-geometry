@@ -1333,18 +1333,8 @@ class MasterBody(IBody):
 
         # cache tessellation
         if not self._tessellation:
-            if tess_options is not None:
-                response = self._grpc_client.services.bodies.get_tesellation_with_options(
-                    id=self.id,
-                    options=tess_options,
-                )
-            else:
-                response = self._grpc_client.services.bodies.get_tesellation(
-                    id=self.id,
-                    backend_version=self._grpc_client.backend_version,
-                )
-
-            self._tessellation = response.get("tessellation")
+            response = self.get_raw_tessellation(tess_options)
+            self._tessellation = response
 
         pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
         comp = pv.MultiBlock(pdata)
