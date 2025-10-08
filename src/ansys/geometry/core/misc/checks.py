@@ -478,3 +478,77 @@ def graphics_required(method):
         return method(*args, **kwargs)
 
     return wrapper
+
+
+def kwargs_passed_not_accepted(method):
+    """Decorator to check that no unexpected kwargs are passed to the method.
+
+    This decorator will raise a TypeError if any keyword arguments are passed
+    to the decorated method that don't correspond to the method's parameters.
+    If the method has **kwargs in its signature, this decorator will raise an
+    error for any kwargs passed to it (that are not explicitly accepted).
+
+    Parameters
+    ----------
+    method : callable
+        The method to decorate.
+
+    Returns
+    -------
+    callable
+        Decorated method that raises TypeError if unexpected kwargs are passed.
+
+    Raises
+    ------
+    TypeError
+        If unexpected keyword arguments are passed to the decorated method.
+
+    Examples
+    --------
+    >>> @kwargs_passed_not_accepted
+    ... def my_method(arg1, arg2):
+    ...     return arg1 + arg2
+    >>> my_method(1, 2)  # Works fine
+    3
+    >>> my_method(arg1=1, arg2=2)  # Works fine
+    3
+    >>> my_method(1, 2, invalid_arg=3)  # Raises TypeError
+    TypeError: The following keyword arguments are not accepted in the method 'my_method': invalid_arg.
+    >>> @kwargs_passed_not_accepted
+    ... def my_method_with_kwargs(arg1, arg2, **kwargs):
+    ...     return arg1 + arg2
+    >>> my_method_with_kwargs(1, 2, invalid_arg=3)  # Raises TypeError
+    TypeError: The following keyword arguments are not accepted in the method 'my_method_with_kwargs': invalid_arg.
+    """
+    import inspect
+
+    def wrapper(*args, **kwargs):
+        # Get the method signature
+        sig = inspect.signature(method)
+
+        # Check if method has **kwargs parameter
+        has_var_keyword = any(
+            param.kind == inspect.Parameter.VAR_KEYWORD for param in sig.parameters.values()
+        )
+
+        # If method has **kwargs and kwargs are passed...
+        if has_var_keyword and len(kwargs) > 0:
+            # Retrieve a list of all parameter names excluding **kwargs
+            param_names = {
+                name
+                for name, param in sig.parameters.items()
+                if param.kind != inspect.Parameter.VAR_KEYWORD
+            }
+
+            # Identify unexpected kwargs
+            unexpected_kwargs = [key for key in kwargs.keys() if key not in param_names]
+
+            if unexpected_kwargs:
+                raise TypeError(
+                    f"The following keyword arguments are not accepted in the method '{method.__name__}': "
+                    + f"{', '.join(unexpected_kwargs)}."
+                )
+
+        return method(*args, **kwargs)
+
+    return wrapper

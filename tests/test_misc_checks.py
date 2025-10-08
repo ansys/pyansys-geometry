@@ -40,6 +40,7 @@ from ansys.geometry.core.misc import (
     check_type_equivalence,
     deprecated_argument,
     deprecated_method,
+    kwargs_passed_not_accepted,
     min_backend_version,
 )
 
@@ -411,3 +412,30 @@ def test_deprecated_argument_decorator():
     with warnings.catch_warnings():
         warnings.simplefilter("error")
         mock_object.deprecated_argument_with_info_and_alternate_and_versions(alt_arg="test")
+
+
+def test_kwargs_passed_not_accepted():
+    """Test the kwargs_passed_not_accepted decorator."""
+
+    @kwargs_passed_not_accepted
+    def my_method(arg1, arg2, **kwargs):
+        """A method that accepts no keyword arguments."""
+        return arg1 + arg2
+
+    # Call the method without kwargs - should not raise an error
+    assert my_method(1, 2) == 3
+    assert my_method(arg1=1, arg2=2) == 3
+
+    # Call the method with kwargs - should raise an error
+    with pytest.raises(
+        TypeError,
+        match="The following keyword arguments are not accepted in the"
+        " method 'my_method': unexpected_arg, another_one.",
+    ):
+        my_method(1, 2, unexpected_arg=3, another_one="test")
+
+    with pytest.raises(
+        TypeError,
+        match="The following keyword arguments are not accepted in the method 'my_method': arg3.",
+    ):
+        my_method(arg1=1, arg2=2, arg3=3)
