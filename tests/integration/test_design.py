@@ -1741,7 +1741,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Exists               : True" in surf_repr
     assert "Parent component     : MidSurfaceProperties" in surf_repr
     assert "Surface body         : True" in surf_repr
-    assert "Surface thickness    : 30 millimeter" in surf_repr
+    assert "Surface thickness    : 30.0 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
     assert f"Color                : {DEFAULT_COLOR}" in surf_repr
 
@@ -4022,3 +4022,27 @@ def test_failure_for_export(modeler: Modeler, tmp_path_factory: pytest.TempPathF
         TypeError, match="memoryview: a bytes-like object is required, not 'NoneType'"
     ):
         design.download(file_location=reexported_file, format=DesignFileFormat.INVALID)
+
+
+def test_combine_merge(modeler: Modeler):
+    design = modeler.create_design("combine_merge")
+    box1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    box2 = design.extrude_sketch("box2", Sketch().box(Point2D([0.5, 0.5]), 1, 1), 1)
+    assert len(design.bodies) == 2
+
+    # combine the two boxes and check body count and volume
+    box1.combine_merge([box2])
+    design._update_design_inplace()
+    assert len(design.bodies) == 1
+    assert box1.volume.m == pytest.approx(Quantity(1.75, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+    # create a third box
+    box1 = design.bodies[0]
+    box3 = design.extrude_sketch("box3", Sketch().box(Point2D([-0.5, -0.5]), 1, 1), 1)
+    assert len(design.bodies) == 2
+
+    # combine the two boxes and check body count and volume
+    box1.combine_merge([box3])
+    design._update_design_inplace()
+    assert len(design.bodies) == 1
+    assert box1.volume.m == pytest.approx(Quantity(2.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
