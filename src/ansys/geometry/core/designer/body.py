@@ -595,6 +595,21 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def get_raw_tessellation(self, tess_options: TessellationOptions | None = None) -> dict:
+        """Tessellate the body and return the raw tessellation data.
+        
+        Parameters
+        ----------
+        tess_options : TessellationOptions | None, default: None
+            A set of options to determine the tessellation quality.
+
+        Returns
+        -------
+        dict
+            Dictionary with face IDs as keys and :class:`pyvista.PolyData` as values.
+        """
+
+    @abstractmethod
     def tessellate(
         self, merge: bool = False, tess_options: TessellationOptions | None = None
     ) -> Union["PolyData", "MultiBlock"]:
@@ -1282,6 +1297,38 @@ class MasterBody(IBody):
         return Body(body_id, response.get("name"), parent, tb)
 
     @graphics_required
+    def get_raw_tessellation(self, tess_options: TessellationOptions | None = None) -> dict:  # noqa: D102
+        if not self.is_alive:
+            return {}
+
+        # If the server does not support tessellation options, ignore them
+        if tess_options is not None and self._grpc_client.backend_version < (25, 2, 0):
+            self._grpc_client.log.warning(
+                "Tessellation options are not supported by server"
+                f" version {self._grpc_client.backend_version}. Ignoring options."
+            )
+            tess_options = None
+
+        self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
+
+        # cache tessellation
+        if not self._tessellation:
+            if tess_options is not None:
+                response = self._grpc_client.services.bodies.get_tesellation_with_options(
+                    id=self.id,
+                    options=tess_options,
+                )
+            else:
+                response = self._grpc_client.services.bodies.get_tesellation(
+                    id=self.id,
+                    backend_version=self._grpc_client.backend_version,
+                )
+
+            self._tessellation = response.get("tessellation")
+
+        return self._tessellation
+
+    @graphics_required
     def tessellate(  # noqa: D102
         self,
         merge: bool = False,
@@ -1848,6 +1895,10 @@ class Body(IBody):
     @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         return self._template.copy(parent, name)
+
+    @ensure_design_is_active
+    def get_raw_tessellation(self, tess_options: TessellationOptions | None = None) -> dict:  # noqa: D102
+        return self._template.get_raw_tessellation(tess_options)
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102

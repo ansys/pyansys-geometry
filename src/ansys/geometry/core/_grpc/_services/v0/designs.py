@@ -30,6 +30,8 @@ from .conversions import (
     _check_write_body_facets_input,
     build_grpc_id,
     from_design_file_format_to_grpc_part_export_format,
+    from_grpc_tess_to_pd,
+    from_tess_options_to_grpc_tess_options,
 )
 
 
@@ -261,27 +263,30 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
     def stream_design_tessellation(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.dbu.v0.designs_pb2 import DesignTessellationRequest
 
+        # If there are options, convert to gRPC options
+        options = (
+            from_tess_options_to_grpc_tess_options(kwargs["options"])
+            if kwargs["options"] is not None
+            else None
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = DesignTessellationRequest(
-            chordal_deviation=kwargs["chordal_deviation"],
-            angle_deviation=kwargs["angle_deviation"],
-            max_aspect_ratio=kwargs["max_aspect_ratio"],
-            min_edge_length=kwargs["min_edge_length"],
-            max_edge_length=kwargs["max_edge_length"],
-            deflection_type=kwargs["deflection_type"],
+            options=options
         )
 
         # Call the gRPC service
         response = self.designs_stub.StreamDesignTessellation(request)
 
         # Return the response - formatted as a dictionary
-        points = []
-        triangles = []
+        tess_map = {}
         for elem in response:
-            points.extend(elem.points)
-            triangles.extend(elem.triangles)
+            for body_id, body_tess in elem.body_tessellation.items():
+                tess = {}
+                for face_id, face_tess in body_tess.face_tessellation.items():
+                    tess[face_id] = from_grpc_tess_to_pd(face_tess)
+                tess_map[body_id] = tess
 
         return {
-            "points": points,
-            "triangles": triangles,
+            "tessellation": tess_map,
         }

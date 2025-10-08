@@ -161,3 +161,67 @@ def test_component_tessellate(modeler: Modeler):
             rel=1e-6,
             abs=1e-8,
         )
+
+    
+def test_get_design_tessellation(modeler: Modeler):
+    """Test getting the entire design tessellation."""
+    import pyvista as pv
+
+    design = modeler.create_design("revolve_edges")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    cyl = design.extrude_sketch("cylinder", Sketch().circle(Point2D([1, 0]), 0.5), 2)
+
+    design_tess = design.tessellate()
+    assert isinstance(design_tess, dict)
+    assert len(design_tess) == 2  # Two bodies in the design
+
+    box_tess = design_tess[box.id]
+    assert isinstance(box_tess, dict)
+    assert len(box_tess) == 6  # Six faces on the box
+
+    for face_id, face_tess in box_tess.items():
+        assert isinstance(face_id, str)
+        assert isinstance(face_tess, pv.PolyData)
+        assert face_tess.n_cells == 2
+        assert face_tess.n_points == 4
+
+    cyl_tess = design_tess[cyl.id]
+    assert isinstance(cyl_tess, dict)
+    assert len(cyl_tess) == 3  # Three faces on the cylinder
+
+    for face_id, face_tess in cyl_tess.items():
+        assert isinstance(face_id, str)
+        assert isinstance(face_tess, pv.PolyData)
+        assert face_tess.n_cells > 0
+        assert face_tess.n_points > 0
+
+
+def test_get_body_raw_tessellation(modeler: Modeler):
+    """Test getting the raw tessellation from a body."""
+    import pyvista as pv
+    
+    design = modeler.create_design("revolve_edges")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    cylinder = design.extrude_sketch("cylinder", Sketch().circle(Point2D([1, 0]), 0.5), 2)
+
+    # Get the raw tessellation from the box body
+    box_tess = box.get_raw_tessellation()
+    assert isinstance(box_tess, dict)
+    assert len(box_tess) == 6  # Six faces on the box
+
+    for face_id, face_tess in box_tess.items():
+        assert isinstance(face_id, str)
+        assert isinstance(face_tess, pv.PolyData)
+        assert face_tess.n_cells == 2
+        assert face_tess.n_points == 4
+    
+    # Get the raw tessellation from the cylinder body
+    cyl_tess = cylinder.get_raw_tessellation()
+    assert isinstance(cyl_tess, dict)
+    assert len(cyl_tess) == 3  # Three faces on the cylinder
+
+    for face_id, face_tess in cyl_tess.items():
+        assert isinstance(face_id, str)
+        assert isinstance(face_tess, pv.PolyData)
+        assert face_tess.n_cells > 0
+        assert face_tess.n_points > 0

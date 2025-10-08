@@ -1040,30 +1040,25 @@ class Design(Component):
     @min_backend_version(26, 1, 0)
     @check_input_types
     @graphics_required
-    def tessellate(
-        self, merge: bool = False, tess_options: TessellationOptions | None = None
-    ) -> Union["PolyData", "MultiBlock"]:
+    def tessellate(self, tess_options: TessellationOptions | None = None) -> dict:
         """Tessellate the entire design and return the geometry as triangles.
 
         Parameters
         ----------
-        merge : bool, default: False
-            Whether to merge all bodies into a single mesh.
         tess_options : TessellationOptions, optional
             Options for the tessellation. If None, default options are used.
 
         Returns
         -------
-        ~pyvista.PolyData | ~pyvista.MultiBlock
-            The tessellated mesh. If `merge` is True, a single PolyData is returned.
-            Otherwise, a MultiBlock is returned with each block corresponding to a body.
+        dict
+            A dictionary with body IDs as keys and another dictionary as values.
+            The inner dictionary has face IDs as keys and the corresponding PyVista
+            PolyData objects as values.
         """
-        import pyvista as pv
-
         if not self.is_alive:
-            return pv.PolyData() if merge else pv.MultiBlock()
+            return {}  # Return an empty dictionary if the design is not alive
         
-        self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
+        self._grpc_client.log.debug(f"Requesting tessellation for design {self.id}.")
 
         # cache tessellation
         if not self._tessellation:
@@ -1073,14 +1068,7 @@ class Design(Component):
             
             self._tessellation = response.get("tessellation")
 
-        pdata = [tess for tess in self._tessellation.values()]
-        comp = pv.MultiBlock(pdata)
-
-        if merge:
-            ugrid = comp.combine()
-            return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
-        else:
-            return comp
+        return self._tessellation
 
     def __repr__(self) -> str:
         """Represent the ``Design`` as a string."""
