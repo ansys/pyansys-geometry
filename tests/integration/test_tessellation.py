@@ -163,6 +163,9 @@ def test_component_tessellate(modeler: Modeler):
         )
 
 
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_get_design_tessellation(modeler: Modeler):
     """Test getting the entire design tessellation."""
 
@@ -191,6 +194,9 @@ def test_get_design_tessellation(modeler: Modeler):
         assert isinstance(face_tess, dict)
 
 
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_get_body_raw_tessellation(modeler: Modeler):
     """Test getting the raw tessellation from a body."""
 
