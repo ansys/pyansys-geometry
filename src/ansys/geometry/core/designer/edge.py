@@ -24,7 +24,6 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
@@ -92,11 +91,6 @@ class Edge:
     def id(self) -> str:
         """ID of the edge."""
         return self._id
-
-    @property
-    def _grpc_id(self) -> EntityIdentifier:
-        """Entity ID of this edge on the server side."""
-        return EntityIdentifier(id=self._id)
 
     @property
     def body(self) -> "Body":

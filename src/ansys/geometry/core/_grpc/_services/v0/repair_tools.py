@@ -26,6 +26,7 @@ The class provides a set of abstract methods for identifying and repairing vario
 geometry issues, such as split edges, extra edges, duplicate faces etc.
 """
 
+from google.protobuf.wrappers_pb2 import Int32Value
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
@@ -542,7 +543,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixDuplicateFacesRequest(
-            duplicate_face_problem_area_id=kwargs["duplicate_face_problem_area_id"],
+            duplicate_face_problem_area_id=Int32Value(value=kwargs["duplicate_face_problem_area_id"]),
         )
 
         # Call the gRPC service
@@ -564,7 +565,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixMissingFacesRequest(
-            missing_face_problem_area_id=kwargs["missing_face_problem_area_id"],
+            missing_face_problem_area_id=Int32Value(value=kwargs["missing_face_problem_area_id"]),
         )
 
         # Call the gRPC service
@@ -586,7 +587,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixInexactEdgesRequest(
-            inexact_edge_problem_area_id=kwargs["inexact_edge_problem_area_id"],
+            inexact_edge_problem_area_id=Int32Value(value=kwargs["inexact_edge_problem_area_id"]),
         )
 
         # Call the gRPC service
@@ -608,7 +609,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixExtraEdgesRequest(
-            extra_edge_problem_area_id=kwargs["extra_edge_problem_area_id"],
+            extra_edge_problem_area_id=Int32Value(value=kwargs["extra_edge_problem_area_id"]),
         )
 
         # Call the gRPC service
@@ -630,7 +631,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixShortEdgesRequest(
-            short_edge_problem_area_id=kwargs["short_edge_problem_area_id"],
+            short_edge_problem_area_id=Int32Value(value=kwargs["short_edge_problem_area_id"]),
         )
 
         # Call the gRPC service
@@ -652,7 +653,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixSmallFacesRequest(
-            small_face_problem_area_id=kwargs["small_face_problem_area_id"],
+            small_face_problem_area_id=Int32Value(value=kwargs["small_face_problem_area_id"]),
         )
 
         # Call the gRPC service
@@ -674,7 +675,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixSplitEdgesRequest(
-            split_edge_problem_area_id=kwargs["split_edge_problem_area_id"],
+            split_edge_problem_area_id=Int32Value(value=kwargs["split_edge_problem_area_id"]),
         )
 
         # Call the gRPC service
@@ -696,7 +697,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixStitchFacesRequest(
-            stitch_face_problem_area_id=kwargs["stitch_face_problem_area_id"],
+            stitch_face_problem_area_id=Int32Value(value=kwargs["stitch_face_problem_area_id"]),
         )
 
         # Call the gRPC service
@@ -718,7 +719,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixAdjustSimplifyRequest(
-            adjust_simplify_problem_area_id=kwargs["adjust_simplify_problem_area_id"],
+            adjust_simplify_problem_area_id=Int32Value(value=kwargs["adjust_simplify_problem_area_id"]),
         )
 
         # Call the gRPC service
@@ -740,7 +741,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixInterferenceRequest(
-            interference_problem_area_id=kwargs["interference_problem_area_id"],
+            interference_problem_area_id=Int32Value(value=kwargs["interference_problem_area_id"]),
         )
 
         # Call the gRPC service
