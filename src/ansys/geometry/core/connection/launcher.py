@@ -35,7 +35,11 @@ from ansys.geometry.core.connection.docker_instance import (
 )
 from ansys.geometry.core.connection.product_instance import prepare_and_start_backend
 from ansys.geometry.core.logger import LOG
-from ansys.geometry.core.misc.checks import check_type, deprecated_argument
+from ansys.geometry.core.misc.checks import (
+    check_type,
+    deprecated_argument,
+    kwargs_passed_not_accepted,
+)
 
 try:
     import ansys.platform.instancemanagement as pypim
@@ -233,6 +237,7 @@ def _launch_with_automatic_detection(**kwargs: dict | None) -> "Modeler":
     raise NotImplementedError("Geometry service cannot be initialized.")
 
 
+@kwargs_passed_not_accepted
 def launch_remote_modeler(
     platform: str = "windows",
     version: str | None = None,
@@ -287,6 +292,7 @@ def launch_remote_modeler(
     )
 
 
+@kwargs_passed_not_accepted
 def launch_docker_modeler(
     port: int = pygeom_defaults.DEFAULT_PORT,
     connect_to_existing_service: bool = True,
@@ -362,6 +368,7 @@ def launch_docker_modeler(
     )
 
 
+@kwargs_passed_not_accepted
 def launch_modeler_with_discovery_and_pimlight(
     version: str | None = None,
     client_log_level: int = logging.INFO,
@@ -404,6 +411,7 @@ def launch_modeler_with_discovery_and_pimlight(
     )
 
 
+@kwargs_passed_not_accepted
 def launch_modeler_with_geometry_service_and_pimlight(
     version: str | None = None,
     client_log_level: int = logging.INFO,
@@ -446,6 +454,7 @@ def launch_modeler_with_geometry_service_and_pimlight(
     )
 
 
+@kwargs_passed_not_accepted
 def launch_modeler_with_spaceclaim_and_pimlight(
     version: str | None = None,
     client_log_level: int = logging.INFO,
@@ -488,6 +497,7 @@ def launch_modeler_with_spaceclaim_and_pimlight(
     )
 
 
+@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
 def launch_modeler_with_geometry_service(
     version: str | int | None = None,
@@ -587,13 +597,6 @@ def launch_modeler_with_geometry_service(
         timeout=300,
         server_log_level=0)
     """
-    # if api_version is passed, throw a warning saying that it is not used
-    if "api_version" in kwargs:
-        LOG.warning(
-            "The 'api_version' parameter is not used in 'launch_modeler_with_geometry_service'. "
-            "Please remove it from the arguments."
-        )
-
     # If we are in a Windows environment, we are going to write down the server
     # logs in the %PUBLIC%/Documents/Ansys/GeometryService folder.
     if os.name == "nt" and server_logs_folder is None:
@@ -617,6 +620,7 @@ def launch_modeler_with_geometry_service(
     )
 
 
+@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
 def launch_modeler_with_discovery(
     version: str | int | None = None,
@@ -720,13 +724,6 @@ def launch_modeler_with_discovery(
         timeout=300,
         server_log_level=0)
     """
-    for unused_var in ["server_logs_folder", "logs_folder"]:
-        if unused_var in kwargs:
-            LOG.warning(
-                f"The '{unused_var}' parameter is not used in 'launch_modeler_with_discovery'. "
-                "Please remove it from the arguments."
-            )
-
     return prepare_and_start_backend(
         BackendType.DISCOVERY,
         version=version,
@@ -744,6 +741,7 @@ def launch_modeler_with_discovery(
     )
 
 
+@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
 def launch_modeler_with_spaceclaim(
     version: str | int | None = None,
@@ -847,13 +845,6 @@ def launch_modeler_with_spaceclaim(
         timeout=300,
         server_log_level=0)
     """
-    for unused_var in ["server_logs_folder", "logs_folder"]:
-        if unused_var in kwargs:
-            LOG.warning(
-                f"The '{unused_var}' parameter is not used in 'launch_modeler_with_spaceclaim'. "
-                "Please remove it from the arguments."
-            )
-
     return prepare_and_start_backend(
         BackendType.SPACECLAIM,
         version=version,
@@ -871,6 +862,7 @@ def launch_modeler_with_spaceclaim(
     )
 
 
+@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
 def launch_modeler_with_core_service(
     version: str | int | None = None,
@@ -970,13 +962,6 @@ def launch_modeler_with_core_service(
         timeout=300,
         server_log_level=0)
     """
-    # if api_version is passed, throw a warning saying that it is not used
-    if "api_version" in kwargs:
-        LOG.warning(
-            "The 'api_version' parameter is not used in 'launch_modeler_with_core_service'. "
-            "Please remove it from the arguments."
-        )
-
     # If we are in a Windows environment, we are going to write down the server
     # logs in the %PUBLIC%/Documents/Ansys/GeometryService folder.
     if os.name == "nt" and server_logs_folder is None:

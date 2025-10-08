@@ -28,31 +28,15 @@ from functools import cached_property, wraps
 from typing import TYPE_CHECKING, Union
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.commands_pb2 import (
-    AssignMidSurfaceOffsetTypeRequest,
-    AssignMidSurfaceThicknessRequest,
-    ImprintCurvesRequest,
-    ProjectCurvesRequest,
-    RemoveFacesRequest,
-    ShellRequest,
-)
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
 
 import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import (
-    plane_to_grpc_plane,
-    sketch_shapes_to_grpc_geometries,
-    trimmed_curve_to_grpc_trimmed_curve,
-    unit_vector_to_grpc_direction,
-)
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.designer.vertex import Vertex
-from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
@@ -343,12 +327,12 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def add_midsurface_thickness(self, thickness: Quantity) -> None:
+    def add_midsurface_thickness(self, thickness: Distance | Quantity | Real) -> None:
         """Add a mid-surface thickness to a surface body.
 
         Parameters
         ----------
-        thickness : ~pint.Quantity
+        thickness : Distance | Quantity | Real
             Thickness to assign.
 
         Notes
@@ -669,12 +653,12 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def shell_body(self, offset: Real) -> bool:
+    def shell_body(self, offset: Distance | Quantity | Real) -> bool:
         """Shell the body to the thickness specified.
 
         Parameters
         ----------
-        offset : Real
+        offset : Distance | Quantity | Real
             Shell thickness.
 
         Returns
@@ -689,14 +673,16 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:
+    def remove_faces(
+        self, selection: Face | Iterable[Face], offset: Distance | Quantity | Real
+    ) -> bool:
         """Shell by removing a given set of faces.
 
         Parameters
         ----------
         selection : Face | Iterable[Face]
             Face or faces to be removed.
-        offset : Real
+        offset : Distance | Quantity | Real
             Shell thickness.
 
         Returns
@@ -890,7 +876,6 @@ class MasterBody(IBody):
         self._surface_thickness = None
         self._surface_offset = None
         self._is_alive = True
-        self._commands_stub = CommandsStub(self._grpc_client.channel)
         self._tessellation = None
         self._fill_style = FillStyle.DEFAULT
         self._color = None
@@ -1099,30 +1084,25 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Removing assigned material for body {self.id}.")
         self._grpc_client.services.bodies.remove_assigned_material(ids=[self.id])
 
-    @protect_grpc
     @check_input_types
-    def add_midsurface_thickness(self, thickness: Quantity) -> None:  # noqa: D102
+    def add_midsurface_thickness(self, thickness: Distance | Quantity | Real) -> None:  # noqa: D102
+        thickness = thickness if isinstance(thickness, Distance) else Distance(thickness)
+
         if self.is_surface:
-            self._commands_stub.AssignMidSurfaceThickness(
-                AssignMidSurfaceThicknessRequest(
-                    bodies_or_faces=[self.id],
-                    thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-                )
+            self._grpc_client.services.bodies.assign_midsurface_thickness(
+                ids=[self.id], thickness=thickness
             )
-            self._surface_thickness = thickness
+            self._surface_thickness = thickness.value
         else:
             self._grpc_client.log.warning(
                 f"Body {self.name} cannot be assigned a mid-surface thickness because it is not a surface. Ignoring request."  # noqa : E501
             )
 
-    @protect_grpc
     @check_input_types
     def add_midsurface_offset(self, offset: MidSurfaceOffsetType) -> None:  # noqa: D102
         if self.is_surface:
-            self._commands_stub.AssignMidSurfaceOffsetType(
-                AssignMidSurfaceOffsetTypeRequest(
-                    bodies_or_faces=[self.id], offset_type=offset.value
-                )
+            self._grpc_client.services.bodies.assign_midsurface_offset(
+                ids=[self.id], offset_type=offset
             )
             self._surface_offset = offset
         else:
@@ -1375,30 +1355,29 @@ class MasterBody(IBody):
         else:
             return comp
 
-    @protect_grpc
     @reset_tessellation_cache
     @check_input_types
     @min_backend_version(25, 2, 0)
-    def shell_body(self, offset: Real) -> bool:  # noqa: D102
+    def shell_body(self, offset: Distance | Quantity | Real) -> bool:  # noqa: D102
         self._grpc_client.log.debug(f"Shelling body {self.id} to offset {offset}.")
 
-        result = self._commands_stub.Shell(
-            ShellRequest(
-                selection=self._grpc_id,
-                offset=offset,
-            )
+        offset = offset if isinstance(offset, Distance) else Distance(offset)
+        result = self._grpc_client.services.bodies.shell(
+            id=self.id,
+            offset=offset,
         )
 
-        if result.success is False:
+        if result.get("success") is False:
             self._grpc_client.log.warning(f"Failed to shell body {self.id}.")
 
-        return result.success
+        return result.get("success")
 
-    @protect_grpc
     @reset_tessellation_cache
     @check_input_types
     @min_backend_version(25, 2, 0)
-    def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
+    def remove_faces(  # noqa: D102
+        self, selection: Face | Iterable[Face], offset: Distance | Quantity | Real
+    ) -> bool:
         selection: list[Face] = selection if isinstance(selection, Iterable) else [selection]
         check_type_all_elements_in_iterable(selection, Face)
 
@@ -1409,17 +1388,16 @@ class MasterBody(IBody):
 
         self._grpc_client.log.debug(f"Removing faces to shell body {self.id}.")
 
-        result = self._commands_stub.RemoveFaces(
-            RemoveFacesRequest(
-                selection=[face._grpc_id for face in selection],
-                offset=offset,
-            )
+        offset = offset if isinstance(offset, Distance) else Distance(offset)
+        result = self._grpc_client.services.bodies.remove_faces(
+            face_ids=[face.id for face in selection],
+            offset=offset,
         )
 
-        if result.success is False:
+        if result.get("success") is False:
             self._grpc_client.log.warning(f"Failed to remove faces from body {self.id}.")
 
-        return result.success
+        return result.get("success")
 
     @min_backend_version(25, 2, 0)
     @check_input_types
@@ -1688,7 +1666,6 @@ class Body(IBody):
     ) -> None:
         self._template.add_midsurface_offset(offset)
 
-    @protect_grpc
     @ensure_design_is_active
     def imprint_curves(  # noqa: D102
         self, faces: list[Face], sketch: Sketch = None, trimmed_curves: list[TrimmedCurve] = None
@@ -1727,50 +1704,35 @@ class Body(IBody):
             f"Imprinting curves on {self.id} for faces {[face.id for face in faces]}."
         )
 
-        curves = None
-        grpc_trimmed_curves = None
-
-        if sketch:
-            curves = sketch_shapes_to_grpc_geometries(sketch._plane, sketch.edges, sketch.faces)
-
-        if trimmed_curves:
-            grpc_trimmed_curves = [
-                trimmed_curve_to_grpc_trimmed_curve(curve) for curve in trimmed_curves
-            ]
-
-        imprint_response = self._template._commands_stub.ImprintCurves(
-            ImprintCurvesRequest(
-                body=self._id,
-                curves=curves,
-                faces=[face._id for face in faces],
-                plane=plane_to_grpc_plane(sketch.plane) if sketch else None,
-                trimmed_curves=grpc_trimmed_curves,
-            )
+        imprint_response = self._template._grpc_client.services.bodies.imprint_curves(
+            id=self.id,
+            sketch=sketch,
+            face_ids=[face.id for face in faces],
+            tc=trimmed_curves,
         )
 
         new_edges = [
             Edge(
-                grpc_edge.id,
-                CurveType(grpc_edge.curve_type),
+                edge.get("id"),
+                CurveType(edge.get("curve_type")),
                 self,
                 self._template._grpc_client,
             )
-            for grpc_edge in imprint_response.edges
+            for edge in imprint_response.get("edges")
         ]
 
         new_faces = [
             Face(
-                grpc_face.id,
-                SurfaceType(grpc_face.surface_type),
+                face.get("id"),
+                SurfaceType(face.get("surface_type")),
                 self,
                 self._template._grpc_client,
             )
-            for grpc_face in imprint_response.faces
+            for face in imprint_response.get("faces")
         ]
 
         return (new_edges, new_faces)
 
-    @protect_grpc
     @ensure_design_is_active
     def project_curves(  # noqa: D102
         self,
@@ -1779,35 +1741,29 @@ class Body(IBody):
         closest_face: bool,
         only_one_curve: bool = False,
     ) -> list[Face]:
-        curves = sketch_shapes_to_grpc_geometries(
-            sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
-        )
         self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
-        project_response = self._template._commands_stub.ProjectCurves(
-            ProjectCurvesRequest(
-                body=self._id,
-                curves=curves,
-                direction=unit_vector_to_grpc_direction(direction),
-                closest_face=closest_face,
-                plane=plane_to_grpc_plane(sketch.plane),
-            )
+        project_response = self._template._grpc_client.services.bodies.project_curves(
+            id=self.id,
+            sketch=sketch,
+            direction=direction,
+            closest_face=closest_face,
+            only_one_curve=only_one_curve,
         )
 
         projected_faces = [
             Face(
-                grpc_face.id,
-                SurfaceType(grpc_face.surface_type),
+                face.get("id"),
+                SurfaceType(face.get("surface_type")),
                 self,
                 self._template._grpc_client,
             )
-            for grpc_face in project_response.faces
+            for face in project_response.get("faces")
         ]
 
         return projected_faces
 
     @check_input_types
-    @protect_grpc
     @ensure_design_is_active
     def imprint_projected_curves(  # noqa: D102
         self,
@@ -1816,29 +1772,24 @@ class Body(IBody):
         closest_face: bool,
         only_one_curve: bool = False,
     ) -> list[Face]:
-        curves = sketch_shapes_to_grpc_geometries(
-            sketch._plane, sketch.edges, sketch.faces, only_one_curve=only_one_curve
-        )
         self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
-        response = self._template._commands_stub.ImprintProjectedCurves(
-            ProjectCurvesRequest(
-                body=self._id,
-                curves=curves,
-                direction=unit_vector_to_grpc_direction(direction),
-                closest_face=closest_face,
-                plane=plane_to_grpc_plane(sketch.plane),
-            )
+        response = self._template._grpc_client.services.bodies.imprint_projected_curves(
+            id=self.id,
+            direction=direction,
+            sketch=sketch,
+            closest_face=closest_face,
+            only_one_curve=only_one_curve,
         )
 
         imprinted_faces = [
             Face(
-                grpc_face.id,
-                SurfaceType(grpc_face.surface_type),
+                face.get("id"),
+                SurfaceType(face.get("surface_type")),
                 self,
                 self._template._grpc_client,
             )
-            for grpc_face in response.faces
+            for face in response.get("faces")
         ]
 
         return imprinted_faces
