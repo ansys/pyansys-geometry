@@ -905,3 +905,185 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Return the response - formatted as a dictionary
         return {}
+
+    @protect_grpc
+    def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import AssignMidSurfaceThicknessRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = AssignMidSurfaceThicknessRequest(
+            bodies_or_faces=kwargs["ids"],
+            thickness=from_measurement_to_server_length(kwargs["thickness"]),
+        )
+
+        # Call the gRPC service
+        self.command_stub.AssignMidSurfaceThickness(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
+    def assign_midsurface_offset(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import AssignMidSurfaceOffsetTypeRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = AssignMidSurfaceOffsetTypeRequest(
+            bodies_or_faces=kwargs["ids"],
+            offset_type=kwargs["offset_type"].value,
+        )
+
+        # Call the gRPC service
+        self.command_stub.AssignMidSurfaceOffsetType(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
+    def shell(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ShellRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ShellRequest(
+            selection=build_grpc_id(kwargs["id"]),
+            offset=from_measurement_to_server_length(kwargs["offset"]),
+        )
+
+        # Call the gRPC service
+        response = self.command_stub.Shell(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+        }
+
+    @protect_grpc
+    def remove_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import RemoveFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RemoveFacesRequest(
+            selection=[build_grpc_id(id) for id in kwargs["face_ids"]],
+            offset=from_measurement_to_server_length(kwargs["offset"]),
+        )
+
+        # Call the gRPC service
+        response = self.command_stub.RemoveFaces(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+        }
+
+    @protect_grpc
+    def imprint_curves(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ImprintCurvesRequest
+
+        # Convert sketch and trimmed curves to gRPC format
+        sketch = kwargs["sketch"]
+        curves = None
+        if sketch:
+            curves = from_sketch_shapes_to_grpc_geometries(sketch.plane, sketch.edges, sketch.faces)
+
+        trimmed_curves = None
+        if kwargs["tc"]:
+            trimmed_curves = [from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["tc"]]
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ImprintCurvesRequest(
+            body=kwargs["id"],
+            curves=curves,
+            faces=kwargs["face_ids"],
+            plane=from_plane_to_grpc_plane(sketch.plane) if sketch else None,
+            trimmed_curves=trimmed_curves,
+        )
+
+        # Call the gRPC service
+        response = self.command_stub.ImprintCurves(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "edges": [
+                {
+                    "id": edge.id,
+                    "curve_type": edge.curve_type,
+                    "is_reversed": edge.is_reversed,
+                }
+                for edge in response.edges
+            ],
+            "faces": [
+                {
+                    "id": face.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
+                }
+                for face in response.faces
+            ],
+        }
+
+    @protect_grpc
+    def project_curves(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ProjectCurvesRequest
+
+        # Convert sketch and trimmed curves to gRPC format
+        sketch = kwargs["sketch"]
+        curves = from_sketch_shapes_to_grpc_geometries(
+            sketch.plane, sketch.edges, sketch.faces, kwargs["only_one_curve"]
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ProjectCurvesRequest(
+            body=kwargs["id"],
+            curves=curves,
+            direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+            closest_face=kwargs["closest_face"],
+            plane=from_plane_to_grpc_plane(sketch.plane),
+        )
+
+        # Call the gRPC service
+        response = self.command_stub.ProjectCurves(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "faces": [
+                {
+                    "id": face.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
+                }
+                for face in response.faces
+            ],
+        }
+
+    @protect_grpc
+    def imprint_projected_curves(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ProjectCurvesRequest
+
+        # Convert sketch and trimmed curves to gRPC format
+        sketch = kwargs["sketch"]
+        curves = from_sketch_shapes_to_grpc_geometries(
+            sketch.plane, sketch.edges, sketch.faces, kwargs["only_one_curve"]
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ProjectCurvesRequest(
+            body=kwargs["id"],
+            curves=curves,
+            direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+            closest_face=kwargs["closest_face"],
+            plane=from_plane_to_grpc_plane(sketch.plane),
+        )
+
+        # Call the gRPC service
+        response = self.command_stub.ImprintProjectedCurves(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "faces": [
+                {
+                    "id": face.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
+                }
+                for face in response.faces
+            ],
+        }
