@@ -34,6 +34,7 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
+    Component,
     CurveType,
     DesignFileFormat,
     MidSurfaceOffsetType,
@@ -3910,6 +3911,118 @@ def test_write_body_facets_on_save(
 
     missing = expected_files - namelist
     assert not missing
+
+
+def test_updating_design_from_tracker(modeler: Modeler):
+    # Adding coverage for handling the tracker response when updating the design
+    design = modeler.open_file(
+        Path(FILES_DIR, "boxes_w_mat.scdocx")
+    )  # ,read_existing_design=True))
+    # Creating the tracker response that modifies, deletes and creates bodies
+    tracker_response = {
+        "modified_bodies": [
+            {"id": "body1", "name": "ModifiedBody1", "is_surface": True},
+            {"id": "7", "name": "Fake_Mat", "is_surface": False},
+            {"id": "10", "name": "Steel", "is_surface": False},
+        ],
+        "deleted_bodies": [
+            {"id": "11:1", "name": "DeletedBody2"},
+            {"id": "7:515/7:518", "name": "DeletedBody2"},
+            {"id": "test", "name": "SubComponentBody"},
+        ],
+        "created_bodies": [
+            {
+                "id": "body100",
+                "name": "ExistingBody",
+                "is_surface": False,
+                "parent_id": "Component1",
+            },
+        ],
+    }
+    # Adding needed bodies and components that are modified
+    design.bodies.append(
+        MasterBody("body100", "ExistingBody", design._grpc_client, is_surface=False)
+    )
+    design.components[2].components.append(
+        Component("SubComponent", design.components[2], design._grpc_client, preexisting_id="sub1")
+    )
+    design.components[2].components[0].components.append(
+        Component(
+            "SubComponent2",
+            design.components[2].components[0],
+            design._grpc_client,
+            preexisting_id="sub2",
+        )
+    )
+    design.components[2].components[0].bodies.append(
+        MasterBody("test", "SubComponentBody", design._grpc_client, is_surface=True)
+    )
+    # Changing the ids of the bodies to match those in the tracker response
+    design.components[1].bodies[0]._id = "7"
+    design.bodies[0]._id = "10"
+    result = design._update_from_tracker(tracker_response)
+    assert result is None
+    # Then we create particular body_into statements to hit lines not hit when calling
+    # the _update_from_tracker method
+    body_info = {
+        "id": "body1",
+        "name": "UpdatedSubComponentBody",
+        "is_surface": False,
+        "parent_id": "sub1",
+    }
+    design._find_and_update_body(body_info, design.components[2])
+    top_component = Component("TopComponent", design, design._grpc_client, preexisting_id="top1")
+    design.components.append(top_component)
+    body_info = {
+        "id": "body1",
+        "name": "NewBody",
+        "is_surface": True,
+        "parent_id": "top1",
+    }
+    result = design._find_and_add_body(body_info, design.components)
+
+
+def test_legacy_export_download(
+    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, use_grpc_client_old_backend: Modeler
+):
+    # Test is meant to add test coverage for using an old backend to export and download
+    # Creating the directory and file to export
+    working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
+    original_file = Path(FILES_DIR, "reactorWNS.scdocx")
+    reexported_file = Path(working_directory, "reexported.scdocx")
+    design = modeler.create_design("Assembly")
+    design.insert_file(original_file)
+    # The following lines export the file to scdocx and parasolid
+    design.download(reexported_file, format=DesignFileFormat.SCDOCX)
+    reexported_file = Path(working_directory, "reexported.x_t")
+    design.download(reexported_file, format=DesignFileFormat.PARASOLID_TEXT)
+    # This is testing out exporting out to a non-supported format
+    reexported_file = Path(working_directory, "reexported.stride")
+    with pytest.raises(
+        TypeError, match="memoryview: a bytes-like object is required, not 'NoneType'"
+    ):
+        design.download(reexported_file, format=DesignFileFormat.STRIDE)
+
+
+def test_failure_for_export(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    # # Creating the directory and file to export
+    working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
+    original_file = Path(FILES_DIR, "reactorWNS.scdocx")
+    reexported_file = Path(working_directory, "reexported.scdocx")
+    design = modeler.create_design("Assembly")
+    design.insert_file(original_file)
+    # Giving the download an incorrect file extension in the file path for the chosen format
+    reexported_file = Path(working_directory, "reexported.x_t")
+    with pytest.raises(
+        GeometryExitedError,
+        match="Geometry service connection terminated: The method or operation is not implemented.",
+    ):
+        design.download(file_location=reexported_file, format=DesignFileFormat.STEP)
+    # Exporting to the invalid type to get an error
+    with pytest.raises(
+        TypeError, match="memoryview: a bytes-like object is required, not 'NoneType'"
+    ):
+        design.download(file_location=reexported_file, format=DesignFileFormat.INVALID)
 
 
 def test_combine_merge(modeler: Modeler):
