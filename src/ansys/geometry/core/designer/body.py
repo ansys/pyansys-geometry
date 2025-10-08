@@ -1295,15 +1295,11 @@ class MasterBody(IBody):
         if not self._tessellation:
             if tess_options is not None:
                 response = self._grpc_client.services.bodies.get_tesellation_with_options(
-                    id=self.id,
-                    options=tess_options,
-                    raw_data=True
+                    id=self.id, options=tess_options, raw_data=True
                 )
             else:
                 response = self._grpc_client.services.bodies.get_tesellation(
-                    id=self.id,
-                    backend_version=self._grpc_client.backend_version,
-                    raw_data=True
+                    id=self.id, backend_version=self._grpc_client.backend_version, raw_data=True
                 )
 
             self._tessellation = response.get("tessellation")
@@ -1337,17 +1333,13 @@ class MasterBody(IBody):
         if not self._tessellation:
             if tess_options is not None:
                 response = self._grpc_client.services.bodies.get_tesellation_with_options(
-                    id=self.id,
-                    options=tess_options,
-                    raw_data=False
+                    id=self.id, options=tess_options, raw_data=False
                 )
             else:
                 response = self._grpc_client.services.bodies.get_tesellation(
-                    id=self.id,
-                    backend_version=self._grpc_client.backend_version,
-                    raw_data=False
+                    id=self.id, backend_version=self._grpc_client.backend_version, raw_data=False
                 )
-                
+
             self._tessellation = response.get("tessellation")
 
         pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]

@@ -165,7 +165,6 @@ def test_component_tessellate(modeler: Modeler):
 
 def test_get_design_tessellation(modeler: Modeler):
     """Test getting the entire design tessellation."""
-    import pyvista as pv
 
     design = modeler.create_design("revolve_edges")
     box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
@@ -194,7 +193,6 @@ def test_get_design_tessellation(modeler: Modeler):
 
 def test_get_body_raw_tessellation(modeler: Modeler):
     """Test getting the raw tessellation from a body."""
-    import pyvista as pv
 
     design = modeler.create_design("revolve_edges")
     box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
