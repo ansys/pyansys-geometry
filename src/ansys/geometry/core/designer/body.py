@@ -581,7 +581,7 @@ class IBody(ABC):
     @abstractmethod
     def get_raw_tessellation(self, tess_options: TessellationOptions | None = None) -> dict:
         """Tessellate the body and return the raw tessellation data.
-        
+
         Parameters
         ----------
         tess_options : TessellationOptions | None, default: None

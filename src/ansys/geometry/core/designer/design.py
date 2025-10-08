@@ -85,7 +85,7 @@ from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.typing import RealSequence
 
 if TYPE_CHECKING:  # pragma: no cover
-    from pyvista import MultiBlock, PolyData
+    pass
 
 
 @unique
@@ -1036,7 +1036,7 @@ class Design(Component):
 
         # Return the newly inserted component
         return self._components[-1]
-    
+
     @min_backend_version(26, 1, 0)
     @check_input_types
     @graphics_required
@@ -1057,7 +1057,7 @@ class Design(Component):
         """
         if not self.is_alive:
             return {}  # Return an empty dictionary if the design is not alive
-        
+
         self._grpc_client.log.debug(f"Requesting tessellation for design {self.id}.")
 
         # cache tessellation
@@ -1065,7 +1065,7 @@ class Design(Component):
             response = self._grpc_client.services.designs.stream_design_tessellation(
                 options=tess_options,
             )
-            
+
             self._tessellation = response.get("tessellation")
 
         return self._tessellation

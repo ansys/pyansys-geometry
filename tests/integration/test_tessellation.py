@@ -162,7 +162,7 @@ def test_component_tessellate(modeler: Modeler):
             abs=1e-8,
         )
 
-    
+
 def test_get_design_tessellation(modeler: Modeler):
     """Test getting the entire design tessellation."""
     import pyvista as pv
@@ -214,7 +214,7 @@ def test_get_body_raw_tessellation(modeler: Modeler):
         assert isinstance(face_tess, pv.PolyData)
         assert face_tess.n_cells == 2
         assert face_tess.n_points == 4
-    
+
     # Get the raw tessellation from the cylinder body
     cyl_tess = cylinder.get_raw_tessellation()
     assert isinstance(cyl_tess, dict)
