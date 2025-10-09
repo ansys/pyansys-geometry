@@ -573,13 +573,20 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def get_raw_tessellation(self, tess_options: TessellationOptions | None = None) -> dict:
+    def get_raw_tessellation(
+        self,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
+    ) -> dict:
         """Tessellate the body and return the raw tessellation data.
 
         Parameters
         ----------
         tess_options : TessellationOptions | None, default: None
             A set of options to determine the tessellation quality.
+        reset_cache : bool, default: False
+            Whether to reset the tessellation cache and re-request the tessellation
+            from the server.
 
         Returns
         -------
@@ -589,7 +596,10 @@ class IBody(ABC):
 
     @abstractmethod
     def tessellate(
-        self, merge: bool = False, tess_options: TessellationOptions | None = None
+        self,
+        merge: bool = False,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False
     ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
@@ -601,6 +611,9 @@ class IBody(ABC):
             When ``True``, the individual faces of the tessellation are merged.
         tess_options : TessellationOptions | None, default: None
             A set of options to determine the tessellation quality.
+        reset_cache : bool, default: False
+            Whether to reset the tessellation cache and re-request the tessellation
+            from the server.
 
         Returns
         -------
@@ -871,6 +884,7 @@ class MasterBody(IBody):
         self._surface_offset = None
         self._is_alive = True
         self._tessellation = None
+        self._raw_tessellation = None
         self._fill_style = FillStyle.DEFAULT
         self._color = None
 
@@ -891,6 +905,7 @@ class MasterBody(IBody):
         @wraps(func)
         def wrapper(self: "MasterBody", *args, **kwargs):
             self._tessellation = None
+            self._raw_tessellation = None
             return func(self, *args, **kwargs)
 
         return wrapper
@@ -1266,7 +1281,11 @@ class MasterBody(IBody):
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
         return Body(body_id, response.get("name"), parent, tb)
 
-    def get_raw_tessellation(self, tess_options: TessellationOptions | None = None) -> dict:  # noqa: D102
+    def get_raw_tessellation(  # noqa: D102
+        self,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
+    ) -> dict:
         if not self.is_alive:
             return {}
 
@@ -1281,7 +1300,7 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
         # cache tessellation
-        if not self._tessellation:
+        if not self._raw_tessellation or reset_cache:
             if tess_options is not None:
                 response = self._grpc_client.services.bodies.get_tesellation_with_options(
                     id=self.id, options=tess_options, raw_data=True
@@ -1291,9 +1310,9 @@ class MasterBody(IBody):
                     id=self.id, backend_version=self._grpc_client.backend_version, raw_data=True
                 )
 
-            self._tessellation = response.get("tessellation")
+            self._raw_tessellation = response.get("tessellation")
 
-        return self._tessellation
+        return self._raw_tessellation
 
     @graphics_required
     def tessellate(  # noqa: D102
@@ -1301,6 +1320,7 @@ class MasterBody(IBody):
         merge: bool = False,
         transform: Matrix44 = IDENTITY_MATRIX44,
         tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1319,7 +1339,7 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
         # cache tessellation
-        if not self._tessellation:
+        if not self._tessellation or reset_cache:
             if tess_options is not None:
                 response = self._grpc_client.services.bodies.get_tesellation_with_options(
                     id=self.id, options=tess_options, raw_data=False
@@ -1483,6 +1503,7 @@ class Body(IBody):
     def _reset_tessellation_cache(self):  # noqa: N805
         """Reset the cached tessellation for a body."""
         self._template._tessellation = None
+        self._template._raw_tessellation = None
         # if this reference is stale, reset the real cache in the part
         # this gets the matching id master body in the part
         master_in_part = next(
@@ -1495,6 +1516,7 @@ class Body(IBody):
         )
         if master_in_part is not None:
             master_in_part._tessellation = None
+            master_in_part._raw_tessellation = None
 
     @property
     def id(self) -> str:  # noqa: D102
@@ -1829,15 +1851,22 @@ class Body(IBody):
         return self._template.copy(parent, name)
 
     @ensure_design_is_active
-    def get_raw_tessellation(self, tess_options: TessellationOptions | None = None) -> dict:  # noqa: D102
-        return self._template.get_raw_tessellation(tess_options)
+    def get_raw_tessellation(  # noqa: D102
+        self,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
+    ) -> dict:
+        return self._template.get_raw_tessellation(tess_options, reset_cache)
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
-        self, merge: bool = False, tess_options: TessellationOptions | None = None
+        self,
+        merge: bool = False,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate(
-            merge, self.parent_component.get_world_transform(), tess_options
+            merge, self.parent_component.get_world_transform(), tess_options, reset_cache
         )
 
     @ensure_design_is_active

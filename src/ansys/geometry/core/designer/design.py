@@ -1035,13 +1035,19 @@ class Design(Component):
 
     @min_backend_version(26, 1, 0)
     @check_input_types
-    def get_raw_tessellation(self, tess_options: TessellationOptions | None = None) -> dict:
+    def get_raw_tessellation(
+        self,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
+    ) -> dict:
         """Tessellate the entire design and return the geometry as triangles.
 
         Parameters
         ----------
         tess_options : TessellationOptions, optional
             Options for the tessellation. If None, default options are used.
+        reset_cache : bool, default: False
+            Whether to reset the cache before performing the tessellation.
 
         Returns
         -------
@@ -1056,7 +1062,7 @@ class Design(Component):
         self._grpc_client.log.debug(f"Requesting tessellation for design {self.id}.")
 
         # cache tessellation
-        if not self._design_tess:
+        if not self._design_tess or reset_cache:
             response = self._grpc_client.services.designs.stream_design_tessellation(
                 options=tess_options,
             )
