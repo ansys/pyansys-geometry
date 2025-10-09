@@ -567,7 +567,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixMissingFacesRequest(
-            missing_face_problem_area_id=Int32Value(value=int(kwargs["missing_face_problem_area_id"])),
+            missing_face_problem_area_id=Int32Value(
+                value=int(kwargs["missing_face_problem_area_id"])
+            ),
         )
 
         # Call the gRPC service
@@ -589,7 +591,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixInexactEdgesRequest(
-            inexact_edge_problem_area_id=Int32Value(value=int(kwargs["inexact_edge_problem_area_id"])),
+            inexact_edge_problem_area_id=Int32Value(
+                value=int(kwargs["inexact_edge_problem_area_id"])
+            ),
         )
 
         # Call the gRPC service
@@ -699,7 +703,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixStitchFacesRequest(
-            stitch_face_problem_area_id=Int32Value(value=int(kwargs["stitch_face_problem_area_id"])),
+            stitch_face_problem_area_id=Int32Value(
+                value=int(kwargs["stitch_face_problem_area_id"])
+            ),
         )
 
         # Call the gRPC service
@@ -745,7 +751,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FixInterferenceRequest(
-            interference_problem_area_id=Int32Value(value=int(kwargs["interference_problem_area_id"])),
+            interference_problem_area_id=Int32Value(
+                value=int(kwargs["interference_problem_area_id"])
+            ),
         )
 
         # Call the gRPC service
