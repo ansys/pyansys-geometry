@@ -1266,7 +1266,6 @@ class MasterBody(IBody):
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
         return Body(body_id, response.get("name"), parent, tb)
 
-    @graphics_required
     def get_raw_tessellation(self, tess_options: TessellationOptions | None = None) -> dict:  # noqa: D102
         if not self.is_alive:
             return {}
