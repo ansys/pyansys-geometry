@@ -117,9 +117,6 @@ def test_body_tessellate(modeler: Modeler):
     assert comp_1.bodies[0]._template._tessellation is None
 
 
-@pytest.mark.skipif(
-    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
-)
 def test_component_tessellate(modeler: Modeler):
     """Test the component tessellation."""
     # Create a sketch
@@ -163,9 +160,6 @@ def test_component_tessellate(modeler: Modeler):
         )
 
 
-@pytest.mark.skipif(
-    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
-)
 def test_get_design_tessellation(modeler: Modeler):
     """Test getting the entire design tessellation."""
 

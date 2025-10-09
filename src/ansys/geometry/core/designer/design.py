@@ -23,7 +23,7 @@
 
 from enum import Enum, unique
 from pathlib import Path
-from typing import TYPE_CHECKING, Union
+from typing import Union
 
 from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from ansys.api.geometry.v0.commands_pb2 import (
@@ -84,9 +84,6 @@ from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.typing import RealSequence
 
-if TYPE_CHECKING:  # pragma: no cover
-    pass
-
 
 @unique
 class DesignFileFormat(Enum):
@@ -146,7 +143,7 @@ class Design(Component):
         self._design_id = ""
         self._is_active = False
         self._modeler = modeler
-        self._tessellation = None
+        self._design_tess = None
 
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
@@ -1039,7 +1036,6 @@ class Design(Component):
 
     @min_backend_version(26, 1, 0)
     @check_input_types
-    @graphics_required
     def get_raw_tessellation(self, tess_options: TessellationOptions | None = None) -> dict:
         """Tessellate the entire design and return the geometry as triangles.
 
@@ -1052,8 +1048,8 @@ class Design(Component):
         -------
         dict
             A dictionary with body IDs as keys and another dictionary as values.
-            The inner dictionary has face IDs as keys and the corresponding PyVista
-            PolyData objects as values.
+            The inner dictionary has face IDs as keys and the corresponding face/vertice arrays
+            as values.
         """
         if not self.is_alive:
             return {}  # Return an empty dictionary if the design is not alive
@@ -1061,14 +1057,14 @@ class Design(Component):
         self._grpc_client.log.debug(f"Requesting tessellation for design {self.id}.")
 
         # cache tessellation
-        if not self._tessellation:
+        if not self._design_tess:
             response = self._grpc_client.services.designs.stream_design_tessellation(
                 options=tess_options,
             )
 
-            self._tessellation = response.get("tessellation")
+            self._design_tess = response.get("tessellation")
 
-        return self._tessellation
+        return self._design_tess
 
     def __repr__(self) -> str:
         """Represent the ``Design`` as a string."""
