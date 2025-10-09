@@ -71,9 +71,12 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
+from ansys.geometry.core.misc.checks import (
+    ensure_design_is_active,
+    min_backend_version,
+)
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
-from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.misc.options import ImportOptions, TessellationOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
@@ -139,6 +142,7 @@ class Design(Component):
         self._design_id = ""
         self._is_active = False
         self._modeler = modeler
+        self._design_tess = None
 
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
@@ -1028,6 +1032,44 @@ class Design(Component):
 
         # Return the newly inserted component
         return self._components[-1]
+
+    @min_backend_version(26, 1, 0)
+    @check_input_types
+    def get_raw_tessellation(
+        self,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
+    ) -> dict:
+        """Tessellate the entire design and return the geometry as triangles.
+
+        Parameters
+        ----------
+        tess_options : TessellationOptions, optional
+            Options for the tessellation. If None, default options are used.
+        reset_cache : bool, default: False
+            Whether to reset the cache before performing the tessellation.
+
+        Returns
+        -------
+        dict
+            A dictionary with body IDs as keys and another dictionary as values.
+            The inner dictionary has face IDs as keys and the corresponding face/vertice arrays
+            as values.
+        """
+        if not self.is_alive:
+            return {}  # Return an empty dictionary if the design is not alive
+
+        self._grpc_client.log.debug(f"Requesting tessellation for design {self.id}.")
+
+        # cache tessellation
+        if not self._design_tess or reset_cache:
+            response = self._grpc_client.services.designs.stream_design_tessellation(
+                options=tess_options,
+            )
+
+            self._design_tess = response.get("tessellation")
+
+        return self._design_tess
 
     def __repr__(self) -> str:
         """Represent the ``Design`` as a string."""
