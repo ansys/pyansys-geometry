@@ -599,7 +599,7 @@ class IBody(ABC):
         self,
         merge: bool = False,
         tess_options: TessellationOptions | None = None,
-        reset_cache: bool = False
+        reset_cache: bool = False,
     ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
