@@ -45,6 +45,7 @@ from ansys.geometry.core.misc.checks import (
     deprecated_argument,
     deprecated_method,
     graphics_required,
+    kwargs_passed_not_accepted,
     min_backend_version,
     run_if_graphics_required,
 )
