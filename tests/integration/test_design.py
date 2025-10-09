@@ -3333,7 +3333,7 @@ def test_nurbs_surface_body_creation_using_old_backend(
     with pytest.raises(
         ValueError, match="NURBS surface bodies are only supported starting on Ansys release 26R1."
     ):
-        body = design.create_body_from_surface("nurbs_surface", trimmed_surface)
+        design.create_body_from_surface("nurbs_surface", trimmed_surface)
 
 
 def test_create_surface_from_nurbs_sketch(modeler: Modeler):
