@@ -11,7 +11,9 @@ updates:
       semver-patch-days: 3   # Cooldown for patch updates
       exclude:
         - "ansys-api-geometry"
+        - "ansys-platform-instancemanagement"
         - "ansys-sphinx-theme"
+        - "ansys-tools-path"
         - "ansys-tools-visualization-interface"
     labels:
       - "maintenance"
