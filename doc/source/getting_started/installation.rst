@@ -87,7 +87,7 @@ archive for your corresponding machine architecture from the repository's `Relea
 <https://github.com/ansys/pyansys-geometry/releases>`_.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,
-Linux, and MacOS from Python 3.10 to 3.13. You can install this on an isolated system with a fresh Python
+Linux, and MacOS from Python 3.10 to 3.14. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
 For example, on Linux with Python 3.10, unzip the wheelhouse archive and install it with these commands:
