@@ -73,7 +73,6 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import (
     ensure_design_is_active,
-    graphics_required,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
