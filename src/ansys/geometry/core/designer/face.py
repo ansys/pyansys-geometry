@@ -24,7 +24,6 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
@@ -184,11 +183,6 @@ class Face:
     def id(self) -> str:
         """Face ID."""
         return self._id
-
-    @property
-    def _grpc_id(self) -> EntityIdentifier:
-        """Entity ID of this face on the server side."""
-        return EntityIdentifier(id=self._id)
 
     @property
     def is_reversed(self) -> bool:

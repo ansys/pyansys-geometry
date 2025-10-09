@@ -24,10 +24,9 @@
 from abc import ABC, abstractmethod
 from collections.abc import Iterable
 from enum import Enum, unique
-from functools import cached_property, wraps
+from functools import wraps
 from typing import TYPE_CHECKING, Union
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
@@ -118,11 +117,6 @@ class IBody(ABC):
     @abstractmethod
     def id(self) -> str:
         """Get the ID of the body as a string."""
-        return
-
-    @abstractmethod
-    def _grpc_id(self) -> EntityIdentifier:
-        """Entity identifier of this body on the server side."""
         return
 
     @abstractmethod
@@ -905,10 +899,6 @@ class MasterBody(IBody):
     def id(self) -> str:  # noqa: D102
         return self._id
 
-    @cached_property
-    def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
-        return EntityIdentifier(id=self._id)
-
     @property
     def name(self) -> str:  # noqa: D102
         return self._name
@@ -1510,10 +1500,6 @@ class Body(IBody):
     @property
     def id(self) -> str:  # noqa: D102
         return self._id
-
-    @cached_property
-    def _grpc_id(self) -> EntityIdentifier:  # noqa: D102
-        return EntityIdentifier(id=self._id)
 
     @property
     def name(self) -> str:  # noqa: D102
