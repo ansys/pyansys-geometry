@@ -3307,10 +3307,10 @@ def test_nurbs_surface_body_creation(modeler: Modeler):
 
 
 def test_nurbs_surface_body_creation_using_old_backend(
-    modeler: Modeler, use_grpc_client_old_backend_251: Modeler
+    fake_modeler_old_backend_251: Modeler
 ):
     """Test not implemented surface body creation from NURBS surfaces using an old backend"""
-    design = modeler.create_design("Design1")
+    design = fake_modeler_old_backend_251.create_design("Design1")
 
     points = [
         Point3D([0, 0, 0]),
