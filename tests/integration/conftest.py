@@ -228,7 +228,7 @@ def use_grpc_client_old_backend(modeler: Modeler):
 
 
 @pytest.fixture(scope="function")
-def fake_old_backend_251(modeler: Modeler):
+def fake_modeler_old_backend_251(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
     modeler._grpc_client._backend_version = (25, 1, 0)
 
