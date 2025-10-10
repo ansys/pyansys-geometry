@@ -3306,9 +3306,7 @@ def test_nurbs_surface_body_creation(modeler: Modeler):
     assert surface.dir_z.z == 1
 
 
-def test_nurbs_surface_body_creation_using_old_backend(
-    fake_modeler_old_backend_251: Modeler
-):
+def test_nurbs_surface_body_creation_using_old_backend(fake_modeler_old_backend_251: Modeler):
     """Test not implemented surface body creation from NURBS surfaces using an old backend"""
     design = fake_modeler_old_backend_251.create_design("Design1")
 
