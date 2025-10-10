@@ -1090,3 +1090,46 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 for face in response.faces
             ],
         }
+
+    @protect_grpc
+    def get_full_tessellation(self, **kwargs):  # noqa: D102
+        from ansys.api.geometry.v0.bodies_pb2 import (
+            GetFullTessellationRequest,
+            GetFullTessellationRequestData,
+        )
+
+        from .conversions import (
+            from_grpc_edge_tess_to_pd,
+            from_grpc_edge_tess_to_raw_data,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetFullTessellationRequest(
+            request_data=[GetFullTessellationRequestData(
+                id=build_grpc_id(kwargs["id"]),
+                options=from_tess_options_to_grpc_tess_options(kwargs["tess_options"])
+                if kwargs["tess_options"]
+                else None,
+            )]
+        )
+
+        # Call the gRPC service
+        resp = self.stub.GetFullTessellation(request=request)
+
+        # Return the response - formatted as a dictionary
+        tess_map = {}
+        for response in resp.response_data:
+            for face_id, face_tess in response.face_tessellation.items():
+                tess_map[face_id] = (
+                    from_grpc_tess_to_raw_data(face_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_tess_to_pd(face_tess)
+                )
+            for edge_id, edge_tess in response.edge_tessellation.items():
+                tess_map[edge_id] = (
+                        from_grpc_edge_tess_to_raw_data(edge_tess)
+                        if kwargs["raw_data"]
+                        else from_grpc_edge_tess_to_pd(edge_tess)
+                    )
+
+        return {"tessellation": tess_map}

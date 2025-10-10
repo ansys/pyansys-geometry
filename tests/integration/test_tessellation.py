@@ -201,17 +201,17 @@ def test_get_body_raw_tessellation(modeler: Modeler):
     # Get the raw tessellation from the box body
     box_tess = box.get_raw_tessellation()
     assert isinstance(box_tess, dict)
-    assert len(box_tess) == 6  # Six faces on the box
+    assert len(box_tess) == 18  # Six faces + Twelve edge on the box
 
-    for face_id, face_tess in box_tess.items():
-        assert isinstance(face_id, str)
-        assert isinstance(face_tess, dict)
+    for id, tess in box_tess.items():
+        assert isinstance(id, str)
+        assert isinstance(tess, dict)
 
     # Get the raw tessellation from the cylinder body
     cyl_tess = cylinder.get_raw_tessellation()
     assert isinstance(cyl_tess, dict)
-    assert len(cyl_tess) == 3  # Three faces on the cylinder
+    assert len(cyl_tess) == 5  # Three faces + Two edges on the cylinder
 
-    for face_id, face_tess in cyl_tess.items():
-        assert isinstance(face_id, str)
-        assert isinstance(face_tess, dict)
+    for id, tess in cyl_tess.items():
+        assert isinstance(id, str)
+        assert isinstance(tess, dict)

@@ -271,3 +271,8 @@ class GRPCBodyService(ABC):  # pragma: no cover
     def imprint_projected_curves(self, **kwargs) -> dict:
         """Imprint projected curves on a body."""
         pass
+
+    @abstractmethod
+    def get_full_tessellation(self, **kwargs) -> dict:
+        """Get the full tessellation of a body."""
+        pass

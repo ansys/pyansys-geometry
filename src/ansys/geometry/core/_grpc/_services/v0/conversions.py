@@ -35,6 +35,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     Circle as GRPCCircle,
     CurveGeometry as GRPCCurveGeometry,
     Direction as GRPCDirection,
+    EdgeTessellation as GRPCEdgeTessellation,
     Ellipse as GRPCEllipse,
     Frame as GRPCFrame,
     Geometries as GRPCGeometries,
@@ -378,6 +379,26 @@ def from_grpc_tess_to_pd(tess: GRPCTessellation) -> "pv.PolyData":
 def from_grpc_tess_to_raw_data(tess: GRPCTessellation) -> dict:
     """Convert a ``Tessellation`` to raw data."""
     return {"vertices": tess.vertices, "faces": tess.faces}
+
+
+@graphics_required
+def from_grpc_edge_tess_to_pd(tess: GRPCEdgeTessellation) -> "pv.PolyData":
+    """Convert a ``EdgeTessellation`` to ``pyvista.PolyData``."""
+    # lazy imports here to improve initial load
+    import numpy as np
+    import pyvista as pv
+
+    if len(tess.vertices) == 0:
+        return pv.PolyData()
+
+    points = np.reshape(np.array([from_grpc_point_to_point3d(pt) for pt in tess.vertices]), (-1, 3))
+    lines = np.hstack([[len(points), *range(len(points))]])
+    return pv.PolyData(points, lines=lines)
+
+
+def from_grpc_edge_tess_to_raw_data(tess: GRPCEdgeTessellation) -> dict:
+    """Convert a ``EdgeTessellation`` to raw data."""
+    return {"vertices": [from_grpc_point_to_point3d(pt) for pt in tess.vertices]}
 
 
 def from_tess_options_to_grpc_tess_options(

@@ -575,6 +575,7 @@ class IBody(ABC):
     @abstractmethod
     def get_raw_tessellation(
         self,
+        transform: Matrix44 = IDENTITY_MATRIX44,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
     ) -> dict:
@@ -582,6 +583,8 @@ class IBody(ABC):
 
         Parameters
         ----------
+        transform : Matrix44, default: IDENTITY_MATRIX44
+            A transformation matrix to apply to the tessellation.
         tess_options : TessellationOptions | None, default: None
             A set of options to determine the tessellation quality.
         reset_cache : bool, default: False
@@ -591,7 +594,7 @@ class IBody(ABC):
         Returns
         -------
         dict
-            Dictionary with face IDs as keys and face tessellation data as values.
+            Dictionary with face and edge IDs as keys and face and edge tessellation data as values.
         """
 
     @abstractmethod
@@ -656,6 +659,36 @@ class IBody(ABC):
           Y Bounds:	-1.000e+00, 0.000e+00
           Z Bounds:	-5.000e-01, 4.500e+00
           N Arrays:	0
+        """
+        return
+    
+    @abstractmethod
+    def get_full_tessellation(
+        self,
+        merge: bool = False,
+        transform: Matrix44 = IDENTITY_MATRIX44,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
+    ) -> dict:
+        """Tessellate the body and return the full tessellation data.
+
+        Parameters
+        ----------
+        merge : bool, default: False
+            Whether to merge the body into a single mesh. When ``False`` (default), the
+            number of triangles are preserved and only the topology is merged.
+        transform : Matrix44, default: IDENTITY_MATRIX44
+            A transformation matrix to apply to the tessellation.
+        tess_options : TessellationOptions | None, default: None
+            A set of options to determine the tessellation quality.
+        reset_cache : bool, default: False
+            Whether to reset the tessellation cache and re-request the tessellation
+            from the server.
+        
+        Returns
+        -------
+        dict
+            Dictionary with face and edge IDs as keys and face and edge tessellation data as values.
         """
         return
 
@@ -1281,36 +1314,33 @@ class MasterBody(IBody):
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
         return Body(body_id, response.get("name"), parent, tb)
 
+    @min_backend_version(26, 1, 0)
     def get_raw_tessellation(  # noqa: D102
         self,
+        transform: Matrix44 = IDENTITY_MATRIX44,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
     ) -> dict:
         if not self.is_alive:
             return {}
 
-        # If the server does not support tessellation options, ignore them
-        if tess_options is not None and self._grpc_client.backend_version < (25, 2, 0):
-            self._grpc_client.log.warning(
-                "Tessellation options are not supported by server"
-                f" version {self._grpc_client.backend_version}. Ignoring options."
-            )
-            tess_options = None
-
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
         # cache tessellation
         if not self._raw_tessellation or reset_cache:
-            if tess_options is not None:
-                response = self._grpc_client.services.bodies.get_tesellation_with_options(
-                    id=self.id, options=tess_options, raw_data=True
-                )
-            else:
-                response = self._grpc_client.services.bodies.get_tesellation(
-                    id=self.id, backend_version=self._grpc_client.backend_version, raw_data=True
-                )
+            response = self._grpc_client.services.bodies.get_full_tessellation(
+                id=self.id, tess_options=tess_options, raw_data=True
+            )
 
             self._raw_tessellation = response.get("tessellation")
+
+        # Transform the raw tessellation points
+        import numpy as np
+        for face_id, face_tess in self._raw_tessellation.items():
+            vertices = np.reshape(np.array(face_tess.get("vertices")), (-1, 3))
+            homogenous_points = np.hstack([vertices, np.ones((vertices.shape[0], 1))])
+            transformed_points = (transform @ homogenous_points.T).T[:, :3]
+            self._raw_tessellation[face_id]["vertices"] = transformed_points.tolist()
 
         return self._raw_tessellation
 
@@ -1357,6 +1387,40 @@ class MasterBody(IBody):
         if merge:
             ugrid = comp.combine()
             return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
+        else:
+            return comp
+        
+    @min_backend_version(26, 1, 0)
+    @graphics_required
+    def get_full_tessellation(  # noqa: D102
+        self,
+        merge: bool = False,
+        transform: Matrix44 = IDENTITY_MATRIX44,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
+    ) -> Union["PolyData", "MultiBlock"]:
+        # lazy import here to improve initial module load time
+        import pyvista as pv
+
+        if not self.is_alive:
+            return pv.PolyData() if merge else pv.MultiBlock()
+
+        self._grpc_client.log.debug(f"Requesting edge tessellation for body {self.id}.")
+
+        if not self._tessellation or reset_cache:
+            response = self._grpc_client.services.bodies.get_full_tessellation(
+                id=self.id, tess_options=tess_options, raw_data=False
+            )
+            self._tessellation = response.get("tessellation")
+
+        pdata = [
+            tess.transform(transform, inplace=False)
+            for tess in self._tessellation.values()
+        ]
+        comp = pv.MultiBlock(pdata)
+
+        if merge:
+            return comp.combine()
         else:
             return comp
 
@@ -1856,7 +1920,11 @@ class Body(IBody):
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
     ) -> dict:
-        return self._template.get_raw_tessellation(tess_options, reset_cache)
+        return self._template.get_raw_tessellation(
+            self.parent_component.get_world_transform(),
+            tess_options,
+            reset_cache
+        )
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
@@ -1866,6 +1934,17 @@ class Body(IBody):
         reset_cache: bool = False,
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate(
+            merge, self.parent_component.get_world_transform(), tess_options, reset_cache
+        )
+
+    @ensure_design_is_active
+    def get_full_tessellation(  # noqa: D102
+        self,
+        merge: bool = False,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
+    ) -> Union["PolyData", "MultiBlock"]:
+        return self._template.get_full_tessellation(
             merge, self.parent_component.get_world_transform(), tess_options, reset_cache
         )
 

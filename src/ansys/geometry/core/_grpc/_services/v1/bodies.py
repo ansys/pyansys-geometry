@@ -235,3 +235,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def imprint_projected_curves(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def get_full_tessellation(self, **kwargs):  # noqa: D102
+        raise NotImplementedError
