@@ -3293,6 +3293,46 @@ def test_nurbs_surface_body_creation(modeler: Modeler):
     assert body.is_surface
     assert body.faces[0].area.m == pytest.approx(7.44626609)
 
+    assert surface.origin.x == 0
+    assert surface.origin.y == 0
+    assert surface.origin.z == 0
+
+    assert surface.dir_x.x == 1
+    assert surface.dir_x.y == 0
+    assert surface.dir_x.z == 0
+
+    assert surface.dir_z.x == 0
+    assert surface.dir_z.y == 0
+    assert surface.dir_z.z == 1
+
+
+def test_nurbs_surface_body_creation_using_old_backend(fake_modeler_old_backend_251: Modeler):
+    """Test not implemented surface body creation from NURBS surfaces using an old backend"""
+    design = fake_modeler_old_backend_251.create_design("Design1")
+
+    points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+    degree_u = 2
+    degree_v = 2
+    surface = NURBSSurface.fit_surface_from_points(
+        points=points, size_u=3, size_v=3, degree_u=degree_u, degree_v=degree_v
+    )
+
+    trimmed_surface = surface.trim(BoxUV(Interval(0, 1), Interval(0, 1)))
+    with pytest.raises(
+        ValueError, match="NURBS surface bodies are only supported starting on Ansys release 26R1."
+    ):
+        design.create_body_from_surface("nurbs_surface", trimmed_surface)
+
 
 def test_create_surface_from_nurbs_sketch(modeler: Modeler):
     """Test creating a surface from a NURBS sketch."""
