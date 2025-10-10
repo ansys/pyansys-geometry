@@ -105,7 +105,7 @@ doc = [
     "notebook==7.4.7",
     "numpydoc==1.9.0",
     "numpy==2.2.6",
-    "panel==1.8.1",
+    "panel==1.8.2",
     "pdf2image==1.17.0",
     "Pint==0.24.4",
     "protobuf==6.32.1",
