@@ -390,7 +390,7 @@ class Beam:
         self._material = material
         self._cross_section = cross_section
         self._properties = properties
-        self._shape = shape
+        # self._shape = shape
         self._type = beam_type
 
     @property

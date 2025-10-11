@@ -39,11 +39,6 @@ from pint import Quantity, UndefinedUnitError
 
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.connection.conversions import (
-    grpc_curve_to_curve,
-    grpc_frame_to_frame,
-    grpc_material_to_material,
-    grpc_matrix_to_matrix,
-    grpc_point_to_point3d,
     plane_to_grpc_plane,
     point3d_to_grpc_point,
 )
@@ -1089,10 +1084,13 @@ class Design(Component):
             self._name = design_response.get("name")
             self._activate(called_after_design_creation=True)
 
-        response = self._commands_stub.GetAssembly(EntityIdentifier(id=self._design_id))
+        # request = {"active_design" : design_response}
+        response = self._grpc_client.services.designs.get_assembly(active_design=design_response)
 
         # Store created objects
-        created_parts = {p.id: Part(p.id, p.name, [], []) for p in response.parts}
+        created_parts = {
+            p.get("id"): Part(p.get("id"), p.get("name"), [], []) for p in response.get("parts")
+        }
         created_tps = {}
         created_components = {design_response.get("main_part_id"): self}
         created_bodies = {}
@@ -1103,154 +1101,169 @@ class Design(Component):
         )
 
         # Create MasterComponents
-        for master in response.transformed_parts:
-            part = created_parts.get(master.part_master.id)
+        for master in response.get("transformed_parts"):
+            part = created_parts.get(master.get("part_master").get("id"))
             new_master = MasterComponent(
-                master.id, master.name, part, grpc_matrix_to_matrix(master.placement)
+                master.get("id"), master.get("name"), part, master.get("placement")
             )
-            created_tps[master.id] = new_master
+            created_tps[master.get("id")] = new_master
 
         # Create Components
-        for comp in response.components:
-            parent = created_components.get(comp.parent_id)
-            master = created_tps.get(comp.master_id)
+        for comp in response.get("components"):
+            parent = created_components.get(comp.get("parent_id"))
+            master = created_tps.get(comp.get("master_id"))
             c = Component(
-                comp.name,
+                comp.get("name"),
                 parent,
                 self._grpc_client,
-                preexisting_id=comp.id,
+                preexisting_id=comp.get("id"),
                 master_component=master,
                 read_existing_comp=True,
             )
-            created_components[comp.id] = c
+            created_components[comp.get("id")] = c
             parent.components.append(c)
 
         # Create Bodies
-        for body in response.bodies:
-            part = created_parts.get(body.parent_id)
-            tb = MasterBody(body.id, body.name, self._grpc_client, is_surface=body.is_surface)
+        for body in response.get("bodies"):
+            part = created_parts.get(body.get("parent_id"))
+            tb = MasterBody(
+                body.get("id"),
+                body.get("name"),
+                self._grpc_client,
+                is_surface=body.get("is_surface"),
+            )
             part.bodies.append(tb)
-            created_bodies[body.id] = tb
+            created_bodies[body.get("id")] = tb
 
         # Create Materials
-        for material in response.materials:
+        for material in response.get("materials"):
             properties = []
             density = Quantity(0)
-            for property in material.material_properties:
+            for property in material.get("material_properties"):
                 # TODO: Add support for more material properties...
                 #      - Need to add support for more MaterialPropertyTypes
                 #      - Need to add support for more Quantity units
                 # https://github.com/ansys/pyansys-geometry/issues/1319
                 try:
-                    mp_type = MaterialPropertyType.from_id(property.id)
+                    mp_type = MaterialPropertyType.from_id(property.get("id"))
                 except ValueError as err:
                     # TODO: Errors coming from MaterialPropertyType.from_id
                     # because of unsupported MaterialPropertyType entries...
                     # https://github.com/ansys/pyansys-geometry/issues/1319
                     self._grpc_client.log.warning(
-                        f"Material property {property.display_name} of type {property.id} is not supported."  # noqa : E501
+                        f"Material property {property.get('display_name')} of type {property.get('id')} is not supported."  # noqa : E501
                         " Storing as string."
                     )
                     self._grpc_client.log.warning(f"Root cause: {err}")
                     mp_type = property.id
 
                 try:
-                    mp_quantity = Quantity(property.value, property.units)
+                    mp_quantity = Quantity(property.get("value"), property.get("units"))
                 except (
                     UndefinedUnitError,
                     TypeError,
                 ) as err:  # TODO: Errors coming from Quantity ctor because of unsupported units...
                     # https://github.com/ansys/pyansys-geometry/issues/1319
                     self._grpc_client.log.warning(
-                        f"Material property {property.display_name} with units {property.units} is not fully supported."  # noqa : E501
+                        f"Material property {property.get('display_name')} with units {property.get('units')} is not fully supported."  # noqa : E501
                         " Storing value only as float."
                     )
                     self._grpc_client.log.warning(f"Root cause: {err}")
-                    mp_quantity = property.value
+                    mp_quantity = property.get("value")
 
-                mp = MaterialProperty(mp_type, property.display_name, mp_quantity)
+                mp = MaterialProperty(mp_type, property.get("display_name"), mp_quantity)
                 properties.append(mp)
                 if mp.type == MaterialPropertyType.DENSITY:
                     density = (
                         mp.quantity if isinstance(mp.quantity, Quantity) else Quantity(mp.quantity)
                     )
 
-            m = Material(material.name, density, properties)
+            m = Material(material.get("name"), density, properties)
             self.materials.append(m)
 
         # Create Beams
-        for beam in response.beams:
+        for beam in response.get("beams"):
             cross_section = BeamCrossSectionInfo(
-                section_anchor=SectionAnchorType(beam.cross_section.section_anchor),
-                section_angle=beam.cross_section.section_angle,
-                section_frame=grpc_frame_to_frame(beam.cross_section.section_frame),
+                section_anchor=SectionAnchorType(beam.get("cross_section").get("section_anchor")),
+                section_angle=beam.get("cross_section").get("section_angle"),
+                section_frame=beam.get("cross_section").get("section_frame"),
                 section_profile=[
                     [
                         TrimmedCurve(
-                            geometry=grpc_curve_to_curve(curve.curve),
-                            start=grpc_point_to_point3d(curve.start),
-                            end=grpc_point_to_point3d(curve.end),
-                            interval=Interval(curve.interval_start, curve.interval_end),
-                            length=curve.length,
+                            geometry=curve.get("curve"),
+                            start=curve.get("start"),
+                            end=curve.get("end"),
+                            interval=Interval(
+                                curve.get("interval_start"), curve.get("interval_end")
+                            ),
+                            length=curve.get("length"),
                         )
-                        for curve in curve_list.curves
+                        for curve in curve_list.get("curves")
                     ]
-                    for curve_list in beam.cross_section.section_profile
+                    for curve_list in beam.get("cross_section").get("section_profile")
                 ],
             )
             properties = BeamProperties(
-                area=beam.properties.area,
-                centroid=ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
-                warping_constant=beam.properties.warping_constant,
-                ixx=beam.properties.ixx,
-                ixy=beam.properties.ixy,
-                iyy=beam.properties.iyy,
-                shear_center=ParamUV(
-                    beam.properties.shear_center_x, beam.properties.shear_center_y
+                area=beam.get("properties").get("area"),
+                centroid=ParamUV(
+                    beam.get("properties").get("centroid_x"),
+                    beam.get("properties").get("centroid_y"),
                 ),
-                torsion_constant=beam.properties.torsional_constant,
+                warping_constant=beam.get("properties").get("warping_constant"),
+                ixx=beam.get("properties").get("ixx"),
+                ixy=beam.get("properties").get("ixy"),
+                iyy=beam.get("properties").get("iyy"),
+                shear_center=ParamUV(
+                    beam.get("properties").get("shear_center_x"),
+                    beam.get("properties").get("shear_center_y"),
+                ),
+                torsion_constant=beam.get("properties").get("torsional_constant"),
             )
 
             new_beam = Beam(
-                id=beam.id.id,
-                start=grpc_point_to_point3d(beam.shape.start),
-                end=grpc_point_to_point3d(beam.shape.end),
+                id=beam.get("id"),
+                start=beam.get("start"),
+                end=beam.get("end"),
                 profile=None,
                 # TODO: Beams need BeamProfiles imported from existing design
                 # https://github.com/ansys/pyansys-geometry/issues/1825
                 parent_component=self,
-                name=beam.name,
-                is_deleted=beam.is_deleted,
-                is_reversed=beam.is_reversed,
-                is_rigid=beam.is_rigid,
-                material=grpc_material_to_material(beam.material),
+                name=beam.get("name"),
+                is_deleted=beam.get("is_deleted"),
+                is_reversed=beam.get("is_reversed"),
+                is_rigid=beam.get("is_rigid"),
+                material=beam.get("material"),
                 cross_section=cross_section,
                 properties=properties,
-                shape=beam.shape,
-                beam_type=beam.type,
+                # shape=beam.shape,
+                beam_type=beam.get("type"),
             )
 
             # Find the component to which the beam belongs
-            parent = created_components.get(beam.parent.id, self)
+            parent = created_components.get(beam.get("parent.id"), self)
             parent._beams.append(new_beam)
 
         # Create NamedSelections
-        for ns in response.named_selections:
+        for ns in response.get("named_selections"):
             new_ns = NamedSelection(
-                ns.name,
+                ns.get("name"),
                 self,
                 self._grpc_client,
-                preexisting_id=ns.id,
+                preexisting_id=ns.get("id"),
             )
             self._named_selections[new_ns.name] = new_ns
 
         # Create CoordinateSystems
         num_created_coord_systems = 0
-        for component_id, coordinate_systems in response.component_coord_systems.items():
+        for ccs in response.get("component_coordinate_systems"):
+            component_id = ccs.get("component_id")
             component = created_components.get(component_id)
-            for cs in coordinate_systems.coordinate_systems:
-                frame = grpc_frame_to_frame(cs.frame)
-                new_cs = CoordinateSystem(cs.name, frame, component, self._grpc_client, cs.id)
+            coordinate_systems = ccs.get("coordinate_systems")
+            for cs in coordinate_systems:
+                frame = cs.get("frame")
+                new_cs = CoordinateSystem(
+                    cs.get("name"), frame, component, self._grpc_client, cs.get("id")
+                )
                 component.coordinate_systems.append(new_cs)
                 num_created_coord_systems += 1
 
@@ -1262,7 +1275,9 @@ class Design(Component):
         # Make sure design doesn't need edge case attention
         # https://github.com/ansys/pyansys-geometry/issues/1319
         num_created_shared_topologies = 0
-        for component_id, shared_topology_type in response.component_shared_topologies.items():
+        for cst in response.get("component_shared_topologies"):
+            component_id = cst.get("component_id")
+            shared_topology_type = cst.get("shared_topology_type")
             component = created_components.get(component_id)
             component._shared_topology = SharedTopologyType(shared_topology_type)
             num_created_shared_topologies += 1

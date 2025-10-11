@@ -50,6 +50,11 @@ class GRPCDesignsService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def get_assembly(self, **kwargs) -> dict:
+        """Create a new design."""
+        pass
+
+    @abstractmethod
     def close(self, **kwargs) -> dict:
         """Close the currently open design."""
         pass
