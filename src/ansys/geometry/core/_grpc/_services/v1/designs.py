@@ -56,6 +56,10 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
+    def get_assembly(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
     def close(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
