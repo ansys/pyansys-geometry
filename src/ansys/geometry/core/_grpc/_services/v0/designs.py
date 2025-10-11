@@ -36,6 +36,8 @@ from .conversions import (
     from_grpc_material_to_material,
     from_grpc_matrix_to_matrix,
     from_grpc_point_to_point3d,
+    from_grpc_tess_to_raw_data,
+    from_tess_options_to_grpc_tess_options,
 )
 
 
@@ -438,5 +440,35 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 component_coordinate_systems),
             "component_shared_topologies": serialize_component_shared_topologies(
                 component_shared_topologies),
-            "beams": [serialize_beam(beam) for beam in beams],
+            "beams": [serialize_beam(beam) for beam in beams]
+        }
+
+    @protect_grpc
+    def stream_design_tessellation(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.dbu.v0.designs_pb2 import DesignTessellationRequest
+
+        # If there are options, convert to gRPC options
+        options = (
+            from_tess_options_to_grpc_tess_options(kwargs["options"])
+            if kwargs["options"] is not None
+            else None
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DesignTessellationRequest(options=options)
+
+        # Call the gRPC service
+        response = self.designs_stub.StreamDesignTessellation(request)
+
+        # Return the response - formatted as a dictionary
+        tess_map = {}
+        for elem in response:
+            for body_id, body_tess in elem.body_tessellation.items():
+                tess = {}
+                for face_id, face_tess in body_tess.face_tessellation.items():
+                    tess[face_id] = from_grpc_tess_to_raw_data(face_tess)
+                tess_map[body_id] = tess
+
+        return {
+            "tessellation": tess_map,
         }
