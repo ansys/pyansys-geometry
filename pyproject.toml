@@ -119,7 +119,7 @@ general-all = [
 tests-minimal = [
   "pytest==8.4.2",
   "pytest-cov==7.0.0",
-  "pytest-pyvista==0.2.0",
+  "pytest-pyvista==0.3.0",
   "pyyaml==6.0.3",
 ]
 
