@@ -349,6 +349,7 @@ jobs:
           needs-quarto: true
           dependencies: 'pandoc'
           sphinxopts: '-j 1 -W --color'
+          group-dependencies-name: "doc"
 
       - name: Stop the Geometry service
         if: always()
@@ -446,6 +447,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           checkout: false
           randomize: true
+          group-dependencies-name: "tests"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
@@ -516,7 +518,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e .[all] --group tests-minimal
-          pip install pytest
 
       - name: Start Geometry service and verify start
         env:
@@ -868,6 +869,7 @@ jobs:
           pytest-extra-args: "--use-existing-service=yes"
           checkout: false
           randomize: true
+          group-dependencies-name: "tests"
 
       - name: "Compressing Linux Dockerfile"
         uses: vimtor/action-zip@1379ea20d4c5705669ba81fd626dd01b1c738f26 # v1.2
