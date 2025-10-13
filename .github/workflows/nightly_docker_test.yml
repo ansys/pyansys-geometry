@@ -115,7 +115,7 @@ jobs:
       - name: Install packages for testing
         run: |
           pip install --upgrade build
-          pip install -e .[tests]
+          pip install -e . --group tests
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
