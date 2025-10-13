@@ -321,7 +321,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 "name": material.name,
                 "material_properties": [
                     serialize_material_properties(property) for property in material_properties
-                ]
+                ],
             }
 
         def serialize_named_selection(named_selection):
@@ -437,10 +437,12 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
             "materials": [serialize_material(material) for material in materials],
             "named_selections": [serialize_named_selection(ns) for ns in named_selections],
             "component_coordinate_systems": serialize_component_coordinate_systems(
-                component_coordinate_systems),
+                component_coordinate_systems
+            ),
             "component_shared_topologies": serialize_component_shared_topologies(
-                component_shared_topologies),
-            "beams": [serialize_beam(beam) for beam in beams]
+                component_shared_topologies
+            ),
+            "beams": [serialize_beam(beam) for beam in beams],
         }
 
     @protect_grpc
