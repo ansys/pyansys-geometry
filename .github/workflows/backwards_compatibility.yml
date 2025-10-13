@@ -87,7 +87,7 @@ jobs:
         if: runner.name == 'pygeometry-ci-2'
         env:
           LICENSE_SERVER_INTERNAL: ${{ secrets.LICENSE_SERVER_INTERNAL }}
-        run:
+        run: |
           echo "ANSRV_GEO_LICENSE_SERVER=$env:LICENSE_SERVER_INTERNAL" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Stop any running containers
@@ -121,7 +121,7 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
-        timeout-minutes: 20  # On Windows self-hosted runners, sometimes hangs...
+        timeout-minutes: 20 # On Windows self-hosted runners, sometimes hangs...
         env:
           BACKEND_VERSION: ${{ matrix.backend-version }}
         run: |
@@ -151,10 +151,9 @@ jobs:
               docker rm $dockerContainers
           }
 
-# =================================================================================================
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# =================================================================================================
-
+  # =================================================================================================
+  # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  # =================================================================================================
 
   testing-backwards-compatibility-windows:
     name: Windows ${{ matrix.backend-version }}
@@ -214,7 +213,7 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
-        timeout-minutes: 20  # Sometimes hangs...
+        timeout-minutes: 20 # Sometimes hangs...
         env:
           BACKEND_VERSION: ${{ matrix.backend-version }}
         run: |
