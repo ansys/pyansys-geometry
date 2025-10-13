@@ -82,7 +82,7 @@ jobs:
       - name: PyAnsys documentation style checks
         uses: ansys/actions/doc-style@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
-         token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   smoke-tests:
     name: Build and Smoke tests
@@ -157,7 +157,6 @@ jobs:
             touch ${CONTAINER_UNSTABLE}.json
           fi
 
-
           # Check if the manifests are the same (and if so, create an output that will skip the next job)
           if diff ${CONTAINER_STABLE}.json ${CONTAINER_UNSTABLE}.json; then
             echo "${SERVICE_NAME} container manifests are the same... skipping"
@@ -229,7 +228,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade build wheel
-          pip install -e .[tests]
+          pip install -e . --group tests
 
       - name: Login to GitHub Container Registry
         if: env.SKIP_UNSTABLE == 'false'
@@ -269,11 +268,11 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-          lookup-only: false  # zizmor: ignore[cache-poisoning]
+          lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Testing
         if: env.SKIP_UNSTABLE == 'false'
-        timeout-minutes: 20  # Sometimes hangs...
+        timeout-minutes: 20 # Sometimes hangs...
         run: |
           pytest -v
 
@@ -350,6 +349,7 @@ jobs:
           needs-quarto: true
           dependencies: 'pandoc'
           sphinxopts: '-j 1 -W --color'
+          group-dependencies-name: "doc"
 
       - name: Stop the Geometry service
         if: always()
@@ -380,7 +380,7 @@ jobs:
         env:
           DOCKER_IMAGE: ${{ matrix.docker-image }}
           SKIP_CORE_LINUX: ${{ needs.manifests.outputs.skip_core_linux }}
-          VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}
+          VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY}}
         run: |
           # Choose the manifests output to consider (for Core service)
           # based on the matrix value
@@ -436,7 +436,7 @@ jobs:
           path: tests/integration/image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-          lookup-only: false  # zizmor: ignore[cache-poisoning]
+          lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
@@ -447,6 +447,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           checkout: false
           randomize: true
+          group-dependencies-name: "tests"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
@@ -516,8 +517,7 @@ jobs:
       - name: Install minimum requirements
         run: |
           python -m pip install --upgrade pip
-          pip install -e .[all,tests-minimal]
-          pip install pytest
+          pip install -e .[all] --group tests-minimal
 
       - name: Start Geometry service and verify start
         env:
@@ -569,7 +569,7 @@ jobs:
       - name: Install minimum requirements
         run: |
           python -m pip install --upgrade pip
-          pip install -e .[tests-minimal]
+          pip install -e . --group tests-minimal
           # Uninstall pytest-pyvista (not needed for these tests)
           pip uninstall -y pytest-pyvista
           # Installing docker (needed for the tests)
@@ -610,9 +610,9 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           attest-provenance: true
 
-# =================================================================================================
-# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-# =================================================================================================
+  # =================================================================================================
+  # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  # =================================================================================================
 
   fetch-release-artifacts:
     name: Fetch release artifacts
@@ -734,7 +734,7 @@ jobs:
         if: runner.name == 'pygeometry-ci-2'
         env:
           LICENSE_SERVER_INTERNAL: ${{ secrets.LICENSE_SERVER_INTERNAL }}
-        run:
+        run: |
           echo "ANSRV_GEO_LICENSE_SERVER=$env:LICENSE_SERVER_INTERNAL" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Validate connection using PyAnsys Geometry
@@ -742,7 +742,7 @@ jobs:
           python -m venv .venv
           .\.venv\Scripts\Activate.ps1
           python -m pip install --upgrade pip
-          pip install -e .[tests]
+          pip install -e . --group tests
 
       - name: Restore images cache
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -750,7 +750,7 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-          lookup-only: false  # zizmor: ignore[cache-poisoning]
+          lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Start Geometry service and verify start
         env:
@@ -767,7 +767,7 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
-        timeout-minutes: 20  # On Windows self-hosted runners, sometimes hangs...
+        timeout-minutes: 20 # On Windows self-hosted runners, sometimes hangs...
         run: |
           .\.venv\Scripts\Activate.ps1
           pytest -v --use-existing-service=yes
@@ -807,9 +807,9 @@ jobs:
           docker image rm ghcr.io/ansys/geometry:windows-tmp
           docker system prune -f
 
-# =================================================================================================
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# =================================================================================================
+  # =================================================================================================
+  # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  # =================================================================================================
 
   build-linux-container:
     name: Building Geometry Service - Linux
@@ -843,7 +843,7 @@ jobs:
       - name: Validate connection using PyAnsys Geometry
         run: |
           python -m pip install --upgrade pip
-          pip install -e .[tests]
+          pip install -e . --group tests
 
       - name: Start Geometry service and verify start
         env:
@@ -858,7 +858,7 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-          lookup-only: false  # zizmor: ignore[cache-poisoning]
+          lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Run pytest
         uses: ansys/actions/tests-pytest@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
@@ -869,6 +869,7 @@ jobs:
           pytest-extra-args: "--use-existing-service=yes"
           checkout: false
           randomize: true
+          group-dependencies-name: "tests"
 
       - name: "Compressing Linux Dockerfile"
         uses: vimtor/action-zip@1379ea20d4c5705669ba81fd626dd01b1c738f26 # v1.2

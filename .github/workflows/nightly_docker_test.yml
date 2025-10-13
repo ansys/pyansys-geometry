@@ -80,7 +80,6 @@ jobs:
             touch ${CONTAINER_UNSTABLE}.json
           fi
 
-
           # Check if the manifests are the same (and if so, create an output that will skip the next job)
           if diff ${CONTAINER_STABLE}.json ${CONTAINER_UNSTABLE}.json; then
             echo "${SERVICE_NAME} container manifests are the same... skipping"
@@ -116,7 +115,7 @@ jobs:
       - name: Install packages for testing
         run: |
           pip install --upgrade build
-          pip install -e .[tests]
+          pip install -e . --group tests
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
@@ -143,7 +142,7 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run PyAnsys Geometry tests
-        timeout-minutes: 20  # Sometimes hangs...
+        timeout-minutes: 20 # Sometimes hangs...
         run: |
           pytest -v
 
@@ -173,7 +172,8 @@ jobs:
                     "body": [
                       {
                         "type": "TextBlock",
-                        "text": "**Windows Core Service unstable build tests are failing**\n\n[View details in GitHub Actions](https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }})",
+                        "text": "**Windows Core Service unstable build tests are failing**\n\n[View
+            details in GitHub Actions](https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }})",
                         "wrap": true
                       }
                     ]
@@ -214,6 +214,7 @@ jobs:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          group-dependencies-name: "tests"
 
       - name: Stop the Geometry service
         if: always()
@@ -241,7 +242,8 @@ jobs:
                     "body": [
                       {
                         "type": "TextBlock",
-                        "text": "**Linux Core Service unstable build tests are failing**\n\n[View details in GitHub Actions](https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }})",
+                        "text": "**Linux Core Service unstable build tests are failing**\n\n[View
+            details in GitHub Actions](https://github.com/ansys/pyansys-geometry/actions/runs/${{ github.run_id }})",
                         "wrap": true
                       }
                     ]
