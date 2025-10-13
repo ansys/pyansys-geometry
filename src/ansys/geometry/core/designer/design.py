@@ -1126,7 +1126,6 @@ class Design(Component):
             self._name = design_response.get("name")
             self._activate(called_after_design_creation=True)
 
-        # request = {"active_design" : design_response}
         response = self._grpc_client.services.designs.get_assembly(active_design=design_response)
 
         # Store created objects
@@ -1277,7 +1276,6 @@ class Design(Component):
                 material=beam.get("material"),
                 cross_section=cross_section,
                 properties=properties,
-                # shape=beam.shape,
                 beam_type=beam.get("type"),
             )
 
