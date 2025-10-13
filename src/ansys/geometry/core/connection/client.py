@@ -227,6 +227,8 @@ class GrpcClient:
         # Store the backend type and version
         self._backend_type = response.get("backend")
         self._backend_version = response.get("version")
+        self._backend_api_server_build_info = response.get("api_server_build_info")
+        self._backend_product_build_info = response.get("product_build_info")
 
         # Register the close method to be called at exit - irrespectively of
         # the user calling it or not...
@@ -303,6 +305,21 @@ class GrpcClient:
         except Exception:  # pragma: no cover
             return False
 
+    def backend_info(self, indent=0) -> str:
+        """Get a string with the backend information.
+
+        Returns
+        -------
+        str
+            String with the backend information.
+        """
+        return (
+            f"{' ' * indent}Version:            {self.backend_version}\n"
+            f"{' ' * indent}Backend type:       {self.backend_type.name}\n"
+            f"{' ' * indent}Backend number:     {self._backend_product_build_info}\n"
+            f"{' ' * indent}API server number:  {self._backend_api_server_build_info}"
+        )
+
     def __repr__(self) -> str:
         """Represent the client as a string."""
         lines = []
@@ -314,6 +331,8 @@ class GrpcClient:
             lines.append("  Connection: Healthy")
         else:
             lines.append("  Connection: Unhealthy")  # pragma: no cover
+        lines.append("  Backend info:")
+        lines.append(self.backend_info(indent=4))
         return "\n".join(lines)
 
     def close(self):
