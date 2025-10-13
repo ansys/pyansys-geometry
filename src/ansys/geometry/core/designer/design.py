@@ -1196,7 +1196,7 @@ class Design(Component):
                         " Storing as string."
                     )
                     self._grpc_client.log.warning(f"Root cause: {err}")
-                    mp_type = property.id
+                    mp_type = property.get('id')
 
                 try:
                     mp_quantity = Quantity(property.get("value"), property.get("units"))
