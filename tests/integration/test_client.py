@@ -44,8 +44,19 @@ def test_client_init(client: GrpcClient):
     client_repr = repr(client)
     assert "Target" in client_repr
     assert "Connection" in client_repr
+    assert "Backend info" in client_repr
 
     assert client.channel
+
+
+def test_client_backend_info(client: GrpcClient):
+    """Test the retrieval of the backend information."""
+    backend_info = client.backend_info()
+    assert isinstance(backend_info, str)
+    assert "Version" in backend_info
+    assert "Backend type" in backend_info
+    assert "Backend number" in backend_info
+    assert "API server number" in backend_info
 
 
 def test_client_through_channel(modeler: Modeler):
