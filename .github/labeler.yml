@@ -1,11 +1,11 @@
 documentation:
-- changed-files:
-  - any-glob-to-any-file: 'doc/source/**/*'
-  - any-glob-to-any-file: 'README.rst'
+  - changed-files:
+      - any-glob-to-any-file: 'doc/source/**/*'
+      - any-glob-to-any-file: 'README.rst'
 maintenance:
-- changed-files:
-  - any-glob-to-any-file: '.github/**/*'
-  - any-glob-to-any-file: 'pyproject.toml'
+  - changed-files:
+      - any-glob-to-any-file: '.github/**/*'
+      - any-glob-to-any-file: 'pyproject.toml'
 testing:
-- changed-files:
-  - any-glob-to-any-file:  'tests/*'
+  - changed-files:
+      - any-glob-to-any-file: 'tests/*'

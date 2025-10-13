@@ -21,9 +21,11 @@ jobs:
       packages: write
     steps:
 
-    - name: "Perform versions cleanup - except certain tags"
-      uses: ansys/actions/hk-package-clean-except@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
-      with:
-        package-name: 'geometry'
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tags-kept: 'windows-latest, windows-latest-unstable, core-windows-latest, core-windows-latest-unstable, core-linux-latest, core-linux-latest-unstable, 24.1, 24.2, 25.1, windows-24.1, windows-24.2, windows-25.1, windows-25.2, core-windows-25.2, core-linux-25.2, simba-plugin-geometry'
+      - name: "Perform versions cleanup - except certain tags"
+        uses: ansys/actions/hk-package-clean-except@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
+        with:
+          package-name: 'geometry'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tags-kept: 'windows-latest, windows-latest-unstable, core-windows-latest, core-windows-latest-unstable, core-linux-latest,
+            core-linux-latest-unstable, 24.1, 24.2, 25.1, windows-24.1, windows-24.2, windows-25.1, windows-25.2, core-windows-25.2,
+            core-linux-25.2, simba-plugin-geometry'
