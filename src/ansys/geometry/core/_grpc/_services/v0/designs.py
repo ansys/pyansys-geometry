@@ -283,6 +283,8 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 tess = {}
                 for face_id, face_tess in body_tess.face_tessellation.items():
                     tess[face_id] = from_grpc_tess_to_raw_data(face_tess)
+                for edge_id, edge_tess in body_tess.edge_tessellation.items():
+                    tess[edge_id] = from_grpc_tess_to_raw_data(edge_tess)
                 tess_map[body_id] = tess
 
         return {
