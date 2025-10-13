@@ -164,6 +164,7 @@ def test_component_tessellate(modeler: Modeler):
 
 
 def test_get_design_tessellation(modeler: Modeler):
+    # TODO: fix to get edge tess too
     """Test getting the entire design tessellation."""
 
     design = modeler.create_design("revolve_edges")
@@ -215,3 +216,28 @@ def test_get_body_raw_tessellation(modeler: Modeler):
     for id, tess in cyl_tess.items():
         assert isinstance(id, str)
         assert isinstance(tess, dict)
+
+
+def test_get_body_full_tessellation(modeler: Modeler):
+    """Test getting the full tessellation from a body."""
+    design = modeler.create_design("full_tessellation")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    cylinder = design.extrude_sketch("cylinder", Sketch().circle(Point2D([5, 5]), 0.5), 2)
+
+    # Get the full tessellation from the box body
+    box_tess = box.get_full_tessellation(merge=True)
+    assert box_tess.n_cells == 24
+    assert box_tess.n_points == 48
+    assert box_tess.n_arrays == 0
+    assert box_tess.bounds == pytest.approx([-1.0, 1.0, -1.0, 1.0, 0.0, 2.0])
+
+    # Get the full tessellation from the cylinder body
+    cyl_tess = cylinder.get_full_tessellation(merge=True)
+    assert cyl_tess.n_cells == 234
+    assert cyl_tess.n_points == 354
+    assert cyl_tess.n_arrays == 0
+    assert cyl_tess.bounds == pytest.approx(
+        [4.5, 5.5, 4.500733293074438, 5.499266706925562, 0.0, 2.0],
+        rel=1e-5,
+        abs=1e-8,
+    )

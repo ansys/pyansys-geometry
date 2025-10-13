@@ -623,6 +623,11 @@ class IBody(ABC):
         ~pyvista.PolyData, ~pyvista.MultiBlock
             Merged :class:`pyvista.PolyData` if ``merge=True`` or a composite dataset.
 
+        Warnings
+        --------
+        This method does not include edge tessellation data.
+        If edge tessellation data is required, it must be requested via ``get_full_tessellation``.
+
         Examples
         --------
         Extrude a box centered at the origin to create a rectangular body and
@@ -1334,13 +1339,13 @@ class MasterBody(IBody):
 
             self._raw_tessellation = response.get("tessellation")
 
-        # Transform the raw tessellation points
+        # Transform the raw tessellation points for both faces/edges
         import numpy as np
-        for face_id, face_tess in self._raw_tessellation.items():
-            vertices = np.reshape(np.array(face_tess.get("vertices")), (-1, 3))
+        for id, tess in self._raw_tessellation.items():
+            vertices = np.reshape(np.array(tess.get("vertices")), (-1, 3))
             homogenous_points = np.hstack([vertices, np.ones((vertices.shape[0], 1))])
             transformed_points = (transform @ homogenous_points.T).T[:, :3]
-            self._raw_tessellation[face_id]["vertices"] = transformed_points.tolist()
+            self._raw_tessellation[id]["vertices"] = transformed_points.tolist()
 
         return self._raw_tessellation
 
