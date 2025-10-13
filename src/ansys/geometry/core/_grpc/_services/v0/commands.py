@@ -26,6 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.commands import GRPCCommandsService
+from .conversions import build_grpc_id
 
 
 class GRPCCommandsServiceV0(GRPCCommandsService):
@@ -49,12 +50,11 @@ class GRPCCommandsServiceV0(GRPCCommandsService):
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import RenameObjectRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RenameObjectRequest(
-            selection=[EntityIdentifier(id=id) for id in kwargs["selection_ids"]],
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
             name=kwargs["name"],
         )
 
