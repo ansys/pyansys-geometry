@@ -28,6 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.prepare_tools import GRPCPrepareToolsService
 from .conversions import build_grpc_id
 
+
 class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
     """Prepare tools service for gRPC communication with the Geometry server.
 

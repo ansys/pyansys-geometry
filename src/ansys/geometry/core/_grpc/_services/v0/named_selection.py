@@ -50,7 +50,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
 
     @protect_grpc
     def get_named_selection(self, **kwargs):  # noqa: D102
-            # Create the request - assumes all inputs are valid and of the proper type
+        # Create the request - assumes all inputs are valid and of the proper type
         request = build_grpc_id(kwargs["id"])
 
         # Call the gRPC service
