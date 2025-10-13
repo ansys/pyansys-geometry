@@ -455,6 +455,9 @@ def test_modeler(modeler: Modeler):
     # Get the modeler's string representation and check it
     repr = str(modeler)
     assert "Ansys Geometry Modeler (" in repr
+    assert "Target:" in repr
+    assert "Connection:" in repr
+    assert "Backend info:" in repr
 
     design = modeler.create_design("MyNewDesign")
     assert design is not None
