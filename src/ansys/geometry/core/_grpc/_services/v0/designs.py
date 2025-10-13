@@ -21,7 +21,6 @@
 # SOFTWARE.
 """Module containing the designs service implementation for v0."""
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
@@ -103,7 +102,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         # Create the request - assumes all inputs are valid and of the proper type
         request = build_grpc_id(id=design_id)
 
-         # Call the gRPC service
+        # Call the gRPC service
         response = self.commands_stub.GetAssembly(request)
 
         # Return the response - formatted as a dictionary
