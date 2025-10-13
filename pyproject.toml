@@ -1,191 +1,181 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
+requires = [ "flit-core>=3.2,<4" ]
 
 [project]
 name = "ansys-geometry-core"
 version = "0.12.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
-requires-python = ">=3.10,<4"
 license = "MIT"
-license-files = ["LICENSE"]
-authors = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
-maintainers = [{ name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" }]
+license-files = [ "LICENSE" ]
+maintainers = [ { name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" } ]
+authors = [ { name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" } ]
+requires-python = ">=3.10,<4"
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering :: Information Analysis",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 
 dependencies = [
-    "ansys-api-geometry==0.4.80",
-    "ansys-tools-path>=0.3,<1",
-    "beartype>=0.11.0,<0.22",
-    "geomdl>=5,<6",
-    "grpcio>=1.35.0,<2",
-    "grpcio-health-checking>=1.45.0,<2",
-    "matplotlib>=3,<4",
-    "numpy>=1.20.3,<3",
-    "Pint>=0.18,<1",
-    "protobuf>=3.20.2,<7",
-    "requests>=2,<3",
-    "scipy>=1.7.3,<2",
-    "semver>=3,<4",
-    "six>=1.16.0,<2",
+  "ansys-api-geometry==0.4.81",
+  "ansys-tools-path>=0.3,<1",
+  "beartype>=0.11.0,<0.22",
+  "geomdl>=5,<6",
+  "grpcio>=1.35.0,<2",
+  "grpcio-health-checking>=1.45.0,<2",
+  "matplotlib>=3,<4",
+  "numpy>=1.20.3,<3",
+  "pint>=0.18,<1",
+  "protobuf>=3.20.2,<7",
+  "requests>=2,<3",
+  "scipy>=1.7.3,<2",
+  "semver>=3,<4",
+  "six>=1.16.0,<2",
 ]
 
-[project.optional-dependencies]
-graphics = [
-    "ansys-tools-visualization-interface>=0.2.6",
-    "pygltflib>=1.16,<2",
-    "pyvista[jupyter]>=0.38.1,<1",
-    "vtk>=9,<10",
+optional-dependencies.all = [
+  "ansys-platform-instancemanagement>=1.0.3,<2",
+  "ansys-tools-visualization-interface>=0.2.6",
+  "docker>=6.0.1,<8",
+  "pygltflib>=1.16,<2",
+  "pyvista[jupyter]>=0.38.1,<1",
+  "vtk>=9,<10",
 ]
-all = [
-    "ansys-platform-instancemanagement>=1.0.3,<2",
-    "ansys-tools-visualization-interface>=0.2.6",
-    "docker>=6.0.1,<8",
-    "pygltflib>=1.16,<2",
-    "pyvista[jupyter]>=0.38.1,<1",
-    "vtk>=9,<10",
+optional-dependencies.doc = [
+  "ansys-sphinx-theme[autoapi]==1.6.3",
+  "ansys-tools-path==0.7.3",
+  "ansys-tools-visualization-interface==0.12.1",
+  "beartype==0.21.0",
+  "docker==7.1.0",
+  "geomdl==5.4.0",
+  "grpcio==1.75.0",
+  "grpcio-health-checking==1.75.0",
+  "ipyvtklink==0.2.3",
+  "jupyter-sphinx==0.5.3",
+  "jupytext==1.17.3",
+  "matplotlib==3.10.6",
+  "myst-parser==4.0.1",
+  "nbconvert==7.16.6",
+  "nbsphinx==0.9.6",
+  "notebook==7.4.7",
+  "numpy==2.2.6",
+  "numpydoc==1.9.0",
+  "panel==1.8.2",
+  "pdf2image==1.17.0",
+  "pint==0.24.4",
+  "protobuf==6.32.1",
+  "pygltflib==1.16.5",
+  "pyvista[jupyter]==0.46.3",
+  "quarto-cli==1.8.25",
+  "requests==2.32.5",
+  "scipy==1.15.3",
+  "semver==3.0.4",
+  "six==1.17.0",
+  "sphinx==8.2.3",
+  "sphinx-autodoc-typehints==3.1.0",
+  "sphinx-copybutton==0.5.2",
+  "sphinx-jinja==2.0.2",
+  "trame-vtk==2.10.0",
+  "vtk==9.5.2",
 ]
-tests = [
-    "ansys-platform-instancemanagement==1.1.2",
-    "ansys-tools-path==0.7.3",
-    "ansys-tools-visualization-interface==0.12.1",
-    "beartype==0.21.0",
-    "docker==7.1.0",
-    "geomdl==5.4.0",
-    "grpcio==1.75.0",
-    "grpcio-health-checking==1.75.0",
-    "matplotlib==3.10.6",
-    "numpy==2.2.6",
-    "Pint==0.24.4",
-    "protobuf==6.32.1",
-    "pygltflib==1.16.5",
-    "pytest==8.4.2",
-    "pytest-cov==6.3.0",
-    "pytest-pyvista==0.2.0",
-    "pyvista[jupyter]==0.46.3",
-    "pyyaml==6.0.3",
-    "requests==2.32.5",
-    "scipy==1.15.3",
-    "semver==3.0.4",
-    "six==1.17.0",
-    "vtk==9.5.2",
+optional-dependencies.graphics = [
+  "ansys-tools-visualization-interface>=0.2.6",
+  "pygltflib>=1.16,<2",
+  "pyvista[jupyter]>=0.38.1,<1",
+  "vtk>=9,<10",
 ]
-tests-minimal = [
-    "pytest==8.4.2",
-    "pytest-cov==6.3.0",
-    "pytest-pyvista==0.2.0",
-    "pyyaml==6.0.3",
+optional-dependencies.tests = [
+  "ansys-platform-instancemanagement==1.1.2",
+  "ansys-tools-path==0.7.3",
+  "ansys-tools-visualization-interface==0.12.1",
+  "beartype==0.21.0",
+  "docker==7.1.0",
+  "geomdl==5.4.0",
+  "grpcio==1.75.0",
+  "grpcio-health-checking==1.75.0",
+  "matplotlib==3.10.6",
+  "numpy==2.2.6",
+  "pint==0.24.4",
+  "protobuf==6.32.1",
+  "pygltflib==1.16.5",
+  "pytest==8.4.2",
+  "pytest-cov==7.0.0",
+  "pytest-pyvista==0.2.0",
+  "pyvista[jupyter]==0.46.3",
+  "pyyaml==6.0.3",
+  "requests==2.32.5",
+  "scipy==1.15.3",
+  "semver==3.0.4",
+  "six==1.17.0",
+  "vtk==9.5.2",
 ]
-doc = [
-    "ansys-sphinx-theme[autoapi]==1.6.1",
-    "ansys-tools-path==0.7.3",
-    "ansys-tools-visualization-interface==0.12.1",
-    "beartype==0.21.0",
-    "docker==7.1.0",
-    "geomdl==5.4.0",
-    "grpcio==1.75.0",
-    "grpcio-health-checking==1.75.0",
-    "ipyvtklink==0.2.3",
-    "jupyter_sphinx==0.5.3",
-    "jupytext==1.17.3",
-    "matplotlib==3.10.6",
-    "myst-parser==4.0.1",
-    "nbconvert==7.16.6",
-    "nbsphinx==0.9.6",
-    "notebook==7.4.7",
-    "numpydoc==1.9.0",
-    "numpy==2.2.6",
-    "panel==1.8.1",
-    "pdf2image==1.17.0",
-    "Pint==0.24.4",
-    "protobuf==6.32.1",
-    "pygltflib==1.16.5",
-    "pyvista[jupyter]==0.46.3",
-    "quarto-cli==1.8.25",
-    "requests==2.32.5",
-    "scipy==1.15.3",
-    "semver==3.0.4",
-    "six==1.17.0",
-    "sphinx==8.2.3",
-    "sphinx-autodoc-typehints==3.1.0",
-    "sphinx-copybutton==0.5.2",
-    "sphinx-jinja==2.0.2",
-    "trame-vtk==2.9.1",
-    "vtk==9.5.2",
+optional-dependencies.tests-minimal = [
+  "pytest==8.4.2",
+  "pytest-cov==7.0.0",
+  "pytest-pyvista==0.2.0",
+  "pyyaml==6.0.3",
 ]
-
-[project.urls]
-Source = "https://github.com/ansys/pyansys-geometry"
-Issues = "https://github.com/ansys/pyansys-geometry/issues"
-Discussions = "https://github.com/ansys/pyansys-geometry/discussions"
-Documentation = "https://geometry.docs.pyansys.com"
-Releases = "https://github.com/ansys/pyansys-geometry/releases"
-Changelog = "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
+urls.Changelog = "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
+urls.Discussions = "https://github.com/ansys/pyansys-geometry/discussions"
+urls.Documentation = "https://geometry.docs.pyansys.com"
+urls.Issues = "https://github.com/ansys/pyansys-geometry/issues"
+urls.Releases = "https://github.com/ansys/pyansys-geometry/releases"
+urls.Source = "https://github.com/ansys/pyansys-geometry"
 
 [tool.flit.module]
 name = "ansys.geometry.core"
 
 [tool.ruff]
 line-length = 100
+extend-exclude = [ "tests/integration/files" ]
+
 fix = true
-extend-exclude = ["tests/integration/files"]
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-docstring-code-format = true
-docstring-code-line-length = "dynamic"
-
-[tool.ruff.lint]
-select = [
-    "E",    # pycodestyle, see https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
-    "D",    # pydocstyle, see https://docs.astral.sh/ruff/rules/#pydocstyle-d
-    "F",    # pyflakes, see https://docs.astral.sh/ruff/rules/#pyflakes-f
-    "I",    # isort, see https://docs.astral.sh/ruff/rules/#isort-i
-    "N",    # pep8-naming, see https://docs.astral.sh/ruff/rules/#pep8-naming-n
-    "PTH",  # flake8-use-pathlib, https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
-    "TD",   # flake8-todos, https://docs.astral.sh/ruff/rules/#flake8-todos-td
+format.indent-style = "space"
+format.quote-style = "double"
+format.docstring-code-line-length = "dynamic"
+format.docstring-code-format = true
+lint.select = [
+  "D",   # pydocstyle, see https://docs.astral.sh/ruff/rules/#pydocstyle-d
+  "E",   # pycodestyle, see https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+  "F",   # pyflakes, see https://docs.astral.sh/ruff/rules/#pyflakes-f
+  "I",   # isort, see https://docs.astral.sh/ruff/rules/#isort-i
+  "N",   # pep8-naming, see https://docs.astral.sh/ruff/rules/#pep8-naming-n
+  "PTH", # flake8-use-pathlib, https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
+  "TD",  # flake8-todos, https://docs.astral.sh/ruff/rules/#flake8-todos-td
 ]
-ignore = [
-    "TD002", # Missing author in TODOs comment
+lint.ignore = [
+  "TD002", # Missing author in TODOs comment
 ]
-
-[tool.ruff.lint.per-file-ignores]
-# Ignore `F401` (import violations) in all `__init__.py` files.
-"__init__.py" = ["F401"]
-# Ignore `E402` (module level import not at top of file) in `src/ansys/geometry/core/__init__.py`.
-"src/ansys/geometry/core/__init__.py" = ["E402"]
 # Ignore `D` rules everywhere except for the `src/` directory.
-"!src/**.py" = ["D"]
-
-[tool.ruff.lint.pydocstyle]
-convention = "numpy"
-
-[tool.ruff.lint.isort]
-combine-as-imports = true
-force-sort-within-sections = true
-known-first-party = ["ansys.geometry.core"]
-
-[tool.coverage.run]
-source = ["ansys.geometry"]
-
-[tool.coverage.report]
-show_missing = true
+lint.per-file-ignores."!src/**.py" = [ "D" ]
+# Ignore `F401` (import violations) in all `__init__.py` files.
+lint.per-file-ignores."__init__.py" = [ "F401" ]
+# Ignore `E402` (module level import not at top of file) in `src/ansys/geometry/core/__init__.py`.
+lint.per-file-ignores."src/ansys/geometry/core/__init__.py" = [ "E402" ]
+lint.isort.combine-as-imports = true
+lint.isort.force-sort-within-sections = true
+lint.isort.known-first-party = [ "ansys.geometry.core" ]
+lint.pydocstyle.convention = "numpy"
 
 [tool.pytest.ini_options]
 minversion = "7.1"
 addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv --image_cache_dir tests/integration/image_cache --add_missing_images"
-testpaths = ["tests"]
+testpaths = [ "tests" ]
+
+[tool.coverage.run]
+source = [ "ansys.geometry" ]
+
+[tool.coverage.report]
+show_missing = true
 
 [tool.towncrier]
 directory = "doc/changelog.d"

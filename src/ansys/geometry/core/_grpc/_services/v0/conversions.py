@@ -375,6 +375,11 @@ def from_grpc_tess_to_pd(tess: GRPCTessellation) -> "pv.PolyData":
     return pv.PolyData(var_inp=np.array(tess.vertices).reshape(-1, 3), faces=tess.faces)
 
 
+def from_grpc_tess_to_raw_data(tess: GRPCTessellation) -> dict:
+    """Convert a ``Tessellation`` to raw data."""
+    return {"vertices": tess.vertices, "faces": tess.faces}
+
+
 def from_tess_options_to_grpc_tess_options(
     options: "TessellationOptions",
 ) -> GRPCTessellationOptions:

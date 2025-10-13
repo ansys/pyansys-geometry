@@ -8,7 +8,6 @@ coverage:
         target: 90%
     patch: off
 
-
 codecov:
   notify:
     wait_for_ci: yes

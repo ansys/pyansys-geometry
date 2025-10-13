@@ -228,6 +228,17 @@ def use_grpc_client_old_backend(modeler: Modeler):
 
 
 @pytest.fixture(scope="function")
+def fake_modeler_old_backend_251(modeler: Modeler):
+    currentbackend = modeler._grpc_client._backend_version
+    modeler._grpc_client._backend_version = (25, 1, 0)
+
+    yield modeler
+
+    # Code here runs after the test, reverting the state
+    modeler._grpc_client._backend_version = currentbackend
+
+
+@pytest.fixture(scope="function")
 def disable_active_design_check_true():
     import ansys.geometry.core as pyansys_geometry
 

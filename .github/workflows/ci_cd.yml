@@ -82,7 +82,7 @@ jobs:
       - name: PyAnsys documentation style checks
         uses: ansys/actions/doc-style@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
         with:
-         token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   smoke-tests:
     name: Build and Smoke tests
@@ -156,7 +156,6 @@ jobs:
           if [ ! -f ${CONTAINER_UNSTABLE}.json ]; then
             touch ${CONTAINER_UNSTABLE}.json
           fi
-
 
           # Check if the manifests are the same (and if so, create an output that will skip the next job)
           if diff ${CONTAINER_STABLE}.json ${CONTAINER_UNSTABLE}.json; then
@@ -269,11 +268,11 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-          lookup-only: false  # zizmor: ignore[cache-poisoning]
+          lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Testing
         if: env.SKIP_UNSTABLE == 'false'
-        timeout-minutes: 20  # Sometimes hangs...
+        timeout-minutes: 20 # Sometimes hangs...
         run: |
           pytest -v
 
@@ -380,7 +379,7 @@ jobs:
         env:
           DOCKER_IMAGE: ${{ matrix.docker-image }}
           SKIP_CORE_LINUX: ${{ needs.manifests.outputs.skip_core_linux }}
-          VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}
+          VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY}}
         run: |
           # Choose the manifests output to consider (for Core service)
           # based on the matrix value
@@ -436,7 +435,7 @@ jobs:
           path: tests/integration/image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-          lookup-only: false  # zizmor: ignore[cache-poisoning]
+          lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
@@ -610,9 +609,9 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           attest-provenance: true
 
-# =================================================================================================
-# vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-# =================================================================================================
+  # =================================================================================================
+  # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv    RUNNING ON SELF-HOSTED RUNNER    vvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+  # =================================================================================================
 
   fetch-release-artifacts:
     name: Fetch release artifacts
@@ -734,7 +733,7 @@ jobs:
         if: runner.name == 'pygeometry-ci-2'
         env:
           LICENSE_SERVER_INTERNAL: ${{ secrets.LICENSE_SERVER_INTERNAL }}
-        run:
+        run: |
           echo "ANSRV_GEO_LICENSE_SERVER=$env:LICENSE_SERVER_INTERNAL" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Validate connection using PyAnsys Geometry
@@ -750,7 +749,7 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-          lookup-only: false  # zizmor: ignore[cache-poisoning]
+          lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Start Geometry service and verify start
         env:
@@ -767,7 +766,7 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
-        timeout-minutes: 20  # On Windows self-hosted runners, sometimes hangs...
+        timeout-minutes: 20 # On Windows self-hosted runners, sometimes hangs...
         run: |
           .\.venv\Scripts\Activate.ps1
           pytest -v --use-existing-service=yes
@@ -807,9 +806,9 @@ jobs:
           docker image rm ghcr.io/ansys/geometry:windows-tmp
           docker system prune -f
 
-# =================================================================================================
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# =================================================================================================
+  # =================================================================================================
+  # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    RUNNING ON SELF-HOSTED RUNNER    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  # =================================================================================================
 
   build-linux-container:
     name: Building Geometry Service - Linux
@@ -858,7 +857,7 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-          lookup-only: false  # zizmor: ignore[cache-poisoning]
+          lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Run pytest
         uses: ansys/actions/tests-pytest@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
@@ -938,8 +937,10 @@ jobs:
   upload_dev_docs:
     name: Upload dev documentation
     if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
     needs: [package]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Deploy the latest documentation
         uses: ansys/actions/doc-deploy-dev@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
@@ -952,8 +953,10 @@ jobs:
   upload_docs_release:
     name: Upload release documentation
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    runs-on: ubuntu-latest
     needs: [release, release-pypi]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Deploy the stable documentation
         uses: ansys/actions/doc-deploy-stable@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4

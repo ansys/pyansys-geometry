@@ -24,9 +24,6 @@
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
-from ansys.api.geometry.v0.repairtools_pb2_grpc import RepairToolsStub
-from google.protobuf.wrappers_pb2 import Int32Value
-
 import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.misc.auxiliary import (
@@ -57,8 +54,6 @@ class ProblemArea:
     def __init__(self, id: str, grpc_client: GrpcClient):
         """Initialize a new instance of a problem area class."""
         self._id = id
-        self._grpc_id = Int32Value(value=int(id))
-        self._repair_stub = RepairToolsStub(grpc_client.channel)
         self._grpc_client = grpc_client
 
     @property
@@ -138,7 +133,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_face(self.faces[0])
         response = self._grpc_client.services.repair_tools.fix_duplicate_faces(
-            duplicate_face_problem_area_id=self._grpc_id
+            duplicate_face_problem_area_id=self.id
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -192,7 +187,7 @@ class MissingFaceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_edge(self.edges[0])
         response = self._grpc_client.services.repair_tools.fix_missing_faces(
-            missing_face_problem_area_id=self._grpc_id
+            missing_face_problem_area_id=self.id
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -247,7 +242,7 @@ class InexactEdgeProblemAreas(ProblemArea):
         parent_design = get_design_from_edge(self.edges[0])
 
         response = self._grpc_client.services.repair_tools.fix_inexact_edges(
-            inexact_edge_problem_area_id=self._grpc_id
+            inexact_edge_problem_area_id=self.id
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -301,7 +296,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
 
         parent_design = get_design_from_edge(self.edges[0])
         response = self._grpc_client.services.repair_tools.fix_extra_edges(
-            extra_edge_problem_area_id=self._grpc_id
+            extra_edge_problem_area_id=self.id
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -355,7 +350,7 @@ class ShortEdgeProblemAreas(ProblemArea):
 
         parent_design = get_design_from_edge(self.edges[0])
         response = self._grpc_client.services.repair_tools.fix_short_edges(
-            short_edge_problem_area_id=self._grpc_id
+            short_edge_problem_area_id=self.id
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -409,7 +404,7 @@ class SmallFaceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_face(self.faces[0])
         response = self._grpc_client.services.repair_tools.fix_small_faces(
-            small_face_problem_area_id=self._grpc_id
+            small_face_problem_area_id=self.id
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -463,7 +458,7 @@ class SplitEdgeProblemAreas(ProblemArea):
 
         parent_design = get_design_from_edge(self.edges[0])
         response = self._grpc_client.services.repair_tools.fix_split_edges(
-            split_edge_problem_area_id=self._grpc_id
+            split_edge_problem_area_id=self.id
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -517,7 +512,7 @@ class StitchFaceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_body(self.bodies[0])
         response = self._grpc_client.services.repair_tools.fix_stitch_faces(
-            stitch_face_problem_area_id=self._grpc_id
+            stitch_face_problem_area_id=self.id
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -566,7 +561,7 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_face(self.faces[0])
         response = self._grpc_client.services.repair_tools.fix_unsimplified_faces(
-            adjust_simplify_problem_area_id=self._grpc_id
+            adjust_simplify_problem_area_id=self.id
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -620,7 +615,7 @@ class InterferenceProblemAreas(ProblemArea):
 
         parent_design = get_design_from_body(self.bodies[0])
         response = self._grpc_client.services.repair_tools.fix_interference(
-            interference_problem_area_id=self._grpc_id
+            interference_problem_area_id=self.id
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:

@@ -27,7 +27,6 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
 from beartype import beartype as check_input_types
 from pint import Quantity
 
@@ -275,11 +274,6 @@ class Component:
     def id(self) -> str:
         """ID of the component."""
         return self._id
-
-    @property
-    def _grpc_id(self) -> EntityIdentifier:
-        """ID of the component in gRPC format."""
-        return EntityIdentifier(id=self.id)
 
     @property
     def name(self) -> str:
