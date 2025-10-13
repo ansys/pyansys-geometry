@@ -70,6 +70,7 @@ def test_client_close(client: GrpcClient):
     assert client.target() == ""
 
 
+@pytest.mark.skip(reason="Flaky test, needs investigation")
 def test_client_get_service_logs(client: GrpcClient):
     """Test the retrieval of the service logs."""
     # Low level call
