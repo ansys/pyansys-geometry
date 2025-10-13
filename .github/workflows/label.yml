@@ -6,7 +6,7 @@ on:
     # labeled - when labels are added to PR
     types: [opened, reopened, synchronize, edited, labeled]
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - '../labels.yml'
 
@@ -41,45 +41,45 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    # Label based on modified files
-    - name: Label based on changed files
-      uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        sync-labels: true
+      # Label based on modified files
+      - name: Label based on changed files
+        uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          sync-labels: true
 
-    # Label based on branch name
-    - uses: actions-ecosystem/action-add-labels@18f1af5e3544586314bbe15c0273249c770b2daf # v1.1.3
-      if: |
-        startsWith(github.event.pull_request.head.ref, 'doc') ||
-        startsWith(github.event.pull_request.head.ref, 'docs')
-      with:
-        labels: documentation
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      # Label based on branch name
+      - uses: actions-ecosystem/action-add-labels@18f1af5e3544586314bbe15c0273249c770b2daf # v1.1.3
+        if: |
+          startsWith(github.event.pull_request.head.ref, 'doc') ||
+          startsWith(github.event.pull_request.head.ref, 'docs')
+        with:
+          labels: documentation
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-    - uses: actions-ecosystem/action-add-labels@18f1af5e3544586314bbe15c0273249c770b2daf # v1.1.3
-      if: |
-        startsWith(github.event.pull_request.head.ref, 'maint') ||
-        startsWith(github.event.pull_request.head.ref, 'no-ci') ||
-        startsWith(github.event.pull_request.head.ref, 'ci')
-      with:
-        labels: maintenance
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions-ecosystem/action-add-labels@18f1af5e3544586314bbe15c0273249c770b2daf # v1.1.3
+        if: |
+          startsWith(github.event.pull_request.head.ref, 'maint') ||
+          startsWith(github.event.pull_request.head.ref, 'no-ci') ||
+          startsWith(github.event.pull_request.head.ref, 'ci')
+        with:
+          labels: maintenance
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-    - uses: actions-ecosystem/action-add-labels@18f1af5e3544586314bbe15c0273249c770b2daf # v1.1.3
-      if: startsWith(github.event.pull_request.head.ref, 'feat')
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        labels: |
-          enhancement
+      - uses: actions-ecosystem/action-add-labels@18f1af5e3544586314bbe15c0273249c770b2daf # v1.1.3
+        if: startsWith(github.event.pull_request.head.ref, 'feat')
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: |
+            enhancement
 
-    - uses: actions-ecosystem/action-add-labels@18f1af5e3544586314bbe15c0273249c770b2daf # v1.1.3
-      if: |
-        startsWith(github.event.pull_request.head.ref, 'fix') ||
-        startsWith(github.event.pull_request.head.ref, 'patch')
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        labels: bug
+      - uses: actions-ecosystem/action-add-labels@18f1af5e3544586314bbe15c0273249c770b2daf # v1.1.3
+        if: |
+          startsWith(github.event.pull_request.head.ref, 'fix') ||
+          startsWith(github.event.pull_request.head.ref, 'patch')
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: bug
 
   commenter:
     name: "Suggest to add labels"
@@ -88,20 +88,20 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-    - name: Suggest to add labels
-      uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
-      # Execute only when no labels have been applied to the pull request
-      if: toJSON(github.event.pull_request.labels.*.name) == '{}'
-      with:
-        issue-number: ${{ github.event.pull_request.number }}
-        body: |
-          Please add one of the following labels to add this contribution to the Release Notes :point_down:
-          - [bug](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Abug+)
-          - [documentation](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Adocumentation+)
-          - [enhancement](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Aenhancement+)
-          - [good first issue](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Agood+first+issue)
-          - [maintenance](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Amaintenance+)
-          - [release](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Arelease+)
+      - name: Suggest to add labels
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
+        # Execute only when no labels have been applied to the pull request
+        if: toJSON(github.event.pull_request.labels.*.name) == '{}'
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Please add one of the following labels to add this contribution to the Release Notes :point_down:
+            - [bug](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Abug+)
+            - [documentation](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Adocumentation+)
+            - [enhancement](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Aenhancement+)
+            - [good first issue](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Agood+first+issue)
+            - [maintenance](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Amaintenance+)
+            - [release](https://github.com/ansys/pyansys-geometry/pulls?q=label%3Arelease+)
 
   changelog-fragment:
     name: "Create changelog fragment"
@@ -111,10 +111,10 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-    - uses: ansys/actions/doc-changelog@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
-      with:
-        token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
-        use-conventional-commits: true
-        use-default-towncrier-config: true
-        bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
-        bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
+      - uses: ansys/actions/doc-changelog@c2fa7c93f6883114e0e643599431b33d29f0b13f # v10.1.4
+        with:
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          use-conventional-commits: true
+          use-default-towncrier-config: true
+          bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
+          bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}

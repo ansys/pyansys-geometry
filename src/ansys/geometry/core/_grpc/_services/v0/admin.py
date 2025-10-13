@@ -71,14 +71,22 @@ class GRPCAdminServiceV0(GRPCAdminService):
         if hasattr(response, "version"):
             ver = response.version
             backend_version = semver.Version(ver.major_release, ver.minor_release, ver.service_pack)
+            api_server_build_info = f"{ver.build_number}" if ver.build_number != 0 else "N/A"
+            product_build_info = (
+                response.backend_version_info.strip() if response.backend_version_info else "N/A"
+            )
         else:  # pragma: no cover
             # If the version is not available, set a default version
             backend_version = semver.Version(24, 1, 0)
+            api_server_build_info = "N/A"
+            product_build_info = "N/A"
 
         # Convert the response to a dictionary
         return {
             "backend": from_grpc_backend_type_to_backend_type(response.type),
             "version": backend_version,
+            "api_server_build_info": api_server_build_info,
+            "product_build_info": product_build_info,
         }
 
     @protect_grpc

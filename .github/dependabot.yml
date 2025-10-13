@@ -5,10 +5,10 @@ updates:
     schedule:
       interval: "daily"
     cooldown:
-      default-days: 5  # Fallback cooldown if no specific rule applies
-      semver-major-days: 30  # Cooldown for major version updates
-      semver-minor-days: 7   # Cooldown for minor version updates
-      semver-patch-days: 3   # Cooldown for patch updates
+      default-days: 5 # Fallback cooldown if no specific rule applies
+      semver-major-days: 30 # Cooldown for major version updates
+      semver-minor-days: 7 # Cooldown for minor version updates
+      semver-patch-days: 3 # Cooldown for patch updates
       exclude:
         - "ansys-api-geometry"
         - "ansys-platform-instancemanagement"
@@ -23,36 +23,36 @@ updates:
     commit-message:
       prefix: "build"
     groups:
-       grpc-deps:
-          patterns:
-            - "grpc*"
-            - "protobuf"
-       docs-deps:
-          patterns:
-            - "ansys-sphinx-theme*"
-            - "ipyvtklink"
-            - "jupyter_sphinx"
-            - "jupytext"
-            - "myst-parser"
-            - "nbconvert"
-            - "nbsphinx"
-            - "notebook"
-            - "numpydoc"
-            - "sphinx"
-            - "sphinx*"
+      grpc-deps:
+        patterns:
+          - "grpc*"
+          - "protobuf"
+      docs-deps:
+        patterns:
+          - "ansys-sphinx-theme*"
+          - "ipyvtklink"
+          - "jupyter_sphinx"
+          - "jupytext"
+          - "myst-parser"
+          - "nbconvert"
+          - "nbsphinx"
+          - "notebook"
+          - "numpydoc"
+          - "sphinx"
+          - "sphinx*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
-      # TODO: This should be activated once it's supported
-      # cooldown:
-      #   default-days: 5  # Fallback cooldown if no specific rule applies
-      #   semver-major-days: 30  # Cooldown for major version updates
-      #   semver-minor-days: 7   # Cooldown for minor version updates
-      #   semver-patch-days: 3   # Cooldown for patch updates
-      #   exclude:
-      #     - "ansys/actions/*"
+    # TODO: This should be activated once it's supported
+    # cooldown:
+    #   default-days: 5  # Fallback cooldown if no specific rule applies
+    #   semver-major-days: 30  # Cooldown for major version updates
+    #   semver-minor-days: 7   # Cooldown for minor version updates
+    #   semver-patch-days: 3   # Cooldown for patch updates
+    #   exclude:
+    #     - "ansys/actions/*"
     labels:
       - "maintenance"
     assignees:
@@ -60,6 +60,6 @@ updates:
     commit-message:
       prefix: "ci"
     groups:
-       actions:
-          patterns:
-            - "*"
+      actions:
+        patterns:
+          - "*"
