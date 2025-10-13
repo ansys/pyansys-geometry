@@ -96,9 +96,17 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def get_assembly(self, **kwargs) -> dict:  # noqa: D102
+        # Return the information needed to fill a design.
         active_design = kwargs["active_design"]
         design_id = active_design.get("design_id")
-        response = self.commands_stub.GetAssembly(EntityIdentifier(id=design_id))
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = build_grpc_id(id=design_id)
+
+         # Call the gRPC service
+        response = self.commands_stub.GetAssembly(request)
+
+        # Return the response - formatted as a dictionary
         serialized_response = self._serialize_assembly_response(response)
         return serialized_response
 
