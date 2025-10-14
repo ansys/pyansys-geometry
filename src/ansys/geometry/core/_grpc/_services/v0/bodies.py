@@ -37,6 +37,7 @@ from .conversions import (
     from_grpc_material_to_material,
     from_grpc_point_to_point3d,
     from_grpc_tess_to_pd,
+    from_grpc_tess_to_raw_data,
     from_plane_to_grpc_plane,
     from_point3d_to_grpc_point,
     from_sketch_shapes_to_grpc_geometries,
@@ -177,7 +178,6 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def sweep_with_guide(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.bodies_pb2 import (
             SweepWithGuideRequest,
             SweepWithGuideRequestData,
@@ -188,7 +188,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             request_data=[
                 SweepWithGuideRequestData(
                     name=data.name,
-                    parent=EntityIdentifier(id=data.parent_id),
+                    parent=build_grpc_id(data.parent_id),
                     plane=from_plane_to_grpc_plane(data.sketch.plane),
                     geometries=from_sketch_shapes_to_grpc_geometries(
                         data.sketch.plane, data.sketch.edges, data.sketch.faces
@@ -683,7 +683,11 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         for elem in resp:
             for face_id, face_tess in elem.face_tessellation.items():
-                tess_map[face_id] = from_grpc_tess_to_pd(face_tess)
+                tess_map[face_id] = (
+                    from_grpc_tess_to_raw_data(face_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_tess_to_pd(face_tess)
+                )
 
         return {"tessellation": tess_map}
 
@@ -707,7 +711,11 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         for elem in resp:
             for face_id, face_tess in elem.face_tessellation.items():
-                tess_map[face_id] = from_grpc_tess_to_pd(face_tess)
+                tess_map[face_id] = (
+                    from_grpc_tess_to_raw_data(face_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_tess_to_pd(face_tess)
+                )
 
         return {"tessellation": tess_map}
 
@@ -774,70 +782,63 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def combine(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v0.bodies_pb2 import (
+        from ansys.api.geometry.v0.commands_pb2 import (
             CombineIntersectBodiesRequest,
             CombineMergeBodiesRequest,
         )
 
+        target_body = kwargs["target"]
         other_bodies = kwargs["other"]
         type_bool_op = kwargs["type_bool_op"]
         keep_other = kwargs["keep_other"]
 
         if type_bool_op == "intersect":
-            body_ids = [body._grpc_id for body in other_bodies]
-            target_ids = [self._grpc_id]
+            body_ids = [build_grpc_id(body.id) for body in other_bodies]
+            target_ids = [build_grpc_id(target_body.id)]
             request = CombineIntersectBodiesRequest(
                 target_selection=target_ids,
                 tool_selection=body_ids,
                 subtract_from_target=False,
                 keep_cutter=keep_other,
             )
-            response = self._template._commands_stub.CombineIntersectBodies(request)
+            response = self.command_stub.CombineIntersectBodies(request)
         elif type_bool_op == "subtract":
-            body_ids = [body._grpc_id for body in other_bodies]
-            target_ids = [self._grpc_id]
+            body_ids = [build_grpc_id(body.id) for body in other_bodies]
+            target_ids = [build_grpc_id(target_body.id)]
             request = CombineIntersectBodiesRequest(
                 target_selection=target_ids,
                 tool_selection=body_ids,
                 subtract_from_target=True,
                 keep_cutter=keep_other,
             )
-            response = self._template._commands_stub.CombineIntersectBodies(request)
+            response = self.command_stub.CombineIntersectBodies(request)
         elif type_bool_op == "unite":
-            bodies = [self]
+            bodies = [target_body]
             bodies.extend(other_bodies)
-            body_ids = [body._grpc_id for body in bodies]
+            body_ids = [build_grpc_id(body.id) for body in bodies]
             request = CombineMergeBodiesRequest(target_selection=body_ids)
-            response = self._template._commands_stub.CombineMergeBodies(request)
+            response = self.command_stub.CombineMergeBodies(request)
         else:
             raise ValueError("Unknown operation requested")
         if not response.success:
             raise ValueError(
                 f"Operation of type '{type_bool_op}' failed: {kwargs['err_msg']}.\n"
-                f"Involving bodies:{self}, {other_bodies}"
+                f"Involving bodies:{target_body}, {other_bodies}"
             )
 
-        if not keep_other:
-            for b in other_bodies:
-                b.parent_component.delete_body(b)
-
-        tracker_response = response.result.complete_command_response
-        serialized_tracker_response = serialize_tracker_command_response(response=tracker_response)
-
         # Return the response - formatted as a dictionary
-        return {"complete_command_response": serialized_tracker_response}
+        return {"complete_command_response": serialize_tracker_command_response(response=response)}
 
     @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import SplitBodyRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SplitBodyRequest(
-            selection=[EntityIdentifier(id=id) for id in kwargs["body_ids"]],
+            selection=[build_grpc_id(id) for id in kwargs["body_ids"]],
             split_by_plane=from_plane_to_grpc_plane(kwargs["plane"]) if kwargs["plane"] else None,
-            split_by_slicer=[EntityIdentifier(id=id) for id in kwargs["slicer_ids"]],
-            split_by_faces=[EntityIdentifier(id=id) for id in kwargs["face_ids"]],
+            split_by_slicer=[build_grpc_id(id) for id in kwargs["slicer_ids"]],
+            split_by_faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
             extend_surfaces=kwargs["extend_surfaces"],
         )
 
@@ -851,7 +852,6 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.bodies_pb2 import (
             CreateBodyFromLoftWithGuidesRequest,
             CreateBodyFromLoftWithGuidesRequestData,
@@ -863,7 +863,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             request_data=[
                 CreateBodyFromLoftWithGuidesRequestData(
                     name=kwargs["name"],
-                    parent=EntityIdentifier(id=kwargs["parent_id"]),
+                    parent=build_grpc_id(kwargs["parent_id"]),
                     profiles=[
                         TrimmedCurveList(
                             curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile]

@@ -19,7 +19,7 @@ these commands:
     git clone https://github.com/ansys/pyansys-geometry
     cd pyansys-geometry
     python -m pip install --upgrade pip
-    pip install -e .
+    pip install -e . --group dev
 
 
 Post issues
@@ -106,7 +106,7 @@ Build the documentation
 To build the documentation locally, you must run this command to install the
 documentation dependencies::
 
-  pip install -e .[doc]
+  pip install -e . --group doc
 
 Then, navigate to the ``docs`` directory and run this command::
 
@@ -149,7 +149,7 @@ You can also test the correct build process of a new example by performing the f
 
 1. Run the following command to install the documentation dependencies::
 
-    pip install -e .[doc]
+    pip install -e . --group doc
 
 2. Navigate to the ``doc`` directory and run the following command::
 
@@ -177,7 +177,7 @@ Prerequisites
 
 Prior to running the tests, you must run this command to install the test dependencies::
 
-  pip install -e .[tests]
+  pip install -e . --group tests
 
 Make sure to define the port and host of the service using the following environment variables::
 

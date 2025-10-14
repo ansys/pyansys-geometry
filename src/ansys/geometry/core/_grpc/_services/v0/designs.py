@@ -30,6 +30,13 @@ from .conversions import (
     _check_write_body_facets_input,
     build_grpc_id,
     from_design_file_format_to_grpc_part_export_format,
+    from_grpc_curve_to_curve,
+    from_grpc_frame_to_frame,
+    from_grpc_material_to_material,
+    from_grpc_matrix_to_matrix,
+    from_grpc_point_to_point3d,
+    from_grpc_tess_to_raw_data,
+    from_tess_options_to_grpc_tess_options,
 )
 
 
@@ -85,6 +92,22 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
             "design_id": response.id,
             "main_part_id": response.main_part.id,
         }
+
+    @protect_grpc
+    def get_assembly(self, **kwargs) -> dict:  # noqa: D102
+        # Return the information needed to fill a design.
+        active_design = kwargs["active_design"]
+        design_id = active_design.get("design_id")
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = build_grpc_id(id=design_id)
+
+        # Call the gRPC service
+        response = self.commands_stub.GetAssembly(request)
+
+        # Return the response - formatted as a dictionary
+        serialized_response = self._serialize_assembly_response(response)
+        return serialized_response
 
     @protect_grpc
     def close(self, **kwargs) -> dict:  # noqa: D102
@@ -256,3 +279,205 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {"file_path": response.file_path}
+
+    def _serialize_assembly_response(self, response):
+        def serialize_body(body):
+            return {
+                "id": body.id,
+                "name": body.name,
+                "master_id": body.master_id,
+                "parent_id": body.parent_id,
+                "is_surface": body.is_surface,
+            }
+
+        def serialize_component(component):
+            return {
+                "id": component.id,
+                "parent_id": component.parent_id,
+                "master_id": component.master_id,
+                "name": component.name,
+                "placement": component.placement,
+                "part_master": serialize_part(component.part_master),
+            }
+
+        def serialize_transformed_part(transformed_part):
+            return {
+                "id": transformed_part.id,
+                "name": transformed_part.name,
+                "placement": from_grpc_matrix_to_matrix(transformed_part.placement),
+                "part_master": serialize_part(transformed_part.part_master),
+            }
+
+        def serialize_part(part):
+            return {
+                "id": part.id,
+                "name": part.name,
+            }
+
+        def serialize_material_properties(material_property):
+            return {
+                "id": material_property.id,
+                "display_name": material_property.display_name,
+                "value": material_property.value,
+                "units": material_property.units,
+            }
+
+        def serialize_material(material):
+            material_properties = getattr(material, "material_properties", [])
+            return {
+                "name": material.name,
+                "material_properties": [
+                    serialize_material_properties(property) for property in material_properties
+                ],
+            }
+
+        def serialize_named_selection(named_selection):
+            return {"id": named_selection.id, "name": named_selection.name}
+
+        def serialize_coordinate_systems(coordinate_systems):
+            serialized_cs = []
+            for cs in coordinate_systems.coordinate_systems:
+                serialized_cs.append(
+                    {
+                        "id": cs.id,
+                        "name": cs.name,
+                        "frame": from_grpc_frame_to_frame(cs.frame),
+                    }
+                )
+
+            return serialized_cs
+
+        def serialize_component_coordinate_systems(component_coordinate_system):
+            serialized_component_coordinate_systems = []
+            for (
+                component_coordinate_system_id,
+                coordinate_systems,
+            ) in component_coordinate_system.items():
+                serialized_component_coordinate_systems.append(
+                    {
+                        "component_id": component_coordinate_system_id,
+                        "coordinate_systems": serialize_coordinate_systems(coordinate_systems),
+                    }
+                )
+
+            return serialized_component_coordinate_systems
+
+        def serialize_component_shared_topologies(component_share_topology):
+            serialized_share_topology = []
+            for component_shared_topology_id, shared_topology in component_share_topology.items():
+                serialized_share_topology.append(
+                    {
+                        "component_id": component_shared_topology_id,
+                        "shared_topology_type": shared_topology,
+                    }
+                )
+            return serialized_share_topology
+
+        def serialize_beam_curve(curve):
+            return {
+                "curve": from_grpc_curve_to_curve(curve.curve),
+                "start": from_grpc_point_to_point3d(curve.start),
+                "end": from_grpc_point_to_point3d(curve.end),
+                "interval_start": curve.interval_start,
+                "interval_end": curve.interval_end,
+                "length": curve.length,
+            }
+
+        def serialize_beam_curve_list(curve_list):
+            return {"curves": [serialize_beam_curve(curve) for curve in curve_list.curves]}
+
+        def serialize_beam_cross_section(cross_section):
+            return {
+                "section_anchor": cross_section.section_anchor,
+                "section_angle": cross_section.section_angle,
+                "section_frame": from_grpc_frame_to_frame(cross_section.section_frame),
+                "section_profile": [
+                    serialize_beam_curve_list(curve_list)
+                    for curve_list in cross_section.section_profile
+                ],
+            }
+
+        def serialize_beam_properties(properties):
+            return {
+                "area": properties.area,
+                "centroid_x": properties.centroid_x,
+                "centroid_y": properties.centroid_y,
+                "warping_constant": properties.warping_constant,
+                "ixx": properties.ixx,
+                "ixy": properties.ixy,
+                "iyy": properties.iyy,
+                "shear_center_x": properties.shear_center_x,
+                "shear_center_y": properties.shear_center_y,
+                "torsional_constant": properties.torsional_constant,
+            }
+
+        def serialize_beam(beam):
+            return {
+                "id": beam.id.id,
+                "parent_id": beam.parent.id,
+                "start": from_grpc_point_to_point3d(beam.shape.start),
+                "end": from_grpc_point_to_point3d(beam.shape.end),
+                "name": beam.name,
+                "is_deleted": beam.is_deleted,
+                "is_reversed": beam.is_reversed,
+                "is_rigid": beam.is_rigid,
+                "material": from_grpc_material_to_material(beam.material),
+                "type": beam.type,
+                "properties": serialize_beam_properties(beam.properties),
+                "cross_section": serialize_beam_cross_section(beam.cross_section),
+            }
+
+        parts = getattr(response, "parts", [])
+        transformed_parts = getattr(response, "transformed_parts", [])
+        bodies = getattr(response, "bodies", [])
+        components = getattr(response, "components", [])
+        materials = getattr(response, "materials", [])
+        named_selections = getattr(response, "named_selections", [])
+        component_coordinate_systems = getattr(response, "component_coord_systems", [])
+        component_shared_topologies = getattr(response, "component_shared_topologies", [])
+        beams = getattr(response, "beams", [])
+        return {
+            "parts": [serialize_part(part) for part in parts] if len(parts) > 0 else [],
+            "transformed_parts": [serialize_transformed_part(tp) for tp in transformed_parts],
+            "bodies": [serialize_body(body) for body in bodies] if len(bodies) > 0 else [],
+            "components": [serialize_component(component) for component in components],
+            "materials": [serialize_material(material) for material in materials],
+            "named_selections": [serialize_named_selection(ns) for ns in named_selections],
+            "component_coordinate_systems": serialize_component_coordinate_systems(
+                component_coordinate_systems
+            ),
+            "component_shared_topologies": serialize_component_shared_topologies(
+                component_shared_topologies
+            ),
+            "beams": [serialize_beam(beam) for beam in beams],
+        }
+
+    @protect_grpc
+    def stream_design_tessellation(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.dbu.v0.designs_pb2 import DesignTessellationRequest
+
+        # If there are options, convert to gRPC options
+        options = (
+            from_tess_options_to_grpc_tess_options(kwargs["options"])
+            if kwargs["options"] is not None
+            else None
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DesignTessellationRequest(options=options)
+
+        # Call the gRPC service
+        response = self.designs_stub.StreamDesignTessellation(request)
+
+        # Return the response - formatted as a dictionary
+        tess_map = {}
+        for elem in response:
+            for body_id, body_tess in elem.body_tessellation.items():
+                tess = {}
+                for face_id, face_tess in body_tess.face_tessellation.items():
+                    tess[face_id] = from_grpc_tess_to_raw_data(face_tess)
+                tess_map[body_id] = tess
+
+        return {
+            "tessellation": tess_map,
+        }

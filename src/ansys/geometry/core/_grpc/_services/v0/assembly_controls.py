@@ -26,6 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.assembly_controls import GRPCAssemblyControlsService
+from .conversions import build_grpc_id
 
 
 class GRPCAssemblyControlsServiceV0(GRPCAssemblyControlsService):
@@ -49,16 +50,15 @@ class GRPCAssemblyControlsServiceV0(GRPCAssemblyControlsService):
 
     @protect_grpc
     def create_align_condition(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import (
             CreateAlignTangentOrientGearConditionRequest,
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateAlignTangentOrientGearConditionRequest(
-            parent=EntityIdentifier(id=kwargs["parent_id"]),
-            geometric_a=EntityIdentifier(id=kwargs["geometric_a_id"]),
-            geometric_b=EntityIdentifier(id=kwargs["geometric_b_id"]),
+            parent=build_grpc_id(kwargs["parent_id"]),
+            geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
+            geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
         )
 
         # Call the gRPC service
@@ -77,16 +77,15 @@ class GRPCAssemblyControlsServiceV0(GRPCAssemblyControlsService):
 
     @protect_grpc
     def create_tangent_condition(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import (
             CreateAlignTangentOrientGearConditionRequest,
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateAlignTangentOrientGearConditionRequest(
-            parent=EntityIdentifier(id=kwargs["parent_id"]),
-            geometric_a=EntityIdentifier(id=kwargs["geometric_a_id"]),
-            geometric_b=EntityIdentifier(id=kwargs["geometric_b_id"]),
+            parent=build_grpc_id(kwargs["parent_id"]),
+            geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
+            geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
         )
 
         # Call the gRPC service
@@ -105,16 +104,15 @@ class GRPCAssemblyControlsServiceV0(GRPCAssemblyControlsService):
 
     @protect_grpc
     def create_orient_condition(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import (
             CreateAlignTangentOrientGearConditionRequest,
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateAlignTangentOrientGearConditionRequest(
-            parent=EntityIdentifier(id=kwargs["parent_id"]),
-            geometric_a=EntityIdentifier(id=kwargs["geometric_a_id"]),
-            geometric_b=EntityIdentifier(id=kwargs["geometric_b_id"]),
+            parent=build_grpc_id(kwargs["parent_id"]),
+            geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
+            geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
         )
 
         # Call the gRPC service

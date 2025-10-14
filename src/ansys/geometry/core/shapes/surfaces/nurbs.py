@@ -74,7 +74,9 @@ class NURBSSurface(Surface):
                 "Please install it using `pip install geomdl`."
             ) from e
 
-        self._nurbs_surface = geomdl_object if geomdl_object else geomdl_nurbs.Surface()
+        self._nurbs_surface = (
+            geomdl_object if geomdl_object else geomdl_nurbs.Surface(normalize_kv=False)
+        )
         self._origin = origin
         self._reference = reference
         self._axis = axis

@@ -50,6 +50,11 @@ class GRPCDesignsService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def get_assembly(self, **kwargs) -> dict:
+        """Create a new design."""
+        pass
+
+    @abstractmethod
     def close(self, **kwargs) -> dict:
         """Close the currently open design."""
         pass
@@ -92,4 +97,9 @@ class GRPCDesignsService(ABC):  # pragma: no cover
     @abstractmethod
     def upload_file_stream(self, **kwargs) -> dict:
         """Upload a file to the server using streaming."""
+        pass
+
+    @abstractmethod
+    def stream_design_tessellation(self, **kwargs) -> dict:
+        """Stream the tessellation of a design."""
         pass
