@@ -178,7 +178,6 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def sweep_with_guide(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.bodies_pb2 import (
             SweepWithGuideRequest,
             SweepWithGuideRequestData,
@@ -189,7 +188,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             request_data=[
                 SweepWithGuideRequestData(
                     name=data.name,
-                    parent=EntityIdentifier(id=data.parent_id),
+                    parent=build_grpc_id(data.parent_id),
                     plane=from_plane_to_grpc_plane(data.sketch.plane),
                     geometries=from_sketch_shapes_to_grpc_geometries(
                         data.sketch.plane, data.sketch.edges, data.sketch.faces
@@ -832,15 +831,14 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.commands_pb2 import SplitBodyRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SplitBodyRequest(
-            selection=[EntityIdentifier(id=id) for id in kwargs["body_ids"]],
+            selection=[build_grpc_id(id) for id in kwargs["body_ids"]],
             split_by_plane=from_plane_to_grpc_plane(kwargs["plane"]) if kwargs["plane"] else None,
-            split_by_slicer=[EntityIdentifier(id=id) for id in kwargs["slicer_ids"]],
-            split_by_faces=[EntityIdentifier(id=id) for id in kwargs["face_ids"]],
+            split_by_slicer=[build_grpc_id(id) for id in kwargs["slicer_ids"]],
+            split_by_faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
             extend_surfaces=kwargs["extend_surfaces"],
         )
 
@@ -854,7 +852,6 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.bodies_pb2 import (
             CreateBodyFromLoftWithGuidesRequest,
             CreateBodyFromLoftWithGuidesRequestData,
@@ -866,7 +863,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             request_data=[
                 CreateBodyFromLoftWithGuidesRequestData(
                     name=kwargs["name"],
-                    parent=EntityIdentifier(id=kwargs["parent_id"]),
+                    parent=build_grpc_id(kwargs["parent_id"]),
                     profiles=[
                         TrimmedCurveList(
                             curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile]
