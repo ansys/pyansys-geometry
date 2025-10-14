@@ -1259,7 +1259,7 @@ class MasterBody(IBody):
         response = self._grpc_client.services.bodies.get_collision(id=self.id, other_id=body.id)
         return CollisionType(response.get("collision_type"))
 
-    def copy(self, copy_id : str, parent: "Component", name: str = None) -> "Body":  # noqa: D102
+    def copy(self, copy_id: str, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         from ansys.geometry.core.designer.component import Component
 
         # Check input types
