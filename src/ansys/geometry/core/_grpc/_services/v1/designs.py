@@ -98,3 +98,23 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def stream_design_tessellation(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def assign_midsurface_offset_type(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def delete_beam_profile(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def create_beam_circular_profile(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def download_file(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError

@@ -21,6 +21,12 @@
 # SOFTWARE.
 """Module containing the designs service implementation for v0."""
 
+from ansys.api.geometry.v0.commands_pb2 import (
+    AssignMidSurfaceOffsetTypeRequest,
+    AssignMidSurfaceThicknessRequest,
+    CreateBeamCircularProfileRequest,
+)
+from google.protobuf.empty_pb2 import Empty
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
@@ -36,6 +42,8 @@ from .conversions import (
     from_grpc_matrix_to_matrix,
     from_grpc_point_to_point3d,
     from_grpc_tess_to_raw_data,
+    from_plane_to_grpc_plane,
+    from_point3d_to_grpc_point,
     from_tess_options_to_grpc_tess_options,
 )
 
@@ -481,3 +489,55 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         return {
             "tessellation": tess_map,
         }
+
+    @protect_grpc
+    def assign_midsurface_thickness(self, **kwargs) -> dict:
+        """ "Add a mid-surface thickness to a list of bodies."""
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = AssignMidSurfaceThicknessRequest(
+            bodies_or_faces=kwargs["bodies_or_faces"], thickness=kwargs["thickness"]
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.AssignMidSurfaceThickness(request)
+
+    @protect_grpc
+    def assign_midsurface_offset_type(self, **kwargs) -> dict:
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = AssignMidSurfaceOffsetTypeRequest(
+            bodies_or_faces=kwargs["bodies_or_faces"], offset_type=kwargs["offset_type"]
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.AssignMidSurfaceOffsetType(request)
+
+    @protect_grpc
+    def delete_beam_profile(self, **kwargs) -> dict:
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = build_grpc_id(id=kwargs["id"])
+
+        # Call the gRPC service
+        response = self.commands_stub.DeleteBeamProfile(request)
+
+    @protect_grpc
+    def create_beam_circular_profile(self, **kwargs) -> dict:
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateBeamCircularProfileRequest(
+            origin=from_point3d_to_grpc_point(kwargs["center"]),
+            radius=kwargs["radius"],
+            plane=from_plane_to_grpc_plane(kwargs["plane"]), name=kwargs["name"],
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.CreateBeamCircularProfile(request)
+
+        # Return the response - formatted as a dictionary
+        return {"id": response.id}
+
+    @protect_grpc
+    def download_file(self, **kwargs) -> dict:  # noqa: D102
+        # Call the gRPC service
+        response = self.commands_stub.DownloadFile(Empty())
+
+        # Return the response - formatted as a dictionary
+        return {"data": response.data}

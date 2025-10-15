@@ -25,23 +25,12 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.commands_pb2 import (
-    AssignMidSurfaceOffsetTypeRequest,
-    AssignMidSurfaceThicknessRequest,
-    CreateBeamCircularProfileRequest,
-)
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
-from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity, UndefinedUnitError
 
 from ansys.geometry.core.connection.backend import BackendType
-from ansys.geometry.core.connection.conversions import (
-    plane_to_grpc_plane,
-    point3d_to_grpc_point,
-)
 from ansys.geometry.core.designer.beam import (
     Beam,
     BeamCircularProfile,
@@ -330,9 +319,9 @@ class Design(Component):
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format} format.")
         if format is DesignFileFormat.SCDOCX:
-            response = self._commands_stub.DownloadFile(Empty())
+            response = self._grpc_client.services.designs.download_file()
             received_bytes = bytes()
-            received_bytes += response.data
+            received_bytes += response.get("data")
         elif format in [
             DesignFileFormat.PARASOLID_TEXT,
             DesignFileFormat.PARASOLID_BIN,
@@ -818,17 +807,16 @@ class Design(Component):
         if not dir_x.is_perpendicular_to(dir_y):
             raise ValueError("Direction X and direction Y must be perpendicular.")
 
-        request = CreateBeamCircularProfileRequest(
-            origin=point3d_to_grpc_point(center),
+        self._grpc_client.log.debug(f"Creating a beam circular profile on {self.id}...")
+
+        response = self._grpc_client._services.designs.create_beam_circular_profile(
+            center=center,
             radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-            plane=plane_to_grpc_plane(Plane(center, dir_x, dir_y)),
+            plane=Plane(center, dir_x, dir_y),
             name=name,
         )
 
-        self._grpc_client.log.debug(f"Creating a beam circular profile on {self.id}...")
-
-        response = self._commands_stub.CreateBeamCircularProfile(request)
-        profile = BeamCircularProfile(response.id, name, radius, center, dir_x, dir_y)
+        profile = BeamCircularProfile(response.get("id"), name, radius, center, dir_x, dir_y)
         self._beam_profiles[profile.name] = profile
 
         self._grpc_client.log.debug(
@@ -912,10 +900,8 @@ class Design(Component):
                 )
 
         # Assign mid-surface thickness
-        self._commands_stub.AssignMidSurfaceThickness(
-            AssignMidSurfaceThicknessRequest(
-                bodies_or_faces=ids, thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-            )
+        self._grpc_client._services.designs.assign_midsurface_thickness(
+            bodies_or_faces=ids, thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
         )
 
         # Once the assignment has gone fine, store the values
@@ -952,8 +938,8 @@ class Design(Component):
                 )
 
         # Assign mid-surface offset type
-        self._commands_stub.AssignMidSurfaceOffsetType(
-            AssignMidSurfaceOffsetTypeRequest(bodies_or_faces=ids, offset_type=offset_type.value)
+        self._grpc_client._services.designs.assign_midsurface_offset_type(
+            bodies_or_faces=ids, offset_type=offset_type.value
         )
 
         # Once the assignment has gone fine, store the values
@@ -976,7 +962,7 @@ class Design(Component):
         removal_obj = self._beam_profiles.get(removal_name, None)
 
         if removal_obj:
-            self._commands_stub.DeleteBeamProfile(EntityIdentifier(id=removal_obj.id))
+            self._grpc_client._services.designs.delete_beam_profile(id=removal_obj.id)
             self._beam_profiles.pop(removal_name)
             self._grpc_client.log.debug(f"Beam profile {removal_name} successfully deleted.")
         else:
