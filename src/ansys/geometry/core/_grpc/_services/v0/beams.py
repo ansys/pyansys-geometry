@@ -28,6 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.beams import GRPCBeamsService
 from ..base.conversions import to_distance
 from .conversions import (
+    build_grpc_id,
     from_grpc_curve_to_curve,
     from_grpc_frame_to_frame,
     from_grpc_material_to_material,
@@ -169,10 +170,8 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
 
     @protect_grpc
     def delete_beam(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-
         # Create the request - assumes all inputs are valid and of the proper type
-        request = EntityIdentifier(id=kwargs["beam_id"])
+        request = build_grpc_id(kwargs["beam_id"])
 
         # Call the gRPC service
         _ = self.stub.DeleteBeam(request)
