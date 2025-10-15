@@ -3807,7 +3807,7 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     assert design.bodies[1].vertices[0].y.magnitude == pytest.approx(-0.00288675, 1e-6, 1e-6)
     assert design.bodies[1].vertices[0].z.magnitude == pytest.approx(0.01, 1e-6, 1e-6)
 
-    print(design.bodies[1].vertices[0].id == "S,~sEbf61ff70-bc08-477a-8a5e-a7c7dc955f40.853__")
+    assert design.bodies[1].vertices[0].id == "S,~sEbf61ff70-bc08-477a-8a5e-a7c7dc955f40.853__"
 
     assert design.bodies[0].vertices == []
     assert design.bodies[1].vertices[1].position == pytest.approx(
