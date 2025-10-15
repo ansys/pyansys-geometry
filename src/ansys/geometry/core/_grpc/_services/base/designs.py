@@ -106,25 +106,25 @@ class GRPCDesignsService(ABC):  # pragma: no cover
 
     @abstractmethod
     def assign_midsurface_thickness(self, **kwargs) -> dict:
-        """ "Add a mid-surface thickness to a list of bodies."""
+        """Add a mid-surface thickness to a list of bodies."""
         pass
 
     @abstractmethod
     def assign_midsurface_offset_type(self, **kwargs) -> dict:
-        """ "Add a mid-surface offset type to a list of bodies."""
+        """Add a mid-surface offset type to a list of bodies."""
         pass
 
     @abstractmethod
     def delete_beam_profile(self, **kwargs) -> dict:
-        """ "Remove a beam profile on the active geometry server instance."""
+        """Remove a beam profile on the active geometry server instance."""
         pass
 
     @abstractmethod
     def create_beam_circular_profile(self, **kwargs) -> dict:
-        """ "Add a new beam circular profile under the design for creating beams."""
+        """Add a new beam circular profile under the design for creating beams."""
         pass
 
     @abstractmethod
     def download_file(self, **kwargs) -> dict:
-        """ "Download the design from the server."""
+        """Download the design from the server."""
         pass

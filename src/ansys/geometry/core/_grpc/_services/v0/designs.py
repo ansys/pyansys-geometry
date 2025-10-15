@@ -491,36 +491,35 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         }
 
     @protect_grpc
-    def assign_midsurface_thickness(self, **kwargs) -> dict:
-        """ "Add a mid-surface thickness to a list of bodies."""
+    def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = AssignMidSurfaceThicknessRequest(
             bodies_or_faces=kwargs["bodies_or_faces"], thickness=kwargs["thickness"]
         )
 
         # Call the gRPC service
-        response = self.commands_stub.AssignMidSurfaceThickness(request)
+        self.commands_stub.AssignMidSurfaceThickness(request)
 
     @protect_grpc
-    def assign_midsurface_offset_type(self, **kwargs) -> dict:
+    def assign_midsurface_offset_type(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = AssignMidSurfaceOffsetTypeRequest(
             bodies_or_faces=kwargs["bodies_or_faces"], offset_type=kwargs["offset_type"]
         )
 
         # Call the gRPC service
-        response = self.commands_stub.AssignMidSurfaceOffsetType(request)
+        self.commands_stub.AssignMidSurfaceOffsetType(request)
 
     @protect_grpc
-    def delete_beam_profile(self, **kwargs) -> dict:
+    def delete_beam_profile(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = build_grpc_id(id=kwargs["id"])
 
         # Call the gRPC service
-        response = self.commands_stub.DeleteBeamProfile(request)
+        self.commands_stub.DeleteBeamProfile(request)
 
     @protect_grpc
-    def create_beam_circular_profile(self, **kwargs) -> dict:
+    def create_beam_circular_profile(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateBeamCircularProfileRequest(
             origin=from_point3d_to_grpc_point(kwargs["center"]),
