@@ -1261,7 +1261,7 @@ class MasterBody(IBody):
 
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
         raise NotImplementedError(
-            'Copy method is not implemented on the MasterBody. Call this method on a body instead.'
+            "Copy method is not implemented on the MasterBody. Call this method on a body instead."
         )
 
     def get_raw_tessellation(  # noqa: D102
@@ -1845,7 +1845,10 @@ class Body(IBody):
 
         # Assign the new body to its specified parent (and return the new body)
         tb = MasterBody(
-            response.get("master_id"), copy_name, self._template._grpc_client, is_surface=self.is_surface
+            response.get("master_id"),
+            copy_name,
+            self._template._grpc_client,
+            is_surface=self.is_surface,
         )
         parent._master_component.part.bodies.append(tb)
         parent._clear_cached_bodies()
