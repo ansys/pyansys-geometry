@@ -525,7 +525,8 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         request = CreateBeamCircularProfileRequest(
             origin=from_point3d_to_grpc_point(kwargs["center"]),
             radius=kwargs["radius"],
-            plane=from_plane_to_grpc_plane(kwargs["plane"]), name=kwargs["name"],
+            plane=from_plane_to_grpc_plane(kwargs["plane"]),
+            name=kwargs["name"],
         )
 
         # Call the gRPC service
