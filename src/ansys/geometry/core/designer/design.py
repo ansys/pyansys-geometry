@@ -1034,6 +1034,8 @@ class Design(Component):
         self,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> dict:
         """Tessellate the entire design and return the geometry as triangles.
 
@@ -1043,6 +1045,10 @@ class Design(Component):
             Options for the tessellation. If None, default options are used.
         reset_cache : bool, default: False
             Whether to reset the cache before performing the tessellation.
+        include_faces : bool, default: True
+            Whether to include faces in the tessellation.
+        include_edges : bool, default: False
+            Whether to include edges in the tessellation.
 
         Returns
         -------
@@ -1059,7 +1065,7 @@ class Design(Component):
         # cache tessellation
         if not self._design_tess or reset_cache:
             response = self._grpc_client.services.designs.stream_design_tessellation(
-                options=tess_options,
+                options=tess_options, include_faces=include_faces, include_edges=include_edges
             )
 
             self._design_tess = response.get("tessellation")

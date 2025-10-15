@@ -464,7 +464,11 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = DesignTessellationRequest(options=options)
+        request = DesignTessellationRequest(
+            options=options,
+            include_faces=kwargs["include_faces"],
+            include_edges=kwargs["include_edges"],
+        )
 
         # Call the gRPC service
         response = self.designs_stub.StreamDesignTessellation(request)
