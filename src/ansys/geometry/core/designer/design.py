@@ -59,13 +59,13 @@ from ansys.geometry.core.misc.checks import (
     ensure_design_is_active,
     min_backend_version,
 )
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
+from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.misc.options import ImportOptions, TessellationOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
-from ansys.geometry.core.typing import RealSequence
+from ansys.geometry.core.typing import Real, RealSequence
 
 
 @unique
@@ -809,9 +809,9 @@ class Design(Component):
 
         self._grpc_client.log.debug(f"Creating a beam circular profile on {self.id}...")
 
-        response = self._grpc_client._services.designs.create_beam_circular_profile(
+        response = self._grpc_client._services.beams.create_beam_circular_profile(
             center=center,
-            radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+            radius=radius,
             plane=Plane(center, dir_x, dir_y),
             name=name,
         )
@@ -873,7 +873,7 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def add_midsurface_thickness(self, thickness: Quantity, bodies: list[Body]) -> None:
+    def add_midsurface_thickness(self, thickness: Distance | Quantity | Real, bodies: list[Body]) -> None:
         """Add a mid-surface thickness to a list of bodies.
 
         Parameters
@@ -887,6 +887,7 @@ class Design(Component):
         -----
         Only surface bodies will be eligible for mid-surface thickness assignment.
         """
+        thickness = thickness if isinstance(thickness, Distance) else Distance(thickness)
         # Store only assignable ids
         ids: list[str] = []
         ids_bodies: list[Body] = []
@@ -900,8 +901,8 @@ class Design(Component):
                 )
 
         # Assign mid-surface thickness
-        self._grpc_client._services.designs.assign_midsurface_thickness(
-            bodies_or_faces=ids, thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        self._grpc_client._services.bodies.assign_midsurface_thickness(
+            ids=ids, thickness=thickness
         )
 
         # Once the assignment has gone fine, store the values
@@ -938,8 +939,8 @@ class Design(Component):
                 )
 
         # Assign mid-surface offset type
-        self._grpc_client._services.designs.assign_midsurface_offset_type(
-            bodies_or_faces=ids, offset_type=offset_type.value
+        self._grpc_client._services.bodies.assign_midsurface_offset(
+            ids=ids, offset_type=offset_type
         )
 
         # Once the assignment has gone fine, store the values
@@ -962,7 +963,7 @@ class Design(Component):
         removal_obj = self._beam_profiles.get(removal_name, None)
 
         if removal_obj:
-            self._grpc_client._services.designs.delete_beam_profile(id=removal_obj.id)
+            self._grpc_client._services.beams.delete_beam_profile(id=removal_obj.id)
             self._beam_profiles.pop(removal_name)
             self._grpc_client.log.debug(f"Beam profile {removal_name} successfully deleted.")
         else:
