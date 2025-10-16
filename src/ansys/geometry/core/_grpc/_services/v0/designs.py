@@ -31,6 +31,7 @@ from .conversions import (
     build_grpc_id,
     from_design_file_format_to_grpc_part_export_format,
     from_grpc_curve_to_curve,
+    from_grpc_edge_tess_to_raw_data,
     from_grpc_frame_to_frame,
     from_grpc_material_to_material,
     from_grpc_matrix_to_matrix,
@@ -481,7 +482,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 for face_id, face_tess in body_tess.face_tessellation.items():
                     tess[face_id] = from_grpc_tess_to_raw_data(face_tess)
                 for edge_id, edge_tess in body_tess.edge_tessellation.items():
-                    tess[edge_id] = from_grpc_tess_to_raw_data(edge_tess)
+                    tess[edge_id] = from_grpc_edge_tess_to_raw_data(edge_tess)
                 tess_map[body_id] = tess
 
         return {

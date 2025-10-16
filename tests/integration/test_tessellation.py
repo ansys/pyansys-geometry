@@ -166,6 +166,9 @@ def test_body_tessellate_with_edges(modeler: Modeler):
     assert blocks_1.bounds == pytest.approx([0.0, 4.0, -2.0, 2.0, 0.0, 4.0])
     assert mesh_1.n_arrays == 0
 
+    # Check cache with edges
+    assert body_1._template._tessellation is not None
+
 
 @pytest.mark.skipif(
     not are_graphics_available(), reason="Skipping due to graphics requirements missing"
@@ -213,7 +216,6 @@ def test_component_tessellate(modeler: Modeler):
         )
 
 
-@pytest.mark.skip(reason="Needs ApiServer fix. Disabled until then.")
 def test_get_design_tessellation(modeler: Modeler):
     """Test getting the entire design tessellation."""
     # Create a design with two bodies
@@ -246,6 +248,21 @@ def test_get_design_tessellation(modeler: Modeler):
     assert isinstance(design_tess, dict)
     assert len(design_tess) == 2  # Two bodies in the design
 
+    box_tess = design_tess[box.id]
+    assert isinstance(box_tess, dict)
+    assert len(box_tess) == 18  # Six faces + Twelve edges on the box
+
+    for face_id, face_tess in box_tess.items():
+        assert isinstance(face_id, str)
+        assert isinstance(face_tess, dict)
+
+    cyl_tess = design_tess[cyl.id]
+    assert isinstance(cyl_tess, dict)
+    assert len(cyl_tess) == 5  # Three faces + Two edges on the cylinder
+
+    # Check design cache
+    assert design._design_tess == design_tess
+
 
 def test_get_body_raw_tessellation(modeler: Modeler):
     """Test getting the raw tessellation from a body."""
@@ -276,3 +293,7 @@ def test_get_body_raw_tessellation(modeler: Modeler):
     for id, tess in cyl_tess.items():
         assert isinstance(id, str)
         assert isinstance(tess, dict)
+
+    # Check raw tessellation cache
+    assert box._template._raw_tessellation == box_tess
+    assert cylinder._template._raw_tessellation == cyl_tess
