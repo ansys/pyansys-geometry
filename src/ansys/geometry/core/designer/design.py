@@ -873,7 +873,9 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def add_midsurface_thickness(self, thickness: Distance | Quantity | Real, bodies: list[Body]) -> None:
+    def add_midsurface_thickness(
+        self, thickness: Distance | Quantity | Real, bodies: list[Body]
+    ) -> None:
         """Add a mid-surface thickness to a list of bodies.
 
         Parameters
@@ -901,9 +903,7 @@ class Design(Component):
                 )
 
         # Assign mid-surface thickness
-        self._grpc_client._services.bodies.assign_midsurface_thickness(
-            ids=ids, thickness=thickness
-        )
+        self._grpc_client._services.bodies.assign_midsurface_thickness(ids=ids, thickness=thickness)
 
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
