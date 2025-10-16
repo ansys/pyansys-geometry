@@ -1054,7 +1054,7 @@ class Design(Component):
         -------
         dict
             A dictionary with body IDs as keys and another dictionary as values.
-            The inner dictionary has face and edge IDs as keys and the corresponding face/vertice 
+            The inner dictionary has face and edge IDs as keys and the corresponding face/vertice
             arrays as values.
         """
         if not self.is_alive:
