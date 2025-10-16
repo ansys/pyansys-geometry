@@ -907,7 +907,7 @@ class Design(Component):
 
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
-            body._surface_thickness = thickness
+            body._surface_thickness = thickness.value
 
     @protect_grpc
     @check_input_types

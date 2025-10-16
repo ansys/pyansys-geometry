@@ -1680,13 +1680,13 @@ def test_midsurface_properties(modeler: Modeler):
     # Let's check the values now
     assert slot_body.surface_thickness is None
     assert slot_body.surface_offset is None
-    assert slot_surf.surface_thickness.value == Quantity(10, UNITS.mm)
+    assert slot_surf.surface_thickness == Quantity(10, UNITS.mm)
     assert slot_surf.surface_offset == MidSurfaceOffsetType.TOP
 
     # Let's check that the design-stored values are also updated
     assert design.bodies[0].surface_thickness is None
     assert design.bodies[0].surface_offset is None
-    assert design.bodies[1].surface_thickness.value == Quantity(10, UNITS.mm)
+    assert design.bodies[1].surface_thickness == Quantity(10, UNITS.mm)
     assert design.bodies[1].surface_offset == MidSurfaceOffsetType.TOP
 
     surf_repr = str(slot_surf)
