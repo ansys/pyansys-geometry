@@ -213,6 +213,7 @@ def test_component_tessellate(modeler: Modeler):
         )
 
 
+@pytest.mark.skip(reason="Needs ApiServer fix. Disabled until then.")
 def test_get_design_tessellation(modeler: Modeler):
     """Test getting the entire design tessellation."""
     # Create a design with two bodies
