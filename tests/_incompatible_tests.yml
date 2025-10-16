@@ -118,6 +118,7 @@ backends:
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
 
   - version: "24.2"
     incompatible_tests:
@@ -230,6 +231,7 @@ backends:
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
 
   - version: "25.1"
     incompatible_tests:
@@ -311,6 +313,7 @@ backends:
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # NURBS surface creation only available from 26.1 onwards
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
 
@@ -349,5 +352,6 @@ backends:
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # NURBS surface creation only available from 26.1 onwards
       - tests/integration/test_design.py::test_nurbs_surface_body_creation

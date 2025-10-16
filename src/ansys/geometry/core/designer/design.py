@@ -425,7 +425,9 @@ class Design(Component):
         """
         return (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
 
-    def export_to_scdocx(self, location: Path | str | None = None) -> Path:
+    def export_to_scdocx(
+        self, location: Path | str | None = None, write_body_facets: bool = False
+    ) -> Path:
         """Export the design to an scdocx file.
 
         Parameters
@@ -433,6 +435,8 @@ class Design(Component):
         location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
+        write_body_facets : bool, default: False
+            Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
 
         Returns
         -------
@@ -443,12 +447,14 @@ class Design(Component):
         file_location = self.__build_export_file_location(location, "scdocx")
 
         # Export the design to an scdocx file
-        self.download(file_location, DesignFileFormat.SCDOCX)
+        self.download(file_location, DesignFileFormat.SCDOCX, write_body_facets)
 
         # Return the file location
         return file_location
 
-    def export_to_disco(self, location: Path | str | None = None) -> Path:
+    def export_to_disco(
+        self, location: Path | str | None = None, write_body_facets: bool = False
+    ) -> Path:
         """Export the design to an dsco file.
 
         Parameters
@@ -456,6 +462,8 @@ class Design(Component):
         location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
+        write_body_facets : bool, default: False
+            Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
 
         Returns
         -------
@@ -466,7 +474,7 @@ class Design(Component):
         file_location = self.__build_export_file_location(location, "dsco")
 
         # Export the design to an dsco file
-        self.download(file_location, DesignFileFormat.DISCO)
+        self.download(file_location, DesignFileFormat.DISCO, write_body_facets)
 
         # Return the file location
         return file_location
