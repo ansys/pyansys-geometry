@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Module containing the designs service implementation for v0."""
 
+from google.protobuf.empty_pb2 import Empty
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
@@ -481,3 +482,11 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         return {
             "tessellation": tess_map,
         }
+
+    @protect_grpc
+    def download_file(self, **kwargs) -> dict:  # noqa: D102
+        # Call the gRPC service
+        response = self.commands_stub.DownloadFile(Empty())
+
+        # Return the response - formatted as a dictionary
+        return {"data": response.data}

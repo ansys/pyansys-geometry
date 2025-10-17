@@ -53,3 +53,13 @@ class GRPCBeamsService(ABC):  # pragma: no cover
     def delete_beam(self, **kwargs) -> dict:
         """Delete a beam."""
         pass
+
+    @abstractmethod
+    def delete_beam_profile(self, **kwargs) -> dict:
+        """Remove a beam profile on the active geometry server instance."""
+        pass
+
+    @abstractmethod
+    def create_beam_circular_profile(self, **kwargs) -> dict:
+        """Add a new beam circular profile under the design for creating beams."""
+        pass

@@ -58,3 +58,11 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
     @protect_grpc
     def delete_beam(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def delete_beam_profile(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def create_beam_circular_profile(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
