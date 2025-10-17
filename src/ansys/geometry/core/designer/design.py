@@ -25,7 +25,6 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity, UndefinedUnitError
@@ -115,9 +114,6 @@ class Design(Component):
     def __init__(self, name: str, modeler: Modeler, read_existing_design: bool = False):
         """Initialize the ``Design`` class."""
         super().__init__(name, None, modeler.client)
-
-        # Initialize the stubs needed
-        self._commands_stub = CommandsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
