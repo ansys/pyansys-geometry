@@ -1279,7 +1279,7 @@ class MasterBody(IBody):
             "Copy method is not implemented on the MasterBody. Call this method on a body instead."
         )
 
-	@min_backend_version(26, 1, 0)
+    @min_backend_version(26, 1, 0)
     def get_raw_tessellation(  # noqa: D102
         self,
         transform: Matrix44 = IDENTITY_MATRIX44,
