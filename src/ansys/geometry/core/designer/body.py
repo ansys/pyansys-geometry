@@ -1324,6 +1324,7 @@ class MasterBody(IBody):
 
         # Transform the raw tessellation points for both faces/edges
         import numpy as np
+
         for id, tess in self._raw_tessellation.items():
             vertices = np.reshape(np.array(tess.get("vertices")), (-1, 3))
             homogenous_points = np.hstack([vertices, np.ones((vertices.shape[0], 1))])
@@ -1897,7 +1898,7 @@ class Body(IBody):
             tess_options,
             reset_cache,
             include_faces,
-            include_edges
+            include_edges,
         )
 
     @ensure_design_is_active

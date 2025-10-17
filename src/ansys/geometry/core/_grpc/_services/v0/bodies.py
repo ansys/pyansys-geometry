@@ -1108,12 +1108,14 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = GetFullTessellationRequest(
-            request_data=[GetFullTessellationRequestData(
-                id=build_grpc_id(kwargs["id"]),
-                options=from_tess_options_to_grpc_tess_options(options) if options else None,
-                include_faces=kwargs["include_faces"],
-                include_edges=kwargs["include_edges"],
-            )]
+            request_data=[
+                GetFullTessellationRequestData(
+                    id=build_grpc_id(kwargs["id"]),
+                    options=from_tess_options_to_grpc_tess_options(options) if options else None,
+                    include_faces=kwargs["include_faces"],
+                    include_edges=kwargs["include_edges"],
+                )
+            ]
         )
 
         # Call the gRPC service
@@ -1141,9 +1143,9 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 )
             for edge_id, edge_tess in elem.edge_tessellation.items():
                 tess_map[edge_id] = (
-                        from_grpc_edge_tess_to_raw_data(edge_tess)
-                        if kwargs["raw_data"]
-                        else from_grpc_edge_tess_to_pd(edge_tess)
-                    )
+                    from_grpc_edge_tess_to_raw_data(edge_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_edge_tess_to_pd(edge_tess)
+                )
 
         return {"tessellation": tess_map}

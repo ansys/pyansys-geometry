@@ -125,7 +125,7 @@ def test_body_tessellate_with_edges(modeler: Modeler):
     design = modeler.create_design("Design")
     sketch_1 = Sketch().box(Point2D([2, 0], UNITS.m), Quantity(4, UNITS.m), Quantity(4, UNITS.m))
     body_1 = design.extrude_sketch("Body_1", sketch_1, Quantity(4, UNITS.m))
-    
+
     # Tessellate the body without merging the individual faces
     blocks_1 = body_1.tessellate()
     assert "MultiBlock" in str(blocks_1)
@@ -158,7 +158,9 @@ def test_body_tessellate_with_edges(modeler: Modeler):
     assert mesh_1.n_arrays == 0
 
     # Tessellate the body not including faces, only edges
-    mesh_1 = body_1.tessellate(merge=True, reset_cache=True, include_faces=False, include_edges=True)
+    mesh_1 = body_1.tessellate(
+        merge=True, reset_cache=True, include_faces=False, include_edges=True
+    )
     assert "PolyData" in str(mesh_1)
     # Test number of cells, points and arrays in dataset
     assert mesh_1.n_cells == 12
@@ -242,7 +244,7 @@ def test_get_design_tessellation(modeler: Modeler):
     for face_id, face_tess in cyl_tess.items():
         assert isinstance(face_id, str)
         assert isinstance(face_tess, dict)
-    
+
     # Get the design tessellation including edges
     design_tess = design.get_raw_tessellation(reset_cache=True, include_edges=True)
     assert isinstance(design_tess, dict)
