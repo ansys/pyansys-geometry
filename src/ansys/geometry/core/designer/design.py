@@ -25,23 +25,12 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.commands_pb2 import (
-    AssignMidSurfaceOffsetTypeRequest,
-    AssignMidSurfaceThicknessRequest,
-    CreateBeamCircularProfileRequest,
-)
 from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
-from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity, UndefinedUnitError
 
 from ansys.geometry.core.connection.backend import BackendType
-from ansys.geometry.core.connection.conversions import (
-    plane_to_grpc_plane,
-    point3d_to_grpc_point,
-)
 from ansys.geometry.core.designer.beam import (
     Beam,
     BeamCircularProfile,
@@ -70,13 +59,13 @@ from ansys.geometry.core.misc.checks import (
     ensure_design_is_active,
     min_backend_version,
 )
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
+from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.misc.options import ImportOptions, TessellationOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
-from ansys.geometry.core.typing import RealSequence
+from ansys.geometry.core.typing import Real, RealSequence
 
 
 @unique
@@ -330,9 +319,9 @@ class Design(Component):
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format} format.")
         if format is DesignFileFormat.SCDOCX:
-            response = self._commands_stub.DownloadFile(Empty())
+            response = self._grpc_client.services.designs.download_file()
             received_bytes = bytes()
-            received_bytes += response.data
+            received_bytes += response.get("data")
         elif format in [
             DesignFileFormat.PARASOLID_TEXT,
             DesignFileFormat.PARASOLID_BIN,
@@ -818,17 +807,16 @@ class Design(Component):
         if not dir_x.is_perpendicular_to(dir_y):
             raise ValueError("Direction X and direction Y must be perpendicular.")
 
-        request = CreateBeamCircularProfileRequest(
-            origin=point3d_to_grpc_point(center),
-            radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-            plane=plane_to_grpc_plane(Plane(center, dir_x, dir_y)),
+        self._grpc_client.log.debug(f"Creating a beam circular profile on {self.id}...")
+
+        response = self._grpc_client._services.beams.create_beam_circular_profile(
+            center=center,
+            radius=radius,
+            plane=Plane(center, dir_x, dir_y),
             name=name,
         )
 
-        self._grpc_client.log.debug(f"Creating a beam circular profile on {self.id}...")
-
-        response = self._commands_stub.CreateBeamCircularProfile(request)
-        profile = BeamCircularProfile(response.id, name, radius, center, dir_x, dir_y)
+        profile = BeamCircularProfile(response.get("id"), name, radius, center, dir_x, dir_y)
         self._beam_profiles[profile.name] = profile
 
         self._grpc_client.log.debug(
@@ -885,7 +873,9 @@ class Design(Component):
     @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def add_midsurface_thickness(self, thickness: Quantity, bodies: list[Body]) -> None:
+    def add_midsurface_thickness(
+        self, thickness: Distance | Quantity | Real, bodies: list[Body]
+    ) -> None:
         """Add a mid-surface thickness to a list of bodies.
 
         Parameters
@@ -899,6 +889,7 @@ class Design(Component):
         -----
         Only surface bodies will be eligible for mid-surface thickness assignment.
         """
+        thickness = thickness if isinstance(thickness, Distance) else Distance(thickness)
         # Store only assignable ids
         ids: list[str] = []
         ids_bodies: list[Body] = []
@@ -912,15 +903,11 @@ class Design(Component):
                 )
 
         # Assign mid-surface thickness
-        self._commands_stub.AssignMidSurfaceThickness(
-            AssignMidSurfaceThicknessRequest(
-                bodies_or_faces=ids, thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-            )
-        )
+        self._grpc_client._services.bodies.assign_midsurface_thickness(ids=ids, thickness=thickness)
 
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
-            body._surface_thickness = thickness
+            body._surface_thickness = thickness.value
 
     @protect_grpc
     @check_input_types
@@ -952,8 +939,8 @@ class Design(Component):
                 )
 
         # Assign mid-surface offset type
-        self._commands_stub.AssignMidSurfaceOffsetType(
-            AssignMidSurfaceOffsetTypeRequest(bodies_or_faces=ids, offset_type=offset_type.value)
+        self._grpc_client._services.bodies.assign_midsurface_offset(
+            ids=ids, offset_type=offset_type
         )
 
         # Once the assignment has gone fine, store the values
@@ -976,7 +963,7 @@ class Design(Component):
         removal_obj = self._beam_profiles.get(removal_name, None)
 
         if removal_obj:
-            self._commands_stub.DeleteBeamProfile(EntityIdentifier(id=removal_obj.id))
+            self._grpc_client._services.beams.delete_beam_profile(id=removal_obj.id)
             self._beam_profiles.pop(removal_name)
             self._grpc_client.log.debug(f"Beam profile {removal_name} successfully deleted.")
         else:

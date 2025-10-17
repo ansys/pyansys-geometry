@@ -1695,7 +1695,7 @@ def test_midsurface_properties(modeler: Modeler):
     assert "Exists               : True" in surf_repr
     assert "Parent component     : MidSurfaceProperties" in surf_repr
     assert "Surface body         : True" in surf_repr
-    assert "Surface thickness    : 10 millimeter" in surf_repr
+    assert "Surface thickness    : 10.0 millimeter" in surf_repr
     assert "Surface offset       : MidSurfaceOffsetType.TOP" in surf_repr
     assert f"Color                : {DEFAULT_COLOR}" in surf_repr
 
@@ -1726,7 +1726,7 @@ def test_midsurface_properties(modeler: Modeler):
         assert "Exists               : True" in surf_repr
         assert "Parent component     : MidSurfaceProperties" in surf_repr
         assert "Surface body         : True" in surf_repr
-        assert "Surface thickness    : 30 millimeter" in surf_repr
+        assert "Surface thickness    : 30.0 millimeter" in surf_repr
         assert "Surface offset       : MidSurfaceOffsetType.BOTTOM" in surf_repr
         assert f"Color                : {DEFAULT_COLOR}" in surf_repr
     except GeometryExitedError:
