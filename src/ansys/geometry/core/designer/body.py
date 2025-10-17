@@ -1888,7 +1888,7 @@ class Body(IBody):
         include_faces: bool = True,
         include_edges: bool = False,
     ) -> dict:
-        tess = self._template.get_raw_tessellation(
+        raw_tess = self._template.get_raw_tessellation(
             tess_options,
             reset_cache,
             include_faces,
@@ -1896,15 +1896,17 @@ class Body(IBody):
         )
     
         # Transform the raw tessellation points for both faces/edges
+        from copy import deepcopy
+
         import numpy as np
 
         transform = self.parent_component.get_world_transform()
-        transformed_map = {}
-        for id, tess in tess.items():
+        transformed_map = deepcopy(raw_tess)
+        for id, tess in raw_tess.items():
             vertices = np.reshape(np.array(tess.get("vertices")), (-1, 3))
             homogenous_points = np.hstack([vertices, np.ones((vertices.shape[0], 1))])
             transformed_points = (transform @ homogenous_points.T).T[:, :3]
-            transformed_map[id]["vertices"] = transformed_points.tolist()
+            transformed_map[id]["vertices"] = transformed_points.flatten().tolist()
 
         return transformed_map
 

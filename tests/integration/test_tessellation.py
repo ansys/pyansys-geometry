@@ -263,6 +263,7 @@ def test_get_design_tessellation(modeler: Modeler):
     assert len(cyl_tess) == 5  # Three faces + Two edges on the cylinder
 
     # Check design cache
+    print(design_tess)
     assert design._design_tess == design_tess
 
 

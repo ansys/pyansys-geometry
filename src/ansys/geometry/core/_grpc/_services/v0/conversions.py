@@ -398,7 +398,7 @@ def from_grpc_edge_tess_to_pd(tess: GRPCEdgeTessellation) -> "pv.PolyData":
 
 def from_grpc_edge_tess_to_raw_data(tess: GRPCEdgeTessellation) -> dict:
     """Convert a ``EdgeTessellation`` to raw data."""
-    return {"vertices": [from_grpc_point_to_point3d(pt) for pt in tess.vertices]}
+    return {"vertices": [coord for pt in tess.vertices for coord in (pt.x, pt.y, pt.z)]}
 
 
 def from_tess_options_to_grpc_tess_options(
