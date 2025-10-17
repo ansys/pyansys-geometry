@@ -1122,8 +1122,6 @@ class GRPCBodyServiceV0(GRPCBodyService):
             resp_single = self.stub.GetFullTessellation(request).response_data[0]
             resp.append(resp_single)
         except grpc.RpcError as err:  # pragma: no cover
-            if kwargs["backend_version"] < (25, 2, 0):
-                raise err
             request = GetTessellationRequest(
                 id=build_grpc_id(kwargs["id"]),
                 options=from_tess_options_to_grpc_tess_options(options) if options else None,

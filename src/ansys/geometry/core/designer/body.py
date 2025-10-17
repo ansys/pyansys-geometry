@@ -1366,23 +1366,21 @@ class MasterBody(IBody):
 
         # cache tessellation
         if not self._tessellation or reset_cache:
-            if tess_options is not None:
+            if self._grpc_client.backend_version > (25, 2, 0):
                 response = self._grpc_client.services.bodies.get_full_tessellation(
                     id=self.id,
                     options=tess_options,
-                    backend_version=self._grpc_client.backend_version,
                     raw_data=False,
                     include_faces=include_faces,
                     include_edges=include_edges,
                 )
+            elif tess_options is not None:
+                response = self._grpc_client.services.bodies.get_tesellation_with_options(
+                    id=self.id, options=tess_options, raw_data=False
+                )
             else:
-                response = self._grpc_client.services.bodies.get_full_tessellation(
-                    id=self.id,
-                    options=None,
-                    backend_version=self._grpc_client.backend_version,
-                    raw_data=False,
-                    include_faces=include_faces,
-                    include_edges=include_edges,
+                response = self._grpc_client.services.bodies.get_tesellation(
+                    id=self.id, backend_version=self._grpc_client.backend_version, raw_data=False
                 )
 
             self._tessellation = response.get("tessellation")
