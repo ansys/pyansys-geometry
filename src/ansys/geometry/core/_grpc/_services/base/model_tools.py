@@ -63,3 +63,8 @@ class GRPCModelToolsService(ABC):  # pragma: no cover
     def move_translate(self, **kwargs) -> dict:
         """Translate the specified entities."""
         pass
+
+    @abstractmethod
+    def create_sketch_line(self, **kwargs) -> dict:
+        """Create a sketch line in the design."""
+        pass

@@ -20,8 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Tests trimmed geometry."""
-
-from ansys.api.geometry.v0.commands_pb2 import CreateSketchLineRequest
 import numpy as np
 from pint import Quantity
 import pytest
@@ -46,9 +44,7 @@ from ansys.geometry.core.sketch.sketch import Sketch
 
 def create_sketch_line(design: Design, p1: Point3D, p2: Point3D):
     """A helper function to create a sketch line given two points and a design."""
-    point1 = point3d_to_grpc_point(p1)
-    point2 = point3d_to_grpc_point(p2)
-    design._commands_stub.CreateSketchLine(CreateSketchLineRequest(point1=point1, point2=point2))
+    design._create_sketch_line(p1, p2)
 
 
 def create_hedgehog(modeler: Modeler):

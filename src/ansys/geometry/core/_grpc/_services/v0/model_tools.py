@@ -149,3 +149,21 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
         return {
             "success": response.success,
         }
+
+    @protect_grpc
+    def create_sketch_line(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import CreateSketchLineRequest
+
+        from .conversions import from_point3d_to_grpc_point
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateSketchLineRequest(
+            point1=from_point3d_to_grpc_point(kwargs["start"]),
+            point2=from_point3d_to_grpc_point(kwargs["end"]),
+        )
+
+        # Call the gRPC service
+        _ = self._stub.CreateSketchLine(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
