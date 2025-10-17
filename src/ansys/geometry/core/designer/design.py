@@ -881,7 +881,7 @@ class Design(Component):
         self._update_design_inplace()
 
         return response.get("status")
-    
+
     @check_input_types
     @ensure_design_is_active
     def add_midsurface_thickness(

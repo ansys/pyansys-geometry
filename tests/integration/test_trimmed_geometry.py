@@ -20,11 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Tests trimmed geometry."""
+
 import numpy as np
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.connection import BackendType, point3d_to_grpc_point
+from ansys.geometry.core.connection import BackendType
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.face import SurfaceType
 from ansys.geometry.core.math import Point3D, UnitVector3D
