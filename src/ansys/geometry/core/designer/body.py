@@ -1275,28 +1275,11 @@ class MasterBody(IBody):
         return CollisionType(response.get("collision_type"))
 
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
-        from ansys.geometry.core.designer.component import Component
-
-        # Check input types
-        check_type(parent, Component)
-        copy_name = self.name if name is None else name
-        check_type(copy_name, str)
-
-        self._grpc_client.log.debug(f"Copying body {self.id}.")
-        response = self._grpc_client.services.bodies.copy(
-            id=self.id, parent_id=parent.id, name=copy_name
+        raise NotImplementedError(
+            "Copy method is not implemented on the MasterBody. Call this method on a body instead."
         )
 
-        # Assign the new body to its specified parent (and return the new body)
-        tb = MasterBody(
-            response.get("master_id"), copy_name, self._grpc_client, is_surface=self.is_surface
-        )
-        parent._master_component.part.bodies.append(tb)
-        parent._clear_cached_bodies()
-        body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
-        return Body(body_id, response.get("name"), parent, tb)
-
-    @min_backend_version(26, 1, 0)
+	@min_backend_version(26, 1, 0)
     def get_raw_tessellation(  # noqa: D102
         self,
         transform: Matrix44 = IDENTITY_MATRIX44,
@@ -1883,7 +1866,29 @@ class Body(IBody):
 
     @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
-        return self._template.copy(parent, name)
+        from ansys.geometry.core.designer.component import Component
+
+        # Check input types
+        check_type(parent, Component)
+        copy_name = self.name if name is None else name
+        check_type(copy_name, str)
+
+        self._template._grpc_client.log.debug(f"Copying body {self.id}.")
+        response = self._template._grpc_client.services.bodies.copy(
+            id=self.id, parent_id=parent.id, name=copy_name
+        )
+
+        # Assign the new body to its specified parent (and return the new body)
+        tb = MasterBody(
+            response.get("master_id"),
+            copy_name,
+            self._template._grpc_client,
+            is_surface=self.is_surface,
+        )
+        parent._master_component.part.bodies.append(tb)
+        parent._clear_cached_bodies()
+        body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
+        return Body(body_id, response.get("name"), parent, tb)
 
     @ensure_design_is_active
     def get_raw_tessellation(  # noqa: D102
