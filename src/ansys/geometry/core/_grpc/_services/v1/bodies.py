@@ -237,5 +237,5 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
-    def get_full_tessellation(self, **kwargs):  # noqa: D102
+    def get_full_tessellation(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError

@@ -1282,7 +1282,6 @@ class MasterBody(IBody):
     @min_backend_version(26, 1, 0)
     def get_raw_tessellation(  # noqa: D102
         self,
-        transform: Matrix44 = IDENTITY_MATRIX44,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
         include_faces: bool = True,
@@ -1304,15 +1303,6 @@ class MasterBody(IBody):
             )
 
             self._raw_tessellation = response.get("tessellation")
-
-        # Transform the raw tessellation points for both faces/edges
-        import numpy as np
-
-        for id, tess in self._raw_tessellation.items():
-            vertices = np.reshape(np.array(tess.get("vertices")), (-1, 3))
-            homogenous_points = np.hstack([vertices, np.ones((vertices.shape[0], 1))])
-            transformed_points = (transform @ homogenous_points.T).T[:, :3]
-            self._raw_tessellation[id]["vertices"] = transformed_points.tolist()
 
         return self._raw_tessellation
 
@@ -1898,13 +1888,25 @@ class Body(IBody):
         include_faces: bool = True,
         include_edges: bool = False,
     ) -> dict:
-        return self._template.get_raw_tessellation(
-            self.parent_component.get_world_transform(),
+        tess = self._template.get_raw_tessellation(
             tess_options,
             reset_cache,
             include_faces,
             include_edges,
         )
+    
+        # Transform the raw tessellation points for both faces/edges
+        import numpy as np
+
+        transform = self.parent_component.get_world_transform()
+        transformed_map = {}
+        for id, tess in tess.items():
+            vertices = np.reshape(np.array(tess.get("vertices")), (-1, 3))
+            homogenous_points = np.hstack([vertices, np.ones((vertices.shape[0], 1))])
+            transformed_points = (transform @ homogenous_points.T).T[:, :3]
+            transformed_map[id]["vertices"] = transformed_points.tolist()
+
+        return transformed_map
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
