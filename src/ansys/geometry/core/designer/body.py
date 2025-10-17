@@ -1894,7 +1894,7 @@ class Body(IBody):
             include_faces,
             include_edges,
         )
-    
+
         # Transform the raw tessellation points for both faces/edges
         import numpy as np
 
