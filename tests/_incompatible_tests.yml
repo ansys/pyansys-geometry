@@ -119,7 +119,7 @@ backends:
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
       # Edge tessellation added in 26.1
-      - test/integration/test_tessellation.py::test_body_tessellate_with_edges
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
 
   - version: "24.2"
     incompatible_tests:
@@ -233,7 +233,7 @@ backends:
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
       # Edge tessellation added in 26.1
-      - test/integration/test_tessellation.py::test_body_tessellate_with_edges
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
 
   - version: "25.1"
     incompatible_tests:
@@ -318,7 +318,7 @@ backends:
       # NURBS surface creation only available from 26.1 onwards
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
-      - test/integration/test_tessellation.py::test_body_tessellate_with_edges
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
 
   - version: "25.2"
     incompatible_tests:
@@ -358,4 +358,4 @@ backends:
       # NURBS surface creation only available from 26.1 onwards
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
-      - test/integration/test_tessellation.py::test_body_tessellate_with_edges
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
