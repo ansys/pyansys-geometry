@@ -291,7 +291,7 @@ class Design(Component):
         file_location.write_bytes(received_bytes)
         self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
 
-    @min_backend_version(25, 2, 0)
+    @min_backend_version(24, 1, 0)
     @check_input_types
     def _create_sketch_line(self, start: Point3D, end: Point3D) -> None:
         """Create a sketch line in the design.
