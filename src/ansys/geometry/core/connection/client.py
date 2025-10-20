@@ -229,6 +229,7 @@ class GrpcClient:
         self._backend_version = response.get("version")
         self._backend_api_server_build_info = response.get("api_server_build_info")
         self._backend_product_build_info = response.get("product_build_info")
+        self._backend_additional_info = response.get("additional_info", {})
 
         # Register the close method to be called at exit - irrespectively of
         # the user calling it or not...
@@ -313,12 +314,23 @@ class GrpcClient:
         str
             String with the backend information.
         """
-        return (
+        base_info = (
             f"{' ' * indent}Version:            {self.backend_version}\n"
             f"{' ' * indent}Backend type:       {self.backend_type.name}\n"
             f"{' ' * indent}Backend number:     {self._backend_product_build_info}\n"
             f"{' ' * indent}API server number:  {self._backend_api_server_build_info}"
         )
+        if self._backend_additional_info:
+            # Calculate padding to align values consistently
+            # (19 chars total for label + colon + spaces)
+            additional_info_lines = [
+                f"{' ' * indent}{key + ':':<19}{value}"
+                for key, value in self._backend_additional_info.items()
+            ]
+            additional_info_str = "\n".join(additional_info_lines)
+            return f"{base_info}\n{additional_info_str}"
+        else:  # pragma: no cover
+            return base_info
 
     def __repr__(self) -> str:
         """Represent the client as a string."""

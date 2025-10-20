@@ -87,6 +87,7 @@ class GRPCAdminServiceV0(GRPCAdminService):
             "version": backend_version,
             "api_server_build_info": api_server_build_info,
             "product_build_info": product_build_info,
+            "additional_info": {k: v for k, v in response.additional_build_info.items()},
         }
 
     @protect_grpc
