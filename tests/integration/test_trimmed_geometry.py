@@ -42,12 +42,6 @@ from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
 )
 from ansys.geometry.core.sketch.sketch import Sketch
 
-
-def create_sketch_line(design: Design, p1: Point3D, p2: Point3D):
-    """A helper function to create a sketch line given two points and a design."""
-    design._create_sketch_line(p1, p2)
-
-
 def create_hedgehog(modeler: Modeler):
     """A helper function that creates the Hedgehog model."""
     design = modeler.create_design("Hedgehog")
@@ -80,7 +74,7 @@ def create_hedgehog(modeler: Modeler):
                 u, v = face.shape.get_proportional_parameters(uv)
                 normal = face.normal(u, v)
                 p2 = design.add_design_point("hair", p1 + normal / 800).value
-                create_sketch_line(design, p1, p2)
+                design._create_sketch_line(p1, p2)
                 current_gap += 1
     # Add isoparametric curves, not on linux
     if not BackendType.is_core_service(modeler.client.backend_type):
