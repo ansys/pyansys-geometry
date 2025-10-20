@@ -321,8 +321,10 @@ class GrpcClient:
             f"{' ' * indent}API server number:  {self._backend_api_server_build_info}"
         )
         if self._backend_additional_info:
+            # Calculate padding to align values consistently
+            # (19 chars total for label + colon + spaces)
             additional_info_lines = [
-                f"{' ' * indent}{key}: {value}"
+                f"{' ' * indent}{key + ':':<19}{value}"
                 for key, value in self._backend_additional_info.items()
             ]
             additional_info_str = "\n".join(additional_info_lines)
