@@ -26,7 +26,6 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core.connection import BackendType
-from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.face import SurfaceType
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
@@ -41,6 +40,7 @@ from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
     TrimmedSurface,
 )
 from ansys.geometry.core.sketch.sketch import Sketch
+
 
 def create_hedgehog(modeler: Modeler):
     """A helper function that creates the Hedgehog model."""
