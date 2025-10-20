@@ -25,7 +25,6 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity, UndefinedUnitError
@@ -48,7 +47,6 @@ from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.designer.vertex import Vertex
-from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, ZERO_POINT3D
@@ -110,14 +108,10 @@ class Design(Component):
     _named_selections: dict[str, NamedSelection]
     _beam_profiles: dict[str, BeamProfile]
 
-    @protect_grpc
     @check_input_types
     def __init__(self, name: str, modeler: Modeler, read_existing_design: bool = False):
         """Initialize the ``Design`` class."""
         super().__init__(name, None, modeler.client)
-
-        # Initialize the stubs needed
-        self._commands_stub = CommandsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -256,7 +250,6 @@ class Design(Component):
         )
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def download(
@@ -297,6 +290,26 @@ class Design(Component):
         # Write to file
         file_location.write_bytes(received_bytes)
         self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
+
+    @min_backend_version(24, 1, 0)
+    @check_input_types
+    def _create_sketch_line(self, start: Point3D, end: Point3D) -> None:
+        """Create a sketch line in the design.
+
+        Parameters
+        ----------
+        start : Point3D
+            Start point of the line.
+        end : Point3D
+            End point of the line.
+
+        Warnings
+        --------
+        This method is for internal testing use only and may change without warning.
+        Please use the Sketch class to create sketch lines.
+        """
+        # Process request
+        self._grpc_client.services.model_tools.create_sketch_line(start=start, end=end)
 
     def __export_and_download_legacy(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
@@ -771,7 +784,6 @@ class Design(Component):
         """
         raise ValueError("The design itself cannot have a shared topology.")
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def add_beam_circular_profile(
@@ -870,7 +882,6 @@ class Design(Component):
 
         return response.get("status")
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def add_midsurface_thickness(
@@ -909,7 +920,6 @@ class Design(Component):
         for body in ids_bodies:
             body._surface_thickness = thickness.value
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def add_midsurface_offset(self, offset_type: MidSurfaceOffsetType, bodies: list[Body]) -> None:
@@ -947,7 +957,6 @@ class Design(Component):
         for body in ids_bodies:
             body._surface_offset = offset_type
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def delete_beam_profile(self, beam_profile: BeamProfile | str) -> None:
@@ -972,7 +981,6 @@ class Design(Component):
                 + " Ignoring request."
             )
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)

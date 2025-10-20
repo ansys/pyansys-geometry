@@ -54,8 +54,8 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtractVolumeFromFacesRequest(
-            sealing_faces=[build_grpc_id(face.id) for face in kwargs["sealing_faces"]],
-            inside_faces=[build_grpc_id(face.id) for face in kwargs["inside_faces"]],
+            sealing_faces=[build_grpc_id(face) for face in kwargs["sealing_faces"]],
+            inside_faces=[build_grpc_id(face) for face in kwargs["inside_faces"]],
         )
 
         # Call the gRPC service
@@ -73,8 +73,8 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtractVolumeFromEdgeLoopsRequest(
-            sealing_edges=[build_grpc_id(edge.id) for edge in kwargs["sealing_edges"]],
-            inside_faces=[build_grpc_id(face.id) for face in kwargs["inside_faces"]],
+            sealing_edges=[build_grpc_id(edge) for edge in kwargs["sealing_edges"]],
+            inside_faces=[build_grpc_id(face) for face in kwargs["inside_faces"]],
         )
 
         # Call the gRPC service
@@ -94,7 +94,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RemoveRoundsRequest(
-            selection=[Face(id=round.id) for round in kwargs["rounds"]],
+            selection=[Face(id=round) for round in kwargs["rounds"]],
             auto_shrink=BoolValue(value=kwargs["auto_shrink"]),
         )
 
@@ -114,7 +114,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
-            selection=[Body(id=body.id) for body in kwargs["bodies"]],
+            selection=[Body(id=body) for body in kwargs["bodies"]],
             tolerance=DoubleValue(value=kwargs["tolerance"]),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
@@ -135,7 +135,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
-            selection=[Body(id=body.id) for body in kwargs["bodies"]],
+            selection=[Body(id=body) for body in kwargs["bodies"]],
             tolerance=DoubleValue(value=kwargs["tolerance"]),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
@@ -160,7 +160,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindLogosRequest(
-            bodies=[build_grpc_id(body.id) for body in kwargs["bodies"]],
+            bodies=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=FindLogoOptions(
                 min_height=kwargs["min_height"],
                 max_height=kwargs["max_height"],
@@ -183,7 +183,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindLogosRequest(
-            bodies=[build_grpc_id(body.id) for body in kwargs["bodies"]],
+            bodies=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=FindLogoOptions(
                 min_height=kwargs["min_height"],
                 max_height=kwargs["max_height"],
@@ -229,7 +229,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DetectHelixesRequest(
-            body_ids=[build_grpc_id(body.id) for body in kwargs["bodies"]],
+            body_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=DetectHelixesOptions(
                 min_radius=from_measurement_to_server_length(kwargs["min_radius"]),
                 max_radius=from_measurement_to_server_length(kwargs["max_radius"]),

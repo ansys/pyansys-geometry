@@ -118,8 +118,8 @@ class PrepareTools:
         parent_design = get_design_from_face(sealing_faces[0])
 
         response = self._grpc_client._services.prepare_tools.extract_volume_from_faces(
-            sealing_faces=sealing_faces,
-            inside_faces=inside_faces,
+            sealing_faces=[face.id for face in sealing_faces],
+            inside_faces=[face.id for face in inside_faces],
         )
 
         if response.get("success"):
@@ -173,8 +173,8 @@ class PrepareTools:
         parent_design = get_design_from_edge(sealing_edges[0])
 
         response = self._grpc_client._services.prepare_tools.extract_volume_from_edge_loops(
-            sealing_edges=sealing_edges,
-            inside_faces=inside_faces,
+            sealing_edges=[edge.id for edge in sealing_edges],
+            inside_faces=[face.id for face in inside_faces],
         )
 
         if response.get("success"):
@@ -215,7 +215,7 @@ class PrepareTools:
 
         parent_design = get_design_from_face(faces[0])
         response = self._grpc_client._services.prepare_tools.remove_rounds(
-            rounds=faces,
+            rounds=[face.id for face in faces],
             auto_shrink=auto_shrink,
         )
 
@@ -259,7 +259,7 @@ class PrepareTools:
         check_type_all_elements_in_iterable(bodies, Body)
 
         response = self._grpc_client._services.prepare_tools.share_topology(
-            bodies=bodies,
+            bodies=[body.id for body in bodies],
             tolerance=tol,
             preserve_instances=preserve_instances,
         )
@@ -301,7 +301,7 @@ class PrepareTools:
         check_type_all_elements_in_iterable(bodies, Body)
 
         response = self._grpc_client._services.prepare_tools.enhanced_share_topology(
-            bodies=bodies,
+            bodies=[body.id for body in bodies],
             tolerance=tol,
             preserve_instances=preserve_instances,
         )
@@ -358,7 +358,7 @@ class PrepareTools:
 
         bodies = [] if bodies is None else bodies
         response = self._grpc_client._services.prepare_tools.find_logos(
-            bodies=bodies,
+            bodies=[body.id for body in bodies],
             min_height=min_height,
             max_height=max_height,
         )
@@ -410,7 +410,7 @@ class PrepareTools:
 
         bodies = [] if bodies is None else bodies
         response = self._grpc_client._services.prepare_tools.find_and_remove_logos(
-            bodies=bodies,
+            bodies=[body.id for body in bodies],
             min_height=min_height,
             max_height=max_height,
         )
@@ -466,7 +466,7 @@ class PrepareTools:
         )
 
         response = self._grpc_client._services.prepare_tools.detect_helixes(
-            bodies=bodies,
+            bodies=[body.id for body in bodies],
             min_radius=min_radius,
             max_radius=max_radius,
             fit_radius_error=fit_radius_error,

@@ -21,12 +21,11 @@
 # SOFTWARE.
 """Tests trimmed geometry."""
 
-from ansys.api.geometry.v0.commands_pb2 import CreateSketchLineRequest
 import numpy as np
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core.connection import BackendType, point3d_to_grpc_point
+from ansys.geometry.core.connection import BackendType
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.face import SurfaceType
 from ansys.geometry.core.math import Point3D, UnitVector3D
@@ -42,14 +41,6 @@ from ansys.geometry.core.shapes.surfaces.trimmed_surface import (
     TrimmedSurface,
 )
 from ansys.geometry.core.sketch.sketch import Sketch
-
-
-def create_sketch_line(design: Design, p1: Point3D, p2: Point3D):
-    """A helper function to create a sketch line given two points and a design."""
-    point1 = point3d_to_grpc_point(p1)
-    point2 = point3d_to_grpc_point(p2)
-    design._commands_stub.CreateSketchLine(CreateSketchLineRequest(point1=point1, point2=point2))
-
 
 def create_hedgehog(modeler: Modeler):
     """A helper function that creates the Hedgehog model."""
@@ -83,7 +74,7 @@ def create_hedgehog(modeler: Modeler):
                 u, v = face.shape.get_proportional_parameters(uv)
                 normal = face.normal(u, v)
                 p2 = design.add_design_point("hair", p1 + normal / 800).value
-                create_sketch_line(design, p1, p2)
+                design._create_sketch_line(p1, p2)
                 current_gap += 1
     # Add isoparametric curves, not on linux
     if not BackendType.is_core_service(modeler.client.backend_type):

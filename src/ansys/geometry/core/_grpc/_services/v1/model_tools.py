@@ -66,3 +66,7 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
     @protect_grpc
     def move_translate(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def create_sketch_line(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
