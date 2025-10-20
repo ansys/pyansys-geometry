@@ -120,6 +120,61 @@ def test_body_tessellate(modeler: Modeler):
 @pytest.mark.skipif(
     not are_graphics_available(), reason="Skipping due to graphics requirements missing"
 )
+def test_body_tessellate_with_edges(modeler: Modeler):
+    """Test the body tessellation including edges."""
+    design = modeler.create_design("Design")
+    sketch_1 = Sketch().box(Point2D([2, 0], UNITS.m), Quantity(4, UNITS.m), Quantity(4, UNITS.m))
+    body_1 = design.extrude_sketch("Body_1", sketch_1, Quantity(4, UNITS.m))
+
+    # Tessellate the body without merging the individual faces
+    blocks_1 = body_1.tessellate()
+    assert "MultiBlock" in str(blocks_1)
+    # Number of blocks will be the number of faces
+    assert blocks_1.n_blocks == 6
+    # Test the center of the bounding box
+    assert blocks_1.center == pytest.approx([2, 0, 2])
+    # Test the values of blocks which are the length 6 tuple of floats
+    # containing min/max along each axis
+    assert blocks_1.bounds == pytest.approx([0.0, 4.0, -2.0, 2.0, 0.0, 4.0])
+
+    # Tessellate the body with edges
+    blocks_1_with_edges = body_1.tessellate(reset_cache=True, include_edges=True)
+    assert "MultiBlock" in str(blocks_1_with_edges)
+    # Number of blocks will be the number of faces + edges
+    assert blocks_1_with_edges.n_blocks == 18
+    # Test the center of the bounding box
+    assert blocks_1_with_edges.center == pytest.approx([2, 0, 2])
+    # Test the values of blocks which are the length 6 tuple of floats
+    # containing min/max along each axis
+    assert blocks_1_with_edges.bounds == pytest.approx([0.0, 4.0, -2.0, 2.0, 0.0, 4.0])
+
+    # Tessellate the body merging the individual faces + include edges
+    mesh_1 = body_1.tessellate(merge=True, reset_cache=True, include_edges=True)
+    assert "PolyData" in str(mesh_1)
+    # Test number of cells, points and arrays in dataset
+    assert mesh_1.n_cells == 24
+    assert mesh_1.n_points == 48
+    assert blocks_1.bounds == pytest.approx([0.0, 4.0, -2.0, 2.0, 0.0, 4.0])
+    assert mesh_1.n_arrays == 0
+
+    # Tessellate the body not including faces, only edges
+    mesh_1 = body_1.tessellate(
+        merge=True, reset_cache=True, include_faces=False, include_edges=True
+    )
+    assert "PolyData" in str(mesh_1)
+    # Test number of cells, points and arrays in dataset
+    assert mesh_1.n_cells == 12
+    assert mesh_1.n_points == 24
+    assert blocks_1.bounds == pytest.approx([0.0, 4.0, -2.0, 2.0, 0.0, 4.0])
+    assert mesh_1.n_arrays == 0
+
+    # Check cache with edges
+    assert body_1._template._tessellation is not None
+
+
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
 def test_component_tessellate(modeler: Modeler):
     """Test the component tessellation."""
     # Create a sketch
@@ -163,10 +218,9 @@ def test_component_tessellate(modeler: Modeler):
         )
 
 
-@pytest.mark.skip(reason="Needs ApiServer fix. Disabled until then.")
 def test_get_design_tessellation(modeler: Modeler):
     """Test getting the entire design tessellation."""
-
+    # Create a design with two bodies
     design = modeler.create_design("revolve_edges")
     box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
     cyl = design.extrude_sketch("cylinder", Sketch().circle(Point2D([1, 0]), 0.5), 2)
@@ -191,6 +245,26 @@ def test_get_design_tessellation(modeler: Modeler):
         assert isinstance(face_id, str)
         assert isinstance(face_tess, dict)
 
+    # Get the design tessellation including edges
+    design_tess = design.get_raw_tessellation(reset_cache=True, include_edges=True)
+    assert isinstance(design_tess, dict)
+    assert len(design_tess) == 2  # Two bodies in the design
+
+    box_tess = design_tess[box.id]
+    assert isinstance(box_tess, dict)
+    assert len(box_tess) == 18  # Six faces + Twelve edges on the box
+
+    for face_id, face_tess in box_tess.items():
+        assert isinstance(face_id, str)
+        assert isinstance(face_tess, dict)
+
+    cyl_tess = design_tess[cyl.id]
+    assert isinstance(cyl_tess, dict)
+    assert len(cyl_tess) == 5  # Three faces + Two edges on the cylinder
+
+    # Check design cache
+    assert design._design_tess == design_tess
+
 
 def test_get_body_raw_tessellation(modeler: Modeler):
     """Test getting the raw tessellation from a body."""
@@ -202,17 +276,26 @@ def test_get_body_raw_tessellation(modeler: Modeler):
     # Get the raw tessellation from the box body
     box_tess = box.get_raw_tessellation()
     assert isinstance(box_tess, dict)
-    assert len(box_tess) == 6  # Six faces on the box
+    assert len(box_tess) == 6  # Six faces + Twelve edge on the box
 
-    for face_id, face_tess in box_tess.items():
-        assert isinstance(face_id, str)
-        assert isinstance(face_tess, dict)
+    for id, tess in box_tess.items():
+        assert isinstance(id, str)
+        assert isinstance(tess, dict)
 
-    # Get the raw tessellation from the cylinder body
-    cyl_tess = cylinder.get_raw_tessellation()
+    # Get the raw tessellation from the box body including edges
+    box_tess = box.get_raw_tessellation(reset_cache=True, include_edges=True)
+    assert isinstance(box_tess, dict)
+    assert len(box_tess) == 18  # Six faces + Twelve edge on the box
+
+    # Get the raw tessellation from the cylinder body only including edges
+    cyl_tess = cylinder.get_raw_tessellation(include_faces=False, include_edges=True)
     assert isinstance(cyl_tess, dict)
-    assert len(cyl_tess) == 3  # Three faces on the cylinder
+    assert len(cyl_tess) == 2  # Three faces + Two edges on the cylinder
 
-    for face_id, face_tess in cyl_tess.items():
-        assert isinstance(face_id, str)
-        assert isinstance(face_tess, dict)
+    for id, tess in cyl_tess.items():
+        assert isinstance(id, str)
+        assert isinstance(tess, dict)
+
+    # Check raw tessellation cache
+    assert box._template._raw_tessellation == box_tess
+    assert cylinder._template._raw_tessellation == cyl_tess

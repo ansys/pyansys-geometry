@@ -843,7 +843,6 @@ class GeometryCommands:
 
         # Convert angle and pitch to appropriate objects
         step_angle = step_angle if isinstance(step_angle, Angle) else Angle(step_angle)
-        print(step_linear)
         step_linear = step_linear if isinstance(step_linear, Distance) else Distance(step_linear)
 
         result = self._grpc_client.services.patterns.modify_circular_pattern(
