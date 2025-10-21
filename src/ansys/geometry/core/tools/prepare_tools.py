@@ -228,7 +228,10 @@ class PrepareTools:
 
     @min_backend_version(24, 2, 0)
     def share_topology(
-        self, bodies: list["Body"], tol: Real = 0.0, preserve_instances: bool = False
+        self,
+        bodies: list["Body"],
+        tol: Distance | Quantity | Real = 0.0,
+        preserve_instances: bool = False,
     ) -> bool:
         """Share topology between the chosen bodies.
 
@@ -236,7 +239,7 @@ class PrepareTools:
         ----------
         bodies : list[Body]
             List of bodies to share topology between.
-        tol : Real
+        tol : Distance | Quantity | Real
             Maximum distance between bodies.
         preserve_instances : bool
             Whether instances are preserved.
@@ -257,6 +260,7 @@ class PrepareTools:
 
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
+        tol = tol if isinstance(tol, Distance) else Distance(tol)
 
         response = self._grpc_client._services.prepare_tools.share_topology(
             bodies=[body.id for body in bodies],
@@ -268,7 +272,10 @@ class PrepareTools:
 
     @min_backend_version(25, 2, 0)
     def enhanced_share_topology(
-        self, bodies: list["Body"], tol: Real = 0.0, preserve_instances: bool = False
+        self,
+        bodies: list["Body"],
+        tol: Distance | Quantity | Real = 0.0,
+        preserve_instances: bool = False,
     ) -> RepairToolMessage:
         """Share topology between the chosen bodies.
 
@@ -276,7 +283,7 @@ class PrepareTools:
         ----------
         bodies : list[Body]
             List of bodies to share topology between.
-        tol : Real
+        tol : Distance | Quantity | Real
             Maximum distance between bodies.
         preserve_instances : bool
             Whether instances are preserved.
@@ -299,6 +306,7 @@ class PrepareTools:
 
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
+        tol = tol if isinstance(tol, Distance) else Distance(tol)
 
         response = self._grpc_client._services.prepare_tools.enhanced_share_topology(
             bodies=[body.id for body in bodies],
@@ -318,7 +326,10 @@ class PrepareTools:
     @check_input_types
     @min_backend_version(25, 2, 0)
     def find_logos(
-        self, bodies: list["Body"] = None, min_height: Real = None, max_height: Real = None
+        self,
+        bodies: list["Body"] = None,
+        min_height: Distance | Quantity | Real = None,
+        max_height: Distance | Quantity | Real = None
     ) -> "LogoProblemArea":
         """Detect logos in geometry.
 
@@ -329,9 +340,9 @@ class PrepareTools:
         ----------
         bodies : list[Body], optional
             List of bodies where logos should be detected
-        min_height : real, optional
+        min_height : Distance | Quantity | Real, optional
             The minimum height when searching for logos
-        max_height: real, optional
+        max_height: Distance | Quantity | Real, optional
             The minimum height when searching for logos
 
         Returns
@@ -357,6 +368,13 @@ class PrepareTools:
             check_type_all_elements_in_iterable(bodies, Body)
 
         bodies = [] if bodies is None else bodies
+
+        # Convert the height inputs to Distance if they are not already
+        if min_height:
+            min_height = min_height if isinstance(min_height, Distance) else Distance(min_height)
+        if max_height:
+            max_height = max_height if isinstance(max_height, Distance) else Distance(max_height)
+
         response = self._grpc_client._services.prepare_tools.find_logos(
             bodies=[body.id for body in bodies],
             min_height=min_height,
@@ -372,7 +390,10 @@ class PrepareTools:
     @check_input_types
     @min_backend_version(25, 2, 0)
     def find_and_remove_logos(
-        self, bodies: list["Body"] = None, min_height: Real = None, max_height: Real = None
+        self,
+        bodies: list["Body"] = None,
+        min_height: Distance | Quantity | Real = None,
+        max_height: Distance | Quantity | Real = None
     ) -> bool:
         """Detect and remove logos in geometry.
 
@@ -382,10 +403,10 @@ class PrepareTools:
         ----------
         bodies : list[Body], optional
             List of bodies where logos should be detected and removed.
-        min_height : real, optional
+        min_height : Distance | Quantity | Real, optional
             The minimum height when searching for logos
-        max_height: real, optional
-            The minimum height when searching for logos
+        max_height: Distance | Quantity | Real, optional
+            The maximum height when searching for logos
 
         Returns
         -------
@@ -409,6 +430,13 @@ class PrepareTools:
             check_type_all_elements_in_iterable(bodies, Body)
 
         bodies = [] if bodies is None else bodies
+
+        # Convert the height inputs to Distance if they are not already
+        if min_height:
+            min_height = min_height if isinstance(min_height, Distance) else Distance(min_height)
+        if max_height:
+            max_height = max_height if isinstance(max_height, Distance) else Distance(max_height)
+
         response = self._grpc_client._services.prepare_tools.find_and_remove_logos(
             bodies=[body.id for body in bodies],
             min_height=min_height,
