@@ -496,9 +496,8 @@ def launch_modeler_with_spaceclaim_and_pimlight(
         client_log_file=client_log_file,
     )
 
-
-@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
+@kwargs_passed_not_accepted
 def launch_modeler_with_geometry_service(
     version: str | int | None = None,
     host: str = "localhost",
@@ -619,9 +618,8 @@ def launch_modeler_with_geometry_service(
         product_version=product_version,
     )
 
-
-@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
+@kwargs_passed_not_accepted
 def launch_modeler_with_discovery(
     version: str | int | None = None,
     host: str = "localhost",
@@ -740,9 +738,8 @@ def launch_modeler_with_discovery(
         product_version=product_version,
     )
 
-
-@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
+@kwargs_passed_not_accepted
 def launch_modeler_with_spaceclaim(
     version: str | int | None = None,
     host: str = "localhost",
@@ -861,9 +858,8 @@ def launch_modeler_with_spaceclaim(
         product_version=product_version,
     )
 
-
-@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
+@kwargs_passed_not_accepted
 def launch_modeler_with_core_service(
     version: str | int | None = None,
     host: str = "localhost",
