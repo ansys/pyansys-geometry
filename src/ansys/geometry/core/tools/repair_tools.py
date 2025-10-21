@@ -97,7 +97,10 @@ class RepairTools:
         self._grpc_client = grpc_client
 
     def find_split_edges(
-        self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
+        self,
+        bodies: list["Body"],
+        angle: Angle | pint.Quantity | Real = 0.0,
+        length: Distance | pint.Quantity | Real = 0.0,
     ) -> list[SplitEdgeProblemAreas]:
         """Find split edges in the given list of bodies.
 
@@ -108,9 +111,9 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that split edges are investigated on.
-        angle : Real
+        angle : Angle | ~pint.Quantity | Real
             The maximum angle between edges.
-        length : Real
+        length : Distance | ~pint.Quantity | Real
             The maximum length of the edges.
 
         Returns
@@ -122,6 +125,10 @@ class RepairTools:
             return []
 
         body_ids = [body.id for body in bodies]
+
+        # Convert the measurement objects
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        length = length if isinstance(length, Distance) else Distance(length)
 
         response = self._grpc_client.services.repair_tools.find_split_edges(
             bodies_or_faces=body_ids, angle=angle, distance=length
@@ -203,7 +210,7 @@ class RepairTools:
         ]
 
     def find_short_edges(
-        self, bodies: list["Body"], length: Real = 0.0
+        self, bodies: list["Body"], length: Distance | pint.Quantity | Real = 0.0
     ) -> list[ShortEdgeProblemAreas]:
         """Find the short edge problem areas.
 
@@ -214,6 +221,8 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that short edges are investigated on.
+        length : Distance | ~pint.Quantity | Real, optional
+            The maximum length of the edges. By default, 0.0.
 
         Returns
         -------
@@ -224,6 +233,9 @@ class RepairTools:
             return []
 
         body_ids = [body.id for body in bodies]
+
+        # Convert the measurement object
+        length = length if isinstance(length, Distance) else Distance(length)
 
         response = self._grpc_client.services.repair_tools.find_short_edges(
             selection=body_ids, length=length
@@ -514,7 +526,10 @@ class RepairTools:
 
     @min_backend_version(25, 2, 0)
     def find_and_fix_short_edges(
-        self, bodies: list["Body"], length: Real = 0.0, comprehensive_result: bool = False
+        self,
+        bodies: list["Body"],
+        length: Distance | pint.Quantity | Real = 0.0,
+        comprehensive_result: bool = False,
     ) -> RepairToolMessage:
         """Find and fix the short edge problem areas.
 
@@ -524,7 +539,7 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that short edges are investigated on.
-        length : Real, optional
+        length : Distance | ~pint.Quantity | Real, optional
             The maximum length of the edges. By default, 0.0.
         comprehensive_result : bool, optional
             Whether to fix all problem areas individually.
@@ -542,7 +557,7 @@ class RepairTools:
         from ansys.geometry.core.designer.body import Body
 
         check_type_all_elements_in_iterable(bodies, Body)
-        check_type(length, Real)
+        check_type(length, (Distance, pint.Quantity, Real))
         check_type(comprehensive_result, bool)
 
         if not bodies:
@@ -552,6 +567,7 @@ class RepairTools:
 
         body_ids = [body.id for body in bodies]
         parent_design = get_design_from_body(bodies[0])
+        length = length if isinstance(length, Distance) else Distance(length)
 
         response = self._grpc_client.services.repair_tools.find_and_fix_short_edges(
             selection=body_ids,
@@ -581,8 +597,6 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that short edges are investigated on.
-        length : Real
-            The maximum length of the edges.
         comprehensive_result : bool, optional
             Whether to fix all problem areas individually.
             By default, False.
@@ -627,8 +641,8 @@ class RepairTools:
     def find_and_fix_split_edges(
         self,
         bodies: list["Body"],
-        angle: Real = 0.0,
-        length: Real = 0.0,
+        angle: Angle | pint.Quantity | Real = 0.0,
+        length: Distance | pint.Quantity | Real = 0.0,
         comprehensive_result: bool = False,
     ) -> RepairToolMessage:
         """Find and fix the split edge problem areas.
@@ -639,9 +653,9 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that split edges are investigated on.
-        angle : Real, optional
+        angle : Angle | ~pint.Quantity | Real, optional
             The maximum angle between edges. By default, 0.0.
-        length : Real, optional
+        length : Distance | ~pint.Quantity | Real, optional
             The maximum length of the edges. By default, 0.0.
         comprehensive_result : bool, optional
             Whether to fix all problem areas individually.
@@ -659,8 +673,8 @@ class RepairTools:
         from ansys.geometry.core.designer.body import Body
 
         check_type_all_elements_in_iterable(bodies, Body)
-        check_type(angle, Real)
-        check_type(length, Real)
+        check_type(angle, (Angle, pint.Quantity, Real))
+        check_type(length, (Distance, pint.Quantity, Real))
         check_type(comprehensive_result, bool)
 
         if not bodies:
@@ -670,6 +684,10 @@ class RepairTools:
 
         body_ids = [body.id for body in bodies]
         parent_design = get_design_from_body(bodies[0])
+
+        # Convert the measurement objects
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        length = length if isinstance(length, Distance) else Distance(length)
 
         response = self._grpc_client.services.repair_tools.find_and_fix_split_edges(
             bodies_or_faces=body_ids,

@@ -1929,11 +1929,15 @@ class Body(IBody):
         )
 
     @ensure_design_is_active
-    def shell_body(self, offset: Real) -> bool:  # noqa: D102
+    def shell_body(self, offset: Distance | Quantity | Real) -> bool:  # noqa: D102
         return self._template.shell_body(offset)
 
     @ensure_design_is_active
-    def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
+    def remove_faces(  # noqa: D102
+        self,
+        selection: Face | Iterable[Face],
+        offset: Distance | Quantity | Real,
+    ) -> bool:
         return self._template.remove_faces(selection, offset)
 
     @graphics_required

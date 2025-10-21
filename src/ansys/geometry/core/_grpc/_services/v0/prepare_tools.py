@@ -25,6 +25,7 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import from_measurement_to_server_length
 from ..base.prepare_tools import GRPCPrepareToolsService
 from .conversions import build_grpc_id
 
@@ -115,7 +116,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
             selection=[Body(id=body) for body in kwargs["bodies"]],
-            tolerance=DoubleValue(value=kwargs["tolerance"]),
+            tolerance=DoubleValue(value=from_measurement_to_server_length(kwargs["tolerance"])),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
 
@@ -136,7 +137,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
             selection=[Body(id=body) for body in kwargs["bodies"]],
-            tolerance=DoubleValue(value=kwargs["tolerance"]),
+            tolerance=DoubleValue(value=from_measurement_to_server_length(kwargs["tolerance"])),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
 
@@ -158,12 +159,24 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         from ansys.api.geometry.v0.models_pb2 import FindLogoOptions
         from ansys.api.geometry.v0.preparetools_pb2 import FindLogosRequest
 
+        # Check height objects
+        min_height = (
+            from_measurement_to_server_length(kwargs["min_height"])
+            if kwargs["min_height"] is not None
+            else None
+        )
+        max_height = (
+            from_measurement_to_server_length(kwargs["max_height"])
+            if kwargs["max_height"] is not None
+            else None
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindLogosRequest(
             bodies=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=FindLogoOptions(
-                min_height=kwargs["min_height"],
-                max_height=kwargs["max_height"],
+                min_height=min_height,
+                max_height=max_height,
             ),
         )
 
@@ -181,12 +194,24 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         from ansys.api.geometry.v0.models_pb2 import FindLogoOptions
         from ansys.api.geometry.v0.preparetools_pb2 import FindLogosRequest
 
+        # Check height objects
+        min_height = (
+            from_measurement_to_server_length(kwargs["min_height"])
+            if kwargs["min_height"] is not None
+            else None
+        )
+        max_height = (
+            from_measurement_to_server_length(kwargs["max_height"])
+            if kwargs["max_height"] is not None
+            else None
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindLogosRequest(
             bodies=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=FindLogoOptions(
-                min_height=kwargs["min_height"],
-                max_height=kwargs["max_height"],
+                min_height=min_height,
+                max_height=max_height,
             ),
         )
 
