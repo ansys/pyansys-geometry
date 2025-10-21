@@ -439,3 +439,38 @@ def test_kwargs_passed_not_accepted():
         match="The following keyword arguments are not accepted in the method 'my_method': arg3.",
     ):
         my_method(arg1=1, arg2=2, arg3=3)
+
+
+def test_kwargs_passed_not_accepted_decorator_order():
+    """Test the kwargs_passed_not_accepted decorator."""
+
+    @deprecated_argument("arg3")
+    @kwargs_passed_not_accepted
+    def my_method(arg1, arg2, **kwargs):
+        """A method that accepts no keyword arguments."""
+        return arg1 + arg2
+
+    # Call the method without kwargs - should not raise an error
+    assert my_method(1, 2) == 3
+    assert my_method(arg1=1, arg2=2) == 3
+
+    # Call the method with kwargs - should raise an error
+    with pytest.raises(
+        TypeError,
+        match="The following keyword arguments are not accepted in the"
+        " method 'my_method': unexpected_arg, another_one.",
+    ):
+        my_method(1, 2, unexpected_arg=3, another_one="test")
+
+    with pytest.raises(
+        TypeError,
+        match="The following keyword arguments are not accepted in the method 'my_method': arg3.",
+    ):
+        my_method(arg1=1, arg2=2, arg3=3)
+
+    # TODO: This test fails, fix decorator #2338
+    #     @kwargs_passed_not_accepted
+    #     @deprecated_argument("arg3")
+    #     def my_method(arg1, arg2, **kwargs):
+    #         """A method that accepts no keyword arguments."""
+    #         return arg1 + arg2
