@@ -100,7 +100,7 @@ class RepairTools:
         self,
         bodies: list["Body"],
         angle: Angle | pint.Quantity | Real = 0.0,
-        length: Distance | pint.Quantity | Real = 0.0
+        length: Distance | pint.Quantity | Real = 0.0,
     ) -> list[SplitEdgeProblemAreas]:
         """Find split edges in the given list of bodies.
 
@@ -233,7 +233,7 @@ class RepairTools:
             return []
 
         body_ids = [body.id for body in bodies]
-        
+
         # Convert the measurement object
         length = length if isinstance(length, Distance) else Distance(length)
 
@@ -529,7 +529,7 @@ class RepairTools:
         self,
         bodies: list["Body"],
         length: Distance | pint.Quantity | Real = 0.0,
-        comprehensive_result: bool = False
+        comprehensive_result: bool = False,
     ) -> RepairToolMessage:
         """Find and fix the short edge problem areas.
 

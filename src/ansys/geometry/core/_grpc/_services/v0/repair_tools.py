@@ -66,7 +66,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         request = FindSplitEdgesRequest(
             bodies_or_faces=kwargs["bodies_or_faces"],
             angle=DoubleValue(value=float(from_measurement_to_server_angle(kwargs["angle"]))),
-            distance=DoubleValue(value=float(from_measurement_to_server_length(kwargs["distance"]))),
+            distance=DoubleValue(
+                value=float(from_measurement_to_server_length(kwargs["distance"]))
+            ),
         )
 
         # Call the gRPC service

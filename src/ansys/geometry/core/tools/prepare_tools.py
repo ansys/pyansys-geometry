@@ -329,7 +329,7 @@ class PrepareTools:
         self,
         bodies: list["Body"] = None,
         min_height: Distance | Quantity | Real = None,
-        max_height: Distance | Quantity | Real = None
+        max_height: Distance | Quantity | Real = None,
     ) -> "LogoProblemArea":
         """Detect logos in geometry.
 
@@ -393,7 +393,7 @@ class PrepareTools:
         self,
         bodies: list["Body"] = None,
         min_height: Distance | Quantity | Real = None,
-        max_height: Distance | Quantity | Real = None
+        max_height: Distance | Quantity | Real = None,
     ) -> bool:
         """Detect and remove logos in geometry.
 
