@@ -9,6 +9,22 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.12.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.12.1>`_ - October 21, 2025
+=============================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Decorator order issue
+          - `#2337 <https://github.com/ansys/pyansys-geometry/pull/2337>`_
+
+
 `0.12.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.12.0>`_ - October 20, 2025
 =============================================================================================
 
