@@ -468,7 +468,7 @@ def test_kwargs_passed_not_accepted_decorator_order():
     ):
         my_method(arg1=1, arg2=2, arg3=3)
 
-    # TODO: This test fails, fix decorator
+    # TODO: This test fails, fix decorator #2338
     #     @kwargs_passed_not_accepted
     #     @deprecated_argument("arg3")
     #     def my_method(arg1, arg2, **kwargs):
