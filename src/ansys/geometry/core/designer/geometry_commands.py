@@ -273,7 +273,7 @@ class GeometryCommands:
         ----------
         faces : Face | list[Face]
             Faces to extrude.
-        distance : Real
+        distance : Distance | Quantity | Real
             Distance to extrude.
         direction : UnitVector3D, default: None
             Direction of extrusion. If no direction is provided, it will be inferred.
