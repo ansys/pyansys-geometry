@@ -27,7 +27,7 @@ from ansys.geometry.core.errors import protect_grpc
 
 from ..base.conversions import from_measurement_to_server_length
 from ..base.prepare_tools import GRPCPrepareToolsService
-from .conversions import build_grpc_id
+from .conversions import build_grpc_id, serialize_tracker_command_response
 
 
 class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
@@ -66,6 +66,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         return {
             "success": response.success,
             "created_bodies": [body.id for body in response.created_bodies],
+            "tracker_response": response.changes,
         }
 
     @protect_grpc
@@ -81,10 +82,16 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         # Call the gRPC service
         response = self.stub.ExtractVolumeFromEdgeLoops(request)
 
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.complete_command_response
+        )
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.success,
             "created_bodies": [body.id for body in response.created_bodies],
+            "complete_command_response": serialized_tracker_response,
+
         }
 
     @protect_grpc
