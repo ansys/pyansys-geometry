@@ -370,9 +370,9 @@ class PrepareTools:
         bodies = [] if bodies is None else bodies
 
         # Convert the height inputs to Distance if they are not already
-        if min_height:
+        if min_height is not None:
             min_height = min_height if isinstance(min_height, Distance) else Distance(min_height)
-        if max_height:
+        if max_height is not None:
             max_height = max_height if isinstance(max_height, Distance) else Distance(max_height)
 
         response = self._grpc_client._services.prepare_tools.find_logos(
