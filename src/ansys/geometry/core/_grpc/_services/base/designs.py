@@ -103,3 +103,8 @@ class GRPCDesignsService(ABC):  # pragma: no cover
     def stream_design_tessellation(self, **kwargs) -> dict:
         """Stream the tessellation of a design."""
         pass
+
+    @abstractmethod
+    def download_file(self, **kwargs) -> dict:
+        """Download the design from the server."""
+        pass

@@ -26,7 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.named_selection import GRPCNamedSelectionService
-from .conversions import build_grpc_id
+from .conversions import build_grpc_id, from_grpc_point_to_point3d
 
 
 class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
@@ -64,7 +64,9 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "faces": [face.id for face in response.faces],
             "edges": [edge.id for edge in response.edges],
             "beams": [beam.id.id for beam in response.beams],
-            "design_points": [(dp.id, dp.points[0]) for dp in response.design_points],
+            "design_points": [
+                (dp.id, from_grpc_point_to_point3d(dp.points[0])) for dp in response.design_points
+            ],
             "components": [comp.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
         }

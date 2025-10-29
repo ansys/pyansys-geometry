@@ -699,6 +699,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
         request = GetTessellationRequest(
             id=build_grpc_id(kwargs["id"]),
             options=from_tess_options_to_grpc_tess_options(kwargs["options"]),
+            include_faces=kwargs["include_faces"],
+            include_edges=kwargs["include_edges"],
         )
 
         tess_map = {}
@@ -1087,3 +1089,63 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 for face in response.faces
             ],
         }
+
+    @protect_grpc
+    def get_full_tessellation(self, **kwargs):  # noqa: D102
+        from ansys.api.geometry.v0.bodies_pb2 import (
+            GetFullTessellationRequest,
+            GetFullTessellationRequestData,
+            GetTessellationRequest,
+        )
+
+        from .conversions import (
+            from_grpc_edge_tess_to_pd,
+            from_grpc_edge_tess_to_raw_data,
+        )
+
+        # Create options
+        options = kwargs["options"] if kwargs["options"] else None
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetFullTessellationRequest(
+            request_data=[
+                GetFullTessellationRequestData(
+                    id=build_grpc_id(kwargs["id"]),
+                    options=from_tess_options_to_grpc_tess_options(options) if options else None,
+                    include_faces=kwargs["include_faces"],
+                    include_edges=kwargs["include_edges"],
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        resp = []  # For compatibility with stream response
+        try:
+            resp_single = self.stub.GetFullTessellation(request).response_data[0]
+            resp.append(resp_single)
+        except grpc.RpcError:  # pragma: no cover
+            request = GetTessellationRequest(
+                id=build_grpc_id(kwargs["id"]),
+                options=from_tess_options_to_grpc_tess_options(options) if options else None,
+                include_faces=kwargs["include_faces"],
+                include_edges=kwargs["include_edges"],
+            )
+            resp = self.stub.GetTessellationStream(request)
+
+        # Return the response - formatted as a dictionary
+        tess_map = {}
+        for elem in resp:
+            for face_id, face_tess in elem.face_tessellation.items():
+                tess_map[face_id] = (
+                    from_grpc_tess_to_raw_data(face_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_tess_to_pd(face_tess)
+                )
+            for edge_id, edge_tess in elem.edge_tessellation.items():
+                tess_map[edge_id] = (
+                    from_grpc_edge_tess_to_raw_data(edge_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_edge_tess_to_pd(edge_tess)
+                )
+
+        return {"tessellation": tess_map}
