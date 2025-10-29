@@ -473,7 +473,7 @@ def test_kwargs_passed_not_accepted_decorator_order():
     def my_method_diff_order(arg1, arg2, **kwargs):
         """A method that accepts no keyword arguments."""
         return arg1 + arg2
-    
+
     # Call the method without kwargs - should not raise an error
     assert my_method_diff_order(1, 2) == 3
     assert my_method_diff_order(arg1=1, arg2=2) == 3
