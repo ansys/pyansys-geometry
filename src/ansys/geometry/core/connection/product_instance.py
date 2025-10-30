@@ -191,6 +191,7 @@ def prepare_and_start_backend(
     client_log_file: str = None,
     specific_minimum_version: int = None,
     product_version: int | None = None,  # Deprecated, use `version` instead.
+    cwd: str | Path | None = None,  # New: working directory for subprocess
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
 
@@ -493,6 +494,7 @@ def prepare_and_start_backend(
                         CORE_GEOMETRY_SERVICE_EXE.replace(".exe", ".dll"),
                     )
                 )
+                cwd = root_service_folder  # ensure working directory also for dotnet case
             else:
                 # For Linux, we need to use the exe file to launch the Core Geometry Service
                 args.append(
@@ -501,6 +503,7 @@ def prepare_and_start_backend(
                         CORE_GEOMETRY_SERVICE_EXE.replace(".exe", ""),
                     )
                 )
+                cwd = root_service_folder
     else:
         raise RuntimeError(
             f"Cannot connect to backend {backend_type.name} using ``prepare_and_start_backend()``"
@@ -510,7 +513,7 @@ def prepare_and_start_backend(
     LOG.debug(f"Args: {args}")
     LOG.debug(f"Environment variables: {env_copy}")
 
-    instance = ProductInstance(__start_program(args, env_copy).pid)
+    instance = ProductInstance(__start_program(args, env_copy, cwd=cwd).pid)
 
     # Verify that the backend is ready to accept connections
     # before returning the Modeler instance.
@@ -614,7 +617,11 @@ def _manifest_path_provider(
         raise RuntimeError(msg)
 
 
-def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Popen:
+def __start_program(
+    args: list[str],
+    local_env: dict[str, str],
+    cwd: str | os.PathLike | None = None,  # New parameter
+) -> subprocess.Popen:
     """Start the program.
 
     Parameters
@@ -624,6 +631,8 @@ def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Po
         be the program path.
     local_env : dict[str,str]
         Environment variables to be passed to the program.
+    cwd : str | Path, optional
+        Working directory for the launched process.
 
     Returns
     -------
@@ -641,6 +650,7 @@ def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Po
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         env=local_env,
+        cwd=str(cwd) if cwd is not None else None,
     )
 
 
