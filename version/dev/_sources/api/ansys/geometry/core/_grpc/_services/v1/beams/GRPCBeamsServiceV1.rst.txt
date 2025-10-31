@@ -1,0 +1,237 @@
+
+
+
+
+
+
+:class:`GRPCBeamsServiceV1`
+===========================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.beams.GRPCBeamsServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.beams.GRPCBeamsService`
+
+
+   
+   Beams service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   beams service. It is specifically designed for the v1 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCBeamsServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_beam_segments`
+            - Create beam segments.
+          * - :py:attr:`~create_descriptive_beam_segments`
+            - Create descriptive beam segments.
+          * - :py:attr:`~delete_beam`
+            - Delete a beam.
+          * - :py:attr:`~delete_beam_profile`
+            - Remove a beam profile on the active geometry server instance.
+          * - :py:attr:`~create_beam_circular_profile`
+            - Add a new beam circular profile under the design for creating beams.
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.beams import GRPCBeamsServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_beam_segments(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create beam segments.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_descriptive_beam_segments(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create descriptive beam segments.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete_beam(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Delete a beam.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete_beam_profile(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Remove a beam profile on the active geometry server instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_beam_circular_profile(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Add a new beam circular profile under the design for creating beams.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
