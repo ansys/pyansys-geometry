@@ -190,8 +190,8 @@ def prepare_and_start_backend(
     server_logs_folder: str = None,
     client_log_file: str = None,
     specific_minimum_version: int = None,
+    server_working_dir: str | Path | None = None,
     product_version: int | None = None,  # Deprecated, use `version` instead.
-    cwd: str | Path | None = None,  # New: working directory for subprocess
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
 
@@ -246,6 +246,9 @@ def prepare_and_start_backend(
     specific_minimum_version : int, optional
         Sets a specific minimum version to be checked. If this is not defined,
         the minimum version will be set to 24.1.0.
+    server_working_dir : str | Path, optional
+        Sets the working directory for the product instance. If nothing is defined,
+        the working directory will be inherited from the parent process.
     product_version: ``int``, optional
         The product version to be started. Deprecated, use `version` instead.
 
@@ -494,7 +497,6 @@ def prepare_and_start_backend(
                         CORE_GEOMETRY_SERVICE_EXE.replace(".exe", ".dll"),
                     )
                 )
-                cwd = root_service_folder  # ensure working directory also for dotnet case
             else:
                 # For Linux, we need to use the exe file to launch the Core Geometry Service
                 args.append(
@@ -503,7 +505,6 @@ def prepare_and_start_backend(
                         CORE_GEOMETRY_SERVICE_EXE.replace(".exe", ""),
                     )
                 )
-                cwd = root_service_folder
     else:
         raise RuntimeError(
             f"Cannot connect to backend {backend_type.name} using ``prepare_and_start_backend()``"
@@ -513,7 +514,9 @@ def prepare_and_start_backend(
     LOG.debug(f"Args: {args}")
     LOG.debug(f"Environment variables: {env_copy}")
 
-    instance = ProductInstance(__start_program(args, env_copy, cwd=cwd).pid)
+    instance = ProductInstance(
+        __start_program(args, env_copy, server_working_dir=server_working_dir).pid
+    )
 
     # Verify that the backend is ready to accept connections
     # before returning the Modeler instance.
@@ -620,7 +623,7 @@ def _manifest_path_provider(
 def __start_program(
     args: list[str],
     local_env: dict[str, str],
-    cwd: str | os.PathLike | None = None,  # New parameter
+    server_working_dir: str | os.PathLike | None = None,
 ) -> subprocess.Popen:
     """Start the program.
 
@@ -631,8 +634,9 @@ def __start_program(
         be the program path.
     local_env : dict[str,str]
         Environment variables to be passed to the program.
-    cwd : str | Path, optional
-        Working directory for the launched process.
+    server_working_dir : str | Path, optional
+        Working directory for the launched process. If None, the working directory
+        of the parent process is used.
 
     Returns
     -------
@@ -650,7 +654,7 @@ def __start_program(
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         env=local_env,
-        cwd=str(cwd) if cwd is not None else None,
+        cwd=server_working_dir,
     )
 
 
