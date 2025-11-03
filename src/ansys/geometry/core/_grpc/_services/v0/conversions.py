@@ -1389,6 +1389,26 @@ def serialize_tracker_command_response(**kwargs) -> dict:
             "parent_id": body.parent_id,
             "is_surface": body.is_surface,
         }
+    
+    def serialize_component(component):
+        return {
+            "id": component.id,
+           
+            "can_suppress": component.can_suppress,
+            "transform_to_master": {
+                "m00": component.transform_to_master.m00,
+                "m11": component.transform_to_master.m11,
+                "m22": component.transform_to_master.m22,
+                "m33": component.transform_to_master.m33,
+            },
+            "master_id": component.master_id,
+            "parent_id": component.parent_id,
+        }
+    
+    def serialize_part(part):
+        return {
+            "id": part.id,
+        }
 
     def serialize_entity_identifier(entity):
         """Serialize an EntityIdentifier object into a dictionary."""
@@ -1399,6 +1419,27 @@ def serialize_tracker_command_response(**kwargs) -> dict:
     response = kwargs["response"]
     return {
         "success": response.success,
+
+        "created_parts": [
+            serialize_part(part) for part in getattr(response, "created_parts", [])
+        ],
+        "modified_parts": [
+            serialize_part(part) for part in getattr(response, "modified_parts", [])    
+        ],
+        "deleted_parts": [
+            serialize_entity_identifier(entity) for entity in getattr(response, "deleted_parts", [])
+        ],
+        "created_components": [
+            serialize_component(component) for component in getattr(response, "created_components", [])
+        ],
+        "modified_components": [
+            serialize_component(component) for component in getattr(response, "modified_components", [])
+        ],
+        "deleted_components": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response, "deleted_components", [])
+        ],
+
         "created_bodies": [
             serialize_body(body) for body in getattr(response, "created_bodies", [])
         ],
@@ -1406,7 +1447,6 @@ def serialize_tracker_command_response(**kwargs) -> dict:
             serialize_body(body) for body in getattr(response, "modified_bodies", [])
         ],
         "deleted_bodies": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response, "deleted_bodies", [])
+            serialize_entity_identifier(entity) for entity in getattr(response, "deleted_bodies", [])
         ],
     }
