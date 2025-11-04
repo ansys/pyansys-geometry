@@ -72,6 +72,8 @@ class NamedSelection:
         All design points to include in the named selection.
     components: list[Component], default: None
         All components to include in the named selection.
+    vertices: list[Vertex], default: None
+        All vertices to include in the named selection.
     """
 
     def __init__(
@@ -263,6 +265,8 @@ class NamedSelection:
             "components": response.get("components"),
             "vertices": response.get("vertices"),
         }
+
+        print('verifying NS:', ids["vertices"])
 
         for key in ids:
             if ids[key] != self._ids_cached[key]:

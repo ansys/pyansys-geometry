@@ -4089,3 +4089,103 @@ def test_combine_merge(modeler: Modeler):
     design._update_design_inplace()
     assert len(design.bodies) == 1
     assert box1.volume.m == pytest.approx(Quantity(2.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+
+def test_faces_get_named_selections(modeler: Modeler):
+    # Test getting named selections associated with faces
+    design = modeler.create_design("faces_named_selections")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # create named selection from faces
+    face_ns1 = [box.faces[0], box.faces[1]]
+    face_ns2 = [box.faces[2], box.faces[3]]
+    design.create_named_selection("face_ns_1", faces=face_ns1)
+    design.create_named_selection("face_ns_2", faces=face_ns2)
+
+    # Check that edges return the correct named selections
+    for face in box.faces:
+        ns_list = face.get_named_selections()
+        if face.id in face_ns1:
+            assert len(ns_list) == 1
+            assert any(ns.name == "face_ns_1" for ns in ns_list)
+        elif face.id in face_ns2:
+            assert len(ns_list) == 1
+            assert any(ns.name == "face_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this face
+
+
+def test_body_get_named_selections(modeler: Modeler):
+    # Test getting named selections associated with bodies
+    design = modeler.create_design("body_named_selections")
+    box1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    box2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 2]), 1, 1), 1)
+
+    # create named selection from bodies
+    design.create_named_selection("body_ns_1", bodies=[box1])
+    design.create_named_selection("body_ns_2", bodies=[box2])
+
+    # Check that bodies return the correct named selections
+    for body in design.bodies:
+        ns_list = body.get_named_selections()
+        if body.id == box1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "body_ns_1" for ns in ns_list)
+        elif body.id == box2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "body_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this body
+
+
+def test_beam_get_named_selections(modeler: Modeler):
+    # Test getting named selections associated with beams
+    design = modeler.create_design("beam_named_selections")
+    profile = design.add_beam_circular_profile("profile1", Distance(0.1, UNITS.m))
+    beam1 = design.create_beam(Point3D([0, 0, 0]), Point3D([1, 0, 0]), profile)
+    beam2 = design.create_beam(Point3D([0, 1, 0]), Point3D([1, 1, 0]), profile)
+
+    # create named selection from beams
+    design.create_named_selection("beam_ns_1", beams=[beam1])
+    design.create_named_selection("beam_ns_2", beams=[beam2])
+
+    # Check that beams return the correct named selections
+    for beam in design.beams:
+        ns_list = beam.get_named_selections()
+        if beam.id == beam1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "beam_ns_1" for ns in ns_list)
+        elif beam.id == beam2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "beam_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this beam
+
+
+def test_vertices_get_named_selections(modeler: Modeler):
+    # Test getting named selections associated with vertices
+    design = modeler.create_design("vertex_named_selections")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # create named selection from vertices
+    vertex_ns1 = [box.vertices[0], box.vertices[1]]
+    vertex_ns2 = [box.vertices[2], box.vertices[3]]
+    print(box.vertices[3].id, box.vertices[3].position)
+    ns1 = design.create_named_selection("vertex_ns_1", vertices=vertex_ns1)
+    ns2 = design.create_named_selection("vertex_ns_2", vertices=vertex_ns2)
+
+    print('ns1', ns1.vertices)
+    print('ns2', ns2.vertices)
+
+    # Check that vertices return the correct named selections
+    for vertex in box.vertices:
+        ns_list = vertex.get_named_selections()
+        print('ns found:', [ns.name for ns in ns_list])
+        if vertex in vertex_ns1:
+            assert len(ns_list) == 1
+            assert any(ns.name == "vertex_ns_1" for ns in ns_list)
+        elif vertex in vertex_ns2:
+            assert len(ns_list) == 1
+            assert any(ns.name == "vertex_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this vertex

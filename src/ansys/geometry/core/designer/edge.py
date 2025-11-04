@@ -24,6 +24,7 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
+from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
@@ -37,6 +38,7 @@ from ansys.geometry.core.shapes.parameterization import Interval
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.designer.selection import NamedSelection
     from ansys.geometry.core.designer.vertex import Vertex
 
 
@@ -185,6 +187,7 @@ class Edge:
             Vertex(
                 vertex_resp.get("id"),
                 vertex_resp.get("position"),
+                self.body,
             )
             for vertex_resp in response.get("vertices")
         ]
@@ -229,3 +232,21 @@ class Edge:
         return BoundingBox(
             response.get("min_corner"), response.get("max_corner"), response.get("center")
         )
+
+    @ensure_design_is_active
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get named selections associated with the edge.
+        
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections that include the edge.
+        """
+        named_selections = get_design_from_body(self.body).named_selections
+        
+        included_ns = []
+        for ns in named_selections:
+            if self in ns.edges:
+                included_ns.append(ns)
+
+        return included_ns

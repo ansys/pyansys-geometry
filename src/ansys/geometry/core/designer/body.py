@@ -67,6 +67,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.selection import NamedSelection
 
 # TODO: Temporary fix for boolean operations
 # This is a temporary fix for the boolean operations issue. The issue is that the
@@ -571,6 +572,17 @@ class IBody(ABC):
             Copy of the body.
         """
         return
+    
+    @abstractmethod
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get the named selections associated with the body.
+
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections associated with the body.
+        """
+        return
 
     @abstractmethod
     def get_raw_tessellation(
@@ -1052,6 +1064,7 @@ class MasterBody(IBody):
             Vertex(
                 vertex_resp.get("id"),
                 vertex_resp.get("position"),
+                body,
             )
             for vertex_resp in response.get("vertices")
         ]
@@ -1278,6 +1291,16 @@ class MasterBody(IBody):
         raise NotImplementedError(
             "Copy method is not implemented on the MasterBody. Call this method on a body instead."
         )
+    
+    def get_named_selections(self, body: "Body") -> list["NamedSelection"]:  # noqa: D102
+        named_selections = get_design_from_body(body).named_selections
+        
+        included_ns = []
+        for ns in named_selections:
+            if body.id in [body.id for body in ns.bodies]:
+                included_ns.append(ns)
+
+        return included_ns
 
     @min_backend_version(26, 1, 0)
     def get_raw_tessellation(  # noqa: D102
@@ -1879,6 +1902,10 @@ class Body(IBody):
         parent._clear_cached_bodies()
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
         return Body(body_id, response.get("name"), parent, tb)
+    
+    @ensure_design_is_active
+    def get_named_selections(self) -> list["NamedSelection"]:  # noqa: D102
+        return self._template.get_named_selections(self)
 
     @ensure_design_is_active
     def get_raw_tessellation(  # noqa: D102
