@@ -4200,7 +4200,7 @@ def test_components_get_named_selections(modeler: Modeler):
     design = modeler.create_design("component_named_selections")
     comp1 = design.add_component("Component1")
     comp2 = design.add_component("Component2")
-    comp3 = design.add_component("Component3")
+    design.add_component("Component3")
 
     # create named selection from components
     design.create_named_selection("component_ns_1", components=[comp1])
@@ -4224,7 +4224,7 @@ def test_design_point_get_named_selections(modeler: Modeler):
     design = modeler.create_design("design_point_named_selections")
     dp1 = design.add_design_point("DesignPoint1", Point3D([0, 0, 0]))
     dp2 = design.add_design_point("DesignPoint2", Point3D([1, 1, 1]))
-    dp3 = design.add_design_point("DesignPoint3", Point3D([2, 2, 2]))
+    design.add_design_point("DesignPoint3", Point3D([2, 2, 2]))
 
     # create named selection from design points
     design.create_named_selection("design_point_ns_1", design_points=[dp1])
