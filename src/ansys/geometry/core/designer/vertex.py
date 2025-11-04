@@ -95,7 +95,6 @@ class Vertex(Point3D):
 
         included_ns = []
         for ns in named_selections:
-            print(ns.vertices)
             if self in ns.vertices:
                 included_ns.append(ns)
 

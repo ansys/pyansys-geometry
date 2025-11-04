@@ -57,7 +57,6 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
         response = self.stub.Get(request)
 
         # Return the response - formatted as a dictionary
-        print('grpc response:', [vertex.id.id for vertex in response.vertices])
         return {
             "id": response.id,
             "name": response.name,

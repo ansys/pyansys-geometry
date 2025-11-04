@@ -4170,12 +4170,13 @@ def test_vertices_get_named_selections(modeler: Modeler):
     # create named selection from vertices
     vertex_ns1 = [box.vertices[0], box.vertices[1]]
     vertex_ns2 = [box.vertices[2], box.vertices[3]]
-    print(box.vertices[3].id, box.vertices[3].position)
-    ns1 = design.create_named_selection("vertex_ns_1", vertices=vertex_ns1)
-    ns2 = design.create_named_selection("vertex_ns_2", vertices=vertex_ns2)
+    vertex_ns3 = [box.vertices[4], box.vertices[5]]
+    vertex_ns4 = [box.vertices[4], box.vertices[5]]
 
-    print('ns1', ns1.vertices)
-    print('ns2', ns2.vertices)
+    design.create_named_selection("vertex_ns_1", vertices=vertex_ns1)
+    design.create_named_selection("vertex_ns_2", vertices=vertex_ns2)
+    design.create_named_selection("vertex_ns_3", vertices=vertex_ns3)
+    design.create_named_selection("vertex_ns_4", vertices=vertex_ns4)
 
     # Check that vertices return the correct named selections
     for vertex in box.vertices:
@@ -4187,5 +4188,8 @@ def test_vertices_get_named_selections(modeler: Modeler):
         elif vertex in vertex_ns2:
             assert len(ns_list) == 1
             assert any(ns.name == "vertex_ns_2" for ns in ns_list)
+        elif vertex in vertex_ns3:
+            assert len(ns_list) == 2
+            assert any(ns.name == "vertex_ns_3" for ns in ns_list)
         else:
             assert len(ns_list) == 0  # No named selection for this vertex

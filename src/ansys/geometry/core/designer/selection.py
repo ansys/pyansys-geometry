@@ -266,8 +266,6 @@ class NamedSelection:
             "vertices": response.get("vertices"),
         }
 
-        print('verifying NS:', ids["vertices"])
-
         for key in ids:
             if ids[key] != self._ids_cached[key]:
                 # Clear the cache for that specific entity
