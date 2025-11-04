@@ -79,7 +79,7 @@ class DesignPoint:
     def parent_component(self) -> "Component":
         """Component node that the design point is under."""
         return self._parent_component
-    
+
     def get_named_selections(self) -> list["NamedSelection"]:
         """Get named selections that contain this design point.
 

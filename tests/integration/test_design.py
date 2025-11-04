@@ -4181,7 +4181,7 @@ def test_vertices_get_named_selections(modeler: Modeler):
     # Check that vertices return the correct named selections
     for vertex in box.vertices:
         ns_list = vertex.get_named_selections()
-        print('ns found:', [ns.name for ns in ns_list])
+        print("ns found:", [ns.name for ns in ns_list])
         if vertex in vertex_ns1:
             assert len(ns_list) == 1
             assert any(ns.name == "vertex_ns_1" for ns in ns_list)

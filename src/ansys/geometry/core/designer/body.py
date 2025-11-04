@@ -572,7 +572,7 @@ class IBody(ABC):
             Copy of the body.
         """
         return
-    
+
     @abstractmethod
     def get_named_selections(self) -> list["NamedSelection"]:
         """Get the named selections associated with the body.
@@ -1291,10 +1291,10 @@ class MasterBody(IBody):
         raise NotImplementedError(
             "Copy method is not implemented on the MasterBody. Call this method on a body instead."
         )
-    
+
     def get_named_selections(self, body: "Body") -> list["NamedSelection"]:  # noqa: D102
         named_selections = get_design_from_body(body).named_selections
-        
+
         included_ns = []
         for ns in named_selections:
             if body.id in [body.id for body in ns.bodies]:
@@ -1902,7 +1902,7 @@ class Body(IBody):
         parent._clear_cached_bodies()
         body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
         return Body(body_id, response.get("name"), parent, tb)
-    
+
     @ensure_design_is_active
     def get_named_selections(self) -> list["NamedSelection"]:  # noqa: D102
         return self._template.get_named_selections(self)
