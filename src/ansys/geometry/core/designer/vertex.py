@@ -25,8 +25,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.typing import RealSequence
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -76,12 +76,12 @@ class Vertex(Point3D):
     def id(self) -> str:
         """Get the unique identifier of the vertex."""
         return self._id
-    
+
     @property
     def body(self) -> "Body":
         """Get the body this vertex belongs to."""
         return self._body
-    
+
     def get_named_selections(self) -> list["NamedSelection"]:
         """Get all named selections that include this vertex.
 

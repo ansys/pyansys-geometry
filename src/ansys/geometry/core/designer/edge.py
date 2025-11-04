@@ -24,13 +24,13 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
-from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.shapes.curves.trimmed_curve import ReversedTrimmedCurve, TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -236,14 +236,14 @@ class Edge:
     @ensure_design_is_active
     def get_named_selections(self) -> list["NamedSelection"]:
         """Get named selections associated with the edge.
-        
+
         Returns
         -------
         list[NamedSelection]
             List of named selections that include the edge.
         """
         named_selections = get_design_from_body(self.body).named_selections
-        
+
         included_ns = []
         for ns in named_selections:
             if self in ns.edges:

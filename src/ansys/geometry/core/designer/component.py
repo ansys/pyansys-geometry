@@ -1992,7 +1992,7 @@ class Component:
             List of named selections belonging to the component.
         """
         named_selections = get_design_from_component(self).named_selections
-        
+
         included_ns = []
         for ns in named_selections:
             if self in ns.components:
