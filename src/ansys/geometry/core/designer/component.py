@@ -67,6 +67,8 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
+    from ansys.geometry.core.designer.selection import NamedSelection
+
 
 @unique
 class SharedTopologyType(Enum):
@@ -1980,3 +1982,20 @@ class Component:
         """
         ids = [self.id, *[o.id for o in others or []]]
         self._grpc_client._services.components.make_independent(ids=ids)
+
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get the named selections of the component.
+
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections belonging to the component.
+        """
+        named_selections = get_design_from_component(self).named_selections
+        
+        included_ns = []
+        for ns in named_selections:
+            if self in ns.components:
+                included_ns.append(ns)
+
+        return included_ns

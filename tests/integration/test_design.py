@@ -4193,3 +4193,51 @@ def test_vertices_get_named_selections(modeler: Modeler):
             assert any(ns.name == "vertex_ns_3" for ns in ns_list)
         else:
             assert len(ns_list) == 0  # No named selection for this vertex
+
+
+def test_components_get_named_selections(modeler: Modeler):
+    # Test getting named selections associated with components
+    design = modeler.create_design("component_named_selections")
+    comp1 = design.add_component("Component1")
+    comp2 = design.add_component("Component2")
+    comp3 = design.add_component("Component3")
+
+    # create named selection from components
+    design.create_named_selection("component_ns_1", components=[comp1])
+    design.create_named_selection("component_ns_2", components=[comp2])
+
+    # Check that components return the correct named selections
+    for component in design.components:
+        ns_list = component.get_named_selections()
+        if component.id == comp1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "component_ns_1" for ns in ns_list)
+        elif component.id == comp2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "component_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this component
+
+
+def test_design_point_get_named_selections(modeler: Modeler):
+    # Test getting named selections associated with design points
+    design = modeler.create_design("design_point_named_selections")
+    dp1 = design.add_design_point("DesignPoint1", Point3D([0, 0, 0]))
+    dp2 = design.add_design_point("DesignPoint2", Point3D([1, 1, 1]))
+    dp3 = design.add_design_point("DesignPoint3", Point3D([2, 2, 2]))
+
+    # create named selection from design points
+    design.create_named_selection("design_point_ns_1", design_points=[dp1])
+    design.create_named_selection("design_point_ns_2", design_points=[dp2])
+
+    # Check that design points return the correct named selections
+    for design_point in design.design_points:
+        ns_list = design_point.get_named_selections()
+        if design_point.id == dp1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "design_point_ns_1" for ns in ns_list)
+        elif design_point.id == dp2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "design_point_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this design point

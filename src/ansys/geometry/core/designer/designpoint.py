@@ -24,6 +24,7 @@
 from typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_component
 from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.units import UNITS
 
@@ -31,6 +32,7 @@ if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
 
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.selection import NamedSelection
 
 
 class DesignPoint:
@@ -77,6 +79,26 @@ class DesignPoint:
     def parent_component(self) -> "Component":
         """Component node that the design point is under."""
         return self._parent_component
+    
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get named selections that contain this design point.
+
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections that contain this design point.
+        """
+        if self.parent_component is None:
+            raise ValueError("Design point does not have a parent component.")
+
+        named_selections = get_design_from_component(self.parent_component).named_selections
+
+        included_ns = []
+        for ns in named_selections:
+            if self.id in [dp.id for dp in ns.design_points]:
+                included_ns.append(ns)
+
+        return included_ns
 
     def __repr__(self) -> str:
         """Represent the design points as a string."""
