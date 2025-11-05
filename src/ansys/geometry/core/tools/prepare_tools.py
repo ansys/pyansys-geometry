@@ -125,7 +125,7 @@ class PrepareTools:
         if response.get("success"):
             bodies_ids = response.get("created_bodies")
             if len(bodies_ids) > 0:
-                parent_design._update_from_tracker(response.get("changes"))
+                parent_design._update_from_tracker(response.get("complete_command_response"))
                 #parent_design._update_design_inplace()
             return get_bodies_from_ids(parent_design, bodies_ids)
         else:
