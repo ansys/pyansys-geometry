@@ -125,7 +125,8 @@ class PrepareTools:
         if response.get("success"):
             bodies_ids = response.get("created_bodies")
             if len(bodies_ids) > 0:
-                parent_design._update_design_inplace()
+                #parent_design._update_design_inplace()
+                parent_design._update_from_tracker(response.get("complete_command_response"))
             return get_bodies_from_ids(parent_design, bodies_ids)
         else:
             self._grpc_client.log.info("Failed to extract volume from faces...")
