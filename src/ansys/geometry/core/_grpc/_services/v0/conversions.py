@@ -1393,16 +1393,24 @@ def serialize_tracker_command_response(**kwargs) -> dict:
     def serialize_component(component):
         return {
             "id": component.id,
-           
-            "can_suppress": component.can_suppress,
-            "transform_to_master": {
-                "m00": component.transform_to_master.m00,
-                "m11": component.transform_to_master.m11,
-                "m22": component.transform_to_master.m22,
-                "m33": component.transform_to_master.m33,
+            "name": getattr(component, "name", ""),
+            "display_name": getattr(component, "display_name", ""),
+            "part_occurrence": {
+                "id": getattr(component.part_occurrence, "id", "") if hasattr(component, "part_occurrence") else "",
+                "name": getattr(component.part_occurrence, "name", "") if hasattr(component, "part_occurrence") else "",
+            } if hasattr(component, "part_occurrence") else None,
+            "placement": {
+                "m00": getattr(component.placement, "m00", 1.0) if hasattr(component, "placement") else 1.0,
+                "m11": getattr(component.placement, "m11", 1.0) if hasattr(component, "placement") else 1.0,
+                "m22": getattr(component.placement, "m22", 1.0) if hasattr(component, "placement") else 1.0,
+                "m33": getattr(component.placement, "m33", 1.0) if hasattr(component, "placement") else 1.0,
             },
-            "master_id": component.master_id,
-            "parent_id": component.parent_id,
+            "part_master": {
+                "id": getattr(component.part_master, "id", "") if hasattr(component, "part_master") else "",
+                "name": getattr(component.part_master, "name", "") if hasattr(component, "part_master") else "",
+            } if hasattr(component, "part_master") else None,
+            "master_id": getattr(component, "master_id", ""),
+            "parent_id": getattr(component, "parent_id", ""),
         }
     
     def serialize_part(part):
