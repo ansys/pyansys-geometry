@@ -26,6 +26,7 @@ from typing import TYPE_CHECKING
 from beartype import beartype as check_input_types
 from pint import Quantity
 
+import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.errors import GeometryRuntimeError
@@ -125,8 +126,11 @@ class PrepareTools:
         if response.get("success"):
             bodies_ids = response.get("created_bodies")
             if len(bodies_ids) > 0:
-                parent_design._update_from_tracker(response.get("complete_command_response"))
-                #parent_design._update_design_inplace()
+
+                if pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
+                    parent_design._update_from_tracker(response.get("complete_command_response"))
+                else:
+                    parent_design._update_design_inplace()
             return get_bodies_from_ids(parent_design, bodies_ids)
         else:
             self._grpc_client.log.info("Failed to extract volume from faces...")
