@@ -1372,25 +1372,33 @@ class Design(Component):
             f"Starting _update_from_tracker with response: {tracker_response}"
         )
         
+        # Track created entities for use in subsequent steps
+        created_parts_dict = {}
+        created_components_dict = {}
+        created_bodies_dict = {}
+        
         # Handle parts first (foundational dependencies)
-        self.update_parts(
+        created_parts_dict = self.update_parts(
             created_parts=tracker_response.get("created_parts", []),
             modified_parts=tracker_response.get("modified_parts", []),
             deleted_parts=tracker_response.get("deleted_parts", [])
         )
         
         # Handle components (depend on parts)
-        self._update_components(
+        created_components_dict = self._update_components(
             created_components=tracker_response.get("created_components", []),
             modified_components=tracker_response.get("modified_components", []),
-            deleted_components=tracker_response.get("deleted_components", [])
+            deleted_components=tracker_response.get("deleted_components", []),
+            created_parts=created_parts_dict
         )
         
         # Handle bodies (depend on parts/components)
-        self._update_bodies(
+        created_bodies_dict = self._update_bodies(
             created_bodies=tracker_response.get("created_bodies", []),
             modified_bodies=tracker_response.get("modified_bodies", []),
-            deleted_bodies=tracker_response.get("deleted_bodies", [])
+            deleted_bodies=tracker_response.get("deleted_bodies", []),
+            created_parts=created_parts_dict,
+            created_components=created_components_dict
         )
 
     def update_parts(self, created_parts=None, modified_parts=None, deleted_parts=None):
@@ -1404,15 +1412,24 @@ class Design(Component):
             List of modified part information from tracker response.
         deleted_parts : list, optional
             List of deleted part information from tracker response.
+            
+        Returns
+        -------
+        dict
+            Dictionary of created parts with part_id as key and Part object as value.
         """
+        created_parts_dict = {}
+        
         if created_parts:
-            self._handle_created_parts(created_parts)
+            created_parts_dict = self._handle_created_parts(created_parts)
         if modified_parts:
             self._handle_modified_parts(modified_parts)
         if deleted_parts:
             self._handle_deleted_parts(deleted_parts)
+            
+        return created_parts_dict
 
-    def _update_components(self, created_components=None, modified_components=None, deleted_components=None):
+    def _update_components(self, created_components=None, modified_components=None, deleted_components=None, created_parts=None):
         """Update components with consolidated handling of created, modified, and deleted components.
         
         Parameters
@@ -1423,15 +1440,26 @@ class Design(Component):
             List of modified component information from tracker response.
         deleted_components : list, optional
             List of deleted component information from tracker response.
+        created_parts : dict, optional
+            Dictionary of created parts from previous step.
+            
+        Returns
+        -------
+        dict
+            Dictionary of created components with component_id as key and Component object as value.
         """
+        created_components_dict = {}
+        
         if created_components:
-            self._handle_created_components(created_components)
+            created_components_dict = self._handle_created_components(created_components, created_parts)
         if modified_components:
             self._handle_modified_components(modified_components)
         if deleted_components:
             self._handle_deleted_components(deleted_components)
+            
+        return created_components_dict
 
-    def _update_bodies(self, created_bodies=None, modified_bodies=None, deleted_bodies=None):
+    def _update_bodies(self, created_bodies=None, modified_bodies=None, deleted_bodies=None, created_parts=None, created_components=None):
         """Update bodies with consolidated handling of created, modified, and deleted bodies.
         
         Parameters
@@ -1442,18 +1470,39 @@ class Design(Component):
             List of modified body information from tracker response.
         deleted_bodies : list, optional
             List of deleted body information from tracker response.
+        created_parts : dict, optional
+            Dictionary of created parts from previous step.
+        created_components : dict, optional
+            Dictionary of created components from previous step.
+            
+        Returns
+        -------
+        dict
+            Dictionary of created bodies with body_id as key and Body object as value.
         """
+        created_bodies_dict = {}
+        
         if created_bodies:
-            self._handle_created_bodies(created_bodies)
+            created_bodies_dict = self._handle_created_bodies(created_bodies, created_parts, created_components)
         if modified_bodies:
             self._handle_modified_bodies(modified_bodies)
         if deleted_bodies:
             self._handle_deleted_bodies(deleted_bodies)
+            
+        return created_bodies_dict
 
     # ================== PART HANDLERS ==================
     
     def _handle_created_parts(self, created_parts):
-        """Handle creation of new parts from tracker response."""
+        """Handle creation of new parts from tracker response.
+        
+        Returns
+        -------
+        dict
+            Dictionary of created parts with part_id as key and Part object as value.
+        """
+        created_parts_dict = {}
+        
         for part_info in created_parts:
             part_id = part_info["id"]
             part_name = part_info.get("name", f"Part_{part_id}")
@@ -1470,10 +1519,13 @@ class Design(Component):
                 
             # Create new part
             new_part = Part(part_id, part_name, [], [])
+            created_parts_dict[part_id] = new_part
             # TODO: Add part to appropriate collection/registry
             self._grpc_client.log.debug(
                 f"Created new part '{part_name}' (ID: {part_id})"
             )
+            
+        return created_parts_dict
             
     def _handle_modified_parts(self, modified_parts):
         """Handle modification of existing parts from tracker response."""
@@ -1506,8 +1558,23 @@ class Design(Component):
     
     # ================== COMPONENT HANDLERS ==================
     
-    def _handle_created_components(self, created_components):
-        """Handle creation of new components from tracker response."""
+    def _handle_created_components(self, created_components, created_parts=None):
+        """Handle creation of new components from tracker response.
+        
+        Parameters
+        ----------
+        created_components : list
+            List of created component information from tracker response.
+        created_parts : dict, optional
+            Dictionary of created parts from previous step.
+            
+        Returns
+        -------
+        dict
+            Dictionary of created components with component_id as key and Component object as value.
+        """
+        created_components_dict = {}
+        
         for component_info in created_components:
             component_id = component_info["id"]
             component_name = component_info.get("name", f"Component_{component_id}")
@@ -1523,11 +1590,15 @@ class Design(Component):
                 continue
                 
             # Try to add the component to the appropriate parent
-            added = self._find_and_add_component(component_info, self.components)
-            if not added:
+            new_component = self._find_and_add_component(component_info, self.components, created_parts)
+            if new_component:
+                created_components_dict[component_id] = new_component
+            else:
                 self._grpc_client.log.warning(
                     f"Could not find parent for component '{component_name}' (ID: {component_id})"
                 )
+                
+        return created_components_dict
             
     def _handle_modified_components(self, modified_components):
         """Handle modification of existing components from tracker response."""
@@ -1560,8 +1631,25 @@ class Design(Component):
     
     # ================== BODY HANDLERS ==================
     
-    def _handle_created_bodies(self, created_bodies):
-        """Handle creation of new bodies from tracker response."""
+    def _handle_created_bodies(self, created_bodies, created_parts=None, created_components=None):
+        """Handle creation of new bodies from tracker response.
+        
+        Parameters
+        ----------
+        created_bodies : list
+            List of created body information from tracker response.
+        created_parts : dict, optional
+            Dictionary of created parts from previous step.
+        created_components : dict, optional
+            Dictionary of created components from previous step.
+            
+        Returns
+        -------
+        dict
+            Dictionary of created bodies with body_id as key and Body object as value.
+        """
+        created_bodies_dict = {}
+        
         for body_info in created_bodies:
             body_id = body_info["id"]
             body_name = body_info["name"]
@@ -1576,14 +1664,19 @@ class Design(Component):
                 )
                 continue
 
-            added = self._find_and_add_body(body_info, self.components)
-            if not added:
+            new_body = self._find_and_add_body(body_info, self.components, created_parts, created_components)
+            if not new_body:
                 new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
                 self._master_component.part.bodies.append(new_body)
                 self._clear_cached_bodies()
                 self._grpc_client.log.debug(
                     f"Added new body '{body_name}' (ID: {body_id}) to root level."
                 )
+            
+            if new_body:
+                created_bodies_dict[body_id] = new_body
+                
+        return created_bodies_dict
 
     def _handle_modified_bodies(self, modified_bodies):
         """Handle modification of existing bodies from tracker response."""
@@ -1704,32 +1797,76 @@ class Design(Component):
             
         return False
     
-    def _find_and_add_component(self, component_info, parent_components):
-        """Recursively find the appropriate parent and add a new component to it."""
+    def _find_and_add_component(self, component_info, parent_components, created_parts=None):
+        """Recursively find the appropriate parent and add a new component to it.
+        
+        Parameters
+        ----------
+        component_info : dict
+            Information about the component to create.
+        parent_components : list
+            List of parent components to search.
+        created_parts : dict, optional
+            Dictionary of created parts from previous step.
+            
+        Returns
+        -------
+        Component or None
+            The newly created component if successful, None otherwise.
+        """
         parent_id = component_info.get("parent_id")
         
         # Check if this should be added to the root design
         if parent_id == self.id:
             # TODO: Create new component and add to self.components
-            # This requires proper Component instantiation logic
+            # Create the Component object
+            # Find the master part for this component (if available)
+            master_part = None
+            if created_parts and component_info.get("master_id"):
+                master_part = created_parts.get(component_info["master_id"])
+            # Create the master component if master_part is found
+            master_component = None
+            if master_part:
+                master_component = MasterComponent(
+                    component_info["master_id"],
+                    f"master_{component_info['name']}",
+                    master_part
+                )
+            # Create the Component object with master_component
+            new_component = Component(
+                id=component_info["id"],
+                name=component_info["name"],
+                parent=self,
+                grpc_client=self._grpc_client,
+                master_component=master_component
+            )
+            self.components.append(new_component)
             self._grpc_client.log.debug(
                 f"Would add component '{component_info['id']}' to root design"
             )
-            return True
-            
+            return new_component
+
         # Search through existing components for the parent
         for component in parent_components:
             if component.id == parent_id:
                 # TODO: Create new component and add to component.components
+                new_component = Component(
+                    id=component_info["id"],
+                    name=component_info["name"],
+                    parent=component,
+                    grpc_client=self._grpc_client
+                )
+                component.components.append(new_component)
                 self._grpc_client.log.debug(
                     f"Would add component '{component_info['id']}' to component '{component.name}'"
                 )
-                return True
+                return new_component
+
+            result = self._find_and_add_component(component_info, component.components, created_parts)
+            if result:
+                return result
                 
-            if self._find_and_add_component(component_info, component.components):
-                return True
-                
-        return False
+        return None
     
     def _find_and_update_component(self, component_info, components):
         """Recursively find and update an existing component in the hierarchy."""
@@ -1778,8 +1915,25 @@ class Design(Component):
         existing_body.name = body_info["name"]
         existing_body._template._is_surface = body_info.get("is_surface", False)
 
-    def _find_and_add_body(self, body_info, components):
-        """Recursively find the appropriate component and add a new body to it."""
+    def _find_and_add_body(self, body_info, components, created_parts=None, created_components=None):
+        """Recursively find the appropriate component and add a new body to it.
+        
+        Parameters
+        ----------
+        body_info : dict
+            Information about the body to create.
+        components : list
+            List of components to search.
+        created_parts : dict, optional
+            Dictionary of created parts from previous step.
+        created_components : dict, optional
+            Dictionary of created components from previous step.
+            
+        Returns
+        -------
+        MasterBody or None
+            The newly created body if successful, None otherwise.
+        """
         for component in components:
             parent_id_for_body = component._master_component.part.id
             if parent_id_for_body == body_info.get("parent_id"):
@@ -1795,12 +1949,13 @@ class Design(Component):
                     f"Added new body '{new_body.name}' (ID: {new_body.id}) "
                     f"to component '{component.name}' (ID: {component.id})"
                 )
-                return True
+                return new_body
 
-            if self._find_and_add_body(body_info, component.components):
-                return True
+            result = self._find_and_add_body(body_info, component.components, created_parts, created_components)
+            if result:
+                return result
 
-        return False
+        return None
 
     def _find_and_update_body(self, body_info, component):
         """Recursively find and update an existing body in the component hierarchy."""
