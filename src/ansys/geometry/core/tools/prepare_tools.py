@@ -126,7 +126,6 @@ class PrepareTools:
         if response.get("success"):
             bodies_ids = response.get("created_bodies")
             if len(bodies_ids) > 0:
-
                 if pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
                     parent_design._update_from_tracker(response.get("complete_command_response"))
                 else:

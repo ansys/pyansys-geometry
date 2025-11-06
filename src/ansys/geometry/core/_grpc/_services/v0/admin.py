@@ -71,8 +71,10 @@ class GRPCAdminServiceV0(GRPCAdminService):
         if hasattr(response, "version"):
             ver = response.version
             backend_version = semver.Version(ver.major_release, ver.minor_release, ver.service_pack)
-            api_server_build_info = "N/A" #f"{ver.build_number}" if ver.build_number != 0 else "N/A"
-            product_build_info = "N/A" #f"{response.backend_version_info.strip()}" if response.backend_version_info else "N/A"
+            api_server_build_info = (
+                "N/A"  # f"{ver.build_number}" if ver.build_number != 0 else "N/A"
+            )
+            product_build_info = "N/A"  # f"{response.backend_version_info.strip()}" if response.backend_version_info else "N/A"
         else:  # pragma: no cover
             # If the version is not available, set a default version
             backend_version = semver.Version(24, 1, 0)
@@ -85,7 +87,7 @@ class GRPCAdminServiceV0(GRPCAdminService):
             "version": backend_version,
             "api_server_build_info": api_server_build_info,
             "product_build_info": product_build_info,
-            "additional_info": "N/A" # {k: v for k, v in response.additional_build_info.items()},
+            "additional_info": "N/A",  # {k: v for k, v in response.additional_build_info.items()},
         }
 
     @protect_grpc
