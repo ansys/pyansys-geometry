@@ -4100,4 +4100,3 @@ def test_design_update_with_tracker_response(modeler: Modeler):
     sealing_faces = [body.faces[1], body.faces[2]]
     modeler.prepare_tools.extract_volume_from_faces(sealing_faces, inside_faces)
     assert len(design.components) == 2
-
