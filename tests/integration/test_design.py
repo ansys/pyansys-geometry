@@ -4089,3 +4089,15 @@ def test_combine_merge(modeler: Modeler):
     design._update_design_inplace()
     assert len(design.bodies) == 1
     assert box1.volume.m == pytest.approx(Quantity(2.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+
+def test_design_update_with_tracker_response(modeler: Modeler):
+    design = modeler.open_file(FILES_DIR / "hollowCylinder1.dsco")
+
+    assert len(design.components) == 1
+    body = design.components[0].bodies[0]
+    inside_faces = [body.faces[0]]
+    sealing_faces = [body.faces[1], body.faces[2]]
+    modeler.prepare_tools.extract_volume_from_faces(sealing_faces, inside_faces)
+    assert len(design.components) == 2
+
