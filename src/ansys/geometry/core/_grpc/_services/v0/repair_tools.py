@@ -66,24 +66,19 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         request = FindSplitEdgesRequest(
             bodies_or_faces=kwargs["bodies_or_faces"],
             angle=(
-                DoubleValue(
-                    value=float(from_measurement_to_server_angle(kwargs["angle"]))
-                )
+                DoubleValue(value=float(from_measurement_to_server_angle(kwargs["angle"])))
                 if kwargs["angle"] is not None
                 else None
             ),
             distance=(
-                DoubleValue(
-                    value=float(from_measurement_to_server_length(kwargs["distance"]))
-                )
+                DoubleValue(value=float(from_measurement_to_server_length(kwargs["distance"])))
                 if kwargs["distance"] is not None
                 else None
             ),
         )
 
-
-        print('distance:', request.distance)
-        print('angle:', request.angle)
+        print("distance:", request.distance)
+        print("angle:", request.angle)
 
         # Call the gRPC service
         response = self.stub.FindSplitEdges(request)

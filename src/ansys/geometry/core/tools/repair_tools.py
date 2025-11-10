@@ -127,19 +127,17 @@ class RepairTools:
         body_ids = [body.id for body in bodies]
 
         # Convert the measurement objects
-        angle = (
-            angle if isinstance(angle, Angle) 
-            else Angle(angle) if angle is not None 
-            else None
-        )
+        angle = angle if isinstance(angle, Angle) else Angle(angle) if angle is not None else None
         length = (
-            length if isinstance(length, Distance)
-            else Distance(length) if length is not None
+            length
+            if isinstance(length, Distance)
+            else Distance(length)
+            if length is not None
             else None
         )
 
-        print('angle:', angle)
-        print('length:', length)
+        print("angle:", angle)
+        print("length:", length)
         response = self._grpc_client.services.repair_tools.find_split_edges(
             bodies_or_faces=body_ids, angle=angle, distance=length
         )
