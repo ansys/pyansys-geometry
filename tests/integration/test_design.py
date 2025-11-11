@@ -3807,8 +3807,6 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     assert design.bodies[1].vertices[0].y.magnitude == pytest.approx(-0.00288675, 1e-6, 1e-6)
     assert design.bodies[1].vertices[0].z.magnitude == pytest.approx(0.01, 1e-6, 1e-6)
 
-    print(design.bodies[1].vertices[0].id == "S,~sEbf61ff70-bc08-477a-8a5e-a7c7dc955f40.853__")
-
     assert design.bodies[0].vertices == []
     assert design.bodies[1].vertices[1].position == pytest.approx(
         Point3D([0.033, -0.0057735, 0.01]), 1e-6, 1e-6
@@ -4181,7 +4179,6 @@ def test_vertices_get_named_selections(modeler: Modeler):
     # Check that vertices return the correct named selections
     for vertex in box.vertices:
         ns_list = vertex.get_named_selections()
-        print("ns found:", [ns.name for ns in ns_list])
         if vertex in vertex_ns1:
             assert len(ns_list) == 1
             assert any(ns.name == "vertex_ns_1" for ns in ns_list)
