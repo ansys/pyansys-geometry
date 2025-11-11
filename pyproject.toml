@@ -26,7 +26,7 @@ classifiers = [
 ]
 
 dependencies = [
-  "ansys-api-geometry==0.4.83",
+  "ansys-api-discovery==1.0.3",
   "ansys-tools-path>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -99,7 +99,7 @@ general-all = [
   "ansys-platform-instancemanagement==1.1.2",
   "ansys-tools-path==0.7.3",
   "ansys-tools-visualization-interface==0.12.1",
-  "beartype==0.22.3",
+  "beartype==0.22.5",
   "docker==7.1.0",
   "geomdl==5.4.0",
   "grpcio==1.75.0",
@@ -110,7 +110,7 @@ general-all = [
   "pint==0.24.4",
   "protobuf==6.32.1",
   "pygltflib==1.16.5",
-  "pyvista[jupyter]==0.46.3",
+  "pyvista[jupyter]==0.46.4",
   "requests==2.32.5",
   "scipy==1.15.3; python_version<'3.11'",
   "scipy==1.16.2; python_version>='3.11'",
