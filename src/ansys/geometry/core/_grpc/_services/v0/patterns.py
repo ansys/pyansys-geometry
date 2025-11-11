@@ -30,7 +30,7 @@ from ..base.conversions import (
     from_measurement_to_server_length,
 )
 from ..base.patterns import GRPCPatternsService
-from .conversions import build_grpc_id, from_unit_vector_to_grpc_direction, from_line_to_grpc_line
+from .conversions import build_grpc_id, from_line_to_grpc_line, from_unit_vector_to_grpc_direction
 
 
 class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
@@ -137,7 +137,7 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
             linear_count=kwargs["linear_count"],
             linear_pitch=linear_pitch,
             radial_direction=radial_direction,
-            axis=axis
+            axis=axis,
         )
 
         # Call the gRPC service

@@ -710,7 +710,7 @@ class GeometryCommands:
             old_seed_index=old_seed_index,
         )
 
-        return result.get("success")     
+        return result.get("success")
 
     def create_circular_pattern(
         self,

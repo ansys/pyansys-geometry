@@ -458,9 +458,7 @@ def test_circular_pattern_about_line(modeler: Modeler):
     cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-5, -5]), 1), 20)
     base.subtract(cutout)
 
-    assert base.volume.m == pytest.approx(
-        Quantity(7937.1681, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    assert base.volume.m == pytest.approx(Quantity(7937.1681, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 7
 
     # full two-dimensional test - creates 3 rings around the center
@@ -468,9 +466,7 @@ def test_circular_pattern_about_line(modeler: Modeler):
     success = modeler.geometry_commands.create_circular_pattern(base.faces[-1], axis, 8, np.pi * 2)
 
     assert success
-    assert base.volume.m == pytest.approx(
-        Quantity(7497.3452, UNITS.m**3).m, rel=1e-6, abs=1e-8
-    )
+    assert base.volume.m == pytest.approx(Quantity(7497.3452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 14
 
 
