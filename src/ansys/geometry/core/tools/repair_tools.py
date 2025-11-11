@@ -99,8 +99,8 @@ class RepairTools:
     def find_split_edges(
         self,
         bodies: list["Body"],
-        angle: Angle | pint.Quantity | Real = 0.0,
-        length: Distance | pint.Quantity | Real = 0.0,
+        angle: Angle | pint.Quantity | Real = None,
+        length: Distance | pint.Quantity | Real = None,
     ) -> list[SplitEdgeProblemAreas]:
         """Find split edges in the given list of bodies.
 
@@ -112,9 +112,9 @@ class RepairTools:
         bodies : list[Body]
             List of bodies that split edges are investigated on.
         angle : Angle | ~pint.Quantity | Real
-            The maximum angle between edges.
+            The maximum angle between edges. By default, None.
         length : Distance | ~pint.Quantity | Real
-            The maximum length of the edges.
+            The maximum length of the edges. By default, None.
 
         Returns
         -------
@@ -127,8 +127,14 @@ class RepairTools:
         body_ids = [body.id for body in bodies]
 
         # Convert the measurement objects
-        angle = angle if isinstance(angle, Angle) else Angle(angle)
-        length = length if isinstance(length, Distance) else Distance(length)
+        angle = angle if isinstance(angle, Angle) else Angle(angle) if angle is not None else None
+        length = (
+            length
+            if isinstance(length, Distance)
+            else Distance(length)
+            if length is not None
+            else None
+        )
 
         response = self._grpc_client.services.repair_tools.find_split_edges(
             bodies_or_faces=body_ids, angle=angle, distance=length

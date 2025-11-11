@@ -225,7 +225,7 @@ class Angle(Measurement):
     value : Real | ~pint.Quantity
         Value of the angle.
     unit : ~pint.Unit, default: DEFAULT_UNITS.ANGLE
-        Units for the distance.
+        Units for the angle.
     """
 
     def __init__(self, value: Real | Quantity, unit: Unit | None = None):
