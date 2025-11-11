@@ -141,9 +141,9 @@ def set_proto_version(
         # while not version.verify_supported(channel):
         #     version = GeometryApiProtos.from_int_value(version.value[0] - 1)
         # ---> REPLACE THIS BLOCK <---
-        # xxx> DELETE THIS BLOCK <xxx
+        # ---> DELETE THIS BLOCK <---
         version = GeometryApiProtos.V0
-        # xxx> DELETE THIS BLOCK <xxx
+        # ---> DELETE THIS BLOCK <---
 
     # Return the version
     return version
