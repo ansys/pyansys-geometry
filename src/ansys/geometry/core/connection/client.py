@@ -176,8 +176,9 @@ class GrpcClient:
         Logging level to apply to the client.
     logging_file : str or Path, default: None
         File to output the log to, if requested.
-    proto_version: str or None, default: None
-        Version of the gRPC protocol to use. If ``None``, the latest version is used.
+    proto_version : str | None, default: None
+        Protocol version to use for communication with the server. If None, v0 is used.
+        Available versions are "v0", "v1", etc.
     """
 
     @check_input_types
