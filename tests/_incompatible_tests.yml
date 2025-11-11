@@ -73,8 +73,8 @@ backends:
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
       - tests/integration/test_design.py::test_vertices
-      - tests/integration/test_geometry_commands.py::test_components_get_named_selections
-      - tests/integration/test_geometry_commands.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_components_get_named_selections
+      - tests/integration/test_design.py::test_vertices_get_named_selections
       # Bounding box center is only available from 25R2 onwards
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
@@ -196,8 +196,8 @@ backends:
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
       - tests/integration/test_design.py::test_vertices
-      - tests/integration/test_geometry_commands.py::test_components_get_named_selections
-      - tests/integration/test_geometry_commands.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_components_get_named_selections
+      - tests/integration/test_design.py::test_vertices_get_named_selections
       # Bounding box center is only available from 25R2 onwards
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
@@ -266,8 +266,8 @@ backends:
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
       - tests/integration/test_design.py::test_vertices
-      - tests/integration/test_geometry_commands.py::test_components_get_named_selections
-      - tests/integration/test_geometry_commands.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_components_get_named_selections
+      - tests/integration/test_design.py::test_vertices_get_named_selections
       # Potential problem in model/reading design for importing parameters
       - tests/integration/test_design.py::test_design_parameters
       # Bounding box center is only available from 25R2 onwards
@@ -335,8 +335,8 @@ backends:
       - tests/integration/test_design.py::test_named_selections_components
       - tests/integration/test_design.py::test_component_make_independent
       - tests/integration/test_design.py::test_vertices
-      - tests/integration/test_geometry_commands.py::test_components_get_named_selections
-      - tests/integration/test_geometry_commands.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_components_get_named_selections
+      - tests/integration/test_design.py::test_vertices_get_named_selections
       # Insert/Import file operations caused problems prior to 26.1
       - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
       - tests/integration/test_design_export.py::test_import_export_reimport_design_x_t
