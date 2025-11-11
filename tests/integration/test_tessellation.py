@@ -35,7 +35,6 @@ from ..conftest import are_graphics_available
 @pytest.mark.skipif(
     not are_graphics_available(), reason="Skipping due to graphics requirements missing"
 )
-@pytest.mark.skip(reason="Skipping to promote new CS package")
 def test_body_tessellate(modeler: Modeler):
     """Test the body tessellation."""
     sketch_1 = Sketch()
@@ -176,7 +175,6 @@ def test_body_tessellate_with_edges(modeler: Modeler):
 @pytest.mark.skipif(
     not are_graphics_available(), reason="Skipping due to graphics requirements missing"
 )
-@pytest.mark.skip(reason="Skipping to promote new CS package")
 def test_component_tessellate(modeler: Modeler):
     """Test the component tessellation."""
     # Create a sketch
