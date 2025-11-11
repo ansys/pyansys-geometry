@@ -466,7 +466,7 @@ def test_circular_pattern_about_line(modeler: Modeler):
     # full two-dimensional test - creates 3 rings around the center
     axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
     success = modeler.geometry_commands.create_circular_pattern(base.faces[-1], axis, 8, np.pi * 2)
-    design.plot(screenshot=FILES_DIR / "circular_pattern_about_line.png")
+
     assert success
     assert base.volume.m == pytest.approx(
         Quantity(7497.3452, UNITS.m**3).m, rel=1e-6, abs=1e-8
