@@ -115,6 +115,7 @@ backends:
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
       # Export body facets added in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
@@ -229,6 +230,7 @@ backends:
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
@@ -312,6 +314,7 @@ backends:
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
@@ -352,6 +355,7 @@ backends:
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
