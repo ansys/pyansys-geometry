@@ -136,8 +136,6 @@ class RepairTools:
             else None
         )
 
-        print("angle:", angle)
-        print("length:", length)
         response = self._grpc_client.services.repair_tools.find_split_edges(
             bodies_or_faces=body_ids, angle=angle, distance=length
         )
