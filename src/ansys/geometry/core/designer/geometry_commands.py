@@ -712,6 +712,7 @@ class GeometryCommands:
 
         return result.get("success")
 
+    @min_backend_version(25, 2, 0)
     def create_circular_pattern(
         self,
         selection: Union["Face", list["Face"]],
