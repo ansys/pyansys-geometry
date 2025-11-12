@@ -83,3 +83,8 @@ class GRPCPrepareToolsService(ABC):  # pragma: no cover
     def detect_helixes(self, **kwargs) -> dict:
         """Detect helixes in geometry."""
         pass
+
+    @abstractmethod
+    def is_body_sweepable(self, **kwargs) -> dict:
+        """Check if body is sweepable."""
+        pass

@@ -527,3 +527,29 @@ class PrepareTools:
                 for helix in response.get("helixes")
             ]
         }
+
+    def is_body_sweepable(self, body: "Body", get_source_target_faces: bool) -> bool:
+        """Check if a body is sweepable.
+
+        Parameters
+        ----------
+        body : Body
+            Body to check.
+        get_source_target_faces : bool
+            Whether to get source and target faces.
+
+        Returns
+        -------
+        bool
+            True if the body is sweepable, False otherwise.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        # Verify inputs
+        check_type_all_elements_in_iterable([body], Body)
+
+        response = self._grpc_client._services.prepare_tools.is_body_sweepable(
+            body_id=body.id,
+        )
+
+        return response.get("is_sweepable")

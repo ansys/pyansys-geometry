@@ -234,3 +234,15 @@ def test_helix_detection(modeler: Modeler):
     # Test with multiple bodies
     result = modeler.prepare_tools.detect_helixes(bodies)
     assert len(result["helixes"]) == 2
+
+
+def test_is_body_sweepable(modeler: Modeler):
+    """Test body sweepability detection."""
+    design = modeler.open_file(FILES_DIR / "simpleSweepableBody.scdocx")
+
+    bodies = design.bodies
+    assert len(bodies) == 1
+
+    # Test sweepability of the body
+    is_sweepable = modeler.prepare_tools.is_body_sweepable(bodies[0])
+    assert is_sweepable is True

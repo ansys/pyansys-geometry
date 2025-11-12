@@ -295,3 +295,29 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
                 for helix in response.helixes
             ]
         }
+
+    @protect_grpc
+    def is_body_sweepable(self, **kwargs):  # noqa: D102
+        from ansys.api.geometry.v0.preparetools_pb2 import IsBodySweepableRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = IsBodySweepableRequest(
+            body=build_grpc_id(kwargs["body_id"]),
+            get_source_target_faces=kwargs["get_source_target_faces"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.IsBodySweepable(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "result": response.result,
+            "faces": [
+                {
+                    "id": face.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
+                }
+                for face in response.faces
+            ],
+        }
