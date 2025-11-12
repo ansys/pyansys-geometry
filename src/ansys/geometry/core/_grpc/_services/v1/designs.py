@@ -43,9 +43,9 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.dbu.v1.designs_pb2_grpc import DesignsStub
+        from ansys.api.discovery.v1.design.designdoc_pb2_grpc import DesignDocStub
 
-        self.stub = DesignsStub(channel)
+        self.stub = DesignDocStub(channel)
 
     @protect_grpc
     def open(self, **kwargs) -> dict:  # noqa: D102
@@ -93,7 +93,21 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def upload_file_stream(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.commands_pb2 import UploadFileRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = UploadFileRequest(
+            data=kwargs["data"],
+            file_name=kwargs["file_name"],
+            open=kwargs["open_file"],
+            import_options=kwargs["import_options"].to_dict(),
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.UploadFile(request)
+
+        # Return the response - formatted as a dictionary
+        return {"file_path": response.file_path}
 
     @protect_grpc
     def stream_design_tessellation(self, **kwargs) -> dict:  # noqa: D102
