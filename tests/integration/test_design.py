@@ -4090,7 +4090,7 @@ def test_combine_merge(modeler: Modeler):
 
 
 def test_faces_get_named_selections(modeler: Modeler):
-    # Test getting named selections associated with faces
+    """Test getting named selections associated with faces."""
     design = modeler.create_design("faces_named_selections")
     box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
@@ -4114,7 +4114,7 @@ def test_faces_get_named_selections(modeler: Modeler):
 
 
 def test_body_get_named_selections(modeler: Modeler):
-    # Test getting named selections associated with bodies
+    """Test getting named selections associated with bodies."""
     design = modeler.create_design("body_named_selections")
     box1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     box2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 2]), 1, 1), 1)
@@ -4137,7 +4137,7 @@ def test_body_get_named_selections(modeler: Modeler):
 
 
 def test_beam_get_named_selections(modeler: Modeler):
-    # Test getting named selections associated with beams
+    """Test getting named selections associated with beams."""
     design = modeler.create_design("beam_named_selections")
     profile = design.add_beam_circular_profile("profile1", Distance(0.1, UNITS.m))
     beam1 = design.create_beam(Point3D([0, 0, 0]), Point3D([1, 0, 0]), profile)
@@ -4161,7 +4161,7 @@ def test_beam_get_named_selections(modeler: Modeler):
 
 
 def test_vertices_get_named_selections(modeler: Modeler):
-    # Test getting named selections associated with vertices
+    """Test getting named selections associated with vertices."""
     design = modeler.create_design("vertex_named_selections")
     box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
@@ -4193,7 +4193,7 @@ def test_vertices_get_named_selections(modeler: Modeler):
 
 
 def test_components_get_named_selections(modeler: Modeler):
-    # Test getting named selections associated with components
+    """Test getting named selections associated with components."""
     design = modeler.create_design("component_named_selections")
     comp1 = design.add_component("Component1")
     comp2 = design.add_component("Component2")
@@ -4217,7 +4217,7 @@ def test_components_get_named_selections(modeler: Modeler):
 
 
 def test_design_point_get_named_selections(modeler: Modeler):
-    # Test getting named selections associated with design points
+    """Test getting named selections associated with design points."""
     design = modeler.create_design("design_point_named_selections")
     dp1 = design.add_design_point("DesignPoint1", Point3D([0, 0, 0]))
     dp2 = design.add_design_point("DesignPoint2", Point3D([1, 1, 1]))
