@@ -83,6 +83,9 @@ class Modeler:
         Logging level to apply to the client.
     logging_file : str, Path, default: None
         File to output the log to, if requested.
+    proto_version : str | None, default: None
+        Protocol version to use for communication with the server. If None, v0 is used.
+        Available versions are "v0", "v1", etc.
     """
 
     def __init__(
@@ -96,6 +99,7 @@ class Modeler:
         timeout: Real = 120,
         logging_level: int = logging.INFO,
         logging_file: Path | str | None = None,
+        proto_version: str | None = None,
     ):
         """Initialize the ``Modeler`` class."""
         from ansys.geometry.core.designer.geometry_commands import GeometryCommands
@@ -110,6 +114,7 @@ class Modeler:
             timeout=timeout,
             logging_level=logging_level,
             logging_file=logging_file,
+            proto_version=proto_version,
         )
 
         # Single design for the Modeler
