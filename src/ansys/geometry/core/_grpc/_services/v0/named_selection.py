@@ -64,9 +64,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "faces": [face.id for face in response.faces],
             "edges": [edge.id for edge in response.edges],
             "beams": [beam.id.id for beam in response.beams],
-            "design_points": [
-                (dp.id, from_grpc_point_to_point3d(dp.points[0])) for dp in response.design_points
-            ],
+            "design_points": [dp.id for dp in response.design_points],
             "components": [comp.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
         }

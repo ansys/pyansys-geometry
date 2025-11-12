@@ -4100,7 +4100,7 @@ def test_faces_get_named_selections(modeler: Modeler):
     design.create_named_selection("face_ns_1", faces=face_ns1)
     design.create_named_selection("face_ns_2", faces=face_ns2)
 
-    # Check that edges return the correct named selections
+    # Check that faces return the correct named selections
     for face in box.faces:
         ns_list = face.get_named_selections()
         if face.id in face_ns1:

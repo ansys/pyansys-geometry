@@ -432,11 +432,8 @@ class Beam:
         list["NamedSelection"]
             List of named selections that include this beam.
         """
-        design = get_design_from_component(self)
-        named_selections = design.named_selections
-
         included_ns = []
-        for ns in named_selections:
+        for ns in get_design_from_component(self.parent_component).named_selections:
             if self in ns.beams:
                 included_ns.append(ns)
 

@@ -27,6 +27,7 @@ import numpy as np
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.auxiliary import get_design_from_body
+from ansys.geometry.core.misc.checks import ensure_design_is_active
 from ansys.geometry.core.typing import RealSequence
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -90,11 +91,8 @@ class Vertex(Point3D):
         list["NamedSelection"]
             List of named selections that include this vertex.
         """
-        design = get_design_from_body(self.body)
-        named_selections = design.named_selections
-
         included_ns = []
-        for ns in named_selections:
+        for ns in get_design_from_body(self.body).named_selections:
             if self in ns.vertices:
                 included_ns.append(ns)
 
@@ -104,6 +102,6 @@ class Vertex(Point3D):
         """Return a string representation of the vertex."""
         lines = [f"ansys.geometry.core.designer.Vertex {hex(id(self))}"]
         lines.append(f"  Id                   : {self.id}")
-        lines.append(f"  Position                 : {self.position}")
-        lines.append(f"  Body Id                : {self.body.id}")
+        lines.append(f"  Position             : {self.position}")
+        lines.append(f"  Body Id              : {self.body.id}")
         return "\n".join(lines)

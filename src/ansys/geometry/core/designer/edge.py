@@ -233,7 +233,6 @@ class Edge:
             response.get("min_corner"), response.get("max_corner"), response.get("center")
         )
 
-    @ensure_design_is_active
     def get_named_selections(self) -> list["NamedSelection"]:
         """Get named selections associated with the edge.
 
@@ -242,10 +241,8 @@ class Edge:
         list[NamedSelection]
             List of named selections that include the edge.
         """
-        named_selections = get_design_from_body(self.body).named_selections
-
         included_ns = []
-        for ns in named_selections:
+        for ns in get_design_from_body(self.body).named_selections:
             if self in ns.edges:
                 included_ns.append(ns)
 

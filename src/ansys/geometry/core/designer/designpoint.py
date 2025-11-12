@@ -90,11 +90,9 @@ class DesignPoint:
         """
         if self.parent_component is None:
             raise ValueError("Design point does not have a parent component.")
-
-        named_selections = get_design_from_component(self.parent_component).named_selections
-
+        
         included_ns = []
-        for ns in named_selections:
+        for ns in get_design_from_component(self.parent_component).named_selections:
             if self.id in [dp.id for dp in ns.design_points]:
                 included_ns.append(ns)
 

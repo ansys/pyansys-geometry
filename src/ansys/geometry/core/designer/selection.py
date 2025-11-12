@@ -35,6 +35,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_beams_from_ids,
     get_bodies_from_ids,
     get_components_from_ids,
+    get_design_points_from_ids,
     get_edges_from_ids,
     get_faces_from_ids,
     get_vertices_from_ids,
@@ -204,10 +205,10 @@ class NamedSelection:
         self.__verify_ns()
         if self._design_points is None:
             # Get all design points from the named selection
-            self._design_points = [
-                DesignPoint(dp_id, f"dp: {dp_id}", dp_point)
-                for dp_id, dp_point in self._ids_cached["design_points"]
-            ]
+            self._design_points = get_design_points_from_ids(
+                self._design,
+                self._ids_cached["design_points"],
+            )
 
         return self._design_points
 

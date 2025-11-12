@@ -1991,10 +1991,8 @@ class Component:
         list[NamedSelection]
             List of named selections belonging to the component.
         """
-        named_selections = get_design_from_component(self).named_selections
-
         included_ns = []
-        for ns in named_selections:
+        for ns in get_design_from_component(self).named_selections:
             if self in ns.components:
                 included_ns.append(ns)
 
