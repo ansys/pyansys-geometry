@@ -44,10 +44,8 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.discovery.v1.design.designdoc_pb2_grpc import DesignDocStub
-        from ansys.api.discovery.v1.commands.file_pb2_grpc import FileStub
 
-        self.designs_stub = DesignDocStub(channel)
-        self.file_stub = FileStub(channel)
+        self.stub = DesignDocStub(channel)
 
     @protect_grpc
     def open(self, **kwargs) -> dict:  # noqa: D102
@@ -92,27 +90,50 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def upload_file(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commands.file_pb2 import OpenRequest
+        from pathlib import Path
+        from typing import TYPE_CHECKING, Generator
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = OpenRequest(
-            data=kwargs["data"],
-            #file_name=kwargs["file_name"],
-            #open=kwargs["open_file"],
-            import_options=kwargs["import_options"].to_dict(),
-        )
+        import ansys.geometry.core.connection.defaults as pygeom_defaults
+
+        if TYPE_CHECKING:  # pragma: no cover
+            from ansys.geometry.core.misc.options import ImportOptions
+
+        def request_generator(
+            file_path: Path, open_file: bool, import_options: "ImportOptions"
+        ) -> Generator[OpenRequest, None, None]:
+            """Generate requests for streaming file upload."""
+            msg_buffer = 5 * 1024  # 5KB - for additional message data
+            if pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer < 0:  # pragma: no cover
+                raise ValueError("MAX_MESSAGE_LENGTH is too small for file upload.")
+
+            chunk_size = pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer
+            with Path.open(file_path, "rb") as file:
+                while chunk := file.read(chunk_size):
+                    yield OpenRequest(
+                        data=chunk,
+                        file_name=file_path.name,
+                        open=open_file,
+                        import_options=import_options.to_dict(),
+                    )
+
+
 
         # Call the gRPC service
-        response = self.file_stub.Open(request)
+        response = self.commands_stub.UploadFile(request_generator(
+                file_path=kwargs["file_path"],
+                open_file=kwargs["open_file"],
+                import_options=kwargs["import_options"],
+            ))
 
         # Return the response - formatted as a dictionary
-        return {"file_path": response.file_path}
+        return {"file_path": response.file_path}    
 
     @protect_grpc
     def upload_file_stream(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commands.file_pb2 import OpenRequest
+        from ansys.api.discovery.v1.commands.file_pb2 import UploadFileRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = OpenRequest(
+        request = UploadFileRequest(
             data=kwargs["data"],
             file_name=kwargs["file_name"],
             open=kwargs["open_file"],
@@ -120,7 +141,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.file_stub.Open(request)
+        response = self.commands_stub.UploadFile(request)
 
         # Return the response - formatted as a dictionary
         return {"file_path": response.file_path}
