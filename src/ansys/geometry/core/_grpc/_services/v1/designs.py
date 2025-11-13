@@ -44,8 +44,10 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.discovery.v1.design.designdoc_pb2_grpc import DesignDocStub
+        from ansys.api.discovery.v1.commands.file_pb2_grpc import FileStub
 
         self.stub = DesignDocStub(channel)
+        self.file_stub = FileStub(channel)
 
     @protect_grpc
     def open(self, **kwargs) -> dict:  # noqa: D102
@@ -119,7 +121,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
 
         # Call the gRPC service
-        response = self.commands_stub.UploadFile(request_generator(
+        response = self.file_stub.Open(request_generator(
                 file_path=kwargs["file_path"],
                 open_file=kwargs["open_file"],
                 import_options=kwargs["import_options"],
