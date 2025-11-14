@@ -13,7 +13,7 @@ updates:
         - "ansys-api-discovery"
         - "ansys-platform-instancemanagement"
         - "ansys-sphinx-theme"
-        - "ansys-tools-path"
+        - "ansys-tools-common"
         - "ansys-tools-visualization-interface"
     labels:
       - "maintenance"
