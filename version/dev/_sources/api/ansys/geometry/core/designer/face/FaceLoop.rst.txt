@@ -1,0 +1,227 @@
+
+
+
+
+
+
+:class:`FaceLoop`
+=================
+
+
+.. py:class:: ansys.geometry.core.designer.face.FaceLoop(type: FaceLoopType, length: pint.Quantity, min_bbox: ansys.geometry.core.math.point.Point3D, max_bbox: ansys.geometry.core.math.point.Point3D, edges: list[ansys.geometry.core.designer.edge.Edge])
+
+   
+   Provides an internal class holding the face loops defined.
+
+
+   :Parameters:
+
+       **type** : :obj:`FaceLoopType`
+           Type of loop.
+
+       **length** : :obj:`Quantity`
+           Length of the loop.
+
+       **min_bbox** : :obj:`Point3D`
+           Minimum point of the bounding box containing the loop.
+
+       **max_bbox** : :obj:`Point3D`
+           Maximum point of the bounding box containing the loop.
+
+       **edges** : :class:`python:list`\[:obj:`Edge`]
+           Edges contained in the loop.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This class is to be used only when parsing server side results. It is not
+   intended to be instantiated by a user.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: FaceLoop
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~type`
+            - Type of the loop.
+          * - :py:attr:`~length`
+            - Length of the loop.
+          * - :py:attr:`~min_bbox`
+            - Minimum point of the bounding box containing the loop.
+          * - :py:attr:`~max_bbox`
+            - Maximum point of the bounding box containing the loop.
+          * - :py:attr:`~edges`
+            - Edges contained in the loop.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.face import FaceLoop
+
+Property detail
+---------------
+
+.. py:property:: type
+   :type: FaceLoopType
+
+
+   
+   Type of the loop.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: length
+   :type: pint.Quantity
+
+
+   
+   Length of the loop.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: min_bbox
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Minimum point of the bounding box containing the loop.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: max_bbox
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Maximum point of the bounding box containing the loop.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: edges
+   :type: list[ansys.geometry.core.designer.edge.Edge]
+
+
+   
+   Edges contained in the loop.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
