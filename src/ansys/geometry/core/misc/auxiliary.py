@@ -311,7 +311,9 @@ def get_beams_from_ids(design: "Design", beam_ids: list[str]) -> list["Beam"]:
     return [beam for beam in __traverse_all_beams(design) if beam.id in beam_ids]  # noqa: E501
 
 
-def get_design_points_from_ids(design: "Design", design_point_ids: list[str]) -> list["DesignPoint"]:
+def get_design_points_from_ids(
+    design: "Design", design_point_ids: list[str]
+) -> list["DesignPoint"]:
     """Find the ``DesignPoint`` objects inside a ``Design`` from its ids.
 
     Parameters

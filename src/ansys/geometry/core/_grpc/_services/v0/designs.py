@@ -428,7 +428,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 "properties": serialize_beam_properties(beam.properties),
                 "cross_section": serialize_beam_cross_section(beam.cross_section),
             }
-        
+
         def serialize_design_point(design_point):
             return {
                 "id": design_point.id,

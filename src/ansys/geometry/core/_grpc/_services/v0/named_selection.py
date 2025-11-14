@@ -26,7 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.named_selection import GRPCNamedSelectionService
-from .conversions import build_grpc_id, from_grpc_point_to_point3d
+from .conversions import build_grpc_id
 
 
 class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):

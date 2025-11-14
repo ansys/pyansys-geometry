@@ -27,7 +27,6 @@ import numpy as np
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.auxiliary import get_design_from_body
-from ansys.geometry.core.misc.checks import ensure_design_is_active
 from ansys.geometry.core.typing import RealSequence
 
 if TYPE_CHECKING:  # pragma: no cover
