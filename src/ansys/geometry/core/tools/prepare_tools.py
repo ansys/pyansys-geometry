@@ -528,7 +528,12 @@ class PrepareTools:
             ]
         }
 
-    def is_body_sweepable(self, body: "Body", get_source_target_faces: bool) -> bool:
+    @min_backend_version(26, 1, 0)
+    def is_body_sweepable(
+        self,
+        body: "Body",
+        get_source_target_faces: bool = False,
+    ) -> tuple[bool, list["Face"]]:
         """Check if a body is sweepable.
 
         Parameters
@@ -536,20 +541,35 @@ class PrepareTools:
         body : Body
             Body to check.
         get_source_target_faces : bool
-            Whether to get source and target faces.
+            Whether to get source and target faces. By default, ``False``.
 
         Returns
         -------
-        bool
-            True if the body is sweepable, False otherwise.
+        tuple[bool, list[Face]]
+            Tuple containing a boolean indicating if the body is sweepable and
+            a list of source and target faces if requested.
         """
         from ansys.geometry.core.designer.body import Body
+        from ansys.geometry.core.designer.face import Face, SurfaceType
 
         # Verify inputs
         check_type_all_elements_in_iterable([body], Body)
 
         response = self._grpc_client._services.prepare_tools.is_body_sweepable(
             body_id=body.id,
+            get_source_target_faces=get_source_target_faces,
         )
 
-        return response.get("is_sweepable")
+        faces = []
+        if get_source_target_faces:
+            faces = [
+                Face(
+                    face.get("id"),
+                    SurfaceType(face.get("surface_type")),
+                    self,
+                    self._grpc_client,
+                )
+            for face in response.get("faces")
+        ]
+            
+        return (response.get("result"), faces)
