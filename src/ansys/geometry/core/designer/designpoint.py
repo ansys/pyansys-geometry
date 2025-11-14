@@ -46,13 +46,12 @@ class DesignPoint:
         User-defined label for the design points.
     points : Point3D
         3D point constituting the design points.
-    parent_component : Component | None
+    parent_component : Component
         Parent component to place the new design point under within the design assembly.
-        Its default value is None.
     """
 
     def __init__(
-        self, id: str, name: str, point: Point3D, parent_component: Union["Component", None] = None
+        self, id: str, name: str, point: Point3D, parent_component: Union["Component"]
     ):
         """Initialize the ``DesignPoints`` class."""
         self._id = id

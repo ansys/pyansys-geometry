@@ -432,7 +432,9 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         def serialize_design_point(design_point):
             return {
                 "id": design_point.id,
-                "parent": design_point.owner_name,
+                "name": design_point.owner_name,
+                "point": from_grpc_point_to_point3d(design_point.points[0]),
+                "parent_id": design_point.parent_id.id,
             }
 
         parts = getattr(response, "parts", [])
