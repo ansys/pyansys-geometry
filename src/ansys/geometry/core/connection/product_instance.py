@@ -32,7 +32,7 @@ import socket
 import subprocess  # nosec B404
 from typing import TYPE_CHECKING
 
-from ansys.tools.path import get_available_ansys_installations, get_latest_ansys_installation
+from ansys.tools.common.path import get_available_ansys_installations, get_latest_ansys_installation
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.logger import LOG
