@@ -26,10 +26,12 @@ from typing import TYPE_CHECKING
 from beartype import beartype as check_input_types
 from pint import Quantity
 
+import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.logger import LOG
+from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_body,
@@ -47,6 +49,48 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+
+
+class EnclosureOptions:
+    """Provides options related to enclosure creation.
+
+    Options allow control on how the enclosure is inserted in the design.
+
+    Parameters
+    ----------
+    create_shared_topology : bool
+        Whether shared topology should be applied after enclosure creation.
+    subtract_bodies : bool
+        Whether the specified bodies for enclosure creation should be subtracted from the enclosure.
+    frame : Frame
+        Frame used to orient the enclosure.
+    """
+
+    def __init__(
+        self,
+        create_shared_topology: bool = False,
+        subtract_bodies: bool = True,
+        frame: Frame = None,
+    ):
+        """Initialize a new instance of the enclosure options."""
+        self._create_shared_topology = create_shared_topology
+        self._subtract_bodies = subtract_bodies
+        self._frame = frame
+
+    @property
+    def create_shared_topology(self) -> bool:
+        """Whether shared topology should be applied after enclosure creation."""
+        return self._create_shared_topology
+
+    @property
+    def subtract_bodies(self) -> bool:
+        """Whether the bodies should be subtracted from the enclosure."""
+        return self._subtract_bodies
+
+    @property
+    def frame(self) -> Frame:
+        """TFrame used to orient the enclosure."""
+        return self._frame
 
 
 class PrepareTools:
@@ -527,3 +571,202 @@ class PrepareTools:
                 for helix in response.get("helixes")
             ]
         }
+
+    @min_backend_version(26, 1, 0)
+    def create_box_enclosure(
+        self,
+        bodies: list["Body"],
+        x_low: Distance | Quantity | Real,
+        x_high: Distance | Quantity | Real,
+        y_low: Distance | Quantity | Real,
+        y_high: Distance | Quantity | Real,
+        z_low: Distance | Quantity | Real,
+        z_high: Distance | Quantity | Real,
+        enclosure_options: EnclosureOptions,
+    ) -> list["Body"]:
+        """Create box enclosure around the given bodies.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to create enclosure around.
+        x_low : Distance, Quantity, or Real
+            The lowest distance from the bodies in the x direction.
+        x_high : Distance, Quantity, or Real
+            The highest distance from the bodies in the x direction.
+        y_low : Distance, Quantity, or Real
+            The lowest distance from the bodies in the y direction.
+        y_high : Distance, Quantity, or Real
+            The highest distance from the bodies in the y direction.
+        z_low : Distance, Quantity, or Real
+           The lowest distance from the bodies in the z direction.
+        z_high : Distance, Quantity, or Real
+            The highest distance from the bodies in the z direction.
+        enclosure_options : EnclosureOptions
+            Options that define how the enclosure is included in the design.
+
+        Returns
+        -------
+        dict
+            Dictionary with key "created_bodies",
+              containing a list of bodies created for the enclosure.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        if not bodies:
+            self._grpc_client.log.info("No bodies provided for enclosure...")
+            return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        parent_design = get_design_from_body(bodies[0])
+
+        response = self._grpc_client._services.prepare_tools.create_box_enclosure(
+            bodies=bodies,
+            x_low=x_low,
+            x_high=x_high,
+            y_low=y_low,
+            y_high=y_high,
+            z_low=z_low,
+            z_high=z_high,
+            enclosure_options=enclosure_options,
+        )
+
+        if response.get("success"):
+            bodies_ids = response.get("created_bodies")
+            if len(bodies_ids) > 0:
+                if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                    parent_design._update_design_inplace()
+                else:
+                    parent_design._update_from_tracker(response.get("tracker_response"))
+            return get_bodies_from_ids(parent_design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to create enclosure...")
+            return []
+
+    @min_backend_version(26, 1, 0)
+    def create_cylinder_enclosure(
+        self,
+        bodies: list["Body"],
+        axial_distance_low: Distance | Quantity | Real,
+        axial_distance_high: Distance | Quantity | Real,
+        radial_distance: Distance | Quantity | Real,
+        enclosure_options: EnclosureOptions,
+    ) -> list["Body"]:
+        """Create cylinder enclosure around the given bodies.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to create enclosure around.
+        axial_distance_low : Distance, Quantity, or Real
+            The lowest axial distance from the bodies.
+        axial_distance_high : Distance, Quantity, or Real
+            The highest axial distance from the bodies.
+        radial_distance : Distance, Quantity, or Real
+            The radial distance from the bodies.
+        enclosure_options : EnclosureOptions
+            Options that define how the enclosure is included in the design.
+
+        Returns
+        -------
+        dict
+            Dictionary with key "created_bodies",
+              containing a list of bodies created for the enclosure.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        if not bodies:
+            self._grpc_client.log.info("No bodies provided for enclosure...")
+            return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        parent_design = get_design_from_body(bodies[0])
+
+        response = self._grpc_client._services.prepare_tools.create_cylinder_enclosure(
+            bodies=bodies,
+            axial_distance_low=axial_distance_low,
+            axial_distance_high=axial_distance_high,
+            radial_distance=radial_distance,
+            enclosure_options=enclosure_options,
+        )
+
+        if response.get("success"):
+            bodies_ids = response.get("created_bodies")
+            if len(bodies_ids) > 0:
+                if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                    parent_design._update_design_inplace()
+                else:
+                    parent_design._update_from_tracker(response.get("tracker_response"))
+            return get_bodies_from_ids(parent_design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to create enclosure...")
+            return []
+
+    @min_backend_version(26, 1, 0)
+    def create_sphere_enclosure(
+        self,
+        bodies: list["Body"],
+        radial_distance: Distance | Quantity | Real,
+        enclosure_options: EnclosureOptions,
+    ) -> list["Body"]:
+        """Create sphere enclosure around the given bodies.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to create enclosure around.
+        radial_distance : Distance, Quantity, or Real
+            The radial distance from the bodies.
+        enclosure_options : EnclosureOptions
+            Options that define how the enclosure is included in the design.
+
+        Returns
+        -------
+        dict
+            Dictionary with key "created_bodies",
+              containing a list of bodies created for the enclosure.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        if not bodies:
+            self._grpc_client.log.info("No bodies provided for enclosure...")
+            return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        parent_design = get_design_from_body(bodies[0])
+
+        response = self._grpc_client._services.prepare_tools.create_sphere_enclosure(
+            bodies=bodies,
+            radial_distance=radial_distance,
+            enclosure_options=enclosure_options,
+        )
+
+        if response.get("success"):
+            bodies_ids = response.get("created_bodies")
+            if len(bodies_ids) > 0:
+                if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                    parent_design._update_design_inplace()
+                else:
+                    parent_design._update_from_tracker(response.get("tracker_response"))
+            return get_bodies_from_ids(parent_design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to create enclosure...")
+            return []

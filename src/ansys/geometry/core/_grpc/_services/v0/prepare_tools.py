@@ -23,11 +23,20 @@
 
 import grpc
 
+from ansys.api.geometry.v0.preparetools_pb2 import (
+    CreateEnclosureBoxRequest,
+    CreateEnclosureCylinderRequest,
+    CreateEnclosureSphereRequest,
+)
+from ansys.api.geometry.v0.models_pb2 import Body
+from ansys.api.geometry.v0.preparetools_pb2 import EnclosureOptions as GRPCEnclosureOptions
+
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.tools.prepare_tools import EnclosureOptions
 
 from ..base.conversions import from_measurement_to_server_length
 from ..base.prepare_tools import GRPCPrepareToolsService
-from .conversions import build_grpc_id
+from .conversions import build_grpc_id, from_frame_to_grpc_frame, serialize_tracker_command_response
 
 
 class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
@@ -294,4 +303,99 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
                 }
                 for helix in response.helixes
             ]
+        }
+
+    @protect_grpc
+    def create_box_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        enclosure_options = kwargs["enclosure_options"]
+        frame = enclosure_options.frame
+        grpc_enclosure_options = GRPCEnclosureOptions(
+            create_shared_topology=enclosure_options.create_shared_topology,
+            subtract_bodies=enclosure_options.subtract_bodies,
+            frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
+        )
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateEnclosureBoxRequest(
+            bodies=[Body(id=body.id) for body in kwargs["bodies"]],
+            x_low=kwargs["x_low"],
+            x_high=kwargs["x_high"],
+            y_low=kwargs["y_low"],
+            y_high=kwargs["y_high"],
+            z_low=kwargs["z_low"],
+            z_high=kwargs["z_high"],
+            enclosure_options=grpc_enclosure_options,
+        )
+
+        # Call the gRPC service
+        response = self.stub.CreateEnclosureBox(request)
+
+        # Return the response - formatted as a dictionary
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.command_response
+        )
+        return {
+            "success": response.success,
+            "created_bodies": [body.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
+        }
+
+    @protect_grpc
+    def create_cylinder_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        enclosure_options = kwargs["enclosure_options"]
+        frame = enclosure_options.frame
+        grpc_enclosure_options = GRPCEnclosureOptions(
+            create_shared_topology=enclosure_options.create_shared_topology,
+            subtract_bodies=enclosure_options.subtract_bodies,
+            frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
+        )
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateEnclosureCylinderRequest(
+            bodies=[Body(id=body.id) for body in kwargs["bodies"]],
+            axial_distance_low=kwargs["axial_distance_low"],
+            axial_distance_high=kwargs["axial_distance_high"],
+            radial_distance=kwargs["radial_distance"],
+            enclosure_options=grpc_enclosure_options,
+        )
+
+        # Call the gRPC service
+        response = self.stub.CreateEnclosureCylinder(request)
+
+        # Return the response - formatted as a dictionary
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.command_response
+        )
+        return {
+            "success": response.success,
+            "created_bodies": [body.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
+        }
+
+    @protect_grpc
+    def create_sphere_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        enclosure_options = kwargs["enclosure_options"]
+        frame = enclosure_options.frame
+        grpc_enclosure_options = GRPCEnclosureOptions(
+            create_shared_topology=enclosure_options.create_shared_topology,
+            subtract_bodies=enclosure_options.subtract_bodies,
+            frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
+        )
+        # Create the request - assumes all inputs are valid and of the proper type
+
+        request = CreateEnclosureSphereRequest(
+            bodies=[Body(id=body.id) for body in kwargs["bodies"]],
+            radial_distance=kwargs["radial_distance"],
+            enclosure_options=grpc_enclosure_options,
+        )        
+
+        # Call the gRPC service
+        response = self.stub.CreateEnclosureSphere(request)
+
+        # Return the response - formatted as a dictionary
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.command_response
+        )
+        return {
+            "success": response.success,
+            "created_bodies": [body.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
         }
