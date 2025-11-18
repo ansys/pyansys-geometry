@@ -84,7 +84,7 @@ doc = [
   "notebook==7.4.7",
   "numpydoc==1.9.0",
   "pdf2image==1.17.0",
-  "quarto-cli==1.8.25",
+  "quarto-cli==1.8.26",
   "sphinx==8.2.3",
   "sphinx-autodoc-typehints==3.1.0",
   "sphinx-copybutton==0.5.2",
