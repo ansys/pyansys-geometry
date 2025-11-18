@@ -39,6 +39,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_faces_from_ids,
     get_vertices_from_ids,
 )
+from ansys.geometry.core.misc.checks import min_backend_version
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.design import Design
@@ -157,6 +158,7 @@ class NamedSelection:
         return self._name
     
     @name.setter
+    @min_backend_version(26, 1, 0)
     def name(self, value: str) -> None:
         """Set the name of the named selection."""
         self._grpc_client.services.named_selection.rename_named_selection(

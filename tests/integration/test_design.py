@@ -596,6 +596,39 @@ def test_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 3
 
 
+def test_rename_named_selection(modeler: Modeler):
+    """Test for renaming and verifying a ``NamedSelection``."""
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelection_Test")
+
+    # Create 2 Sketch objects and draw a circle and a polygon (all client side)
+    sketch_1 = Sketch()
+    sketch_1.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch_2 = Sketch()
+    sketch_2.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+
+    # Build 2 independent components and bodies
+    circle_comp = design.add_component("CircleComponent")
+    body_circle_comp = circle_comp.extrude_sketch("Circle", sketch_1, Quantity(50, UNITS.mm))
+    polygon_comp = design.add_component("PolygonComponent")
+    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
+
+    # Create the NamedSelection
+    only_circle = design.create_named_selection("OnlyCircle", bodies=[body_circle_comp])
+    design.create_named_selection("OnlyPolygon", bodies=[body_polygon_comp])
+    design.create_named_selection("CircleAndPolygon", bodies=[body_circle_comp, body_polygon_comp])
+
+    # Check that the named selections are available
+    assert len(design.named_selections) == 3
+
+    # Rename the only circle NS
+    only_circle.name = "JustCircle"
+    assert only_circle.name == "JustCircle"
+    assert design.named_selections[0].name == "JustCircle"
+    assert design.named_selections[1].name == "OnlyPolygon"
+    assert design.named_selections[2].name == "CircleAndPolygon"
+
+
 def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
     # Try to vefify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
