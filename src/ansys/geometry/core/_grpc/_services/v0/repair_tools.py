@@ -31,6 +31,7 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
 from ..base.repair_tools import GRPCRepairToolsService
 from .conversions import (
     serialize_tracker_command_response,
@@ -64,8 +65,16 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSplitEdgesRequest(
             bodies_or_faces=kwargs["bodies_or_faces"],
-            angle=DoubleValue(value=float(kwargs["angle"])),
-            distance=DoubleValue(value=float(kwargs["distance"])),
+            angle=(
+                DoubleValue(value=float(from_measurement_to_server_angle(kwargs["angle"])))
+                if kwargs["angle"] is not None
+                else None
+            ),
+            distance=(
+                DoubleValue(value=float(from_measurement_to_server_length(kwargs["distance"])))
+                if kwargs["distance"] is not None
+                else None
+            ),
         )
 
         # Call the gRPC service
@@ -132,7 +141,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindShortEdgesRequest(
             selection=kwargs["selection"],
-            max_edge_length=DoubleValue(value=kwargs["length"]),
+            max_edge_length=DoubleValue(value=from_measurement_to_server_length(kwargs["length"])),
         )
 
         # Call the gRPC service
@@ -366,7 +375,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindShortEdgesRequest(
             selection=kwargs["selection"],
-            max_edge_length=DoubleValue(value=kwargs["length"]),
+            max_edge_length=DoubleValue(value=from_measurement_to_server_length(kwargs["length"])),
             comprehensive=kwargs["comprehensive_result"],
         )
 
@@ -422,8 +431,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSplitEdgesRequest(
             bodies_or_faces=kwargs["bodies_or_faces"],
-            angle=DoubleValue(value=float(kwargs["angle"])),
-            distance=DoubleValue(value=float(kwargs["length"])),
+            distance=DoubleValue(value=float(from_measurement_to_server_length(kwargs["length"]))),
             comprehensive=kwargs["comprehensive_result"],
         )
 

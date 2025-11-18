@@ -58,6 +58,11 @@ def test_client_backend_info(client: GrpcClient):
     assert "Backend number" in backend_info
     assert "API server number" in backend_info
 
+    # Additional info may or may not be present depending on the backend version
+    if client._backend_additional_info:
+        for key in client._backend_additional_info.keys():
+            assert key in backend_info
+
 
 def test_client_through_channel(modeler: Modeler):
     """Test the instantiation of a client from a gRPC channel."""
@@ -81,7 +86,6 @@ def test_client_close(client: GrpcClient):
     assert client.target() == ""
 
 
-@pytest.mark.skip(reason="Flaky test, needs investigation")
 def test_client_get_service_logs(client: GrpcClient):
     """Test the retrieval of the service logs."""
     # Low level call

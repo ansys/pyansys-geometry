@@ -22,6 +22,7 @@
 """Provides functions for performing common checks."""
 
 from collections.abc import Iterable
+import functools
 from typing import TYPE_CHECKING
 import warnings
 
@@ -41,6 +42,7 @@ def ensure_design_is_active(method):
     is not necessary to call this.
     """
 
+    @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
         import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.errors import GeometryRuntimeError
@@ -310,6 +312,7 @@ def min_backend_version(major: int, minor: int, service_pack: int):
     from ansys.geometry.core.logger import LOG
 
     def backend_version_decorator(method):
+        @functools.wraps(method)
         def wrapper(self, *args, **kwargs):
             method_version = semver.Version(major, minor, service_pack)
             if hasattr(self, "_grpc_client"):
@@ -365,6 +368,7 @@ def deprecated_method(
     """
 
     def deprecated_decorator(method):
+        @functools.wraps(method)
         def wrapper(*args, **kwargs):
             msg = f"The method '{method.__name__}' is deprecated."
             if alternative:
@@ -408,6 +412,7 @@ def deprecated_argument(
     """
 
     def deprecated_decorator(method):
+        @functools.wraps(method)
         def wrapper(*args, **kwargs):
             if arg in kwargs and kwargs[arg] is not None:
                 msg = f"The argument '{arg}' in '{method.__name__}' is deprecated."
@@ -473,6 +478,7 @@ def graphics_required(method):
         Decorated method.
     """
 
+    @functools.wraps(method)
     def wrapper(*args, **kwargs):
         run_if_graphics_required()
         return method(*args, **kwargs)
@@ -524,6 +530,7 @@ def kwargs_passed_not_accepted(method):
     """
     import inspect
 
+    @functools.wraps(method)
     def wrapper(*args, **kwargs):
         # Get the method signature
         sig = inspect.signature(method)

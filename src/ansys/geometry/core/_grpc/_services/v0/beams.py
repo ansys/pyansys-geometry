@@ -21,17 +21,20 @@
 # SOFTWARE.
 """Module containing the beams service implementation for v0."""
 
+from ansys.api.geometry.v0.commands_pb2 import CreateBeamCircularProfileRequest
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.beams import GRPCBeamsService
-from ..base.conversions import to_distance
+from ..base.conversions import from_measurement_to_server_length, to_distance
 from .conversions import (
+    build_grpc_id,
     from_grpc_curve_to_curve,
     from_grpc_frame_to_frame,
     from_grpc_material_to_material,
     from_grpc_point_to_point3d,
+    from_plane_to_grpc_plane,
     from_point3d_to_grpc_point,
 )
 
@@ -53,7 +56,7 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 
-        self.stub = CommandsStub(channel)
+        self.commands_stub = CommandsStub(channel)
 
     @protect_grpc
     def create_beam_segments(self, **kwargs) -> dict:  # noqa: D102
@@ -78,7 +81,7 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
         )
 
         # Call the gRPC service
-        resp = self.stub.CreateBeamSegments(request)
+        resp = self.commands_stub.CreateBeamSegments(request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -110,7 +113,7 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
         )
 
         # Call the gRPC service
-        resp = self.stub.CreateDescriptiveBeamSegments(request)
+        resp = self.commands_stub.CreateDescriptiveBeamSegments(request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -169,13 +172,38 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
 
     @protect_grpc
     def delete_beam(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-
         # Create the request - assumes all inputs are valid and of the proper type
-        request = EntityIdentifier(id=kwargs["beam_id"])
+        request = build_grpc_id(kwargs["beam_id"])
 
         # Call the gRPC service
-        _ = self.stub.DeleteBeam(request)
+        _ = self.commands_stub.DeleteBeam(request)
 
         # Return the response - formatted as a dictionary
         return {}
+
+    @protect_grpc
+    def delete_beam_profile(self, **kwargs) -> dict:  # noqa: D102
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = build_grpc_id(id=kwargs["id"])
+
+        # Call the gRPC service
+        _ = self.commands_stub.DeleteBeamProfile(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
+    def create_beam_circular_profile(self, **kwargs) -> dict:  # noqa: D102
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateBeamCircularProfileRequest(
+            origin=from_point3d_to_grpc_point(kwargs["center"]),
+            radius=from_measurement_to_server_length(kwargs["radius"]),
+            plane=from_plane_to_grpc_plane(kwargs["plane"]),
+            name=kwargs["name"],
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.CreateBeamCircularProfile(request)
+
+        # Return the response - formatted as a dictionary
+        return {"id": response.id}

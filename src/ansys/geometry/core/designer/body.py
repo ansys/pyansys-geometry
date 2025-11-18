@@ -575,23 +575,32 @@ class IBody(ABC):
     @abstractmethod
     def get_raw_tessellation(
         self,
+        transform: Matrix44 = IDENTITY_MATRIX44,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> dict:
         """Tessellate the body and return the raw tessellation data.
 
         Parameters
         ----------
+        transform : Matrix44, default: IDENTITY_MATRIX44
+            A transformation matrix to apply to the tessellation.
         tess_options : TessellationOptions | None, default: None
             A set of options to determine the tessellation quality.
         reset_cache : bool, default: False
             Whether to reset the tessellation cache and re-request the tessellation
             from the server.
+        include_faces : bool, default: True
+            Whether to include face tessellation data in the output.
+        include_edges : bool, default: False
+            Whether to include edge tessellation data in the output.
 
         Returns
         -------
         dict
-            Dictionary with face IDs as keys and face tessellation data as values.
+            Dictionary with face and edge IDs as keys and face and edge tessellation data as values.
         """
 
     @abstractmethod
@@ -600,6 +609,8 @@ class IBody(ABC):
         merge: bool = False,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
@@ -614,6 +625,10 @@ class IBody(ABC):
         reset_cache : bool, default: False
             Whether to reset the tessellation cache and re-request the tessellation
             from the server.
+        include_faces : bool, default: True
+            Whether to include face tessellation data in the output.
+        include_edges : bool, default: False
+            Whether to include edge tessellation data in the output.
 
         Returns
         -------
@@ -1260,55 +1275,32 @@ class MasterBody(IBody):
         return CollisionType(response.get("collision_type"))
 
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
-        from ansys.geometry.core.designer.component import Component
-
-        # Check input types
-        check_type(parent, Component)
-        copy_name = self.name if name is None else name
-        check_type(copy_name, str)
-
-        self._grpc_client.log.debug(f"Copying body {self.id}.")
-        response = self._grpc_client.services.bodies.copy(
-            id=self.id, parent_id=parent.id, name=copy_name
+        raise NotImplementedError(
+            "Copy method is not implemented on the MasterBody. Call this method on a body instead."
         )
 
-        # Assign the new body to its specified parent (and return the new body)
-        tb = MasterBody(
-            response.get("master_id"), copy_name, self._grpc_client, is_surface=self.is_surface
-        )
-        parent._master_component.part.bodies.append(tb)
-        parent._clear_cached_bodies()
-        body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
-        return Body(body_id, response.get("name"), parent, tb)
-
+    @min_backend_version(26, 1, 0)
     def get_raw_tessellation(  # noqa: D102
         self,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> dict:
         if not self.is_alive:
             return {}
-
-        # If the server does not support tessellation options, ignore them
-        if tess_options is not None and self._grpc_client.backend_version < (25, 2, 0):
-            self._grpc_client.log.warning(
-                "Tessellation options are not supported by server"
-                f" version {self._grpc_client.backend_version}. Ignoring options."
-            )
-            tess_options = None
 
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
         # cache tessellation
         if not self._raw_tessellation or reset_cache:
-            if tess_options is not None:
-                response = self._grpc_client.services.bodies.get_tesellation_with_options(
-                    id=self.id, options=tess_options, raw_data=True
-                )
-            else:
-                response = self._grpc_client.services.bodies.get_tesellation(
-                    id=self.id, backend_version=self._grpc_client.backend_version, raw_data=True
-                )
+            response = self._grpc_client.services.bodies.get_full_tessellation(
+                id=self.id,
+                options=tess_options,
+                raw_data=True,
+                include_faces=include_faces,
+                include_edges=include_edges,
+            )
 
             self._raw_tessellation = response.get("tessellation")
 
@@ -1321,6 +1313,8 @@ class MasterBody(IBody):
         transform: Matrix44 = IDENTITY_MATRIX44,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1335,12 +1329,26 @@ class MasterBody(IBody):
                 f" version {self._grpc_client.backend_version}. Ignoring options."
             )
             tess_options = None
+        if include_edges and self._grpc_client.backend_version < (26, 1, 0):
+            self._grpc_client.log.warning(
+                "Edge tessellation is not supported by server"
+                f" version {self._grpc_client.backend_version}. Ignoring request."
+            )
+            include_edges = False
 
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
         # cache tessellation
         if not self._tessellation or reset_cache:
-            if tess_options is not None:
+            if self._grpc_client.backend_version > (25, 2, 0):
+                response = self._grpc_client.services.bodies.get_full_tessellation(
+                    id=self.id,
+                    options=tess_options,
+                    raw_data=False,
+                    include_faces=include_faces,
+                    include_edges=include_edges,
+                )
+            elif tess_options is not None:
                 response = self._grpc_client.services.bodies.get_tesellation_with_options(
                     id=self.id, options=tess_options, raw_data=False
                 )
@@ -1848,15 +1856,59 @@ class Body(IBody):
 
     @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
-        return self._template.copy(parent, name)
+        from ansys.geometry.core.designer.component import Component
+
+        # Check input types
+        check_type(parent, Component)
+        copy_name = self.name if name is None else name
+        check_type(copy_name, str)
+
+        self._template._grpc_client.log.debug(f"Copying body {self.id}.")
+        response = self._template._grpc_client.services.bodies.copy(
+            id=self.id, parent_id=parent.id, name=copy_name
+        )
+
+        # Assign the new body to its specified parent (and return the new body)
+        tb = MasterBody(
+            response.get("master_id"),
+            copy_name,
+            self._template._grpc_client,
+            is_surface=self.is_surface,
+        )
+        parent._master_component.part.bodies.append(tb)
+        parent._clear_cached_bodies()
+        body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
+        return Body(body_id, response.get("name"), parent, tb)
 
     @ensure_design_is_active
     def get_raw_tessellation(  # noqa: D102
         self,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> dict:
-        return self._template.get_raw_tessellation(tess_options, reset_cache)
+        raw_tess = self._template.get_raw_tessellation(
+            tess_options,
+            reset_cache,
+            include_faces,
+            include_edges,
+        )
+
+        # Transform the raw tessellation points for both faces/edges
+        from copy import deepcopy
+
+        import numpy as np
+
+        transform = self.parent_component.get_world_transform()
+        transformed_map = deepcopy(raw_tess)
+        for id, tess in raw_tess.items():
+            vertices = np.reshape(np.array(tess.get("vertices")), (-1, 3))
+            homogenous_points = np.hstack([vertices, np.ones((vertices.shape[0], 1))])
+            transformed_points = (transform @ homogenous_points.T).T[:, :3]
+            transformed_map[id]["vertices"] = transformed_points.flatten().tolist()
+
+        return transformed_map
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
@@ -1864,17 +1916,28 @@ class Body(IBody):
         merge: bool = False,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate(
-            merge, self.parent_component.get_world_transform(), tess_options, reset_cache
+            merge,
+            self.parent_component.get_world_transform(),
+            tess_options,
+            reset_cache,
+            include_faces,
+            include_edges,
         )
 
     @ensure_design_is_active
-    def shell_body(self, offset: Real) -> bool:  # noqa: D102
+    def shell_body(self, offset: Distance | Quantity | Real) -> bool:  # noqa: D102
         return self._template.shell_body(offset)
 
     @ensure_design_is_active
-    def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
+    def remove_faces(  # noqa: D102
+        self,
+        selection: Face | Iterable[Face],
+        offset: Distance | Quantity | Real,
+    ) -> bool:
         return self._template.remove_faces(selection, offset)
 
     @graphics_required

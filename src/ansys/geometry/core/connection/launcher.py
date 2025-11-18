@@ -497,8 +497,8 @@ def launch_modeler_with_spaceclaim_and_pimlight(
     )
 
 
-@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
+@kwargs_passed_not_accepted
 def launch_modeler_with_geometry_service(
     version: str | int | None = None,
     host: str = "localhost",
@@ -509,6 +509,7 @@ def launch_modeler_with_geometry_service(
     client_log_level: int = logging.INFO,
     server_logs_folder: str = None,
     client_log_file: str = None,
+    server_working_dir: str | Path | None = None,
     product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ) -> "Modeler":
@@ -559,6 +560,9 @@ def launch_modeler_with_geometry_service(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
+    server_working_dir : str | Path, optional
+        Sets the working directory for the product instance. If nothing is defined,
+        the working directory will be inherited from the parent process.
     product_version: int, optional
         The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
@@ -616,12 +620,13 @@ def launch_modeler_with_geometry_service(
         client_log_level=client_log_level,
         server_logs_folder=server_logs_folder,
         client_log_file=client_log_file,
+        server_working_dir=server_working_dir,
         product_version=product_version,
     )
 
 
-@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
+@kwargs_passed_not_accepted
 def launch_modeler_with_discovery(
     version: str | int | None = None,
     host: str = "localhost",
@@ -633,6 +638,7 @@ def launch_modeler_with_discovery(
     server_log_level: int = 2,
     client_log_level: int = logging.INFO,
     client_log_file: str = None,
+    server_working_dir: str | Path | None = None,
     product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ):
@@ -685,6 +691,9 @@ def launch_modeler_with_discovery(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
+    server_working_dir : str | Path, optional
+        Sets the working directory for the product instance. If nothing is defined,
+        the working directory will be inherited from the parent process.
     product_version: int, optional
         The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
@@ -737,12 +746,13 @@ def launch_modeler_with_discovery(
         server_log_level=server_log_level,
         client_log_level=client_log_level,
         client_log_file=client_log_file,
+        server_working_dir=server_working_dir,
         product_version=product_version,
     )
 
 
-@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
+@kwargs_passed_not_accepted
 def launch_modeler_with_spaceclaim(
     version: str | int | None = None,
     host: str = "localhost",
@@ -754,6 +764,7 @@ def launch_modeler_with_spaceclaim(
     server_log_level: int = 2,
     client_log_level: int = logging.INFO,
     client_log_file: str = None,
+    server_working_dir: str | Path | None = None,
     product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ):
@@ -806,6 +817,9 @@ def launch_modeler_with_spaceclaim(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
+    server_working_dir : str | Path, optional
+        Sets the working directory for the product instance. If nothing is defined,
+        the working directory will be inherited from the parent process.
     product_version: int, optional
         The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
@@ -858,12 +872,13 @@ def launch_modeler_with_spaceclaim(
         server_log_level=server_log_level,
         client_log_level=client_log_level,
         client_log_file=client_log_file,
+        server_working_dir=server_working_dir,
         product_version=product_version,
     )
 
 
-@kwargs_passed_not_accepted
 @deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
+@kwargs_passed_not_accepted
 def launch_modeler_with_core_service(
     version: str | int | None = None,
     host: str = "localhost",
@@ -874,6 +889,7 @@ def launch_modeler_with_core_service(
     client_log_level: int = logging.INFO,
     server_logs_folder: str = None,
     client_log_file: str = None,
+    server_working_dir: str | Path | None = None,
     product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ) -> "Modeler":
@@ -924,6 +940,9 @@ def launch_modeler_with_core_service(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
+    server_working_dir : str | Path, optional
+        Sets the working directory for the product instance. If nothing is defined,
+        the working directory will be inherited from the parent process.
     product_version: int, optional
         The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
@@ -981,6 +1000,7 @@ def launch_modeler_with_core_service(
         client_log_level=client_log_level,
         server_logs_folder=server_logs_folder,
         client_log_file=client_log_file,
+        server_working_dir=server_working_dir,
         specific_minimum_version=252,
         product_version=product_version,
     )

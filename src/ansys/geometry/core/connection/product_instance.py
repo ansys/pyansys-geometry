@@ -32,7 +32,7 @@ import socket
 import subprocess  # nosec B404
 from typing import TYPE_CHECKING
 
-from ansys.tools.path import get_available_ansys_installations, get_latest_ansys_installation
+from ansys.tools.common.path import get_available_ansys_installations, get_latest_ansys_installation
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.logger import LOG
@@ -190,6 +190,7 @@ def prepare_and_start_backend(
     server_logs_folder: str = None,
     client_log_file: str = None,
     specific_minimum_version: int = None,
+    server_working_dir: str | Path | None = None,
     product_version: int | None = None,  # Deprecated, use `version` instead.
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
@@ -245,6 +246,9 @@ def prepare_and_start_backend(
     specific_minimum_version : int, optional
         Sets a specific minimum version to be checked. If this is not defined,
         the minimum version will be set to 24.1.0.
+    server_working_dir : str | Path, optional
+        Sets the working directory for the product instance. If nothing is defined,
+        the working directory will be inherited from the parent process.
     product_version: ``int``, optional
         The product version to be started. Deprecated, use `version` instead.
 
@@ -510,7 +514,9 @@ def prepare_and_start_backend(
     LOG.debug(f"Args: {args}")
     LOG.debug(f"Environment variables: {env_copy}")
 
-    instance = ProductInstance(__start_program(args, env_copy).pid)
+    instance = ProductInstance(
+        __start_program(args, env_copy, server_working_dir=server_working_dir).pid
+    )
 
     # Verify that the backend is ready to accept connections
     # before returning the Modeler instance.
@@ -614,7 +620,11 @@ def _manifest_path_provider(
         raise RuntimeError(msg)
 
 
-def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Popen:
+def __start_program(
+    args: list[str],
+    local_env: dict[str, str],
+    server_working_dir: str | os.PathLike | None = None,
+) -> subprocess.Popen:
     """Start the program.
 
     Parameters
@@ -624,6 +634,9 @@ def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Po
         be the program path.
     local_env : dict[str,str]
         Environment variables to be passed to the program.
+    server_working_dir : str | Path, optional
+        Working directory for the launched process. If None, the working directory
+        of the parent process is used.
 
     Returns
     -------
@@ -641,6 +654,7 @@ def __start_program(args: list[str], local_env: dict[str, str]) -> subprocess.Po
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
         env=local_env,
+        cwd=server_working_dir,
     )
 
 

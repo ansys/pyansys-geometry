@@ -56,6 +56,10 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
+    def get_assembly(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
     def close(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
 
@@ -93,4 +97,8 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def stream_design_tessellation(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def download_file(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError

@@ -24,7 +24,6 @@
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import grpc_point_to_point3d
 from ansys.geometry.core.designer.beam import Beam
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component
@@ -204,7 +203,7 @@ class NamedSelection:
         if self._design_points is None:
             # Get all design points from the named selection
             self._design_points = [
-                DesignPoint(dp_id, f"dp: {dp_id}", grpc_point_to_point3d(dp_point))
+                DesignPoint(dp_id, f"dp: {dp_id}", dp_point)
                 for dp_id, dp_point in self._ids_cached["design_points"]
             ]
 

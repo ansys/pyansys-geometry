@@ -25,7 +25,9 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import from_measurement_to_server_length
 from ..base.prepare_tools import GRPCPrepareToolsService
+from .conversions import build_grpc_id
 
 
 class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
@@ -49,13 +51,12 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def extract_volume_from_faces(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.preparetools_pb2 import ExtractVolumeFromFacesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtractVolumeFromFacesRequest(
-            sealing_faces=[EntityIdentifier(id=face.id) for face in kwargs["sealing_faces"]],
-            inside_faces=[EntityIdentifier(id=face.id) for face in kwargs["inside_faces"]],
+            sealing_faces=[build_grpc_id(face) for face in kwargs["sealing_faces"]],
+            inside_faces=[build_grpc_id(face) for face in kwargs["inside_faces"]],
         )
 
         # Call the gRPC service
@@ -69,13 +70,12 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def extract_volume_from_edge_loops(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.preparetools_pb2 import ExtractVolumeFromEdgeLoopsRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtractVolumeFromEdgeLoopsRequest(
-            sealing_edges=[EntityIdentifier(id=face.id) for face in kwargs["sealing_edges"]],
-            inside_faces=[EntityIdentifier(id=face.id) for face in kwargs["inside_faces"]],
+            sealing_edges=[build_grpc_id(edge) for edge in kwargs["sealing_edges"]],
+            inside_faces=[build_grpc_id(face) for face in kwargs["inside_faces"]],
         )
 
         # Call the gRPC service
@@ -95,7 +95,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RemoveRoundsRequest(
-            selection=[Face(id=round.id) for round in kwargs["rounds"]],
+            selection=[Face(id=round) for round in kwargs["rounds"]],
             auto_shrink=BoolValue(value=kwargs["auto_shrink"]),
         )
 
@@ -115,8 +115,8 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
-            selection=[Body(id=body.id) for body in kwargs["bodies"]],
-            tolerance=DoubleValue(value=kwargs["tolerance"]),
+            selection=[Body(id=body) for body in kwargs["bodies"]],
+            tolerance=DoubleValue(value=from_measurement_to_server_length(kwargs["tolerance"])),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
 
@@ -136,8 +136,8 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
-            selection=[Body(id=body.id) for body in kwargs["bodies"]],
-            tolerance=DoubleValue(value=kwargs["tolerance"]),
+            selection=[Body(id=body) for body in kwargs["bodies"]],
+            tolerance=DoubleValue(value=from_measurement_to_server_length(kwargs["tolerance"])),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
 
@@ -156,16 +156,27 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def find_logos(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.models_pb2 import FindLogoOptions
         from ansys.api.geometry.v0.preparetools_pb2 import FindLogosRequest
 
+        # Check height objects
+        min_height = (
+            from_measurement_to_server_length(kwargs["min_height"])
+            if kwargs["min_height"] is not None
+            else None
+        )
+        max_height = (
+            from_measurement_to_server_length(kwargs["max_height"])
+            if kwargs["max_height"] is not None
+            else None
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindLogosRequest(
-            bodies=[EntityIdentifier(id=body.id) for body in kwargs["bodies"]],
+            bodies=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=FindLogoOptions(
-                min_height=kwargs["min_height"],
-                max_height=kwargs["max_height"],
+                min_height=min_height,
+                max_height=max_height,
             ),
         )
 
@@ -180,16 +191,27 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def find_and_remove_logos(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.models_pb2 import FindLogoOptions
         from ansys.api.geometry.v0.preparetools_pb2 import FindLogosRequest
 
+        # Check height objects
+        min_height = (
+            from_measurement_to_server_length(kwargs["min_height"])
+            if kwargs["min_height"] is not None
+            else None
+        )
+        max_height = (
+            from_measurement_to_server_length(kwargs["max_height"])
+            if kwargs["max_height"] is not None
+            else None
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindLogosRequest(
-            bodies=[EntityIdentifier(id=body.id) for body in kwargs["bodies"]],
+            bodies=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=FindLogoOptions(
-                min_height=kwargs["min_height"],
-                max_height=kwargs["max_height"],
+                min_height=min_height,
+                max_height=max_height,
             ),
         )
 
@@ -201,12 +223,11 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def remove_logo(self, **kwargs):  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.preparetools_pb2 import RemoveLogoRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RemoveLogoRequest(
-            face_ids=[EntityIdentifier(id=id) for id in kwargs["face_ids"]],
+            face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
         )
 
         # Call the gRPC service
@@ -217,7 +238,6 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def detect_helixes(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
         from ansys.api.geometry.v0.models_pb2 import DetectHelixesOptions
         from ansys.api.geometry.v0.preparetools_pb2 import DetectHelixesRequest
 
@@ -234,7 +254,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DetectHelixesRequest(
-            body_ids=[EntityIdentifier(id=body.id) for body in kwargs["bodies"]],
+            body_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=DetectHelixesOptions(
                 min_radius=from_measurement_to_server_length(kwargs["min_radius"]),
                 max_radius=from_measurement_to_server_length(kwargs["max_radius"]),

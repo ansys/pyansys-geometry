@@ -176,8 +176,9 @@ class GrpcClient:
         Logging level to apply to the client.
     logging_file : str or Path, default: None
         File to output the log to, if requested.
-    proto_version: str or None, default: None
-        Version of the gRPC protocol to use. If ``None``, the latest version is used.
+    proto_version : str | None, default: None
+        Protocol version to use for communication with the server. If None, v0 is used.
+        Available versions are "v0", "v1", etc.
     """
 
     @check_input_types
@@ -229,6 +230,7 @@ class GrpcClient:
         self._backend_version = response.get("version")
         self._backend_api_server_build_info = response.get("api_server_build_info")
         self._backend_product_build_info = response.get("product_build_info")
+        self._backend_additional_info = response.get("additional_info", {})
 
         # Register the close method to be called at exit - irrespectively of
         # the user calling it or not...
@@ -313,12 +315,23 @@ class GrpcClient:
         str
             String with the backend information.
         """
-        return (
+        base_info = (
             f"{' ' * indent}Version:            {self.backend_version}\n"
             f"{' ' * indent}Backend type:       {self.backend_type.name}\n"
             f"{' ' * indent}Backend number:     {self._backend_product_build_info}\n"
             f"{' ' * indent}API server number:  {self._backend_api_server_build_info}"
         )
+        if self._backend_additional_info:
+            # Calculate padding to align values consistently
+            # (19 chars total for label + colon + spaces)
+            additional_info_lines = [
+                f"{' ' * indent}{key + ':':<19}{value}"
+                for key, value in self._backend_additional_info.items()
+            ]
+            additional_info_str = "\n".join(additional_info_lines)
+            return f"{base_info}\n{additional_info_str}"
+        else:  # pragma: no cover
+            return base_info
 
     def __repr__(self) -> str:
         """Represent the client as a string."""

@@ -26,6 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.named_selection import GRPCNamedSelectionService
+from .conversions import build_grpc_id, from_grpc_point_to_point3d
 
 
 class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
@@ -49,10 +50,8 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
 
     @protect_grpc
     def get_named_selection(self, **kwargs):  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-
         # Create the request - assumes all inputs are valid and of the proper type
-        request = EntityIdentifier(id=kwargs["id"])
+        request = build_grpc_id(kwargs["id"])
 
         # Call the gRPC service
         response = self.stub.Get(request)
@@ -65,7 +64,9 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "faces": [face.id for face in response.faces],
             "edges": [edge.id for edge in response.edges],
             "beams": [beam.id.id for beam in response.beams],
-            "design_points": [(dp.id, dp.points[0]) for dp in response.design_points],
+            "design_points": [
+                (dp.id, from_grpc_point_to_point3d(dp.points[0])) for dp in response.design_points
+            ],
             "components": [comp.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
         }
@@ -98,10 +99,8 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
 
     @protect_grpc
     def delete_named_selection(self, **kwargs):  # noqa: D102
-        from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-
         # Create the request - assumes all inputs are valid and of the proper type
-        request = EntityIdentifier(id=kwargs["id"])
+        request = build_grpc_id(kwargs["id"])
 
         # Call the gRPC service
         self.stub.Delete(request)
