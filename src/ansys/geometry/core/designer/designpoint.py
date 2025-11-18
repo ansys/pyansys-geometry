@@ -85,9 +85,6 @@ class DesignPoint:
         list[NamedSelection]
             List of named selections that contain this design point.
         """
-        if self.parent_component is None:
-            raise ValueError("Design point does not have a parent component.")
-
         included_ns = []
         for ns in get_design_from_component(self.parent_component).named_selections:
             if self.id in [dp.id for dp in ns.design_points]:

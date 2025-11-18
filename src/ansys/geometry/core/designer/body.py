@@ -1293,14 +1293,12 @@ class MasterBody(IBody):
         )
 
     def get_named_selections(self, body: "Body") -> list["NamedSelection"]:  # noqa: D102
-        named_selections = get_design_from_body(body).named_selections
-
-        included_ns = []
-        for ns in named_selections:
-            if body.id in [body.id for body in ns.bodies]:
-                included_ns.append(ns)
-
-        return included_ns
+        raise NotImplementedError(
+            """
+            get_named_selections is not implemented at the MasterBody level.
+            Instead, call this method on a body.
+            """
+        )
 
     @min_backend_version(26, 1, 0)
     def get_raw_tessellation(  # noqa: D102
@@ -1905,7 +1903,12 @@ class Body(IBody):
 
     @ensure_design_is_active
     def get_named_selections(self) -> list["NamedSelection"]:  # noqa: D102
-        return self._template.get_named_selections(self)
+        included_ns = []
+        for ns in get_design_from_body(self).named_selections:
+            if self.id in [body.id for body in ns.bodies]:
+                included_ns.append(ns)
+
+        return included_ns
 
     @ensure_design_is_active
     def get_raw_tessellation(  # noqa: D102
