@@ -155,6 +155,14 @@ class NamedSelection:
     def name(self) -> str:
         """Name of the named selection."""
         return self._name
+    
+    @name.setter
+    def name(self, value: str) -> None:
+        """Set the name of the named selection."""
+        self._grpc_client.services.named_selection.rename_named_selection(
+            id=self._id, new_name=value
+        )
+        self._name = value
 
     @property
     def bodies(self) -> list[Body]:
