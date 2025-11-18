@@ -21,18 +21,16 @@
 # SOFTWARE.
 """Module containing the Prepare Tools service implementation for v0."""
 
-import grpc
-
+from ansys.api.geometry.v0.models_pb2 import Body
 from ansys.api.geometry.v0.preparetools_pb2 import (
     CreateEnclosureBoxRequest,
     CreateEnclosureCylinderRequest,
     CreateEnclosureSphereRequest,
+    EnclosureOptions as GRPCEnclosureOptions,
 )
-from ansys.api.geometry.v0.models_pb2 import Body
-from ansys.api.geometry.v0.preparetools_pb2 import EnclosureOptions as GRPCEnclosureOptions
+import grpc
 
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.tools.prepare_tools import EnclosureOptions
 
 from ..base.conversions import from_measurement_to_server_length
 from ..base.prepare_tools import GRPCPrepareToolsService
@@ -385,7 +383,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
             bodies=[Body(id=body.id) for body in kwargs["bodies"]],
             radial_distance=kwargs["radial_distance"],
             enclosure_options=grpc_enclosure_options,
-        )        
+        )
 
         # Call the gRPC service
         response = self.stub.CreateEnclosureSphere(request)
