@@ -97,3 +97,4 @@ class GRPCPrepareToolsService(ABC):  # pragma: no cover
     @abstractmethod
     def create_sphere_enclosure(self, **kwargs) -> dict:
         """Create a sphere enclosure around bodies."""
+        pass

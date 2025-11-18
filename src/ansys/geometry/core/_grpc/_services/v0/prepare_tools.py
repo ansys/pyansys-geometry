@@ -313,16 +313,17 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
             create_shared_topology=enclosure_options.create_shared_topology,
             subtract_bodies=enclosure_options.subtract_bodies,
             frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
+            cushion_proportion=enclosure_options.cushion_proportion,
         )
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateEnclosureBoxRequest(
             bodies=[Body(id=body.id) for body in kwargs["bodies"]],
-            x_low=kwargs["x_low"],
-            x_high=kwargs["x_high"],
-            y_low=kwargs["y_low"],
-            y_high=kwargs["y_high"],
-            z_low=kwargs["z_low"],
-            z_high=kwargs["z_high"],
+            x_low=from_measurement_to_server_length(kwargs["x_low"]),
+            x_high=from_measurement_to_server_length(kwargs["x_high"]),
+            y_low=from_measurement_to_server_length(kwargs["y_low"]),
+            y_high=from_measurement_to_server_length(kwargs["y_high"]),
+            z_low=from_measurement_to_server_length(kwargs["z_low"]),
+            z_high=from_measurement_to_server_length(kwargs["z_high"]),
             enclosure_options=grpc_enclosure_options,
         )
 
@@ -347,13 +348,14 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
             create_shared_topology=enclosure_options.create_shared_topology,
             subtract_bodies=enclosure_options.subtract_bodies,
             frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
+            cushion_proportion=enclosure_options.cushion_proportion,
         )
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateEnclosureCylinderRequest(
             bodies=[Body(id=body.id) for body in kwargs["bodies"]],
-            axial_distance_low=kwargs["axial_distance_low"],
-            axial_distance_high=kwargs["axial_distance_high"],
-            radial_distance=kwargs["radial_distance"],
+            axial_distance_low=from_measurement_to_server_length(kwargs["axial_distance_low"]),
+            axial_distance_high=from_measurement_to_server_length(kwargs["axial_distance_high"]),
+            radial_distance=from_measurement_to_server_length(kwargs["radial_distance"]),
             enclosure_options=grpc_enclosure_options,
         )
 
@@ -378,12 +380,13 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
             create_shared_topology=enclosure_options.create_shared_topology,
             subtract_bodies=enclosure_options.subtract_bodies,
             frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
+            cushion_proportion=enclosure_options.cushion_proportion,
         )
         # Create the request - assumes all inputs are valid and of the proper type
 
         request = CreateEnclosureSphereRequest(
             bodies=[Body(id=body.id) for body in kwargs["bodies"]],
-            radial_distance=kwargs["radial_distance"],
+            radial_distance=from_measurement_to_server_length(kwargs["radial_distance"]),
             enclosure_options=grpc_enclosure_options,
         )        
 

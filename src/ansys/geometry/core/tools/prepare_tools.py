@@ -23,10 +23,10 @@
 
 from typing import TYPE_CHECKING
 
+from dataclasses import dataclass
 from beartype import beartype as check_input_types
 from pint import Quantity
 
-import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.errors import GeometryRuntimeError
@@ -44,6 +44,7 @@ from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.tools.problem_areas import LogoProblemArea
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.typing import Real
+import ansys.geometry.core as pyansys_geom
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -51,6 +52,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.face import Face
 
 
+@dataclass
 class EnclosureOptions:
     """Provides options related to enclosure creation.
 
@@ -64,34 +66,16 @@ class EnclosureOptions:
         Whether the specified bodies for enclosure creation should be subtracted from the enclosure.
     frame : Frame
         Frame used to orient the enclosure.
+    cushion_proportion : Real
+      A percentage of the minimum enclosure size.
+      Determines the initial distance between the enclosed objects
+      and the closest point of the enclosure to the objects.
     """
 
-    def __init__(
-        self,
-        create_shared_topology: bool = False,
-        subtract_bodies: bool = True,
-        frame: Frame = None,
-    ):
-        """Initialize a new instance of the enclosure options."""
-        self._create_shared_topology = create_shared_topology
-        self._subtract_bodies = subtract_bodies
-        self._frame = frame
-
-    @property
-    def create_shared_topology(self) -> bool:
-        """Whether shared topology should be applied after enclosure creation."""
-        return self._create_shared_topology
-
-    @property
-    def subtract_bodies(self) -> bool:
-        """Whether the bodies should be subtracted from the enclosure."""
-        return self._subtract_bodies
-
-    @property
-    def frame(self) -> Frame:
-        """TFrame used to orient the enclosure."""
-        return self._frame
-
+    create_shared_topology: bool = False
+    subtract_bodies: bool = True
+    frame: Frame = None
+    cushion_proportion: Real = 0.25
 
 class PrepareTools:
     """Prepare tools for PyAnsys Geometry.
@@ -607,9 +591,8 @@ class PrepareTools:
 
         Returns
         -------
-        dict
-            Dictionary with key "created_bodies",
-              containing a list of bodies created for the enclosure.
+        list[Body]
+            List of created bodies.
 
         Warnings
         --------
@@ -623,6 +606,13 @@ class PrepareTools:
 
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
+
+        x_low = x_low if isinstance(x_low, Distance) else Distance(x_low)
+        x_high = x_high if isinstance(x_high, Distance) else Distance(x_high)
+        y_low = x_low if isinstance(y_low, Distance) else Distance(y_low)
+        y_high = y_high if isinstance(y_high, Distance) else Distance(y_high)
+        z_low = z_low if isinstance(z_low, Distance) else Distance(z_low)
+        z_high = z_high if isinstance(z_high, Distance) else Distance(z_high)
 
         parent_design = get_design_from_body(bodies[0])
 
@@ -675,9 +665,8 @@ class PrepareTools:
 
         Returns
         -------
-        dict
-            Dictionary with key "created_bodies",
-              containing a list of bodies created for the enclosure.
+        list[Body]
+            List of created bodies.
 
         Warnings
         --------
@@ -691,6 +680,10 @@ class PrepareTools:
 
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
+
+        axial_distance_low = axial_distance_low if isinstance(axial_distance_low, Distance) else Distance(axial_distance_low)
+        axial_distance_high = axial_distance_high if isinstance(axial_distance_high, Distance) else Distance(axial_distance_high)
+        radial_distance = axial_distance_low if isinstance(radial_distance, Distance) else Distance(radial_distance)
 
         parent_design = get_design_from_body(bodies[0])
 
@@ -734,9 +727,8 @@ class PrepareTools:
 
         Returns
         -------
-        dict
-            Dictionary with key "created_bodies",
-              containing a list of bodies created for the enclosure.
+        list[Body]
+            List of created bodies.
 
         Warnings
         --------
@@ -752,6 +744,8 @@ class PrepareTools:
         check_type_all_elements_in_iterable(bodies, Body)
 
         parent_design = get_design_from_body(bodies[0])
+
+        radial_distance = radial_distance if isinstance(radial_distance, Distance) else Distance(radial_distance)
 
         response = self._grpc_client._services.prepare_tools.create_sphere_enclosure(
             bodies=bodies,
