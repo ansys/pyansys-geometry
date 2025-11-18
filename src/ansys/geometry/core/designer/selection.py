@@ -156,7 +156,7 @@ class NamedSelection:
     def name(self) -> str:
         """Name of the named selection."""
         return self._name
-    
+
     @name.setter
     @min_backend_version(26, 1, 0)
     def name(self, value: str) -> None:

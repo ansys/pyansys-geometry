@@ -58,7 +58,7 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):  # pragma: no cove
     @protect_grpc
     def delete_named_selection(self, **kwargs):  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def rename_named_selection(self, **kwargs):  # noqa: D102
         raise NotImplementedError
