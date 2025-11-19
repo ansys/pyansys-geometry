@@ -167,7 +167,7 @@ def use_tracker(request):
 
 @pytest.fixture(scope="session")
 def proto_version(request):
-    """Fixture to determine protos version to be used."""
+    """Fixture to determine proto files version to be used."""
     value: str = request.config.getoption("--proto-version", default="v0")
     return value.lower()
 
