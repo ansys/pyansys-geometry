@@ -30,6 +30,7 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.shapes.curves.trimmed_curve import ReversedTrimmedCurve, TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -37,6 +38,7 @@ from ansys.geometry.core.shapes.parameterization import Interval
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.designer.selection import NamedSelection
     from ansys.geometry.core.designer.vertex import Vertex
 
 
@@ -185,6 +187,7 @@ class Edge:
             Vertex(
                 vertex_resp.get("id"),
                 vertex_resp.get("position"),
+                self.body,
             )
             for vertex_resp in response.get("vertices")
         ]
@@ -229,3 +232,18 @@ class Edge:
         return BoundingBox(
             response.get("min_corner"), response.get("max_corner"), response.get("center")
         )
+
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get named selections associated with the edge.
+
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections that include the edge.
+        """
+        included_ns = []
+        for ns in get_design_from_body(self.body).named_selections:
+            if any(edge.id == self.id for edge in ns.edges):
+                included_ns.append(ns)
+
+        return included_ns
