@@ -429,7 +429,7 @@ class Beam:
 
         Returns
         -------
-        list["NamedSelection"]
+        list[NamedSelection]
             List of named selections that include this beam.
         """
         included_ns = []
