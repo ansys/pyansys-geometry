@@ -28,6 +28,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.design import Design
+    from ansys.geometry.core.designer.designpoint import DesignPoint
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
     from ansys.geometry.core.designer.vertex import Vertex
@@ -140,6 +141,11 @@ def __traverse_all_bodies(comp: Union["Design", "Component"]) -> list["Body"]:
 def __traverse_all_beams(comp: Union["Design", "Component"]) -> list["Body"]:
     """Traverse all beams in a design/component and all its subcomponents."""
     return __traverse_component_elem("beams", comp)
+
+
+def __traverse_all_design_points(comp: Union["Design", "Component"]) -> list["DesignPoint"]:
+    """Traverse all design points in a design/component and all its subcomponents."""
+    return __traverse_component_elem("design_points", comp)
 
 
 def get_all_bodies_from_design(design: "Design") -> list["Body"]:
@@ -303,6 +309,31 @@ def get_beams_from_ids(design: "Design", beam_ids: list[str]) -> list["Beam"]:
     This method takes a design and beam ids, and gets their corresponding ``Beam`` objects.
     """
     return [beam for beam in __traverse_all_beams(design) if beam.id in beam_ids]  # noqa: E501
+
+
+def get_design_points_from_ids(
+    design: "Design", design_point_ids: list[str]
+) -> list["DesignPoint"]:
+    """Find the ``DesignPoint`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the design points.
+    design_point_ids : list[str]
+        List of design point ids.
+
+    Returns
+    -------
+    list[DesignPoint]
+        List of DesignPoint objects.
+
+    Notes
+    -----
+    This method takes a design and design point ids, and gets their corresponding ``DesignPoint``
+    objects.
+    """
+    return [dp for dp in __traverse_all_design_points(design) if dp.id in design_point_ids]
 
 
 def convert_color_to_hex(
