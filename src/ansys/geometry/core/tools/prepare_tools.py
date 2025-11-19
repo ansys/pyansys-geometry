@@ -67,9 +67,9 @@ class EnclosureOptions:
     frame : Frame
         Frame used to orient the enclosure.
     cushion_proportion : Real
-      A percentage of the minimum enclosure size.
-      Determines the initial distance between the enclosed objects
-      and the closest point of the enclosure to the objects.
+        A percentage of the minimum enclosure size.
+        Determines the initial distance between the enclosed objects
+        and the closest point of the enclosure to the objects.
     """
 
     create_shared_topology: bool = False
