@@ -611,141 +611,141 @@ jobs:
             experimental: true
 
     steps:
-    - name: Calculate SKIP_UNSTABLE
-      if: matrix.experimental
-      env:
-        VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}
-        SKIP_CORE_WINDOWS: ${{ needs.manifests.outputs.skip_core_windows }}
-        DOCKER_IMAGE: ${{ matrix.docker-image }}
-      run: |
-        # Choose the manifests output to consider based on the matrix value
-        if ("$env:DOCKER_IMAGE" -eq "core-windows-latest-unstable") {
-          $ImagesAreEqual = $env:SKIP_CORE_WINDOWS
-        } else {
-          Write-Output "Unknown docker image"
-          exit 1
-        }
+      - name: Calculate SKIP_UNSTABLE
+        if: matrix.experimental
+        env:
+          VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY }}
+          SKIP_CORE_WINDOWS: ${{ needs.manifests.outputs.skip_core_windows }}
+          DOCKER_IMAGE: ${{ matrix.docker-image }}
+        run: |
+          # Choose the manifests output to consider based on the matrix value
+          if ("$env:DOCKER_IMAGE" -eq "core-windows-latest-unstable") {
+            $ImagesAreEqual = $env:SKIP_CORE_WINDOWS
+          } else {
+            Write-Output "Unknown docker image"
+            exit 1
+          }
 
-        $A = $env:VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY -eq 1
-        $B = $ImagesAreEqual -eq 1
+          $A = $env:VARS_SKIP_UNSTABLE_CONTAINERS_TEMPORARILY -eq 1
+          $B = $ImagesAreEqual -eq 1
 
-        # Calculate the logical expression
-        $Result = ($A -or $B).ToString().ToLower()
+          # Calculate the logical expression
+          $Result = ($A -or $B).ToString().ToLower()
 
-        # Export it as an environment variable with true/false value
-        Write-Output "SKIP_UNSTABLE=$Result" | Out-File -FilePath $env:GITHUB_ENV -Append
-        Write-Output "SKIP_UNSTABLE will be: $Result"
+          # Export it as an environment variable with true/false value
+          Write-Output "SKIP_UNSTABLE=$Result" | Out-File -FilePath $env:GITHUB_ENV -Append
+          Write-Output "SKIP_UNSTABLE will be: $Result"
 
-    - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
-      if: env.SKIP_UNSTABLE == 'false'
-      with:
-        persist-credentials: false
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        if: env.SKIP_UNSTABLE == 'false'
+        with:
+          persist-credentials: false
 
-    - name: Set up Python
-      if: env.SKIP_UNSTABLE == 'false'
-      uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
-      with:
-        python-version: ${{ env.MAIN_PYTHON_VERSION }}
+      - name: Set up Python
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
-    - name: Set up headless display
-      if: env.SKIP_UNSTABLE == 'false'
-      uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+      - name: Set up headless display
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
 
-    - name: Install packages for testing
-      if: env.SKIP_UNSTABLE == 'false'
-      run: |
-        python -m pip install --upgrade pip
-        pip install --upgrade build wheel
-        pip install -e . --group tests
+      - name: Install packages for testing
+        if: env.SKIP_UNSTABLE == 'false'
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade build wheel
+          pip install -e . --group tests
 
-    - name: Login to GitHub Container Registry
-      if: env.SKIP_UNSTABLE == 'false'
-      uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to GitHub Container Registry
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Download Geometry service container (if needed)
-      if: env.SKIP_UNSTABLE == 'false'
-      env:
-        FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}"
-      run: |
-        Write-Host "Pulling Docker image: $env:FULL_IMAGE_NAME"
-        docker pull $env:FULL_IMAGE_NAME
+      - name: Download Geometry service container (if needed)
+        if: env.SKIP_UNSTABLE == 'false'
+        env:
+          FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}"
+        run: |
+          Write-Host "Pulling Docker image: $env:FULL_IMAGE_NAME"
+          docker pull $env:FULL_IMAGE_NAME
 
-    - name: Start Geometry service and verify start
-      if: env.SKIP_UNSTABLE == 'false'
-      env:
-        FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}"
-        PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
-        TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
-      run: |
-        # Write command to file launch.txt for sanitizing purposes
-        echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
-        # Read the file and execute the command
-        $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
-        Invoke-Expression $command.Line
-        Start-Sleep -Seconds 10
-        python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+      - name: Start Geometry service and verify start
+        if: env.SKIP_UNSTABLE == 'false'
+        env:
+          FULL_IMAGE_NAME: "${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}"
+          PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
+          TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
+        run: |
+          # Write command to file launch.txt for sanitizing purposes
+          echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
+          # Read the file and execute the command
+          $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
+          Invoke-Expression $command.Line
+          Start-Sleep -Seconds 10
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
-    - name: Restore images cache
-      if: env.SKIP_UNSTABLE == 'false'
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
-      with:
-        path: .\tests\integration\image_cache
-        key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
-        restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-        lookup-only: false # zizmor: ignore[cache-poisoning]
+      - name: Restore images cache
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: .\tests\integration\image_cache
+          key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
+          lookup-only: false # zizmor: ignore[cache-poisoning]
 
-    - name: Testing
-      if: env.SKIP_UNSTABLE == 'false'
-      timeout-minutes: 20 # Sometimes hangs...
-      run: |
-        pytest -v --protos-version=v1
+      - name: Testing
+        if: env.SKIP_UNSTABLE == 'false'
+        timeout-minutes: 20 # Sometimes hangs...
+        run: |
+          pytest -v --protos-version=v1
 
-    - name: Upload integration test logs
-      if: always()
-      uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
-      with:
-        name: integration-test-logs-${{ matrix.docker-image }}
-        path: tests/integration/logs/integration_tests_logs.txt
-        retention-days: 7
+      - name: Upload integration test logs
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: integration-test-logs-${{ matrix.docker-image }}
+          path: tests/integration/logs/integration_tests_logs.txt
+          retention-days: 7
 
-    - name: Upload PyVista generated images (cache and results)
-      if: always()
-      uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
-      with:
-        name: pytest-pyvista-images-${{ matrix.docker-image }}
-        path: tests/integration/image_cache
-        retention-days: 7
+      - name: Upload PyVista generated images (cache and results)
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: pytest-pyvista-images-${{ matrix.docker-image }}
+          path: tests/integration/image_cache
+          retention-days: 7
 
-    - name: Upload Coverage Results
-      if: always()
-      uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
-      with:
-        include-hidden-files: true
-        name: coverage-html-${{ matrix.docker-image }}
-        path: .cov/html
-        retention-days: 7
+      - name: Upload Coverage Results
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          include-hidden-files: true
+          name: coverage-html-${{ matrix.docker-image }}
+          path: .cov/html
+          retention-days: 7
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
-      if: matrix.docker-image == 'core-windows-latest'
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      with:
-        files: .cov/xml
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        if: matrix.docker-image == 'core-windows-latest'
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: .cov/xml
 
-    - name: Stop the Geometry service
-      if: always()
-      run: |
-        if ( "$env:SKIP_UNSTABLE" -match 'false')
-        {
-          docker stop $env:GEO_CONT_NAME
-          docker logs $env:GEO_CONT_NAME
-          docker rm $env:GEO_CONT_NAME
-        }
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          if ( "$env:SKIP_UNSTABLE" -match 'false')
+          {
+            docker stop $env:GEO_CONT_NAME
+            docker logs $env:GEO_CONT_NAME
+            docker rm $env:GEO_CONT_NAME
+          }
 
   testing-linux-v1:
     name: Testing and coverage (Linux v1)
@@ -872,7 +872,7 @@ jobs:
             docker logs ${GEO_CONT_NAME}
             docker rm ${GEO_CONT_NAME}
           fi
-  
+
   package:
     name: Package library
     needs: [testing-windows, testing-linux, testing-min-reqs, testing-no-graphics, docs]
