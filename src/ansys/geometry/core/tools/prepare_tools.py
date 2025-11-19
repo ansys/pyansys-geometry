@@ -733,7 +733,7 @@ class PrepareTools:
         ----------
         bodies : list[Body]
             List of bodies to create enclosure around.
-        radial_distance : Distance, Quantity, or Real
+        radial_distance : Distance | Quantity | Real
             The radial distance from the bodies.
         enclosure_options : EnclosureOptions
             Options that define how the enclosure is included in the design.
