@@ -1488,7 +1488,7 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._grpc_client._services.assembly_controls.create_align_condition(
+        result = self._grpc_client._services.assembly_condition.create_align_condition(
             parent_id=parent_component.id,
             geometric_a_id=geometry_a.id,
             geometric_b_id=geometry_b.id,
@@ -1497,7 +1497,7 @@ class GeometryCommands:
         get_design_from_component(parent_component)._update_design_inplace()
 
         return AlignCondition(
-            result.get("moniker"),
+            result.get("id"),
             result.get("is_deleted"),
             result.get("is_enabled"),
             result.get("is_satisfied"),
@@ -1544,7 +1544,7 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._grpc_client._services.assembly_controls.create_tangent_condition(
+        result = self._grpc_client._services.assembly_condition.create_tangent_condition(
             parent_id=parent_component.id,
             geometric_a_id=geometry_a.id,
             geometric_b_id=geometry_b.id,
@@ -1553,7 +1553,7 @@ class GeometryCommands:
         get_design_from_component(parent_component)._update_design_inplace()
 
         return TangentCondition(
-            result.get("moniker"),
+            result.get("id"),
             result.get("is_deleted"),
             result.get("is_enabled"),
             result.get("is_satisfied"),
@@ -1600,7 +1600,7 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._grpc_client.services.assembly_controls.create_orient_condition(
+        result = self._grpc_client.services.assembly_condition.create_orient_condition(
             parent_id=parent_component.id,
             geometric_a_id=geometry_a.id,
             geometric_b_id=geometry_b.id,
@@ -1609,7 +1609,7 @@ class GeometryCommands:
         get_design_from_component(parent_component)._update_design_inplace()
 
         return OrientCondition(
-            result.get("moniker"),
+            result.get("id"),
             result.get("is_deleted"),
             result.get("is_enabled"),
             result.get("is_satisfied"),

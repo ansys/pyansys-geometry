@@ -24,6 +24,7 @@
 from typing import TYPE_CHECKING
 
 from ansys.api.discovery.v1.commonenums_pb2 import BackendType as GRPCBackendType
+from ansys.api.discovery.v1.commonmessages_pb2 import EntityIdentifier
 
 if TYPE_CHECKING:
     from ansys.geometry.core.connection.backend import BackendType
@@ -66,3 +67,19 @@ def from_grpc_backend_type_to_backend_type(
         raise ValueError(f"Invalid backend type: {grpc_backend_type}")
 
     return backend_type
+
+
+def build_grpc_id(id: str) -> EntityIdentifier:
+    """Build an EntityIdentifier gRPC message.
+
+    Parameters
+    ----------
+    id : str
+        Source ID.
+
+    Returns
+    -------
+    EntityIdentifier
+        Geometry service gRPC entity identifier message.
+    """
+    return EntityIdentifier(id=id)
