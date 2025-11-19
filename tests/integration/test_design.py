@@ -4193,7 +4193,7 @@ def test_body_get_named_selections(modeler: Modeler):
             assert len(ns_list) == 0  # No named selection for this body
 
 
-def test_beam_get_named_selections(modeler: Modeler):
+def test_beams_get_named_selections(modeler: Modeler):
     """Test getting named selections associated with beams."""
     design = modeler.create_design("beam_named_selections")
     profile = design.add_beam_circular_profile("profile1", Distance(0.1, UNITS.m))

@@ -434,7 +434,7 @@ class Beam:
         """
         included_ns = []
         for ns in get_design_from_component(self.parent_component).named_selections:
-            if self in ns.beams:
+            if any(beam.id == self.id for beam in ns.beams):
                 included_ns.append(ns)
 
         return included_ns
