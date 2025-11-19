@@ -716,7 +716,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
-          name: pytest-pyvista-images-${{ matrix.docker-image }}
+          name: pytest-pyvista-v1images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
           retention-days: 7
 
@@ -859,7 +859,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
-          name: pytest-pyvista-images-${{ matrix.docker-image }}
+          name: pytest-pyvista-v1images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
           retention-days: 7
 
