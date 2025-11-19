@@ -31,7 +31,7 @@ backends:
       - tests/integration/test_prepare_tools.py::test_helix_detection
       - tests/integration/test_prepare_tools.py::test_box_enclosure
       - tests/integration/test_prepare_tools.py::test_cylinder_enclosure
-      - tests/integration/test_prepare_tools.py::test_sphere_enclosure      
+      - tests/integration/test_prepare_tools.py::test_sphere_enclosure
       - tests/integration/test_repair_tools.py::test_fix_small_face
       - tests/integration/test_repair_tools.py::test_find_interference
       - tests/integration/test_repair_tools.py::test_fix_interference
@@ -153,7 +153,7 @@ backends:
       - tests/integration/test_prepare_tools.py::test_helix_detection
       - tests/integration/test_prepare_tools.py::test_box_enclosure
       - tests/integration/test_prepare_tools.py::test_cylinder_enclosure
-      - tests/integration/test_prepare_tools.py::test_sphere_enclosure        
+      - tests/integration/test_prepare_tools.py::test_sphere_enclosure
       - tests/integration/test_repair_tools.py::test_fix_small_face
       - tests/integration/test_repair_tools.py::test_find_interference
       - tests/integration/test_repair_tools.py::test_fix_interference
