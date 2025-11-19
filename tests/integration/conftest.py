@@ -158,7 +158,7 @@ def docker_instance(use_existing_service):
 
 
 @pytest.fixture(scope="session")
-def session_modeler(docker_instance, protos_version):
+def session_modeler(docker_instance, proto_version):
     # Log to file - accepts str or Path objects, Path is passed for testing/coverage purposes.
     log_file_path = Path(__file__).absolute().parent / "logs" / "integration_tests_logs.txt"
 
@@ -171,7 +171,7 @@ def session_modeler(docker_instance, protos_version):
         docker_instance=docker_instance,
         logging_level=logging.DEBUG,
         logging_file=log_file_path,
-        protos_version=protos_version,
+        proto_version=proto_version,
     )
 
     yield modeler

@@ -52,10 +52,10 @@ def pytest_addoption(parser):
         choices=("yes", "no"),
     )
     parser.addoption(
-        "--protos-version",
+        "--proto-version",
         action="store",
         default="v0",
-        help=("Specify the protos version to use for the tests. By default, 'v0'."),
+        help=("Specify the proto version to use for the tests. By default, 'v0'."),
     )
 
     parser.addoption(
@@ -166,9 +166,9 @@ def use_tracker(request):
 
 
 @pytest.fixture(scope="session")
-def protos_version(request):
+def proto_version(request):
     """Fixture to determine protos version to be used."""
-    value: str = request.config.getoption("--protos-version", default="v0")
+    value: str = request.config.getoption("--proto-version", default="v0")
     return value.lower()
 
 
