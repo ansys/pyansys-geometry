@@ -105,3 +105,19 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
 
         # Return the response - empty dictionary
         return {}
+
+    @protect_grpc
+    def rename_named_selection(self, **kwargs):  # noqa: D102
+        from ansys.api.geometry.v0.namedselections_pb2 import SetNameRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetNameRequest(
+            id=build_grpc_id(kwargs["id"]),
+            new_name=kwargs["new_name"],
+        )
+
+        # Call the gRPC service
+        self.stub.SetName(request)
+
+        # Return the response - empty dictionary
+        return {}
