@@ -94,7 +94,8 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         from pathlib import Path
         from typing import TYPE_CHECKING, Generator
 
-        from ansys.api.discovery.v1.commands.file_pb2 import OpenRequest
+        from ansys.api.discovery.v1.commands.file_pb2 import OpenRequest, OpenMode
+        from ansys.api.discovery.v1.commonenums_pb2 import FileFormat
         import ansys.geometry.core.connection.defaults as pygeom_defaults
 
         if TYPE_CHECKING:  # pragma: no cover
@@ -179,7 +180,8 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
                         yield OpenRequest(
                             data=chunk,
-                            
+                            open_mode=OpenMode.OPENMODE_NEW,
+                            file_format= FileFormat.FILEFORMAT_DISCO,
                             import_options=import_options_dict,
                         )
                         chunk_index += 1
