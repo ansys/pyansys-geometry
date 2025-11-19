@@ -1993,7 +1993,7 @@ class Component:
         """
         included_ns = []
         for ns in get_design_from_component(self).named_selections:
-            if self in ns.components:
+            if any(comp.id == self.id for comp in ns.components):
                 included_ns.append(ns)
 
         return included_ns

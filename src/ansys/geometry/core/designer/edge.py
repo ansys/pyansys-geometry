@@ -243,7 +243,7 @@ class Edge:
         """
         included_ns = []
         for ns in get_design_from_body(self.body).named_selections:
-            if self in ns.edges:
+            if any(edge.id == self.id for edge in ns.edges):
                 included_ns.append(ns)
 
         return included_ns

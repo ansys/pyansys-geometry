@@ -4136,14 +4136,38 @@ def test_faces_get_named_selections(modeler: Modeler):
     # Check that faces return the correct named selections
     for face in box.faces:
         ns_list = face.get_named_selections()
-        if face.id in face_ns1:
+        if any(f.id == face.id for f in face_ns1):
             assert len(ns_list) == 1
             assert any(ns.name == "face_ns_1" for ns in ns_list)
-        elif face.id in face_ns2:
+        elif any(f.id == face.id for f in face_ns2):
             assert len(ns_list) == 1
             assert any(ns.name == "face_ns_2" for ns in ns_list)
         else:
             assert len(ns_list) == 0  # No named selection for this face
+
+
+def test_edges_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with edges."""
+    design = modeler.create_design("edges_named_selections")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # create named selection from edges
+    edge_ns1 = [box.edges[0], box.edges[1]]
+    edge_ns2 = [box.edges[2], box.edges[3]]
+    design.create_named_selection("edge_ns_1", edges=edge_ns1)
+    design.create_named_selection("edge_ns_2", edges=edge_ns2)
+
+    # Check that edges return the correct named selections
+    for edge in box.edges:
+        ns_list = edge.get_named_selections()
+        if any(e.id == edge.id for e in edge_ns1):
+            assert len(ns_list) == 1
+            assert any(ns.name == "edge_ns_1" for ns in ns_list)
+        elif any(e.id == edge.id for e in edge_ns2):
+            assert len(ns_list) == 1
+            assert any(ns.name == "edge_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this edge
 
 
 def test_body_get_named_selections(modeler: Modeler):
@@ -4212,13 +4236,13 @@ def test_vertices_get_named_selections(modeler: Modeler):
     # Check that vertices return the correct named selections
     for vertex in box.vertices:
         ns_list = vertex.get_named_selections()
-        if vertex in vertex_ns1:
+        if any(v.id == vertex.id for v in vertex_ns1):
             assert len(ns_list) == 1
             assert any(ns.name == "vertex_ns_1" for ns in ns_list)
-        elif vertex in vertex_ns2:
+        elif any(v.id == vertex.id for v in vertex_ns2):
             assert len(ns_list) == 1
             assert any(ns.name == "vertex_ns_2" for ns in ns_list)
-        elif vertex in vertex_ns3:
+        elif any(v.id == vertex.id for v in vertex_ns3):
             assert len(ns_list) == 2
             assert any(ns.name == "vertex_ns_3" for ns in ns_list)
         else:

@@ -87,26 +87,3 @@ def test_edges_get_vertices(modeler: Modeler):
 
     with pytest.raises(AttributeError):
         vertices[0].id = "new_id"
-
-
-def test_edges_get_named_selections(modeler: Modeler):
-    # Test getting named selections associated with edges
-    # Create a simple design with a box
-    design = modeler.create_design("BoxNamedSelections")
-    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    # Create named selections on some edges
-    edge_ns1 = [body.edges[0], body.edges[1]]
-    edge_ns2 = [body.edges[2], body.edges[3]]
-    design.create_named_selection("NS1", edges=edge_ns1)
-    design.create_named_selection("NS2", edges=edge_ns2)
-
-    # Check that edges return the correct named selections
-    for edge in body.edges:
-        ns_list = edge.get_named_selections()
-        if edge.id in edge_ns1:
-            assert any(ns.name == "NS1" for ns in ns_list)
-        elif edge.id in edge_ns2:
-            assert any(ns.name == "NS2" for ns in ns_list)
-        else:
-            assert len(ns_list) == 0  # No named selection for this edge

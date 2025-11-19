@@ -87,7 +87,7 @@ class DesignPoint:
         """
         included_ns = []
         for ns in get_design_from_component(self.parent_component).named_selections:
-            if self.id in [dp.id for dp in ns.design_points]:
+            if any(dp.id == self.id for dp in ns.design_points):
                 included_ns.append(ns)
 
         return included_ns

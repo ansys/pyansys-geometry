@@ -1905,7 +1905,7 @@ class Body(IBody):
     def get_named_selections(self) -> list["NamedSelection"]:  # noqa: D102
         included_ns = []
         for ns in get_design_from_body(self).named_selections:
-            if self.id in [body.id for body in ns.bodies]:
+            if any(body.id == self.id for body in ns.bodies):
                 included_ns.append(ns)
 
         return included_ns

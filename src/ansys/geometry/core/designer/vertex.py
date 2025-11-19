@@ -92,7 +92,7 @@ class Vertex(Point3D):
         """
         included_ns = []
         for ns in get_design_from_body(self.body).named_selections:
-            if self in ns.vertices:
+            if any(vertex.id == self.id for vertex in ns.vertices):
                 included_ns.append(ns)
 
         return included_ns
