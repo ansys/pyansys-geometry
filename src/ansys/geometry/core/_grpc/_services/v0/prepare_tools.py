@@ -23,9 +23,6 @@
 
 from ansys.api.geometry.v0.models_pb2 import Body
 from ansys.api.geometry.v0.preparetools_pb2 import (
-    CreateEnclosureBoxRequest,
-    CreateEnclosureCylinderRequest,
-    CreateEnclosureSphereRequest,
     EnclosureOptions as GRPCEnclosureOptions,
 )
 import grpc
@@ -305,6 +302,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def create_box_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureBoxRequest
         enclosure_options = kwargs["enclosure_options"]
         frame = enclosure_options.frame
         grpc_enclosure_options = GRPCEnclosureOptions(
@@ -340,6 +338,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def create_cylinder_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureCylinderRequest
         enclosure_options = kwargs["enclosure_options"]
         frame = enclosure_options.frame
         grpc_enclosure_options = GRPCEnclosureOptions(
@@ -372,6 +371,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def create_sphere_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureSphereRequest
         enclosure_options = kwargs["enclosure_options"]
         frame = enclosure_options.frame
         grpc_enclosure_options = GRPCEnclosureOptions(
