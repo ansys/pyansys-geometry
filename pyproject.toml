@@ -164,12 +164,17 @@ lint.pydocstyle.convention = "numpy"
 minversion = "9.0"
 addopts = [
   "-ra",
-  "--cov=ansys.geometry",
-  "--cov-report html:.cov/html",
-  "--cov-report xml:.cov/xml",
-  "--cov-report term",
+  "--cov",
+  "ansys.geometry",
+  "--cov-report",
+  "html:.cov/html",
+  "--cov-report",
+  "xml:.cov/xml",
+  "--cov-report",
+  "term",
   "-vv",
-  "--image_cache_dir tests/integration/image_cache",
+  "--image_cache_dir",
+  "tests/integration/image_cache",
   "--add_missing_images",
 ]
 testpaths = [ "tests" ]
