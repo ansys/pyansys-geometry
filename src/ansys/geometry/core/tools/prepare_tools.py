@@ -575,17 +575,17 @@ class PrepareTools:
         ----------
         bodies : list[Body]
             List of bodies to create enclosure around.
-        x_low : Distance, Quantity, or Real
+        x_low : Distance | Quantity | Real
             The lowest distance from the bodies in the x direction.
-        x_high : Distance, Quantity, or Real
+        x_high : Distance | Quantity | Real
             The highest distance from the bodies in the x direction.
-        y_low : Distance, Quantity, or Real
+        y_low : Distance | Quantity | Real
             The lowest distance from the bodies in the y direction.
-        y_high : Distance, Quantity, or Real
+        y_high : Distance | Quantity | Real
             The highest distance from the bodies in the y direction.
-        z_low : Distance, Quantity, or Real
+        z_low : Distance | Quantity | Real
            The lowest distance from the bodies in the z direction.
-        z_high : Distance, Quantity, or Real
+        z_high : Distance | Quantity | Real
             The highest distance from the bodies in the z direction.
         enclosure_options : EnclosureOptions
             Options that define how the enclosure is included in the design.
