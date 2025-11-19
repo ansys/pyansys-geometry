@@ -655,11 +655,11 @@ class PrepareTools:
         ----------
         bodies : list[Body]
             List of bodies to create enclosure around.
-        axial_distance_low : Distance, Quantity, or Real
+        axial_distance_low : Distance | Quantity | Real
             The lowest axial distance from the bodies.
-        axial_distance_high : Distance, Quantity, or Real
+        axial_distance_high : Distance | Quantity | Real
             The highest axial distance from the bodies.
-        radial_distance : Distance, Quantity, or Real
+        radial_distance : Distance | Quantity | Real
             The radial distance from the bodies.
         enclosure_options : EnclosureOptions
             Options that define how the enclosure is included in the design.
