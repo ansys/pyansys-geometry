@@ -27,7 +27,11 @@ from ansys.geometry.core.errors import protect_grpc
 
 from ..base.conversions import from_measurement_to_server_length
 from ..base.prepare_tools import GRPCPrepareToolsService
-from .conversions import build_grpc_id, from_enclosure_options_to_grpc_enclosure_options, from_frame_to_grpc_frame, serialize_tracker_command_response
+from .conversions import (
+    build_grpc_id,
+    from_enclosure_options_to_grpc_enclosure_options,
+    serialize_tracker_command_response,
+)
 
 
 class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
@@ -298,10 +302,13 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def create_box_enclosure(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureBoxRequest
         from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
-        grpc_enclosure_options = from_enclosure_options_to_grpc_enclosure_options(kwargs["enclosure_options"])
-        
+        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureBoxRequest
+
+        grpc_enclosure_options = from_enclosure_options_to_grpc_enclosure_options(
+            kwargs["enclosure_options"]
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateEnclosureBoxRequest(
             bodies=[GRPCBody(id=body.id) for body in kwargs["bodies"]],
@@ -329,10 +336,13 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def create_cylinder_enclosure(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureCylinderRequest
         from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
-        grpc_enclosure_options = from_enclosure_options_to_grpc_enclosure_options(kwargs["enclosure_options"])
-        
+        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureCylinderRequest
+
+        grpc_enclosure_options = from_enclosure_options_to_grpc_enclosure_options(
+            kwargs["enclosure_options"]
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateEnclosureCylinderRequest(
             bodies=[GRPCBody(id=body.id) for body in kwargs["bodies"]],
@@ -357,10 +367,13 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
     @protect_grpc
     def create_sphere_enclosure(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureSphereRequest
         from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
-        grpc_enclosure_options = from_enclosure_options_to_grpc_enclosure_options(kwargs["enclosure_options"])
-    
+        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureSphereRequest
+
+        grpc_enclosure_options = from_enclosure_options_to_grpc_enclosure_options(
+            kwargs["enclosure_options"]
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateEnclosureSphereRequest(
             bodies=[GRPCBody(id=body.id) for body in kwargs["bodies"]],
