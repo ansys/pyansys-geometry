@@ -702,7 +702,7 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         timeout-minutes: 20 # Sometimes hangs...
         run: |
-          pytest -v --protos-version=v1
+          pytest -v --proto-version=v1
 
       - name: Upload integration test logs
         if: always()
@@ -716,7 +716,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
-          name: pytest-pyvista-v1images-${{ matrix.docker-image }}
+          name: pytest-pyvista-v1-images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
           retention-days: 7
 
@@ -834,7 +834,7 @@ jobs:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          pytest-extra-args: "--protos-version=v1"
+          pytest-extra-args: "--proto-version=v1"
           checkout: false
           randomize: true
           group-dependencies-name: "tests"
@@ -859,7 +859,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
-          name: pytest-pyvista-v1images-${{ matrix.docker-image }}
+          name: pytest-pyvista-v1-images-${{ matrix.docker-image }}
           path: tests/integration/image_cache
           retention-days: 7
 
