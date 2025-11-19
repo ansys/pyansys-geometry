@@ -51,6 +51,12 @@ def pytest_addoption(parser):
         help=("Enable the tracker to update the design. Options: 'yes' or 'no'. By default, 'no'."),
         choices=("yes", "no"),
     )
+    parser.addoption(
+        "--protos-version",
+        action="store",
+        default="v0",
+        help=("Specify the protos version to use for the tests. By default, 'v0'."),
+    )
 
     parser.addoption(
         "--backwards-compatibility",
@@ -157,6 +163,13 @@ def use_tracker(request):
 
     # Revert the state after the test session
     pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN = False
+
+
+@pytest.fixture(scope="session")
+def protos_version(request):
+    """Fixture to determine protos version to be used."""
+    value: str = request.config.getoption("--protos-version", default="v0")
+    return value.lower()
 
 
 @pytest.fixture
