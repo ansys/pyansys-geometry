@@ -21,12 +21,13 @@
 # SOFTWARE.
 """Provides tools for preparing geometry for use with simulation."""
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from dataclasses import dataclass
 from beartype import beartype as check_input_types
 from pint import Quantity
 
+import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.errors import GeometryRuntimeError
@@ -44,7 +45,6 @@ from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.tools.problem_areas import LogoProblemArea
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 from ansys.geometry.core.typing import Real
-import ansys.geometry.core as pyansys_geom
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -76,6 +76,7 @@ class EnclosureOptions:
     subtract_bodies: bool = True
     frame: Frame = None
     cushion_proportion: Real = 0.25
+
 
 class PrepareTools:
     """Prepare tools for PyAnsys Geometry.
@@ -681,9 +682,21 @@ class PrepareTools:
         # Verify inputs
         check_type_all_elements_in_iterable(bodies, Body)
 
-        axial_distance_low = axial_distance_low if isinstance(axial_distance_low, Distance) else Distance(axial_distance_low)
-        axial_distance_high = axial_distance_high if isinstance(axial_distance_high, Distance) else Distance(axial_distance_high)
-        radial_distance = axial_distance_low if isinstance(radial_distance, Distance) else Distance(radial_distance)
+        axial_distance_low = (
+            axial_distance_low
+            if isinstance(axial_distance_low, Distance)
+            else Distance(axial_distance_low)
+        )
+        axial_distance_high = (
+            axial_distance_high
+            if isinstance(axial_distance_high, Distance)
+            else Distance(axial_distance_high)
+        )
+        radial_distance = (
+            axial_distance_low
+            if isinstance(radial_distance, Distance)
+            else Distance(radial_distance)
+        )
 
         parent_design = get_design_from_body(bodies[0])
 
@@ -745,7 +758,9 @@ class PrepareTools:
 
         parent_design = get_design_from_body(bodies[0])
 
-        radial_distance = radial_distance if isinstance(radial_distance, Distance) else Distance(radial_distance)
+        radial_distance = (
+            radial_distance if isinstance(radial_distance, Distance) else Distance(radial_distance)
+        )
 
         response = self._grpc_client._services.prepare_tools.create_sphere_enclosure(
             bodies=bodies,
