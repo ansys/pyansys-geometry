@@ -67,9 +67,9 @@ class EnclosureOptions:
     frame : Frame
         Frame used to orient the enclosure.
     cushion_proportion : Real
-      A percentage of the minimum enclosure size.
-      Determines the initial distance between the enclosed objects
-      and the closest point of the enclosure to the objects.
+        A percentage of the minimum enclosure size.
+        Determines the initial distance between the enclosed objects
+        and the closest point of the enclosure to the objects.
     """
 
     create_shared_topology: bool = False
@@ -575,17 +575,17 @@ class PrepareTools:
         ----------
         bodies : list[Body]
             List of bodies to create enclosure around.
-        x_low : Distance, Quantity, or Real
+        x_low : Distance | Quantity | Real
             The lowest distance from the bodies in the x direction.
-        x_high : Distance, Quantity, or Real
+        x_high : Distance | Quantity | Real
             The highest distance from the bodies in the x direction.
-        y_low : Distance, Quantity, or Real
+        y_low : Distance | Quantity | Real
             The lowest distance from the bodies in the y direction.
-        y_high : Distance, Quantity, or Real
+        y_high : Distance | Quantity | Real
             The highest distance from the bodies in the y direction.
-        z_low : Distance, Quantity, or Real
+        z_low : Distance | Quantity | Real
            The lowest distance from the bodies in the z direction.
-        z_high : Distance, Quantity, or Real
+        z_high : Distance | Quantity | Real
             The highest distance from the bodies in the z direction.
         enclosure_options : EnclosureOptions
             Options that define how the enclosure is included in the design.
@@ -655,11 +655,11 @@ class PrepareTools:
         ----------
         bodies : list[Body]
             List of bodies to create enclosure around.
-        axial_distance_low : Distance, Quantity, or Real
+        axial_distance_low : Distance | Quantity | Real
             The lowest axial distance from the bodies.
-        axial_distance_high : Distance, Quantity, or Real
+        axial_distance_high : Distance | Quantity | Real
             The highest axial distance from the bodies.
-        radial_distance : Distance, Quantity, or Real
+        radial_distance : Distance | Quantity | Real
             The radial distance from the bodies.
         enclosure_options : EnclosureOptions
             Options that define how the enclosure is included in the design.
@@ -733,7 +733,7 @@ class PrepareTools:
         ----------
         bodies : list[Body]
             List of bodies to create enclosure around.
-        radial_distance : Distance, Quantity, or Real
+        radial_distance : Distance | Quantity | Real
             The radial distance from the bodies.
         enclosure_options : EnclosureOptions
             Options that define how the enclosure is included in the design.

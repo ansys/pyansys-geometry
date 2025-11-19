@@ -359,11 +359,9 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
     def create_sphere_enclosure(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureSphereRequest
         from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
-
         grpc_enclosure_options = from_enclosure_options_to_grpc_enclosure_options(kwargs["enclosure_options"])
     
         # Create the request - assumes all inputs are valid and of the proper type
-
         request = CreateEnclosureSphereRequest(
             bodies=[GRPCBody(id=body.id) for body in kwargs["bodies"]],
             radial_distance=from_measurement_to_server_length(kwargs["radial_distance"]),
