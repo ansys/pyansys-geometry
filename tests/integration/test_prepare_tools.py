@@ -245,6 +245,7 @@ def test_helix_detection(modeler: Modeler):
 
 
 def test_box_enclosure(modeler):
+    """Tests creation of a box enclosure. """
     design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
     bodies = [design.bodies[0]]
     enclosure_options = EnclosureOptions()
@@ -273,6 +274,7 @@ def test_box_enclosure(modeler):
 
 
 def test_cylinder_enclosure(modeler):
+    """Tests creation of a cylinder enclosure. """
     design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
     bodies = [design.bodies[0]]
     origin = Vector3D([0.0, 0.0, 0.0])
@@ -289,6 +291,7 @@ def test_cylinder_enclosure(modeler):
 
 
 def test_sphere_enclosure(modeler):
+    """Tests creation of a sphere enclosure. """
     design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
     bodies = [design.bodies[0]]
     enclosure_options = EnclosureOptions()
