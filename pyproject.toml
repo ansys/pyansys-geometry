@@ -172,8 +172,7 @@ addopts = [
   "--cov-report",
   "term",
   "-vv",
-  "--image_cache_dir",
-  "tests/integration/image_cache",
+  "--image_cache_dir tests/integration/image_cache",
   "--add_missing_images",
 ]
 testpaths = [ "tests" ]
