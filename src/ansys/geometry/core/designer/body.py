@@ -1292,7 +1292,7 @@ class MasterBody(IBody):
             "Copy method is not implemented on the MasterBody. Call this method on a body instead."
         )
 
-    def get_named_selections(self, body: "Body") -> list["NamedSelection"]:  # noqa: D102
+    def get_named_selections(self) -> list["NamedSelection"]:  # noqa: D102
         raise NotImplementedError(
             """
             get_named_selections is not implemented at the MasterBody level.
