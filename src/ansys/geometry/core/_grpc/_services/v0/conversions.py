@@ -56,6 +56,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
+from ansys.api.geometry.v0.preparetools_pb2 import EnclosureOptions as GRPCEnclosureOptions
 import pint
 
 from ansys.geometry.core.errors import GeometryRuntimeError
@@ -95,6 +96,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.sketch.nurbs import SketchNurbs
     from ansys.geometry.core.sketch.polygon import Polygon
     from ansys.geometry.core.sketch.segment import SketchSegment
+    from ansys.geometry.core.tools.prepare_tools import EnclosureOptions
 
 
 def from_point3d_to_grpc_point(point: "Point3D") -> GRPCPoint:
@@ -1410,3 +1412,27 @@ def serialize_tracker_command_response(**kwargs) -> dict:
             for entity in getattr(response, "deleted_bodies", [])
         ],
     }
+
+
+def from_enclosure_options_to_grpc_enclosure_options(
+    enclosure_options: "EnclosureOptions",
+) -> GRPCEnclosureOptions:
+    """Convert enclosure_options to grpc definition.
+
+    Parameters
+    ----------
+    enclosure_options : EnclosureOptions
+        Definition of the enclosure options.
+
+    Returns
+    -------
+    GRPCEnclosureOptions
+        Grpc converted definition.
+    """
+    frame = enclosure_options.frame
+    return GRPCEnclosureOptions(
+        create_shared_topology=enclosure_options.create_shared_topology,
+        subtract_bodies=enclosure_options.subtract_bodies,
+        frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
+        cushion_proportion=enclosure_options.cushion_proportion,
+    )
