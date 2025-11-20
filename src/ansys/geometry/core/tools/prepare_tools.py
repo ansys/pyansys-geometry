@@ -21,15 +21,18 @@
 # SOFTWARE.
 """Provides tools for preparing geometry for use with simulation."""
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
 from pint import Quantity
 
+import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.logger import LOG
+from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
     get_design_from_body,
@@ -47,6 +50,32 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+
+
+@dataclass
+class EnclosureOptions:
+    """Provides options related to enclosure creation.
+
+    Options allow control on how the enclosure is inserted in the design.
+
+    Parameters
+    ----------
+    create_shared_topology : bool, default: False
+        Whether shared topology should be applied after enclosure creation.
+    subtract_bodies : bool, default: True
+        Whether the specified bodies for enclosure creation should be subtracted from the enclosure.
+    frame : Frame, default: None
+        Frame used to orient the enclosure.
+    cushion_proportion : Real, default: 0.25
+        A percentage of the minimum enclosure size.
+        Determines the initial distance between the enclosed objects
+        and the closest point of the enclosure to the objects.
+    """
+
+    create_shared_topology: bool = False
+    subtract_bodies: bool = True
+    frame: Frame = None
+    cushion_proportion: Real = 0.25
 
 
 class PrepareTools:
@@ -529,6 +558,229 @@ class PrepareTools:
         }
 
     @min_backend_version(26, 1, 0)
+    def create_box_enclosure(
+        self,
+        bodies: list["Body"],
+        x_low: Distance | Quantity | Real,
+        x_high: Distance | Quantity | Real,
+        y_low: Distance | Quantity | Real,
+        y_high: Distance | Quantity | Real,
+        z_low: Distance | Quantity | Real,
+        z_high: Distance | Quantity | Real,
+        enclosure_options: EnclosureOptions,
+    ) -> list["Body"]:
+        """Create box enclosure around the given bodies.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to create enclosure around.
+        x_low : Distance | Quantity | Real
+            The lowest distance from the bodies in the x direction.
+        x_high : Distance | Quantity | Real
+            The highest distance from the bodies in the x direction.
+        y_low : Distance | Quantity | Real
+            The lowest distance from the bodies in the y direction.
+        y_high : Distance | Quantity | Real
+            The highest distance from the bodies in the y direction.
+        z_low : Distance | Quantity | Real
+           The lowest distance from the bodies in the z direction.
+        z_high : Distance | Quantity | Real
+            The highest distance from the bodies in the z direction.
+        enclosure_options : EnclosureOptions
+            Options that define how the enclosure is included in the design.
+
+        Returns
+        -------
+        list[Body]
+            List of created bodies.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        if not bodies:
+            self._grpc_client.log.info("No bodies provided for enclosure...")
+            return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        x_low = x_low if isinstance(x_low, Distance) else Distance(x_low)
+        x_high = x_high if isinstance(x_high, Distance) else Distance(x_high)
+        y_low = x_low if isinstance(y_low, Distance) else Distance(y_low)
+        y_high = y_high if isinstance(y_high, Distance) else Distance(y_high)
+        z_low = z_low if isinstance(z_low, Distance) else Distance(z_low)
+        z_high = z_high if isinstance(z_high, Distance) else Distance(z_high)
+
+        parent_design = get_design_from_body(bodies[0])
+
+        response = self._grpc_client._services.prepare_tools.create_box_enclosure(
+            bodies=bodies,
+            x_low=x_low,
+            x_high=x_high,
+            y_low=y_low,
+            y_high=y_high,
+            z_low=z_low,
+            z_high=z_high,
+            enclosure_options=enclosure_options,
+        )
+
+        if response.get("success"):
+            bodies_ids = response.get("created_bodies")
+            if len(bodies_ids) > 0:
+                if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                    parent_design._update_design_inplace()
+                else:
+                    parent_design._update_from_tracker(response.get("tracker_response"))
+            return get_bodies_from_ids(parent_design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to create enclosure...")
+            return []
+
+    @min_backend_version(26, 1, 0)
+    def create_cylinder_enclosure(
+        self,
+        bodies: list["Body"],
+        axial_distance_low: Distance | Quantity | Real,
+        axial_distance_high: Distance | Quantity | Real,
+        radial_distance: Distance | Quantity | Real,
+        enclosure_options: EnclosureOptions,
+    ) -> list["Body"]:
+        """Create cylinder enclosure around the given bodies.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to create enclosure around.
+        axial_distance_low : Distance | Quantity | Real
+            The lowest axial distance from the bodies.
+        axial_distance_high : Distance | Quantity | Real
+            The highest axial distance from the bodies.
+        radial_distance : Distance | Quantity | Real
+            The radial distance from the bodies.
+        enclosure_options : EnclosureOptions
+            Options that define how the enclosure is included in the design.
+
+        Returns
+        -------
+        list[Body]
+            List of created bodies.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        if not bodies:
+            self._grpc_client.log.info("No bodies provided for enclosure...")
+            return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        axial_distance_low = (
+            axial_distance_low
+            if isinstance(axial_distance_low, Distance)
+            else Distance(axial_distance_low)
+        )
+        axial_distance_high = (
+            axial_distance_high
+            if isinstance(axial_distance_high, Distance)
+            else Distance(axial_distance_high)
+        )
+        radial_distance = (
+            axial_distance_low
+            if isinstance(radial_distance, Distance)
+            else Distance(radial_distance)
+        )
+
+        parent_design = get_design_from_body(bodies[0])
+
+        response = self._grpc_client._services.prepare_tools.create_cylinder_enclosure(
+            bodies=bodies,
+            axial_distance_low=axial_distance_low,
+            axial_distance_high=axial_distance_high,
+            radial_distance=radial_distance,
+            enclosure_options=enclosure_options,
+        )
+
+        if response.get("success"):
+            bodies_ids = response.get("created_bodies")
+            if len(bodies_ids) > 0:
+                if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                    parent_design._update_design_inplace()
+                else:
+                    parent_design._update_from_tracker(response.get("tracker_response"))
+            return get_bodies_from_ids(parent_design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to create enclosure...")
+            return []
+
+    @min_backend_version(26, 1, 0)
+    def create_sphere_enclosure(
+        self,
+        bodies: list["Body"],
+        radial_distance: Distance | Quantity | Real,
+        enclosure_options: EnclosureOptions,
+    ) -> list["Body"]:
+        """Create sphere enclosure around the given bodies.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to create enclosure around.
+        radial_distance : Distance | Quantity | Real
+            The radial distance from the bodies.
+        enclosure_options : EnclosureOptions
+            Options that define how the enclosure is included in the design.
+
+        Returns
+        -------
+        list[Body]
+            List of created bodies.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        if not bodies:
+            self._grpc_client.log.info("No bodies provided for enclosure...")
+            return []
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        parent_design = get_design_from_body(bodies[0])
+
+        radial_distance = (
+            radial_distance if isinstance(radial_distance, Distance) else Distance(radial_distance)
+        )
+
+        response = self._grpc_client._services.prepare_tools.create_sphere_enclosure(
+            bodies=bodies,
+            radial_distance=radial_distance,
+            enclosure_options=enclosure_options,
+        )
+
+        if response.get("success"):
+            bodies_ids = response.get("created_bodies")
+            if len(bodies_ids) > 0:
+                if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                    parent_design._update_design_inplace()
+                else:
+                    parent_design._update_from_tracker(response.get("tracker_response"))
+            return get_bodies_from_ids(parent_design, bodies_ids)
+        else:
+            self._grpc_client.log.info("Failed to create enclosure...")
+            return []
+
+	@min_backend_version(26, 1, 0)
     def is_body_sweepable(
         self,
         body: "Body",

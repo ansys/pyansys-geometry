@@ -1308,6 +1308,18 @@ class Design(Component):
                 component.coordinate_systems.append(new_cs)
                 num_created_coord_systems += 1
 
+        # Create DesignPoints
+        for dp in response.get("design_points"):
+            created_dp = DesignPoint(
+                dp.get("id"),
+                dp.get("name"),
+                dp.get("point"),
+                created_components.get(dp.get("parent_id"), self),
+            )
+
+            # Append the design point to the component to which it belongs
+            created_dp.parent_component._design_points.append(created_dp)
+
         end = time.time()
 
         # Set SharedTopology
