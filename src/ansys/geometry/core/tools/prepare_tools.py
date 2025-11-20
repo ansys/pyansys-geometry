@@ -38,6 +38,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
     get_design_from_edge,
     get_design_from_face,
+    get_faces_from_ids,
 )
 from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
 from ansys.geometry.core.misc.measurements import Distance
@@ -780,48 +781,44 @@ class PrepareTools:
             self._grpc_client.log.info("Failed to create enclosure...")
             return []
 
-	@min_backend_version(26, 1, 0)
+    @min_backend_version(26, 1, 0)
     def is_body_sweepable(
         self,
-        body: "Body",
+        bodies: list["Body"],
         get_source_target_faces: bool = False,
-    ) -> tuple[bool, list["Face"]]:
-        """Check if a body is sweepable.
+    ) -> list[tuple[bool, list["Face"]]]:
+        """Check if bodies are sweepable.
 
         Parameters
         ----------
-        body : Body
-            Body to check.
+        bodies : list[Body]
+            List of bodies to check.
         get_source_target_faces : bool
             Whether to get source and target faces. By default, ``False``.
 
         Returns
         -------
-        tuple[bool, list[Face]]
-            Tuple containing a boolean indicating if the body is sweepable and
+        list[tuple[bool, list[Face]]]
+            List of tuples, each containing a boolean indicating if the body is sweepable and
             a list of source and target faces if requested.
         """
         from ansys.geometry.core.designer.body import Body
-        from ansys.geometry.core.designer.face import Face, SurfaceType
+        check_type_all_elements_in_iterable(bodies, Body)
 
-        # Verify inputs
-        check_type_all_elements_in_iterable([body], Body)
+        if not bodies:
+            return []
 
         response = self._grpc_client._services.prepare_tools.is_body_sweepable(
-            body_id=body.id,
+            body_ids=[body.id for body in bodies],
             get_source_target_faces=get_source_target_faces,
         )
 
-        faces = []
-        if get_source_target_faces:
-            faces = [
-                Face(
-                    face.get("id"),
-                    SurfaceType(face.get("surface_type")),
-                    self,
-                    self._grpc_client,
-                )
-            for face in response.get("faces")
-        ]
+        results = []
+        for result_data in response.get("results"):
+            faces = []
+            parent_design = get_design_from_body(bodies[0])
+            if get_source_target_faces:
+                faces.extend(get_faces_from_ids(parent_design, result_data.get("face_ids")))
+            results.append((result_data.get("sweepable"), faces))
             
-        return (response.get("result"), faces)
+        return results

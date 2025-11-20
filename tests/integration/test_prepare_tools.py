@@ -298,12 +298,46 @@ def test_sphere_enclosure(modeler):
 
 def test_is_body_sweepable(modeler: Modeler):
     """Test body sweepability detection."""
-    design = modeler.open_file(FILES_DIR / "1mm_Cube.dsco")
+    design = modeler.open_file(FILES_DIR / "DifferentShapes.scdocx")
 
     bodies = design.bodies
-    assert len(bodies) == 1
+    assert len(bodies) == 6
 
     # Test sweepability of the body
-    is_sweepable, faces = modeler.prepare_tools.is_body_sweepable(bodies[0])
+    is_sweepable, faces = modeler.prepare_tools.is_body_sweepable([bodies[0]])[0]
     assert is_sweepable
     assert len(faces) == 0
+
+    # Test non-sweepable body
+    is_sweepable, faces = modeler.prepare_tools.is_body_sweepable([bodies[2]])[0]
+    assert not is_sweepable
+    assert len(faces) == 0
+
+    # Test sweepability of a body and getting faces
+    is_sweepable, faces = modeler.prepare_tools.is_body_sweepable(
+        [bodies[0]], get_source_target_faces=True
+    )[0]
+    assert is_sweepable
+    assert len(faces) == 2
+
+    # Test multiple bodies at once
+    result = modeler.prepare_tools.is_body_sweepable(bodies)
+    assert len(result) == 6
+    assert result[0][0]  # first body is sweepable
+    assert result[1][0]  # second body is sweepable
+    assert not result[2][0]  # third body is not sweepable
+    assert not result[3][0]  # fourth body is not sweepable
+
+    # Test with multiple bodys and getting faces
+    result = modeler.prepare_tools.is_body_sweepable(bodies, get_source_target_faces=True)
+    assert len(result) == 6
+    assert result[0][0]  # first body is sweepable
+    assert len(result[0][1]) == 2  # two faces for first body
+    assert result[1][0]  # second body is sweepable
+    assert len(result[1][1]) == 2  # two faces for second body
+    assert not result[2][0]  # third body is not sweepable
+    assert len(result[2][1]) == 0  # no faces for third body
+
+    # Test with empty input
+    result = modeler.prepare_tools.is_body_sweepable([])
+    assert result == []
