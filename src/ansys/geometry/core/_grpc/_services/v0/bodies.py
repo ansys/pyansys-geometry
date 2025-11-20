@@ -793,7 +793,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         other_bodies = kwargs["other"]
         type_bool_op = kwargs["type_bool_op"]
         keep_other = kwargs["keep_other"]
-        transfer_named_selections = kwargs.get("transfer_named_selections")
+        transfer_named_selections = kwargs["transfer_named_selections"]
 
         if type_bool_op == "intersect":
             body_ids = [build_grpc_id(body.id) for body in other_bodies]

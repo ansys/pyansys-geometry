@@ -2110,7 +2110,12 @@ class Body(IBody):
         other = other if isinstance(other, Iterable) else [other]
 
         response = self._template._grpc_client.services.bodies.combine(
-            target=self, other=other, type_bool_op=method, err_msg=err_msg, keep_other=keep_other
+            target=self,
+            other=other,
+            type_bool_op=method,
+            err_msg=err_msg,
+            keep_other=keep_other,
+            transfer_named_selections=False,
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
