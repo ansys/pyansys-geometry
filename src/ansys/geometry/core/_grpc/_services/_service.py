@@ -150,6 +150,7 @@ class _GRPCServices:
             # Import the appropriate assembly condition service based on the version
             from .v0.assembly_condition import GRPCAssemblyConditionServiceV0
             from .v1.assembly_condition import GRPCAssemblyConditionServiceV1
+
             if self.version == GeometryApiProtos.V0:
                 self._assembly_condition = GRPCAssemblyConditionServiceV0(self.channel)
             elif self.version == GeometryApiProtos.V1:  # pragma: no cover

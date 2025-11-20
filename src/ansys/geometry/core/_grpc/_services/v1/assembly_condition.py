@@ -59,11 +59,13 @@ class GRPCAssemblyConditionServiceV1(GRPCAssemblyConditionService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateAlignRequest(
-            request_data=[CreateAlignRequestData(
-                parent=build_grpc_id(kwargs["parent_id"]),
-                geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
-                geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
-            )]
+            request_data=[
+                CreateAlignRequestData(
+                    parent=build_grpc_id(kwargs["parent_id"]),
+                    geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
+                    geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
+                )
+            ]
         )
 
         # Call the gRPC service
@@ -89,11 +91,13 @@ class GRPCAssemblyConditionServiceV1(GRPCAssemblyConditionService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateTangentRequest(
-            request_data=[CreateTangentRequestData(
-                parent=build_grpc_id(kwargs["parent_id"]),
-                geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
-                geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
-            )]
+            request_data=[
+                CreateTangentRequestData(
+                    parent=build_grpc_id(kwargs["parent_id"]),
+                    geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
+                    geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
+                )
+            ]
         )
 
         # Call the gRPC service
@@ -119,11 +123,13 @@ class GRPCAssemblyConditionServiceV1(GRPCAssemblyConditionService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateOrientRequest(
-            request_data=[CreateOrientRequestData(
-                parent=build_grpc_id(kwargs["parent_id"]),
-                geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
-                geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
-            )]
+            request_data=[
+                CreateOrientRequestData(
+                    parent=build_grpc_id(kwargs["parent_id"]),
+                    geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
+                    geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
+                )
+            ]
         )
 
         # Call the gRPC service

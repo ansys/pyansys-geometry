@@ -29,6 +29,7 @@ from ansys.api.discovery.v1.commonmessages_pb2 import EntityIdentifier
 if TYPE_CHECKING:
     from ansys.geometry.core.connection.backend import BackendType
 
+
 def from_grpc_backend_type_to_backend_type(
     grpc_backend_type: GRPCBackendType,
 ) -> "BackendType":
