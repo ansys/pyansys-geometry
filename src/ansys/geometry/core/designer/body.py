@@ -868,7 +868,7 @@ class IBody(ABC):
         """
         return
 
-    def combine_subtract(
+    def _combine_subtract(
         self,
         other: Union["Body", Iterable["Body"]],
         keep_other: bool = False,
@@ -1471,7 +1471,7 @@ class MasterBody(IBody):
             body_ids=[self.id] + [body.id for body in other]
         )
 
-    def combine_subtract(  # noqa: D102
+    def _combine_subtract(  # noqa: D102
         self,
         other: Union["Body", Iterable["Body"]],
         keep_other: bool = False,
@@ -2074,7 +2074,7 @@ class Body(IBody):
         self._template.combine_merge(other)
 
     @min_backend_version(26, 1, 0)
-    def combine_subtract(  # noqa: D102
+    def _combine_subtract(  # noqa: D102
         self,
         other: Union["Body", Iterable["Body"]],
         keep_other: bool = False,

@@ -4130,7 +4130,7 @@ def test_combine_subtract_transfer_ns(modeler: Modeler):
     outside = design.bodies[1]
 
     assert len(design.named_selections) == 2
-    outside.combine_subtract(inside)
+    outside._combine_subtract(inside)
 
     assert len(design.bodies) == 1
     assert len(design.named_selections) == 2
