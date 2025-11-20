@@ -11,6 +11,10 @@ env:
   GEO_CONT_NAME: ans_geo
   RESET_IMAGE_CACHE: 0
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   testing-windows-v1:
     name: Testing and coverage (Windows - v1 Protos)
@@ -73,7 +77,7 @@ jobs:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-          lookup-only: false # zizmor: ignore[cache-poisoning]
+          lookup-only: true
 
       - name: Testing
         timeout-minutes: 20 # Sometimes hangs...
@@ -142,7 +146,7 @@ jobs:
           path: tests/integration/image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
           restore-keys: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}
-          lookup-only: false # zizmor: ignore[cache-poisoning]
+          lookup-only: true
 
       - name: Testing
         timeout-minutes: 20 # Sometimes hangs...
