@@ -28,10 +28,10 @@ from .base.assembly_controls import GRPCAssemblyControlsService
 from .base.beams import GRPCBeamsService
 from .base.bodies import GRPCBodyService
 from .base.commands import GRPCCommandsService
+from .base.commands_script import GRPCCommandsScriptService
 from .base.components import GRPCComponentsService
 from .base.coordinate_systems import GRPCCoordinateSystemService
 from .base.curves import GRPCCurvesService
-from .base.commands_script import GRPCCommandsScriptService
 from .base.designs import GRPCDesignsService
 from .base.driving_dimensions import GRPCDrivingDimensionsService
 from .base.edges import GRPCEdgesService

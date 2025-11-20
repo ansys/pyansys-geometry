@@ -49,7 +49,7 @@ class GRPCCommandsScriptServiceV1(GRPCCommandsScriptService):  # pragma: no cove
 
     @protect_grpc
     def run_script_file(self, **kwargs) -> dict:  # noqa: D102
-        from aansys.api.discovery.v1.commands.script_pb2  import RunScriptFileRequest
+        from aansys.api.discovery.v1.commands.script_pb2 import RunScriptFileRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RunScriptFileRequest(
