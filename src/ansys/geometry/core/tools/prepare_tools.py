@@ -60,13 +60,13 @@ class EnclosureOptions:
 
     Parameters
     ----------
-    create_shared_topology : bool
+    create_shared_topology : bool, default: False
         Whether shared topology should be applied after enclosure creation.
-    subtract_bodies : bool
+    subtract_bodies : bool, default: True
         Whether the specified bodies for enclosure creation should be subtracted from the enclosure.
-    frame : Frame
+    frame : Frame, default: None
         Frame used to orient the enclosure.
-    cushion_proportion : Real
+    cushion_proportion : Real, default: 0.25
         A percentage of the minimum enclosure size.
         Determines the initial distance between the enclosed objects
         and the closest point of the enclosure to the objects.
