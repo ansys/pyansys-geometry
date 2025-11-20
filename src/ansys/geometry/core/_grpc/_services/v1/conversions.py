@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 def from_grpc_backend_type_to_backend_type(
     grpc_backend_type: GRPCBackendType,
 ) -> "BackendType":
-    """Convert a gRPC backend type to a backend type.
+    """Convert a gRPC v1 backend type to a backend type.
 
     Parameters
     ----------
@@ -71,7 +71,7 @@ def from_grpc_backend_type_to_backend_type(
 
 
 def build_grpc_id(id: str) -> EntityIdentifier:
-    """Build an EntityIdentifier gRPC message.
+    """Build a v1 EntityIdentifier gRPC message.
 
     Parameters
     ----------
