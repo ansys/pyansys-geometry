@@ -803,6 +803,7 @@ class PrepareTools:
             a list of source and target faces if requested.
         """
         from ansys.geometry.core.designer.body import Body
+
         check_type_all_elements_in_iterable(bodies, Body)
 
         if not bodies:
@@ -820,5 +821,5 @@ class PrepareTools:
             if get_source_target_faces:
                 faces.extend(get_faces_from_ids(parent_design, result_data.get("face_ids")))
             results.append((result_data.get("sweepable"), faces))
-            
+
         return results

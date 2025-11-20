@@ -294,7 +294,7 @@ def test_sphere_enclosure(modeler):
     modeler.prepare_tools.create_sphere_enclosure(bodies, 0.1, enclosure_options)
     assert len(design.components) == 1
     assert len(design.components[0].bodies) == 1
-    
+
 
 def test_is_body_sweepable(modeler: Modeler):
     """Test body sweepability detection."""

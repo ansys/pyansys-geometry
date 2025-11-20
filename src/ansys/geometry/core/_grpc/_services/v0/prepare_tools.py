@@ -393,7 +393,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
             "created_bodies": [body.id for body in response.created_bodies],
             "tracker_response": serialized_tracker_response,
         }
-	
+
     @protect_grpc
     def is_body_sweepable(self, **kwargs):  # noqa: D102
         from ansys.api.geometry.v0.preparetools_pb2 import IsBodySweepableRequest
@@ -410,10 +410,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         # Return the response - formatted as a dictionary
         return {
             "results": [
-                {
-                    "sweepable": result.result,
-                    "face_ids": [face.id for face in result.face_ids]
-                }
+                {"sweepable": result.result, "face_ids": [face.id for face in result.face_ids]}
                 for result in response.response_data
             ]
         }

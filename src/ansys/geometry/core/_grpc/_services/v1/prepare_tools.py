@@ -94,7 +94,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
     @protect_grpc
     def create_sphere_enclosure(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
-    
+
     @protect_grpc
     def is_body_sweepable(self, **kwargs):  # noqa: D102
         raise NotImplementedError
