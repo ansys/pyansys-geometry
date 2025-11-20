@@ -69,7 +69,6 @@ class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
         # Call the gRPC service
         response = self.admin_stub.GetBackend(request=request)
 
-        # COMPATIBILITY HACK: retrieve the backend version -- for versions after 24R1
         ver = response.version
         backend_version = semver.Version(ver.major_release, ver.minor_release, ver.service_pack)
         api_server_build_info = f"{ver.build_number}" if ver.build_number != 0 else "N/A"
