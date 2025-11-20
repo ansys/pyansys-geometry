@@ -239,6 +239,7 @@ def test_helix_detection(modeler: Modeler):
     result = modeler.prepare_tools.detect_helixes(bodies)
     assert len(result["helixes"]) == 2
 
+
 def test_box_enclosure(modeler):
     """Tests creation of a box enclosure."""
     design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
