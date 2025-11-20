@@ -4089,3 +4089,17 @@ def test_combine_merge(modeler: Modeler):
     design._update_design_inplace()
     assert len(design.bodies) == 1
     assert box1.volume.m == pytest.approx(Quantity(2.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+
+
+def test_combine_subtract_transfer_ns(modeler: Modeler):
+    input_file = Path(FILES_DIR, "sub_valid.scdocx")
+    design = modeler.open_file(input_file)
+
+    inside = design.bodies[0]
+    outside = design.bodies[1]
+
+    assert len(design.named_selections) == 2
+    outside.combine_subtract(inside)
+
+    assert len(design.bodies) == 1
+    assert len(design.named_selections) == 2
