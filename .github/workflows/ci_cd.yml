@@ -733,7 +733,6 @@ jobs:
         run: |
           pytest -v --proto-version=v1
 
-
       - name: Stop the Geometry service
         if: always()
         run: |
