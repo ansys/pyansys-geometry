@@ -2073,6 +2073,7 @@ class Body(IBody):
     def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
         self._template.combine_merge(other)
 
+    @min_backend_version(26, 1, 0)
     def combine_subtract(  # noqa: D102
         self,
         other: Union["Body", Iterable["Body"]],
