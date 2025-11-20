@@ -596,6 +596,39 @@ def test_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 3
 
 
+def test_rename_named_selection(modeler: Modeler):
+    """Test for renaming and verifying a ``NamedSelection``."""
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelection_Test")
+
+    # Create 2 Sketch objects and draw a circle and a polygon (all client side)
+    sketch_1 = Sketch()
+    sketch_1.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch_2 = Sketch()
+    sketch_2.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+
+    # Build 2 independent components and bodies
+    circle_comp = design.add_component("CircleComponent")
+    body_circle_comp = circle_comp.extrude_sketch("Circle", sketch_1, Quantity(50, UNITS.mm))
+    polygon_comp = design.add_component("PolygonComponent")
+    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
+
+    # Create the NamedSelection
+    only_circle = design.create_named_selection("OnlyCircle", bodies=[body_circle_comp])
+    design.create_named_selection("OnlyPolygon", bodies=[body_polygon_comp])
+    design.create_named_selection("CircleAndPolygon", bodies=[body_circle_comp, body_polygon_comp])
+
+    # Check that the named selections are available
+    assert len(design.named_selections) == 3
+
+    # Rename the only circle NS
+    only_circle.name = "JustCircle"
+    assert only_circle.name == "JustCircle"
+    assert design.named_selections[0].name == "JustCircle"
+    assert design.named_selections[1].name == "OnlyPolygon"
+    assert design.named_selections[2].name == "CircleAndPolygon"
+
+
 def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
     # Try to vefify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
@@ -3807,8 +3840,6 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     assert design.bodies[1].vertices[0].y.magnitude == pytest.approx(-0.00288675, 1e-6, 1e-6)
     assert design.bodies[1].vertices[0].z.magnitude == pytest.approx(0.01, 1e-6, 1e-6)
 
-    print(design.bodies[1].vertices[0].id == "S,~sEbf61ff70-bc08-477a-8a5e-a7c7dc955f40.853__")
-
     assert design.bodies[0].vertices == []
     assert design.bodies[1].vertices[1].position == pytest.approx(
         Point3D([0.033, -0.0057735, 0.01]), 1e-6, 1e-6
@@ -4103,3 +4134,178 @@ def test_combine_subtract_transfer_ns(modeler: Modeler):
 
     assert len(design.bodies) == 1
     assert len(design.named_selections) == 2
+
+
+def test_faces_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with faces."""
+    design = modeler.create_design("faces_named_selections")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # create named selection from faces
+    face_ns1 = [box.faces[0], box.faces[1]]
+    face_ns2 = [box.faces[2], box.faces[3]]
+    design.create_named_selection("face_ns_1", faces=face_ns1)
+    design.create_named_selection("face_ns_2", faces=face_ns2)
+
+    # Check that faces return the correct named selections
+    for face in box.faces:
+        ns_list = face.get_named_selections()
+        if any(f.id == face.id for f in face_ns1):
+            assert len(ns_list) == 1
+            assert any(ns.name == "face_ns_1" for ns in ns_list)
+        elif any(f.id == face.id for f in face_ns2):
+            assert len(ns_list) == 1
+            assert any(ns.name == "face_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this face
+
+
+def test_edges_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with edges."""
+    design = modeler.create_design("edges_named_selections")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # create named selection from edges
+    edge_ns1 = [box.edges[0], box.edges[1]]
+    edge_ns2 = [box.edges[2], box.edges[3]]
+    design.create_named_selection("edge_ns_1", edges=edge_ns1)
+    design.create_named_selection("edge_ns_2", edges=edge_ns2)
+
+    # Check that edges return the correct named selections
+    for edge in box.edges:
+        ns_list = edge.get_named_selections()
+        if any(e.id == edge.id for e in edge_ns1):
+            assert len(ns_list) == 1
+            assert any(ns.name == "edge_ns_1" for ns in ns_list)
+        elif any(e.id == edge.id for e in edge_ns2):
+            assert len(ns_list) == 1
+            assert any(ns.name == "edge_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this edge
+
+
+def test_body_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with bodies."""
+    design = modeler.create_design("body_named_selections")
+    box1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    box2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 2]), 1, 1), 1)
+
+    # create named selection from bodies
+    design.create_named_selection("body_ns_1", bodies=[box1])
+    design.create_named_selection("body_ns_2", bodies=[box2])
+
+    # Check that bodies return the correct named selections
+    for body in design.bodies:
+        ns_list = body.get_named_selections()
+        if body.id == box1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "body_ns_1" for ns in ns_list)
+        elif body.id == box2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "body_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this body
+
+
+def test_beams_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with beams."""
+    design = modeler.create_design("beam_named_selections")
+    profile = design.add_beam_circular_profile("profile1", Distance(0.1, UNITS.m))
+    beam1 = design.create_beam(Point3D([0, 0, 0]), Point3D([1, 0, 0]), profile)
+    beam2 = design.create_beam(Point3D([0, 1, 0]), Point3D([1, 1, 0]), profile)
+
+    # create named selection from beams
+    design.create_named_selection("beam_ns_1", beams=[beam1])
+    design.create_named_selection("beam_ns_2", beams=[beam2])
+
+    # Check that beams return the correct named selections
+    for beam in design.beams:
+        ns_list = beam.get_named_selections()
+        if beam.id == beam1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "beam_ns_1" for ns in ns_list)
+        elif beam.id == beam2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "beam_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this beam
+
+
+def test_vertices_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with vertices."""
+    design = modeler.create_design("vertex_named_selections")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # create named selection from vertices
+    vertex_ns1 = [box.vertices[0], box.vertices[1]]
+    vertex_ns2 = [box.vertices[2], box.vertices[3]]
+    vertex_ns3 = [box.vertices[4], box.vertices[5]]
+    vertex_ns4 = [box.vertices[4], box.vertices[5]]
+
+    design.create_named_selection("vertex_ns_1", vertices=vertex_ns1)
+    design.create_named_selection("vertex_ns_2", vertices=vertex_ns2)
+    design.create_named_selection("vertex_ns_3", vertices=vertex_ns3)
+    design.create_named_selection("vertex_ns_4", vertices=vertex_ns4)
+
+    # Check that vertices return the correct named selections
+    for vertex in box.vertices:
+        ns_list = vertex.get_named_selections()
+        if any(v.id == vertex.id for v in vertex_ns1):
+            assert len(ns_list) == 1
+            assert any(ns.name == "vertex_ns_1" for ns in ns_list)
+        elif any(v.id == vertex.id for v in vertex_ns2):
+            assert len(ns_list) == 1
+            assert any(ns.name == "vertex_ns_2" for ns in ns_list)
+        elif any(v.id == vertex.id for v in vertex_ns3):
+            assert len(ns_list) == 2
+            assert any(ns.name == "vertex_ns_3" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this vertex
+
+
+def test_components_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with components."""
+    design = modeler.create_design("component_named_selections")
+    comp1 = design.add_component("Component1")
+    comp2 = design.add_component("Component2")
+    design.add_component("Component3")
+
+    # create named selection from components
+    design.create_named_selection("component_ns_1", components=[comp1])
+    design.create_named_selection("component_ns_2", components=[comp2])
+
+    # Check that components return the correct named selections
+    for component in design.components:
+        ns_list = component.get_named_selections()
+        if component.id == comp1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "component_ns_1" for ns in ns_list)
+        elif component.id == comp2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "component_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this component
+
+
+def test_design_point_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with design points."""
+    design = modeler.create_design("design_point_named_selections")
+    dp1 = design.add_design_point("DesignPoint1", Point3D([0, 0, 0]))
+    dp2 = design.add_design_point("DesignPoint2", Point3D([1, 1, 1]))
+    design.add_design_point("DesignPoint3", Point3D([2, 2, 2]))
+
+    # create named selection from design points
+    design.create_named_selection("design_point_ns_1", design_points=[dp1])
+    design.create_named_selection("design_point_ns_2", design_points=[dp2])
+
+    # Check that design points return the correct named selections
+    for design_point in design.design_points:
+        ns_list = design_point.get_named_selections()
+        if design_point.id == dp1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "design_point_ns_1" for ns in ns_list)
+        elif design_point.id == dp2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "design_point_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this design point

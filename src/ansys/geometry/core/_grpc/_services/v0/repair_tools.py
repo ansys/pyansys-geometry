@@ -77,9 +77,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             ),
         )
 
-        print("distance:", request.distance)
-        print("angle:", request.angle)
-
         # Call the gRPC service
         response = self.stub.FindSplitEdges(request)
 

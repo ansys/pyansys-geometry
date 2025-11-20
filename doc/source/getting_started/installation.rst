@@ -20,7 +20,7 @@ previous versions of Python are no longer supported.
 PyAnsys Geometry dependencies are automatically checked when packages are installed.
 These projects are required dependencies for PyAnsys Geometry:
 
-* `ansys-api-geometry <https://pypi.org/project/ansys-api-geometry/>`_: Used for supplying
+* `ansys-api-discovery <https://pypi.org/project/ansys-api-discovery/>`_: Used for supplying
   gRPC code generated from Protobuf (PROTO) files
 * `NumPy <https://pypi.org/project/numpy/>`_: Used for data array access
 * `Pint <https://pypi.org/project/Pint/>`_: Used for measurement units

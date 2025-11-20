@@ -29,6 +29,9 @@ backends:
       - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
       - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
       - tests/integration/test_prepare_tools.py::test_helix_detection
+      - tests/integration/test_prepare_tools.py::test_box_enclosure
+      - tests/integration/test_prepare_tools.py::test_cylinder_enclosure
+      - tests/integration/test_prepare_tools.py::test_sphere_enclosure
       - tests/integration/test_repair_tools.py::test_fix_small_face
       - tests/integration/test_repair_tools.py::test_find_interference
       - tests/integration/test_repair_tools.py::test_fix_interference
@@ -73,6 +76,8 @@ backends:
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
       - tests/integration/test_design.py::test_vertices
+      - tests/integration/test_design.py::test_components_get_named_selections
+      - tests/integration/test_design.py::test_vertices_get_named_selections
       # Bounding box center is only available from 25R2 onwards
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
@@ -115,6 +120,7 @@ backends:
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
       # Export body facets added in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
@@ -147,6 +153,9 @@ backends:
       - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
       - tests/integration/test_prepare_tools.py::test_volume_extract_bad_edges
       - tests/integration/test_prepare_tools.py::test_helix_detection
+      - tests/integration/test_prepare_tools.py::test_box_enclosure
+      - tests/integration/test_prepare_tools.py::test_cylinder_enclosure
+      - tests/integration/test_prepare_tools.py::test_sphere_enclosure
       - tests/integration/test_repair_tools.py::test_fix_small_face
       - tests/integration/test_repair_tools.py::test_find_interference
       - tests/integration/test_repair_tools.py::test_fix_interference
@@ -194,6 +203,8 @@ backends:
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
       - tests/integration/test_design.py::test_vertices
+      - tests/integration/test_design.py::test_components_get_named_selections
+      - tests/integration/test_design.py::test_vertices_get_named_selections
       # Bounding box center is only available from 25R2 onwards
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
@@ -229,6 +240,7 @@ backends:
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
@@ -262,6 +274,8 @@ backends:
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
       - tests/integration/test_design.py::test_vertices
+      - tests/integration/test_design.py::test_components_get_named_selections
+      - tests/integration/test_design.py::test_vertices_get_named_selections
       # Potential problem in model/reading design for importing parameters
       - tests/integration/test_design.py::test_design_parameters
       # Bounding box center is only available from 25R2 onwards
@@ -312,6 +326,7 @@ backends:
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
@@ -329,6 +344,8 @@ backends:
       - tests/integration/test_design.py::test_named_selections_components
       - tests/integration/test_design.py::test_component_make_independent
       - tests/integration/test_design.py::test_vertices
+      - tests/integration/test_design.py::test_components_get_named_selections
+      - tests/integration/test_design.py::test_vertices_get_named_selections
       # Insert/Import file operations caused problems prior to 26.1
       - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
       - tests/integration/test_design_export.py::test_import_export_reimport_design_x_t
@@ -352,6 +369,7 @@ backends:
       - tests/integration/test_design_import.py::test_named_selections_after_file_insert
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
+      - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]

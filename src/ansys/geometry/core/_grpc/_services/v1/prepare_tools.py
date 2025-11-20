@@ -82,3 +82,15 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
     @protect_grpc
     def detect_helixes(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
+
+    @protect_grpc
+    def create_box_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def create_cylinder_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
+
+    @protect_grpc
+    def create_sphere_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
