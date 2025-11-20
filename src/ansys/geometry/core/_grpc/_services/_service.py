@@ -31,7 +31,7 @@ from .base.commands import GRPCCommandsService
 from .base.components import GRPCComponentsService
 from .base.coordinate_systems import GRPCCoordinateSystemService
 from .base.curves import GRPCCurvesService
-from .base.dbuapplication import GRPCDbuApplicationService
+from .base.commands_script import GRPCCommandsScriptService
 from .base.designs import GRPCDesignsService
 from .base.driving_dimensions import GRPCDrivingDimensionsService
 from .base.edges import GRPCEdgesService
@@ -94,7 +94,7 @@ class _GRPCServices:
         self._components = None
         self._coordinate_systems = None
         self._curves = None
-        self._dbu_application = None
+        self._commands_script = None
         self._designs = None
         self._driving_dimensions = None
         self._edges = None
@@ -345,30 +345,30 @@ class _GRPCServices:
         return self._designs
 
     @property
-    def dbu_application(self) -> GRPCDbuApplicationService:
+    def commands_script(self) -> GRPCCommandsScriptService:
         """
         Get the DBU application service for the specified version.
 
         Returns
         -------
-        GRPCDbuApplicationService
-            The DBU application service for the specified version.
+        GRPCCommandsScriptService
+            The commands script application service for the specified version.
         """
-        if not self._dbu_application:
+        if not self._commands_script:
             # Import the appropriate DBU application service based on the version
-            from .v0.dbuapplication import GRPCDbuApplicationServiceV0
-            from .v1.dbuapplication import GRPCDbuApplicationServiceV1
+            from .v0.commands_script import GRPCCommandsScriptServiceV0
+            from .v1.commands_script import GRPCCommandsScriptServiceV1
 
             if self.version == GeometryApiProtos.V0:
-                self._dbu_application = GRPCDbuApplicationServiceV0(self.channel)
+                self._commands_script = GRPCCommandsScriptServiceV0(self.channel)
             elif self.version == GeometryApiProtos.V1:  # pragma: no cover
                 # V1 is not implemented yet
-                self._dbu_application = GRPCDbuApplicationServiceV1(self.channel)
+                self._commands_script = GRPCCommandsScriptServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
                 raise ValueError(f"Unsupported version: {self.version}")
 
-        return self._dbu_application
+        return self._commands_script
 
     @property
     def driving_dimensions(self) -> GRPCDrivingDimensionsService:
