@@ -21,12 +21,16 @@
 # SOFTWARE.
 """Testing of prepare tools."""
 
+import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.point import Point2D, Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.measurements import UNITS
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.tools.prepare_tools import EnclosureOptions
 
 from .conftest import FILES_DIR
 
@@ -234,3 +238,59 @@ def test_helix_detection(modeler: Modeler):
     # Test with multiple bodies
     result = modeler.prepare_tools.detect_helixes(bodies)
     assert len(result["helixes"]) == 2
+
+
+def test_box_enclosure(modeler):
+    """Tests creation of a box enclosure."""
+    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
+    bodies = [design.bodies[0]]
+    enclosure_options = EnclosureOptions()
+    modeler.prepare_tools.create_box_enclosure(
+        bodies, 0.005, 0.01, 0.01, 0.005, 0.10, 0.10, enclosure_options
+    )
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 1
+    # verify that a body is created in a new component
+    volume_when_subtracting = design.components[0].bodies[0].volume
+    enclosure_options = EnclosureOptions(subtract_bodies=False)
+    modeler.prepare_tools.create_box_enclosure(
+        bodies, 0.005, 0.01, 0.01, 0.005, 0.10, 0.10, enclosure_options
+    )
+    assert len(design.components) == 2
+    assert len(design.components[1].bodies) == 1
+    volume_without_subtracting = design.components[1].bodies[0].volume
+    # verify that the volume without subtracting is greater than the one with subtraction
+    assert volume_without_subtracting > volume_when_subtracting
+    # verify that an enclosure can be created with zero cushion
+    modeler.prepare_tools.create_box_enclosure(
+        bodies, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, enclosure_options
+    )
+    assert len(design.components) == 3
+    assert len(design.components[2].bodies) == 1
+
+
+def test_cylinder_enclosure(modeler):
+    """Tests creation of a cylinder enclosure."""
+    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
+    bodies = [design.bodies[0]]
+    origin = Vector3D([0.0, 0.0, 0.0])
+    direction_x = UnitVector3D([0, 1, 0])
+    direction_y = UnitVector3D([0, 0, 1])
+    frame = Frame(origin, direction_x, direction_y)
+    enclosure_options = EnclosureOptions(frame=frame)
+    modeler.prepare_tools.create_cylinder_enclosure(bodies, 0.1, 0.1, 0.1, enclosure_options)
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 1
+    bounding_box = design.components[0].bodies[0].bounding_box
+    # check that the cylinder has been placed in the appropriate position based upon the frame
+    assert np.allclose(bounding_box.center, Point3D([0.0, 0.0, 0.01]))
+
+
+def test_sphere_enclosure(modeler):
+    """Tests creation of a sphere enclosure."""
+    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
+    bodies = [design.bodies[0]]
+    enclosure_options = EnclosureOptions()
+    modeler.prepare_tools.create_sphere_enclosure(bodies, 0.1, enclosure_options)
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 1
