@@ -4,7 +4,6 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.13'
-  PACKAGE_NAME: 'ansys-geometry-core'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
