@@ -162,7 +162,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def sweep_with_guide(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
             SweepWithGuideRequest,
             SweepWithGuideRequestData,
         )
@@ -186,7 +186,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        resp = self.stub.SweepWithGuide(request=request)
+        resp = self.edits_stub.SweepWithGuide(request=request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -295,7 +295,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        resp = self.stub.CreateBodyFromFace(request=request)
+        resp = self.stub.CreateFromFace(request=request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -365,7 +365,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        self.stub.Translate(request=request)
+        self.edits_stub.Translate(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -381,7 +381,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def is_suppressed(self, **kwargs) -> dict:  # noqa: D102
         # Call the gRPC service
-        resp = self.stub.IsSuppressed(request=build_grpc_id(kwargs["id"]))
+        resp = self.stub.GetIsSuppressed(request=build_grpc_id(kwargs["id"]))
 
         # Return the response - formatted as a dictionary
         return {"result": resp.result}
@@ -483,6 +483,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             "center": Point(x=resp.box.center.x, y=resp.box.center.y, z=resp.box.center.z),
         }
 
+    # TODO: Find the new method name.
     @protect_grpc
     def set_assigned_material(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.geometry.body_pb2 import SetAssignedMaterialRequest
@@ -520,7 +521,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import SetNameRequest
+        from ansys.api.discovery.v1.physics.physicsentity_pb2 import SetNameRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetNameRequest(body_id=kwargs["id"], name=kwargs["name"])
@@ -585,7 +586,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def scale(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import ScaleRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import ScaleRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ScaleRequest(
@@ -594,7 +595,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        self.stub.Scale(request=request)
+        self.edits_stub.Scale(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -610,14 +611,14 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        self.stub.Mirror(request=request)
+        self.edits_stub.Mirror(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
 
     @protect_grpc
     def map(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import MapRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import MapRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MapRequest(
@@ -626,7 +627,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        self.stub.Map(request=request)
+        self.edits_stub.Map(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -647,9 +648,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {"collision_type": resp.collision}
 
+    # TODO:find new method name,
     @protect_grpc
     def copy(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import CopyRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import CopyRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CopyRequest(
@@ -659,7 +661,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        resp = self.stub.Copy(request=request)
+        resp = self.edits_stub.Copy(request=request)
 
         # Return the response - formatted as a dictionary
         return {"master_id": resp.master_id, "name": resp.name}
@@ -675,7 +677,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             resp = [self.stub.GetTessellation(request=request)]
         except grpc.RpcError:
             request = GetTessellationRequest(id=build_grpc_id(kwargs["id"]))
-            resp = self.stub.StreamTessellation(request=request)
+            resp = self.stub.GetTessellation(request=request)
 
         for elem in resp:
             for face_id, face_tess in elem.face_tessellation.items():
@@ -701,7 +703,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         try:
             resp = [self.stub.GetTessellation(request=request)]
         except grpc.RpcError:
-            resp = self.stub.StreamTessellation(request=request)
+            resp = self.stub.GetTessellationStream(request=request)
 
         for elem in resp:
             for face_id, face_tess in elem.face_tessellation.items():
@@ -715,19 +717,19 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def boolean(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import BooleanRequest
+        from ansys.api.discovery.v1.commonmessages_pb2 import SetBooleanRequest
 
         # Call the gRPC service and build the requests accordingly
         response_success = 0
         serialized_tracker_response = {}
         try:
-            request = BooleanRequest(
+            request = SetBooleanRequest(
                 target=kwargs["target"],
                 tool=kwargs["tool"],
                 type=kwargs["type"],
                 keep_tool=kwargs["keep_tool"],
             )
-            response = self.stub.Boolean(request=request)
+            response = self.edits_stub.Boolean(request=request)
             response_success = 1
         except grpc.RpcError:
             response_success = 0
@@ -757,20 +759,20 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                 tool_selection=[build_grpc_id(id) for id in other_bodies],
                 preserve_tools=keep_other,
             )
-            response = self.command_stub.CombineIntersectBodies(request=request)
+            response = self.edits_stub.CombineIntersectBodies(request=request)
         elif type_bool_op == "subtract":
             request = CombineIntersectBodiesRequest(
                 target_selection=build_grpc_id(target_body),
                 tool_selection=[build_grpc_id(id) for id in other_bodies],
                 preserve_tools=keep_other,
             )
-            response = self.command_stub.CombineSubtractBodies(request=request)
+            response = self.edits_stub.CombineSubtractBodies(request=request)
         elif type_bool_op == "unite":
             request = CombineMergeBodiesRequest(
                 target_selection=[build_grpc_id(target_body)]
                 + [build_grpc_id(id) for id in other_bodies],  # noqa: E501
             )
-            response = self.command_stub.CombineMergeBodies(request=request)
+            response = self.edits_stub.CombineMergeBodies(request=request)
         else:
             raise ValueError(f"Invalid boolean operation type: {type_bool_op}")
 
@@ -795,7 +797,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        resp = self.command_stub.SplitBody(request=request)
+        resp = self.edits_stub.SplitBodies(request=request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -804,11 +806,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.design.designmessages_pb2 import TrimmedCurveList
         from ansys.api.discovery.v1.design.geometry.body_pb2 import (
             CreateBodyFromLoftWithGuidesRequest,
             CreateBodyFromLoftWithGuidesRequestData,
         )
-        from ansys.api.discovery.v1.operations.edit_pb2 import TrimmedCurveList
 
         # Create request object - assumes all inputs are valid and of the proper type
         request = CreateBodyFromLoftWithGuidesRequest(
@@ -830,7 +832,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.edits_stub.CreateBodyFromLoftWithGuides(request)
+        response = self.stub.CreateFromLoftWithGuides(request)
 
         # Return the response - formatted as a dictionary
         new_body = response.created_bodies[0]
