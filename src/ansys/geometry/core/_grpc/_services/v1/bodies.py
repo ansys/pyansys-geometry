@@ -48,11 +48,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def __init__(self, channel: grpc.Channel):
         """Initialize the BodyService with the gRPC stub."""
-        from ansys.api.discovery.v1.design.geometry.body_pb2_grpc import BodiesStub
-        from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditsStub
+        from ansys.api.discovery.v1.design.geometry.body_pb2_grpc import BodyStub
+        from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
 
-        self.stub = BodiesStub(channel)
-        self.edits_stub = EditsStub(channel)
+        self.stub = BodyStub(channel)
+        self.edits_stub = EditStub(channel)
 
     @protect_grpc
     def create_sphere_body(self, **kwargs) -> dict:  # noqa: D102
