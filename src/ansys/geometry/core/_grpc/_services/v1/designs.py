@@ -87,7 +87,18 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def get_active(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from google.protobuf.empty_pb2 import Empty
+
+        # Call the gRPC service
+        response = self.stub.Get(request=Empty())
+
+        # Return the response - formatted as a dictionary
+        if response:
+            return {
+                "design_id": response.design.id,
+                "main_part_id": response.design.main_part.id,
+                "name": response.design.name,
+            }
 
     @protect_grpc
     def upload_file(self, **kwargs) -> dict:  # noqa: D102
@@ -216,7 +227,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
             raise
 
         # ---- 6) Return the response - formatted as a dictionary ----
-        return {"file_path": response.file_path}
+        return {"file_path": response.design.path}
 
 
     @protect_grpc
