@@ -51,11 +51,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         from ansys.api.discovery.v1.design.geometry.body_pb2_grpc import BodyStub
         from ansys.api.discovery.v1.design.geometry.face_pb2_grpc import FaceStub
         from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
-        
 
         self.stub = BodyStub(channel)
         self.edits_stub = EditStub(channel)
         self.face_stub = FaceStub(channel)
+
     @protect_grpc
     def create_sphere_body(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commonmessages_pb2 import Point
