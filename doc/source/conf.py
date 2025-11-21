@@ -24,7 +24,8 @@ from ansys.geometry.core import __version__
 # Convert notebooks into Python scripts and include them in the output files
 logger = logging.getLogger(__name__)
 
-
+############################################################################
+# CONTROL FLAGS
 # For some reason the global var is not working on doc build...
 # import ansys.tools.visualization_interface as viz_interface
 #
@@ -33,6 +34,11 @@ logger = logging.getLogger(__name__)
 # Using env var instead
 os.environ["PYANSYS_VISUALIZER_DOC_MODE"] = "true"
 os.environ["PYANSYS_VISUALIZER_HTML_BACKEND"] = "true"
+BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
+BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "true") == "true" else False
+BUILD_CHEATSHEET = True if os.environ.get("BUILD_CHEATSHEET", "true") == "true" else False
+
+############################################################################
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
@@ -184,7 +190,7 @@ html_theme_options = {
 }
 
 # Determine whether to skip cheat sheet build or not
-if os.environ.get("SKIP_BUILD_CHEAT_SHEET"):
+if not BUILD_CHEATSHEET:
     html_theme_options.pop("cheatsheet")
 
 # Sphinx extensions
@@ -382,13 +388,12 @@ user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 
 # -- Declare the Jinja context -----------------------------------------------
 exclude_patterns = []
-BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
+
 if not BUILD_API:
     exclude_patterns.append("api")
     html_theme_options.pop("ansys_sphinx_theme_autoapi")
     extensions.remove("ansys_sphinx_theme.extension.autoapi")
 
-BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "true") == "true" else False
 if not BUILD_EXAMPLES:
     exclude_patterns.append("examples/**")
     exclude_patterns.append("examples.rst")
