@@ -35,7 +35,7 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
     ----------
     channel : grpc.Channel
         The gRPC channel to the server.
-    """ 
+    """
 
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.discovery.v1.commands.unsupported_pb2_grpc import UnsupportedStub
