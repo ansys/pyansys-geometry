@@ -1546,7 +1546,6 @@ class Body(IBody):
         self._name = name
         self._parent_component = parent_component
         self._template = template
-        self._grpc_client = template._grpc_client
 
     def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``Body`` methods that require a tessellation cache update.
