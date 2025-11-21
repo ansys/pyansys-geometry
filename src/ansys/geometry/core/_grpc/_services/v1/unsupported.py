@@ -22,10 +22,11 @@
 """Module containing the unsupported service implementation for v1."""
 
 import grpc
-
+from ansys.api.discovery.v1.commands.unsupported_pb2 import SetExportIdData
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.unsupported import GRPCUnsupportedService
+from .conversions import build_grpc_id
 
 
 class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
@@ -60,12 +61,7 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
 
     @protect_grpc
     def set_export_ids(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commands.unsupported_pb2 import (
-            SetExportIdData,
-            SetExportIdRequest,
-        )
-
-        from .conversions import build_grpc_id
+        from ansys.api.discovery.v1.commands.unsupported_pb2 import SetExportIdRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetExportIdRequest(
@@ -87,10 +83,6 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
 
     @protect_grpc
     def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commands.unsupported_pb2 import SetExportIdData
-
-        from .conversions import build_grpc_id
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetExportIdData(
             moniker=build_grpc_id(kwargs["export_data"].moniker),
