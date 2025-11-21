@@ -876,7 +876,9 @@ class IBody(ABC):
     ) -> None:
         """Subtract bodies from this body.
 
-        Warning: This is a specialized boolean operation that has the ability to transfer named
+        Warnings
+        --------
+        This is a specialized boolean operation that has the ability to transfer named
         selections. It may behave differently than the encouraged ``subtract()``.
 
         Parameters
