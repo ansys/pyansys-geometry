@@ -26,6 +26,13 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.components import GRPCComponentsService
+from ..base.conversions import from_measurement_to_server_angle
+from .conversions import (
+    build_grpc_id,
+    from_grpc_matrix_to_matrix,
+    from_point3d_to_grpc_point,
+    from_unit_vector_to_grpc_direction,
+)
 
 
 class GRPCComponentsServiceV1(GRPCComponentsService):
@@ -43,34 +50,136 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.components_pb2_grpc import ComponentsStub
+        from ansys.api.discovery.v1.design.geometry.component_pb2_grpc import ComponentStub
 
-        self.stub = ComponentsStub(channel)
+        self.stub = ComponentStub(channel)
 
     @protect_grpc
     def create(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.geometry.component_pb2 import CreateRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateRequest(
+            name=kwargs["name"],
+            parent=kwargs["parent_id"],
+            template=kwargs["template_id"],
+            instance_name=kwargs["instance_name"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.Create(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": response.component.id,
+            "name": response.component.name,
+            "instance_name": response.component.instance_name,
+            "template": response.template,
+            "component": response.component,
+        }
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.designentity_pb2 import SetDesignEntityNameRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetDesignEntityNameRequest(id=build_grpc_id(kwargs["id"]), name=kwargs["name"])
+
+        # Call the gRPC service
+        _ = self.stub.SetName(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def set_placement(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.geometry.component_pb2 import SetPlacementRequest
+
+        # Create the direction and point objects
+        translation = (
+            from_unit_vector_to_grpc_direction(kwargs["translation"].normalize())
+            if kwargs["translation"] is not None
+            else None
+        )
+        origin = (
+            from_point3d_to_grpc_point(kwargs["rotation_axis_origin"])
+            if kwargs["rotation_axis_origin"] is not None
+            else None
+        )
+        direction = (
+            from_unit_vector_to_grpc_direction(kwargs["rotation_axis_direction"])
+            if kwargs["rotation_axis_direction"] is not None
+            else None
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetPlacementRequest(
+            id=kwargs["id"],
+            translation=translation,
+            rotation_axis_origin=origin,
+            rotation_axis_direction=direction,
+            rotation_angle=from_measurement_to_server_angle(kwargs["rotation_angle"]),
+        )
+
+        # Call the gRPC service
+        response = self.stub.SetPlacement(request)
+
+        # Return the response - formatted as a dictionary
+        return {"matrix": from_grpc_matrix_to_matrix(response.matrix)}
 
     @protect_grpc
     def set_shared_topology(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.geometry.component_pb2 import SetSharedTopologyRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetSharedTopologyRequest(
+            id=kwargs["id"],
+            share_type=kwargs["share_type"].value,
+        )
+
+        # Call the gRPC service
+        _ = self.stub.SetSharedTopology(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def delete(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = build_grpc_id(kwargs["id"])
+
+        # Call the gRPC service
+        _ = self.stub.Delete(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def import_groups(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.geometry.component_pb2 import ImportGroupsRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ImportGroupsRequest(
+            id=build_grpc_id(kwargs["id"]),
+        )
+
+        # Call the gRPC service
+        _ = self.stub.ImportGroups(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def make_independent(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.geometry.component_pb2 import MakeIndependentRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MakeIndependentRequest(
+            ids=[build_grpc_id(id) for id in kwargs["ids"]],
+        )
+
+        # Call the gRPC service
+        _ = self.stub.MakeIndependent(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
