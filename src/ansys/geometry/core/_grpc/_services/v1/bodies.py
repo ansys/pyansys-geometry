@@ -765,12 +765,13 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             response = self.command_stub.CombineSubtractBodies(request=request)
         elif type_bool_op == "unite":
             request = CombineMergeBodiesRequest(
-                target_selection=[build_grpc_id(target_body)] + [build_grpc_id(id) for id in other_bodies],  # noqa: E501
+                target_selection=[build_grpc_id(target_body)]
+                + [build_grpc_id(id) for id in other_bodies],  # noqa: E501
             )
             response = self.command_stub.CombineMergeBodies(request=request)
         else:
             raise ValueError(f"Invalid boolean operation type: {type_bool_op}")
-        
+
         if not response.success:
             raise ValueError(f"Boolean operation failed: {response}")
 
