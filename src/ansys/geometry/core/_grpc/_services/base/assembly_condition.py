@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the assembly controls service implementation (abstraction layer)."""
+"""Module containing the assembly condition service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCAssemblyControlsService(ABC):  # pragma: no cover
-    """Assembly controls service for gRPC communication with the Geometry server.
+class GRPCAssemblyConditionService(ABC):  # pragma: no cover
+    """Assembly condition service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,7 +36,7 @@ class GRPCAssemblyControlsService(ABC):  # pragma: no cover
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCAssemblyControls class."""
+        """Initialize the GRPCAssemblyCondition class."""
         pass
 
     @abstractmethod

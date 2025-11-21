@@ -24,7 +24,7 @@ import grpc
 
 from .._version import GeometryApiProtos, set_proto_version
 from .base.admin import GRPCAdminService
-from .base.assembly_controls import GRPCAssemblyControlsService
+from .base.assembly_condition import GRPCAssemblyConditionService
 from .base.beams import GRPCBeamsService
 from .base.bodies import GRPCBodyService
 from .base.commands import GRPCCommandsService
@@ -87,7 +87,7 @@ class _GRPCServices:
 
         # Lazy load all the services
         self._admin = None
-        self._assembly_controls = None
+        self._assembly_condition = None
         self._beams = None
         self._bodies = None
         self._commands = None
@@ -137,30 +137,30 @@ class _GRPCServices:
         return self._admin
 
     @property
-    def assembly_controls(self) -> GRPCAssemblyControlsService:
+    def assembly_condition(self) -> GRPCAssemblyConditionService:
         """
-        Get the assembly controls service for the specified version.
+        Get the assembly condition service for the specified version.
 
         Returns
         -------
-        GRPCAssemblyControlsService
-            The assembly controls service for the specified version.
+        GRPCAssemblyConditionService
+            The assembly condition service for the specified version.
         """
-        if not self._assembly_controls:
-            # Import the appropriate assembly controls service based on the version
-            from .v0.assembly_controls import GRPCAssemblyControlsServiceV0
-            from .v1.assembly_controls import GRPCAssemblyControlsServiceV1
+        if not self._assembly_condition:
+            # Import the appropriate assembly condition service based on the version
+            from .v0.assembly_condition import GRPCAssemblyConditionServiceV0
+            from .v1.assembly_condition import GRPCAssemblyConditionServiceV1
 
             if self.version == GeometryApiProtos.V0:
-                self._assembly_controls = GRPCAssemblyControlsServiceV0(self.channel)
+                self._assembly_condition = GRPCAssemblyConditionServiceV0(self.channel)
             elif self.version == GeometryApiProtos.V1:  # pragma: no cover
                 # V1 is not implemented yet
-                self._assembly_controls = GRPCAssemblyControlsServiceV1(self.channel)
+                self._assembly_condition = GRPCAssemblyConditionServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
                 raise ValueError(f"Unsupported version: {self.version}")
 
-        return self._assembly_controls
+        return self._assembly_condition
 
     @property
     def beams(self) -> GRPCBeamsService:
