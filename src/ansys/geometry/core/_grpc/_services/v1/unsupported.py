@@ -35,10 +35,10 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
     ----------
     channel : grpc.Channel
         The gRPC channel to the server.
-    """
+    """ 
 
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.discovery.v1.commands.unsupported_pb2 import UnsupportedStub
+        from ansys.api.discovery.v1.commands.unsupported_pb2_grpc import UnsupportedStub
 
         self.stub = UnsupportedStub(channel)
 
@@ -61,7 +61,7 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
     @protect_grpc
     def set_export_ids(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commands.unsupported_pb2 import (
-            ExportIdRequest,
+            SetExportIdData,
             SetExportIdRequest,
         )
 
@@ -70,7 +70,7 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetExportIdRequest(
             export_data=[
-                ExportIdRequest(
+                SetExportIdData(
                     moniker=build_grpc_id(data.moniker),
                     id=data.value,
                     type=data.id_type.value,
@@ -87,12 +87,12 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
 
     @protect_grpc
     def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commands.unsupported_pb2 import SetExportIdRequest
+        from ansys.api.discovery.v1.commands.unsupported_pb2 import SetExportIdData
 
         from .conversions import build_grpc_id
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SetExportIdRequest(
+        request = SetExportIdData(
             moniker=build_grpc_id(kwargs["export_data"].moniker),
             id=kwargs["export_data"].value,
             type=kwargs["export_data"].id_type.value,
