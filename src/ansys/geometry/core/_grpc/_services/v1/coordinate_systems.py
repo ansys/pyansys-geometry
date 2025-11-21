@@ -26,6 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.coordinate_systems import GRPCCoordinateSystemService
+from .conversions import from_frame_to_grpc_frame, from_grpc_frame_to_frame
 
 
 class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no cover
@@ -43,10 +44,29 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no 
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.coordinatesystems_pb2_grpc import CoordinateSystemsStub
+        from ansys.api.discovery.v1.design.constructs.coordinatesystem_pb2_grpc import (
+            CoordinateSystemStub,
+        )
 
-        self.stub = CoordinateSystemsStub(channel)
+        self.stub = CoordinateSystemStub(channel)
 
     @protect_grpc
     def create(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.constructs.coordinatesystem_pb2 import CreateRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateRequest(
+            parent=kwargs["parent_id"],
+            name=kwargs["name"],
+            frame=from_frame_to_grpc_frame(kwargs["frame"]),
+        )
+
+        # Call the gRPC service
+        response = self.stub.Create(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": response.id,
+            "name": response.name,
+            "frame": from_grpc_frame_to_frame(response.frame),
+        }
