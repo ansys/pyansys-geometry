@@ -30,6 +30,7 @@ from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_component
 from ansys.geometry.core.misc.checks import check_type
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
@@ -37,6 +38,7 @@ from ansys.geometry.core.shapes.parameterization import ParamUV
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.selection import NamedSelection
 
 
 class BeamType(Enum):
@@ -421,6 +423,21 @@ class Beam:
     def is_alive(self) -> bool:
         """Flag indicating whether the beam is still alive on the server."""
         return self._is_alive
+
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get the named selections that include this beam.
+
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections that include this beam.
+        """
+        included_ns = []
+        for ns in get_design_from_component(self.parent_component).named_selections:
+            if any(beam.id == self.id for beam in ns.beams):
+                included_ns.append(ns)
+
+        return included_ns
 
     def __repr__(self) -> str:
         """Represent the beam as a string."""
