@@ -43,8 +43,8 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.discovery.v1.design.designdoc_pb2_grpc import DesignDocStub
         from ansys.api.discovery.v1.commands.file_pb2_grpc import FileStub
+        from ansys.api.discovery.v1.design.designdoc_pb2_grpc import DesignDocStub
 
         self.stub = DesignDocStub(channel)
         self.file_stub = FileStub(channel)
@@ -94,8 +94,9 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         from pathlib import Path
         from typing import TYPE_CHECKING, Generator
 
-        from ansys.api.discovery.v1.commands.file_pb2 import OpenRequest, OpenMode
+        from ansys.api.discovery.v1.commands.file_pb2 import OpenMode, OpenRequest
         from ansys.api.discovery.v1.commonenums_pb2 import FileFormat
+
         import ansys.geometry.core.connection.defaults as pygeom_defaults
 
         if TYPE_CHECKING:  # pragma: no cover
@@ -141,6 +142,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
             except Exception as e:
                 print("[upload_file] ERROR in import_options.to_dict():", repr(e))
                 import traceback
+
                 traceback.print_exc()
                 # Re-raise so we see the real cause instead of UNKNOWN / iterating requests
                 raise
@@ -157,9 +159,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
             msg_buffer = 5 * 1024  # 5KB - for additional message data
             if pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer < 0:  # pragma: no cover
-                raise ValueError(
-                    "[upload_file] MAX_MESSAGE_LENGTH is too small for file upload"
-                )
+                raise ValueError("[upload_file] MAX_MESSAGE_LENGTH is too small for file upload")
 
             chunk_size = pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer
             print(f"[upload_file] Using chunk_size = {chunk_size} bytes")
@@ -173,19 +173,16 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
                             print("[upload_file] No more data to read, stopping generator")
                             break
 
-                        print(
-                            f"[upload_file] Yielding chunk {chunk_index}, "
-                            f"len={len(chunk)}"
-                        )
+                        print(f"[upload_file] Yielding chunk {chunk_index}, len={len(chunk)}")
 
                         yield OpenRequest(
                             data=chunk,
                             open_mode=OpenMode.OPENMODE_NEW,
-                            file_format= FileFormat.FILEFORMAT_DISCO,
+                            file_format=FileFormat.FILEFORMAT_DISCO,
                             import_options=import_options_dict,
                         )
                         chunk_index += 1
-            except Exception as e:
+            except Exception:
                 print("[upload_file] EXCEPTION inside request_generator:")
                 traceback.print_exc()
                 # Re-raise so gRPC wraps it, but you still see the root traceback
@@ -217,7 +214,6 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
         # ---- 6) Return the response - formatted as a dictionary ----
         return {"file_path": response.file_path}
-
 
     @protect_grpc
     def upload_file_stream(self, **kwargs) -> dict:  # noqa: D102
