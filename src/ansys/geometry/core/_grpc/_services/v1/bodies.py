@@ -48,7 +48,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def __init__(self, channel: grpc.Channel):
         """Initialize the BodyService with the gRPC stub."""
-        from ansys.api.geometry.v1.bodies_pb2_grpc import BodiesStub
+        from ansys.api.discovery.design.geometry.body.bodies_pb2_grpc import BodiesStub
         from ansys.api.geometry.v1.commands_pb2_grpc import CommandsStub
 
         self.stub = BodiesStub(channel)
@@ -56,7 +56,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_sphere_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import CreateSphereBodyRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import CreateSphereBodyRequest
         from ansys.api.geometry.v1.commonmessages_pb2 import Point
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -84,7 +84,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_extruded_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import CreateExtrudedBodyRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import CreateExtrudedBodyRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         # Note: This will need proper conversion functions for plane, geometries
@@ -111,7 +111,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_sweeping_profile_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import CreateSweepingProfileRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import CreateSweepingProfileRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSweepingProfileRequest(
@@ -137,7 +137,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_sweeping_chain(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import CreateSweepingChainRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import CreateSweepingChainRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSweepingChainRequest(
@@ -160,7 +160,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def sweep_with_guide(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import (
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import (
             SweepWithGuideRequest,
             SweepWithGuideRequestData,
         )
@@ -201,7 +201,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_extruded_body_from_face_profile(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import CreateExtrudedBodyFromFaceProfileRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import CreateExtrudedBodyFromFaceProfileRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateExtrudedBodyFromFaceProfileRequest(
@@ -224,7 +224,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_extruded_body_from_loft_profiles(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import CreateExtrudedBodyFromLoftProfilesRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import CreateExtrudedBodyFromLoftProfilesRequest
         from ansys.api.geometry.v1.commonmessages_pb2 import TrimmedCurveList
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -254,7 +254,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_planar_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import CreatePlanarBodyRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import CreatePlanarBodyRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreatePlanarBodyRequest(
@@ -279,7 +279,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_body_from_face(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import CreateBodyFromFaceRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import CreateBodyFromFaceRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateBodyFromFaceRequest(
@@ -301,7 +301,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_surface_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import CreateSurfaceBodyRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import CreateSurfaceBodyRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSurfaceBodyRequest(
@@ -323,7 +323,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_surface_body_from_trimmed_curves(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import CreateSurfaceBodyFromTrimmedCurvesRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import CreateSurfaceBodyFromTrimmedCurvesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSurfaceBodyFromTrimmedCurvesRequest(
@@ -347,7 +347,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def translate(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import TranslateRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import TranslateRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = TranslateRequest(
@@ -388,7 +388,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_color(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import SetColorRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import SetColorRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetColorRequest(body_id=kwargs["id"], color=kwargs["color"])
@@ -475,7 +475,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_assigned_material(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import SetAssignedMaterialRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import SetAssignedMaterialRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetAssignedMaterialRequest(id=kwargs["id"], material=kwargs["material"].name)
@@ -497,7 +497,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def remove_assigned_material(self, **kwargs):  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import RemoveAssignedMaterialRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import RemoveAssignedMaterialRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RemoveAssignedMaterialRequest(ids=[build_grpc_id(id) for id in kwargs["ids"]])
@@ -510,7 +510,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import SetNameRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import SetNameRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetNameRequest(body_id=kwargs["id"], name=kwargs["name"])
@@ -523,7 +523,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_fill_style(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import SetFillStyleRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import SetFillStyleRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetFillStyleRequest(body_id=kwargs["id"], fill_style=kwargs["fill_style"].value)
@@ -536,7 +536,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_suppressed(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import SetSuppressedRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import SetSuppressedRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetSuppressedRequest(
@@ -552,7 +552,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def rotate(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import RotateRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import RotateRequest
         from ansys.api.geometry.v1.commonmessages_pb2 import Point
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -575,7 +575,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def scale(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import ScaleRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import ScaleRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ScaleRequest(
@@ -591,7 +591,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def mirror(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import MirrorRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import MirrorRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MirrorRequest(
@@ -607,7 +607,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def map(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import MapRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import MapRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MapRequest(
@@ -623,7 +623,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_collision(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import GetCollisionRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import GetCollisionRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = GetCollisionRequest(
@@ -639,7 +639,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def copy(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import CopyRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import CopyRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CopyRequest(
@@ -656,7 +656,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_tesellation(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import GetTessellationRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import GetTessellationRequest
 
         tess_map = {}
         resp = []  # For compatibility with stream response
@@ -676,7 +676,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_tesellation_with_options(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import GetTessellationRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import GetTessellationRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = GetTessellationRequest(
@@ -705,7 +705,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def boolean(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import BooleanRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import BooleanRequest
 
         # Call the gRPC service and build the requests accordingly
         response_success = 0
@@ -793,7 +793,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_body_from_loft_profiles_with_guides(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import (
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import (
             CreateBodyFromLoftWithGuidesRequest,
             CreateBodyFromLoftWithGuidesRequestData,
         )
@@ -966,7 +966,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_full_tessellation(self, **kwargs):  # noqa: D102
-        from ansys.api.geometry.v1.bodies_pb2 import GetTessellationRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import GetTessellationRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = GetTessellationRequest(
