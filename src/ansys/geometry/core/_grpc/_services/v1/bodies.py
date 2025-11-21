@@ -856,7 +856,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.design.geometry.body.bodies_pb2 import SetMidSurfaceThicknessRequest
+        from ansys.api.discovery.design.geometry.body.bodies_pb2 import (
+            SetMidSurfaceThicknessRequest,
+        )
 
         request = SetMidSurfaceThicknessRequest(
             bodies_or_faces=kwargs["ids"],

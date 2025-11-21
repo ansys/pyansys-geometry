@@ -7,11 +7,11 @@ This document describes each V0 proto file where the methods it contains have be
 Good to know
 
 Designs
-Designs proto has been drastically refactored. Its name has changed to File.proto. 
-In V0 a client could ask the server to save or copy a document to a certain path which was given through the grpc request. 
-Though, this pattern can only work in local context, for there’s no use for a client to ask a remote server to save a file in its local drive. So we changed that in v1 to keep only the methods which are remote oriented. 
-For instance, the only way to open a file is to use the Open, but behind the scenes this is what we used to call StreamUploadFile in v0. 
-Same goes for saving. The only save method in v1 is what we used to call StreamDownloadExportFile in v0.  
+Designs proto has been drastically refactored. Its name has changed to File.proto.
+In V0 a client could ask the server to save or copy a document to a certain path which was given through the grpc request.
+Though, this pattern can only work in local context, for there’s no use for a client to ask a remote server to save a file in its local drive. So we changed that in v1 to keep only the methods which are remote oriented.
+For instance, the only way to open a file is to use the Open, but behind the scenes this is what we used to call StreamUploadFile in v0.
+Same goes for saving. The only save method in v1 is what we used to call StreamDownloadExportFile in v0.
 Since we don’t support SpaceClaim in v1 and CS and Disco are single doc, all the GetAll,GetActive/SetActive methods have been removed from the designs proto.
 
 
@@ -21,7 +21,7 @@ Since we don’t support SpaceClaim in v1 and CS and Disco are single doc, all t
 
 Tags
 
-Some colored tags have been added along with the mapping itself. 
+Some colored tags have been added along with the mapping itself.
 Here’s the legend:
 •  The method has been moved to a different proto.
 • The method’s signature has changed.
@@ -36,61 +36,61 @@ DBU Protos
 Admin
 
   GetLogs(LogsRequest) returns (stream LogsResponse);
-• 	
+•
 New location: ansys.api.discovery.v1.commands.communication
 New signature: CreateCircular(CreateBeamProfileCircularRequest) returns(CreateBeamProfileCircularResponse)
 
 
  Health(google.protobuf.Empty) returns (HealthResponse);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.communication
 New signature: Health(HealthRequest) returns(HealthResponse)
 
 
   Shutdown(google.protobuf.Empty) returns (google.protobuf.Empty);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.communication
 New signature: Shutdown(ShutdownRequest) returns(ShutdownResponse)
 
 
   StatusInfo(google.protobuf.Empty) returns (StatusInfoResponse);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.communication
 New signature: StatusInfo(StatusInfoRequest) returns(StatusInfoResponse)
 
 
   SetApplicationTitle(SetApplicationTitleRequest) returns (google.protobuf.Empty);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.application
 New signature: SetTitle(SetApplicationTitleRequest) returns(SetApplicationTitleResponse)
 
 
   CloseApplication(google.protobuf.Empty) returns (google.protobuf.Empty);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.application
 New signature: Close(CloseApplicationRequest) returns(CloseApplicationResponse)
 
 
   GetBackend(google.protobuf.Empty) returns (GetBackendResponse);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.application
 New signature: GetBackend(GetBackendRequest) returns(GetBackendResponse)
 
 
   ApplicationStarted(google.protobuf.Empty) returns (ApplicationStartedResponse);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.application
 New signature: GetBackend(GetBackendRequest) returns(GetBackendResponse)
 
 
   SetMonikersCompressionMethod(MonikerCompressionMethodMessage) returns (google.protobuf.Empty);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.application
 New signature: SetMonikersCompressionMethod(MonikerCompressionMethodMessage) returns(SetMonikersCompressionMethodResponse)
 
 
   GetMonikersCompressionMethod(google.protobuf.Empty) returns (MonikerCompressionMethodMessage);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.application
 New signature: GetMonikersCompressionMethod(GetMonikersCompressionMethodRequest) returns(MonikerCompressionMethodMessage)
 
@@ -104,25 +104,25 @@ DbuApi
 DbuApplication
 
   RunScriptFile(RunScriptFileRequest) returns (RunScriptFileResponse);
-• 	
+•
 New location: ansys.api.discovery.v1.commands.script
 
   RunNotTrackedScriptFile(RunScriptFileRequest) returns (RunScriptFileResponse);
-• 	
+•
 New location: ansys.api.discovery.v1.commands.script
 
   RunScript(RunScriptRequest) returns (RunScriptResponse);
-• 	
+•
 New location: ansys.api.discovery.v1.commands.script
 
   RunCommand(RunCommandRequest) returns (RunCommandResponse);
-• 	
+•
 New location: ansys.api.discovery.v1.commands.unsupported
 
 Designs
 
   Get(EntityIdentifier) returns (Design);
-•• 	
+••
 New location: ansys.api.discovery.v1.design.designdoc
 New signature: Get(EntityRequest) returns(GetResponse)
 
@@ -135,13 +135,13 @@ New signature: Get(EntityRequest) returns(GetResponse)
   Open(OpenRequest) returns (EntityIdentifier);
 •
   New(NewRequest) returns (Design);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.file
 New signature: New(NewRequest) returns(NewResponse)
 
 
   Close(EntityIdentifier) returns (google.protobuf.Empty);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.file
 New signature: Close(CloseRequest)   returns(CloseResponse)
 
@@ -153,15 +153,15 @@ New signature: Close(CloseRequest)   returns(CloseResponse)
 • Note: now insert is a mode of the Open method.
 
   GetAsJson(GetAsJsonRequest) returns (GetAsJsonResponse);
-•• 	
+••
 New location: ansys.api.discovery.v1.design.designdoc
 New signature: GetAsJson(GetAsJsonRequest) returns(GetAsJsonResponse)
 
-  GetReferencedDocuments(GetReferencedDocumentsRequest) 
-    returns( stream GetReferencedDocumentsResponse); 
+  GetReferencedDocuments(GetReferencedDocumentsRequest)
+    returns( stream GetReferencedDocumentsResponse);
 
 Note : now get referenced documents is returning a stream.
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.file
 New signature: GetMonikersCompressionMethod(GetMonikersCompressionMethodRequest) returns(MonikerCompressionMethodMessage)
 
@@ -169,42 +169,42 @@ New signature: GetMonikersCompressionMethod(GetMonikersCompressionMethodRequest)
   SaveWithoutResults(google.protobuf.Empty) returns (google.protobuf.Empty);
 •
   OpenCloudFileFromUrl(OpenCloudFileFromUrlRequest) returns (google.protobuf.Empty);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.file
 New signature: OpenFromUrl(OpenFromUrlRequest)   returns(OpenFromUrlResponse)
 
   SaveCloudFile(google.protobuf.Empty) returns (google.protobuf.Empty);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.file
 New signature: SaveToUrl(SaveToUrlRequest)   returns (SaveToUrlResponse)
 
   DownloadExportFile(DownloadExportFileRequest) returns (DownloadExportFileResponse);
 •
   StreamDownloadExportFile(DownloadExportFileRequest) returns (stream DownloadExportFileResponse);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.file
 New signature: Save(SaveRequest)   returns (stream SaveResponse)
 
   StreamDesignTessellation(DesignTessellationRequest) returns (stream DesignTessellationResponse);
-•	
+•
 New location: ansys.api.discovery.v1.design.designdoc
 
 DrivingDimensions
 
   Get(EntityIdentifier) returns (DrivingDimension);
-•• 
+••
 New location: ansys.api.discovery.v1.design.parameters.drivingdimension
 New signature: Get(EntityRequest) returns(GetResponse)
 
   GetAll(GetAllRequest) returns (GetAllResponse);
-•• 	
+••
 New location: ansys.api.discovery.v1.design.parameters.drivingdimension
 New signature: GetAll(ParentEntityRequest) returns(GetAllResponse)
 
   Update(UpdateRequest) returns (DrivingDimension);
 •
   UpdateParameter(UpdateRequest) returns (UpdateResponse);
-•• 	
+••
 New location: ansys.api.discovery.v1.design.parameters.drivingdimension
 New signature: Set(SetDrivingDimensionRequest) returns(SetDrivingDimensionResponse)
 
@@ -218,12 +218,12 @@ SessionManager
 Windows
 
   GetImage(GetImageRequest) returns (stream StreamPackage);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.view
 New signature: GetImage(GetImageRequest) returns(GetImageResponse)
 
   SetView(SetViewRequest) returns (google.protobuf.Empty);
-•• 	
+••
 New location: ansys.api.discovery.v1.commands.view
 New signature: Set(SetViewRequest) returns(SetViewResponse)
  
@@ -236,7 +236,7 @@ Commands
   Rename(RenameRequest) returns (RenameResponse);
 •
   ProjectCurves(ProjectCurvesRequest) returns (ProjectCurvesResponse);
-•• •	
+•• •
 New location: ansys.api.discovery.v1.operations.edit
 New signature: ProjectCurves(ProjectCurvesRequest) returns (ProjectCurvesResponse)
 
@@ -254,7 +254,7 @@ New signature: ImprintProjectedCurves(ImprintProjectedCurvesRequest) returns (Im
 MISSING?
 
   CreateBeamCircularProfile(CreateBeamCircularProfileRequest) returns (CreateBeamCircularProfileResponse);
-•••	
+•••
 New location: ansys.api.discovery.v1.engineeringdata.beamprofiledata
 New signature: CreateCircular(CreateBeamProfileCircularRequest) returns(CreateBeamProfileCircularResponse)
 
@@ -273,24 +273,24 @@ New location: ansys.api.discovery.v1.engineeringdata.beamprofiledata
 New signature: CreateDescriptiveSegments(CreateBeamProfileSegmentsRequest) returns (CreateDescriptiveProfileSegmentsResponse)
 
   FillFaces(FillFacesRequest) returns (google.protobuf.Empty);
-•••	
+•••
 New location: ansys.api.discovery.v1.operations.edit
 New signature: FillFaces(FillFacesRequest) returns (FillFacesResponse)
 
   CreateDesignPoint(CreateDesignPointRequest) returns (CreateDesignPointResponse);
 •
   CreateDesignPoints(CreateDesignPointsRequest) returns (CreateDesignPointsResponse);
-•••	
+•••
 New location: ansys.api.discovery.v1.design.constructs.datumpoint
 New signature: Create(DatumPointCreationRequest) returns (DatumPointCreationResponse)
 
   CreateCurvesFromProfile(CreateCurvesFromProfileRequest) returns (CreateCurvesFromProfileResponse);
-•••	
+•••
 New location: ansys.api.discovery.v1.design.geometry.curves
 New signature: CreateFromProfile(CreateCurvesFromProfileRequest) returns (CreateCurvesFromProfileResponse)
 
   AssignMidSurfaceThickness(AssignMidSurfaceThicknessRequest) returns (google.protobuf.Empty);
-•••• 
+••••
 Body
 New location: ansys.api.discovery.v1.design.geometry.body
 New signature: SetMidSurfaceThickness(SetMidSurfaceThicknessRequest) returns (SetMidSurfaceThicknessResponse)
@@ -519,7 +519,7 @@ New signature: GetCrossSectionInfo(GetBeamProfileCrossSectionInfoRequest) return
   DeleteEntities(DeleteEntitiesRequest) returns (DeleteEntitiesResponse);
 •
 
-  SetAutomaticTrackingState(SetAutomaticTrackingStateRequest) returns 
+  SetAutomaticTrackingState(SetAutomaticTrackingStateRequest) returns
 (SetAutomaticTrackingStateResponse);
 •
 
@@ -671,16 +671,16 @@ Edges (edges.proto -> edge.proto)
 
   Get(ansys.api.dbu.v0.EntityIdentifier) returns (Edge);
 •• 	New location: ansys.api.discovery.v1.design.geometry
-New signature  Get(EntityRequest) returns(GetResponse);  
+New signature  Get(EntityRequest) returns(GetResponse);
 
   GetAll(GetAllRequest) returns (GetAllResponse);
 •• 	New location: ansys.api.discovery.v1.design.geometry
-New signature  GetFaces(MultipleEntitiesRequest) returns(GetFacesResponse);  
+New signature  GetFaces(MultipleEntitiesRequest) returns(GetFacesResponse);
 
 
   GetFaces(ansys.api.dbu.v0.EntityIdentifier) returns (GetFacesResponse);
 ••• 	New location: ansys.api.discovery.v1.design.geometry
-New signature  GetFaces(MultipleEntitiesRequest) returns(GetFacesResponse);  
+New signature  GetFaces(MultipleEntitiesRequest) returns(GetFacesResponse);
 
   GetVertices(GetVerticesRequest) returns (GetVerticesResponse);
 ••• 	New location: ansys.api.discovery.v1.design.geometry
@@ -688,7 +688,7 @@ New signature  GetVertices(MultipleEntitiesRequest) returns(GetVerticesResponse)
 
   GetLength(ansys.api.dbu.v0.EntityIdentifier) returns (GetLengthResponse);
 ••• 	New location: ansys.api.discovery.v1.design.geometry
-New signature  GetLength(MultipleEntitiesRequest) returns(GetLengthResponse);  
+New signature  GetLength(MultipleEntitiesRequest) returns(GetLengthResponse);
 
   IsDeleted(ansys.api.dbu.v0.EntityIdentifier) returns (IsDeletedResponse);
 ••• 	New location: ansys.api.discovery.v1.design.geometry
@@ -701,7 +701,7 @@ New signature  GetUpdateState(MultipleEntitiesRequest) returns(GetUpdateStateRes
 
   GetStartAndEndPoints(ansys.api.dbu.v0.EntityIdentifier) returns (GetStartAndEndPointsResponse);
 ••• 	New location: ansys.api.discovery.v1.design.geometry
-New signature  GetStartAndEndPoints(MultipleEntitiesRequest) returns(GetStartAndEndPointsResponse);  
+New signature  GetStartAndEndPoints(MultipleEntitiesRequest) returns(GetStartAndEndPointsResponse);
 
   GetInterval(ansys.api.dbu.v0.EntityIdentifier) returns (GetIntervalResponse);
 ••• 	New location: ansys.api.discovery.v1.design.geometry
@@ -709,7 +709,7 @@ New signature  GetInterval(MultipleEntitiesRequest) returns(GetIntervalResponse)
 
   GetCurve(ansys.api.dbu.v0.EntityIdentifier) returns (CurveGeometry);
 ••• 	New location: ansys.api.discovery.v1.design.geometry
-New signature  GetCurve(MultipleEntitiesRequest) returns(GetCurveResponse);  
+New signature  GetCurve(MultipleEntitiesRequest) returns(GetCurveResponse);
 
   GetBoundingBox(ansys.api.dbu.v0.EntityIdentifier) returns (Box);
 ••• 	New location: ansys.api.discovery.v1.design.geometry
@@ -857,7 +857,7 @@ NamedSelections (namedselections.proto -> namedselection.proto)
 New signature:  Get(EntityRequest) returns(GetResponse);
   Create(CreateRequest) returns (NamedSelection);
 •• 	New location: ansys.api.discovery.v1.design.selections
-New signature: Create(CreateRequest) returns(CreateResponse);  
+New signature: Create(CreateRequest) returns(CreateResponse);
 
   GetAll(google.protobuf.Empty) returns (GetAllResponse);
 •• 	New location: ansys.api.discovery.v1.design.selections
@@ -865,7 +865,7 @@ New signature: GetAll(ParentEntityRequest) returns(GetAllResponse);
 
   Delete(ansys.api.dbu.v0.EntityIdentifier) returns (google.protobuf.Empty);
 •• •	New location: ansys.api.discovery.v1.design.selections
-New signature: Delete(MultipleEntitiesRequest) returns(DeleteResponse);  
+New signature: Delete(MultipleEntitiesRequest) returns(DeleteResponse);
 
   DeleteByName(DeleteByNameRequest) returns (google.protobuf.Empty);
 •• 	New location: ansys.api.discovery.v1.design.selections
@@ -905,19 +905,19 @@ PrepareTools (repairtools.proto -> repair.proto)
 •
 
   ShareTopology(ShareTopologyRequest) returns (ShareTopologyResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
   UnshareTopology(UnshareTopologyRequest) returns (UnshareTopologyResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
   RemoveRounds(RemoveRoundsRequest) returns (RemoveRoundsResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
   RemoveFaces(RemoveFacesRequest) returns (RemoveFacesResponse)
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
   ExtractVolumeFromFaces(ExtractVolumeFromFacesRequest) returns (VolumeExtractionResponse);
 •• 	New location: ansys.api.discovery.v1.operations
@@ -936,66 +936,66 @@ New signature: EnhancedShareTopology(ShareTopologyRequest) returns (EnhancedShar
 • 	New location: ansys.api.discovery.v1.operations
 
   FindLogos(FindLogosRequest) returns (FindLogosResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
   FindAndRemoveLogos(FindLogosRequest) returns (RemoveLogoResponse);
 •• 	New location: ansys.api.discovery.v1.operations
 New signature: FindAndRemoveLogos(FindAndRemoveLogosRequest) returns (FindAndRemoveLogosResponse);
 
   RemoveLogo(RemoveLogoRequest) returns (RemoveLogoResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
   DetectHelixes(DetectHelixesRequest) returns (DetectHelixesResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
 RepairTools  (repairtools.proto -> repair.proto)
 
   FindInterference(FindInterferenceRequest) returns (FindInterferenceResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
   FixInterference(FixInterferenceRequest) returns (FixInterferenceResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
   FindSplitEdges(FindSplitEdgesRequest) returns (FindSplitEdgesResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
   FixSplitEdges(FixSplitEdgesRequest) returns (FixSplitEdgesResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
   FindExtraEdges(FindExtraEdgesRequest) returns (FindExtraEdgesResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
   FixExtraEdges(FixExtraEdgesRequest) returns (FixExtraEdgesResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
   FindInexactEdges(FindInexactEdgesRequest) returns (FindInexactEdgesResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
   FixInexactEdges(FixInexactEdgesRequest) returns (FixInexactEdgesResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
   FindShortEdges(FindShortEdgesRequest) returns (FindShortEdgesResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
   FixShortEdges(FixShortEdgesRequest) returns (FixShortEdgesResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
   FindStitchFaces(FindStitchFacesRequest) returns (FindStitchFacesResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
   FixStitchFaces(FixStitchFacesRequest) returns (FixStitchFacesResponse)
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
   FindMissingFaces(FindMissingFacesRequest) returns (FindMissingFacesResponse);
-• 	New location: ansys.api.discovery.v1.operations 
+• 	New location: ansys.api.discovery.v1.operations
 
 
   FixMissingFaces(FixMissingFacesRequest) returns (FixMissingFacesResponse);
@@ -1076,7 +1076,7 @@ New signature: FindAndFixShortEdges(FindAndFixShortEdgesRequest) returns (FindAn
   FindAndFixShortEdges(FindShortEdgesRequest) returns (EnhancedRepairToolMessage);
 •• 	New location: ansys.api.discovery.v1.operations
 New signature: FindAndFixShortEdges(FindAndFixShortEdgesRequest) returns (FindAndFixShortEdgesResponse);
-  
+
 
   FindAndSimplify(FindAdjustSimplifyRequest) returns (EnhancedRepairToolMessage);
 
