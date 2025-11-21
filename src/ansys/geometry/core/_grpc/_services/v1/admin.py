@@ -32,6 +32,11 @@ from ..base.admin import GRPCAdminService
 from .conversions import from_grpc_backend_type_to_backend_type
 
 
+# Define BackendType if not already imported
+class BackendType:
+    DISCOVERY = "DISCOVERY"
+
+
 class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
     """Admin service for gRPC communication with the Geometry server.
 

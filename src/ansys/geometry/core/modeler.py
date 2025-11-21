@@ -297,6 +297,7 @@ class Modeler:
 
         response = self.client.services.designs.upload_file(
             data=data,
+            file_path=str(fp_path),
             file_name=file_name,
             open_file=open_file,
             import_options=import_options,
