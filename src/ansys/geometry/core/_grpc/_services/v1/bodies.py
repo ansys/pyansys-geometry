@@ -49,11 +49,13 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     def __init__(self, channel: grpc.Channel):
         """Initialize the BodyService with the gRPC stub."""
         from ansys.api.discovery.v1.design.geometry.body_pb2_grpc import BodyStub
+        from ansys.api.discovery.v1.design.geometry.face_pb2_grpc import FaceStub
         from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
+        
 
         self.stub = BodyStub(channel)
         self.edits_stub = EditStub(channel)
-
+        self.face_stub = FaceStub(channel)
     @protect_grpc
     def create_sphere_body(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commonmessages_pb2 import Point
@@ -353,7 +355,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def translate(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import TranslateRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import TranslateRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = TranslateRequest(
@@ -394,7 +396,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_color(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import SetColorRequest
+        from ansys.api.discovery.v1.design.designmessages_pb2 import SetColorRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetColorRequest(body_id=kwargs["id"], color=kwargs["color"])
@@ -599,7 +601,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def mirror(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import MirrorRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import MirrorRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MirrorRequest(
@@ -828,7 +830,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.stub.CreateBodyFromLoftWithGuides(request)
+        response = self.edits_stub.CreateBodyFromLoftWithGuides(request)
 
         # Return the response - formatted as a dictionary
         new_body = response.created_bodies[0]
@@ -849,14 +851,14 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        _ = self.command_stub.CombineMergeBodies(request=request)
+        _ = self.edits_stub.CombineMergeBodies(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
 
     @protect_grpc
     def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.design.geometry.body.bodies_pb2 import (
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
             SetMidSurfaceThicknessRequest,
         )
 
@@ -872,16 +874,16 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def assign_midsurface_offset(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import AssignMidSurfaceOffsetRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import SetMidSurfaceThicknessRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = AssignMidSurfaceOffsetRequest(
+        request = SetMidSurfaceThicknessRequest(
             bodies_or_faces=kwargs["ids"],
             offset_type=kwargs["offset_type"].value,
         )
 
         # Call the gRPC service
-        _ = self.command_stub.AssignMidSurfaceOffset(request=request)
+        _ = self.stub.SetMidSurfaceThickness(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -898,14 +900,14 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        _ = self.command_stub.Shell(request=request)
+        _ = self.edits_stub.Shell(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
 
     @protect_grpc
     def remove_faces(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import RemoveFacesRequest
+        from ansys.api.discovery.v1.design.geometry.face_pb2 import RemoveFacesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RemoveFacesRequest(
@@ -914,7 +916,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        _ = self.command_stub.RemoveFaces(request=request)
+        _ = self.face_stub.Remove(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -930,7 +932,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        _ = self.command_stub.ImprintCurves(request=request)
+        _ = self.edits_stub.ImprintCurves(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -948,7 +950,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        resp = self.command_stub.ProjectCurves(request=request)
+        resp = self.edits_stub.ProjectCurves(request=request)
 
         # Return the response - formatted as a dictionary
         return {"curves": resp.curves}
@@ -968,7 +970,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        _ = self.command_stub.ImprintProjectedCurves(request=request)
+        _ = self.edits_stub.ImprintProjectedCurves(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -986,7 +988,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service - using streaming
-        resp = self.stub.StreamTessellation(request=request)
+        resp = self.stub.GetTessellationStream(request=request)
 
         # Return the response - formatted as a dictionary
         # return {"tessellation": from_grpc_tess_to_pd(resp)}
