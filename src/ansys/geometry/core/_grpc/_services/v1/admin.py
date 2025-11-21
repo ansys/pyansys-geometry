@@ -21,14 +21,15 @@
 # SOFTWARE.
 """Module containing the admin service implementation for v1."""
 
-import grpc
 import warnings
 
+import grpc
 import semver
 
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.admin import GRPCAdminService
+from .conversions import from_grpc_backend_type_to_backend_type
 
 # Define BackendType if not already imported
 class BackendType:
@@ -51,8 +52,10 @@ class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.discovery.v1.commands.application_pb2_grpc import ApplicationStub
+        from ansys.api.discovery.v1.commands.communication_pb2_grpc import CommunicationStub
 
-        self.stub = ApplicationStub(channel)
+        self.admin_stub = ApplicationStub(channel)
+        self.communication_stub = CommunicationStub(channel)
 
     @protect_grpc
     def get_backend(self, **kwargs) -> dict:  # noqa: D102
@@ -62,31 +65,24 @@ class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
             warnings.filterwarnings(
                 "ignore", "Protobuf gencode version", UserWarning, "google.protobuf.runtime_version"
             )
-            from google.protobuf.empty_pb2 import Empty
+            from ansys.api.discovery.v1.commands.application_pb2 import GetBackendRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = Empty()
+        request = GetBackendRequest()
 
         # Call the gRPC service
-        response = self.stub.GetBackend(request=request)
+        response = self.admin_stub.GetBackend(request=request)
 
-        # COMPATIBILITY HACK: retrieve the backend version -- for versions after 24R1
-        if hasattr(response, "version"):
-            ver = response.version
-            backend_version = semver.Version(ver.major_release, ver.minor_release, ver.service_pack)
-            api_server_build_info = f"{ver.build_number}" if ver.build_number != 0 else "N/A"
-            product_build_info = (
-                response.backend_version_info.strip() if response.backend_version_info else "N/A"
-            )
-        else:  # pragma: no cover
-            # If the version is not available, set a default version
-            backend_version = semver.Version(24, 1, 0)
-            api_server_build_info = "N/A"
-            product_build_info = "N/A"
+        ver = response.version
+        backend_version = semver.Version(ver.major_release, ver.minor_release, ver.service_pack)
+        api_server_build_info = f"{ver.build_number}" if ver.build_number != 0 else "N/A"
+        product_build_info = (
+            response.backend_version_info.strip() if response.backend_version_info else "N/A"
+        )
 
         # Convert the response to a dictionary
         return {
-            "backend": BackendType.DISCOVERY,
+            "backend": from_grpc_backend_type_to_backend_type(response.type),
             "version": backend_version,
             "api_server_build_info": api_server_build_info,
             "product_build_info": product_build_info,
@@ -95,18 +91,23 @@ class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
 
     @protect_grpc
     def get_logs(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v1.admin_pb2 import LogsRequest, LogsTarget, PeriodType
+        from ansys.api.discovery.v1.commands.communication_pb2 import LogsRequest
+        from ansys.api.discovery.v1.commonenums_pb2 import LogsPeriodType, LogsTarget
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = LogsRequest(
-            target=LogsTarget.CLIENT,
-            period_type=PeriodType.CURRENT if not kwargs["all_logs"] else PeriodType.ALL,
+            target=LogsTarget.LOGSTARGET_CLIENT,
+            period_type=(
+                LogsPeriodType.LOGSPERIODTIME_CURRENT
+                if not kwargs["all_logs"]
+                else LogsPeriodType.LOGSPERIODTIME_ALL
+            ),
             null_path=None,
             null_period=None,
         )
 
         # Call the gRPC service
-        logs_generator = self.stub.GetLogs(request)
+        logs_generator = self.communication_stub.GetLogs(request)
         logs: dict[str, str] = {}
 
         # Convert the response to a dictionary
@@ -119,13 +120,13 @@ class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
 
     @protect_grpc
     def get_service_status(self, **kwargs) -> dict:  # noqa: D102
-        from google.protobuf.empty_pb2 import Empty
+        from ansys.api.discovery.v1.commands.communication_pb2 import HealthRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = Empty()
+        request = HealthRequest()
 
         # Call the gRPC service
-        response = self.stub.Health(request=request)
+        response = self.communication_stub.Health(request=request)
 
         # Convert the response to a dictionary
         return {"healthy": True if response.message == "I am healthy!" else False}

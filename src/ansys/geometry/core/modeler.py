@@ -539,7 +539,7 @@ class Modeler:
         serv_path = self._upload_file(file_path)
 
         self.client.log.debug(f"Running Discovery script file at {file_path}...")
-        response = self.client.services.dbu_application.run_script(
+        response = self.client.services.commands_script.run_script_file(
             script_path=serv_path,
             script_args=script_args,
             api_version=api_version.value if api_version is not None else None,

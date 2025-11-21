@@ -429,6 +429,14 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 "cross_section": serialize_beam_cross_section(beam.cross_section),
             }
 
+        def serialize_design_point(design_point):
+            return {
+                "id": design_point.id,
+                "name": design_point.owner_name,
+                "point": from_grpc_point_to_point3d(design_point.points[0]),
+                "parent_id": design_point.parent_id.id,
+            }
+
         parts = getattr(response, "parts", [])
         transformed_parts = getattr(response, "transformed_parts", [])
         bodies = getattr(response, "bodies", [])
@@ -438,6 +446,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         component_coordinate_systems = getattr(response, "component_coord_systems", [])
         component_shared_topologies = getattr(response, "component_shared_topologies", [])
         beams = getattr(response, "beams", [])
+        design_points = getattr(response, "design_points", [])
         return {
             "parts": [serialize_part(part) for part in parts] if len(parts) > 0 else [],
             "transformed_parts": [serialize_transformed_part(tp) for tp in transformed_parts],
@@ -452,6 +461,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 component_shared_topologies
             ),
             "beams": [serialize_beam(beam) for beam in beams],
+            "design_points": [serialize_design_point(dp) for dp in design_points],
         }
 
     @protect_grpc
