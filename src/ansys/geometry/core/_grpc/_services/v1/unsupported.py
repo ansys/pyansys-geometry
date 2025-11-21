@@ -21,8 +21,9 @@
 # SOFTWARE.
 """Module containing the unsupported service implementation for v1."""
 
-import grpc
 from ansys.api.discovery.v1.commands.unsupported_pb2 import SetExportIdData
+import grpc
+
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.unsupported import GRPCUnsupportedService
