@@ -1,0 +1,101 @@
+:py:mod:`ansys.geometry.core.plotting.trame_gui`
+================================================
+
+.. py:module:: ansys.geometry.core.plotting.trame_gui
+
+.. autoapi-nested-parse::
+
+   Module for the trame visualizer.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.plotting.trame_gui.TrameVisualizer
+
+
+
+
+.. py:class:: TrameVisualizer
+
+
+   
+   Trame visualizer class.
+
+   It will define how the trame view layout will be.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: set_scene(plotter)
+
+      
+      Set the trame layout view and the mesh to show through the pyvista plotter.
+
+
+      :Parameters:
+
+          **plotter** : :obj:`pv.Plotter`
+              PyVista plotter with the mesh rendered.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: show()
+
+      
+      Start the server and show the mesh.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

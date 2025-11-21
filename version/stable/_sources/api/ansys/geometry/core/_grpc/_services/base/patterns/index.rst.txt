@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``patterns.py`` module
+==========================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.patterns
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: patterns
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.patterns.GRPCPatternsService`
+            - Patterns service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCPatternsService</api/ansys/geometry/core/_grpc/_services/base/patterns/GRPCPatternsService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the patterns service implementation (abstraction layer).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

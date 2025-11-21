@@ -1,0 +1,141 @@
+
+
+
+
+
+
+The ``conversions.py`` module
+=============================
+
+.. py:module:: ansys.geometry.core._grpc._services.v1.conversions
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: conversions
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~from_grpc_backend_type_to_backend_type`
+            - Convert a gRPC v1 backend type to a backend type.
+
+
+          * - :py:obj:`~build_grpc_id`
+            - Build a v1 EntityIdentifier gRPC message.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing v1 related conversions from PyAnsys Geometry objects to gRPC messages.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: from_grpc_backend_type_to_backend_type(grpc_backend_type: ansys.api.discovery.v1.commonenums_pb2.BackendType) -> ansys.geometry.core.connection.backend.BackendType
+
+   
+   Convert a gRPC v1 backend type to a backend type.
+
+
+   :Parameters:
+
+       **backend_type** : :obj:`GRPCBackendType`
+           Source backend type.
+
+
+
+   :Returns:
+
+       :obj:`BackendType`
+           Converted backend type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: build_grpc_id(id: str) -> ansys.api.discovery.v1.commonmessages_pb2.EntityIdentifier
+
+   
+   Build a v1 EntityIdentifier gRPC message.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Source ID.
+
+
+
+   :Returns:
+
+       :obj:`EntityIdentifier`
+           Geometry service gRPC entity identifier message.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
