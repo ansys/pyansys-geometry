@@ -876,17 +876,17 @@ class IBody(ABC):
     ) -> None:
         """Subtract bodies from this body.
 
-        Warnings
-        --------
-        This is a specialized boolean operation that has the ability to transfer named
-        selections. It may behave differently than the encouraged ``subtract()``.
-
         Parameters
         ----------
         other : Union[Body, list[Body]]
             The body or list of bodies to combine with this body.
         keep_other : bool, default: False
             Whether to retain the other bodies or not.
+
+        Warnings
+        --------
+        This is a specialized boolean operation that has the ability to transfer named
+        selections. It may behave differently than the encouraged ``subtract()``.
 
         Notes
         -----
