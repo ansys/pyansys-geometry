@@ -98,3 +98,8 @@ class GRPCPrepareToolsService(ABC):  # pragma: no cover
     def create_sphere_enclosure(self, **kwargs) -> dict:
         """Create a sphere enclosure around bodies."""
         pass
+
+    @abstractmethod
+    def is_body_sweepable(self, **kwargs) -> dict:
+        """Check if body is sweepable."""
+        pass
