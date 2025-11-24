@@ -35,6 +35,7 @@ from ansys.api.discovery.v1.commonmessages_pb2 import (
     Plane as GRPCPlane,
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
+    Quantity as GRPCQuantity,
 )
 from ansys.api.discovery.v1.design.designmessages_pb2 import (
     CurveGeometry as GRPCCurveGeometry,
@@ -50,6 +51,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     Surface as GRPCSurface,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
+    TrackedCommandResponse as GRPCTrackedCommandResponse,
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
@@ -66,6 +68,7 @@ import pint
 
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 
 if TYPE_CHECKING:
@@ -81,6 +84,7 @@ if TYPE_CHECKING:
     from ansys.geometry.core.math.plane import Plane
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
+    from ansys.geometry.core.misc.measurements import Measurement
     from ansys.geometry.core.misc.options import TessellationOptions
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
@@ -198,7 +202,11 @@ def from_grpc_point_to_point3d(point: GRPCPoint) -> "Point3D":
     from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
     return Point3D(
-        [point.x, point.y, point.z],
+        [
+            point.x.value_in_geometry_units,
+            point.y.value_in_geometry_units,
+            point.z.value_in_geometry_units,
+        ],
         DEFAULT_UNITS.SERVER_LENGTH,
     )
 
@@ -1284,6 +1292,56 @@ def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
     )
 
 
+def from_grpc_direction_to_unit_vector(direction: GRPCDirection) -> "UnitVector3D":
+    """Convert a gRPC direction to a unit vector.
+
+    Parameters
+    ----------
+    direction : GRPCDirection
+        Source gRPC direction data.
+
+    Returns
+    -------
+    UnitVector3D
+        Converted unit vector.
+    """
+    from ansys.geometry.core.math.vector import UnitVector3D
+
+    return UnitVector3D([direction.x, direction.y, direction.z])
+
+
+def from_length_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
+    """Convert a ``Measurement`` containing a length to a gRPC quantity.
+
+    Parameters
+    ----------
+    input : Measurement
+        Source measurement data.
+
+    Returns
+    -------
+    GRPCQuantity
+        Converted gRPC quantity.
+    """
+    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
+
+
+def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
+    """Convert a ``Measurement`` containing an angle to a gRPC quantity.
+
+    Parameters
+    ----------
+    input : Measurement
+        Source measurement data.
+
+    Returns
+    -------
+    GRPCQuantity
+        Converted gRPC quantity.
+    """
+    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
+
+
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
     """Check if the backend version is compatible with NURBS curves in sketches.
 
@@ -1351,18 +1409,18 @@ def from_enclosure_options_to_grpc_enclosure_options(
     )
 
 
-def serialize_tracker_command_response(**kwargs) -> dict:
-    """Serialize a TrackerCommandResponse object into a dictionary.
+def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> dict:
+    """Serialize a TrackedCommandResponse object into a dictionary.
 
     Parameters
     ----------
-    response : TrackerCommandResponse
-        The gRPC TrackerCommandResponse object to serialize.
+    response : GRPCTrackedCommandResponse
+        The gRPC TrackedCommandResponse object to serialize.
 
     Returns
     -------
     dict
-        A dictionary representation of the TrackerCommandResponse object.
+        A dictionary representation of the TrackedCommandResponse object.
     """
 
     def serialize_body(body):
@@ -1387,9 +1445,8 @@ def serialize_tracker_command_response(**kwargs) -> dict:
             "id": entity.id,
         }
 
-    response = kwargs["response"]
     return {
-        "success": response.success,
+        "success": getattr(response, "success", False),
         "created_bodies": [
             serialize_body(body) for body in getattr(response, "created_bodies", [])
         ],

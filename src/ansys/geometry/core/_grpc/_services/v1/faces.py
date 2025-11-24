@@ -34,10 +34,12 @@ from ..base.conversions import (
 from ..base.faces import GRPCFacesService
 from .conversions import (
     build_grpc_id,
+    from_angle_to_grpc_quantity,
     from_grpc_curve_to_curve,
     from_grpc_direction_to_unit_vector,
     from_grpc_point_to_point3d,
     from_grpc_surface_to_surface,
+    from_length_to_grpc_quantity,
     from_line_to_grpc_line,
     from_point3d_to_grpc_point,
     from_unit_vector_to_grpc_direction,
@@ -72,11 +74,11 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
         
         # Call the gRPC service
-        response = self.stub.GetSurface(request=request)
+        response = self.stub.GetSurface(request=request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
-            "surface": from_grpc_surface_to_surface(response, kwargs["surface_type"]),
+            "surface": from_grpc_surface_to_surface(response.surface, kwargs["surface_type"]),
         }
 
     @protect_grpc
@@ -90,8 +92,14 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "uv_box": {
-                "u": (response.start_u, response.end_u),
-                "v": (response.start_v, response.end_v),
+                "u": (
+                    response.start_u.value_in_geometry_units,
+                    response.end_u.value_in_geometry_units,
+                ),
+                "v": (
+                    response.start_v.value_in_geometry_units,
+                    response.end_v.value_in_geometry_units,
+                ),
             }
         }
 
@@ -104,7 +112,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         response = self.stub.GetArea(request=request).response_data[0]
 
         # Return the response - formatted as a dictionary
-        return {"area": to_area(response.area)}
+        return {"area": to_area(response.area.value_in_geometry_units)}
 
     @protect_grpc
     def get_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -159,8 +167,8 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         return {
             "loops": [
                 {
-                    "type": int(loop.type),
-                    "length": to_distance(loop.length).value,
+                    "type": loop.type,
+                    "length": to_distance(loop.length.value_in_geometry_units).value,
                     "min_corner": from_grpc_point_to_point3d(loop.bounding_box.min),
                     "max_corner": from_grpc_point_to_point3d(loop.bounding_box.max),
                     "edges": [edge for edge in loop.edges],
@@ -325,21 +333,23 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtrudeFacesRequest(
-            request_data=ExtrudeFacesRequestData(
-                faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
-                distance=from_measurement_to_server_length(kwargs["distance"]),
-                direction=direction,
-                extrude_type=kwargs["extrude_type"].value,
-                pull_symmetric=kwargs["pull_symmetric"],
-                offset_mode=kwargs["offset_mode"].value,
-                copy=kwargs["copy"],
-                force_do_as_extrude=kwargs["force_do_as_extrude"],
-            )
+            request_data=[
+                ExtrudeFacesRequestData(
+                    ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    distance=from_length_to_grpc_quantity(kwargs["distance"]),
+                    direction=direction,
+                    extrude_type=kwargs["extrude_type"].value,
+                    pull_symmetric=kwargs["pull_symmetric"],
+                    offset_mode=kwargs["offset_mode"].value,
+                    copy=kwargs["copy"],
+                    force_do_as_extrude=kwargs["force_do_as_extrude"],
+                )
+            ]
         )
 
         # Call the gRPC service and serialize the response
         response = self.EditStub.ExtrudeFaces(request=request)
-        tracked_response = serialize_tracked_command_response(response)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
@@ -356,22 +366,24 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtrudeFacesUpToRequest(
-            request_data=ExtrudeFacesUpToRequestData(
-                faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
-                up_to_selection=build_grpc_id(kwargs["up_to_selection_id"]),
-                seed_point=from_point3d_to_grpc_point(kwargs["seed_point"]),
-                direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                extrude_type=kwargs["extrude_type"].value,
-                pull_symmetric=kwargs["pull_symmetric"],
-                offset_mode=kwargs["offset_mode"].value,
-                copy=kwargs["copy"],
-                force_do_as_extrude=kwargs["force_do_as_extrude"],
-            )
+            request_data=[
+                ExtrudeFacesUpToRequestData(
+                    faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    up_to_selection=build_grpc_id(kwargs["up_to_selection_id"]),
+                    seed_point=from_point3d_to_grpc_point(kwargs["seed_point"]),
+                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+                    extrude_type=kwargs["extrude_type"].value,
+                    pull_symmetric=kwargs["pull_symmetric"],
+                    offset_mode=kwargs["offset_mode"].value,
+                    copy=kwargs["copy"],
+                    force_do_as_extrude=kwargs["force_do_as_extrude"],
+                )
+            ]
         )
 
         # Call the gRPC service and serialize the response
         response = self.EditStub.ExtrudeFacesUpTo(request=request)
-        tracked_response = serialize_tracked_command_response(response)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
@@ -387,14 +399,17 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
+        # TODO: multiple faces?
         request = OffsetFacesSetRadiusRequest(
-            request_data=OffsetFacesSetRadiusRequestData(
-                faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
-                radius=from_measurement_to_server_length(kwargs["radius"]),
-                offset_mode=kwargs["offset_mode"].value,
-                copy=kwargs["copy"],
-                extrude_type=kwargs["extrude_type"].value,
-            )
+            request_data=[
+                OffsetFacesSetRadiusRequestData(
+                    id=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    radius=from_measurement_to_server_length(kwargs["radius"]),
+                    offset_mode=kwargs["offset_mode"].value,
+                    copy=kwargs["copy"],
+                    extrude_type=kwargs["extrude_type"].value,
+                )
+            ]
         )
 
         # Call the gRPC service
@@ -426,7 +441,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
 
         # Call the gRPC service and serialize the response
         response = self.EditStub.RevolveFaces(request=request)
-        tracked_response = serialize_tracked_command_response(response)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
@@ -456,7 +471,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
 
         # Call the gRPC service and serialize the response
         response = self.EditStub.RevolveFacesUpTo(request=request)
-        tracked_response = serialize_tracked_command_response(response)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
@@ -490,7 +505,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
 
         # Call the gRPC service and serialize the response
         response = self.EditStub.RevolveFacesByHelix(request=request)
-        tracked_response = serialize_tracked_command_response(response)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
@@ -525,14 +540,16 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ThickenFacesRequest(
-            request_data=ThickenFacesRequestData(
-                faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
-                direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                value=from_measurement_to_server_length(kwargs["thickness"]),
-                extrude_type=kwargs["extrude_type"].value,
-                pull_symmetric=kwargs["pull_symmetric"],
-                select_direction=kwargs["select_direction"],
-            )
+            request_data=[
+                ThickenFacesRequestData(
+                    ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+                    value=from_length_to_grpc_quantity(kwargs["thickness"]),
+                    extrude_type=kwargs["extrude_type"].value,
+                    pull_symmetric=kwargs["pull_symmetric"],
+                    select_direction=kwargs["select_direction"],
+                )
+            ]
         )
 
         # Call the gRPC service
@@ -552,13 +569,15 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DraftFacesRequest(
-            request_data=DraftFacesRequestData(
-                faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
-                reference_faces=[build_grpc_id(id) for id in kwargs["reference_face_ids"]],
-                draft_side=kwargs["draft_side"].value,
-                draft_angle=from_measurement_to_server_angle(kwargs["angle"]),
-                extrude_type=kwargs["extrude_type"].value,
-            )
+            request_data=[
+                DraftFacesRequestData(
+                    ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    reference_ids=[build_grpc_id(id) for id in kwargs["reference_face_ids"]],
+                    draft_side=kwargs["draft_side"].value,
+                    draft_angle=from_angle_to_grpc_quantity(kwargs["angle"]),
+                    extrude_type=kwargs["extrude_type"].value,
+                )
+            ]
         )
 
         # Call the gRPC server
@@ -604,7 +623,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
 
         # Call the gRPC service and serialize the response
         response = self.EditStub.OffsetFaces(request=request)
-        tracked_response = serialize_tracked_command_response(response)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
@@ -620,12 +639,14 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FaceOffsetRequest(
-            request_data=FaceOffsetRequestData(
-                face1=build_grpc_id(kwargs["face1_id"]),
-                face2=build_grpc_id(kwargs["face2_id"]),
-                set_baselines=kwargs["set_baselines"],
-                process_adjacent_faces=kwargs["process_adjacent_faces"],
-            )
+            request_data=[
+                FaceOffsetRequestData(
+                    face1=build_grpc_id(kwargs["face1_id"]),
+                    face2=build_grpc_id(kwargs["face2_id"]),
+                    set_baselines=kwargs["set_baselines"],
+                    process_adjacent_faces=kwargs["process_adjacent_faces"],
+                )
+            ]
         )
 
         # Call the gRPC service
