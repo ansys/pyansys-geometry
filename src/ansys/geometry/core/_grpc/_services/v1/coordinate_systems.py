@@ -52,21 +52,29 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no 
 
     @protect_grpc
     def create(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.constructs.coordinatesystem_pb2 import CreateRequest
+        from ansys.api.discovery.v1.design.constructs.coordinatesystem_pb2 import (
+            CreateRequest,
+            CreateRequestData,
+        )
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = CreateRequest(
-            parent=kwargs["parent_id"],
+        # Create the request data - assumes all inputs are valid and of the proper type
+        request_data = CreateRequestData(
+            parent_id=kwargs["parent_id"],
             name=kwargs["name"],
             frame=from_frame_to_grpc_frame(kwargs["frame"]),
         )
+
+        # Wrap in CreateRequest with repeated field
+        request = CreateRequest(request_data=[request_data])
 
         # Call the gRPC service
         response = self.stub.Create(request=request)
 
         # Return the response - formatted as a dictionary
+        # Note: response.coordinate_systems is a repeated field, we return the first one
+        coord_system = response.coordinate_systems[0]
         return {
-            "id": response.id,
-            "name": response.name,
-            "frame": from_grpc_frame_to_frame(response.frame),
+            "id": coord_system.id,
+            "name": coord_system.name,
+            "frame": from_grpc_frame_to_frame(coord_system.frame),
         }
