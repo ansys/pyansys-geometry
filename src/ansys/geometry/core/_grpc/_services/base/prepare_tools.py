@@ -100,6 +100,6 @@ class GRPCPrepareToolsService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
-    def is_body_sweepable(self, **kwargs) -> dict:
+    def detect_sweepable_bodies(self, **kwargs) -> dict:
         """Check if body is sweepable."""
         pass

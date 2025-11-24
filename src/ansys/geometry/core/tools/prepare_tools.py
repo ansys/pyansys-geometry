@@ -782,7 +782,7 @@ class PrepareTools:
             return []
 
     @min_backend_version(26, 1, 0)
-    def is_body_sweepable(
+    def detect_sweepable_bodies(
         self,
         bodies: list["Body"],
         get_source_target_faces: bool = False,
@@ -809,7 +809,7 @@ class PrepareTools:
         if not bodies:
             return []
 
-        response = self._grpc_client._services.prepare_tools.is_body_sweepable(
+        response = self._grpc_client._services.prepare_tools.detect_sweepable_bodies(
             body_ids=[body.id for body in bodies],
             get_source_target_faces=get_source_target_faces,
         )

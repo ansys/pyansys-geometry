@@ -96,5 +96,5 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         raise NotImplementedError
 
     @protect_grpc
-    def is_body_sweepable(self, **kwargs):  # noqa: D102
+    def detect_sweepable_bodies(self, **kwargs):  # noqa: D102
         raise NotImplementedError
