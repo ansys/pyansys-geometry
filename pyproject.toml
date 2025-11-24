@@ -26,7 +26,7 @@ classifiers = [
 ]
 
 dependencies = [
-  "ansys-api-discovery==1.0.9",
+  "ansys-api-discovery==1.0.11",
   "ansys-tools-common>=0.2,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
