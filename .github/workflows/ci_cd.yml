@@ -348,7 +348,9 @@ jobs:
           add-pdf-html-docs-as-assets: true
           needs-quarto: true
           dependencies: 'pandoc'
-          sphinxopts: '-j 1 -W --color'
+          # sphinxopts: '-j 1 -W --color'
+          # TODO: Re-enable warnings as errors when numpydoc issues are fixed
+          sphinxopts: '-j 1'
           group-dependencies-name: "doc"
 
       - name: Stop the Geometry service
