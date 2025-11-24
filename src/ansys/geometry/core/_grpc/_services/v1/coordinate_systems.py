@@ -58,14 +58,15 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no 
         )
 
         # Create the request data - assumes all inputs are valid and of the proper type
-        request_data = CreateRequestData(
-            parent_id=kwargs["parent_id"],
-            name=kwargs["name"],
-            frame=from_frame_to_grpc_frame(kwargs["frame"]),
+        request = CreateRequest(
+            request_data=[
+                CreateRequestData(
+                    parent_id=kwargs["parent_id"],
+                    name=kwargs["name"],
+                    frame=from_frame_to_grpc_frame(kwargs["frame"]),
+                )
+            ]
         )
-
-        # Wrap in CreateRequest with repeated field
-        request = CreateRequest(request_data=[request_data])
 
         # Call the gRPC service
         response = self.stub.Create(request=request)
