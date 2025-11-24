@@ -4,7 +4,7 @@ requires = [ "flit-core>=3.2,<4" ]
 
 [project]
 name = "ansys-geometry-core"
-version = "0.12.dev0"
+version = "0.14.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
 license = "MIT"
