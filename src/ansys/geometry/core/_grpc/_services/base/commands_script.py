@@ -19,15 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the DBU Application service implementation (abstraction layer)."""
+"""Module containing the CommandsScript service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
 
 import grpc
 
 
-class GRPCDbuApplicationService(ABC):  # pragma: no cover
-    """DBU Application service for gRPC communication with the Geometry server.
+class GRPCCommandsScriptService(ABC):  # pragma: no cover
+    """Commands Script service for gRPC communication with the Geometry server.
 
     Parameters
     ----------
@@ -36,10 +36,10 @@ class GRPCDbuApplicationService(ABC):  # pragma: no cover
     """
 
     def __init__(self, channel: grpc.Channel):
-        """Initialize the GRPCDbuApplicationService class."""
+        """Initialize the GRPCCommandsScriptService class."""
         pass
 
     @abstractmethod
-    def run_script(self, **kwargs) -> dict:
-        """Run a Scripting API script."""
+    def run_script_file(self, **kwargs) -> dict:
+        """Run a Scripting API script file."""
         pass
