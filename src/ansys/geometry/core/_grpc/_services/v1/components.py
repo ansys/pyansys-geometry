@@ -126,7 +126,7 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
 
         # Create the request with repeated ids and placements
         request = SetPlacementRequest(
-            ids=[kwargs["id"]],
+            ids=[build_grpc_id(kwargs["id"])],
             placements=[
                 PlacementData(
                     translation=translation,
@@ -157,7 +157,7 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
         request = SetSharedTopologyRequest(
             shared_topologies=[
                 SharedTopologyData(
-                    id=kwargs["id"],
+                    id=build_grpc_id(kwargs["id"]),
                     share_type=kwargs["share_type"].value,
                 )
             ]
