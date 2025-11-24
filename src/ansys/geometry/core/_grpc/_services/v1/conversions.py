@@ -993,7 +993,7 @@ def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
     from ansys.geometry.core.shapes.curves.ellipse import Ellipse
     from ansys.geometry.core.shapes.curves.line import Line
 
-    origin = Point3D([curve.origin.x, curve.origin.y, curve.origin.z])
+    origin = from_grpc_point_to_point3d(curve.origin)
     try:
         reference = UnitVector3D([curve.reference.x, curve.reference.y, curve.reference.z])
         axis = UnitVector3D([curve.axis.x, curve.axis.y, curve.axis.z])

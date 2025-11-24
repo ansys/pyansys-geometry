@@ -410,15 +410,16 @@ class _GRPCServices:
             # Import the appropriate edges service based on the version
             from .v0.edges import GRPCEdgesServiceV0
             from .v1.edges import GRPCEdgesServiceV1
+            self._edges = GRPCEdgesServiceV1(self.channel)
 
-            if self.version == GeometryApiProtos.V0:
-                self._edges = GRPCEdgesServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
-                self._edges = GRPCEdgesServiceV1(self.channel)
-            else:  # pragma: no cover
-                # This should never happen as the version is set in the constructor
-                raise ValueError(f"Unsupported version: {self.version}")
+            # if self.version == GeometryApiProtos.V0:
+            #     self._edges = GRPCEdgesServiceV0(self.channel)
+            # elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+            #     # V1 is not implemented yet
+            #     self._edges = GRPCEdgesServiceV1(self.channel)
+            # else:  # pragma: no cover
+            #     # This should never happen as the version is set in the constructor
+            #     raise ValueError(f"Unsupported version: {self.version}")
 
         return self._edges
 
@@ -436,15 +437,16 @@ class _GRPCServices:
             # Import the appropriate faces service based on the version
             from .v0.faces import GRPCFacesServiceV0
             from .v1.faces import GRPCFacesServiceV1
+            self._faces = GRPCFacesServiceV1(self.channel)
 
-            if self.version == GeometryApiProtos.V0:
-                self._faces = GRPCFacesServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
-                self._faces = GRPCFacesServiceV1(self.channel)
-            else:  # pragma: no cover
-                # This should never happen as the version is set in the constructor
-                raise ValueError(f"Unsupported version: {self.version}")
+            # if self.version == GeometryApiProtos.V0:
+            #     self._faces = GRPCFacesServiceV0(self.channel)
+            # elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+            #     # V1 is not implemented yet
+            #     self._faces = GRPCFacesServiceV1(self.channel)
+            # else:  # pragma: no cover
+            #     # This should never happen as the version is set in the constructor
+            #     raise ValueError(f"Unsupported version: {self.version}")
 
         return self._faces
 

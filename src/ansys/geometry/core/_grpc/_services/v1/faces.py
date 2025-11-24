@@ -368,15 +368,15 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         request = ExtrudeFacesUpToRequest(
             request_data=[
                 ExtrudeFacesUpToRequestData(
-                    faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
-                    up_to_selection=build_grpc_id(kwargs["up_to_selection_id"]),
-                    seed_point=from_point3d_to_grpc_point(kwargs["seed_point"]),
+                    ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    up_to_selection_id=build_grpc_id(kwargs["up_to_selection_id"]),
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     extrude_type=kwargs["extrude_type"].value,
                     pull_symmetric=kwargs["pull_symmetric"],
                     offset_mode=kwargs["offset_mode"].value,
                     copy=kwargs["copy"],
                     force_do_as_extrude=kwargs["force_do_as_extrude"],
+                    seed_point=from_point3d_to_grpc_point(kwargs["seed_point"]),
                 )
             ]
         )

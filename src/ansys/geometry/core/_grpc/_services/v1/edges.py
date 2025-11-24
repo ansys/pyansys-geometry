@@ -35,6 +35,7 @@ from .conversions import (
     from_length_to_grpc_quantity,
     from_point3d_to_grpc_point,
     from_unit_vector_to_grpc_direction,
+    serialize_tracked_command_response,
 )
 
 
@@ -186,7 +187,10 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
 
     @protect_grpc
     def extrude_edges(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v0.commands_pb2 import ExtrudeEdgesRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            ExtrudeEdgesRequest,
+            ExtrudeEdgesRequestData,
+        )
 
         # Parse some optional arguments
         point = from_point3d_to_grpc_point(kwargs["point"]) if kwargs["point"] else None
@@ -196,34 +200,108 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtrudeEdgesRequest(
-            edges=[build_grpc_id(edge_id) for edge_id in kwargs["edge_ids"]],
-            distance=from_length_to_grpc_quantity(kwargs["distance"]),
-            face=build_grpc_id(kwargs["face"]),
-            point=point,
-            direction=direction,
-            extrude_type=kwargs["extrude_type"].value,
-            pull_symmetric=kwargs["pull_symmetric"],
-            copy=kwargs["copy"],
-            natural_extension=kwargs["natural_extension"],
+            request_data=[
+                ExtrudeEdgesRequestData(
+                    edge_ids=[build_grpc_id(edge_id) for edge_id in kwargs["edge_ids"]],
+                    face_id=build_grpc_id(kwargs["face"]),
+                    point=point,
+                    direction=direction,
+                    distance=from_length_to_grpc_quantity(kwargs["distance"]),
+                    extrude_type=kwargs["extrude_type"].value,
+                    pull_symmetric=kwargs["pull_symmetric"],
+                    copy=kwargs["copy"],
+                    natural_extension=kwargs["natural_extension"],
+                )
+            ]
         )
 
-        # Call the gRPC service
-        resp = self.EditStub.ExtrudeEdges(request)
+        # Call the gRPC service and serialize the response
+        response = self.EditStub.ExtrudeEdges(request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
-            "created_bodies": [body.id for body in resp.created_bodies],
-            "success": resp.success,
+            "success": tracked_response.get("success"),
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
         }
 
     @protect_grpc
     def extrude_edges_up_to(self, **kwargs) -> dict:  # noqa: D102
-        return NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            ExtrudeEdgesUpToRequest,
+            ExtrudeEdgesUpToRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ExtrudeEdgesUpToRequest(
+            request_data=[
+                ExtrudeEdgesUpToRequestData(
+                    edge_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    up_to_selection_id=build_grpc_id(kwargs["up_to_selection_id"]),
+                    seed_point=from_point3d_to_grpc_point(kwargs["seed_point"]),
+                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+                    extrude_type=kwargs["extrude_type"].value,
+                )
+            ]
+        )
+
+        # Call the gRPC service and serialize the response
+        response = self.EditStub.ExtrudeFacesUpTo(request=request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": tracked_response.get("success"),
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+        }
 
     @protect_grpc
     def move_imprint_edges(self, **kwargs) -> dict:  # noqa: D102
-        return NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            MoveImprintEdgesRequest,
+            MoveImprintEdgesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MoveImprintEdgesRequest(
+            request_data=[
+                MoveImprintEdgesRequestData(
+                    edge_ids=[build_grpc_id(edge_id) for edge_id in kwargs["edge_ids"]],
+                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+                    distance=from_length_to_grpc_quantity(kwargs["distance"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.EditStub.MoveImprintEdges(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+        }
 
     @protect_grpc
     def offset_edges(self, **kwargs) -> dict:  # noqa: D102
-        return NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            OffsetEdgesRequest,
+            OffsetEdgesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = OffsetEdgesRequest(
+            request_data=[
+                OffsetEdgesRequestData(
+                    edge_ids=[build_grpc_id(edge_id) for edge_id in kwargs["edge_ids"]],
+                    value=from_length_to_grpc_quantity(kwargs["offset"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.EditStub.OffsetEdges(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+        }
