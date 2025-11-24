@@ -23,6 +23,7 @@
 
 import grpc
 
+from ansys.geometry.core._grpc._services.v1.conversions import build_grpc_id
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.coordinate_systems import GRPCCoordinateSystemService
@@ -61,7 +62,7 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no 
         request = CreateRequest(
             request_data=[
                 CreateRequestData(
-                    parent_id=kwargs["parent_id"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
                     name=kwargs["name"],
                     frame=from_frame_to_grpc_frame(kwargs["frame"]),
                 )

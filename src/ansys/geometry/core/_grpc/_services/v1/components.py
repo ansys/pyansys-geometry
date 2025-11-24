@@ -66,8 +66,8 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
             components=[
                 CreateComponentData(
                     name=kwargs["name"],
-                    parent_id=kwargs["parent_id"],
-                    template_id=kwargs["template_id"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    template_id=build_grpc_id(kwargs["template_id"]),
                     instance_name=kwargs["instance_name"],
                 )
             ]
