@@ -24,6 +24,7 @@
 from enum import Enum
 from functools import wraps
 import os
+from pathlib import Path
 from typing import Optional
 
 from beartype import beartype as check_input_types
@@ -37,6 +38,7 @@ try:
 except ModuleNotFoundError:  # pragma: no cover
     _HAS_DOCKER = False
 
+from ansys.tools.common.cyberchannel import verify_transport_mode
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.logger import LOG
 
@@ -106,6 +108,14 @@ class LocalDockerInstance:
         in which case the ``LocalDockerInstance`` class identifies the OS of your
         Docker engine and deploys the latest version of the Geometry service for that
         OS.
+    transport_mode : str | None
+        Transport mode selected, by default `None` and thus it will be selected
+        for you based on the connection criteria. Options are: "insecure", "mtls"
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
     """
 
     __DOCKER_CLIENT__: "DockerClient" = None
@@ -164,6 +174,8 @@ class LocalDockerInstance:
         restart_if_existing_service: bool = False,
         name: str | None = None,
         image: GeometryContainers | None = None,
+        transport_mode: str | None = None,
+        certs_dir: Path | str | None = None,
     ) -> None:
         """``LocalDockerInstance`` constructor."""
         # Initialize instance variables
@@ -190,7 +202,13 @@ class LocalDockerInstance:
         #
         # First, check if the port is available... otherwise raise error
         if port_available:
-            self._deploy_container(port=port, name=name, image=image)
+            self._deploy_container(
+                port=port,
+                name=name,
+                image=image,
+                transport_mode=transport_mode,
+                certs_dir=certs_dir,
+            )
         else:
             raise RuntimeError(f"Geometry service cannot be deployed on port {port}")
 
@@ -245,7 +263,14 @@ class LocalDockerInstance:
         # If you have reached this point, the image is not a Geometry service
         return False  # pragma: no cover
 
-    def _deploy_container(self, port: int, name: str | None, image: GeometryContainers | None):
+    def _deploy_container(
+        self,
+        port: int,
+        name: str | None,
+        image: GeometryContainers | None,
+        transport_mode: str | None,
+        certs_dir: Path | str | None,
+    ) -> None:
         """Handle the deployment of a Geometry service.
 
         Parameters
@@ -258,6 +283,14 @@ class LocalDockerInstance:
         image : GeometryContainers or None
             Geometry service Docker container image to be used. If ``None``, the
             latest container version matching
+        transport_mode : str | None
+            Transport mode selected, by default `None` and thus it will be selected
+            for you based on the connection criteria. Options are: "insecure", "mtls"
+        certs_dir : Path | str | None
+            Directory to use for TLS certificates.
+            By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment
+            variable. If not found, it will use the "certs" folder assuming it is in the
+            current working directory.
 
         Raises
         ------
@@ -292,6 +325,37 @@ class LocalDockerInstance:
                 "No license server provided... Store its value under the following env variable: ANSRV_GEO_LICENSE_SERVER."  # noqa: E501
             )
 
+        # Verify the transport mode
+        if transport_mode:
+            verify_transport_mode(transport_mode, "remote")
+        else:
+            # Default to "mtls" if possible
+            transport_mode = "mtls"
+            LOG.info(f"No transport mode provided. Defaulting to '{transport_mode}'")
+
+        # Create the shared volume if mtls is selected
+        volumes = None
+        if transport_mode == "mtls":
+            # Share the certificates directory if needed
+            if certs_dir is None:
+                certs_dir_env = os.getenv("ANSYS_GRPC_CERTIFICATES", None)
+                if certs_dir_env is not None:
+                    certs_dir = certs_dir_env
+                else:
+                    certs_dir = Path.cwd() / "certs"
+
+            if not Path(certs_dir).is_dir():  # pragma: no cover
+                raise RuntimeError(
+                    "Transport mode 'mtls' was selected, but the expected"
+                    f" certificates directory does not exist: {certs_dir}"
+                )
+            volumes = {
+                str(Path(certs_dir).resolve()): {
+                    "bind": "/certs" if image.value[1] == "linux" else "C:/certs",
+                    "mode": "ro",
+                }
+            }
+
         # Try to deploy it
         try:
             container: Container = self.docker_client().containers.run(
@@ -300,12 +364,17 @@ class LocalDockerInstance:
                 auto_remove=True,
                 name=name,
                 ports={"50051/tcp": port},
+                volumes=volumes,
                 environment={
                     "LICENSE_SERVER": license_server,
                     "LOG_LEVEL": os.getenv("ANSRV_GEO_LOG_LEVEL", 2),
                     "ENABLE_TRACE": os.getenv("ANSRV_GEO_ENABLE_TRACE", 0),
                     "USE_DEBUG_MODE": os.getenv("ANSRV_GEO_USE_DEBUG_MODE", 0),
+                    "ANSYS_GRPC_CERTIFICATES": "/certs"
+                    if image.value[1] == "linux"
+                    else "C:/certs",
                 },
+                command=f"--transport-mode={transport_mode}",
             )
         except ImageNotFound:  # pragma: no cover
             raise RuntimeError(

@@ -301,6 +301,8 @@ def launch_docker_modeler(
     image: GeometryContainers | None = None,
     client_log_level: int = logging.INFO,
     client_log_file: str | None = None,
+    transport_mode: str | None = None,
+    certs_dir: Path | str | None = None,
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using Docker.
@@ -335,6 +337,14 @@ def launch_docker_modeler(
     client_log_file : str, default: None
         Path to the log file for the client. The default is ``None``,
         in which case the client logs to the console.
+    transport_mode : str | None
+        Transport mode selected, by default `None` and thus it will be selected
+        for you based on the connection criteria. Options are: "insecure", "mtls"
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -356,6 +366,8 @@ def launch_docker_modeler(
         restart_if_existing_service=restart_if_existing_service,
         name=name,
         image=image,
+        transport_mode=transport_mode,
+        certs_dir=certs_dir,
     )
 
     # Once the local Docker instance is ready... return the Modeler
@@ -365,6 +377,8 @@ def launch_docker_modeler(
         docker_instance=docker_instance,
         logging_level=client_log_level,
         logging_file=client_log_file,
+        transport_mode=transport_mode if transport_mode else "mtls",
+        certs_dir=certs_dir,
     )
 
 
@@ -510,6 +524,10 @@ def launch_modeler_with_geometry_service(
     server_logs_folder: str = None,
     client_log_file: str = None,
     server_working_dir: str | Path | None = None,
+    transport_mode: str | None = None,
+    uds_dir: Path | str | None = None,
+    uds_id: str | None = None,
+    certs_dir: Path | str | None = None,
     product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ) -> "Modeler":
@@ -563,6 +581,21 @@ def launch_modeler_with_geometry_service(
     server_working_dir : str | Path, optional
         Sets the working directory for the product instance. If nothing is defined,
         the working directory will be inherited from the parent process.
+    transport_mode : str | None
+        Transport mode selected, by default `None` and thus it will be selected
+        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+    uds_dir : Path | str | None
+        Directory to use for Unix Domain Sockets (UDS) transport mode.
+        By default `None` and thus it will use the "~/.conn" folder.
+    uds_id : str | None
+        Optional ID to use for the UDS socket filename.
+        By default `None` and thus it will use "aposdas_socket.sock".
+        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
     product_version: int, optional
         The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
@@ -621,6 +654,10 @@ def launch_modeler_with_geometry_service(
         server_logs_folder=server_logs_folder,
         client_log_file=client_log_file,
         server_working_dir=server_working_dir,
+        transport_mode=transport_mode,
+        uds_dir=uds_dir,
+        uds_id=uds_id,
+        certs_dir=certs_dir,
         product_version=product_version,
     )
 
@@ -639,6 +676,10 @@ def launch_modeler_with_discovery(
     client_log_level: int = logging.INFO,
     client_log_file: str = None,
     server_working_dir: str | Path | None = None,
+    transport_mode: str | None = None,
+    uds_dir: Path | str | None = None,
+    uds_id: str | None = None,
+    certs_dir: Path | str | None = None,
     product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ):
@@ -694,6 +735,21 @@ def launch_modeler_with_discovery(
     server_working_dir : str | Path, optional
         Sets the working directory for the product instance. If nothing is defined,
         the working directory will be inherited from the parent process.
+    transport_mode : str | None
+        Transport mode selected, by default `None` and thus it will be selected
+        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+    uds_dir : Path | str | None
+        Directory to use for Unix Domain Sockets (UDS) transport mode.
+        By default `None` and thus it will use the "~/.conn" folder.
+    uds_id : str | None
+        Optional ID to use for the UDS socket filename.
+        By default `None` and thus it will use "aposdas_socket.sock".
+        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
     product_version: int, optional
         The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
@@ -747,6 +803,10 @@ def launch_modeler_with_discovery(
         client_log_level=client_log_level,
         client_log_file=client_log_file,
         server_working_dir=server_working_dir,
+        transport_mode=transport_mode,
+        uds_dir=uds_dir,
+        uds_id=uds_id,
+        certs_dir=certs_dir,
         product_version=product_version,
     )
 
@@ -765,6 +825,10 @@ def launch_modeler_with_spaceclaim(
     client_log_level: int = logging.INFO,
     client_log_file: str = None,
     server_working_dir: str | Path | None = None,
+    transport_mode: str | None = None,
+    uds_dir: Path | str | None = None,
+    uds_id: str | None = None,
+    certs_dir: Path | str | None = None,
     product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ):
@@ -820,6 +884,21 @@ def launch_modeler_with_spaceclaim(
     server_working_dir : str | Path, optional
         Sets the working directory for the product instance. If nothing is defined,
         the working directory will be inherited from the parent process.
+    transport_mode : str | None
+        Transport mode selected, by default `None` and thus it will be selected
+        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+    uds_dir : Path | str | None
+        Directory to use for Unix Domain Sockets (UDS) transport mode.
+        By default `None` and thus it will use the "~/.conn" folder.
+    uds_id : str | None
+        Optional ID to use for the UDS socket filename.
+        By default `None` and thus it will use "aposdas_socket.sock".
+        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
     product_version: int, optional
         The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
@@ -873,6 +952,10 @@ def launch_modeler_with_spaceclaim(
         client_log_level=client_log_level,
         client_log_file=client_log_file,
         server_working_dir=server_working_dir,
+        transport_mode=transport_mode,
+        uds_dir=uds_dir,
+        uds_id=uds_id,
+        certs_dir=certs_dir,
         product_version=product_version,
     )
 
@@ -890,6 +973,10 @@ def launch_modeler_with_core_service(
     server_logs_folder: str = None,
     client_log_file: str = None,
     server_working_dir: str | Path | None = None,
+    transport_mode: str | None = None,
+    uds_dir: Path | str | None = None,
+    uds_id: str | None = None,
+    certs_dir: Path | str | None = None,
     product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ) -> "Modeler":
@@ -943,6 +1030,21 @@ def launch_modeler_with_core_service(
     server_working_dir : str | Path, optional
         Sets the working directory for the product instance. If nothing is defined,
         the working directory will be inherited from the parent process.
+    transport_mode : str | None
+        Transport mode selected, by default `None` and thus it will be selected
+        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+    uds_dir : Path | str | None
+        Directory to use for Unix Domain Sockets (UDS) transport mode.
+        By default `None` and thus it will use the "~/.conn" folder.
+    uds_id : str | None
+        Optional ID to use for the UDS socket filename.
+        By default `None` and thus it will use "aposdas_socket.sock".
+        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
     product_version: int, optional
         The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
@@ -1001,6 +1103,10 @@ def launch_modeler_with_core_service(
         server_logs_folder=server_logs_folder,
         client_log_file=client_log_file,
         server_working_dir=server_working_dir,
+        transport_mode=transport_mode,
+        uds_dir=uds_dir,
+        uds_id=uds_id,
+        certs_dir=certs_dir,
         specific_minimum_version=252,
         product_version=product_version,
     )
