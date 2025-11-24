@@ -32,8 +32,8 @@ import socket
 import subprocess  # nosec B404
 from typing import TYPE_CHECKING
 
-from ansys.tools.common.path import get_available_ansys_installations, get_latest_ansys_installation
 from ansys.tools.common.cyberchannel import verify_transport_mode, verify_uds_socket
+from ansys.tools.common.path import get_available_ansys_installations, get_latest_ansys_installation
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.logger import LOG
@@ -546,11 +546,10 @@ def prepare_and_start_backend(
     # Assign environment variables as needed
     if transport_values["certs_dir"]:
         env_copy["ANSYS_GRPC_CERTIFICATES"] = certs_dir
-    
+
     # On SpaceClaim and Discovery, we need to change the "--" to "/"
     if backend_type in (BackendType.DISCOVERY, BackendType.SPACECLAIM):
         exe_args = [arg.replace("--", "/") for arg in exe_args]
-
 
     LOG.info(f"Launching ProductInstance for {backend_type.name}")
     LOG.debug(f"Args: {args}")
@@ -634,7 +633,7 @@ def _wait_for_backend(host: str, port: int, timeout: int, transport_values: dict
                 else:
                     LOG.debug("Still waiting for backend to be ready... Retrying in 5 seconds.")
                     time.sleep(5)
- 
+
     raise ConnectionError("Timeout while waiting for backend to be ready.")
 
 
@@ -798,7 +797,6 @@ def _get_common_env(
             env_copy[BACKEND_LOG_LEVEL_VARIABLE] = "0"
 
     return env_copy
-
 
 
 def _handle_transport_mode(

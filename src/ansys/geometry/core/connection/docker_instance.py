@@ -39,6 +39,7 @@ except ModuleNotFoundError:  # pragma: no cover
     _HAS_DOCKER = False
 
 from ansys.tools.common.cyberchannel import verify_transport_mode
+
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.logger import LOG
 
