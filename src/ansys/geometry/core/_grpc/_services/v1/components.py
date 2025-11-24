@@ -61,16 +61,17 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
             CreateRequest,
         )
 
-        # Create the component data - assumes all inputs are valid and of the proper type
-        component_data = CreateComponentData(
-            name=kwargs["name"],
-            parent_id=kwargs["parent_id"],
-            template_id=kwargs["template_id"],
-            instance_name=kwargs["instance_name"],
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateRequest(
+            components=[
+                CreateComponentData(
+                    name=kwargs["name"],
+                    parent_id=kwargs["parent_id"],
+                    template_id=kwargs["template_id"],
+                    instance_name=kwargs["instance_name"],
+                )
+            ]
         )
-
-        # Wrap in CreateRequest with repeated field
-        request = CreateRequest(components=[component_data])
 
         # Call the gRPC service
         response = self.stub.Create(request)
@@ -123,18 +124,17 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
             else None
         )
 
-        # Create the placement data
-        placement_data = PlacementData(
-            translation=translation,
-            rotation_axis_origin=origin,
-            rotation_axis_direction=direction,
-            rotation_angle=from_measurement_to_server_angle(kwargs["rotation_angle"]),
-        )
-
         # Create the request with repeated ids and placements
         request = SetPlacementRequest(
             ids=[kwargs["id"]],
-            placements=[placement_data],
+            placements=[
+                PlacementData(
+                    translation=translation,
+                    rotation_axis_origin=origin,
+                    rotation_axis_direction=direction,
+                    rotation_angle=from_measurement_to_server_angle(kwargs["rotation_angle"]),
+                )
+            ],
         )
 
         # Call the gRPC service
@@ -153,14 +153,15 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
             SharedTopologyData,
         )
 
-        # Create the shared topology data
-        shared_topology_data = SharedTopologyData(
-            id=kwargs["id"],
-            share_type=kwargs["share_type"].value,
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetSharedTopologyRequest(
+            shared_topologies=[
+                SharedTopologyData(
+                    id=kwargs["id"],
+                    share_type=kwargs["share_type"].value,
+                )
+            ]
         )
-
-        # Create the request with repeated field
-        request = SetSharedTopologyRequest(shared_topologies=[shared_topology_data])
 
         # Call the gRPC service
         _ = self.stub.SetSharedTopology(request)
