@@ -56,26 +56,34 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
 
     @protect_grpc
     def create(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.component_pb2 import CreateRequest
+        from ansys.api.discovery.v1.design.geometry.component_pb2 import (
+            CreateComponentData,
+            CreateRequest,
+        )
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = CreateRequest(
+        # Create the component data - assumes all inputs are valid and of the proper type
+        component_data = CreateComponentData(
             name=kwargs["name"],
-            parent=kwargs["parent_id"],
-            template=kwargs["template_id"],
+            parent_id=kwargs["parent_id"],
+            template_id=kwargs["template_id"],
             instance_name=kwargs["instance_name"],
         )
+
+        # Wrap in CreateRequest with repeated field
+        request = CreateRequest(components=[component_data])
 
         # Call the gRPC service
         response = self.stub.Create(request)
 
         # Return the response - formatted as a dictionary
+        # Note: response.components is a repeated field, we return the first one
+        component = response.components[0]
         return {
-            "id": response.component.id,
-            "name": response.component.name,
-            "instance_name": response.component.instance_name,
-            "template": response.template,
-            "component": response.component,
+            "id": component.id,
+            "name": component.name,
+            "instance_name": component.instance_name,
+            "template": kwargs["template_id"],  # template_id from input
+            "component": component,
         }
 
     @protect_grpc
@@ -93,7 +101,10 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
 
     @protect_grpc
     def set_placement(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.component_pb2 import SetPlacementRequest
+        from ansys.api.discovery.v1.design.geometry.component_pb2 import (
+            PlacementData,
+            SetPlacementRequest,
+        )
 
         # Create the direction and point objects
         translation = (
@@ -112,30 +123,44 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
             else None
         )
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = SetPlacementRequest(
-            id=kwargs["id"],
+        # Create the placement data
+        placement_data = PlacementData(
             translation=translation,
             rotation_axis_origin=origin,
             rotation_axis_direction=direction,
             rotation_angle=from_measurement_to_server_angle(kwargs["rotation_angle"]),
         )
 
+        # Create the request with repeated ids and placements
+        request = SetPlacementRequest(
+            ids=[kwargs["id"]],
+            placements=[placement_data],
+        )
+
         # Call the gRPC service
         response = self.stub.SetPlacement(request)
 
         # Return the response - formatted as a dictionary
-        return {"matrix": from_grpc_matrix_to_matrix(response.matrix)}
+        # Note: response.matrices is a map<string, Matrix>
+        # Get the matrix for our component ID
+        matrix_value = response.matrices.get(kwargs["id"].id)
+        return {"matrix": from_grpc_matrix_to_matrix(matrix_value) if matrix_value else None}
 
     @protect_grpc
     def set_shared_topology(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.component_pb2 import SetSharedTopologyRequest
+        from ansys.api.discovery.v1.design.geometry.component_pb2 import (
+            SetSharedTopologyRequest,
+            SharedTopologyData,
+        )
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = SetSharedTopologyRequest(
+        # Create the shared topology data
+        shared_topology_data = SharedTopologyData(
             id=kwargs["id"],
             share_type=kwargs["share_type"].value,
         )
+
+        # Create the request with repeated field
+        request = SetSharedTopologyRequest(shared_topologies=[shared_topology_data])
 
         # Call the gRPC service
         _ = self.stub.SetSharedTopology(request)
@@ -145,8 +170,10 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
 
     @protect_grpc
     def delete(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
         # Create the request - assumes all inputs are valid and of the proper type
-        request = build_grpc_id(kwargs["id"])
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
 
         # Call the gRPC service
         _ = self.stub.Delete(request)
