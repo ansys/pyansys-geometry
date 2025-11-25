@@ -23,9 +23,11 @@
 
 import atexit
 import logging
+import os
 from pathlib import Path
 import time
 from typing import Optional
+import warnings
 
 from beartype import beartype as check_input_types
 import grpc
@@ -165,6 +167,13 @@ def wait_until_healthy(
     """
     t_max = time.time() + timeout
     t_out = 0.1
+
+    # If transport mode is not specified, default to insecure when running in CI
+    if transport_mode is None and os.getenv("IS_WORKFLOW_RUNNING") is not None:
+        warnings.warn(
+            "Transport mode forced to 'insecure' when running in CI workflows.",
+        )
+        transport_mode = "insecure"
 
     # If the channel is a string, create a channel using the default insecure channel
     channel_creation_required = True if isinstance(channel, str) else False
