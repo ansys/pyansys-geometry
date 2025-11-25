@@ -402,12 +402,11 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        # TODO: multiple faces?
         request = OffsetFacesSetRadiusRequest(
             request_data=[
                 OffsetFacesSetRadiusRequestData(
-                    id=[build_grpc_id(id) for id in kwargs["face_ids"]],
-                    radius=from_measurement_to_server_length(kwargs["radius"]),
+                    faces_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    radius=from_length_to_grpc_quantity(kwargs["radius"]),
                     offset_mode=kwargs["offset_mode"].value,
                     copy=kwargs["copy"],
                     extrude_type=kwargs["extrude_type"].value,
