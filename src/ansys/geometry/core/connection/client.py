@@ -169,17 +169,18 @@ def wait_until_healthy(
     t_out = 0.1
 
     # If transport mode is not specified, default to insecure when running in CI
-    if transport_mode is None and os.getenv("IS_WORKFLOW_RUNNING") is not None:
-        warnings.warn(
-            "Transport mode forced to 'insecure' when running in CI workflows.",
-        )
-        transport_mode = "insecure"
-    else:
-        raise ValueError(
-            "Transport mode must be specified when not running in CI workflows."
-            " Use 'transport_mode' parameter with one of the possible options."
-            " Options are: 'insecure', 'uds', 'wnua', 'mtls'."
-        )
+    if transport_mode is None:
+        if os.getenv("IS_WORKFLOW_RUNNING") is not None:
+            warnings.warn(
+                "Transport mode forced to 'insecure' when running in CI workflows.",
+            )
+            transport_mode = "insecure"
+        else:
+            raise ValueError(
+                "Transport mode must be specified when not running in CI workflows."
+                " Use 'transport_mode' parameter with one of the possible options."
+                " Options are: 'insecure', 'uds', 'wnua', 'mtls'."
+            )
 
     # If the channel is a string, create a channel using the default insecure channel
     channel_creation_required = True if isinstance(channel, str) else False
