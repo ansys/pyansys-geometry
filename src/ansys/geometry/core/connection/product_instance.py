@@ -871,12 +871,11 @@ def _handle_transport_mode(
                 "Transport mode 'mtls' was selected, but the expected"
                 f" certificates directory does not exist: {certs_dir}"
             )
-        LOG.info(f"Using certificates directory: {Path(certs_dir).resolve()}")
+        LOG.info(f"Using certificates directory: {Path(certs_dir).resolve().as_posix()}")
 
         # Determine args to be passed to the backend
         exe_args.append(f"--transport-mode={transport_mode}")
-        exe_args.append(f"--certs-dir={Path(certs_dir).resolve()}")
-
+        exe_args.append(f"--certs-dir={Path(certs_dir).resolve().as_posix()}")
     elif transport_mode == "uds":
         # UDS is only available for localhost connections
         if host not in loopback_localhosts:
@@ -894,7 +893,7 @@ def _handle_transport_mode(
 
         # Determine args to be passed to the backend
         exe_args.append(f"--transport-mode={transport_mode}")
-        exe_args.append(f"--uds-dir={Path(uds_dir).resolve()}")
+        exe_args.append(f"--uds-dir={Path(uds_dir).resolve().as_posix()}")
         if uds_id is not None:
             exe_args.append(f"--uds-id={uds_id}")
 
