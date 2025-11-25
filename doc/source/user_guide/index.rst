@@ -5,13 +5,14 @@ User guide
 ==========
 
 This section provides an overview of the PyAnsys Geometry library,
-explaining key concepts and approaches for primitives,
+explaining key concepts and approaches for connection, primitives,
 sketches (2D basic shape elements), and model designs.
 
 .. toctree::
    :maxdepth: 1
    :hidden:
 
+   connection
    primitives
    shapes
    designer
