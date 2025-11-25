@@ -24,12 +24,13 @@
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.measurements import Distance
 
 from ..base.patterns import GRPCPatternsService
 from .conversions import (
     build_grpc_id,
-    from_length_to_grpc_quantity,
     from_angle_to_grpc_quantity,
+    from_length_to_grpc_quantity,
 )
 
 
@@ -63,8 +64,8 @@ class GRPCPatternsServiceV1(GRPCPatternsService):  # pragma: no cover
         request = LinearPatternCreationRequest(
             request_data=[
                 LinearPatternCreationRequestData(
-                    selection_ids=kwargs["selection_ids"],
-                    linear_direction_id=kwargs["linear_direction_id"],
+                    selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    linear_direction_id=build_grpc_id(kwargs["linear_direction_id"]),
                     count_x=kwargs["count_x"],
                     pitch_x=from_length_to_grpc_quantity(kwargs["pitch_x"]),
                     two_dimensional=kwargs["two_dimensional"],
@@ -72,7 +73,7 @@ class GRPCPatternsServiceV1(GRPCPatternsService):  # pragma: no cover
                     pitch_y=(
                         from_length_to_grpc_quantity(kwargs["pitch_y"])
                         if kwargs["pitch_y"]
-                        else 0.0
+                        else from_length_to_grpc_quantity(Distance(0))
                     ),
                 )
             ]
@@ -138,7 +139,7 @@ class GRPCPatternsServiceV1(GRPCPatternsService):  # pragma: no cover
         linear_pitch = (
             from_length_to_grpc_quantity(kwargs["linear_pitch"])
             if kwargs["linear_pitch"]
-            else None
+            else from_length_to_grpc_quantity(Distance(0.0))
         )
 
         # Create line if axis is a line object
@@ -158,7 +159,7 @@ class GRPCPatternsServiceV1(GRPCPatternsService):  # pragma: no cover
                     circular_angle=from_angle_to_grpc_quantity(kwargs["circular_angle"]),
                     two_dimensional=kwargs["two_dimensional"],
                     linear_count=kwargs["linear_count"],
-                    linear_pitch=from_length_to_grpc_quantity(linear_pitch),
+                    linear_pitch=linear_pitch,
                     radial_direction=radial_direction,
                     line_axis=axis,
                 )
@@ -188,7 +189,7 @@ class GRPCPatternsServiceV1(GRPCPatternsService):  # pragma: no cover
                     circular_count=kwargs["circular_count"],
                     linear_count=kwargs["linear_count"],
                     step_angle=from_angle_to_grpc_quantity(kwargs["step_angle"]),
-                    step_linear=from_angle_to_grpc_quantity(kwargs["step_linear"]),
+                    step_linear=from_length_to_grpc_quantity(kwargs["step_linear"]),
                 )
             ]
         )
