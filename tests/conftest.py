@@ -76,6 +76,14 @@ def pytest_addoption(parser):
         help=("Specify the backend version to use for the tests. By default, 'latest'."),
     )
 
+    parser.addoption(
+        "--transport-mode",
+        action="store",
+        default="default",
+        help=("Specify the transport mode to use for the tests. By default, 'default'."),
+        choices=("default", "insecure", "uds", "wnua", "mtls"),
+    )
+
 
 def pytest_configure(config):
     """Configure pytest with custom options."""
@@ -170,6 +178,16 @@ def proto_version(request):
     """Fixture to determine proto files version to be used."""
     value: str = request.config.getoption("--proto-version", default="v0")
     return value.lower()
+
+
+@pytest.fixture(scope="session")
+def transport_mode(request):
+    """Fixture to determine transport mode to be used."""
+
+    value: str = request.config.getoption("--transport-mode", default="default")
+    mode = None if value.lower() == "default" else value.lower()
+
+    return mode
 
 
 @pytest.fixture
