@@ -58,7 +58,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
 
         self.stub = EdgeStub(channel)
-        self.EditStub = EditStub(channel)
+        self.edit_stub = EditStub(channel)
 
     @protect_grpc
     def get_edge(self, **kwargs) -> dict:  # noqa: D102
@@ -216,7 +216,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         )
 
         # Call the gRPC service and serialize the response
-        response = self.EditStub.ExtrudeEdges(request)
+        response = self.edit_stub.ExtrudeEdges(request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
@@ -248,7 +248,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         )
 
         # Call the gRPC service and serialize the response
-        response = self.EditStub.ExtrudeFacesUpTo(request=request)
+        response = self.edit_stub.ExtrudeFacesUpTo(request=request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
@@ -278,7 +278,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.EditStub.MoveImprintEdges(request)
+        response = self.edit_stub.MoveImprintEdges(request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -303,7 +303,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.EditStub.OffsetEdges(request)
+        response = self.edit_stub.OffsetEdges(request)
 
         # Return the response - formatted as a dictionary
         return {
