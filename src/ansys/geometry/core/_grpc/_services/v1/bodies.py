@@ -552,9 +552,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RemoveAssignedCADMaterialRequest(
-            ids=[build_grpc_id(id) for id in kwargs["ids"]]
-        )
+        request = RemoveAssignedCADMaterialRequest(ids=[build_grpc_id(id) for id in kwargs["ids"]])
 
         # Call the gRPC service
         resp = self.stub.RemoveAssignedCADMaterial(request=request)
