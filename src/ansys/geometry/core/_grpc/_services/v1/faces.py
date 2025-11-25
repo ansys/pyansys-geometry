@@ -433,7 +433,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
                 RevolveFacesRequestData(
                     selection_id=[build_grpc_id(id) for id in kwargs["selection_ids"]],
                     axis=from_line_to_grpc_line(kwargs["axis"]),
-                    angle=from_measurement_to_server_angle(kwargs["angle"]),
+                    angle=from_angle_to_grpc_quantity(kwargs["angle"]),
                     extrude_type=kwargs["extrude_type"].value,
                 )
             ]
@@ -493,9 +493,9 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
                     selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     axis=from_line_to_grpc_line(kwargs["axis"]),
-                    height=from_measurement_to_server_length(kwargs["height"]),
-                    pitch=from_measurement_to_server_length(kwargs["pitch"]),
-                    taper_angle=from_measurement_to_server_angle(kwargs["taper_angle"]),
+                    height=from_length_to_grpc_quantity(kwargs["height"]),
+                    pitch=from_length_to_grpc_quantity(kwargs["pitch"]),
+                    taper_angle=from_angle_to_grpc_quantity(kwargs["taper_angle"]),
                     right_handed=kwargs["right_handed"],
                     both_sides=kwargs["both_sides"],
                     extrude_type=kwargs["extrude_type"].value,
@@ -510,7 +510,9 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "created_bodies": [
+                body.get("id").id for body in tracked_response.get("created_bodies")
+            ],
         }
 
     @protect_grpc
@@ -613,7 +615,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         request = OffsetFacesRequest(
             request_data=[
                 OffsetFacesRequestData(
-                    faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
                     offset=from_measurement_to_server_length(kwargs["distance"]),
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     extrude_type=kwargs["extrude_type"].value,

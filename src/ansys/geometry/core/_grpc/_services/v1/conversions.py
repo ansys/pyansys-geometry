@@ -179,9 +179,9 @@ def from_point3d_to_grpc_point(point: "Point3D") -> GRPCPoint:
     from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
     return GRPCPoint(
-        x=point.x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        y=point.y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        z=point.z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        x=GRPCQuantity(value_in_geometry_units=point.x.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        y=GRPCQuantity(value_in_geometry_units=point.y.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        z=GRPCQuantity(value_in_geometry_units=point.z.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
     )
 
 
@@ -987,7 +987,6 @@ def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
     Curve
         Resulting converted curve.
     """
-    from ansys.geometry.core.math.point import Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.shapes.curves.circle import Circle
     from ansys.geometry.core.shapes.curves.ellipse import Ellipse
@@ -1000,10 +999,13 @@ def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
     except ValueError:
         # curve will be a line
         pass
-    if curve.radius != 0:
-        result = Circle(origin, curve.radius, reference, axis)
-    elif curve.major_radius != 0 and curve.minor_radius != 0:
-        result = Ellipse(origin, curve.major_radius, curve.minor_radius, reference, axis)
+
+    major_radius = curve.major_radius.value_in_geometry_units
+    minor_radius = curve.minor_radius.value_in_geometry_units
+    if curve.radius.value_in_geometry_units != 0:
+        result = Circle(origin, curve.radius.value_in_geometry_units, reference, axis)
+    elif major_radius != 0 and minor_radius != 0:
+        result = Ellipse(origin, major_radius, minor_radius, reference, axis)
     elif curve.nurbs_curve.nurbs_data.degree != 0:
         result = from_grpc_nurbs_curve_to_nurbs_curve(curve.nurbs_curve)
     elif curve.direction is not None:
@@ -1446,15 +1448,15 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
         }
 
     return {
-        "success": getattr(response, "success", False),
+        "success": getattr(response.command_response, "success", False),
         "created_bodies": [
-            serialize_body(body) for body in getattr(response, "created_bodies", [])
+            serialize_body(body) for body in getattr(response.tracked_changes, "created_bodies", [])
         ],
         "modified_bodies": [
-            serialize_body(body) for body in getattr(response, "modified_bodies", [])
+            serialize_body(body) for body in getattr(response.tracked_changes, "modified_bodies", [])
         ],
         "deleted_bodies": [
             serialize_entity_identifier(entity)
-            for entity in getattr(response, "deleted_bodies", [])
+            for entity in getattr(response.tracked_changes, "deleted_bodies", [])
         ],
     }
