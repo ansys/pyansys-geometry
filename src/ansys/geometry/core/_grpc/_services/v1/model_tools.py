@@ -125,7 +125,7 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
         )
 
         from .conversions import from_angle_to_grpc_quantity, from_line_to_grpc_line
-        
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = MoveRotateRequest(
             request_data=[
@@ -189,7 +189,7 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
             CreateSketchLineRequest,
             CreateSketchLineRequestData,
         )
-        
+
         from .conversions import from_point3d_to_grpc_point
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -199,7 +199,7 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
                     point1=from_point3d_to_grpc_point(kwargs["start"]),
                     point2=from_point3d_to_grpc_point(kwargs["end"]),
                 )
-            ]   
+            ]
         )
 
         # Call the gRPC service

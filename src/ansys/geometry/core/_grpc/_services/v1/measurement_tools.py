@@ -62,6 +62,4 @@ class GRPCMeasurementToolsServiceV1(GRPCMeasurementToolsService):  # pragma: no 
         response = self.stub.MinDistanceBetweenSelectionObjects(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "distance": to_distance(response.gap.distance.value_in_geometry_units)
-        }
+        return {"distance": to_distance(response.gap.distance.value_in_geometry_units)}
