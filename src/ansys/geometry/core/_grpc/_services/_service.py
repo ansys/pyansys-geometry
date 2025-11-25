@@ -200,6 +200,7 @@ class _GRPCServices:
         """
         if not self._bodies:
             # Import the appropriate body service based on the version
+            from .v0.bodies import GRPCBodyServiceV0
             from .v1.bodies import GRPCBodyServiceV1
 
             if self.version == GeometryApiProtos.V0:
