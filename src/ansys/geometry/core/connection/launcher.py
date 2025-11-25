@@ -25,6 +25,7 @@ import logging
 import os
 from pathlib import Path
 from typing import TYPE_CHECKING
+import warnings
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
@@ -358,6 +359,12 @@ def launch_docker_modeler(
 
     if not _HAS_DOCKER:  # pragma: no cover
         raise ModuleNotFoundError("The package 'docker' is required to use this function.")
+
+    if os.getenv("IS_WORKFLOW_RUNNING") is not None:
+        warnings.warn(
+            "Transport mode forced to 'insecure' when running in CI workflows.",
+        )
+        transport_mode = "insecure"
 
     # Call the LocalDockerInstance ctor.
     docker_instance = LocalDockerInstance(

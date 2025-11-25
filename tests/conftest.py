@@ -189,14 +189,6 @@ def transport_mode(request):
     value: str = request.config.getoption("--transport-mode", default="default")
     mode = None if value.lower() == "default" else value.lower()
 
-    if os.environ.get("IS_WORKFLOW_RUNNING") == "true":
-        # When running in CI, force transport mode to insecure for simplicity
-        mode = "insecure"
-        warnings.warn(
-            "Transport mode forced to 'insecure' when running in CI workflows.",
-            UserWarning,
-        )
-
     return mode
 
 
