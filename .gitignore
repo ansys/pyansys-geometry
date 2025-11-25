@@ -167,4 +167,7 @@ docker/*-binaries.zip
 # Ignore scripts folder
 scripts
 
+# Ignore certs folder
+certs
+
 # End of https://www.toptal.com/developers/gitignore/api/python

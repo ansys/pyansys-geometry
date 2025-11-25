@@ -9,6 +9,7 @@ env:
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
   RESET_IMAGE_CACHE: 0
+  IS_WORKFLOW_RUNNING: true
 
 permissions:
   contents: read
