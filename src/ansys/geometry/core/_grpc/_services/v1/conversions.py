@@ -668,8 +668,12 @@ def from_sketch_ellipse_to_grpc_ellipse(ellipse: "SketchEllipse", plane: "Plane"
 
     return GRPCEllipse(
         center=from_point2d_to_grpc_point(plane, ellipse.center),
-        majorradius=GRPCQuantity(value_in_geometry_units=ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
-        minorradius=GRPCQuantity(value_in_geometry_units=ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        majorradius=GRPCQuantity(
+            value_in_geometry_units=ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),
+        minorradius=GRPCQuantity(
+            value_in_geometry_units=ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),
         angle=GRPCQuantity(value_in_geometry_units=ellipse.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
     )
 
@@ -695,7 +699,9 @@ def from_sketch_circle_to_grpc_circle(circle: "SketchCircle", plane: "Plane") ->
 
     return GRPCCircle(
         center=from_point2d_to_grpc_point(plane, circle.center),
-        radius=GRPCQuantity(value_in_geometry_units=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        radius=GRPCQuantity(
+            value_in_geometry_units=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),
     )
 
 
@@ -718,7 +724,9 @@ def from_sketch_polygon_to_grpc_polygon(polygon: "Polygon", plane: "Plane") -> G
 
     return GRPCPolygon(
         center=from_point2d_to_grpc_point(plane, polygon.center),
-        radius=GRPCQuantity(value_in_geometry_units=polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        radius=GRPCQuantity(
+            value_in_geometry_units=polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),
         numberofsides=polygon.n_sides,
         angle=GRPCQuantity(value_in_geometry_units=polygon.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
     )
