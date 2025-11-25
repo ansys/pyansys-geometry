@@ -125,6 +125,8 @@ class GRPCPatternsServiceV1(GRPCPatternsService):  # pragma: no cover
 
         from ansys.geometry.core.shapes.curves.line import Line
 
+        from .conversions import from_line_to_grpc_line, from_unit_vector_to_grpc_direction
+
         # Create direction if not None
         radial_direction = (
             from_unit_vector_to_grpc_direction(kwargs["radial_direction"])
@@ -152,68 +154,84 @@ class GRPCPatternsServiceV1(GRPCPatternsService):  # pragma: no cover
                 CircularPatternCreationRequestData(
                     selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
                     circular_count=kwargs["circular_count"],
-                    circular_axis=circular_axis,
+                    edge_axis_id=circular_axis,
                     circular_angle=from_angle_to_grpc_quantity(kwargs["circular_angle"]),
                     two_dimensional=kwargs["two_dimensional"],
                     linear_count=kwargs["linear_count"],
-                    linear_pitch=linear_pitch,
+                    linear_pitch=from_length_to_grpc_quantity(linear_pitch),
                     radial_direction=radial_direction,
-            axis=axis,
+                    line_axis=axis,
                 )
             ]
         )
 
         # Call the gRPC service
-        response = self.stub.CreateCircularPattern(request)
+        response = self.stub.CreateCircular(request)
 
         # Return the response - formatted as a dictionary
         return {
-            "success": response.result.success,
+            "success": response.tracked_creation_response.creation_response.success,
         }
 
     @protect_grpc
     def modify_circular_pattern(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.design.relationships.pattern_pb2 import (
+            SetCircularPatternDataRequest,
+            SetCircularPatternDataRequestData,
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
-        request = ModifyCircularPatternRequest(
-            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
-            circular_count=kwargs["circular_count"],
-            linear_count=kwargs["linear_count"],
-            step_angle=from_angle_to_grpc_quantity(kwargs["step_angle"]),
-            step_linear=from_angle_to_grpc_quantity(kwargs["step_linear"]),
+        request = SetCircularPatternDataRequest(
+            request_data=[
+                SetCircularPatternDataRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    circular_count=kwargs["circular_count"],
+                    linear_count=kwargs["linear_count"],
+                    step_angle=from_angle_to_grpc_quantity(kwargs["step_angle"]),
+                    step_linear=from_angle_to_grpc_quantity(kwargs["step_linear"]),
+                )
+            ]
         )
 
         # Call the gRPC service
-        response = self.stub.ModifyCircularPattern(request)
+        response = self.stub.SetCircularData(request)
 
         # Return the response - formatted as a dictionary
         return {
-            "success": response.result.success,
+            "success": response.tracked_set_response.set_response.success,
         }
 
     @protect_grpc
     def create_fill_pattern(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.geometry.v0.commands_pb2 import CreateFillPatternRequest
+        from ansys.api.discovery.v1.design.relationships.pattern_pb2 import (
+            FillPatternCreationRequest,
+            FillPatternCreationRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = CreateFillPatternRequest(
-            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
-            linear_direction=build_grpc_id(kwargs["linear_direction_id"]),
-            fill_pattern_type=kwargs["fill_pattern_type"].value,
-            margin=from_length_to_grpc_quantity(kwargs["margin"]),
-            x_spacing=from_length_to_grpc_quantity(kwargs["x_spacing"]),
-            y_spacing=from_length_to_grpc_quantity(kwargs["y_spacing"]),
-            row_x_offset=from_length_to_grpc_quantity(kwargs["row_x_offset"]),
-            row_y_offset=from_length_to_grpc_quantity(kwargs["row_y_offset"]),
-            column_x_offset=from_length_to_grpc_quantity(kwargs["column_x_offset"]),
-            column_y_offset=from_length_to_grpc_quantity(kwargs["column_y_offset"]),
+        request = FillPatternCreationRequest(
+            request_data=[
+                FillPatternCreationRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    linear_direction_id=build_grpc_id(kwargs["linear_direction_id"]),
+                    fill_pattern_type=kwargs["fill_pattern_type"].value,
+                    margin=from_length_to_grpc_quantity(kwargs["margin"]),
+                    x_spacing=from_length_to_grpc_quantity(kwargs["x_spacing"]),
+                    y_spacing=from_length_to_grpc_quantity(kwargs["y_spacing"]),
+                    row_x_offset=from_length_to_grpc_quantity(kwargs["row_x_offset"]),
+                    row_y_offset=from_length_to_grpc_quantity(kwargs["row_y_offset"]),
+                    column_x_offset=from_length_to_grpc_quantity(kwargs["column_x_offset"]),
+                    column_y_offset=from_length_to_grpc_quantity(kwargs["column_y_offset"]),
+                )
+            ]
         )
 
         # Call the gRPC service
-        response = self.stub.CreateFillPattern(request)
+        response = self.stub.CreateFill(request)
 
         # Return the response - formatted as a dictionary
         return {
-            "success": response.result.success,
+            "success": response.tracked_creation_response.creation_response.success,
         }
 
     @protect_grpc
@@ -226,10 +244,10 @@ class GRPCPatternsServiceV1(GRPCPatternsService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.stub.UpdateFillPattern(request)
+        response = self.stub.UpdateFill(request)
 
         # Return the response - formatted as a dictionary
         return {
-            "success": response.result.success,
+            "success": response.tracked_command_response.command_response.success,
         }
 
