@@ -1460,4 +1460,28 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
             serialize_entity_identifier(entity)
             for entity in getattr(response.tracked_changes, "deleted_bodies", [])
         ],
+        "created_faces": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "created_face_ids", [])
+        ],
+        "modified_faces": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "modified_face_ids", [])
+        ],
+        "deleted_faces": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "deleted_face_ids", [])
+        ],
+        "created_edges": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "created_edge_ids", [])
+        ],
+        "modified_edges": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "modified_edge_ids", [])
+        ],
+        "deleted_edges": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "deleted_edge_ids", [])
+        ],
     }
