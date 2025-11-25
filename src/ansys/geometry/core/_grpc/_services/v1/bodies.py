@@ -437,14 +437,14 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request_data = MoveTranslateRequestData()
         for body_id in kwargs["ids"]:
             request_data.selection_ids.append(build_grpc_id(body_id))
-        
+
         # Set the distance using GRPCQuantity
         request_data.distance.CopyFrom(
             GRPCQuantity(
                 value_in_geometry_units=from_measurement_to_server_length(kwargs["distance"])
             )
         )
-        
+
         # direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
 
         # Create the request with request_data
@@ -644,10 +644,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Create request data
         request_data = SetFillStyleRequestData(
-            id=build_grpc_id(kwargs["id"]),
-            fill_style=kwargs["fill_style"].value
+            id=build_grpc_id(kwargs["id"]), fill_style=kwargs["fill_style"].value
         )
-        
+
         # Create the request with request_data
         request = SetFillStyleRequest(request_data=[request_data])
 
@@ -893,7 +892,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             request_data.target_selection_ids.append(build_grpc_id(target_body))
             for body_id in other_bodies:
                 request_data.target_selection_ids.append(build_grpc_id(body_id))
-            
+
             request = CombineMergeBodiesRequest(request_data=[request_data])
             response = self.edits_stub.CombineMergeBodies(request=request)
         else:
@@ -977,7 +976,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request_data = CombineMergeBodiesRequestData()
         for body_id in kwargs["body_ids"]:
             request_data.target_selection_ids.append(build_grpc_id(body_id))
-        
+
         # Create the request with request_data
         request = CombineMergeBodiesRequest(request_data=[request_data])
 
