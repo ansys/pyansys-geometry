@@ -26,9 +26,10 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.materials import GRPCMaterialsService
+from .conversions import from_material_to_grpc_material
 
 
-class GRPCMaterialsServiceV1(GRPCMaterialsService):  # pragma: no cover
+class GRPCMaterialsServiceV1(GRPCMaterialsService):
     """Materials service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
@@ -43,14 +44,36 @@ class GRPCMaterialsServiceV1(GRPCMaterialsService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.materials_pb2_grpc import MaterialsStub
+        from ansys.api.discovery.v1.design.data.cadmaterial_pb2_grpc import MaterialsStub
 
         self.stub = MaterialsStub(channel)
 
     @protect_grpc
     def add_material(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.data.cadmaterial_pb2_grpc import CreateRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateRequest(
+            request_data=from_material_to_grpc_material(kwargs["material"]),
+        )
+
+        # Call the gRPC service
+        _ = self.stub.Create(request=request)
+
+        # Convert the response to a dictionary
+        return {}
 
     @protect_grpc
     def remove_material(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.data.cadmaterial_pb2_grpc import DeleteRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DeleteRequest(
+            request_data=[from_material_to_grpc_material(mat) for mat in kwargs["materials"]]
+        )
+
+        # Call the gRPC service
+        _ = self.stub.Delete(request=request)
+
+        # Convert the response to a dictionary
+        return {}
