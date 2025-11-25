@@ -204,7 +204,7 @@ class _GRPCServices:
             from .v1.bodies import GRPCBodyServiceV1
 
             if self.version == GeometryApiProtos.V0:
-                self._bodies = GRPCBodyServiceV0(self.channel)
+                self._bodies = GRPCBodyServiceV1(self.channel)
             elif self.version == GeometryApiProtos.V1:  # pragma: no cover
                 # V1 is not implemented yet
                 self._bodies = GRPCBodyServiceV1(self.channel)

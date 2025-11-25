@@ -24,7 +24,8 @@
 import grpc
 import pint
 
-from ansys.geometry.core._grpc._services.v0.conversions import from_plane_to_grpc_plane
+from ansys.geometry.core._grpc._services.v0.conversions import from_trimmed_curve_to_grpc_trimmed_curve
+from ansys.geometry.core._grpc._services.v1.conversions import from_plane_to_grpc_plane, from_sketch_shapes_to_grpc_geometries
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
@@ -96,78 +97,102 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_extruded_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import CreateExtrudedBodyRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            CreateExtrudedBodyRequest,
+            CreateExtrudedBodyRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         # Note: This will need proper conversion functions for plane, geometries
         request = CreateExtrudedBodyRequest(
-            name=kwargs["name"],
-            parent=kwargs["parent_id"],
-            # plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
-            distance=from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"],
-            # geometries=from_sketch_shapes_to_grpc_geometries(
-            #     kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
-            # ),
+            request_data=[
+                CreateExtrudedBodyRequestData(
+                    name=kwargs["name"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
+                    geometries=from_sketch_shapes_to_grpc_geometries(
+                         kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
+                     ),
+                     distance=from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"],
+                )
+            ]
         )
 
         # Call the gRPC service
         resp = self.stub.CreateExtrudedBody(request=request)
 
         # Return the response - formatted as a dictionary
+        body = resp.bodies[0]
         return {
-            "id": resp.id,
-            "name": resp.name,
-            "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "id": body.id,
+            "name": body.name,
+            "master_id": body.master_id,
+            "is_surface": body.is_surface,
         }
 
     @protect_grpc
     def create_sweeping_profile_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import CreateSweepingProfileRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            CreateSweepingProfileRequest,
+            CreateSweepingProfileRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSweepingProfileRequest(
-            name=kwargs["name"],
-            parent=kwargs["parent_id"],
-            # plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
-            # geometries=from_sketch_shapes_to_grpc_geometries(
-            #     kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
-            # ),
-            # path=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["path"]],
+            request_data=[
+                CreateSweepingProfileRequestData(
+                    name=kwargs["name"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
+                    geometries=from_sketch_shapes_to_grpc_geometries(
+                        kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
+                    ),
+                    # path=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["path"]],
+                )
+            ]
         )
 
         # Call the gRPC service
         resp = self.stub.CreateSweepingProfile(request=request)
 
         # Return the response - formatted as a dictionary
+        body = resp.bodies[0]
         return {
-            "id": resp.id,
-            "name": resp.name,
-            "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "id": body.id,
+            "name": body.name,
+            "master_id": body.master_id,
+            "is_surface": body.is_surface,
         }
 
     @protect_grpc
     def create_sweeping_chain(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import CreateSweepingChainRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            CreateSweepingChainRequest,
+            CreateSweepingChainRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSweepingChainRequest(
-            name=kwargs["name"],
-            parent=kwargs["parent_id"],
-            # path=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["path"]],
-            # chain=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["chain"]],
+            request_data=[
+                CreateSweepingChainRequestData(
+                    name=kwargs["name"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    chain=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["chain"]],
+                    path=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["path"]],
+                )
+            ]
         )
 
         # Call the gRPC service
         resp = self.stub.CreateSweepingChain(request=request)
 
         # Return the response - formatted as a dictionary
+        body = resp.bodies[0]
         return {
-            "id": resp.id,
-            "name": resp.name,
-            "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "id": body.id,
+            "name": body.name,
+            "master_id": body.master_id,
+            "is_surface": body.is_surface,
         }
 
     @protect_grpc
@@ -241,56 +266,70 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         from ansys.api.discovery.v1.design.designmessages_pb2 import TrimmedCurveList
         from ansys.api.discovery.v1.design.geometry.body_pb2 import (
             CreateExtrudedBodyFromLoftProfilesRequest,
+            CreateExtrudedBodyFromLoftProfilesRequestData,
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateExtrudedBodyFromLoftProfilesRequest(
-            name=kwargs["name"],
-            parent=kwargs["parent_id"],
-            profiles=[
-                TrimmedCurveList(
-                    # curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile]
+            request_data=[
+                CreateExtrudedBodyFromLoftProfilesRequestData(
+                    name=kwargs["name"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    profiles=[
+                        TrimmedCurveList(
+                            curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile]
+                        )
+                        for profile in kwargs["profiles"]
+                    ],
+                    periodic=kwargs["periodic"],
+                    ruled=kwargs["ruled"],
                 )
-                for profile in kwargs["profiles"]
-            ],
-            periodic=kwargs["periodic"],
-            ruled=kwargs["ruled"],
+            ]
         )
 
         # Call the gRPC service
         resp = self.stub.CreateExtrudedBodyFromLoftProfiles(request=request)
 
         # Return the response - formatted as a dictionary
+        body = resp.bodies[0]
         return {
-            "id": resp.id,
-            "name": resp.name,
-            "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "id": body.id,
+            "name": body.name,
+            "master_id": body.master_id,
+            "is_surface": body.is_surface,
         }
 
     @protect_grpc
     def create_planar_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import CreatePlanarBodyRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            CreatePlanarBodyRequest,
+            CreatePlanarBodyRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreatePlanarBodyRequest(
-            name=kwargs["name"],
-            parent=kwargs["parent_id"],
-            # plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
-            # geometries=from_sketch_shapes_to_grpc_geometries(
-            #     kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
-            # ),
+            request_data=[
+                CreatePlanarBodyRequestData(
+                    name=kwargs["name"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
+                    geometries=from_sketch_shapes_to_grpc_geometries(
+                        kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
+                    ),
+                )
+            ]
         )
 
         # Call the gRPC service
         resp = self.stub.CreatePlanarBody(request=request)
 
         # Return the response - formatted as a dictionary
+        body = resp.bodies[0]
         return {
-            "id": resp.id,
-            "name": resp.name,
-            "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "id": body.id,
+            "name": body.name,
+            "master_id": body.master_id,
+            "is_surface": body.is_surface,
         }
 
     @protect_grpc
@@ -565,7 +604,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         from ansys.api.discovery.v1.physics.physicsentity_pb2 import SetNameRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SetNameRequest(body_id=kwargs["id"], name=kwargs["name"])
+        request = SetNameRequest(object_id=build_grpc_id(kwargs["id"]), name=kwargs["name"])
 
         # Call the gRPC service
         self.stub.SetName(request=request)
@@ -578,7 +617,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         from ansys.api.discovery.v1.design.geometry.body_pb2 import SetFillStyleRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SetFillStyleRequest(body_id=kwargs["id"], fill_style=kwargs["fill_style"].value)
+        request = SetFillStyleRequest(body_id=build_grpc_id(kwargs["id"]), fill_style=kwargs["fill_style"].value)
 
         # Call the gRPC service
         self.stub.SetFillStyle(request=request)
@@ -675,19 +714,26 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_collision(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import GetCollisionRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            GetCollisionRequest,
+            GetCollisionRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = GetCollisionRequest(
-            body_1_id=kwargs["id"],
-            body_2_id=kwargs["other_id"],
+            request_data=[
+                GetCollisionRequestData(
+                    body_1_id=build_grpc_id(kwargs["id"]),
+                    body_2_id=build_grpc_id(kwargs["other_id"]),
+                )
+            ]
         )
 
         # Call the gRPC service
         resp = self.stub.GetCollision(request=request)
 
         # Return the response - formatted as a dictionary
-        return {"collision_type": resp.collision}
+        return {"collision_type": resp.response_data[0].collision}
 
     # TODO:find new method name,
     @protect_grpc
