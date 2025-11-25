@@ -92,16 +92,8 @@ sketch.triangle(
 ## Launch a modeling session
 
 ```{python}
-#| eval: false
 from ansys.geometry.core import launch_modeler
 modeler = launch_modeler()
-print(modeler)
-```
-
-```{python}
-#| include: false
-from ansys.geometry.core import launch_modeler
-modeler = launch_modeler(mode="docker", transport_mode="insecure")
 print(modeler)
 ```
 
