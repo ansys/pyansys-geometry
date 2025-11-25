@@ -152,7 +152,7 @@ def docker_instance(use_existing_service, transport_mode):
                 connect_to_existing_service=True,
                 restart_if_existing_service=True,
                 image=is_image_available_cont,
-                transport_mode=transport_mode
+                transport_mode=transport_mode,
             )
 
     return docker_instance

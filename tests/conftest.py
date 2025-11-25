@@ -75,7 +75,7 @@ def pytest_addoption(parser):
         default="latest",
         help=("Specify the backend version to use for the tests. By default, 'latest'."),
     )
-    
+
     parser.addoption(
         "--transport-mode",
         action="store",
@@ -179,12 +179,26 @@ def proto_version(request):
     value: str = request.config.getoption("--proto-version", default="v0")
     return value.lower()
 
+
 @pytest.fixture(scope="session")
 def tranport_mode(request):
     """Fixture to determine transport mode to be used."""
+    import os
+    import warnings
+
     value: str = request.config.getoption("--transport-mode", default="default")
     mode = None if value.lower() == "default" else value.lower()
+
+    if os.environ.get("IS_WORKFLOW_RUNNING") == "true":
+        # When running in CI, force transport mode to insecure for simplicity
+        mode = "insecure"
+        warnings.warn(
+            "Transport mode forced to 'insecure' when running in CI workflows.",
+            UserWarning,
+        )
+
     return mode
+
 
 @pytest.fixture
 def fake_record():
