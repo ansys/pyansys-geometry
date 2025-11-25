@@ -2,7 +2,7 @@ Launching and connecting to a Modeler instance
 **********************************************
 
 PyAnsys Geometry provides the ability to launch and connect to a Modeler instance
-either locally or remotely. By Modeler instance, we mean a running instance of a
+either locally or remotely. A Modeler instance is a running instance of a
 CAD service that the PyAnsys Geometry client can communicate with.
 
 CAD services that are supported include:
@@ -14,7 +14,7 @@ CAD services that are supported include:
 Connecting to a Modeler instance
 --------------------------------
 
-To connect to a Modeler instance, you can use the :class:`Modeler <ansys.geometry.core.modeler.Modeler>` class,
+To connect to a Modeler instance, you can use the  :class:`Modeler() <ansys.geometry.core.modeler>` class,
 which provides methods to connect to the desired CAD service. You can specify the connection parameters such
 as the host, port, and authentication details.
 
@@ -50,7 +50,7 @@ security policies. These secure connections can be established using various met
   case, you need to provide the necessary certificates and keys when establishing the connection. More
   information on the certificates needed can be seen in
   `Generating certificates for mTLS <https://tools.docs.pyansys.com/version/stable/user_guide/secure_grpc.html#generating-certificates-for-mtls>`_.
-  Make sure that the names of the files are in line with the previous linl. An example of how to set up
+  Make sure that the names of the files are in line with the previous link. An example of how to set up
   an mTLS connection is shown below:
 
   .. note::
