@@ -793,6 +793,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         other_bodies = kwargs["other"]
         type_bool_op = kwargs["type_bool_op"]
         keep_other = kwargs["keep_other"]
+        transfer_named_selections = kwargs["transfer_named_selections"]
 
         if type_bool_op == "intersect":
             body_ids = [build_grpc_id(body.id) for body in other_bodies]
@@ -802,6 +803,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 tool_selection=body_ids,
                 subtract_from_target=False,
                 keep_cutter=keep_other,
+                transfer_named_selections=transfer_named_selections,
             )
             response = self.command_stub.CombineIntersectBodies(request)
         elif type_bool_op == "subtract":
@@ -812,6 +814,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 tool_selection=body_ids,
                 subtract_from_target=True,
                 keep_cutter=keep_other,
+                transfer_named_selections=transfer_named_selections,
             )
             response = self.command_stub.CombineIntersectBodies(request)
         elif type_bool_op == "unite":
@@ -824,8 +827,11 @@ class GRPCBodyServiceV0(GRPCBodyService):
             raise ValueError("Unknown operation requested")
         if not response.success:
             raise ValueError(
-                f"Operation of type '{type_bool_op}' failed: {kwargs['err_msg']}.\n"
-                f"Involving bodies:{target_body}, {other_bodies}"
+                (
+                    f"Operation of type '{type_bool_op}' failed: "
+                    f"{kwargs.get('err_msg', 'No error message provided.')}. "
+                    f"Involving bodies: {target_body}, {other_bodies}"
+                )
             )
 
         # Return the response - formatted as a dictionary

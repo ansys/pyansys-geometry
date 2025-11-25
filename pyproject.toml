@@ -4,7 +4,7 @@ requires = [ "flit-core>=3.2,<4" ]
 
 [project]
 name = "ansys-geometry-core"
-version = "0.12.dev0"
+version = "0.14.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
 license = "MIT"
@@ -26,7 +26,7 @@ classifiers = [
 ]
 
 dependencies = [
-  "ansys-api-discovery==1.0.8",
+  "ansys-api-discovery==1.0.10",
   "ansys-tools-common>=0.2,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -99,7 +99,7 @@ general-all = [
   "ansys-platform-instancemanagement==1.1.2",
   "ansys-tools-common==0.2.1",
   "ansys-tools-visualization-interface==0.12.1",
-  "beartype==0.22.5",
+  "beartype==0.22.6",
   "docker==7.1.0",
   "geomdl==5.4.0",
   "grpcio==1.75.0",

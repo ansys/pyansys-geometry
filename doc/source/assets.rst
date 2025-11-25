@@ -25,7 +25,7 @@ For example, on Linux with Python 3.10, unzip the wheelhouse archive and install
 
 .. code:: bash
 
-    unzip ansys-geometry-core-v0.12.dev0-all-wheelhouse-ubuntu-latest-3.10.zip wheelhouse
+    unzip ansys-geometry-core-v0.14.dev0-all-wheelhouse-ubuntu-latest-3.10.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
 If you are on Windows with Python 3.10, unzip to a wheelhouse directory by running ``-d wheelhouse``
