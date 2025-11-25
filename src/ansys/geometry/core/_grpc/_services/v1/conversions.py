@@ -1000,10 +1000,11 @@ def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
         # curve will be a line
         pass
 
+    radius = curve.radius.value_in_geometry_units
     major_radius = curve.major_radius.value_in_geometry_units
     minor_radius = curve.minor_radius.value_in_geometry_units
-    if curve.radius.value_in_geometry_units != 0:
-        result = Circle(origin, curve.radius.value_in_geometry_units, reference, axis)
+    if radius != 0:
+        result = Circle(origin, radius, reference, axis)
     elif major_radius != 0 and minor_radius != 0:
         result = Ellipse(origin, major_radius, minor_radius, reference, axis)
     elif curve.nurbs_curve.nurbs_data.degree != 0:

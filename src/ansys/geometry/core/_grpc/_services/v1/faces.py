@@ -65,7 +65,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
 
         self.stub = FaceStub(channel)
-        self.EditStub = EditStub(channel)
+        self.edit_stub = EditStub(channel)
 
     @protect_grpc
     def get_surface(self, **kwargs) -> dict:  # noqa: D102
@@ -347,7 +347,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Call the gRPC service and serialize the response
-        response = self.EditStub.ExtrudeFaces(request=request)
+        response = self.edit_stub.ExtrudeFaces(request=request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
@@ -383,7 +383,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Call the gRPC service and serialize the response
-        response = self.EditStub.ExtrudeFacesUpTo(request=request)
+        response = self.edit_stub.ExtrudeFacesUpTo(request=request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
@@ -415,7 +415,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.EditStub.OffsetFacesSetRadius(request=request)
+        response = self.edit_stub.OffsetFacesSetRadius(request=request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -442,7 +442,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Call the gRPC service and serialize the response
-        response = self.EditStub.RevolveFaces(request=request)
+        response = self.edit_stub.RevolveFaces(request=request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
@@ -474,7 +474,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Call the gRPC service and serialize the response
-        response = self.EditStub.RevolveFacesUpTo(request=request)
+        response = self.edit_stub.RevolveFacesUpTo(request=request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
@@ -510,7 +510,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Call the gRPC service and serialize the response
-        response = self.EditStub.RevolveFacesByHelix(request=request)
+        response = self.edit_stub.RevolveFacesByHelix(request=request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
@@ -561,7 +561,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.EditStub.ThickenFaces(request=request)
+        response = self.edit_stub.ThickenFaces(request=request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -589,7 +589,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Call the gRPC server
-        response = self.EditStub.DraftFaces(request=request)
+        response = self.edit_stub.DraftFaces(request=request)
 
         # Return the drafted faces
         return {
@@ -630,7 +630,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Call the gRPC service and serialize the response
-        response = self.EditStub.OffsetFaces(request=request)
+        response = self.edit_stub.OffsetFaces(request=request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
@@ -658,7 +658,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.EditStub.FaceOffset(request=request)
+        response = self.edit_stub.FaceOffset(request=request)
 
         # Return the response - formatted as a dictionary
         return {
