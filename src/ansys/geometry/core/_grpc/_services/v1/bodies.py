@@ -92,14 +92,15 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Note: response.bodies is a repeated field, we return the first one
         body = resp.bodies[0]
         return {
-            "id": body.id,
+            "id": body.id.id,
             "name": body.name,
-            "master_id": body.master_id,
+            "master_id": body.master_id.id,
             "is_surface": body.is_surface,
         }
 
     @protect_grpc
     def create_extruded_body(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
         from ansys.api.discovery.v1.design.geometry.body_pb2 import (
             CreateExtrudedBodyRequest,
             CreateExtrudedBodyRequestData,
@@ -116,8 +117,12 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                 kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
             )
         )
-        request_data_item.distance = (
-            from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"]
+        request_data_item.distance.CopyFrom(
+            GRPCQuantity(
+                value_in_geometry_units=(
+                    from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"]
+                )
+            )
         )
 
         request = CreateExtrudedBodyRequest(request_data=[request_data_item])
@@ -128,9 +133,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         body = resp.bodies[0]
         return {
-            "id": body.id,
+            "id": body.id.id,
             "name": body.name,
-            "master_id": body.master_id,
+            "master_id": body.master_id.id,
             "is_surface": body.is_surface,
         }
 
@@ -162,9 +167,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         body = resp.bodies[0]
         return {
-            "id": body.id,
+            "id": body.id.id,
             "name": body.name,
-            "master_id": body.master_id,
+            "master_id": body.master_id.id,
             "is_surface": body.is_surface,
         }
 
@@ -193,9 +198,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         body = resp.bodies[0]
         return {
-            "id": body.id,
+            "id": body.id.id,
             "name": body.name,
-            "master_id": body.master_id,
+            "master_id": body.master_id.id,
             "is_surface": body.is_surface,
         }
 
@@ -231,9 +236,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         return {
             "bodies": [
                 {
-                    "id": body.id,
+                    "id": body.id.id,
                     "name": body.name,
-                    "master_id": body.master_id,
+                    "master_id": body.master_id.id,
                     "is_surface": body.is_surface,
                 }
             ]
@@ -259,9 +264,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {
-            "id": resp.id,
+            "id": resp.id.id,
             "name": resp.name,
-            "master_id": resp.master_id,
+            "master_id": resp.master_id.id,
             "is_surface": resp.is_surface,
         }
 
@@ -297,9 +302,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         body = resp.bodies[0]
         return {
-            "id": body.id,
+            "id": body.id.id,
             "name": body.name,
-            "master_id": body.master_id,
+            "master_id": body.master_id.id,
             "is_surface": body.is_surface,
         }
 
@@ -330,9 +335,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         body = resp.bodies[0]
         return {
-            "id": body.id,
+            "id": body.id.id,
             "name": body.name,
-            "master_id": body.master_id,
+            "master_id": body.master_id.id,
             "is_surface": body.is_surface,
         }
 
@@ -352,9 +357,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {
-            "id": resp.id,
+            "id": resp.id.id,
             "name": resp.name,
-            "master_id": resp.master_id,
+            "master_id": resp.master_id.id,
             "is_surface": resp.is_surface,
         }
 
@@ -382,9 +387,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         body = resp.bodies[0]
         return {
-            "id": body.id,
+            "id": body.id.id,
             "name": body.name,
-            "master_id": body.master_id,
+            "master_id": body.master_id.id,
             "is_surface": body.is_surface,
         }
 
@@ -414,22 +419,36 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         body = resp.bodies[0]
         return {
-            "id": body.id,
+            "id": body.id.id,
             "name": body.name,
-            "master_id": body.master_id,
+            "master_id": body.master_id.id,
             "is_surface": body.is_surface,
         }
 
     @protect_grpc
     def translate(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import TranslateRequest
-
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = TranslateRequest(
-            ids=kwargs["ids"],
-            # direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-            distance=from_measurement_to_server_length(kwargs["distance"]),
+        from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            MoveTranslateRequest,
+            MoveTranslateRequestData,
         )
+
+        # Create the request data with repeated selection_ids
+        request_data = MoveTranslateRequestData()
+        for body_id in kwargs["ids"]:
+            request_data.selection_ids.append(build_grpc_id(body_id))
+        
+        # Set the distance using GRPCQuantity
+        request_data.distance.CopyFrom(
+            GRPCQuantity(
+                value_in_geometry_units=from_measurement_to_server_length(kwargs["distance"])
+            )
+        )
+        
+        # direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+
+        # Create the request with request_data
+        request = MoveTranslateRequest(request_data=[request_data])
 
         # Call the gRPC service
         self.edits_stub.MoveTranslate(request=request)
@@ -582,7 +601,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def get_assigned_material(self, **kwargs) -> dict:  # noqa: D102
         # Call the gRPC service
-        resp = self.stub.GetAssignedMaterial(request=build_grpc_id(kwargs["id"]))
+        resp = self.stub.GetAssignedCADMaterial(request=build_grpc_id(kwargs["id"]))
 
         # Return the response - formatted as a dictionary
         # return {"material": from_grpc_material_to_material(resp)}
@@ -618,12 +637,19 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_fill_style(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import SetFillStyleRequest
-
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = SetFillStyleRequest(
-            body_id=build_grpc_id(kwargs["id"]), fill_style=kwargs["fill_style"].value
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            SetFillStyleRequest,
+            SetFillStyleRequestData,
         )
+
+        # Create request data
+        request_data = SetFillStyleRequestData(
+            id=build_grpc_id(kwargs["id"]),
+            fill_style=kwargs["fill_style"].value
+        )
+        
+        # Create the request with request_data
+        request = SetFillStyleRequest(request_data=[request_data])
 
         # Call the gRPC service
         self.stub.SetFillStyle(request=request)
@@ -839,6 +865,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         from ansys.api.discovery.v1.operations.edit_pb2 import (
             CombineIntersectBodiesRequest,
             CombineMergeBodiesRequest,
+            CombineMergeBodiesRequestData,
         )
 
         target_body = kwargs["target"]
@@ -861,10 +888,13 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             )
             response = self.edits_stub.CombineSubtractBodies(request=request)
         elif type_bool_op == "unite":
-            request = CombineMergeBodiesRequest(
-                target_selection=[build_grpc_id(target_body)]
-                + [build_grpc_id(id) for id in other_bodies],  # noqa: E501
-            )
+            # Create request data with repeated target_selection_ids
+            request_data = CombineMergeBodiesRequestData()
+            request_data.target_selection_ids.append(build_grpc_id(target_body))
+            for body_id in other_bodies:
+                request_data.target_selection_ids.append(build_grpc_id(body_id))
+            
+            request = CombineMergeBodiesRequest(request_data=[request_data])
             response = self.edits_stub.CombineMergeBodies(request=request)
         else:
             raise ValueError(f"Invalid boolean operation type: {type_bool_op}")
@@ -930,20 +960,26 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         new_body = response.created_bodies[0]
         return {
-            "id": new_body.id,
+            "id": new_body.id.id,
             "name": new_body.name,
-            "master_id": new_body.master_id,
+            "master_id": new_body.master_id.id,
             "is_surface": new_body.is_surface,
         }
 
     @protect_grpc
     def combine_merge(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import CombineMergeBodiesRequest
-
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = CombineMergeBodiesRequest(
-            target_selection=[build_grpc_id(id) for id in kwargs["body_ids"]],
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            CombineMergeBodiesRequest,
+            CombineMergeBodiesRequestData,
         )
+
+        # Create request data with repeated target_selection_ids
+        request_data = CombineMergeBodiesRequestData()
+        for body_id in kwargs["body_ids"]:
+            request_data.target_selection_ids.append(build_grpc_id(body_id))
+        
+        # Create the request with request_data
+        request = CombineMergeBodiesRequest(request_data=[request_data])
 
         # Call the gRPC service
         _ = self.edits_stub.CombineMergeBodies(request=request)
