@@ -183,8 +183,6 @@ def proto_version(request):
 @pytest.fixture(scope="session")
 def transport_mode(request):
     """Fixture to determine transport mode to be used."""
-    import os
-    import warnings
 
     value: str = request.config.getoption("--transport-mode", default="default")
     mode = None if value.lower() == "default" else value.lower()
