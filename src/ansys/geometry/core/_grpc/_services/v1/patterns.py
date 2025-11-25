@@ -98,13 +98,13 @@ class GRPCPatternsServiceV1(GRPCPatternsService):  # pragma: no cover
         request = SetLinearPatternDataRequest(
             request_data=[
                 SetLinearPatternDataRequestData(
-                selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
-                count_x=kwargs["count_x"],
-                pitch_x=from_length_to_grpc_quantity(kwargs["pitch_x"]),
-                count_y=kwargs["count_y"],
-                pitch_y=from_length_to_grpc_quantity(kwargs["pitch_y"]),
-                new_seed_index=kwargs["new_seed_index"],
-                old_seed_index=kwargs["old_seed_index"],
+                    selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    count_x=kwargs["count_x"],
+                    pitch_x=from_length_to_grpc_quantity(kwargs["pitch_x"]),
+                    count_y=kwargs["count_y"],
+                    pitch_y=from_length_to_grpc_quantity(kwargs["pitch_y"]),
+                    new_seed_index=kwargs["new_seed_index"],
+                    old_seed_index=kwargs["old_seed_index"],
                 )
             ]
         )
@@ -251,4 +251,3 @@ class GRPCPatternsServiceV1(GRPCPatternsService):  # pragma: no cover
         return {
             "success": response.tracked_command_response.command_response.success,
         }
-
