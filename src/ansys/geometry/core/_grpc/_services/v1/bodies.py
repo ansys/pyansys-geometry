@@ -24,6 +24,7 @@
 import grpc
 import pint
 
+from ansys.geometry.core._grpc._services.v0.conversions import from_plane_to_grpc_plane
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
@@ -316,50 +317,64 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_surface_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import CreateSurfaceBodyRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            CreateSurfaceBodyRequest,
+            CreateSurfaceBodyRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSurfaceBodyRequest(
-            name=kwargs["name"],
-            parent=kwargs["parent_id"],
-            # trimmed_surface=from_trimmed_surface_to_grpc_trimmed_surface(kwargs["trimmed_surface"]),
+            request_data=[
+                CreateSurfaceBodyRequestData(
+                    name=kwargs["name"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    # trimmed_surface=from_trimmed_surface_to_grpc_trimmed_surface(kwargs["trimmed_surface"]),
+                )
+            ]
         )
 
         # Call the gRPC service
         resp = self.stub.CreateSurfaceBody(request=request)
 
         # Return the response - formatted as a dictionary
+        body = resp.bodies[0]
         return {
-            "id": resp.id,
-            "name": resp.name,
-            "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "id": body.id,
+            "name": body.name,
+            "master_id": body.master_id,
+            "is_surface": body.is_surface,
         }
 
     @protect_grpc
     def create_surface_body_from_trimmed_curves(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.geometry.body_pb2 import (
             CreateSurfaceBodyFromTrimmedCurvesRequest,
+            CreateSurfaceBodyFromTrimmedCurvesRequestData,
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSurfaceBodyFromTrimmedCurvesRequest(
-            name=kwargs["name"],
-            parent=kwargs["parent_id"],
-            trimmed_curves=[
-                # from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["trimmed_curves"]
-            ],
+            request_data=[
+                CreateSurfaceBodyFromTrimmedCurvesRequestData(
+                    name=kwargs["name"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    trimmed_curves=[
+                        # from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["trimmed_curves"]
+                    ],
+                )
+            ]
         )
 
         # Call the gRPC service
         resp = self.stub.CreateSurfaceBodyFromTrimmedCurves(request=request)
 
         # Return the response - formatted as a dictionary
+        body = resp.bodies[0]
         return {
-            "id": resp.id,
-            "name": resp.name,
-            "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "id": body.id,
+            "name": body.name,
+            "master_id": body.master_id,
+            "is_surface": body.is_surface,
         }
 
     @protect_grpc
@@ -374,7 +389,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        self.edits_stub.Translate(request=request)
+        self.edits_stub.MoveTranslate(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -397,11 +412,17 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_color(self, **kwargs) -> dict:  # noqa: D102
-        # Call the gRPC service
-        resp = self.stub.GetColor(request=build_grpc_id(kwargs["id"]))
+        from ansys.api.discovery.v1.design.designmessages_pb2 import MultipleEntitiesRequest
 
-        # Return the response - formatted as a dictionary
-        return {"color": resp.color}
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
+        # Call the gRPC service
+        resp = self.stub.GetColor(request=request)
+
+        # Return the response - formatted as a dictionary (get first color from map)
+        color = next(iter(resp.colors.values())) if resp.colors else None
+        return {"color": color}
 
     @protect_grpc
     def set_color(self, **kwargs) -> dict:  # noqa: D102
@@ -492,16 +513,25 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             "center": Point(x=resp.box.center.x, y=resp.box.center.y, z=resp.box.center.z),
         }
 
-    # TODO: Find the new method name.
     @protect_grpc
     def set_assigned_material(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import SetAssignedMaterialRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            SetAssignedCADMaterialRequest,
+            SetAssignedCADMaterialRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SetAssignedMaterialRequest(id=kwargs["id"], material=kwargs["material"].name)
+        request = SetAssignedCADMaterialRequest(
+            request_data=[
+                SetAssignedCADMaterialRequestData(
+                    id=build_grpc_id(kwargs["id"]),
+                    material=kwargs["material"],
+                )
+            ]
+        )
 
         # Call the gRPC service
-        self.stub.SetAssignedMaterial(request=request)
+        self.stub.SetAssignedCADMaterial(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -517,16 +547,20 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def remove_assigned_material(self, **kwargs):  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import RemoveAssignedMaterialRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            RemoveAssignedCADMaterialRequest,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RemoveAssignedMaterialRequest(ids=[build_grpc_id(id) for id in kwargs["ids"]])
+        request = RemoveAssignedCADMaterialRequest(
+            ids=[build_grpc_id(id) for id in kwargs["ids"]]
+        )
 
         # Call the gRPC service
-        resp = self.stub.RemoveAssignedMaterial(request=request)
+        resp = self.stub.RemoveAssignedCADMaterial(request=request)
 
         # Return the response - formatted as a dictionary
-        return {"successfully_removed": [id for id in resp.successfully_removed]}
+        return {"successfully_removed": [id for id in resp.successfully_removed_ids]}
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
@@ -799,7 +833,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Create the request - assumes all inputs are valid and of the proper type
         request = SplitBodyRequest(
             selection=[build_grpc_id(id) for id in kwargs["body_ids"]],
-            # split_by_plane=from_plane_to_grpc_plane(kwargs["plane"]) if kwargs["plane"] else None,
+            split_by_plane=from_plane_to_grpc_plane(kwargs["plane"]) if kwargs["plane"] else None,
             split_by_slicer=[build_grpc_id(id) for id in kwargs["slicer_ids"]],
             split_by_faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
             extend_surfaces=kwargs["extend_surfaces"],
@@ -871,11 +905,16 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.geometry.body_pb2 import (
             SetMidSurfaceThicknessRequest,
+            SetMidSurfaceThicknessRequestData,
         )
 
         request = SetMidSurfaceThicknessRequest(
-            bodies_or_faces=kwargs["ids"],
-            thickness=from_measurement_to_server_length(kwargs["thickness"]),
+            request_data=[
+                SetMidSurfaceThicknessRequestData(
+                    ids=[build_grpc_id(id) for id in kwargs["ids"]],
+                    thickness=from_measurement_to_server_length(kwargs["thickness"]),
+                )
+            ]
         )
 
         _ = self.stub.SetMidSurfaceThickness(request=request)
@@ -885,16 +924,23 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def assign_midsurface_offset(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import SetMidSurfaceThicknessRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            SetMidSurfaceOffsetTypeRequest,
+            SetMidSurfaceOffsetTypeRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SetMidSurfaceThicknessRequest(
-            bodies_or_faces=kwargs["ids"],
-            offset_type=kwargs["offset_type"].value,
+        request = SetMidSurfaceOffsetTypeRequest(
+            request_data=[
+                SetMidSurfaceOffsetTypeRequestData(
+                    ids=[build_grpc_id(id) for id in kwargs["ids"]],
+                    offset_type=kwargs["offset_type"].value,
+                )
+            ]
         )
 
         # Call the gRPC service
-        _ = self.stub.SetMidSurfaceThickness(request=request)
+        _ = self.stub.SetMidSurfaceOffsetType(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
