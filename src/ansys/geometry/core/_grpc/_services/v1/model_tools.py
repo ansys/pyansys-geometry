@@ -52,7 +52,7 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
         from ansys.api.discovery.v1.operations.sketch_pb2_grpc import SketchStub
 
         self.stub = EditStub(channel)
-        self.SketchStub = SketchStub(channel)
+        self.sketch_stub = SketchStub(channel)
 
     @protect_grpc
     def chamfer(self, **kwargs) -> dict:  # noqa: D102
@@ -203,7 +203,7 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
         )
 
         # Call the gRPC service
-        _ = self.SketchStub.CreateSketchLine(request)
+        _ = self.sketch_stub.CreateSketchLine(request)
 
         # Return the response - formatted as a dictionary
         return {}
