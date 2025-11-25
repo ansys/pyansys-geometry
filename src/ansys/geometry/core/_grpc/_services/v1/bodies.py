@@ -24,12 +24,10 @@
 import grpc
 import pint
 
-from ansys.geometry.core._grpc._services.v0.conversions import (
-    from_trimmed_curve_to_grpc_trimmed_curve,
-)
 from ansys.geometry.core._grpc._services.v1.conversions import (
     from_plane_to_grpc_plane,
     from_sketch_shapes_to_grpc_geometries,
+    from_trimmed_curve_to_grpc_trimmed_curve,
 )
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
@@ -109,20 +107,20 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         # Note: This will need proper conversion functions for plane, geometries
-        request = CreateExtrudedBodyRequest(
-            request_data=[
-                CreateExtrudedBodyRequestData(
-                    name=kwargs["name"],
-                    parent_id=build_grpc_id(kwargs["parent_id"]),
-                    plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
-                    geometries=from_sketch_shapes_to_grpc_geometries(
-                        kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
-                    ),
-                    distance=from_measurement_to_server_length(kwargs["distance"])
-                    * kwargs["direction"],
-                )
-            ]
+        request_data_item = CreateExtrudedBodyRequestData()
+        request_data_item.name = kwargs["name"]
+        request_data_item.parent_id.CopyFrom(build_grpc_id(kwargs["parent_id"]))
+        request_data_item.plane.CopyFrom(from_plane_to_grpc_plane(kwargs["sketch"].plane))
+        request_data_item.geometries.CopyFrom(
+            from_sketch_shapes_to_grpc_geometries(
+                kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
+            )
         )
+        request_data_item.distance = (
+            from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"]
+        )
+
+        request = CreateExtrudedBodyRequest(request_data=[request_data_item])
 
         # Call the gRPC service
         resp = self.stub.CreateExtrudedBody(request=request)
