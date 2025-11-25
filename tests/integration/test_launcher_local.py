@@ -78,7 +78,10 @@ def test_if_docker_is_installed():
 
 @pytest.mark.skipif(SKIP_DOCKER_TESTS_CONDITION[0], reason=SKIP_DOCKER_TESTS_CONDITION[1])
 def test_local_launcher_connect(
-    modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance: LocalDockerInstance
+    modeler: Modeler,
+    caplog: pytest.LogCaptureFixture,
+    docker_instance: LocalDockerInstance,
+    transport_mode: str,
 ):
     """Checking connection to existing service using launch modeler."""
     if not docker_instance:
@@ -94,7 +97,10 @@ def test_local_launcher_connect(
 
     # Connect to the existing target... this will throw a warning
     local_modeler = launch_docker_modeler(
-        port=port, connect_to_existing_service=True, restart_if_existing_service=False
+        port=port,
+        connect_to_existing_service=True,
+        restart_if_existing_service=False,
+        transport_mode=transport_mode,
     )
     assert _check_service_already_running(port, caplog.text) is True
     caplog.clear()
@@ -108,7 +114,10 @@ def test_local_launcher_connect(
 # @pytest.mark.skipif(SKIP_DOCKER_TESTS_CONDITION[0], reason=SKIP_DOCKER_TESTS_CONDITION[1])
 @pytest.mark.skip(reason="Temporary skip due to transport mode requirements")
 def test_local_launcher_connect_with_restart(
-    modeler: Modeler, caplog: pytest.LogCaptureFixture, docker_instance: LocalDockerInstance
+    modeler: Modeler,
+    caplog: pytest.LogCaptureFixture,
+    docker_instance: LocalDockerInstance,
+    transport_mode: str,
 ):
     """Checking connection to existing service using launch modeler and
     restarting existing service.
@@ -130,6 +139,7 @@ def test_local_launcher_connect_with_restart(
         connect_to_existing_service=True,
         restart_if_existing_service=False,
         image=image,
+        transport_mode=transport_mode,
     )
 
     # Check that the warning is NOT raised
@@ -142,6 +152,7 @@ def test_local_launcher_connect_with_restart(
         connect_to_existing_service=True,
         restart_if_existing_service=True,
         image=image,
+        transport_mode=transport_mode,
     )
 
     # Check that the warnings are raised
