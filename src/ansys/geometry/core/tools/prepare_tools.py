@@ -359,7 +359,7 @@ class PrepareTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        tracker_response = response.get("tracker_response") 
+        tracker_response = response.get("tracker_response")
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
