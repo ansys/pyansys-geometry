@@ -1453,7 +1453,8 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
             serialize_body(body) for body in getattr(response.tracked_changes, "created_bodies", [])
         ],
         "modified_bodies": [
-            serialize_body(body) for body in getattr(response.tracked_changes, "modified_bodies", [])
+            serialize_body(body)
+            for body in getattr(response.tracked_changes, "modified_bodies", [])
         ],
         "deleted_bodies": [
             serialize_entity_identifier(entity)

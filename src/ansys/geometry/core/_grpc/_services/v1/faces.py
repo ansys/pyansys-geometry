@@ -27,7 +27,6 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.conversions import (
-    from_measurement_to_server_angle,
     from_measurement_to_server_length,
     to_area,
 )
@@ -72,7 +71,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
     def get_surface(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
-        
+
         # Call the gRPC service
         response = self.stub.GetSurface(request=request).response_data[0]
 
