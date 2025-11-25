@@ -130,7 +130,7 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
         request = MoveRotateRequest(
             request_data=[
                 MoveRotateRequestData(
-                    selection=[build_grpc_id(kwargs["selection_id"])],
+                    selection_ids=[build_grpc_id(kwargs["selection_id"])],
                     axis=from_line_to_grpc_line(kwargs["axis"]),
                     angle=from_angle_to_grpc_quantity(kwargs["angle"]),
                 )
@@ -168,7 +168,7 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
         request = MoveTranslateRequest(
             request_data=[
                 MoveTranslateRequestData(
-                    selection=[build_grpc_id(kwargs["selection_id"])],
+                    selection_ids=[build_grpc_id(kwargs["selection_id"])],
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     distance=from_length_to_grpc_quantity(kwargs["distance"]),
                 )

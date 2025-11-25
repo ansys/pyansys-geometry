@@ -25,8 +25,9 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import to_distance
 from ..base.measurement_tools import GRPCMeasurementToolsService
-from .conversions import build_grpc_id, to_distance
+from .conversions import build_grpc_id
 
 
 class GRPCMeasurementToolsServiceV1(GRPCMeasurementToolsService):  # pragma: no cover
