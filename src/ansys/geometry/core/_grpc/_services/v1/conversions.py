@@ -226,13 +226,15 @@ def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
     GRPCPoint
         Geometry service gRPC point message. The unit is meters.
     """
+    from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
+
     from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
     point3d = plane.transform_point2d_local_to_global(point2d)
     return GRPCPoint(
-        x=point3d.x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        y=point3d.y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        z=point3d.z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        x=GRPCQuantity(value_in_geometry_units=point3d.x.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        y=GRPCQuantity(value_in_geometry_units=point3d.y.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        z=GRPCQuantity(value_in_geometry_units=point3d.z.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
     )
 
 
@@ -627,9 +629,8 @@ def from_sketch_nurbs_to_grpc_nurbs_curve(curve: "SketchNurbs", plane: "Plane") 
     GRPCNurbsCurve
         Geometry service gRPC NURBS curve message. The unit is meters.
     """
-    from ansys.api.geometry.v0.models_pb2 import (
+    from ansys.api.discovery.v1.design.designmessages_pb2 import (
         ControlPoint as GRPCControlPoint,
-        NurbsData as GRPCNurbsData,
     )
 
     # Convert control points
@@ -641,16 +642,10 @@ def from_sketch_nurbs_to_grpc_nurbs_curve(curve: "SketchNurbs", plane: "Plane") 
         for i, pt in enumerate(curve.control_points)
     ]
 
-    # Convert nurbs data
-    nurbs_data = GRPCNurbsData(
-        degree=curve.degree,
-        knots=from_knots_to_grpc_knots(curve.knots),
-        order=curve.degree + 1,
-    )
-
     return GRPCNurbsCurve(
         control_points=control_points,
-        nurbs_data=nurbs_data,
+        degree=curve.degree,
+        knots=from_knots_to_grpc_knots(curve.knots),
     )
 
 
@@ -667,13 +662,15 @@ def from_sketch_ellipse_to_grpc_ellipse(ellipse: "SketchEllipse", plane: "Plane"
     GRPCEllipse
         Geometry service gRPC ellipse message. The unit is meters.
     """
+    from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
+
     from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
     return GRPCEllipse(
         center=from_point2d_to_grpc_point(plane, ellipse.center),
-        majorradius=ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        minorradius=ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        angle=ellipse.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE),
+        majorradius=GRPCQuantity(value_in_geometry_units=ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        minorradius=GRPCQuantity(value_in_geometry_units=ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        angle=GRPCQuantity(value_in_geometry_units=ellipse.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
     )
 
 
@@ -692,11 +689,13 @@ def from_sketch_circle_to_grpc_circle(circle: "SketchCircle", plane: "Plane") ->
     GRPCCircle
         Geometry service gRPC circle message. The unit is meters.
     """
+    from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
+
     from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
     return GRPCCircle(
         center=from_point2d_to_grpc_point(plane, circle.center),
-        radius=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        radius=GRPCQuantity(value_in_geometry_units=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
     )
 
 
@@ -713,13 +712,15 @@ def from_sketch_polygon_to_grpc_polygon(polygon: "Polygon", plane: "Plane") -> G
     GRPCPolygon
         Geometry service gRPC polygon message. The unit is meters.
     """
+    from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
+
     from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
     return GRPCPolygon(
         center=from_point2d_to_grpc_point(plane, polygon.center),
-        radius=polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        radius=GRPCQuantity(value_in_geometry_units=polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
         numberofsides=polygon.n_sides,
-        angle=polygon.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE),
+        angle=GRPCQuantity(value_in_geometry_units=polygon.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
     )
 
 
@@ -828,9 +829,8 @@ def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
     GRPCNurbsCurve
         Geometry service gRPC ``NURBSCurve`` message.
     """
-    from ansys.api.geometry.v0.models_pb2 import (
+    from ansys.api.discovery.v1.design.designmessages_pb2 import (
         ControlPoint as GRPCControlPoint,
-        NurbsData as GRPCNurbsData,
     )
 
     # Convert control points
@@ -842,16 +842,10 @@ def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
         for i, pt in enumerate(curve.control_points)
     ]
 
-    # Convert nurbs data
-    nurbs_data = GRPCNurbsData(
-        degree=curve.degree,
-        knots=from_knots_to_grpc_knots(curve.knots),
-        order=curve.degree + 1,
-    )
-
     return GRPCNurbsCurve(
         control_points=control_points,
-        nurbs_data=nurbs_data,
+        degree=curve.degree,
+        knots=from_knots_to_grpc_knots(curve.knots),
     )
 
 
@@ -868,9 +862,8 @@ def from_nurbs_surface_to_grpc_nurbs_surface(surface: "NURBSSurface") -> GRPCNur
     GRPCNurbsSurface
         Geometry service gRPC ``NURBSSurface`` message.
     """
-    from ansys.api.geometry.v0.models_pb2 import (
+    from ansys.api.discovery.v1.design.designmessages_pb2 import (
         ControlPoint as GRPCControlPoint,
-        NurbsData as GRPCNurbsData,
     )
 
     # Convert control points
@@ -882,23 +875,12 @@ def from_nurbs_surface_to_grpc_nurbs_surface(surface: "NURBSSurface") -> GRPCNur
         for weight, point in zip(surface.weights, surface.control_points)
     ]
 
-    # Convert nurbs data
-    nurbs_data_u = GRPCNurbsData(
-        degree=surface.degree_u,
-        knots=from_knots_to_grpc_knots(surface.knotvector_u),
-        order=surface.degree_u + 1,
-    )
-
-    nurbs_data_v = GRPCNurbsData(
-        degree=surface.degree_v,
-        knots=from_knots_to_grpc_knots(surface.knotvector_v),
-        order=surface.degree_v + 1,
-    )
-
     return GRPCNurbsSurface(
         control_points=control_points,
-        nurbs_data_u=nurbs_data_u,
-        nurbs_data_v=nurbs_data_v,
+        degree_u=surface.degree_u,
+        degree_v=surface.degree_v,
+        knots_u=from_knots_to_grpc_knots(surface.knotvector_u),
+        knots_v=from_knots_to_grpc_knots(surface.knotvector_v),
     )
 
 
