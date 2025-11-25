@@ -24,8 +24,13 @@
 import grpc
 import pint
 
-from ansys.geometry.core._grpc._services.v0.conversions import from_trimmed_curve_to_grpc_trimmed_curve
-from ansys.geometry.core._grpc._services.v1.conversions import from_plane_to_grpc_plane, from_sketch_shapes_to_grpc_geometries
+from ansys.geometry.core._grpc._services.v0.conversions import (
+    from_trimmed_curve_to_grpc_trimmed_curve,
+)
+from ansys.geometry.core._grpc._services.v1.conversions import (
+    from_plane_to_grpc_plane,
+    from_sketch_shapes_to_grpc_geometries,
+)
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
@@ -111,9 +116,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     parent_id=build_grpc_id(kwargs["parent_id"]),
                     plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
                     geometries=from_sketch_shapes_to_grpc_geometries(
-                         kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
-                     ),
-                     distance=from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"],
+                        kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
+                    ),
+                    distance=from_measurement_to_server_length(kwargs["distance"])
+                    * kwargs["direction"],
                 )
             ]
         )
@@ -617,7 +623,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         from ansys.api.discovery.v1.design.geometry.body_pb2 import SetFillStyleRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SetFillStyleRequest(body_id=build_grpc_id(kwargs["id"]), fill_style=kwargs["fill_style"].value)
+        request = SetFillStyleRequest(
+            body_id=build_grpc_id(kwargs["id"]), fill_style=kwargs["fill_style"].value
+        )
 
         # Call the gRPC service
         self.stub.SetFillStyle(request=request)
