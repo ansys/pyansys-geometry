@@ -59,29 +59,38 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def create_sphere_body(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commonmessages_pb2 import Point
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import CreateSphereBodyRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            CreateSphereBodyRequest,
+            CreateSphereBodyRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSphereBodyRequest(
-            name=kwargs["name"],
-            parent=kwargs["parent"],
-            center=Point(
-                x=kwargs["center"].x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-                y=kwargs["center"].y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-                z=kwargs["center"].z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-            ),
-            radius=from_measurement_to_server_length(kwargs["radius"]),
+            request_data=[
+                CreateSphereBodyRequestData(
+                    name=kwargs["name"],
+                    parent_id=kwargs["parent"],
+                    center=Point(
+                        x=kwargs["center"].x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+                        y=kwargs["center"].y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+                        z=kwargs["center"].z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+                    ),
+                    radius=from_measurement_to_server_length(kwargs["radius"]),
+                )
+            ]
         )
 
         # Call the gRPC service
         resp = self.stub.CreateSphereBody(request=request)
 
         # Return the response - formatted as a dictionary
+        # Note: response.bodies is a repeated field, we return the first one
+        body = resp.bodies[0]
         return {
-            "id": resp.id,
-            "name": resp.name,
-            "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "id": body.id,
+            "name": body.name,
+            "master_id": body.master_id,
+            "is_surface": body.is_surface,
         }
 
     @protect_grpc
