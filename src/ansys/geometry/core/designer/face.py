@@ -543,7 +543,6 @@ class Face:
         """
         included_ns = []
         for ns in get_design_from_body(self.body).named_selections:
-            print([face.id for face in ns.faces])
             if any(face.id == self.id for face in ns.faces):
                 included_ns.append(ns)
 
