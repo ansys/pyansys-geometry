@@ -359,21 +359,19 @@ class PrepareTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
-        tracker_response = response.get("tracker_response") 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(tracker_response)
+            parent_design._update_from_tracker(response.get("tracker_response"))
 
         message = RepairToolMessage(
             success=response.get("success"),
             found=response.get("found"),
             repaired=response.get("repaired"),
-            created_bodies=[created_body.id for created_body in tracker_response.get("created_bodies")]
-            modified_bodies=[modified_body.id for modified_body in tracker_response.get("modified_bodies")]
+            created_bodies=response.get("created_bodies_monikers"),
+            modified_bodies=response.get("modified_bodies_monikers"),
         )
         return message
-
 
     @check_input_types
     @min_backend_version(25, 2, 0)
@@ -494,12 +492,6 @@ class PrepareTools:
             min_height=min_height,
             max_height=max_height,
         )
-
-        parent_design = get_design_from_body(bodies[0])
-        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
-            parent_design._update_design_inplace()
-        else:
-            parent_design._update_from_tracker(response.get("tracker_response"))
 
         return response.get("success")
 

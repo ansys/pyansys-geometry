@@ -30,6 +30,8 @@ from ..base.prepare_tools import GRPCPrepareToolsService
 from .conversions import (
     build_grpc_id,
     from_enclosure_options_to_grpc_enclosure_options,
+    get_standard_tracker_response,
+    get_tracker_response_with_created_bodies,
     serialize_tracker_command_response,
 )
 
@@ -67,11 +69,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.ExtractVolumeFromFaces(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.command_response.success,
-            "created_bodies": [body.id for body in response.created_bodies],
-            "tracker_response": serialize_tracker_command_response(response.tracked_changes),
-        }
+        return get_tracker_response_with_created_bodies(response)
 
     @protect_grpc
     def extract_volume_from_edge_loops(self, **kwargs) -> dict:  # noqa: D102
@@ -87,11 +85,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.ExtractVolumeFromEdgeLoops(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.command_response.success,
-            "created_bodies": [body.id for body in response.created_bodies],
-            "tracker_response": serialize_tracker_command_response(response.tracked_changes),
-        }
+        return get_tracker_response_with_created_bodies(response)
 
     @protect_grpc
     def remove_rounds(self, **kwargs) -> dict:  # noqa: D102
@@ -108,10 +102,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.RemoveRounds(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.command_response.success,
-            "tracker_response": serialize_tracker_command_response(response.tracked_changes),
-        }
+        return get_standard_tracker_response(response)
 
     @protect_grpc
     def share_topology(self, **kwargs) -> dict:  # noqa: D102
@@ -129,10 +120,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.ShareTopology(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.command_response.success,
-            "tracker_response": serialize_tracker_command_response(response.tracked_changes),
-        }
+        return get_standard_tracker_response(response)
 
     @protect_grpc
     def enhanced_share_topology(self, **kwargs) -> dict:  # noqa: D102
@@ -155,6 +143,14 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
             "found": response.found,
             "repaired": response.repaired,
             "tracker_response": serialize_tracker_command_response(response.tracked_changes),
+            "created_bodies_monikers": [
+                created_body.id
+                for created_body in response.tracked_changes.get("created_bodies", [])
+            ],
+            "modified_bodies_monikers": [
+                modified_body.id
+                for modified_body in response.tracked_changes.get("modified_bodies", [])
+            ],
         }
 
     @protect_grpc
@@ -220,10 +216,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.FindAndRemoveLogos(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.command_response.success,
-            "tracker_response": serialize_tracker_command_response(response.tracked_changes),
-        }
+        return get_standard_tracker_response(response)
 
     @protect_grpc
     def remove_logo(self, **kwargs):  # noqa: D102
@@ -238,10 +231,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.RemoveLogo(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.command_response.success,
-            "tracker_response": serialize_tracker_command_response(response.tracked_changes),
-        }
+        return get_standard_tracker_response(response)
 
     @protect_grpc
     def detect_helixes(self, **kwargs) -> dict:  # noqa: D102
@@ -328,11 +318,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.CreateEnclosureBox(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.command_response.success,
-            "created_bodies": [body.id for body in response.created_bodies],
-            "tracker_response": serialize_tracker_command_response(response.tracked_changes),
-        }
+        return get_tracker_response_with_created_bodies(response)
 
     @protect_grpc
     def create_cylinder_enclosure(self, **kwargs) -> dict:  # noqa: D102
@@ -355,11 +341,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.CreateEnclosureCylinder(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.command_response.success,
-            "created_bodies": [body.id for body in response.created_bodies],
-            "tracker_response": serialize_tracker_command_response(response.tracked_changes),
-        }
+        return get_tracker_response_with_created_bodies(response)
 
     @protect_grpc
     def create_sphere_enclosure(self, **kwargs) -> dict:  # noqa: D102
@@ -380,8 +362,4 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.CreateEnclosureSphere(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.command_response.success,
-            "created_bodies": [body.id for body in response.created_bodies],
-            "tracker_response": serialize_tracker_command_response(response.tracked_changes),
-        }
+        return get_tracker_response_with_created_bodies(response)
