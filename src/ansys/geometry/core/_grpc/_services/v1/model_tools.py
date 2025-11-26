@@ -26,6 +26,11 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.model_tools import GRPCModelToolsService
+from .conversions import (
+    build_grpc_id,
+    from_length_to_grpc_quantity,
+    serialize_tracked_command_response,
+)
 
 
 class GRPCModelToolsServiceV1(GRPCModelToolsService):
@@ -43,30 +48,162 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.model_tools_pb2_grpc import ModelToolsStub
+        from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
+        from ansys.api.discovery.v1.operations.sketch_pb2_grpc import SketchStub
 
-        self._stub = ModelToolsStub(channel)
+        self.stub = EditStub(channel)
+        self.sketch_stub = SketchStub(channel)
 
     @protect_grpc
     def chamfer(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import ChamferRequest, ChamferRequestData
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ChamferRequest(
+            request_data=[
+                ChamferRequestData(
+                    ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    distance=from_length_to_grpc_quantity(kwargs["distance"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.stub.Chamfer(request).response_data[0]
+
+        # Return the response as a dictionary
+        return {
+            "success": response.success,
+        }
 
     @protect_grpc
     def fillet(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import FilletRequest, FilletRequestData
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FilletRequest(
+            request_data=[
+                FilletRequestData(
+                    ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    radius=from_length_to_grpc_quantity(kwargs["radius"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service and serialize the response
+        response = self.stub.Fillet(request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response as a dictionary
+        return {
+            "success": tracked_response.get("success"),
+        }
 
     @protect_grpc
     def full_fillet(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import FullFilletRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FullFilletRequest(
+            face_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+        )
+
+        # Call the gRPC service and serialize the response
+        response = self.stub.FullFillet(request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response as a dictionary
+        return {
+            "success": tracked_response.get("success"),
+        }
 
     @protect_grpc
     def move_rotate(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            MoveRotateRequest,
+            MoveRotateRequestData,
+        )
+
+        from .conversions import from_angle_to_grpc_quantity, from_line_to_grpc_line
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MoveRotateRequest(
+            request_data=[
+                MoveRotateRequestData(
+                    selection_ids=[build_grpc_id(kwargs["selection_id"])],
+                    axis=from_line_to_grpc_line(kwargs["axis"]),
+                    angle=from_angle_to_grpc_quantity(kwargs["angle"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service and serialize the response
+        response = self.stub.MoveRotate(request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response as a dictionary
+        return {
+            "success": tracked_response.get("success"),
+            "modified_bodies": [
+                body.get("id").id for body in tracked_response.get("modified_bodies")
+            ],
+            "modified_faces": [
+                face.get("id").id for face in tracked_response.get("modified_faces")
+            ],
+            "modified_edges": [
+                edge.get("id").id for edge in tracked_response.get("modified_edges")
+            ],
+        }
 
     @protect_grpc
     def move_translate(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            MoveTranslateRequest,
+            MoveTranslateRequestData,
+        )
+
+        from .conversions import from_unit_vector_to_grpc_direction
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MoveTranslateRequest(
+            request_data=[
+                MoveTranslateRequestData(
+                    selection_ids=[build_grpc_id(kwargs["selection_id"])],
+                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+                    distance=from_length_to_grpc_quantity(kwargs["distance"]),
+                )
+            ]
+        )
+        # Call the gRPC service and serialize the response
+        response = self.stub.MoveTranslate(request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response as a dictionary
+        return {
+            "success": tracked_response.get("success"),
+        }
 
     @protect_grpc
     def create_sketch_line(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.operations.sketch_pb2 import (
+            CreateSketchLineRequest,
+            CreateSketchLineRequestData,
+        )
+
+        from .conversions import from_point3d_to_grpc_point
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateSketchLineRequest(
+            request_data=[
+                CreateSketchLineRequestData(
+                    point1=from_point3d_to_grpc_point(kwargs["start"]),
+                    point2=from_point3d_to_grpc_point(kwargs["end"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        _ = self.sketch_stub.CreateSketchLine(request)
+
+        # Return the response - formatted as a dictionary
+        return {}

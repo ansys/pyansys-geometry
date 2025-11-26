@@ -23,11 +23,9 @@
 
 import atexit
 import logging
-import os
 from pathlib import Path
 import time
 from typing import Optional
-import warnings
 
 from beartype import beartype as check_input_types
 import grpc
@@ -52,7 +50,7 @@ except ModuleNotFoundError:  # pragma: no cover
 
 def _create_geometry_channel(
     target: str,
-    transport_mode: str | None = None,
+    transport_mode: str,
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
@@ -64,9 +62,8 @@ def _create_geometry_channel(
     target : str
         Target of the channel. This is usually a string in the form of
         ``host:port``.
-    transport_mode : str | None
-        Transport mode selected, by default `None` and thus it will be selected
-        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+    transport_mode : str
+        Transport mode selected. Options are: "insecure", "uds", "wnua", "mtls"
     uds_dir : Path | str | None
         Directory to use for Unix Domain Sockets (UDS) transport mode.
         By default `None` and thus it will use the "~/.conn" folder.
@@ -102,9 +99,9 @@ def _create_geometry_channel(
 
     # Create the channel accordingly
     return create_channel(
+        transport_mode=transport_mode,
         host=host,
         port=port,
-        transport_mode=transport_mode,
         uds_service="aposdas_socket",
         uds_dir=uds_dir,
         uds_id=uds_id,
@@ -139,8 +136,8 @@ def wait_until_healthy(
         * If the total elapsed time exceeds the value for the ``timeout`` parameter,
           a ``TimeoutError`` is raised.
     transport_mode : str | None
-        Transport mode selected, by default `None` and thus it will be selected
-        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+        Transport mode selected. Needed if channel is a string.
+        Options are: "insecure", "uds", "wnua", "mtls".
     uds_dir : Path | str | None
         Directory to use for Unix Domain Sockets (UDS) transport mode.
         By default `None` and thus it will use the "~/.conn" folder.
@@ -168,23 +165,22 @@ def wait_until_healthy(
     t_max = time.time() + timeout
     t_out = 0.1
 
-    # If transport mode is not specified, default to insecure when running in CI
-    if transport_mode is None:
-        if os.getenv("IS_WORKFLOW_RUNNING") is not None:
-            warnings.warn(
-                "Transport mode forced to 'insecure' when running in CI workflows.",
-            )
-            transport_mode = "insecure"
-        else:
+    # If the channel is a string, create a channel using the specified transport mode
+    channel_creation_required = True if isinstance(channel, str) else False
+    tmp_channel = None
+
+    # If transport mode is not specified and a channel creation is required, raise an error
+    if channel_creation_required:
+        if transport_mode is None:
             raise ValueError(
-                "Transport mode must be specified when not running in CI workflows."
+                "Transport mode must be specified."
                 " Use 'transport_mode' parameter with one of the possible options."
                 " Options are: 'insecure', 'uds', 'wnua', 'mtls'."
             )
+        else:
+            from ansys.tools.common.cyberchannel import verify_transport_mode
 
-    # If the channel is a string, create a channel using the default insecure channel
-    channel_creation_required = True if isinstance(channel, str) else False
-    tmp_channel = None
+            verify_transport_mode(transport_mode)
 
     while time.time() < t_max:
         try:
@@ -262,8 +258,8 @@ class GrpcClient:
         Protocol version to use for communication with the server. If None, v0 is used.
         Available versions are "v0", "v1", etc.
     transport_mode : str | None
-        Transport mode selected, by default `None` and thus it will be selected
-        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+        Transport mode selected. Needed if ``channel`` is not provided.
+        Options are: "insecure", "uds", "wnua", "mtls".
     uds_dir : Path | str | None
         Directory to use for Unix Domain Sockets (UDS) transport mode.
         By default `None` and thus it will use the "~/.conn" folder.
