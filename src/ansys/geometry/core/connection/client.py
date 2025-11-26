@@ -39,7 +39,6 @@ import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG, PyGeometryCustomAdapter
-from ansys.geometry.core.misc.checks import deprecated_method
 from ansys.geometry.core.typing import Real
 
 try:
@@ -369,22 +368,6 @@ class GrpcClient:
             Backend version.
         """
         return self._backend_version
-
-    @property
-    @deprecated_method(
-        info="Multiple designs for the same service are no longer supported.",
-        version="0.9.0",
-        remove="0.11.0",
-    )
-    def multiple_designs_allowed(self) -> bool:
-        """Flag indicating whether multiple designs are allowed.
-
-        Notes
-        -----
-        Currently, only one design is allowed per service. This method will always
-        return ``False``.
-        """
-        return False
 
     @property
     def channel(self) -> grpc.Channel:
