@@ -37,7 +37,6 @@ from ansys.geometry.core.connection.product_instance import prepare_and_start_ba
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import (
     check_type,
-    deprecated_argument,
     kwargs_passed_not_accepted,
 )
 
@@ -511,7 +510,6 @@ def launch_modeler_with_spaceclaim_and_pimlight(
     )
 
 
-@deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
 @kwargs_passed_not_accepted
 def launch_modeler_with_geometry_service(
     version: str | int | None = None,
@@ -528,7 +526,6 @@ def launch_modeler_with_geometry_service(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
-    product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using the ``ProductInstance`` class.
@@ -596,8 +593,6 @@ def launch_modeler_with_geometry_service(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
-    product_version: int, optional
-        The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -658,11 +653,9 @@ def launch_modeler_with_geometry_service(
         uds_dir=uds_dir,
         uds_id=uds_id,
         certs_dir=certs_dir,
-        product_version=product_version,
     )
 
 
-@deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
 @kwargs_passed_not_accepted
 def launch_modeler_with_discovery(
     version: str | int | None = None,
@@ -680,7 +673,6 @@ def launch_modeler_with_discovery(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
-    product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ):
     """Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -750,8 +742,6 @@ def launch_modeler_with_discovery(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
-    product_version: int, optional
-        The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -782,7 +772,7 @@ def launch_modeler_with_discovery(
     with chatty logs, using API v231 and a ``300`` seconds timeout:
 
     >>> from ansys.geometry.core import launch_modeler_with_discovery
-    >>> modeler = launch_modeler_with_discovery(product_version = 241,
+    >>> modeler = launch_modeler_with_discovery(version = 241,
         host="10.171.22.44",
         port=5001,
         api_version= 231,
@@ -807,11 +797,9 @@ def launch_modeler_with_discovery(
         uds_dir=uds_dir,
         uds_id=uds_id,
         certs_dir=certs_dir,
-        product_version=product_version,
     )
 
 
-@deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
 @kwargs_passed_not_accepted
 def launch_modeler_with_spaceclaim(
     version: str | int | None = None,
@@ -829,7 +817,6 @@ def launch_modeler_with_spaceclaim(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
-    product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ):
     """Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -899,8 +886,6 @@ def launch_modeler_with_spaceclaim(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
-    product_version: int, optional
-        The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -931,7 +916,7 @@ def launch_modeler_with_spaceclaim(
     with chatty logs, using API v231 and a ``300`` seconds timeout:
 
     >>> from ansys.geometry.core import launch_modeler_with_spaceclaim
-    >>> modeler = launch_modeler_with_spaceclaim(product_version = 241,
+    >>> modeler = launch_modeler_with_spaceclaim(version = 241,
         host="10.171.22.44",
         port=5001,
         api_version= 231,
@@ -956,11 +941,9 @@ def launch_modeler_with_spaceclaim(
         uds_dir=uds_dir,
         uds_id=uds_id,
         certs_dir=certs_dir,
-        product_version=product_version,
     )
 
 
-@deprecated_argument("product_version", "version", version="0.10.8", remove="0.13.0")
 @kwargs_passed_not_accepted
 def launch_modeler_with_core_service(
     version: str | int | None = None,
@@ -977,7 +960,6 @@ def launch_modeler_with_core_service(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
-    product_version: int = None,  # DEPRECATED: use `version` instead
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry Core service locally using the ``ProductInstance`` class.
@@ -1045,8 +1027,6 @@ def launch_modeler_with_core_service(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
-    product_version: int, optional
-        The product version to be started. Deprecated, use `version` instead.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -1108,7 +1088,6 @@ def launch_modeler_with_core_service(
         uds_id=uds_id,
         certs_dir=certs_dir,
         specific_minimum_version=252,
-        product_version=product_version,
     )
 
 
