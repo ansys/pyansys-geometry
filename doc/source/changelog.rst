@@ -9,6 +9,35 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.14.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.14.1>`_ - November 26, 2025
+==============================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Improve secure connection communication
+          - `#2423 <https://github.com/ansys/pyansys-geometry/pull/2423>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.14.0
+          - `#2421 <https://github.com/ansys/pyansys-geometry/pull/2421>`_
+
+        * - Bump dev version to 0.15.dev0
+          - `#2422 <https://github.com/ansys/pyansys-geometry/pull/2422>`_
+
+
 `0.14.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.14.0>`_ - November 26, 2025
 ==============================================================================================
 
