@@ -420,7 +420,7 @@ class LocalDockerInstance:
     @property
     def transport_mode(self) -> str:
         """Transport mode used by the Docker container.
-        
+
         Returns
         -------
         str
