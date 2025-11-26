@@ -9,6 +9,84 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.14.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.14.0>`_ - November 26, 2025
+==============================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Sweepable body detection
+          - `#2394 <https://github.com/ansys/pyansys-geometry/pull/2394>`_
+
+        * - Secure grpc channels
+          - `#2411 <https://github.com/ansys/pyansys-geometry/pull/2411>`_
+
+        * - Enhancements to transport mode
+          - `#2419 <https://github.com/ansys/pyansys-geometry/pull/2419>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump beartype from 0.22.5 to 0.22.6
+          - `#2406 <https://github.com/ansys/pyansys-geometry/pull/2406>`_
+
+        * - Bump ansys-api-discovery from 1.0.9 to 1.0.10
+          - `#2407 <https://github.com/ansys/pyansys-geometry/pull/2407>`_
+
+        * - Bump ansys-api-discovery from 1.0.10 to 1.0.14
+          - `#2414 <https://github.com/ansys/pyansys-geometry/pull/2414>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - V1 implementation of components stub
+          - `#2401 <https://github.com/ansys/pyansys-geometry/pull/2401>`_
+
+        * - V1 implementation of coordinate system stub
+          - `#2402 <https://github.com/ansys/pyansys-geometry/pull/2402>`_
+
+        * - Update CHANGELOG for v0.13.0
+          - `#2404 <https://github.com/ansys/pyansys-geometry/pull/2404>`_
+
+        * - Bump dev version
+          - `#2405 <https://github.com/ansys/pyansys-geometry/pull/2405>`_
+
+        * - Bump github/codeql-action from 4.31.4 to 4.31.5 in the actions group
+          - `#2408 <https://github.com/ansys/pyansys-geometry/pull/2408>`_
+
+        * - Pre-commit automatic update
+          - `#2409 <https://github.com/ansys/pyansys-geometry/pull/2409>`_
+
+        * - V1 implementation of materials stub
+          - `#2410 <https://github.com/ansys/pyansys-geometry/pull/2410>`_
+
+        * - V1 implementation of faces + edges stubs
+          - `#2412 <https://github.com/ansys/pyansys-geometry/pull/2412>`_
+
+        * - V1 implementation of measurement tools and model tools stubs
+          - `#2413 <https://github.com/ansys/pyansys-geometry/pull/2413>`_
+
+        * - Bump actions/setup-python from 6.0.0 to 6.1.0 in the actions group
+          - `#2415 <https://github.com/ansys/pyansys-geometry/pull/2415>`_
+
+        * - Cleanup of deprecated arguments and methods
+          - `#2420 <https://github.com/ansys/pyansys-geometry/pull/2420>`_
+
+
 `0.13.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.13.0>`_ - November 24, 2025
 ==============================================================================================
 
