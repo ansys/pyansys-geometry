@@ -37,6 +37,7 @@ def client(modeler: Modeler, transport_mode: str) -> GrpcClient:
     # variables in the workflow
     return GrpcClient(transport_mode=transport_mode)
 
+
 def test_client_init(client: GrpcClient):
     """Test the instantiation of a client from the default ctor."""
     assert client.healthy is True
