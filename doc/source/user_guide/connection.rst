@@ -33,7 +33,8 @@ available transport modes.
 .. warning:: Required ``transport_mode`` parameter
 
    Starting from PyAnsys Geometry 0.14, the ``transport_mode`` parameter is required when using
-   the ``Modeler()`` class.
+   the ``Modeler()`` class. Only if the ``channel`` parameter is provided explicitly, the
+   ``transport_mode`` can be omitted.
 
 However, if you are using the :func:`launch_modeler() <ansys.geometry.core.connection.launcher>`
 function to launch a local Modeler instance, the ``transport_mode`` parameter is optional and
