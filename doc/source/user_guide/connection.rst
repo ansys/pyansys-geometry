@@ -30,14 +30,14 @@ The ``transport_mode`` parameter can take several values depending on the type o
 want to establish. You can refer to the `Securing connections`_ section for more details on the
 available transport modes.
 
-.. warning:: Required transport_mode parameter
+.. warning:: Required ``transport_mode`` parameter
 
    Starting from PyAnsys Geometry 0.14, the ``transport_mode`` parameter is required when using
    the ``Modeler()`` class.
 
 However, if you are using the :func:`launch_modeler() <ansys.geometry.core.connection.launcher>`
 function to launch a local Modeler instance, the ``transport_mode`` parameter is optional and
-will default to the appropriate mode based on the operating system and environment.
+defaults to the appropriate mode based on the operating system and environment.
 
 Connection types
 ----------------
