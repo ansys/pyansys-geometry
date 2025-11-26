@@ -25,6 +25,8 @@ From Python, establish a connection to the existing client session by creating a
     modeler = Modeler(host="localhost", port=50051, transport_mode="wnua")  # On Windows
     # or
     modeler = Modeler(host="localhost", port=50051, transport_mode="uds")  # On Linux
+    # or
+    modeler = Modeler(host="localhost", port=50051, transport_mode="insecure")  # For any OS using insecure gRPC
 
 If no error messages are received, your connection is established successfully.
 Note that your local port number might differ from the one shown in the preceding code.
