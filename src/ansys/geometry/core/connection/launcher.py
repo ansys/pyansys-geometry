@@ -25,7 +25,6 @@ import logging
 import os
 from pathlib import Path
 from typing import TYPE_CHECKING
-import warnings
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
@@ -340,7 +339,7 @@ def launch_docker_modeler(
         in which case the client logs to the console.
     transport_mode : str | None
         Transport mode selected, by default `None` and thus it will be selected
-        for you based on the connection criteria. Options are: "insecure", "mtls"
+        for you based on the connection criteria. Options are: "insecure", "mtls".
     certs_dir : Path | str | None
         Directory to use for TLS certificates.
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
@@ -360,12 +359,6 @@ def launch_docker_modeler(
     if not _HAS_DOCKER:  # pragma: no cover
         raise ModuleNotFoundError("The package 'docker' is required to use this function.")
 
-    if os.getenv("IS_WORKFLOW_RUNNING") is not None:
-        warnings.warn(
-            "Transport mode forced to 'insecure' when running in CI workflows.",
-        )
-        transport_mode = "insecure"
-
     # Call the LocalDockerInstance ctor.
     docker_instance = LocalDockerInstance(
         port=port,
@@ -384,7 +377,7 @@ def launch_docker_modeler(
         docker_instance=docker_instance,
         logging_level=client_log_level,
         logging_file=client_log_file,
-        transport_mode=transport_mode if transport_mode else "mtls",
+        transport_mode=docker_instance.transport_mode,
         certs_dir=certs_dir,
     )
 

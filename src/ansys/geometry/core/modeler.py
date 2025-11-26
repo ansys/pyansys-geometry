@@ -87,8 +87,8 @@ class Modeler:
         Protocol version to use for communication with the server. If None, v0 is used.
         Available versions are "v0", "v1", etc.
     transport_mode : str | None
-        Transport mode selected, by default `None` and thus it will be selected
-        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+        Transport mode selected. Needed if ``channel`` is not provided.
+        Options are: "insecure", "uds", "wnua", "mtls".
     uds_dir : Path | str | None
         Directory to use for Unix Domain Sockets (UDS) transport mode.
         By default `None` and thus it will use the "~/.conn" folder.

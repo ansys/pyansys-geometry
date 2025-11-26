@@ -182,6 +182,7 @@ class LocalDockerInstance:
         # Initialize instance variables
         self._container: Container = None
         self._existed_previously: bool = False
+        self._transport_mode: str | None = transport_mode
 
         # Check the port availability
         port_available, cont = self._check_port_availability(port)
@@ -197,6 +198,17 @@ class LocalDockerInstance:
             # Finally, store the container
             self._container = cont
             self._existed_previously = True
+            # If no transport mode was provided, try to extract it from the existing
+            # container command line arguments
+            if transport_mode is None:
+                cmd_args = cont.attrs["Config"].get("Cmd", [])
+                for arg in cmd_args:
+                    if "--transport-mode=" in arg:
+                        self._transport_mode = arg.split("=")[1]
+                        break
+                # If still None, default to "mtls"
+                if self._transport_mode is None:
+                    self._transport_mode = "mtls"
             return
 
         # At this stage, confirm that you have to deploy our own Geometry service.
@@ -389,6 +401,7 @@ class LocalDockerInstance:
         # If the deployment went fine, this means that you have deployed the service.
         self._container = container
         self._existed_previously = False
+        self._transport_mode = transport_mode
 
     @property
     def container(self) -> "Container":
@@ -403,6 +416,18 @@ class LocalDockerInstance:
         deployed by this class or ``True`` if it already existed.
         """
         return self._existed_previously
+
+    @property
+    def transport_mode(self) -> str:
+        """Transport mode used by the Docker container.
+        
+        Returns
+        -------
+        str
+            Transport mode used by the Docker container. If no transport mode
+            was specified during initialization, it defaults to "mtls".
+        """
+        return self._transport_mode if self._transport_mode else "mtls"
 
 
 def get_geometry_container_type(instance: LocalDockerInstance) -> GeometryContainers | None:
