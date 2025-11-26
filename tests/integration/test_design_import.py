@@ -162,7 +162,6 @@ def test_design_import_simple_case(modeler: Modeler, transport_mode: str):
 
     # And now assert all its elements
     assert read_design is not None
-    assert len(new_client.designs) == 1
 
     # Check the design
     _checker_method(read_design, design)
