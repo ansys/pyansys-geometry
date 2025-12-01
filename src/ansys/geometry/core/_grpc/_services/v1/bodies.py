@@ -150,7 +150,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     geometries=from_sketch_shapes_to_grpc_geometries(
                         kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
                     ),
-                    # path=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["path"]],
+                    path=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["path"]],
                 )
             ]
         )
@@ -211,12 +211,12 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                 SweepWithGuideRequestData(
                     name=data.name,
                     parent=build_grpc_id(data.parent_id),
-                    # plane=from_plane_to_grpc_plane(data.sketch.plane),
-                    # geometries=from_sketch_shapes_to_grpc_geometries(
-                    #     data.sketch.plane, data.sketch.edges, data.sketch.faces
-                    # ),
-                    # path=from_trimmed_curve_to_grpc_trimmed_curve(data.path),
-                    # guide=from_trimmed_curve_to_grpc_trimmed_curve(data.guide),
+                    plane=from_plane_to_grpc_plane(data.sketch.plane),
+                    geometries=from_sketch_shapes_to_grpc_geometries(
+                        data.sketch.plane, data.sketch.edges, data.sketch.faces
+                    ),
+                    path=from_trimmed_curve_to_grpc_trimmed_curve(data.path),
+                    guide=from_trimmed_curve_to_grpc_trimmed_curve(data.guide),
                     tight_tolerance=data.tight_tolerance,
                 )
                 for data in kwargs["sweep_data"]
@@ -663,7 +663,6 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         resp = self.stub.GetAssignedCADMaterial(request=build_grpc_id(kwargs["id"]))
 
         # Return the response - formatted as a dictionary
-        # return {"material": from_grpc_material_to_material(resp)}
         return {"material": resp}
 
     @protect_grpc
