@@ -23,7 +23,10 @@
 
 from typing import TYPE_CHECKING
 
-from ansys.api.discovery.v1.commonenums_pb2 import BackendType as GRPCBackendType
+from ansys.api.discovery.v1.commonenums_pb2 import (
+    BackendType as GRPCBackendType,
+    FileFormat as GRPCFileFormat,
+)
 from ansys.api.discovery.v1.commonmessages_pb2 import (
     Arc as GRPCArc,
     Circle as GRPCCircle,
@@ -76,6 +79,7 @@ if TYPE_CHECKING:
     import semver
 
     from ansys.geometry.core.connection.backend import BackendType
+    from ansys.geometry.core.designer.design import DesignFileFormat
     from ansys.geometry.core.designer.face import SurfaceType
     from ansys.geometry.core.materials.material import Material
     from ansys.geometry.core.materials.property import MaterialProperty
@@ -1234,6 +1238,45 @@ def from_grpc_update_status_to_parameter_update_status(
         GRPCUpdateStatus.CONSTRAINED_PARAMETERS: ParameterUpdateStatus.CONSTRAINED_PARAMETERS,
     }
     return status_mapping.get(update_status, ParameterUpdateStatus.UNKNOWN)
+
+
+def from_design_file_format_to_grpc_file_export_format(
+    design_file_format: "DesignFileFormat",
+) -> GRPCFileFormat:
+    """Convert from a DesignFileFormat object to a gRPC FileExportFormat one.
+
+    Parameters
+    ----------
+    design_file_format : DesignFileFormat
+        The file format desired
+
+    Returns
+    -------
+    GRPCFileExportFormat
+        Converted gRPC File format
+    """
+    from ansys.geometry.core.designer.design import DesignFileFormat
+
+    if design_file_format == DesignFileFormat.SCDOCX:
+        return GRPCFileFormat.FILEFORMAT_SCDOCX
+    elif design_file_format == DesignFileFormat.PARASOLID_TEXT:
+        return GRPCFileFormat.FILEFORMAT_PARASOLID_TEXT
+    elif design_file_format == DesignFileFormat.PARASOLID_BIN:
+        return GRPCFileFormat.FILEFORMAT_PARASOLID_BINARY
+    elif design_file_format == DesignFileFormat.FMD:
+        return GRPCFileFormat.FILEFORMAT_FMD
+    elif design_file_format == DesignFileFormat.STEP:
+        return GRPCFileFormat.FILEFORMAT_STEP
+    elif design_file_format == DesignFileFormat.IGES:
+        return GRPCFileFormat.FILEFORMAT_IGES
+    elif design_file_format == DesignFileFormat.PMDB:
+        return GRPCFileFormat.FILEFORMAT_PMDB
+    elif design_file_format == DesignFileFormat.STRIDE:
+        return GRPCFileFormat.FILEFORMAT_STRIDE
+    elif design_file_format == DesignFileFormat.DISCO:
+        return GRPCFileFormat.FILEFORMAT_DISCO
+    else:
+        return None
 
 
 def from_material_to_grpc_material(

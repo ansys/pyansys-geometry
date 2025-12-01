@@ -43,13 +43,59 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.dbu.v1.designs_pb2_grpc import DesignsStub
+        from ansys.api.discovery.v1.commands.file_pb2_grpc import FileStub
 
-        self.stub = DesignsStub(channel)
+        self.stub = FileStub(channel)
 
     @protect_grpc
     def open(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from pathlib import Path
+        from typing import TYPE_CHECKING, Generator
+
+        from ansys.api.discovery.v1.commands.file_pb2 import OpenMode, OpenRequest
+        from ansys.api.discovery.v1.commonenums_pb2 import FileFormat
+
+        import ansys.geometry.core.connection.defaults as pygeom_defaults
+
+        if TYPE_CHECKING:  # pragma: no cover
+            from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
+
+        def request_generator(
+            file_path: Path,
+            file_format: FileFormat,
+            import_options: "ImportOptions",
+            import_options_definitions: "ImportOptionsDefinitions",
+        ) -> Generator[OpenRequest, None, None]:
+            """Generate requests for streaming file upload."""
+            msg_buffer = 5 * 1024  # 5KB - for additional message data
+            if pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer < 0:  # pragma: no cover
+                raise ValueError("MAX_MESSAGE_LENGTH is too small for file upload.")
+
+            chunk_size = pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer
+            with Path.open(file_path, "rb") as file:
+                while chunk := file.read(chunk_size):
+                    test_req = OpenRequest(
+                        data=chunk,
+                        file_format=file_format,
+                        open_mode=OpenMode.OPENMODE_NEW,
+                        import_named_selections=True,
+                        import_options=import_options.to_dict(),
+                        import_options_definitions=import_options_definitions.to_dict(),
+                    )
+                    yield test_req
+
+        # Call the gRPC service
+        response = self.stub.Open(
+            request_generator(
+                file_path=kwargs["filepath"],
+                file_format=FileFormat.FILEFORMAT_DISCO,
+                import_options=kwargs["import_options"],
+                import_options_definitions=kwargs["import_options_definitions"],
+            )
+        )
+
+        # Return the response - formatted as a dictionary
+        return {"file_path": response.design.path}
 
     @protect_grpc
     def new(self, **kwargs) -> dict:  # noqa: D102

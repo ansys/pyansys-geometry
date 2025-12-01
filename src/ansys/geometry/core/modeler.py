@@ -27,12 +27,13 @@ from typing import TYPE_CHECKING, Optional
 
 from grpc import Channel
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
-from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
@@ -363,6 +364,7 @@ class Modeler:
         file_path: str | Path,
         upload_to_server: bool = True,
         import_options: ImportOptions = ImportOptions(),
+        import_options_definitions: ImportOptionsDefinitions = ImportOptionsDefinitions(),
     ) -> "Design":
         """Open a file.
 
@@ -411,8 +413,10 @@ class Modeler:
         if self._design is not None and self._design.is_active:
             self._design.close()
 
-        # Format-specific logic - upload the whole containing folder for assemblies
-        if upload_to_server:
+        # Format-specific logic - upload the whole containing folder for assemblies. If backend's
+        # version is > 26.1.0 we're going to upload the file no matter what, as streaming is
+        # supported.
+        if upload_to_server and self.client.services.version == GeometryApiProtos.V0:
             fp_path = Path(file_path)
             file_size_kb = fp_path.stat().st_size
             if any(
@@ -424,7 +428,7 @@ class Modeler:
                     if full_path != fp_path:
                         if full_path.stat().st_size < pygeom_defaults.MAX_MESSAGE_LENGTH:
                             self._upload_file(full_path)
-                        elif self.client.backend_version >= (25, 2, 0):
+                        elif self.client.backend_version == (25, 2, 0):
                             self._upload_file_stream(full_path)
                         else:  # pragma: no cover
                             raise RuntimeError(
@@ -444,6 +448,7 @@ class Modeler:
             self.client.services.designs.open(
                 filepath=file_path,
                 import_options=import_options,
+                import_options_definitions=import_options_definitions,
             )
 
         return self.read_existing_design()

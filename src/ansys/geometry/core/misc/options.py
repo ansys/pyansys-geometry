@@ -66,6 +66,23 @@ class ImportOptions:
         return {k: bool(v) for k, v in asdict(self).items()}
 
 
+@dataclass
+class ImportOptionsDefinitions:
+    """Import options definitionswhen opening a file.
+
+    Parameters
+    ----------
+    import_named_selections_keys : string = None
+        Import the named selections keys associated with the root component being inserted.
+    """
+
+    import_named_selections_keys: str = None
+
+    def to_dict(self):
+        """Provide the dictionary representation of the ImportOptionsDefinitions class."""
+        return {k: str(v) for k, v in asdict(self).items()}
+
+
 class TessellationOptions:
     """Provides options for getting tessellation.
 
