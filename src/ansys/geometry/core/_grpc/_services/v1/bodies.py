@@ -966,6 +966,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     def combine(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.edit_pb2 import (
             CombineIntersectBodiesRequest,
+            CombineIntersectBodiesRequestData,
             CombineMergeBodiesRequest,
             CombineMergeBodiesRequestData,
         )
@@ -974,27 +975,34 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         other_bodies = kwargs["other"]
         type_bool_op = kwargs["type_bool_op"]
         keep_other = kwargs["keep_other"]
+        transfer_named_selections = kwargs.get("transfer_named_selections", False)
 
         if type_bool_op == "intersect":
-            request = CombineIntersectBodiesRequest(
-                target_selection=build_grpc_id(target_body),
-                tool_selection=[build_grpc_id(id) for id in other_bodies],
-                preserve_tools=keep_other,
+            request_data = CombineIntersectBodiesRequestData(
+                target_selection_ids=[build_grpc_id(target_body.id)],
+                tool_selection_ids=[build_grpc_id(body.id) for body in other_bodies],
+                keep_cutter=keep_other,
+                subtract_from_target=False,
+                transfer_named_selections=transfer_named_selections,
             )
+            request = CombineIntersectBodiesRequest(request_data=[request_data])
             response = self.edit_stub.CombineIntersectBodies(request=request)
         elif type_bool_op == "subtract":
-            request = CombineIntersectBodiesRequest(
-                target_selection=build_grpc_id(target_body),
-                tool_selection=[build_grpc_id(id) for id in other_bodies],
-                preserve_tools=keep_other,
+            request_data = CombineIntersectBodiesRequestData(
+                target_selection_ids=[build_grpc_id(target_body.id)],
+                tool_selection_ids=[build_grpc_id(body.id) for body in other_bodies],
+                keep_cutter=keep_other,
+                subtract_from_target=True,
+                transfer_named_selections=transfer_named_selections,
             )
-            response = self.edit_stub.CombineSubtractBodies(request=request)
+            request = CombineIntersectBodiesRequest(request_data=[request_data])
+            response = self.edit_stub.CombineIntersectBodies(request=request)
         elif type_bool_op == "unite":
             # Create request data with repeated target_selection_ids
             request_data = CombineMergeBodiesRequestData()
-            request_data.target_selection_ids.append(build_grpc_id(target_body))
-            for body_id in other_bodies:
-                request_data.target_selection_ids.append(build_grpc_id(body_id))
+            request_data.target_selection_ids.append(build_grpc_id(target_body.id))
+            for body in other_bodies:
+                request_data.target_selection_ids.append(build_grpc_id(body.id))
 
             request = CombineMergeBodiesRequest(request_data=[request_data])
             response = self.edit_stub.CombineMergeBodies(request=request)

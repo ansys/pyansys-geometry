@@ -882,6 +882,7 @@ def from_nurbs_surface_to_grpc_nurbs_surface(surface: "NURBSSurface") -> GRPCNur
     """
     from ansys.api.discovery.v1.design.designmessages_pb2 import (
         ControlPoint as GRPCControlPoint,
+        NurbsData as GRPCNurbsData,
     )
 
     # Convert control points
@@ -893,12 +894,23 @@ def from_nurbs_surface_to_grpc_nurbs_surface(surface: "NURBSSurface") -> GRPCNur
         for weight, point in zip(surface.weights, surface.control_points)
     ]
 
+    # Convert nurbs data
+    nurbs_data_u = GRPCNurbsData(
+        degree=surface.degree_u,
+        knots=from_knots_to_grpc_knots(surface.knotvector_u),
+        order=surface.degree_u + 1,
+    )
+
+    nurbs_data_v = GRPCNurbsData(
+        degree=surface.degree_v,
+        knots=from_knots_to_grpc_knots(surface.knotvector_v),
+        order=surface.degree_v + 1,
+    )
+
     return GRPCNurbsSurface(
         control_points=control_points,
-        degree_u=surface.degree_u,
-        degree_v=surface.degree_v,
-        knots_u=from_knots_to_grpc_knots(surface.knotvector_u),
-        knots_v=from_knots_to_grpc_knots(surface.knotvector_v),
+        nurbs_data_u=nurbs_data_u,
+        nurbs_data_v=nurbs_data_v,
     )
 
 
