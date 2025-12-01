@@ -32,7 +32,7 @@ from .conversions import (
     from_enclosure_options_to_grpc_enclosure_options,
     get_standard_tracker_response,
     get_tracker_response_with_created_bodies,
-    serialize_tracker_command_response,
+    serialize_tracked_command_response,
 )
 
 
@@ -142,7 +142,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
             "success": response.success,
             "found": response.found,
             "repaired": response.repaired,
-            "tracker_response": serialize_tracker_command_response(response.tracked_changes),
+            "tracker_response": serialize_tracked_command_response(response.tracked_changes),
             "created_bodies_monikers": [
                 created_body.id
                 for created_body in response.tracked_changes.get("created_bodies", [])

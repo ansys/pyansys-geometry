@@ -1503,7 +1503,7 @@ def get_standard_tracker_response(response) -> dict:
     """
     return {
         "success": response.command_response.success,
-        "tracker_response": serialize_tracker_command_response(response.tracked_changes),
+        "tracker_response": serialize_tracked_command_response(response.tracked_changes),
     }
 
 
