@@ -894,8 +894,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CopyRequest(
-            id=kwargs["id"],
-            parent=kwargs["parent_id"],
+            id=build_grpc_id(kwargs["id"]),
+            parent=build_grpc_id(kwargs["parent_id"]),
             name=kwargs["name"],
         )
 
