@@ -455,9 +455,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             request_data.selection_ids.append(build_grpc_id(body_id))
 
         # Set the distance
-        request_data.distance.CopyFrom(
-            from_length_to_grpc_quantity(kwargs["distance"])
-        )
+        request_data.distance.CopyFrom(from_length_to_grpc_quantity(kwargs["distance"]))
 
         request_data.direction.CopyFrom(from_unit_vector_to_grpc_direction(kwargs["direction"]))
 
