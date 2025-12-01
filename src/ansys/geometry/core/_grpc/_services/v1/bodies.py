@@ -637,7 +637,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             SetAssignedCADMaterialRequestData,
         )
 
-        from ansys.geometry.core._grpc._services.v1.conversions import from_material_to_grpc_material
+        from ansys.geometry.core._grpc._services.v1.conversions import (
+            from_material_to_grpc_material,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetAssignedCADMaterialRequest(
