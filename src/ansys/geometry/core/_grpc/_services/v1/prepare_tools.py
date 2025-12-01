@@ -29,7 +29,9 @@ from ..base.conversions import from_measurement_to_server_length
 from ..base.prepare_tools import GRPCPrepareToolsService
 from .conversions import (
     build_grpc_id,
+    from_angle_to_grpc_quantity,
     from_enclosure_options_to_grpc_enclosure_options,
+    from_length_to_grpc_quantity,
     get_standard_tracker_response,
     get_tracker_response_with_created_bodies,
     serialize_tracked_command_response,
@@ -107,12 +109,12 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
     @protect_grpc
     def share_topology(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.prepare_pb2 import ShareTopologyRequest
-        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
+        from google.protobuf.wrappers_pb2 import BoolValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
             selection_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
-            tolerance=DoubleValue(value=from_measurement_to_server_length(kwargs["tolerance"])),
+            tolerance=from_length_to_grpc_quantity(kwargs["tolerance"]),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
 
@@ -125,12 +127,12 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
     @protect_grpc
     def enhanced_share_topology(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.prepare_pb2 import ShareTopologyRequest
-        from google.protobuf.wrappers_pb2 import BoolValue, DoubleValue
+        from google.protobuf.wrappers_pb2 import BoolValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
             selection_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
-            tolerance=DoubleValue(value=from_measurement_to_server_length(kwargs["tolerance"])),
+            tolerance=from_length_to_grpc_quantity(kwargs["tolerance"]),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
 
