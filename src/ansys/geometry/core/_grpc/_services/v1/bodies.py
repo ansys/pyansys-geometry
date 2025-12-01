@@ -65,7 +65,6 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_sphere_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
         from ansys.api.discovery.v1.design.geometry.body_pb2 import (
             CreateSphereBodyRequest,
             CreateSphereBodyRequestData,
@@ -430,9 +429,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def translate(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import (
-            Quantity as GRPCQuantity,
-        )
+
         from ansys.api.discovery.v1.operations.edit_pb2 import (
             MoveTranslateRequest,
             MoveTranslateRequestData,
@@ -443,11 +440,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         for body_id in kwargs["ids"]:
             request_data.selection_ids.append(build_grpc_id(body_id))
 
-        # Set the distance using GRPCQuantity
+        # Set the distance
         request_data.distance.CopyFrom(
-            GRPCQuantity(
-                value_in_geometry_units=from_measurement_to_server_length(kwargs["distance"])
-            )
+            from_length_to_grpc_quantity(kwargs["distance"] * kwargs["direction"])
         )
 
         request_data.direction.CopyFrom(from_unit_vector_to_grpc_direction(kwargs["direction"]))
