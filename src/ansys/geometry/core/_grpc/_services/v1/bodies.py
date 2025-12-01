@@ -479,6 +479,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         from ansys.api.discovery.v1.commonmessages_pb2 import (
             MultipleEntitiesRequest,
         )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
 
@@ -644,6 +645,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import EntityType
         from ansys.api.discovery.v1.design.designmessages_pb2 import (
             SetDesignEntityNameRequest,
             SetDesignEntityNameRequestData,
@@ -1072,9 +1074,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Create request data
         request_data = ShellRequestData(
             selection_id=build_grpc_id(kwargs["id"]),
-            offset=GRPCQuantity(
-                quantity_value=from_measurement_to_server_length(kwargs["offset"])
-            ),
+            offset=GRPCQuantity(quantity_value=from_measurement_to_server_length(kwargs["offset"])),
         )
 
         # Create the request with request_data
