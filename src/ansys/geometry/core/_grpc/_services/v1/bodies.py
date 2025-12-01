@@ -109,24 +109,23 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             CreateExtrudedBodyRequestData,
         )
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        # Note: This will need proper conversion functions for plane, geometries
-        request_data_item = CreateExtrudedBodyRequestData()
-        request_data_item.name = kwargs["name"]
-        request_data_item.parent_id.CopyFrom(build_grpc_id(kwargs["parent_id"]))
-        request_data_item.plane.CopyFrom(from_plane_to_grpc_plane(kwargs["sketch"].plane))
-        request_data_item.geometries.CopyFrom(
-            from_sketch_shapes_to_grpc_geometries(
-                kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
-            )
-        )
-
         # Apply direction (can be 1 or -1) to distance
-        # Extract the underlying pint Quantity and multiply by direction
         distance_value = kwargs["distance"].value * kwargs["direction"]
-        request_data_item.distance.CopyFrom(from_length_to_grpc_quantity(distance_value))
 
-        request = CreateExtrudedBodyRequest(request_data=[request_data_item])
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateExtrudedBodyRequest(
+            request_data=[
+                CreateExtrudedBodyRequestData(
+                    name=kwargs["name"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    plane=from_plane_to_grpc_plane(kwargs["sketch"].plane),
+                    geometries=from_sketch_shapes_to_grpc_geometries(
+                        kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
+                    ),
+                    distance=from_length_to_grpc_quantity(distance_value),
+                )
+            ]
+        )
 
         # Call the gRPC service
         resp = self.stub.CreateExtrudedBody(request=request)
@@ -358,14 +357,16 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             CreateBodyFromFaceRequestData,
         )
 
-        # Create the request data item
-        request_data_item = CreateBodyFromFaceRequestData()
-        request_data_item.name = kwargs["name"]
-        request_data_item.parent_id.CopyFrom(build_grpc_id(kwargs["parent_id"]))
-        request_data_item.face_id.CopyFrom(build_grpc_id(kwargs["face_id"]))
-
-        # Create the request with request_data array
-        request = CreateBodyFromFaceRequest(request_data=[request_data_item])
+        # Create the request with inline request_data
+        request = CreateBodyFromFaceRequest(
+            request_data=[
+                CreateBodyFromFaceRequestData(
+                    name=kwargs["name"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    face_id=build_grpc_id(kwargs["face_id"]),
+                )
+            ]
+        )
 
         # Call the gRPC service
         resp = self.stub.CreateFromFace(request=request)
@@ -1108,13 +1109,14 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             CombineMergeBodiesRequestData,
         )
 
-        # Create request data with repeated target_selection_ids
-        request_data = CombineMergeBodiesRequestData()
-        for body_id in kwargs["body_ids"]:
-            request_data.target_selection_ids.append(build_grpc_id(body_id))
-
-        # Create the request with request_data
-        request = CombineMergeBodiesRequest(request_data=[request_data])
+        # Create the request with inline request_data
+        request = CombineMergeBodiesRequest(
+            request_data=[
+                CombineMergeBodiesRequestData(
+                    target_selection_ids=[build_grpc_id(body_id) for body_id in kwargs["body_ids"]]
+                )
+            ]
+        )
 
         # Call the gRPC service
         _ = self.edit_stub.CombineMergeBodies(request=request)
