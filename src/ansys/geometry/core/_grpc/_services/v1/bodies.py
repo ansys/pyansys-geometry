@@ -115,8 +115,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                 kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
             )
         )
+        
+        # Apply direction (can be 1 or -1) to distance by negating if needed
+        distance = kwargs["distance"] if kwargs["direction"] == 1 else -kwargs["distance"]
         request_data_item.distance.CopyFrom(
-            from_length_to_grpc_quantity(kwargs["distance"] * kwargs["direction"])
+            from_length_to_grpc_quantity(distance)
         )
 
         request = CreateExtrudedBodyRequest(request_data=[request_data_item])
@@ -881,7 +884,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Create the request - assumes all inputs are valid and of the proper type
         request = GetTessellationRequest(
             id=build_grpc_id(kwargs["id"]),
-            # options=from_tess_options_to_grpc_tess_options(kwargs["options"]),
+            options=from_tess_options_to_grpc_tess_options(kwargs["options"]),
             include_faces=kwargs["include_faces"],
             include_edges=kwargs["include_edges"],
         )

@@ -1314,14 +1314,20 @@ def from_length_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     Parameters
     ----------
     input : Measurement
-        Source measurement data.
+        Source measurement data (Measurement object or pint Quantity).
 
     Returns
     -------
     GRPCQuantity
         Converted gRPC quantity.
     """
-    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
+    # Handle both Measurement objects (which have .value attribute) and raw pint Quantities
+    if hasattr(input, 'value'):
+        # Measurement object
+        return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
+    else:
+        # Raw pint Quantity
+        return GRPCQuantity(value_in_geometry_units=input.m_as(DEFAULT_UNITS.SERVER_LENGTH))
 
 
 def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
