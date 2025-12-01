@@ -428,7 +428,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def translate(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
+        from ansys.api.discovery.v1.commonmessages_pb2 import (
+            Direction as GRPCDirection,
+            Quantity as GRPCQuantity,
+        )
         from ansys.api.discovery.v1.operations.edit_pb2 import (
             MoveTranslateRequest,
             MoveTranslateRequestData,
@@ -446,7 +449,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             )
         )
 
-        # direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+        request_data.direction.CopyFrom(from_unit_vector_to_grpc_direction(kwargs["direction"]))
 
         # Create the request with request_data
         request = MoveTranslateRequest(request_data=[request_data])
@@ -538,8 +541,16 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request with MultipleEntitiesRequest
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
         # Call the gRPC service
-        resp = self.stub.GetEdges(request=build_grpc_id(kwargs["id"]))
+        resp = self.stub.GetEdges(request=request)
+
+        # Get the first response data from the array
+        response_data = resp.response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
@@ -549,27 +560,31 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     "curve_type": edge.curve_type,
                     "is_reversed": edge.is_reversed,
                 }
-                for edge in resp.edges
+                for edge in response_data.edges
             ]
         }
 
     @protect_grpc
     def get_vertices(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import Point
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request with MultipleEntitiesRequest
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
 
         # Call the gRPC service
-        resp = self.stub.GetVertices(request=build_grpc_id(kwargs["id"]))
+        resp = self.stub.GetVertices(request=request)
+
+        # Get the first response data from the array
+        response_data = resp.response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
             "vertices": [
                 {
                     "id": vertex.id.id,
-                    "position": Point(
-                        x=vertex.position.x, y=vertex.position.y, z=vertex.position.z
-                    ),
+                    "position": from_grpc_point_to_point3d(vertex.position),
                 }
-                for vertex in resp.vertices
+                for vertex in response_data.vertices
             ]
         }
 
