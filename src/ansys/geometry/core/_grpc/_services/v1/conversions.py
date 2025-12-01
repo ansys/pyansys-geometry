@@ -23,6 +23,9 @@
 
 from typing import TYPE_CHECKING
 
+from ansys.api.discovery.v1.commands.file_pb2 import (
+    ImportOptionDefinition as GRPCImportOptionDefinition,
+)
 from ansys.api.discovery.v1.commonenums_pb2 import (
     BackendType as GRPCBackendType,
     FileFormat as GRPCFileFormat,
@@ -89,7 +92,7 @@ if TYPE_CHECKING:
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.misc.measurements import Measurement
-    from ansys.geometry.core.misc.options import TessellationOptions
+    from ansys.geometry.core.misc.options import TessellationOptions, ImportOptionsDefinitions
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
         ParameterUpdateStatus,
@@ -1387,6 +1390,30 @@ def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     """
     return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
 
+
+def from_import_options_definitions_to_grpc_import_options_definition(
+    import_options_definitions: "ImportOptionsDefinitions",
+) -> GRPCImportOptionDefinition:
+    """Convert an ``ImportOptionsDefinitions`` to import options definition gRPC message.
+
+    Parameters
+    ----------
+    import_options_definitions : ImportOptionsDefinitions
+        Definition of the import options.
+
+    Returns
+    -------
+    GRPCImportOptionDefinition
+        Geometry service gRPC import options definition message.
+    """
+    definitions = {}
+    for key, definition in import_options_definitions.to_dict().items():
+        definitions[key] = GRPCImportOptionDefinition(
+            string_option=str(definition)
+        )
+    
+    return definitions
+        
 
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
     """Check if the backend version is compatible with NURBS curves in sketches.
