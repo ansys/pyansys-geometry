@@ -37,7 +37,12 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_length
-from .conversions import build_grpc_id, from_frame_to_grpc_frame, from_grpc_point_to_point3d, from_length_to_grpc_quantity
+from .conversions import (
+    build_grpc_id,
+    from_frame_to_grpc_frame,
+    from_grpc_point_to_point3d,
+    from_length_to_grpc_quantity,
+)
 
 
 class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
@@ -70,8 +75,6 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             CreateSphereBodyRequest,
             CreateSphereBodyRequestData,
         )
-
-        from ansys.geometry.core._grpc._services.v1.conversions import from_point3d_to_grpc_point
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSphereBodyRequest(
