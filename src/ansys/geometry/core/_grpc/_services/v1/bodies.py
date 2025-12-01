@@ -673,11 +673,28 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_assigned_material(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+        from ansys.api.discovery.v1.design.designmessages_pb2 import MaterialEntity
+
+        from ansys.geometry.core._grpc._services.v1.conversions import (
+            from_grpc_material_to_material,
+        )
+
+        # Create the request with MultipleEntitiesRequest
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
         # Call the gRPC service
-        resp = self.stub.GetAssignedCADMaterial(request=build_grpc_id(kwargs["id"]))
+        resp = self.stub.GetAssignedCADMaterial(request=request)
 
         # Return the response - formatted as a dictionary
-        return {"material": resp}
+        # Get the first response data from the array
+        response_data = resp.response_data[0] if resp.response_data else None
+        grpc_material = (
+            response_data.material
+            if response_data and response_data.HasField("material")
+            else MaterialEntity()
+        )
+        return {"material": from_grpc_material_to_material(grpc_material)}
 
     @protect_grpc
     def remove_assigned_material(self, **kwargs):  # noqa: D102
