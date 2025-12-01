@@ -36,7 +36,7 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
-from .conversions import build_grpc_id
+from .conversions import build_grpc_id, from_grpc_point_to_point3d
 
 
 class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
@@ -565,16 +565,24 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import Point
+        from ansys.api.discovery.v1.commonmessages_pb2 import (
+            MultipleEntitiesRequest,
+        )
+
+        # Create the request with MultipleEntitiesRequest
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
 
         # Call the gRPC service
-        resp = self.stub.GetBoundingBox(request=build_grpc_id(kwargs["id"]))
+        resp = self.stub.GetBoundingBox(request=request)
+
+        # Get the first bounding box from the response array
+        resp = resp.response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
-            "min": Point(x=resp.box.min.x, y=resp.box.min.y, z=resp.box.min.z),
-            "max": Point(x=resp.box.max.x, y=resp.box.max.y, z=resp.box.max.z),
-            "center": Point(x=resp.box.center.x, y=resp.box.center.y, z=resp.box.center.z),
+            "min": from_grpc_point_to_point3d(resp.box.min),
+            "max": from_grpc_point_to_point3d(resp.box.max),
+            "center": from_grpc_point_to_point3d(resp.box.center),
         }
 
     @protect_grpc
@@ -626,10 +634,19 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.physics.physicsentity_pb2 import SetNameRequest
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            SetDesignEntityNameRequest,
+            SetDesignEntityNameRequestData,
+        )
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = SetNameRequest(object_id=build_grpc_id(kwargs["id"]), name=kwargs["name"])
+        # Create the request data
+        request_data = SetDesignEntityNameRequestData(
+            id=build_grpc_id(kwargs["id"]),
+            name=kwargs["name"],
+        )
+
+        # Create the request with repeated request_data
+        request = SetDesignEntityNameRequest(request_data=[request_data])
 
         # Call the gRPC service
         self.stub.SetName(request=request)
@@ -664,7 +681,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetSuppressedRequest(
-            bodies=[build_grpc_id(body_id) for body_id in kwargs["bodies"]],
+            body_ids=[build_grpc_id(body_id) for body_id in kwargs["bodies"]],
             is_suppressed=kwargs["is_suppressed"],
         )
 
@@ -699,13 +716,16 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def scale(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import ScaleRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import ScaleRequest, ScaleRequestData
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = ScaleRequest(
-            id=kwargs["id"],
-            scale=kwargs["value"],
-        )
+        # Create request data with repeated object_ids
+        request_data = ScaleRequestData()
+        request_data.object_ids.append(build_grpc_id(kwargs["id"]))
+        request_data.scale = kwargs["value"]
+        # point, optional_direction, and keep_holes can be added if needed in kwargs
+
+        # Create the request with request_data
+        request = ScaleRequest(request_data=[request_data])
 
         # Call the gRPC service
         self.edits_stub.Scale(request=request)
