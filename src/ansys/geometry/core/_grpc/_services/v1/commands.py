@@ -70,5 +70,5 @@ class GRPCCommandsServiceV1(GRPCCommandsService):
 
         # Return the result - formatted as a dictionary
         return {
-            "success": len(result.successfully_set_ids) == 1,
+            "success": len(result.successfully_set_ids) == len(kwargs["selection_ids"]),
         }
