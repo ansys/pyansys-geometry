@@ -319,11 +319,9 @@ def from_grpc_material_property_to_material_property(
 
     # In v1 API, id is an EntityIdentifier, so we need to extract the .id field
     property_id = (
-        material_property.id.id
-        if hasattr(material_property.id, "id")
-        else material_property.id
+        material_property.id.id if hasattr(material_property.id, "id") else material_property.id
     )
-    
+
     try:
         mp_type = MaterialPropertyType.from_id(property_id)
     except ValueError:
