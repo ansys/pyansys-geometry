@@ -116,18 +116,6 @@ def test_product_instance_initialization():
     assert product_instance.close() is False
 
 
-def test_prepare_and_start_backend_conflicting_versions():
-    """Test that providing both 'product_version' and 'version' raises a ValueError."""
-    with pytest.raises(
-        ValueError,
-        match="Both 'product_version' and 'version' arguments are provided."
-        " Please use only 'version'.",
-    ):
-        prepare_and_start_backend(
-            backend_type=BackendType.WINDOWS_SERVICE, version=1900, product_version=1901
-        )
-
-
 @pytest.mark.skipif(
     os.name != "nt",
     reason="Test skipped on Linux because it is specific to Windows backends.",
@@ -139,7 +127,7 @@ def test_prepare_and_start_backend_unavailable_version():
         match="The requested Ansys product's version 1901 is not available,"
         " please specify a different version.",
     ):
-        prepare_and_start_backend(backend_type=BackendType.WINDOWS_SERVICE, product_version=1901)
+        prepare_and_start_backend(backend_type=BackendType.WINDOWS_SERVICE, version=1901)
 
 
 @pytest.mark.skipif(

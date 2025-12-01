@@ -38,6 +38,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
     get_design_from_edge,
     get_design_from_face,
+    get_faces_from_ids,
 )
 from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
 from ansys.geometry.core.misc.measurements import Distance
@@ -779,3 +780,46 @@ class PrepareTools:
         else:
             self._grpc_client.log.info("Failed to create enclosure...")
             return []
+
+    @min_backend_version(26, 1, 0)
+    def detect_sweepable_bodies(
+        self,
+        bodies: list["Body"],
+        get_source_target_faces: bool = False,
+    ) -> list[tuple[bool, list["Face"]]]:
+        """Check if bodies are sweepable.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to check.
+        get_source_target_faces : bool
+            Whether to get source and target faces. By default, ``False``.
+
+        Returns
+        -------
+        list[tuple[bool, list[Face]]]
+            List of tuples, each containing a boolean indicating if the body is sweepable and
+            a list of source and target faces if requested.
+        """
+        from ansys.geometry.core.designer.body import Body
+
+        check_type_all_elements_in_iterable(bodies, Body)
+
+        if not bodies:
+            return []
+
+        response = self._grpc_client._services.prepare_tools.detect_sweepable_bodies(
+            body_ids=[body.id for body in bodies],
+            get_source_target_faces=get_source_target_faces,
+        )
+
+        results = []
+        for result_data in response.get("results"):
+            faces = []
+            parent_design = get_design_from_body(bodies[0])
+            if get_source_target_faces:
+                faces.extend(get_faces_from_ids(parent_design, result_data.get("face_ids")))
+            results.append((result_data.get("sweepable"), faces))
+
+        return results
