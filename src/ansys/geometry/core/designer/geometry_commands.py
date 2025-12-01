@@ -793,7 +793,9 @@ class GeometryCommands:
         if not isinstance(circular_angle, Angle):
             circular_angle = Angle(circular_angle)
         if linear_pitch is not None:
-            linear_pitch = linear_pitch if isinstance(linear_pitch, Distance) else Distance(linear_pitch)
+            linear_pitch = (
+                linear_pitch if isinstance(linear_pitch, Distance) else Distance(linear_pitch)
+            )
         else:
             linear_pitch = Distance(0)
         if isinstance(circular_axis, Edge):
