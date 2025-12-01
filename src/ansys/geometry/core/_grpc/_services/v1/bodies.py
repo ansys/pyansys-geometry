@@ -838,7 +838,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MirrorRequest(
-            id=build_grpc_id(kwargs["id"]),
+            selection_ids=[build_grpc_id(kwargs["id"])],
             plane=from_plane_to_grpc_plane(kwargs["plane"]),
         )
 
@@ -850,16 +850,20 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def map(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import MapRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import MapRequest, MapRequestData
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MapRequest(
-            id=build_grpc_id(kwargs["id"]),
-            frame=from_frame_to_grpc_frame(kwargs["frame"]),
+            request_data=[
+                MapRequestData(
+                    id=build_grpc_id(kwargs["id"]),
+                    frame=from_frame_to_grpc_frame(kwargs["frame"]),
+                )
+            ]
         )
 
         # Call the gRPC service
-        self.edit_stub.Map(request=request)
+        self.edit_stub.MapBody(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -978,29 +982,15 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def boolean(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import SetBooleanRequest
-
-        # Call the gRPC service and build the requests accordingly
-        response_success = 0
-        serialized_tracker_response = {}
-        try:
-            request = SetBooleanRequest(
-                target=kwargs["target"],
-                tool=kwargs["tool"],
-                type=kwargs["type"],
-                keep_tool=kwargs["keep_tool"],
-            )
-            response = self.edit_stub.Boolean(request=request)
-            response_success = 1
-        except grpc.RpcError:
-            response_success = 0
-
-        if response_success == 1:
-            # serialized_tracker_response = serialize_tracker_command_response(response=response)
-            serialized_tracker_response = response
-
-        # Return the response - formatted as a dictionary
-        return {"complete_command_response": serialized_tracker_response}
+        # v1 uses the combine method instead of a separate boolean method
+        # Map the v0 parameters to v1 combine parameters
+        return self.combine(
+            target=kwargs["target"],
+            other=kwargs["other"],
+            type_bool_op=kwargs["method"],
+            keep_other=kwargs["keep_other"],
+            transfer_named_selections=False,
+        )
 
     @protect_grpc
     def combine(self, **kwargs) -> dict:  # noqa: D102
