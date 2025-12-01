@@ -1080,12 +1080,18 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
         surface_type = GRPCSurfaceType.SURFACETYPE_PLANE
     elif isinstance(surface, Sphere):
         grpc_surface = GRPCSurface(
-            origin=origin, reference=reference, axis=axis, radius=surface.radius.m
+            origin=origin,
+            reference=reference,
+            axis=axis,
+            radius=from_length_to_grpc_quantity(surface.radius),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_SPHERE
     elif isinstance(surface, Cylinder):
         grpc_surface = GRPCSurface(
-            origin=origin, reference=reference, axis=axis, radius=surface.radius.m
+            origin=origin,
+            reference=reference,
+            axis=axis,
+            radius=from_length_to_grpc_quantity(surface.radius),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_CYLINDER
     elif isinstance(surface, Cone):
@@ -1093,8 +1099,8 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
             origin=origin,
             reference=reference,
             axis=axis,
-            radius=surface.radius.m,
-            half_angle=surface.half_angle.m,
+            radius=from_length_to_grpc_quantity(surface.radius),
+            half_angle=from_angle_to_grpc_quantity(surface.half_angle),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_CONE
     elif isinstance(surface, Torus):
@@ -1102,8 +1108,8 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
             origin=origin,
             reference=reference,
             axis=axis,
-            major_radius=surface.major_radius.m,
-            minor_radius=surface.minor_radius.m,
+            major_radius=from_length_to_grpc_quantity(surface.major_radius),
+            minor_radius=from_length_to_grpc_quantity(surface.minor_radius),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_TORUS
     elif isinstance(surface, NURBSSurface):
