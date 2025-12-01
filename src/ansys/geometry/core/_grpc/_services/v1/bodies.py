@@ -645,7 +645,6 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import EntityType
         from ansys.api.discovery.v1.design.designmessages_pb2 import (
             SetDesignEntityNameRequest,
             SetDesignEntityNameRequestData,
