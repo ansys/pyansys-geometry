@@ -408,7 +408,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     name=kwargs["name"],
                     parent_id=build_grpc_id(kwargs["parent_id"]),
                     trimmed_curves=[
-                        from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["trimmed_curves"]
+                        from_trimmed_curve_to_grpc_trimmed_curve(tc)
+                        for tc in kwargs["trimmed_curves"]
                     ],
                 )
             ]
@@ -587,7 +588,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         response_data = resp.response_data[0]
 
         # Return the response - formatted as a dictionary
-        return {"volume": pint.Quantity(response_data.volume.value_in_geometry_units, DEFAULT_UNITS.SERVER_VOLUME)}  # noqa: E501
+        return {
+            "volume": pint.Quantity(
+                response_data.volume.value_in_geometry_units, DEFAULT_UNITS.SERVER_VOLUME
+            )
+        }  # noqa: E501
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
