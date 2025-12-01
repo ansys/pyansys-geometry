@@ -909,7 +909,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         resp = self.stub.CreateDuplicate(request=request)
 
         # Return the response - formatted as a dictionary
-        body = resp.bodies[0]
+        response_data = resp.response_data[0]
+        body = response_data.body
         return {"id": body.id.id, "master_id": body.master_id.id, "name": body.name}
 
     @protect_grpc
