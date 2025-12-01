@@ -635,6 +635,8 @@ class GeometryCommands:
         pitch_x = pitch_x if isinstance(pitch_x, Distance) else Distance(pitch_x)
         if pitch_y is not None:
             pitch_y = pitch_y if isinstance(pitch_y, Distance) else Distance(pitch_y)
+        else:
+            pitch_y = Distance(0)
 
         result = self._grpc_client.services.patterns.create_linear_pattern(
             selection_ids=[object.id for object in selection],
@@ -790,8 +792,12 @@ class GeometryCommands:
         # Convert angle and pitch to appropriate objects
         if not isinstance(circular_angle, Angle):
             circular_angle = Angle(circular_angle)
-        if linear_pitch is not None and not isinstance(linear_pitch, Distance):
-            linear_pitch = Distance(linear_pitch)
+        if linear_pitch is not None:
+            linear_pitch = (
+                linear_pitch if isinstance(linear_pitch, Distance) else Distance(linear_pitch)
+            )
+        else:
+            linear_pitch = Distance(0)
         if isinstance(circular_axis, Edge):
             circular_axis = circular_axis.id
 
