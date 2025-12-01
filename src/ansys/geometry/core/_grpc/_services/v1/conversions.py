@@ -800,21 +800,26 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
         direction = from_unit_vector_to_grpc_direction(curve.direction)
         grpc_curve = GRPCCurveGeometry(origin=origin, direction=direction)
     elif isinstance(curve, (Circle, Ellipse)):
+        from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
+
         origin = from_point3d_to_grpc_point(curve.origin)
         reference = from_unit_vector_to_grpc_direction(curve.dir_x)
         axis = from_unit_vector_to_grpc_direction(curve.dir_z)
 
         if isinstance(curve, Circle):
             grpc_curve = GRPCCurveGeometry(
-                origin=origin, reference=reference, axis=axis, radius=curve.radius.m
+                origin=origin,
+                reference=reference,
+                axis=axis,
+                radius=GRPCQuantity(value_in_geometry_units=curve.radius.m),
             )
         elif isinstance(curve, Ellipse):
             grpc_curve = GRPCCurveGeometry(
                 origin=origin,
                 reference=reference,
                 axis=axis,
-                major_radius=curve.major_radius.m,
-                minor_radius=curve.minor_radius.m,
+                major_radius=GRPCQuantity(value_in_geometry_units=curve.major_radius.m),
+                minor_radius=GRPCQuantity(value_in_geometry_units=curve.minor_radius.m),
             )
     elif isinstance(curve, NURBSCurve):
         grpc_curve = GRPCCurveGeometry(nurbs_curve=from_nurbs_curve_to_grpc_nurbs_curve(curve))

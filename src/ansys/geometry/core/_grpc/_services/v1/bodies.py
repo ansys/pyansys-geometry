@@ -65,24 +65,24 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_sphere_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import Point
+        from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
         from ansys.api.discovery.v1.design.geometry.body_pb2 import (
             CreateSphereBodyRequest,
             CreateSphereBodyRequestData,
         )
+
+        from ansys.geometry.core._grpc._services.v1.conversions import from_point3d_to_grpc_point
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSphereBodyRequest(
             request_data=[
                 CreateSphereBodyRequestData(
                     name=kwargs["name"],
-                    parent_id=kwargs["parent"],
-                    center=Point(
-                        x=kwargs["center"].x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-                        y=kwargs["center"].y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-                        z=kwargs["center"].z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+                    parent_id=build_grpc_id(kwargs["parent"]),
+                    center=from_point3d_to_grpc_point(kwargs["center"]),
+                    radius=GRPCQuantity(
+                        value_in_geometry_units=from_measurement_to_server_length(kwargs["radius"])
                     ),
-                    radius=from_measurement_to_server_length(kwargs["radius"]),
                 )
             ]
         )
@@ -378,7 +378,6 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                 CreateSurfaceBodyRequestData(
                     name=kwargs["name"],
                     parent_id=build_grpc_id(kwargs["parent_id"]),
-                    # trimmed_surface=from_trimmed_surface_to_grpc_trimmed_surface(kwargs["trimmed_surface"]),
                 )
             ]
         )
@@ -409,7 +408,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     name=kwargs["name"],
                     parent_id=build_grpc_id(kwargs["parent_id"]),
                     trimmed_curves=[
-                        # from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["trimmed_curves"]
+                        from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["trimmed_curves"]
                     ],
                 )
             ]
@@ -514,8 +513,16 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request with MultipleEntitiesRequest
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
         # Call the gRPC service
-        resp = self.stub.GetFaces(request=build_grpc_id(kwargs["id"]))
+        resp = self.stub.GetFaces(request=request)
+
+        # Get the first response data from the array
+        response_data = resp.response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
@@ -525,7 +532,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     "surface_type": face.surface_type,
                     "is_reversed": face.is_reversed,
                 }
-                for face in resp.faces
+                for face in response_data.faces
             ]
         }
 
@@ -568,11 +575,19 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_volume(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request with MultipleEntitiesRequest
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
         # Call the gRPC service
-        resp = self.stub.GetVolume(request=build_grpc_id(kwargs["id"]))
+        resp = self.stub.GetVolume(request=request)
+
+        # Get the first response data from the array
+        response_data = resp.response_data[0]
 
         # Return the response - formatted as a dictionary
-        return {"volume": pint.Quantity(resp.volume, DEFAULT_UNITS.SERVER_VOLUME)}
+        return {"volume": pint.Quantity(response_data.volume.value_in_geometry_units, DEFAULT_UNITS.SERVER_VOLUME)}  # noqa: E501
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
@@ -645,7 +660,6 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import EntityType
         from ansys.api.discovery.v1.design.designmessages_pb2 import (
             SetDesignEntityNameRequest,
             SetDesignEntityNameRequestData,
