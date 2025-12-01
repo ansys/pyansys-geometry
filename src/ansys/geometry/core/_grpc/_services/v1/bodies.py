@@ -449,20 +449,20 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             MoveTranslateRequestData,
         )
 
-        # Create the request data with repeated selection_ids
-        request_data = MoveTranslateRequestData()
-        for body_id in kwargs["ids"]:
-            request_data.selection_ids.append(build_grpc_id(body_id))
+        # Extract distance value if it's a Measurement object
+        distance = kwargs["distance"]
+        distance_value = distance.value if hasattr(distance, "value") else distance
 
-        # Set the distance
-        request_data.distance.CopyFrom(
-            from_length_to_grpc_quantity(kwargs["distance"])
+        # Create the request with selection_ids, direction, and distance
+        request = MoveTranslateRequest(
+            request_data=[
+                MoveTranslateRequestData(
+                    selection_ids=[build_grpc_id(body_id) for body_id in kwargs["ids"]],
+                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+                    distance=from_length_to_grpc_quantity(distance_value),
+                )
+            ]
         )
-
-        request_data.direction.CopyFrom(from_unit_vector_to_grpc_direction(kwargs["direction"]))
-
-        # Create the request with request_data
-        request = MoveTranslateRequest(request_data=[request_data])
 
         # Call the gRPC service
         self.edit_stub.MoveTranslate(request=request)

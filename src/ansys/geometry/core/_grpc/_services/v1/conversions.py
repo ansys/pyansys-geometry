@@ -1043,13 +1043,15 @@ def from_trimmed_surface_to_grpc_trimmed_surface(
     """
     surface_geometry, surface_type = from_surface_to_grpc_surface(trimmed_surface.geometry)
 
+    # In v1, u_min/u_max/v_min/v_max are Quantity messages, not floats
+    # These are dimensionless parameters, so we use plain values
     return GRPCTrimmedSurface(
         surface=surface_geometry,
         type=surface_type,
-        u_min=trimmed_surface.box_uv.interval_u.start,
-        u_max=trimmed_surface.box_uv.interval_u.end,
-        v_min=trimmed_surface.box_uv.interval_v.start,
-        v_max=trimmed_surface.box_uv.interval_v.end,
+        u_min=GRPCQuantity(value_in_geometry_units=trimmed_surface.box_uv.interval_u.start),
+        u_max=GRPCQuantity(value_in_geometry_units=trimmed_surface.box_uv.interval_u.end),
+        v_min=GRPCQuantity(value_in_geometry_units=trimmed_surface.box_uv.interval_v.start),
+        v_max=GRPCQuantity(value_in_geometry_units=trimmed_surface.box_uv.interval_v.end),
     )
 
 
