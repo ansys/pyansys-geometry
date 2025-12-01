@@ -24,7 +24,6 @@
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.measurements import Distance
 
 from ..base.patterns import GRPCPatternsService
 from .conversions import (
