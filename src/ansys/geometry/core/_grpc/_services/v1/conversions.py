@@ -92,7 +92,7 @@ if TYPE_CHECKING:
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.misc.measurements import Measurement
-    from ansys.geometry.core.misc.options import TessellationOptions, ImportOptionsDefinitions
+    from ansys.geometry.core.misc.options import ImportOptionsDefinitions, TessellationOptions
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
         ParameterUpdateStatus,
@@ -1556,3 +1556,22 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
             for entity in getattr(response.tracked_changes, "deleted_edge_ids", [])
         ],
     }
+
+def _check_write_body_facets_input(backend_version: "semver.Version", write_body_facets: bool):
+        """Check if the backend version is compatible with NURBS curves in sketches.
+
+        Parameters
+        ----------
+        backend_version : semver.Version
+            The version of the backend.
+        write_body_facets : bool
+            Option to write out body facets.
+        """
+        if write_body_facets and backend_version < (26, 1, 0):
+            from ansys.geometry.core.logger import LOG
+
+            LOG.warning(
+                "The usage of write_body_facets requires a minimum Ansys release version of "
+                + "26.1.0, but the current version used is "
+                + f"{backend_version}."
+            )

@@ -26,9 +26,9 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.components import GRPCComponentsService
-from ..base.conversions import from_measurement_to_server_angle
 from .conversions import (
     build_grpc_id,
+    from_angle_to_grpc_quantity,
     from_grpc_matrix_to_matrix,
     from_point3d_to_grpc_point,
     from_unit_vector_to_grpc_direction,
@@ -80,7 +80,7 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
         # Note: response.components is a repeated field, we return the first one
         component = response.components[0]
         return {
-            "id": component.id,
+            "id": component.id.id,
             "name": component.name,
             "instance_name": component.instance_name,
             "template": kwargs["template_id"],  # template_id from input
@@ -132,7 +132,7 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
                     translation=translation,
                     rotation_axis_origin=origin,
                     rotation_axis_direction=direction,
-                    rotation_angle=from_measurement_to_server_angle(kwargs["rotation_angle"]),
+                    rotation_angle=from_angle_to_grpc_quantity(kwargs["rotation_angle"]),
                 )
             ],
         )
@@ -143,7 +143,7 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
         # Return the response - formatted as a dictionary
         # Note: response.matrices is a map<string, Matrix>
         # Get the matrix for our component ID
-        matrix_value = response.matrices.get(kwargs["id"].id)
+        matrix_value = response.matrices.get(kwargs["id"])
         return {"matrix": from_grpc_matrix_to_matrix(matrix_value) if matrix_value else None}
 
     @protect_grpc

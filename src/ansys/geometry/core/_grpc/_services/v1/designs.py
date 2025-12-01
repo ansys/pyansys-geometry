@@ -111,7 +111,19 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def new(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.commands.file_pb2 import NewRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = NewRequest(name=kwargs["name"])
+
+        # Call the gRPC service
+        response = self.file_stub.New(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "design_id": response.design.id.id,
+            "main_part_id": response.design.main_part_id.id,
+        }
 
     @protect_grpc
     def get_assembly(self, **kwargs) -> dict:  # noqa: D102
@@ -141,7 +153,32 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def download_export(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.commands.file_pb2 import SaveMode, SaveRequest
+
+        from .conversions import (
+            _check_write_body_facets_input,
+            from_design_file_format_to_grpc_file_export_format,
+        )
+
+        _check_write_body_facets_input(kwargs["backend_version"], kwargs["write_body_facets"])
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SaveRequest(
+            format=from_design_file_format_to_grpc_file_export_format(kwargs["format"]),
+            save_mode=SaveMode.SAVEMODE_STANDARD,
+            write_body_facets=kwargs["write_body_facets"],
+        )
+
+        # Call the gRPC service
+        response_stream = self.file_stub.Save(request)
+
+        # Return the response - formatted as a dictionary
+        data = bytes()
+        for response in response_stream:
+            data += response.data
+        return {
+            "data": data,
+        }
 
     @protect_grpc
     def stream_download_export(self, **kwargs) -> dict:  # noqa: D102
