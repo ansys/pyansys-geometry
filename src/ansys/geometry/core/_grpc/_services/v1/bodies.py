@@ -453,8 +453,16 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         distance = kwargs["distance"]
         distance_value = distance.value if hasattr(distance, "value") else distance
 
-        # Set the distance
-        request_data.distance.CopyFrom(from_length_to_grpc_quantity(kwargs["distance"]))
+        # Create the request with selection_ids, direction, and distance
+        request = MoveTranslateRequest(
+            request_data=[
+                MoveTranslateRequestData(
+                    selection_ids=[build_grpc_id(body_id) for body_id in kwargs["ids"]],
+                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+                    distance=from_length_to_grpc_quantity(distance_value),
+                )
+            ]
+        )
 
         # Call the gRPC service
         self.edit_stub.MoveTranslate(request=request)
@@ -1149,7 +1157,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         response = self.edit_stub.Shell(request=request)
 
         # Return the response - formatted as a dictionary
-        return {"tracked_command_response": response.tracked_command_response}
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "tracked_command_response": response.tracked_command_response,
+        }
 
     @protect_grpc
     def remove_faces(self, **kwargs) -> dict:  # noqa: D102
@@ -1169,12 +1180,25 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def imprint_curves(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import ImprintCurvesRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            ImprintCurvesRequest,
+            ImprintCurvesRequestData,
+        )
 
-        # Create the request - assumes all inputs are valid and of the proper type
+        # Convert trimmed curves to gRPC format
+        trimmed_curves = []
+        if kwargs.get("tc"):
+            trimmed_curves = [from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["tc"]]
+
+        # Create the request using request_data pattern
         request = ImprintCurvesRequest(
-            faces=[build_grpc_id(id) for id in kwargs["faces"]],
-            curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["curves"]],
+            request_data=[
+                ImprintCurvesRequestData(
+                    body_ids=build_grpc_id(kwargs["id"]),
+                    face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    trimmed_curves=trimmed_curves,
+                )
+            ]
         )
 
         # Call the gRPC service
