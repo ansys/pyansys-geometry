@@ -887,23 +887,30 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {"collision_type": resp.response_data[0].collision}
 
-    # TODO:find new method name,
     @protect_grpc
     def copy(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import CopyRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            CreateDuplicateBodyRequest,
+            DuplicateBodyRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = CopyRequest(
-            id=build_grpc_id(kwargs["id"]),
-            parent=build_grpc_id(kwargs["parent_id"]),
-            name=kwargs["name"],
+        request = CreateDuplicateBodyRequest(
+            request_data=[
+                DuplicateBodyRequestData(
+                    id=build_grpc_id(kwargs["id"]),
+                    parent=build_grpc_id(kwargs["parent_id"]),
+                    name=kwargs["name"],
+                )
+            ]
         )
 
         # Call the gRPC service
-        resp = self.edit_stub.Copy(request=request)
+        resp = self.stub.CreateDuplicate(request=request)
 
         # Return the response - formatted as a dictionary
-        return {"master_id": resp.master_id, "name": resp.name}
+        body = resp.bodies[0]
+        return {"id": body.id.id, "master_id": body.master_id.id, "name": body.name}
 
     @protect_grpc
     def get_tesellation(self, **kwargs) -> dict:  # noqa: D102
