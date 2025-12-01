@@ -565,11 +565,15 @@ class GeometryCommands:
         Warnings
         --------
         This method is only available starting on Ansys release 25R2.
+
+        Notes
+        -----
+        It is preferred that users use the ``set_name`` method on the object
         """
-        result = self._grpc_client._services.commands.set_name(
-            selection_ids=[object.id for object in selection], name=name
-        )
-        return result.get("success")
+        for obj in selection:
+            obj.set_name(name)
+
+        return True
 
     @min_backend_version(25, 2, 0)
     def create_linear_pattern(
