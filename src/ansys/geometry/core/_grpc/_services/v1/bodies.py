@@ -969,7 +969,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                         for profile in kwargs["profiles"]
                     ],
                     guides=TrimmedCurveList(
-                        curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["guides"]]
+                        curves=[
+                            from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in kwargs["guides"]
+                        ]
                     ),
                 )
             ]
