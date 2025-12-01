@@ -253,19 +253,20 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             CreateExtrudedBodyFromFaceProfileRequestData,
         )
 
-        # Create the request data item
-        request_data_item = CreateExtrudedBodyFromFaceProfileRequestData()
-        request_data_item.name = kwargs["name"]
-        request_data_item.parent_id.CopyFrom(build_grpc_id(kwargs["parent_id"]))
-        request_data_item.face_id.CopyFrom(build_grpc_id(kwargs["face_id"]))
-
         # Apply direction (can be 1 or -1) to distance
-        # Extract the underlying pint Quantity and multiply by direction
         distance_value = kwargs["distance"].value * kwargs["direction"]
-        request_data_item.distance.CopyFrom(from_length_to_grpc_quantity(distance_value))
 
-        # Create the request with request_data array
-        request = CreateExtrudedBodyFromFaceProfileRequest(request_data=[request_data_item])
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateExtrudedBodyFromFaceProfileRequest(
+            request_data=[
+                CreateExtrudedBodyFromFaceProfileRequestData(
+                    name=kwargs["name"],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    face_id=build_grpc_id(kwargs["face_id"]),
+                    distance=from_length_to_grpc_quantity(distance_value),
+                )
+            ]
+        )
 
         # Call the gRPC service
         resp = self.stub.CreateExtrudedBodyFromFaceProfile(request=request)
@@ -525,14 +526,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             SetColorRequestData,
         )
 
-        # Create the request data
-        request_data = SetColorRequestData(
+        # Create the request with repeated request_data
+        request = SetColorRequest(request_data=[SetColorRequestData(
             id=build_grpc_id(kwargs["id"]),
             color=kwargs["color"],
-        )
-
-        # Create the request with repeated request_data
-        request = SetColorRequest(request_data=[request_data])
+        )])
 
         # Call the gRPC service
         self.stub.SetColor(request=request)
@@ -730,14 +728,12 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             SetDesignEntityNameRequestData,
         )
 
-        # Create the request data
-        request_data = SetDesignEntityNameRequestData(
+        # Create the request with repeated request_data
+        request = SetDesignEntityNameRequest(request_data=[SetDesignEntityNameRequestData(
             id=build_grpc_id(kwargs["id"]),
             name=kwargs["name"],
         )
-
-        # Create the request with repeated request_data
-        request = SetDesignEntityNameRequest(request_data=[request_data])
+])
 
         # Call the gRPC service
         self.stub.SetName(request=request)
@@ -752,13 +748,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             SetFillStyleRequestData,
         )
 
-        # Create request data
-        request_data = SetFillStyleRequestData(
-            id=build_grpc_id(kwargs["id"]), fill_style=kwargs["fill_style"].value
-        )
-
         # Create the request with request_data
-        request = SetFillStyleRequest(request_data=[request_data])
+        request = SetFillStyleRequest(request_data=[SetFillStyleRequestData(
+            id=build_grpc_id(kwargs["id"]), fill_style=kwargs["fill_style"].value
+        )])
 
         # Call the gRPC service
         self.stub.SetFillStyle(request=request)
