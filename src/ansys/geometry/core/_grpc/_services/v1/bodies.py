@@ -1178,10 +1178,14 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         from ansys.api.discovery.v1.operations.edit_pb2 import ShellRequest, ShellRequestData
 
         # Create the request with request_data
-        request = ShellRequest(request_data=[ShellRequestData(
-            selection_id=build_grpc_id(kwargs["id"]),
-            offset=from_length_to_grpc_quantity((kwargs["offset"])),
-        )])
+        request = ShellRequest(
+            request_data=[
+                ShellRequestData(
+                    selection_id=build_grpc_id(kwargs["id"]),
+                    offset=from_length_to_grpc_quantity((kwargs["offset"])),
+                )
+            ]
+        )
 
         # Call the gRPC service
         response = self.edit_stub.Shell(request=request)
@@ -1257,9 +1261,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Convert sketch to geometries
         sketch = kwargs["sketch"]
-        curves = from_sketch_shapes_to_grpc_geometries(
-            sketch.plane, sketch.edges, sketch.faces
-        )
+        curves = from_sketch_shapes_to_grpc_geometries(sketch.plane, sketch.edges, sketch.faces)
 
         # Create the request using ProjectCurvesRequestData
         request = ProjectCurvesRequest(
@@ -1298,9 +1300,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Convert sketch to geometries
         sketch = kwargs["sketch"]
-        curves = from_sketch_shapes_to_grpc_geometries(
-            sketch.plane, sketch.edges, sketch.faces
-        )
+        curves = from_sketch_shapes_to_grpc_geometries(sketch.plane, sketch.edges, sketch.faces)
 
         # Create the request using ImprintProjectedCurvesRequestData
         request = ImprintProjectedCurvesRequest(
