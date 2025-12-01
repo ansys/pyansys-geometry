@@ -25,7 +25,9 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import to_distance
 from ..base.measurement_tools import GRPCMeasurementToolsService
+from .conversions import build_grpc_id
 
 
 class GRPCMeasurementToolsServiceV1(GRPCMeasurementToolsService):  # pragma: no cover
@@ -43,10 +45,21 @@ class GRPCMeasurementToolsServiceV1(GRPCMeasurementToolsService):  # pragma: no 
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.measuretools_pb2_grpc import MeasureToolsStub
+        from ansys.api.discovery.v1.operations.measure_pb2_grpc import MeasureStub
 
-        self.stub = MeasureToolsStub(channel)
+        self.stub = MeasureStub(channel)
 
     @protect_grpc
     def min_distance_between_objects(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.operations.measure_pb2 import MinDistanceBetweenObjectsRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MinDistanceBetweenObjectsRequest(
+            selection=[build_grpc_id(item) for item in kwargs["selection"]]
+        )
+
+        # Call the gRPC service
+        response = self.stub.MinDistanceBetweenSelectionObjects(request)
+
+        # Return the response - formatted as a dictionary
+        return {"distance": to_distance(response.gap.distance.value_in_geometry_units)}

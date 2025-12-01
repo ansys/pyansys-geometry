@@ -72,6 +72,11 @@ their API documentation:
 
 .. note::
 
+    For information about transport modes and secure connections, see the
+    :ref:`user_guide_connection_securing` section in the User Guide.
+
+.. note::
+
     Because this is the first release of the Geometry service, you cannot yet define a product version
     or API version.
 

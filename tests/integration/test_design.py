@@ -1312,7 +1312,7 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     assert path_on_server is not None
 
 
-def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory):
+def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_mode: str):
     """Test uploading a file to the server."""
     # Define a new maximum message length
     import ansys.geometry.core.connection.defaults as pygeom_defaults
@@ -1333,7 +1333,7 @@ def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory):
         # Upload file - necessary to import the Modeler class and create an instance
         from ansys.geometry.core import Modeler
 
-        modeler = Modeler()
+        modeler = Modeler(transport_mode=transport_mode)
         path_on_server = modeler._upload_file_stream(file)
         assert path_on_server is not None
     finally:
