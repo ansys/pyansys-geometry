@@ -1159,19 +1159,30 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def remove_faces(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.face_pb2 import RemoveFacesRequest
+        from ansys.api.discovery.v1.design.geometry.face_pb2 import (
+            RemoveFacesRequest,
+            RemoveFacesRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
+        offset_quantity = from_length_to_grpc_quantity(kwargs["offset"])
+        request_data = RemoveFacesRequestData(
+            selection_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+            offset=offset_quantity,
+        )
         request = RemoveFacesRequest(
-            bodies=[build_grpc_id(id) for id in kwargs["bodies"]],
-            faces=[build_grpc_id(id) for id in kwargs["faces"]],
+            request_data=[request_data],
+            offset=offset_quantity,
         )
 
         # Call the gRPC service
-        _ = self.face_stub.Remove(request=request)
+        response = self.face_stub.Remove(request=request)
 
         # Return the response - formatted as a dictionary
-        return {}
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "tracked_command_response": response.tracked_command_response,
+        }
 
     @protect_grpc
     def imprint_curves(self, **kwargs) -> dict:  # noqa: D102
