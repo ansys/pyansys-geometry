@@ -252,7 +252,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request_data_item.name = kwargs["name"]
         request_data_item.parent_id.CopyFrom(build_grpc_id(kwargs["parent_id"]))
         request_data_item.face_id.CopyFrom(build_grpc_id(kwargs["face_id"]))
-        
+
         # Apply direction (can be 1 or -1) to distance by negating if needed
         distance = kwargs["distance"] if kwargs["direction"] == 1 else -kwargs["distance"]
         request_data_item.distance.CopyFrom(from_length_to_grpc_quantity(distance))
