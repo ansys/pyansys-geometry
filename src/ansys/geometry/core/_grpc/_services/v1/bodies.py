@@ -244,25 +244,32 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     def create_extruded_body_from_face_profile(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.geometry.body_pb2 import (
             CreateExtrudedBodyFromFaceProfileRequest,
+            CreateExtrudedBodyFromFaceProfileRequestData,
         )
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = CreateExtrudedBodyFromFaceProfileRequest(
-            name=kwargs["name"],
-            parent=kwargs["parent_id"],
-            face=kwargs["face_id"],
-            distance=from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"],
-        )
+        # Create the request data item
+        request_data_item = CreateExtrudedBodyFromFaceProfileRequestData()
+        request_data_item.name = kwargs["name"]
+        request_data_item.parent_id.CopyFrom(build_grpc_id(kwargs["parent_id"]))
+        request_data_item.face_id.CopyFrom(build_grpc_id(kwargs["face_id"]))
+        
+        # Apply direction (can be 1 or -1) to distance by negating if needed
+        distance = kwargs["distance"] if kwargs["direction"] == 1 else -kwargs["distance"]
+        request_data_item.distance.CopyFrom(from_length_to_grpc_quantity(distance))
+
+        # Create the request with request_data array
+        request = CreateExtrudedBodyFromFaceProfileRequest(request_data=[request_data_item])
 
         # Call the gRPC service
         resp = self.stub.CreateExtrudedBodyFromFaceProfile(request=request)
 
         # Return the response - formatted as a dictionary
+        body = resp.bodies[0]
         return {
-            "id": resp.id.id,
-            "name": resp.name,
-            "master_id": resp.master_id.id,
-            "is_surface": resp.is_surface,
+            "id": body.id.id,
+            "name": body.name,
+            "master_id": body.master_id.id,
+            "is_surface": body.is_surface,
         }
 
     @protect_grpc
@@ -338,24 +345,30 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_body_from_face(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import CreateBodyFromFaceRequest
-
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = CreateBodyFromFaceRequest(
-            name=kwargs["name"],
-            parent=kwargs["parent_id"],
-            face=kwargs["face_id"],
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            CreateBodyFromFaceRequest,
+            CreateBodyFromFaceRequestData,
         )
+
+        # Create the request data item
+        request_data_item = CreateBodyFromFaceRequestData()
+        request_data_item.name = kwargs["name"]
+        request_data_item.parent_id.CopyFrom(build_grpc_id(kwargs["parent_id"]))
+        request_data_item.face_id.CopyFrom(build_grpc_id(kwargs["face_id"]))
+
+        # Create the request with request_data array
+        request = CreateBodyFromFaceRequest(request_data=[request_data_item])
 
         # Call the gRPC service
         resp = self.stub.CreateFromFace(request=request)
 
         # Return the response - formatted as a dictionary
+        body = resp.bodies[0]
         return {
-            "id": resp.id.id,
-            "name": resp.name,
-            "master_id": resp.master_id.id,
-            "is_surface": resp.is_surface,
+            "id": body.id.id,
+            "name": body.name,
+            "master_id": body.master_id.id,
+            "is_surface": body.is_surface,
         }
 
     @protect_grpc
