@@ -36,7 +36,7 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
-from .conversions import build_grpc_id, from_grpc_point_to_point3d
+from .conversions import build_grpc_id, from_grpc_point_to_point3d, from_length_to_grpc_quantity
 
 
 class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
@@ -79,10 +79,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                 CreateSphereBodyRequestData(
                     name=kwargs["name"],
                     parent_id=build_grpc_id(kwargs["parent"]),
-                    center=from_point3d_to_grpc_point(kwargs["center"]),
-                    radius=GRPCQuantity(
-                        value_in_geometry_units=from_measurement_to_server_length(kwargs["radius"])
-                    ),
+                    center= from_point3d_to_grpc_point(kwargs["center"]),
+                    radius= from_length_to_grpc_quantity(kwargs["radius"]),
+                    
                 )
             ]
         )
@@ -102,7 +101,6 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_extruded_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
         from ansys.api.discovery.v1.design.geometry.body_pb2 import (
             CreateExtrudedBodyRequest,
             CreateExtrudedBodyRequestData,
@@ -120,11 +118,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             )
         )
         request_data_item.distance.CopyFrom(
-            GRPCQuantity(
-                value_in_geometry_units=(
-                    from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"]
-                )
-            )
+            from_length_to_grpc_quantity(kwargs["distance"] * kwargs["direction"])
         )
 
         request = CreateExtrudedBodyRequest(request_data=[request_data_item])
@@ -1118,13 +1112,12 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def shell(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
         from ansys.api.discovery.v1.operations.edit_pb2 import ShellRequest, ShellRequestData
 
         # Create request data
         request_data = ShellRequestData(
             selection_id=build_grpc_id(kwargs["id"]),
-            offset=GRPCQuantity(quantity_value=from_measurement_to_server_length(kwargs["offset"])),
+            offset=from_length_to_grpc_quantity((kwargs["offset"])),
         )
 
         # Create the request with request_data
