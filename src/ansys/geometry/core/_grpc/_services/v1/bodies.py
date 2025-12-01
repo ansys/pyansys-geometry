@@ -648,13 +648,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             SetDesignEntityNameRequest,
             SetDesignEntityNameRequestData,
         )
-        from ansys.api.discovery.v1.commonmessages_pb2 import EntityType
 
         # Create the request data
         request_data = SetDesignEntityNameRequestData(
             id=build_grpc_id(kwargs["id"]),
             name=kwargs["name"],
-            type=EntityType.ENTITY_TYPE_BODY,
         )
 
         # Create the request with repeated request_data
