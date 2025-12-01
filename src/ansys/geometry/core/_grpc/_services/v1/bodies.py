@@ -444,11 +444,6 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def translate(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import (
-            MoveTranslateRequest,
-            MoveTranslateRequestData,
-        )
-
         # Extract distance value if it's a Measurement object
         distance = kwargs["distance"]
         distance_value = distance.value if hasattr(distance, "value") else distance
