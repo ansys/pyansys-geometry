@@ -636,6 +636,7 @@ def from_sketch_nurbs_to_grpc_nurbs_curve(curve: "SketchNurbs", plane: "Plane") 
     """
     from ansys.api.discovery.v1.design.designmessages_pb2 import (
         ControlPoint as GRPCControlPoint,
+        NurbsData as GRPCNurbsData,
     )
 
     # Convert control points
@@ -647,10 +648,16 @@ def from_sketch_nurbs_to_grpc_nurbs_curve(curve: "SketchNurbs", plane: "Plane") 
         for i, pt in enumerate(curve.control_points)
     ]
 
-    return GRPCNurbsCurve(
-        control_points=control_points,
+    # Convert nurbs data
+    nurbs_data = GRPCNurbsData(
         degree=curve.degree,
         knots=from_knots_to_grpc_knots(curve.knots),
+        order=curve.degree + 1,
+    )
+
+    return GRPCNurbsCurve(
+        control_points=control_points,
+        nurbs_data=nurbs_data,
     )
 
 
@@ -849,6 +856,7 @@ def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
     """
     from ansys.api.discovery.v1.design.designmessages_pb2 import (
         ControlPoint as GRPCControlPoint,
+        NurbsData as GRPCNurbsData,
     )
 
     # Convert control points
@@ -860,10 +868,16 @@ def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
         for i, pt in enumerate(curve.control_points)
     ]
 
-    return GRPCNurbsCurve(
-        control_points=control_points,
+    # Convert nurbs data
+    nurbs_data = GRPCNurbsData(
         degree=curve.degree,
         knots=from_knots_to_grpc_knots(curve.knots),
+        order=curve.degree + 1,
+    )
+
+    return GRPCNurbsCurve(
+        control_points=control_points,
+        nurbs_data=nurbs_data,
     )
 
 
