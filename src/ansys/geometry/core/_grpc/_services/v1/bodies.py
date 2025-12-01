@@ -254,9 +254,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request_data_item.parent_id.CopyFrom(build_grpc_id(kwargs["parent_id"]))
         request_data_item.face_id.CopyFrom(build_grpc_id(kwargs["face_id"]))
 
-        # Apply direction (can be 1 or -1) to distance by negating if needed
-        distance = kwargs["distance"] if kwargs["direction"] == 1 else -kwargs["distance"]
-        request_data_item.distance.CopyFrom(from_length_to_grpc_quantity(distance))
+        # Apply direction (can be 1 or -1) to distance
+        # Extract the underlying pint Quantity and multiply by direction
+        distance_value = kwargs["distance"].value * kwargs["direction"]
+        request_data_item.distance.CopyFrom(from_length_to_grpc_quantity(distance_value))
 
         # Create the request with request_data array
         request = CreateExtrudedBodyFromFaceProfileRequest(request_data=[request_data_item])
@@ -455,7 +456,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Set the distance
         request_data.distance.CopyFrom(
-            from_length_to_grpc_quantity(kwargs["distance"] * kwargs["direction"])
+            from_length_to_grpc_quantity(kwargs["distance"])
         )
 
         request_data.direction.CopyFrom(from_unit_vector_to_grpc_direction(kwargs["direction"]))
@@ -471,8 +472,13 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def delete(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request with MultipleEntitiesRequest
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
         # Call the gRPC service
-        self.stub.Delete(request=build_grpc_id(kwargs["id"]))
+        self.stub.Delete(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
