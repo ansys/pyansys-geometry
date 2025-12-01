@@ -116,9 +116,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             )
         )
 
-        # Apply direction (can be 1 or -1) to distance by negating if needed
-        distance = kwargs["distance"] if kwargs["direction"] == 1 else -kwargs["distance"]
-        request_data_item.distance.CopyFrom(from_length_to_grpc_quantity(distance))
+        # Apply direction (can be 1 or -1) to distance
+        # Extract the underlying pint Quantity and multiply by direction
+        distance_value = kwargs["distance"].value * kwargs["direction"]
+        request_data_item.distance.CopyFrom(from_length_to_grpc_quantity(distance_value))
 
         request = CreateExtrudedBodyRequest(request_data=[request_data_item])
 
