@@ -37,7 +37,7 @@ from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_length
-from .conversions import build_grpc_id, from_frame_to_grpc_frame, from_grpc_point_to_point3d, from_length_to_grpc_quantity
+from .conversions import build_grpc_id, from_frame_to_grpc_frame, from_grpc_point_to_point3d, from_grpc_tess_to_pd, from_length_to_grpc_quantity
 
 
 class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
@@ -213,7 +213,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             request_data=[
                 SweepWithGuideRequestData(
                     name=data.name,
-                    parent=build_grpc_id(data.parent_id),
+                    parent_id=build_grpc_id(data.parent_id),
                     plane=from_plane_to_grpc_plane(data.sketch.plane),
                     geometries=from_sketch_shapes_to_grpc_geometries(
                         data.sketch.plane, data.sketch.edges, data.sketch.faces
@@ -903,15 +903,22 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_tesellation(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import GetTessellationRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            GetTessellationRequest,
+            GetTessellationRequestData,
+        )
 
         tess_map = {}
         resp = []  # For compatibility with stream response
         try:
-            request = GetTessellationRequest(id=build_grpc_id(kwargs["id"]))
+            request = GetTessellationRequest(
+                request_data=[GetTessellationRequestData(id=build_grpc_id(kwargs["id"]))]
+            )
             resp = [self.stub.GetTessellation(request=request)]
         except grpc.RpcError:
-            request = GetTessellationRequest(id=build_grpc_id(kwargs["id"]))
+            request = GetTessellationRequest(
+                request_data=[GetTessellationRequestData(id=build_grpc_id(kwargs["id"]))]
+            )
             resp = self.stub.GetTessellation(request=request)
 
         for elem in resp:
@@ -923,14 +930,21 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_tesellation_with_options(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import GetTessellationRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            GetTessellationRequest,
+            GetTessellationRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = GetTessellationRequest(
-            id=build_grpc_id(kwargs["id"]),
-            options=from_tess_options_to_grpc_tess_options(kwargs["options"]),
-            include_faces=kwargs["include_faces"],
-            include_edges=kwargs["include_edges"],
+            request_data=[
+                GetTessellationRequestData(
+                    id=build_grpc_id(kwargs["id"]),
+                    options=from_tess_options_to_grpc_tess_options(kwargs["options"]),
+                    include_faces=kwargs["include_faces"],
+                    include_edges=kwargs["include_edges"],
+                )
+            ]
         )
 
         tess_map = {}
@@ -1275,19 +1289,28 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_full_tessellation(self, **kwargs):  # noqa: D102
-        from ansys.api.discovery.v1.design.geometry.body_pb2 import GetTessellationRequest
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            GetTessellationRequest,
+            GetTessellationRequestData,
+        )
+
+        # Create options
+        options = kwargs["options"] if kwargs["options"] else None
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = GetTessellationRequest(
-            id=build_grpc_id(kwargs["id"]),
-            options=from_tess_options_to_grpc_tess_options(kwargs["options"]),
-            include_faces=kwargs["include_faces"],
-            include_edges=kwargs["include_edges"],
+            request_data=[
+                GetTessellationRequestData(
+                    id=build_grpc_id(kwargs["id"]),
+                    options=from_tess_options_to_grpc_tess_options(options) if options else None,
+                    include_faces=kwargs["include_faces"],
+                    include_edges=kwargs["include_edges"],
+                )
+            ]
         )
 
         # Call the gRPC service - using streaming
         resp = self.stub.GetTessellationStream(request=request)
 
         # Return the response - formatted as a dictionary
-        # return {"tessellation": from_grpc_tess_to_pd(resp)}
-        return {"tessellation": resp}
+        return {"tessellation": from_grpc_tess_to_pd(resp)}
