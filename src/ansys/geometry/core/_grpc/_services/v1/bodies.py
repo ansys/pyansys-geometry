@@ -25,6 +25,7 @@ import grpc
 import pint
 
 from ansys.geometry.core._grpc._services.v1.conversions import (
+    from_grpc_tess_to_pd,
     from_plane_to_grpc_plane,
     from_point3d_to_grpc_point,
     from_sketch_shapes_to_grpc_geometries,
