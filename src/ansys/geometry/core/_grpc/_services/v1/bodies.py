@@ -534,7 +534,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         return {
             "faces": [
                 {
-                    "id": face.id,
+                    "id": face.id.id,
                     "surface_type": face.surface_type,
                     "is_reversed": face.is_reversed,
                 }
@@ -559,7 +559,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         return {
             "edges": [
                 {
-                    "id": edge.id,
+                    "id": edge.id.id,
                     "curve_type": edge.curve_type,
                     "is_reversed": edge.is_reversed,
                 }
