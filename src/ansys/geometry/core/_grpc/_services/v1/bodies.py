@@ -470,11 +470,17 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def is_suppressed(self, **kwargs) -> dict:  # noqa: D102
-        # Call the gRPC service
-        resp = self.stub.GetIsSuppressed(request=build_grpc_id(kwargs["id"]))
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
 
-        # Return the response - formatted as a dictionary
-        return {"result": resp.result}
+        # Create the request with MultipleEntitiesRequest
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
+        # Call the gRPC service
+        resp = self.stub.GetIsSuppressed(request=request)
+
+        # Return the response - formatted as a dictionary (get first value from map)
+        result = next(iter(resp.result.values())) if resp.result else False
+        return {"result": result}
 
     @protect_grpc
     def get_color(self, **kwargs) -> dict:  # noqa: D102
@@ -637,7 +643,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             SetAssignedCADMaterialRequestData,
         )
 
-        from ansys.geometry.core._grpc._services.v1.conversions import from_material_to_grpc_material
+        from ansys.geometry.core._grpc._services.v1.conversions import (
+            from_material_to_grpc_material,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetAssignedCADMaterialRequest(
