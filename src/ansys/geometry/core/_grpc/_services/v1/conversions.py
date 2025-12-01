@@ -1322,7 +1322,7 @@ def from_length_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
         Converted gRPC quantity.
     """
     # Handle both Measurement objects (which have .value attribute) and raw pint Quantities
-    if hasattr(input, 'value'):
+    if hasattr(input, "value"):
         # Measurement object
         return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
     else:
