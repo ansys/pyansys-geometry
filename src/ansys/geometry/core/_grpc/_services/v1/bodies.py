@@ -476,8 +476,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_color(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.designmessages_pb2 import MultipleEntitiesRequest
-
+        from ansys.api.discovery.v1.commonmessages_pb2 import (
+            MultipleEntitiesRequest,
+        )
         # Create the request - assumes all inputs are valid and of the proper type
         request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
 
@@ -490,10 +491,19 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def set_color(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.designmessages_pb2 import SetColorRequest
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            SetColorRequest,
+            SetColorRequestData,
+        )
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = SetColorRequest(body_id=kwargs["id"], color=kwargs["color"])
+        # Create the request data
+        request_data = SetColorRequestData(
+            id=build_grpc_id(kwargs["id"]),
+            color=kwargs["color"],
+        )
+
+        # Create the request with repeated request_data
+        request = SetColorRequest(request_data=[request_data])
 
         # Call the gRPC service
         self.stub.SetColor(request=request)
@@ -638,11 +648,13 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             SetDesignEntityNameRequest,
             SetDesignEntityNameRequestData,
         )
+        from ansys.api.discovery.v1.commonmessages_pb2 import EntityType
 
         # Create the request data
         request_data = SetDesignEntityNameRequestData(
             id=build_grpc_id(kwargs["id"]),
             name=kwargs["name"],
+            type=EntityType.ENTITY_TYPE_BODY,
         )
 
         # Create the request with repeated request_data
@@ -1063,7 +1075,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request_data = ShellRequestData(
             selection_id=build_grpc_id(kwargs["id"]),
             offset=GRPCQuantity(
-                value_in_geometry_units=from_measurement_to_server_length(kwargs["offset"])
+                quantity_value=from_measurement_to_server_length(kwargs["offset"])
             ),
         )
 
