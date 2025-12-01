@@ -26,6 +26,7 @@ import pint
 
 from ansys.geometry.core._grpc._services.v1.conversions import (
     from_plane_to_grpc_plane,
+    from_point3d_to_grpc_point,
     from_sketch_shapes_to_grpc_geometries,
     from_tess_options_to_grpc_tess_options,
     from_trimmed_curve_to_grpc_trimmed_curve,
@@ -35,8 +36,8 @@ from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
-from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
-from .conversions import build_grpc_id, from_grpc_point_to_point3d, from_length_to_grpc_quantity
+from ..base.conversions import from_measurement_to_server_length
+from .conversions import build_grpc_id, from_frame_to_grpc_frame, from_grpc_point_to_point3d, from_length_to_grpc_quantity
 
 
 class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
@@ -444,6 +445,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def translate(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            MoveTranslateRequest,
+            MoveTranslateRequestData,
+        )
+
         # Extract distance value if it's a Measurement object
         distance = kwargs["distance"]
         distance_value = distance.value if hasattr(distance, "value") else distance
@@ -774,23 +780,31 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def rotate(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import Point
-        from ansys.api.discovery.v1.operations.edit_pb2 import RotateRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            MoveRotateRequest,
+            MoveRotateRequestData,
+        )
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = RotateRequest(
-            id=kwargs["id"],
-            axis_origin=Point(
-                x=kwargs["axis_origin"].x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-                y=kwargs["axis_origin"].y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-                z=kwargs["axis_origin"].z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-            ),
-            # axis_direction=from_unit_vector_to_grpc_direction(kwargs["axis_direction"]),
-            angle=from_measurement_to_server_angle(kwargs["angle"]),
+        from ansys.geometry.core.shapes.curves.line import Line
+
+        from .conversions import from_angle_to_grpc_quantity, from_line_to_grpc_line
+
+        # Create a Line from axis_origin and axis_direction
+        axis = Line(kwargs["axis_origin"], kwargs["axis_direction"])
+
+        # Create the request with selection_ids, axis, and angle
+        request = MoveRotateRequest(
+            request_data=[
+                MoveRotateRequestData(
+                    selection_ids=[build_grpc_id(kwargs["id"])],
+                    axis=from_line_to_grpc_line(axis),
+                    angle=from_angle_to_grpc_quantity(kwargs["angle"]),
+                )
+            ]
         )
 
         # Call the gRPC service
-        self.stub.Rotate(request=request)
+        self.edit_stub.MoveRotate(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -820,8 +834,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MirrorRequest(
-            id=kwargs["id"],
-            # plane=from_plane_to_grpc_plane(kwargs["plane"]),
+            id=build_grpc_id(kwargs["id"]),
+            plane=from_plane_to_grpc_plane(kwargs["plane"]),
         )
 
         # Call the gRPC service
@@ -836,8 +850,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MapRequest(
-            id=kwargs["id"],
-            # frame=from_frame_to_grpc_frame(kwargs["frame"]),
+            id=build_grpc_id(kwargs["id"]),
+            frame=from_frame_to_grpc_frame(kwargs["frame"]),
         )
 
         # Call the gRPC service
@@ -1050,7 +1064,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             request_data=[
                 CreateBodyFromLoftWithGuidesRequestData(
                     name=kwargs["name"],
-                    parent=build_grpc_id(kwargs["parent_id"]),
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
                     profiles=[
                         TrimmedCurveList(
                             curves=[from_trimmed_curve_to_grpc_trimmed_curve(tc) for tc in profile]
