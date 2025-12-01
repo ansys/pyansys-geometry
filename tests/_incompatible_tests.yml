@@ -20,6 +20,7 @@ backends:
       - tests/integration/test_mating_conditions.py::test_align_condition
       - tests/integration/test_mating_conditions.py::test_tangent_condition
       - tests/integration/test_mating_conditions.py::test_orient_condition
+      - tests/integration/test_prepare_tools.py::test_detect_sweepable_bodies
       - tests/integration/test_prepare_tools.py::test_volume_extract_from_faces
       - tests/integration/test_prepare_tools.py::test_volume_extract_from_edge_loops
       - tests/integration/test_prepare_tools.py::test_remove_rounds
@@ -145,6 +146,7 @@ backends:
       - tests/integration/test_mating_conditions.py::test_align_condition
       - tests/integration/test_mating_conditions.py::test_tangent_condition
       - tests/integration/test_mating_conditions.py::test_orient_condition
+      - tests/integration/test_prepare_tools.py::test_detect_sweepable_bodies
       - tests/integration/test_prepare_tools.py::test_volume_extract_from_faces
       - tests/integration/test_prepare_tools.py::test_volume_extract_from_edge_loops
       - tests/integration/test_prepare_tools.py::test_remove_rounds
@@ -254,6 +256,7 @@ backends:
       # Model used is too new for this version
       - tests/integration/test_design.py::test_import_component_named_selections
       - tests/integration/test_design.py::test_component_make_independent
+      - tests/integration/test_prepare_tools.py::test_detect_sweepable_bodies
       - tests/integration/test_prepare_tools.py::test_helix_detection
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example

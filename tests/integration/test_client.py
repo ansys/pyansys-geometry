@@ -32,10 +32,10 @@ import ansys.geometry.core.connection.defaults as pygeom_defaults
 
 
 @pytest.fixture(scope="function")
-def client(modeler: Modeler):
+def client(modeler: Modeler, transport_mode: str) -> GrpcClient:
     # this uses DEFAULT_HOST and DEFAULT_PORT which are set by environment
     # variables in the workflow
-    return GrpcClient()
+    return GrpcClient(transport_mode=transport_mode)
 
 
 def test_client_init(client: GrpcClient):

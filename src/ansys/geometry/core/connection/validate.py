@@ -36,6 +36,19 @@ from ansys.geometry.core.connection.client import GrpcClient
 
 def validate(*args, **kwargs):  # pragma: no cover
     """Create a client using the default settings and validate it."""
-    print(GrpcClient(*args, **kwargs))
+    # Assume local transport mode for validation if not provided
+    if "transport_mode" not in kwargs:
+        import platform
+
+        kwargs["transport_mode"] = "wnua" if platform.system() == "Windows" else "uds"
+        try:
+            GrpcClient(*args, **kwargs)
+        except Exception:
+            # Let's give it a try to insecure mode... just in case
+            kwargs["transport_mode"] = "insecure"
+            GrpcClient(*args, **kwargs)
+    else:
+        GrpcClient(*args, **kwargs)
+
     # TODO: consider adding additional server stat reporting
     # https://github.com/ansys/pyansys-geometry/issues/1319

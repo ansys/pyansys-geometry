@@ -31,7 +31,7 @@ from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
-from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
+from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
@@ -87,8 +87,8 @@ class Modeler:
         Protocol version to use for communication with the server. If None, v0 is used.
         Available versions are "v0", "v1", etc.
     transport_mode : str | None
-        Transport mode selected, by default `None` and thus it will be selected
-        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+        Transport mode selected. Needed if ``channel`` is not provided.
+        Options are: "insecure", "uds", "wnua", "mtls".
     uds_dir : Path | str | None
         Directory to use for Unix Domain Sockets (UDS) transport mode.
         By default `None` and thus it will use the "~/.conn" folder.
@@ -159,17 +159,6 @@ class Modeler:
     def design(self) -> "Design":
         """Retrieve the design within the modeler workspace."""
         return self._design
-
-    @property
-    @deprecated_method(alternative="design", version="0.9.0", remove="0.11.0")
-    def designs(self) -> dict[str, "Design"]:
-        """Retrieve the design within the modeler workspace.
-
-        Notes
-        -----
-        This method is deprecated. Use the :func:`design` property instead.
-        """
-        return {self._design.id: self._design}
 
     def create_design(self, name: str) -> "Design":
         """Initialize a new design with the connected client.

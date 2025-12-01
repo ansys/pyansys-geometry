@@ -79,9 +79,9 @@ def pytest_addoption(parser):
     parser.addoption(
         "--transport-mode",
         action="store",
-        default="default",
-        help=("Specify the transport mode to use for the tests. By default, 'default'."),
-        choices=("default", "insecure", "uds", "wnua", "mtls"),
+        default="insecure",
+        help=("Specify the transport mode to use for the tests. By default, 'insecure'."),
+        choices=("insecure", "uds", "wnua", "mtls"),
     )
 
 
@@ -184,10 +184,9 @@ def proto_version(request):
 def transport_mode(request):
     """Fixture to determine transport mode to be used."""
 
-    value: str = request.config.getoption("--transport-mode", default="default")
-    mode = None if value.lower() == "default" else value.lower()
+    value: str = request.config.getoption("--transport-mode", default="insecure")
 
-    return mode
+    return value.lower()
 
 
 @pytest.fixture

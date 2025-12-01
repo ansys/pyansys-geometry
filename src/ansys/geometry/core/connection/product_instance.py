@@ -196,7 +196,6 @@ def prepare_and_start_backend(
     certs_dir: Path | str | None = None,
     specific_minimum_version: int = None,
     server_working_dir: str | Path | None = None,
-    product_version: int | None = None,  # Deprecated, use `version` instead.
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
 
@@ -269,8 +268,6 @@ def prepare_and_start_backend(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
-    product_version: ``int``, optional
-        The product version to be started. Deprecated, use `version` instead.
 
     Returns
     -------
@@ -287,16 +284,6 @@ def prepare_and_start_backend(
         a SystemError will be raised.
     """
     from ansys.geometry.core.modeler import Modeler
-
-    # Handle deprecated product_version argument
-    if product_version is not None and version is not None:
-        raise ValueError(
-            "Both 'product_version' and 'version' arguments are provided. "
-            "Please use only 'version'."
-        )
-    if product_version is not None:
-        LOG.warning("The 'product_version' argument is deprecated. Please use 'version' instead.")
-        version = product_version
 
     if os.name != "nt" and not BackendType.is_linux_service(backend_type):  # pragma: no cover
         raise RuntimeError(
