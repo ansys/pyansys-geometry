@@ -60,7 +60,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
 
         self.stub = BodyStub(channel)
-        self.edits_stub = EditStub(channel)
+        self.edit_stub = EditStub(channel)
         self.face_stub = FaceStub(channel)
 
     @protect_grpc
@@ -232,7 +232,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        resp = self.edits_stub.SweepWithGuide(request=request)
+        resp = self.edit_stub.SweepWithGuide(request=request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -372,12 +372,19 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             CreateSurfaceBodyRequestData,
         )
 
+        from ansys.geometry.core._grpc._services.v1.conversions import (
+            from_trimmed_surface_to_grpc_trimmed_surface,
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateSurfaceBodyRequest(
             request_data=[
                 CreateSurfaceBodyRequestData(
                     name=kwargs["name"],
                     parent_id=build_grpc_id(kwargs["parent_id"]),
+                    trimmed_surface=from_trimmed_surface_to_grpc_trimmed_surface(
+                        kwargs["trimmed_surface"]
+                    ),
                 )
             ]
         )
@@ -455,7 +462,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request = MoveTranslateRequest(request_data=[request_data])
 
         # Call the gRPC service
-        self.edits_stub.MoveTranslate(request=request)
+        self.edit_stub.MoveTranslate(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -783,7 +790,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request = ScaleRequest(request_data=[request_data])
 
         # Call the gRPC service
-        self.edits_stub.Scale(request=request)
+        self.edit_stub.Scale(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -799,7 +806,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        self.edits_stub.Mirror(request=request)
+        self.edit_stub.Mirror(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -815,7 +822,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        self.edits_stub.Map(request=request)
+        self.edit_stub.Map(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -856,7 +863,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        resp = self.edits_stub.Copy(request=request)
+        resp = self.edit_stub.Copy(request=request)
 
         # Return the response - formatted as a dictionary
         return {"master_id": resp.master_id, "name": resp.name}
@@ -924,7 +931,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                 type=kwargs["type"],
                 keep_tool=kwargs["keep_tool"],
             )
-            response = self.edits_stub.Boolean(request=request)
+            response = self.edit_stub.Boolean(request=request)
             response_success = 1
         except grpc.RpcError:
             response_success = 0
@@ -955,14 +962,14 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                 tool_selection=[build_grpc_id(id) for id in other_bodies],
                 preserve_tools=keep_other,
             )
-            response = self.edits_stub.CombineIntersectBodies(request=request)
+            response = self.edit_stub.CombineIntersectBodies(request=request)
         elif type_bool_op == "subtract":
             request = CombineIntersectBodiesRequest(
                 target_selection=build_grpc_id(target_body),
                 tool_selection=[build_grpc_id(id) for id in other_bodies],
                 preserve_tools=keep_other,
             )
-            response = self.edits_stub.CombineSubtractBodies(request=request)
+            response = self.edit_stub.CombineSubtractBodies(request=request)
         elif type_bool_op == "unite":
             # Create request data with repeated target_selection_ids
             request_data = CombineMergeBodiesRequestData()
@@ -971,7 +978,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                 request_data.target_selection_ids.append(build_grpc_id(body_id))
 
             request = CombineMergeBodiesRequest(request_data=[request_data])
-            response = self.edits_stub.CombineMergeBodies(request=request)
+            response = self.edit_stub.CombineMergeBodies(request=request)
         else:
             raise ValueError(f"Invalid boolean operation type: {type_bool_op}")
 
@@ -996,7 +1003,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        resp = self.edits_stub.SplitBodies(request=request)
+        resp = self.edit_stub.SplitBodies(request=request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -1060,7 +1067,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request = CombineMergeBodiesRequest(request_data=[request_data])
 
         # Call the gRPC service
-        _ = self.edits_stub.CombineMergeBodies(request=request)
+        _ = self.edit_stub.CombineMergeBodies(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -1124,7 +1131,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request = ShellRequest(request_data=[request_data])
 
         # Call the gRPC service
-        response = self.edits_stub.Shell(request=request)
+        response = self.edit_stub.Shell(request=request)
 
         # Return the response - formatted as a dictionary
         return {"tracked_command_response": response.tracked_command_response}
@@ -1156,7 +1163,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        _ = self.edits_stub.ImprintCurves(request=request)
+        _ = self.edit_stub.ImprintCurves(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -1174,7 +1181,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        resp = self.edits_stub.ProjectCurves(request=request)
+        resp = self.edit_stub.ProjectCurves(request=request)
 
         # Return the response - formatted as a dictionary
         return {"curves": resp.curves}
@@ -1194,7 +1201,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        _ = self.edits_stub.ImprintProjectedCurves(request=request)
+        _ = self.edit_stub.ImprintProjectedCurves(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
