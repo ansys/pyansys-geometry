@@ -363,3 +363,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return get_tracker_response_with_created_bodies(response)
+
+    @protect_grpc
+    def detect_sweepable_bodies(self, **kwargs):  # noqa: D102
+        raise NotImplementedError

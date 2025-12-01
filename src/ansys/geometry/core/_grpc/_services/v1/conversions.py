@@ -35,6 +35,7 @@ from ansys.api.discovery.v1.commonmessages_pb2 import (
     Plane as GRPCPlane,
     Point as GRPCPoint,
     Polygon as GRPCPolygon,
+    Quantity as GRPCQuantity,
 )
 from ansys.api.discovery.v1.design.designmessages_pb2 import (
     CurveGeometry as GRPCCurveGeometry,
@@ -50,6 +51,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     Surface as GRPCSurface,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
+    TrackedCommandResponse as GRPCTrackedCommandResponse,
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
@@ -66,6 +68,7 @@ import pint
 
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 
 if TYPE_CHECKING:
@@ -81,6 +84,7 @@ if TYPE_CHECKING:
     from ansys.geometry.core.math.plane import Plane
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
+    from ansys.geometry.core.misc.measurements import Measurement
     from ansys.geometry.core.misc.options import TessellationOptions
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
@@ -175,9 +179,9 @@ def from_point3d_to_grpc_point(point: "Point3D") -> GRPCPoint:
     from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
     return GRPCPoint(
-        x=point.x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        y=point.y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        z=point.z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        x=GRPCQuantity(value_in_geometry_units=point.x.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        y=GRPCQuantity(value_in_geometry_units=point.y.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        z=GRPCQuantity(value_in_geometry_units=point.z.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
     )
 
 
@@ -198,7 +202,11 @@ def from_grpc_point_to_point3d(point: GRPCPoint) -> "Point3D":
     from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
     return Point3D(
-        [point.x, point.y, point.z],
+        [
+            point.x.value_in_geometry_units,
+            point.y.value_in_geometry_units,
+            point.z.value_in_geometry_units,
+        ],
         DEFAULT_UNITS.SERVER_LENGTH,
     )
 
@@ -979,23 +987,26 @@ def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
     Curve
         Resulting converted curve.
     """
-    from ansys.geometry.core.math.point import Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.shapes.curves.circle import Circle
     from ansys.geometry.core.shapes.curves.ellipse import Ellipse
     from ansys.geometry.core.shapes.curves.line import Line
 
-    origin = Point3D([curve.origin.x, curve.origin.y, curve.origin.z])
+    origin = from_grpc_point_to_point3d(curve.origin)
     try:
         reference = UnitVector3D([curve.reference.x, curve.reference.y, curve.reference.z])
         axis = UnitVector3D([curve.axis.x, curve.axis.y, curve.axis.z])
     except ValueError:
         # curve will be a line
         pass
-    if curve.radius != 0:
-        result = Circle(origin, curve.radius, reference, axis)
-    elif curve.major_radius != 0 and curve.minor_radius != 0:
-        result = Ellipse(origin, curve.major_radius, curve.minor_radius, reference, axis)
+
+    radius = curve.radius.value_in_geometry_units
+    major_radius = curve.major_radius.value_in_geometry_units
+    minor_radius = curve.minor_radius.value_in_geometry_units
+    if radius != 0:
+        result = Circle(origin, radius, reference, axis)
+    elif major_radius != 0 and minor_radius != 0:
+        result = Ellipse(origin, major_radius, minor_radius, reference, axis)
     elif curve.nurbs_curve.nurbs_data.degree != 0:
         result = from_grpc_nurbs_curve_to_nurbs_curve(curve.nurbs_curve)
     elif curve.direction is not None:
@@ -1284,6 +1295,56 @@ def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
     )
 
 
+def from_grpc_direction_to_unit_vector(direction: GRPCDirection) -> "UnitVector3D":
+    """Convert a gRPC direction to a unit vector.
+
+    Parameters
+    ----------
+    direction : GRPCDirection
+        Source gRPC direction data.
+
+    Returns
+    -------
+    UnitVector3D
+        Converted unit vector.
+    """
+    from ansys.geometry.core.math.vector import UnitVector3D
+
+    return UnitVector3D([direction.x, direction.y, direction.z])
+
+
+def from_length_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
+    """Convert a ``Measurement`` containing a length to a gRPC quantity.
+
+    Parameters
+    ----------
+    input : Measurement
+        Source measurement data.
+
+    Returns
+    -------
+    GRPCQuantity
+        Converted gRPC quantity.
+    """
+    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
+
+
+def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
+    """Convert a ``Measurement`` containing an angle to a gRPC quantity.
+
+    Parameters
+    ----------
+    input : Measurement
+        Source measurement data.
+
+    Returns
+    -------
+    GRPCQuantity
+        Converted gRPC quantity.
+    """
+    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
+
+
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
     """Check if the backend version is compatible with NURBS curves in sketches.
 
@@ -1351,18 +1412,18 @@ def from_enclosure_options_to_grpc_enclosure_options(
     )
 
 
-def serialize_tracker_command_response(**kwargs) -> dict:
-    """Serialize a TrackerCommandResponse object into a dictionary.
+def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> dict:
+    """Serialize a TrackedCommandResponse object into a dictionary.
 
     Parameters
     ----------
-    response : TrackerCommandResponse
-        The gRPC TrackerCommandResponse object to serialize.
+    response : GRPCTrackedCommandResponse
+        The gRPC TrackedCommandResponse object to serialize.
 
     Returns
     -------
     dict
-        A dictionary representation of the TrackerCommandResponse object.
+        A dictionary representation of the TrackedCommandResponse object.
     """
 
     def serialize_body(body):
@@ -1387,18 +1448,42 @@ def serialize_tracker_command_response(**kwargs) -> dict:
             "id": entity.id,
         }
 
-    response = kwargs["response"]
     return {
-        "success": response.success,
+        "success": getattr(response.command_response, "success", False),
         "created_bodies": [
-            serialize_body(body) for body in getattr(response, "created_bodies", [])
+            serialize_body(body) for body in getattr(response.tracked_changes, "created_bodies", [])
         ],
         "modified_bodies": [
-            serialize_body(body) for body in getattr(response, "modified_bodies", [])
+            serialize_body(body)
+            for body in getattr(response.tracked_changes, "modified_bodies", [])
         ],
         "deleted_bodies": [
             serialize_entity_identifier(entity)
-            for entity in getattr(response, "deleted_bodies", [])
+            for entity in getattr(response.tracked_changes, "deleted_bodies", [])
+        ],
+        "created_faces": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "created_face_ids", [])
+        ],
+        "modified_faces": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "modified_face_ids", [])
+        ],
+        "deleted_faces": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "deleted_face_ids", [])
+        ],
+        "created_edges": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "created_edge_ids", [])
+        ],
+        "modified_edges": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "modified_edge_ids", [])
+        ],
+        "deleted_edges": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response.tracked_changes, "deleted_edge_ids", [])
         ],
     }
 

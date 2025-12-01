@@ -31,7 +31,7 @@ from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
-from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
+from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
@@ -86,6 +86,21 @@ class Modeler:
     proto_version : str | None, default: None
         Protocol version to use for communication with the server. If None, v0 is used.
         Available versions are "v0", "v1", etc.
+    transport_mode : str | None
+        Transport mode selected. Needed if ``channel`` is not provided.
+        Options are: "insecure", "uds", "wnua", "mtls".
+    uds_dir : Path | str | None
+        Directory to use for Unix Domain Sockets (UDS) transport mode.
+        By default `None` and thus it will use the "~/.conn" folder.
+    uds_id : str | None
+        Optional ID to use for the UDS socket filename.
+        By default `None` and thus it will use "aposdas_socket.sock".
+        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
     """
 
     def __init__(
@@ -100,6 +115,10 @@ class Modeler:
         logging_level: int = logging.INFO,
         logging_file: Path | str | None = None,
         proto_version: str | None = None,
+        transport_mode: str | None = None,
+        uds_dir: Path | str | None = None,
+        uds_id: str | None = None,
+        certs_dir: Path | str | None = None,
     ):
         """Initialize the ``Modeler`` class."""
         from ansys.geometry.core.designer.geometry_commands import GeometryCommands
@@ -115,6 +134,10 @@ class Modeler:
             logging_level=logging_level,
             logging_file=logging_file,
             proto_version=proto_version,
+            transport_mode=transport_mode,
+            uds_dir=uds_dir,
+            uds_id=uds_id,
+            certs_dir=certs_dir,
         )
 
         # Single design for the Modeler
@@ -136,17 +159,6 @@ class Modeler:
     def design(self) -> "Design":
         """Retrieve the design within the modeler workspace."""
         return self._design
-
-    @property
-    @deprecated_method(alternative="design", version="0.9.0", remove="0.11.0")
-    def designs(self) -> dict[str, "Design"]:
-        """Retrieve the design within the modeler workspace.
-
-        Notes
-        -----
-        This method is deprecated. Use the :func:`design` property instead.
-        """
-        return {self._design.id: self._design}
 
     def create_design(self, name: str) -> "Design":
         """Initialize a new design with the connected client.

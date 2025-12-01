@@ -184,6 +184,24 @@ def from_unit_vector_to_grpc_direction(unit_vector: "UnitVector3D") -> GRPCDirec
     return GRPCDirection(x=unit_vector.x, y=unit_vector.y, z=unit_vector.z)
 
 
+def from_grpc_direction_to_unit_vector(direction: GRPCDirection) -> "UnitVector3D":
+    """Convert a gRPC direction message to a ``UnitVector3D`` class.
+
+    Parameters
+    ----------
+    direction : GRPCDirection
+        Source direction data.
+
+    Returns
+    -------
+    UnitVector3D
+        Converted unit vector.
+    """
+    from ansys.geometry.core.math.vector import UnitVector3D
+
+    return UnitVector3D([direction.x, direction.y, direction.z])
+
+
 def from_line_to_grpc_line(line: "Line") -> GRPCLine:
     """Convert a ``Line`` to a line gRPC message.
 
