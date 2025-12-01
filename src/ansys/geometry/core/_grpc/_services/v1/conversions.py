@@ -674,19 +674,11 @@ def from_sketch_ellipse_to_grpc_ellipse(ellipse: "SketchEllipse", plane: "Plane"
     GRPCEllipse
         Geometry service gRPC ellipse message. The unit is meters.
     """
-    from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
-
-    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-
     return GRPCEllipse(
         center=from_point2d_to_grpc_point(plane, ellipse.center),
-        majorradius=GRPCQuantity(
-            value_in_geometry_units=ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-        ),
-        minorradius=GRPCQuantity(
-            value_in_geometry_units=ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-        ),
-        angle=GRPCQuantity(value_in_geometry_units=ellipse.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
+        majorradius=from_length_to_grpc_quantity(ellipse.major_radius),
+        minorradius=from_length_to_grpc_quantity(ellipse.minor_radius),
+        angle=from_angle_to_grpc_quantity(ellipse.angle),
     )
 
 
@@ -1378,14 +1370,20 @@ def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     Parameters
     ----------
     input : Measurement
-        Source measurement data.
+        Source measurement data (Measurement object or pint Quantity).
 
     Returns
     -------
     GRPCQuantity
         Converted gRPC quantity.
     """
-    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
+    # Handle both Measurement objects (which have .value attribute) and raw pint Quantities
+    if hasattr(input, "value"):
+        # Measurement object
+        return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
+    else:
+        # Raw pint Quantity
+        return GRPCQuantity(value_in_geometry_units=input.m_as(DEFAULT_UNITS.SERVER_ANGLE))
 
 
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
