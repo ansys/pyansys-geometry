@@ -18,12 +18,27 @@ To connect to a Modeler instance, you can use the  :class:`Modeler() <ansys.geom
 which provides methods to connect to the desired CAD service. You can specify the connection parameters such
 as the host, port, and authentication details.
 
+
 .. code:: python
 
     from ansys.geometry.core import Modeler
 
     # Connect to a local Modeler instance
-    modeler = Modeler(host="localhost", port=12345)
+    modeler = Modeler(host="localhost", port=12345, transport_mode=...)
+
+The ``transport_mode`` parameter can take several values depending on the type of connection you
+want to establish. You can refer to the `Securing connections`_ section for more details on the
+available transport modes.
+
+.. warning:: Required ``transport_mode`` parameter
+
+   Starting from PyAnsys Geometry 0.14, the ``transport_mode`` parameter is required when using
+   the ``Modeler()`` class. Only if the ``channel`` parameter is provided explicitly, the
+   ``transport_mode`` can be omitted.
+
+However, if you are using the :func:`launch_modeler() <ansys.geometry.core.connection.launcher>`
+function to launch a local Modeler instance, the ``transport_mode`` parameter is optional and
+defaults to the appropriate mode based on the operating system and environment.
 
 Connection types
 ----------------
@@ -37,12 +52,23 @@ differ in the environment in which the transport takes place:
   Modeler client connects to it over the network. This is useful for accessing
   Modeler instances hosted on remote servers or cloud environments.
 
+.. _user_guide_connection_securing:
+
 Securing connections
 --------------------
 
 When connecting to a remote Modeler instance, it is important to ensure that the connection
 is secure, not only to protect sensitive data but also to comply with organizational
 security policies. These secure connections can be established using various methods, such as:
+
+.. warning:: Secure connection compatibility
+
+   Secure connections (mTLS, UDS, WNUA) are only available starting from Ansys release 24R2.
+   However, some releases may require specific Service Packs to enable secure connection support.
+   Starting from Ansys release 26R1, secure connections are available out-of-the-box without
+   requiring additional Service Packs.
+
+   If you are using an Ansys release prior to 24R2, you must use insecure connections.
 
 - **mTLS**: Mutual Transport Layer Security (mTLS) is a security protocol that ensures both the client
   and server authenticate each other using digital certificates. This provides a high level of
