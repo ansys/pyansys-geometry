@@ -453,16 +453,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         distance = kwargs["distance"]
         distance_value = distance.value if hasattr(distance, "value") else distance
 
-        # Create the request with selection_ids, direction, and distance
-        request = MoveTranslateRequest(
-            request_data=[
-                MoveTranslateRequestData(
-                    selection_ids=[build_grpc_id(body_id) for body_id in kwargs["ids"]],
-                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                    distance=from_length_to_grpc_quantity(distance_value),
-                )
-            ]
-        )
+        # Set the distance
+        request_data.distance.CopyFrom(from_length_to_grpc_quantity(kwargs["distance"]))
 
         # Call the gRPC service
         self.edit_stub.MoveTranslate(request=request)
