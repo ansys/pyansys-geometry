@@ -317,10 +317,17 @@ def from_grpc_material_property_to_material_property(
     """
     from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
 
+    # In v1 API, id is an EntityIdentifier, so we need to extract the .id field
+    property_id = (
+        material_property.id.id
+        if hasattr(material_property.id, "id")
+        else material_property.id
+    )
+    
     try:
-        mp_type = MaterialPropertyType.from_id(material_property.id)
+        mp_type = MaterialPropertyType.from_id(property_id)
     except ValueError:
-        mp_type = material_property.id
+        mp_type = property_id
 
     try:
         mp_quantity = pint.Quantity(material_property.value, material_property.units)
@@ -1252,18 +1259,21 @@ def from_material_to_grpc_material(
     GRPCMaterial
         Geometry service gRPC material message.
     """
-    return GRPCMaterial(
-        name=material.name,
-        material_properties=[
-            GRPCMaterialProperty(
-                id=property.type.value,
-                display_name=property.name,
-                value=property.quantity.m,
-                units=format(property.quantity.units),
-            )
-            for property in material.properties.values()
-        ],
-    )
+    # Create material properties
+    material_properties = []
+    for property in material.properties.values():
+        prop = GRPCMaterialProperty()
+        prop.id.CopyFrom(build_grpc_id(str(property.type.value)))
+        prop.display_name = property.name
+        prop.value = property.quantity.m
+        prop.units = format(property.quantity.units)
+        material_properties.append(prop)
+
+    # Create and return the material
+    grpc_material = GRPCMaterial()
+    grpc_material.name = material.name
+    grpc_material.material_properties.extend(material_properties)
+    return grpc_material
 
 
 def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
