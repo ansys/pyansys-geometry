@@ -29,7 +29,6 @@ from ..base.conversions import from_measurement_to_server_length
 from ..base.prepare_tools import GRPCPrepareToolsService
 from .conversions import (
     build_grpc_id,
-    from_angle_to_grpc_quantity,
     from_enclosure_options_to_grpc_enclosure_options,
     from_length_to_grpc_quantity,
     get_standard_tracker_response,
