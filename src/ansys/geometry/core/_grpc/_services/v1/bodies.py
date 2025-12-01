@@ -428,7 +428,6 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def translate(self, **kwargs) -> dict:  # noqa: D102
-
         from ansys.api.discovery.v1.operations.edit_pb2 import (
             MoveTranslateRequest,
             MoveTranslateRequestData,
