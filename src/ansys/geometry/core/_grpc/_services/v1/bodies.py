@@ -65,7 +65,6 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def create_sphere_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
         from ansys.api.discovery.v1.design.geometry.body_pb2 import (
             CreateSphereBodyRequest,
             CreateSphereBodyRequestData,
@@ -79,9 +78,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                 CreateSphereBodyRequestData(
                     name=kwargs["name"],
                     parent_id=build_grpc_id(kwargs["parent"]),
-                    center= from_point3d_to_grpc_point(kwargs["center"]),
-                    radius= from_length_to_grpc_quantity(kwargs["radius"]),
-                    
+                    center=from_point3d_to_grpc_point(kwargs["center"]),
+                    radius=from_length_to_grpc_quantity(kwargs["radius"]),
                 )
             ]
         )
