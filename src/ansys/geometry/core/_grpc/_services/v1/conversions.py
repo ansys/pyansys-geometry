@@ -23,7 +23,10 @@
 
 from typing import TYPE_CHECKING
 
-from ansys.api.discovery.v1.commonenums_pb2 import BackendType as GRPCBackendType
+from ansys.api.discovery.v1.commonenums_pb2 import (
+    BackendType as GRPCBackendType,
+    FileFormat as GRPCFileFormat,
+)
 from ansys.api.discovery.v1.commonmessages_pb2 import (
     Arc as GRPCArc,
     Circle as GRPCCircle,
@@ -76,6 +79,7 @@ if TYPE_CHECKING:
     import semver
 
     from ansys.geometry.core.connection.backend import BackendType
+    from ansys.geometry.core.designer.design import DesignFileFormat
     from ansys.geometry.core.designer.face import SurfaceType
     from ansys.geometry.core.materials.material import Material
     from ansys.geometry.core.materials.property import MaterialProperty
@@ -1412,6 +1416,45 @@ def from_enclosure_options_to_grpc_enclosure_options(
     )
 
 
+def from_design_file_format_to_grpc_file_format(
+    design_file_format: "DesignFileFormat",
+) -> GRPCFileFormat:
+    """Convert from a ``DesignFileFormat`` object to a gRPC file format.
+
+    Parameters
+    ----------
+    design_file_format : DesignFileFormat
+        The file format desired
+
+    Returns
+    -------
+    GRPCFileFormat
+        Converted gRPC FileFormat.
+    """
+    from ansys.geometry.core.designer.design import DesignFileFormat
+
+    if design_file_format == DesignFileFormat.SCDOCX:
+        return GRPCFileFormat.FILEFORMAT_SCDOCX
+    elif design_file_format == DesignFileFormat.PARASOLID_TEXT:
+        return GRPCFileFormat.FILEFORMAT_PARASOLID_TEXT
+    elif design_file_format == DesignFileFormat.PARASOLID_BIN:
+        return GRPCFileFormat.FILEFORMAT_PARASOLID_BINARY
+    elif design_file_format == DesignFileFormat.FMD:
+        return GRPCFileFormat.FILEFORMAT_FMD
+    elif design_file_format == DesignFileFormat.STEP:
+        return GRPCFileFormat.FILEFORMAT_STEP
+    elif design_file_format == DesignFileFormat.IGES:
+        return GRPCFileFormat.FILEFORMAT_IGES
+    elif design_file_format == DesignFileFormat.PMDB:
+        return GRPCFileFormat.FILEFORMAT_PMDB
+    elif design_file_format == DesignFileFormat.STRIDE:
+        return GRPCFileFormat.FILEFORMAT_STRIDE
+    elif design_file_format == DesignFileFormat.DISCO:
+        return GRPCFileFormat.FILEFORMAT_DISCO
+    else:
+        return None
+
+
 def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> dict:
     """Serialize a TrackedCommandResponse object into a dictionary.
 
@@ -1486,3 +1529,42 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
             for entity in getattr(response.tracked_changes, "deleted_edge_ids", [])
         ],
     }
+
+
+def get_standard_tracker_response(response) -> dict:
+    """Get a standard dictionary response from a TrackerCommandResponse gRPC object.
+
+    Parameters
+    ----------
+    response : TrackerCommandResponse
+        The gRPC TrackerCommandResponse object.
+
+    Returns
+    -------
+    dict
+        A dictionary representing the standard tracker response
+    """
+    return {
+        "success": response.command_response.success,
+        "tracker_response": serialize_tracked_command_response(response.tracked_changes),
+    }
+
+
+def get_tracker_response_with_created_bodies(response) -> dict:
+    """Get a dictionary response from a TrackerCommandResponse gRPC object including created bodies.
+
+    Parameters
+    ----------
+    response : TrackerCommandResponse
+        The gRPC TrackerCommandResponse object.
+
+    Returns
+    -------
+    dict
+        A dictionary representing the tracker response with created bodies.
+    """
+    serialized_response = get_standard_tracker_response(response)
+    serialized_response["created_bodies"] = serialized_response["tracker_response"].get(
+        "created_bodies", []
+    )
+    return serialized_response

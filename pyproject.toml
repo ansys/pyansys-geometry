@@ -26,7 +26,7 @@ classifiers = [
 ]
 
 dependencies = [
-  "ansys-api-discovery==1.0.14",
+  "ansys-api-discovery==1.0.15",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -69,7 +69,7 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # only available when a developer clones the repository and installs the package
 # for local development.
 dev = [
-  "pre-commit==4.4.0",
+  "pre-commit==4.5.0",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
@@ -80,7 +80,7 @@ doc = [
   "jupytext==1.18.1",
   "myst-parser==4.0.1",
   "nbconvert==7.16.6",
-  "nbsphinx==0.9.6",
+  "nbsphinx==0.9.8",
   "notebook==7.5.0",
   "numpydoc==1.9.0",
   "pdf2image==1.17.0",
@@ -99,7 +99,7 @@ general-all = [
   "ansys-platform-instancemanagement==1.1.2",
   "ansys-tools-common==0.3.1",
   "ansys-tools-visualization-interface==0.12.1",
-  "beartype==0.22.6",
+  "beartype==0.22.7",
   "docker==7.1.0",
   "geomdl==5.4.0",
   "grpcio==1.75.0",

@@ -155,7 +155,10 @@ class PrepareTools:
         if response.get("success"):
             bodies_ids = response.get("created_bodies")
             if len(bodies_ids) > 0:
-                parent_design._update_design_inplace()
+                if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                    parent_design._update_design_inplace()
+                else:
+                    parent_design._update_from_tracker(response.get("tracker_response"))
             return get_bodies_from_ids(parent_design, bodies_ids)
         else:
             self._grpc_client.log.info("Failed to extract volume from faces...")
@@ -210,7 +213,10 @@ class PrepareTools:
         if response.get("success"):
             bodies_ids = response.get("created_bodies")
             if len(bodies_ids) > 0:
-                parent_design._update_design_inplace()
+                if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                    parent_design._update_design_inplace()
+                else:
+                    parent_design._update_from_tracker(response.get("tracker_response"))
             return get_bodies_from_ids(parent_design, bodies_ids)
         else:
             self._grpc_client.log.info("Failed to extract volume from edge loops...")
@@ -250,7 +256,10 @@ class PrepareTools:
         )
 
         if response.get("success"):
-            parent_design._update_design_inplace()
+            if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                parent_design._update_design_inplace()
+            else:
+                parent_design._update_from_tracker(response.get("tracker_response"))
         else:
             self._grpc_client.log.info("Failed to remove rounds...")
 
@@ -298,6 +307,12 @@ class PrepareTools:
             preserve_instances=preserve_instances,
         )
 
+        parent_design = get_design_from_body(bodies[0])
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response.get("tracker_response"))
+
         return response.get("success")
 
     @min_backend_version(25, 2, 0)
@@ -344,12 +359,18 @@ class PrepareTools:
             preserve_instances=preserve_instances,
         )
 
+        parent_design = get_design_from_body(bodies[0])
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response.get("tracker_response"))
+
         message = RepairToolMessage(
             success=response.get("success"),
-            created_bodies=response.get("created_bodies_monikers"),
-            modified_bodies=response.get("modified_bodies_monikers"),
             found=response.get("found"),
             repaired=response.get("repaired"),
+            created_bodies=response.get("created_bodies_monikers"),
+            modified_bodies=response.get("modified_bodies_monikers"),
         )
         return message
 

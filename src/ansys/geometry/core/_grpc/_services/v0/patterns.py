@@ -64,9 +64,7 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
             pitch_x=from_measurement_to_server_length(kwargs["pitch_x"]),
             two_dimensional=kwargs["two_dimensional"],
             count_y=kwargs["count_y"],
-            pitch_y=(
-                from_measurement_to_server_length(kwargs["pitch_y"]) if kwargs["pitch_y"] else None
-            ),
+            pitch_y=from_measurement_to_server_length(kwargs["pitch_y"]),
         )
 
         # Call the gRPC service
@@ -113,13 +111,6 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
             else None
         )
 
-        # Create linear pitch if not None
-        linear_pitch = (
-            from_measurement_to_server_length(kwargs["linear_pitch"])
-            if kwargs["linear_pitch"]
-            else None
-        )
-
         # Create line if axis is a line object
         circular_axis, axis = None, None
         if isinstance(kwargs["circular_axis"], Line):
@@ -135,7 +126,7 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
             circular_angle=from_measurement_to_server_angle(kwargs["circular_angle"]),
             two_dimensional=kwargs["two_dimensional"],
             linear_count=kwargs["linear_count"],
-            linear_pitch=linear_pitch,
+            linear_pitch=from_measurement_to_server_length(kwargs["linear_pitch"]),
             radial_direction=radial_direction,
             axis=axis,
         )
