@@ -45,6 +45,7 @@ from ansys.api.discovery.v1.commonmessages_pb2 import (
 )
 from ansys.api.discovery.v1.design.designmessages_pb2 import (
     CurveGeometry as GRPCCurveGeometry,
+    DatumPointEntity as GRPCDesignPoint,
     DrivingDimensionEntity as GRPCDrivingDimension,
     EdgeTessellation as GRPCEdgeTessellation,
     Geometries as GRPCGeometries,
@@ -240,6 +241,24 @@ def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
         x=point3d.x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         y=point3d.y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         z=point3d.z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+    )
+
+
+def from_point3d_to_grpc_design_point(point: "Point3D") -> GRPCDesignPoint:
+    """Convert a ``Point3D`` class to a design point gRPC message.
+
+    Parameters
+    ----------
+    point : Point3D
+        Source point data.
+
+    Returns
+    -------
+    GRPCDesignPoint
+        Geometry service gRPC design point message. The unit is meters.
+    """
+    return GRPCDesignPoint(
+        position=from_point3d_to_grpc_point(point),
     )
 
 
@@ -1301,7 +1320,7 @@ def from_material_to_grpc_material(
         name=material.name,
         material_properties=[
             GRPCMaterialProperty(
-                id=property.type.value,
+                id=build_grpc_id(property.type.value),
                 display_name=property.name,
                 value=property.quantity.m,
                 units=format(property.quantity.units),
