@@ -43,10 +43,24 @@ class GRPCPointsServiceV1(GRPCPointsService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.geometricentities.points_pb2_grpc import PointsStub
+        from ansys.api.discovery.v1.design.constructs.datumpoint_pb2_grpc import DatumPointStub
 
-        self.stub = PointsStub(channel)
+        self.stub = DatumPointStub(channel)
 
     @protect_grpc
     def create_design_points(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.constructs.datumpoint_pb2_grpc import DatumPointCreationRequest
+
+        from .conversions import from_point3d_to_grpc_point
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DatumPointCreationRequest(
+            points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
+            parent=kwargs["parent_id"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.Create(request)
+
+        # Return the response - formatted as a dictionary
+        return {"point_ids": [p for p in response.ids]}
