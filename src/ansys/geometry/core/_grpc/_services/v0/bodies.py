@@ -187,17 +187,19 @@ class GRPCBodyServiceV0(GRPCBodyService):
         request = SweepWithGuideRequest(
             request_data=[
                 SweepWithGuideRequestData(
-                    name=data.name,
-                    parent=build_grpc_id(data.parent_id),
-                    plane=from_plane_to_grpc_plane(data.sketch.plane),
+                    name=sweep_item["name"],
+                    parent=build_grpc_id(sweep_item["parent_id"]),
+                    plane=from_plane_to_grpc_plane(sweep_item["sketch"].plane),
                     geometries=from_sketch_shapes_to_grpc_geometries(
-                        data.sketch.plane, data.sketch.edges, data.sketch.faces
+                        sweep_item["sketch"].plane,
+                        sweep_item["sketch"].edges,
+                        sweep_item["sketch"].faces,
                     ),
-                    path=from_trimmed_curve_to_grpc_trimmed_curve(data.path),
-                    guide=from_trimmed_curve_to_grpc_trimmed_curve(data.guide),
-                    tight_tolerance=data.tight_tolerance,
+                    path=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item["path"]),
+                    guide=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item["guide"]),
+                    tight_tolerance=sweep_item["tight_tolerance"],
                 )
-                for data in kwargs["sweep_data"]
+                for sweep_item in kwargs["sweep_data"]
             ],
         )
 
@@ -213,8 +215,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
                     "master_id": body.master_id,
                     "is_surface": body.is_surface,
                 }
+                for body in resp.bodies
             ]
-            for body in resp.bodies
         }
 
     @protect_grpc
