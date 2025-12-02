@@ -24,16 +24,6 @@
 import grpc
 import pint
 
-from ansys.geometry.core._grpc._services.v1.conversions import (
-    from_grpc_tess_to_pd,
-    from_grpc_tess_to_raw_data,
-    from_plane_to_grpc_plane,
-    from_point3d_to_grpc_point,
-    from_sketch_shapes_to_grpc_geometries,
-    from_tess_options_to_grpc_tess_options,
-    from_trimmed_curve_to_grpc_trimmed_curve,
-    from_unit_vector_to_grpc_direction,
-)
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
@@ -43,7 +33,15 @@ from .conversions import (
     build_grpc_id,
     from_frame_to_grpc_frame,
     from_grpc_point_to_point3d,
+    from_grpc_tess_to_pd,
+    from_grpc_tess_to_raw_data,
     from_length_to_grpc_quantity,
+    from_plane_to_grpc_plane,
+    from_point3d_to_grpc_point,
+    from_sketch_shapes_to_grpc_geometries,
+    from_tess_options_to_grpc_tess_options,
+    from_trimmed_curve_to_grpc_trimmed_curve,
+    from_unit_vector_to_grpc_direction,
 )
 
 
