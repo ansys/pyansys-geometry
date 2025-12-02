@@ -26,7 +26,6 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.parts import GRPCPartsService
-from .conversions import from_design_file_format_to_grpc_file_export_format
 
 
 class GRPCPartsServiceV1(GRPCPartsService):  # pragma: no cover
@@ -50,22 +49,20 @@ class GRPCPartsServiceV1(GRPCPartsService):  # pragma: no cover
 
     @protect_grpc
     def export(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commands.file_pb2 import SaveMode, SaveRequest
+        from ansys.api.discovery.v1.commands.file_pb2 import SaveRequest
+
+        from .conversions import from_design_file_format_to_grpc_file_format
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SaveRequest(
-            format=from_design_file_format_to_grpc_file_export_format(kwargs["format"]),
-            save_mode=SaveMode.SAVEMODE_STANDARD,
-            write_body_facets=kwargs["write_body_facets"],
-            parent_entity_id=kwargs["parent_entity_id"],
-        )
+        request = SaveRequest(format=from_design_file_format_to_grpc_file_format(kwargs["format"]))
 
         # Call the gRPC service
-        response = self.stub.Save(request)
+        response_stream = self.stub.Save(request)
 
         # Return the response - formatted as a dictionary
         data = bytes()
-        for elem in response:
-            data += elem.data
-
-        return {"data": data}
+        for response in response_stream:
+            data += response.data
+        return {
+            "data": data,
+        }

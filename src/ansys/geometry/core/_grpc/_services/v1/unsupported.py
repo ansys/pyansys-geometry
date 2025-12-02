@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Module containing the unsupported service implementation for v1."""
 
-from ansys.api.discovery.v1.commands.unsupported_pb2 import SetExportIdData
+from ansys.api.discovery.v1.commands.unsupported_pb2 import SetExportIdData, SetExportIdRequest
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
@@ -62,13 +62,11 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
 
     @protect_grpc
     def set_export_ids(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commands.unsupported_pb2 import SetExportIdRequest
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetExportIdRequest(
             export_data=[
                 SetExportIdData(
-                    moniker=build_grpc_id(data.moniker),
+                    moniker_id=build_grpc_id(data.moniker),
                     id=data.value,
                     type=data.id_type.value,
                 )
@@ -77,18 +75,22 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        _ = self.stub.SetExportIds(request)
+        _ = self.stub.SetExportId(request)
 
         # Return the response - formatted as a dictionary
         return {}
 
     @protect_grpc
-    def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
+    def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102            
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SetExportIdData(
-            moniker=build_grpc_id(kwargs["export_data"].moniker),
-            id=kwargs["export_data"].value,
-            type=kwargs["export_data"].id_type.value,
+        request = SetExportIdRequest(
+            export_data=[
+                SetExportIdData(
+                    moniker_id=build_grpc_id(kwargs["export_data"].moniker),
+                    id=kwargs["export_data"].value,
+                    type=kwargs["export_data"].id_type.value,
+                )
+            ]
         )
 
         # Call the gRPC service

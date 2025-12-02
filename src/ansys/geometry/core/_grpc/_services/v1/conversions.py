@@ -1575,3 +1575,40 @@ def _check_write_body_facets_input(backend_version: "semver.Version", write_body
                 + "26.1.0, but the current version used is "
                 + f"{backend_version}."
             )
+def get_standard_tracker_response(response) -> dict:
+    """Get a standard dictionary response from a TrackerCommandResponse gRPC object.
+
+    Parameters
+    ----------
+    response : TrackerCommandResponse
+        The gRPC TrackerCommandResponse object.
+
+    Returns
+    -------
+    dict
+        A dictionary representing the standard tracker response
+    """
+    return {
+        "success": response.command_response.success,
+        "tracker_response": serialize_tracked_command_response(response.tracked_changes),
+    }
+
+
+def get_tracker_response_with_created_bodies(response) -> dict:
+    """Get a dictionary response from a TrackerCommandResponse gRPC object including created bodies.
+
+    Parameters
+    ----------
+    response : TrackerCommandResponse
+        The gRPC TrackerCommandResponse object.
+
+    Returns
+    -------
+    dict
+        A dictionary representing the tracker response with created bodies.
+    """
+    serialized_response = get_standard_tracker_response(response)
+    serialized_response["created_bodies"] = serialized_response["tracker_response"].get(
+        "created_bodies", []
+    )
+    return serialized_response

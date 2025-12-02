@@ -63,7 +63,6 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         from typing import TYPE_CHECKING, Generator
 
         from ansys.api.discovery.v1.commands.file_pb2 import OpenMode, OpenRequest
-        from ansys.api.discovery.v1.commonenums_pb2 import FileFormat
 
         import ansys.geometry.core.connection.defaults as pygeom_defaults
 
@@ -74,9 +73,9 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
         def request_generator(
             file_path: Path,
-            file_format: FileFormat,
             import_options: "ImportOptions",
             import_options_definitions: "ImportOptionsDefinitions",
+            open_mode: OpenMode,
         ) -> Generator[OpenRequest, None, None]:
             """Generate requests for streaming file upload."""
             msg_buffer = 5 * 1024  # 5KB - for additional message data
@@ -88,21 +87,28 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
                 while chunk := file.read(chunk_size):
                     test_req = OpenRequest(
                         data=chunk,
-                        file_format=file_format,
-                        open_mode=OpenMode.OPENMODE_NEW, # TODO: add different modes
+                        file_name=file_path.name,
+                        open_mode=open_mode,
                         import_named_selections=True,
                         import_options=import_options.to_dict(),
                         import_options_definitions=from_import_options_definitions_to_grpc_import_options_definition(import_options_definitions),
                     )
                     yield test_req
 
+        # Get the open mode
+        open_mode = kwargs["open_mode"]
+        if open_mode == "new":
+            open_mode = OpenMode.OPENMODE_NEW
+        elif open_mode == "insert":
+            open_mode = OpenMode.OPENMODE_INSERT
+
         # Call the gRPC service
         response = self.file_stub.Open(
             request_generator(
                 file_path=kwargs["filepath"],
-                file_format=FileFormat.FILEFORMAT_DISCO,
                 import_options=kwargs["import_options"],
                 import_options_definitions=kwargs["import_options_definitions"],
+                open_mode=open_mode
             )
         )
 
@@ -186,7 +192,8 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def insert(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        # Route to open method
+        return self.open(**kwargs, open_mode="insert")
 
     @protect_grpc
     def get_active(self, **kwargs) -> dict:  # noqa: D102
