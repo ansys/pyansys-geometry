@@ -113,6 +113,7 @@ modeler = launch_modeler(mode='geometry_service')
 
 ```{python}
 #| output: false
+#| eval: false
 from ansys.geometry.core import Modeler
 modeler = Modeler()
 print(modeler)
