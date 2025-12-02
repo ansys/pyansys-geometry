@@ -215,17 +215,19 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request = SweepWithGuideRequest(
             request_data=[
                 SweepWithGuideRequestData(
-                    name=data.name,
-                    parent_id=build_grpc_id(data.parent_id),
-                    plane=from_plane_to_grpc_plane(data.sketch.plane),
+                    name=sweep_item["name"],
+                    parent_id=build_grpc_id(sweep_item["parent_id"]),
+                    plane=from_plane_to_grpc_plane(sweep_item["sketch"].plane),
                     geometries=from_sketch_shapes_to_grpc_geometries(
-                        data.sketch.plane, data.sketch.edges, data.sketch.faces
+                        sweep_item["sketch"].plane,
+                        sweep_item["sketch"].edges,
+                        sweep_item["sketch"].faces,
                     ),
-                    path=from_trimmed_curve_to_grpc_trimmed_curve(data.path),
-                    guide=from_trimmed_curve_to_grpc_trimmed_curve(data.guide),
-                    tight_tolerance=data.tight_tolerance,
+                    path=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item["path"]),
+                    guide=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item["guide"]),
+                    tight_tolerance=sweep_item["tight_tolerance"],
                 )
-                for data in kwargs["sweep_data"]
+                for sweep_item in kwargs["sweep_data"]
             ],
         )
 
@@ -241,8 +243,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     "master_id": body.master_id.id,
                     "is_surface": body.is_surface,
                 }
+                for body in resp.bodies
             ]
-            for body in resp.bodies
         }
 
     @protect_grpc
@@ -822,14 +824,15 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     def scale(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.edit_pb2 import ScaleRequest, ScaleRequestData
 
-        # Create request data with repeated object_ids
-        request_data = ScaleRequestData()
-        request_data.object_ids.append(build_grpc_id(kwargs["id"]))
-        request_data.scale = kwargs["value"]
-        # point, optional_direction, and keep_holes can be added if needed in kwargs
-
-        # Create the request with request_data
-        request = ScaleRequest(request_data=[request_data])
+        # Create the request with inline request_data
+        request = ScaleRequest(
+            request_data=[
+                ScaleRequestData(
+                    object_ids=[build_grpc_id(kwargs["id"])],
+                    scale=kwargs["value"],
+                )
+            ]
+        )
 
         # Call the gRPC service
         self.edit_stub.Scale(request=request)
