@@ -62,7 +62,8 @@ class GRPCCommandsServiceV1(GRPCCommandsService):
                     id=build_grpc_id(id),
                     name=kwargs["name"],
                 )
-            for id in kwargs["selection_ids"]]
+                for id in kwargs["selection_ids"]
+            ]
         )
 
         # Call the gRPC service

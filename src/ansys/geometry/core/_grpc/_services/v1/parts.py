@@ -54,9 +54,7 @@ class GRPCPartsServiceV1(GRPCPartsService):  # pragma: no cover
         from .conversions import from_design_file_format_to_grpc_file_format
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SaveRequest(
-            format=from_design_file_format_to_grpc_file_format(kwargs["format"])
-        )
+        request = SaveRequest(format=from_design_file_format_to_grpc_file_format(kwargs["format"]))
 
         # Call the gRPC service
         response_stream = self.stub.Save(request)
