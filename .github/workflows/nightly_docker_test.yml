@@ -101,7 +101,7 @@ jobs:
       contents: read
       packages: read
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
 
@@ -210,7 +210,7 @@ jobs:
         uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/tests-pytest@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         env:
           ALLOW_PLOTTING: true
         with:
