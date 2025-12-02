@@ -26,6 +26,7 @@ import pint
 
 from ansys.geometry.core._grpc._services.v1.conversions import (
     from_grpc_tess_to_pd,
+    from_grpc_tess_to_raw_data,
     from_plane_to_grpc_plane,
     from_point3d_to_grpc_point,
     from_sketch_shapes_to_grpc_geometries,
@@ -947,8 +948,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         for elem in resp:
             for face_id, face_tess in elem.face_tessellation.items():
-                # tess_map[face_id] = from_grpc_tess_to_raw_data(face_tess)
-                tess_map[face_id] = face_tess
+                tess_map[face_id] = (
+                    from_grpc_tess_to_raw_data(face_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_tess_to_pd(face_tess)
+                )
 
         return {"tessellation": tess_map}
 
@@ -980,12 +984,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         for elem in resp:
             for face_id, face_tess in elem.face_tessellation.items():
-                # tess_map[face_id] = from_grpc_tess_to_raw_data(face_tess)
-                tess_map[face_id] = face_tess
-            for edge_id, edge_tess in elem.edge_tessellation.items():
-                # tess_map[edge_id] = from_grpc_edge_tess_to_raw_data(edge_tess)
-                tess_map[edge_id] = edge_tess
-
+                tess_map[face_id] = (
+                    from_grpc_tess_to_raw_data(face_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_tess_to_pd(face_tess)
+                )
         return {"tessellation": tess_map}
 
     @protect_grpc
