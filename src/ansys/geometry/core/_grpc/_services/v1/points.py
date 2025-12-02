@@ -50,7 +50,8 @@ class GRPCPointsServiceV1(GRPCPointsService):  # pragma: no cover
     @protect_grpc
     def create_design_points(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.constructs.datumpoint_pb2_grpc import (
-        DatumPointCreationRequest, DatumPointCreationRequestData
+            DatumPointCreationRequest,
+            DatumPointCreationRequestData,
         )
 
         from .conversions import from_point3d_to_grpc_point
@@ -60,7 +61,8 @@ class GRPCPointsServiceV1(GRPCPointsService):  # pragma: no cover
             requestData=[
                 DatumPointCreationRequestData(
                     points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
-                    parent=kwargs["parent_id"],)
+                    parent=kwargs["parent_id"],
+                )
             ]
         )
 
