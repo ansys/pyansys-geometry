@@ -416,7 +416,8 @@ class Modeler:
         # Format-specific logic - upload the whole containing folder for assemblies. If backend's
         # version is > 26.1.0 we're going to upload the file no matter what, as streaming is
         # supported.
-        if upload_to_server and self.client.services.version == GeometryApiProtos.V0:
+        # if upload_to_server and self.client.services.version == GeometryApiProtos.V0:
+        if False:
             fp_path = Path(file_path)
             file_size_kb = fp_path.stat().st_size
             if any(
@@ -453,7 +454,7 @@ class Modeler:
 
             # Create a temporary zip file with the same name as the original file
             temp_dir = Path(tempfile.gettempdir())
-            temp_zip_path = temp_dir / fp_path.name
+            temp_zip_path = temp_dir / f"{fp_path.stem}.zip"
 
             try:
                 # Create zip archive
@@ -472,6 +473,7 @@ class Modeler:
                 # Pass the zip file path to the service
                 self.client.services.designs.open(
                     filepath=temp_zip_path,
+                    original_file_name=fp_path.name,
                     import_options=import_options,
                     import_options_definitions=import_options_definitions,
                     open_mode="new",

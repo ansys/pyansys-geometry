@@ -73,6 +73,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
         def request_generator(
             file_path: Path,
+            file_name: str,
             import_options: "ImportOptions",
             import_options_definitions: "ImportOptionsDefinitions",
             open_mode: OpenMode,
@@ -87,7 +88,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
                 while chunk := file.read(chunk_size):
                     test_req = OpenRequest(
                         data=chunk,
-                        file_name=file_path.name,
+                        file_name=file_name,
                         open_mode=open_mode,
                         import_named_selections=True,
                         import_options=import_options.to_dict(),
@@ -106,6 +107,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         response = self.file_stub.Open(
             request_generator(
                 file_path=kwargs["filepath"],
+                file_name=kwargs["original_file_name"],
                 import_options=kwargs["import_options"],
                 import_options_definitions=kwargs["import_options_definitions"],
                 open_mode=open_mode
@@ -155,11 +157,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def save_as(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
-
-    @protect_grpc
-    def download_export(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commands.file_pb2 import SaveMode, SaveRequest
+        from ansys.api.discovery.v1.commands.file_pb2 import SaveRequest
 
         from .conversions import (
             _check_write_body_facets_input,
@@ -171,7 +169,6 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         # Create the request - assumes all inputs are valid and of the proper type
         request = SaveRequest(
             format=from_design_file_format_to_grpc_file_export_format(kwargs["format"]),
-            save_mode=SaveMode.SAVEMODE_STANDARD,
             write_body_facets=kwargs["write_body_facets"],
         )
 
@@ -182,13 +179,18 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         data = bytes()
         for response in response_stream:
             data += response.data
+            
         return {
             "data": data,
         }
 
     @protect_grpc
+    def download_export(self, **kwargs) -> dict:  # noqa: D102
+        return self.save_as(**kwargs)
+
+    @protect_grpc
     def stream_download_export(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        return self.save_as(**kwargs)
 
     @protect_grpc
     def insert(self, **kwargs) -> dict:  # noqa: D102

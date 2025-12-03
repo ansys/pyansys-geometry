@@ -29,6 +29,7 @@ from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity, UndefinedUnitError
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer.beam import (
     Beam,
@@ -58,7 +59,11 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import Distance
-from ansys.geometry.core.misc.options import ImportOptions, TessellationOptions
+from ansys.geometry.core.misc.options import (
+    ImportOptions,
+    ImportOptionsDefinitions,
+    TessellationOptions,
+)
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
@@ -247,6 +252,7 @@ class Design(Component):
             filepath=file_location,
             write_body_facets=write_body_facets,
             backend_version=self._grpc_client.backend_version,
+            format=DesignFileFormat.SCDOCX,
         )
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
@@ -988,6 +994,7 @@ class Design(Component):
         self,
         file_location: Path | str,
         import_options: ImportOptions = ImportOptions(),
+        import_options_definitions: ImportOptionsDefinitions = ImportOptionsDefinitions(),
     ) -> Component:
         """Insert a file into the design.
 
@@ -995,8 +1002,11 @@ class Design(Component):
         ----------
         file_location : ~pathlib.Path | str
             Location on disk where the file is located.
-        import_options : ImportOptions
-            The options to pass into upload file
+        import_options : ImportOptions, optional
+            The options to pass into upload file. If none are provided, default options are used.
+        import_options_definitions : ImportOptionsDefinitions, optional
+            Additional options to pass into insert file. If none are provided, default options
+            are used.
 
         Returns
         -------
@@ -1007,13 +1017,56 @@ class Design(Component):
         --------
         This method is only available starting on Ansys release 24R2.
         """
-        # Upload the file to the server
-        filepath_server = self._modeler._upload_file(file_location, import_options=import_options)
+        # Upload the file to the server if using v0 protos
+        #if self._grpc_client.services.version == GeometryApiProtos.V0:
+        if False:
+            filepath_server = self._modeler._upload_file(
+                file_location, import_options=import_options
+            )
 
-        # Insert the file into the design
-        self._grpc_client.services.designs.insert(
-            filepath=filepath_server, import_named_selections=import_options.import_named_selections
-        )
+            # Insert the file into the design
+            self._grpc_client.services.designs.insert(
+                filepath=filepath_server,
+                import_named_selections=import_options.import_named_selections,
+            )
+        else:
+            # Zip file and pass filepath to service to open
+            import tempfile
+            from zipfile import ZipFile
+
+            fp_path = Path(file_location).resolve()
+
+            # Create a temporary zip file with the same name as the original file
+            temp_dir = Path(tempfile.gettempdir())
+            temp_zip_path = temp_dir / f"{fp_path.stem}.zip"
+
+            try:
+                # Create zip archive
+                with ZipFile(temp_zip_path, 'w') as zipf:
+                    # Add the main file
+                    zipf.write(fp_path, fp_path.name)
+
+                    # If it's an assembly format, add all files from the same directory
+                    assembly_extensions = [".CATProduct", ".asm", ".solution", ".sldasm"]
+                    if any(ext in str(file_location) for ext in assembly_extensions):
+                        dir_path = fp_path.parent
+                        for file in dir_path.iterdir():
+                            if file.is_file() and file != fp_path:
+                                zipf.write(file, file.name)
+
+                # Pass the zip file path to the service
+                self._grpc_client.services.designs.insert(
+                    filepath=temp_zip_path,
+                    original_file_name=fp_path.name,
+                    import_options=import_options,
+                    import_options_definitions=import_options_definitions
+                )
+
+            finally:
+                # Clean up the temporary zip file
+                if temp_zip_path.exists():
+                    temp_zip_path.unlink()
+
         self._grpc_client.log.debug(f"File {file_location} successfully inserted into design.")
 
         self._update_design_inplace()

@@ -68,7 +68,7 @@ class ImportOptions:
 
 @dataclass
 class ImportOptionsDefinitions:
-    """Import options definitionswhen opening a file.
+    """Import options definitions when opening a file.
 
     Parameters
     ----------
