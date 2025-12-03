@@ -10,15 +10,19 @@ on:
 
 permissions: {} # Disable default permissions
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   analyze:
     name: Analyze
     runs-on: 'ubuntu-latest'
     timeout-minutes: 360
     permissions:
-      actions: read
+      actions: read # Required for CodeQL analysis
       contents: read
-      security-events: write
+      security-events: write # Required to upload results of CodeQL analysis
     steps:
       - name: Checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1

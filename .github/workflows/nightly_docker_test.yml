@@ -45,7 +45,7 @@ jobs:
       skip_core_linux: ${{ steps.services.outputs.skip_core_linux }}
     permissions:
       contents: read
-      packages: read
+      packages: read # Needs access to the Geometry docker image
     strategy:
       matrix:
         include:
@@ -99,7 +99,7 @@ jobs:
       PYVISTA_OFF_SCREEN: true
     permissions:
       contents: read
-      packages: read
+      packages: read # Needs access to the Geometry docker image
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
@@ -190,7 +190,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: read
+      packages: read # Needs access to the Geometry docker image
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
@@ -262,7 +262,7 @@ jobs:
       WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:core-windows-latest-unstable
       WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:core-windows-latest
     permissions:
-      packages: write
+      packages: write # Required to promote the Geometry docker image
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
@@ -289,7 +289,7 @@ jobs:
       LINUX_UNSTABLE: ghcr.io/ansys/geometry:core-linux-latest-unstable
       LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:core-linux-latest
     permissions:
-      packages: write
+      packages: write # Required to promote the Geometry docker image
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0

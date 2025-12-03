@@ -13,7 +13,11 @@ env:
 
 permissions:
   contents: read
-  packages: read
+  packages: read # Needs access to the Geometry docker image
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   testing-windows-v1:

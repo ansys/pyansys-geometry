@@ -27,7 +27,7 @@ concurrency:
 
 permissions:
   contents: read
-  packages: read
+  packages: read # Needs access to the Geometry docker image
 
 jobs:
   update-changelog:
@@ -35,8 +35,8 @@ jobs:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write # Required to create the changelog on the release branch
+      pull-requests: write # Required to create on main the associated PR with the changelog
     steps:
       - uses: ansys/actions/doc-deploy-changelog@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
@@ -601,9 +601,9 @@ jobs:
     needs: [testing-windows, testing-linux, testing-min-reqs, testing-no-graphics, docs]
     runs-on: ubuntu-latest
     permissions:
-      attestations: write
+      attestations: write # Required to upload provenance attestations
       contents: read
-      id-token: write
+      id-token: write # Required for OIDC authentication to upload provenance attestations
     steps:
       - name: Build library source and wheel artifacts
         uses: ansys/actions/build-library@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
@@ -901,8 +901,8 @@ jobs:
     # Specifying a GitHub environment is optional, but strongly encouraged
     environment: release
     permissions:
-      id-token: write
-      contents: write
+      id-token: write # Required for GitHub release
+      contents: write # Required for GitHub release
     steps:
       - name: Release to GitHub
         uses: ansys/actions/release-github@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
@@ -921,8 +921,8 @@ jobs:
     # Specifying a GitHub environment is optional, but strongly encouraged
     environment: release
     permissions:
-      id-token: write
-      contents: write
+      id-token: write # Required for OIDC authentication with PyPI
+      contents: write # Required for OIDC authentication with PyPI
     steps:
       - name: "Download the library artifacts from build-library step"
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
@@ -944,7 +944,7 @@ jobs:
     needs: [package]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Required to push to the documentation branch (gh-pages)
     steps:
       - name: Deploy the latest documentation
         uses: ansys/actions/doc-deploy-dev@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
@@ -960,7 +960,7 @@ jobs:
     needs: [release, release-pypi]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Required to push to the documentation branch (gh-pages)
     steps:
       - name: Deploy the stable documentation
         uses: ansys/actions/doc-deploy-stable@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
@@ -976,8 +976,8 @@ jobs:
     needs: [package]
     if: github.event_name == 'pull_request'
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write # Required to allow automerge
+      pull-requests: write # Required to allow automerge
     steps:
       - name: Automerge PRs
         uses: ansys/actions/hk-automerge-prs@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0

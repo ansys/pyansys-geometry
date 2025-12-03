@@ -17,8 +17,8 @@ jobs:
     env:
       PACKAGE_DELETION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     permissions:
-      contents: write
-      packages: write
+      contents: write # Required to delete packages
+      packages: write # Required to delete packages
     steps:
 
       - name: "Perform versions cleanup - except certain tags"

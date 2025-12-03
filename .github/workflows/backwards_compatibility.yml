@@ -22,7 +22,7 @@ concurrency:
 
 permissions:
   contents: read
-  packages: read
+  packages: read # Needs access to the Geometry docker image
 
 jobs:
 
