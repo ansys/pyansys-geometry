@@ -1646,8 +1646,8 @@ def response_problem_area_for_body(response) -> dict:
     return {
         "problems": [
             {
-                "id": res.id,
-                "bodies": res.body_monikers,
+                "id": res.problem_area_id,
+                "bodies": res.body_ids.id,
             }
             for res in response.result
         ]
@@ -1670,8 +1670,8 @@ def response_problem_area_for_face(response) -> dict:
     return {
         "problems": [
             {
-                "id": res.id,
-                "faces": res.face_monikers,
+                "id": res.problem_area_id,
+                "faces": res.face_ids.id,
             }
             for res in response.result
         ]
@@ -1694,8 +1694,8 @@ def response_problem_area_for_edge(response) -> dict:
     return {
         "problems": [
             {
-                "id": res.id,
-                "edges": res.edge_monikers,
+                "id": res.problem_area_id,
+                "edges": res.edge_ids.id,
             }
             for res in response.result
         ]
