@@ -44,6 +44,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     CurveGeometry as GRPCCurveGeometry,
     DrivingDimensionEntity as GRPCDrivingDimension,
     EdgeTessellation as GRPCEdgeTessellation,
+    EnhancedRepairToolMessage as GRPCEnhancedRepairToolResponse,
     Geometries as GRPCGeometries,
     Knot as GRPCKnot,
     MaterialEntity as GRPCMaterial,
@@ -1349,6 +1350,38 @@ def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
 
 
+def from_area_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
+    """Convert a ``Measurement`` containing an area to a gRPC quantity.
+
+    Parameters
+    ----------
+    input : Measurement
+        Source measurement data.
+
+    Returns
+    -------
+    GRPCQuantity
+        Converted gRPC quantity.
+    """
+    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_AREA))
+
+
+def from_volume_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
+    """Convert a ``Measurement`` containing a volume to a gRPC quantity.
+
+    Parameters
+    ----------
+    input : Measurement
+        Source measurement data.
+
+    Returns
+    -------
+    GRPCQuantity
+        Converted gRPC quantity.
+    """
+    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_VOLUME))
+
+
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
     """Check if the backend version is compatible with NURBS curves in sketches.
 
@@ -1568,3 +1601,102 @@ def get_tracker_response_with_created_bodies(response) -> dict:
         "created_bodies", []
     )
     return serialized_response
+
+
+def serialize_repair_command_response(response: GRPCEnhancedRepairToolResponse) -> dict:
+    """Serialize a EnhancedRepairToolResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCEnhancedRepairToolResponse
+        The gRPC EnhancedRepairToolResponse object to serialize.
+        A dictionary representation of the EnhancedRepairToolResponse object.
+    """
+    return {
+        "success": response.tracked_changes.command_response.success,
+        "found": response.found,
+        "repaired": response.repaired,
+        "complete_command_response": serialize_tracked_command_response(response.tracked_changes),
+        "created_bodies_monikers": [
+            created_body.id for created_body in response.tracked_changes.get("created_bodies", [])
+        ],
+        "modified_bodies_monikers": [
+            modified_body.id
+            for modified_body in response.tracked_changes.get("modified_bodies", [])
+        ],
+        "deleted_bodies_monikers": [
+            deleted_body.id for deleted_body in response.tracked_changes.get("deleted_bodies", [])
+        ],
+    }
+
+
+def response_problem_area_for_body(response) -> dict:
+    """Get a dictionary response from problem areas for a body.
+
+    Parameters
+    ----------
+    response
+        The response to convert.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the ProblemAreaForBody object.
+    """
+    return {
+        "problems": [
+            {
+                "id": res.id,
+                "bodies": res.body_monikers,
+            }
+            for res in response.result
+        ]
+    }
+
+
+def response_problem_area_for_face(response) -> dict:
+    """Get a dictionary response from problem areas for a face.
+
+    Parameters
+    ----------
+    response
+        The response to convert.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the ProblemAreaForFace object.
+    """
+    return {
+        "problems": [
+            {
+                "id": res.id,
+                "faces": res.face_monikers,
+            }
+            for res in response.result
+        ]
+    }
+
+
+def response_problem_area_for_edge(response) -> dict:
+    """Get a dictionary response from problem areas for an edge.
+
+    Parameters
+    ----------
+    response
+        The response to convert.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the ProblemAreaForEdge object.
+    """
+    return {
+        "problems": [
+            {
+                "id": res.id,
+                "edges": res.edge_monikers,
+            }
+            for res in response.result
+        ]
+    }

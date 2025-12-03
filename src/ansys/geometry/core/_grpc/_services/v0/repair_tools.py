@@ -393,7 +393,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
-            "complete_command_response": serialized_tracker_response,
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -420,7 +420,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": response.created_bodies_monikers,
             "modified_bodies_monikers": response.modified_bodies_monikers,
-            "complete_command_response": serialized_tracker_response,
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -449,7 +449,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
-            "complete_command_response": serialized_tracker_response,
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -476,7 +476,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "repaired": response.repaired,
             "created_bodies_monikers": [],
             "modified_bodies_monikers": [],
-            "complete_command_response": serialized_tracker_response,
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -514,7 +514,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "modified_bodies_monikers": response.modified_bodies_monikers,
             "found": response.found,
             "repaired": response.repaired,
-            "complete_command_response": serialized_tracker_response,
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -566,7 +566,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
-            "repair_tracker_response": self.__serialize_message_response(response),
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
 
     @protect_grpc
@@ -590,7 +592,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
-            "repair_tracker_response": self.__serialize_message_response(response),
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
 
     @protect_grpc
@@ -614,7 +618,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
-            "repair_tracker_response": self.__serialize_message_response(response),
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
 
     @protect_grpc
@@ -636,7 +642,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
-            "repair_tracker_response": self.__serialize_message_response(response),
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
 
     @protect_grpc
@@ -658,7 +666,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
-            "repair_tracker_response": self.__serialize_message_response(response),
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
 
     @protect_grpc
@@ -680,7 +690,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
-            "repair_tracker_response": self.__serialize_message_response(response),
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
 
     @protect_grpc
@@ -702,7 +714,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
-            "repair_tracker_response": self.__serialize_message_response(response),
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
 
     @protect_grpc
@@ -726,7 +740,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
-            "repair_tracker_response": self.__serialize_message_response(response),
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
 
     @protect_grpc
@@ -750,7 +766,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
-            "repair_tracker_response": self.__serialize_message_response(response),
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
 
     @protect_grpc
@@ -774,7 +792,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         # Return the response - formatted as a dictionary
         return {
             "tracker_response": serialized_tracker_response,
-            "repair_tracker_response": self.__serialize_message_response(response),
+            "success": response.result.success,
+            "created_bodies_monikers": response.result.created_bodies_monikers,
+            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
 
     def __serialize_inspect_result_response(self, response) -> dict:  # noqa: D102
@@ -829,11 +849,4 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 }
                 for body_issues in response.issues_by_body
             ]
-        }
-
-    def __serialize_message_response(self, response):
-        return {
-            "success": response.result.success,
-            "created_bodies_monikers": response.result.created_bodies_monikers,
-            "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
