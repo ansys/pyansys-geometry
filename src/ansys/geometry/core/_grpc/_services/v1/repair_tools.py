@@ -23,11 +23,11 @@
 
 import grpc
 
-from ansys.geometry.core._grpc._services.v0.conversions import build_grpc_id
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.repair_tools import GRPCRepairToolsService
 from .conversions import (
+    build_grpc_id,
     from_angle_to_grpc_quantity,
     from_area_to_grpc_quantity,
     from_length_to_grpc_quantity,
@@ -63,7 +63,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSplitEdgesRequest(
-            bodies_or_faces_ids=build_grpc_id(kwargs["bodies_or_faces"]),
+            bodies_or_faces_ids=[build_grpc_id(item) for item in kwargs["bodies_or_faces"]],
             angle=(
                 from_angle_to_grpc_quantity(kwargs["angle"])
                 if kwargs["angle"] is not None
@@ -86,7 +86,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.discovery.v1.operations.repair_pb2 import FindExtraEdgesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = FindExtraEdgesRequest(selection_id=build_grpc_id(kwargs["selection"]))
+        request = FindExtraEdgesRequest(selection_id=[build_grpc_id(item) for item in kwargs["selection"]])
 
         # Return the response - formatted as a dictionary
         response = self.stub.FindExtraEdges(request)
@@ -99,7 +99,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.discovery.v1.operations.repair_pb2 import FindInexactEdgesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = FindInexactEdgesRequest(selection_id=build_grpc_id(kwargs["selection"]))
+        request = FindInexactEdgesRequest(selection_id=[build_grpc_id(item) for item in kwargs["selection"]])
 
         # Call the gRPC service
         response = self.stub.FindInexactEdges(request)
@@ -113,7 +113,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindShortEdgesRequest(
-            selection_id=kwargs["selection"],
+            selection_id=[build_grpc_id(item) for item in kwargs["selection"]],
             max_edge_length=from_length_to_grpc_quantity(kwargs["length"]),
         )
 
@@ -127,7 +127,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.discovery.v1.operations.repair_pb2 import FindDuplicateFacesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = FindDuplicateFacesRequest(face_ids=build_grpc_id(kwargs["faces"]))
+        request = FindDuplicateFacesRequest(face_ids=[build_grpc_id(face) for face in kwargs["faces"]])
 
         # Call the gRPC service
         response = self.stub.FindDuplicateFaces(request)
@@ -154,7 +154,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindMissingFacesRequest(
-            face_ids=build_grpc_id(kwargs["faces"]),
+            face_ids=[build_grpc_id(face) for face in kwargs["faces"]],
             angle=from_angle_to_grpc_quantity(kwargs["angle"])
             if kwargs["angle"] is not None
             else None,
@@ -189,7 +189,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSmallFacesRequest(
-            selection_id=build_grpc_id(kwargs["selection"]),
+            selection_id=[build_grpc_id(item) for item in kwargs["selection"]],
             area=from_area_to_grpc_quantity(kwargs["area"]) if kwargs["area"] is not None else None,
             width=from_length_to_grpc_quantity(kwargs["width"])
             if kwargs["width"] is not None
@@ -212,7 +212,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindStitchFacesRequest(
-            face_ids=build_grpc_id(kwargs["faces"]),
+            face_ids=[build_grpc_id(face) for face in kwargs["faces"]],
             maximum_distance=from_length_to_grpc_quantity(kwargs["distance"])
             if kwargs["distance"] is not None
             else None,
@@ -229,7 +229,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.discovery.v1.operations.repair_pb2 import FindAdjustSimplifyRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = FindAdjustSimplifyRequest(selection_id=build_grpc_id(kwargs["selection"]))
+        request = FindAdjustSimplifyRequest(selection_id=[build_grpc_id(item) for item in kwargs["selection"]])
 
         # Call the gRPC service
         response = self.stub.FindAdjustSimplify(request)
@@ -244,7 +244,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindInterferenceRequest(
-            bodY_ids=build_grpc_id(kwargs["bodies"]),
+            bodY_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
             cut_smaller_body=BoolValue(value=kwargs["cut_smaller_body"]),
         )
 
@@ -260,7 +260,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindShortEdgesRequest(
-            selection_id=build_grpc_id(kwargs["selection"]),
+            selection_id=[build_grpc_id(item) for item in kwargs["selection"]],
             max_edge_length=from_length_to_grpc_quantity(kwargs["length"]),
             comprehensive=kwargs["comprehensive_result"],
         )
@@ -276,7 +276,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindExtraEdgesRequest(
-            selection_id=build_grpc_id(kwargs["selection"]),
+            selection_id=[build_grpc_id(item) for item in kwargs["selection"]],
             comprehensive=kwargs["comprehensive_result"],
         )
 
@@ -291,7 +291,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSplitEdgesRequest(
-            body_or_face_ids=build_grpc_id(kwargs["bodies_or_faces"]),
+            body_or_face_ids=[build_grpc_id(item) for item in kwargs["bodies_or_faces"]],
             distance=from_length_to_grpc_quantity(kwargs["length"]),
             comprehensive=kwargs["comprehensive_result"],
         )
@@ -307,7 +307,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindAdjustSimplifyRequest(
-            selection_id=build_grpc_id(kwargs["selection"]),
+            selection_id=[build_grpc_id(item) for item in kwargs["selection"]],
             comprehensive=kwargs["comprehensive_result"],
         )
 
@@ -323,7 +323,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindStitchFacesRequest(
-            face_ids=build_grpc_id(kwargs["body_ids"]),
+            face_ids=[build_grpc_id(item) for item in kwargs["body_ids"]],
             maximum_distance=from_length_to_grpc_quantity(kwargs["max_distance"])
             if kwargs["max_distance"] is not None
             else None,
@@ -343,7 +343,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.discovery.v1.operations.repair_pb2 import InspectGeometryRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = InspectGeometryRequest(body_ids=build_grpc_id(kwargs.get("bodies")))
+        request = InspectGeometryRequest(body_ids=[build_grpc_id(body) for body in kwargs.get("bodies")])
 
         # Call the gRPC service
         inspect_result_response = self.stub.InspectGeometry(request)
@@ -356,7 +356,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.discovery.v1.operations.repair_pb2 import RepairGeometryRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RepairGeometryRequest(body_ids=build_grpc_id(kwargs.get("bodies")))
+        request = RepairGeometryRequest(body_ids=[build_grpc_id(body) for body in kwargs.get("bodies")])
 
         # Call the gRPC service
         response = self.stub.RepairGeometry(request)
