@@ -1401,9 +1401,7 @@ def from_grpc_volume_to_volume(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
     pint.Quantity
         Converted volume quantity with server volume units.
     """
-    return pint.Quantity(
-        grpc_quantity.value_in_geometry_units, DEFAULT_UNITS.SERVER_VOLUME
-    )
+    return pint.Quantity(grpc_quantity.value_in_geometry_units, DEFAULT_UNITS.SERVER_VOLUME)
 
 
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
