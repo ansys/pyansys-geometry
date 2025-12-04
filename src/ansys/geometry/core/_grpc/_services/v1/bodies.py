@@ -24,6 +24,7 @@
 import grpc
 import pint
 
+from ansys.geometry.core._grpc._services.v1.conversions import serialize_tracker_command_response
 from ansys.geometry.core.errors import protect_grpc
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
@@ -42,6 +43,7 @@ from .conversions import (
     from_tess_options_to_grpc_tess_options,
     from_trimmed_curve_to_grpc_trimmed_curve,
     from_unit_vector_to_grpc_direction,
+    serialize_tracker_command_response
 )
 
 
@@ -1052,8 +1054,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             raise ValueError(f"Boolean operation failed: {response}")
 
         # Return the response - formatted as a dictionary
-        # return {"complete_command_response": serialize_tracker_command_response(response=response)}
-        return {"complete_command_response": response}
+        return {"complete_command_response": serialize_tracker_command_response(response=response)}
 
     @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
