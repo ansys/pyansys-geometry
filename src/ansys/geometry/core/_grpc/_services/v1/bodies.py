@@ -43,7 +43,7 @@ from .conversions import (
     from_tess_options_to_grpc_tess_options,
     from_trimmed_curve_to_grpc_trimmed_curve,
     from_unit_vector_to_grpc_direction,
-    serialize_tracker_command_response
+    serialize_tracker_command_response,
 )
 
 
