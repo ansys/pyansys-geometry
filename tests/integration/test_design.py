@@ -97,7 +97,9 @@ def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathF
             modeler._upload_file(fake_path)
         with pytest.raises(
             GeometryRuntimeError,
-            match="The '_upload_file_stream' method is not supported with backend v1 and beyond.",
+            match=(
+                "The '_upload_file_stream' method is not supported with backend v1 and beyond."
+            ),
         ):
             modeler._upload_file_stream(fake_path)
     else:
@@ -1353,7 +1355,7 @@ def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_
         else:
             with pytest.raises(
                 GeometryRuntimeError,
-                match="The '_upload_file_stream' method is not supported with backend v1 and beyond.",
+                match="The '_upload_file_stream' method is not supported with backend v1 and beyond.",  # noqa: E501
             ):
                 modeler._upload_file_stream(file)
         assert path_on_server is not None
