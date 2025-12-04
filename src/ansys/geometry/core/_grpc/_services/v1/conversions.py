@@ -701,15 +701,10 @@ def from_sketch_circle_to_grpc_circle(circle: "SketchCircle", plane: "Plane") ->
     GRPCCircle
         Geometry service gRPC circle message. The unit is meters.
     """
-    from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
-
-    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-
     return GRPCCircle(
         center=from_point2d_to_grpc_point(plane, circle.center),
-        radius=GRPCQuantity(
-            value_in_geometry_units=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-        ),
+        radius=from_length_to_grpc_quantity(
+            circle.radius)
     )
 
 
