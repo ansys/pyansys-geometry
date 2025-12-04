@@ -1374,7 +1374,7 @@ def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     Parameters
     ----------
     input : Measurement
-        Source measurement data (Measurement object or pint Quantity).
+        Source measurement data.
 
     Returns
     -------
