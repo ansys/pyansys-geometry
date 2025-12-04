@@ -788,7 +788,6 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
         direction = from_unit_vector_to_grpc_direction(curve.direction)
         grpc_curve = GRPCCurveGeometry(origin=origin, direction=direction)
     elif isinstance(curve, (Circle, Ellipse)):
-
         origin = from_point3d_to_grpc_point(curve.origin)
         reference = from_unit_vector_to_grpc_direction(curve.dir_x)
         axis = from_unit_vector_to_grpc_direction(curve.dir_z)
