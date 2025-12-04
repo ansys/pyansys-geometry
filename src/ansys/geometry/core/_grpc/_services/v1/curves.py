@@ -25,7 +25,13 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import from_measurement_to_server_angle
 from ..base.curves import GRPCCurvesService
+from .conversions import (
+    from_grpc_point_to_point3d,
+    from_line_to_grpc_line,
+    from_trimmed_curve_to_grpc_trimmed_curve,
+)
 
 
 class GRPCCurvesServiceV1(GRPCCurvesService):  # pragma: no cover
@@ -43,14 +49,50 @@ class GRPCCurvesServiceV1(GRPCCurvesService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.curves_pb2_grpc import CurvesStub
+        from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
 
-        self.stub = CurvesStub(channel)
+        self.stub = EditStub(channel)
 
     @protect_grpc
     def revolve_edges(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import RevolveCurvesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RevolveCurvesRequest(
+            curves=[from_trimmed_curve_to_grpc_trimmed_curve(curve) for curve in kwargs["curves"]],
+            axis=from_line_to_grpc_line(kwargs["axis"]),
+            angle=from_measurement_to_server_angle(kwargs["angle"]),
+            symmetric=kwargs["symmetric"],
+        )
+
+        # Call the gRPC service
+        _ = self.stub.RevolveCurves(request)
+
+        # Return the result - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def intersect_curves(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            IntersectCurvesRequest,
+            IntersectCurvesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = IntersectCurvesRequest(
+            request_data=[
+                IntersectCurvesRequestData(
+                    first=from_trimmed_curve_to_grpc_trimmed_curve(kwargs["first"]),
+                    second=from_trimmed_curve_to_grpc_trimmed_curve(kwargs["second"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.stub.IntersectCurves(request).response_data[0]
+
+        # Return the result - formatted as a dictionary
+        return {
+            "intersect": response.intersect,
+            "points": [from_grpc_point_to_point3d(point) for point in response.points],
+        }
