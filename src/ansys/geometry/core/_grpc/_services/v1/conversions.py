@@ -703,8 +703,7 @@ def from_sketch_circle_to_grpc_circle(circle: "SketchCircle", plane: "Plane") ->
     """
     return GRPCCircle(
         center=from_point2d_to_grpc_point(plane, circle.center),
-        radius=from_length_to_grpc_quantity(
-            circle.radius)
+        radius=from_length_to_grpc_quantity(circle.radius),
     )
 
 
