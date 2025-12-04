@@ -1326,11 +1326,11 @@ def from_grpc_direction_to_unit_vector(direction: GRPCDirection) -> "UnitVector3
 
 
 def from_length_to_grpc_quantity(input: "Distance") -> GRPCQuantity:
-    """Convert a ``Measurement`` containing a length to a gRPC quantity.
+    """Convert a ``Distance`` containing a length to a gRPC quantity.
 
     Parameters
     ----------
-    input : Measurement
+    input : Distance
         Source measurement data.
 
     Returns
@@ -1338,15 +1338,7 @@ def from_length_to_grpc_quantity(input: "Distance") -> GRPCQuantity:
     GRPCQuantity
         Converted gRPC quantity.
     """
-    from ansys.geometry.core.misc.measurements import Distance
-
-    # Handle both Measurement objects (which have .value attribute)
-    if isinstance(input, Distance):
-        # Measurement object
-        return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
-    else:
-        # Raw pint Quantity
-        return GRPCQuantity(value_in_geometry_units=input.m_as(DEFAULT_UNITS.SERVER_LENGTH))
+    return GRPCQuantity(value_in_geometry_units=input.m_as(DEFAULT_UNITS.SERVER_LENGTH))
 
 
 def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
