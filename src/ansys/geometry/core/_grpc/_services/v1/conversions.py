@@ -1359,8 +1359,10 @@ def from_length_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     GRPCQuantity
         Converted gRPC quantity.
     """
+    from ansys.geometry.core.misc.measurements import Measurement
+
     # Handle both Measurement objects (which have .value attribute) and raw pint Quantities
-    if hasattr(input, "value"):
+    if isinstance(input, Measurement):
         # Measurement object
         return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
     else:
@@ -1381,8 +1383,10 @@ def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     GRPCQuantity
         Converted gRPC quantity.
     """
+    from ansys.geometry.core.misc.measurements import Measurement
+
     # Handle both Measurement objects (which have .value attribute) and raw pint Quantities
-    if hasattr(input, "value"):
+    if isinstance(input, Measurement):
         # Measurement object
         return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
     else:
