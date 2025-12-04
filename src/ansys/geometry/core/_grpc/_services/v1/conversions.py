@@ -321,10 +321,8 @@ def from_grpc_material_property_to_material_property(
     """
     from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
 
-    # In v1 API, id is an EntityIdentifier, so we need to extract the .id field
-    property_id = (
-        material_property.id.id if hasattr(material_property.id, "id") else material_property.id
-    )
+    # In v1 API, id is an EntityIdentifier
+    property_id = material_property.id.id
 
     try:
         mp_type = MaterialPropertyType.from_id(property_id)
