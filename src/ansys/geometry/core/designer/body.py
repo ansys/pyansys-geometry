@@ -1409,7 +1409,12 @@ class MasterBody(IBody):
 
             self._tessellation = response.get("tessellation")
 
-        pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
+        if transform == IDENTITY_MATRIX44:
+            pdata = list(self._tessellation.values())
+        else:
+            pdata = [
+                tess.transform(transform, inplace=False) for tess in self._tessellation.values()
+            ]
         comp = pv.MultiBlock(pdata)
 
         if merge:

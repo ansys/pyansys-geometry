@@ -27,7 +27,7 @@ concurrency:
 
 permissions:
   contents: read
-  packages: read
+  packages: read # Needs access to the Geometry docker image
 
 jobs:
   update-changelog:
@@ -35,10 +35,10 @@ jobs:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write # Required to create the changelog on the release branch
+      pull-requests: write # Required to create on main the associated PR with the changelog
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+      - uses: ansys/actions/doc-deploy-changelog@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -48,7 +48,7 @@ jobs:
     name: Vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+      - uses: ansys/actions/check-vulnerabilities@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -59,7 +59,7 @@ jobs:
     name: Actions Security
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-actions-security@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+      - uses: ansys/actions/check-actions-security@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           generate-summary: true
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/check-pr-title@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/doc-style@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -99,7 +99,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/build-wheelhouse@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
@@ -111,7 +111,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/docker-style@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/docker-style@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           directory: docker
           recursive: true
@@ -208,7 +208,7 @@ jobs:
           Write-Output "SKIP_UNSTABLE=$Result" | Out-File -FilePath $env:GITHUB_ENV -Append
           Write-Output "SKIP_UNSTABLE will be: $Result"
 
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         if: env.SKIP_UNSTABLE == 'false'
         with:
           persist-credentials: false
@@ -342,7 +342,7 @@ jobs:
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_DOCS_TAG} ${TRANSPORT_MODE_SELECTION}
 
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/doc-build@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
@@ -427,7 +427,7 @@ jobs:
 
       - name: Checkout repository
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
 
@@ -442,7 +442,7 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/tests-pytest@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         env:
           ALLOW_PLOTTING: true
         with:
@@ -507,7 +507,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout repository
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
 
@@ -559,7 +559,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout repository
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
 
@@ -601,12 +601,12 @@ jobs:
     needs: [testing-windows, testing-linux, testing-min-reqs, testing-no-graphics, docs]
     runs-on: ubuntu-latest
     permissions:
-      attestations: write
+      attestations: write # Required to upload provenance attestations
       contents: read
-      id-token: write
+      id-token: write # Required for OIDC authentication to upload provenance attestations
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/build-library@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -628,7 +628,7 @@ jobs:
 
     steps:
       - name: Check out repository pyansys-geometry-binaries
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           repository: 'ansys/pyansys-geometry-binaries'
           token: ${{ secrets.BINARIES_TOKEN }}
@@ -707,7 +707,7 @@ jobs:
             zip-file: "windows-core-binaries.zip"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
 
@@ -819,7 +819,7 @@ jobs:
     needs: [fetch-release-artifacts]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
 
@@ -863,7 +863,7 @@ jobs:
           lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/tests-pytest@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         env:
           ALLOW_PLOTTING: true
         with:
@@ -901,11 +901,11 @@ jobs:
     # Specifying a GitHub environment is optional, but strongly encouraged
     environment: release
     permissions:
-      id-token: write
-      contents: write
+      id-token: write # Required for GitHub release
+      contents: write # Required for GitHub release
     steps:
       - name: Release to GitHub
-        uses: ansys/actions/release-github@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/release-github@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
@@ -921,8 +921,8 @@ jobs:
     # Specifying a GitHub environment is optional, but strongly encouraged
     environment: release
     permissions:
-      id-token: write
-      contents: write
+      id-token: write # Required for OIDC authentication with PyPI
+      contents: write # Required for OIDC authentication with PyPI
     steps:
       - name: "Download the library artifacts from build-library step"
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
@@ -944,10 +944,10 @@ jobs:
     needs: [package]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Required to push to the documentation branch (gh-pages)
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/doc-deploy-dev@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -960,10 +960,10 @@ jobs:
     needs: [release, release-pypi]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Required to push to the documentation branch (gh-pages)
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/doc-deploy-stable@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -976,11 +976,11 @@ jobs:
     needs: [package]
     if: github.event_name == 'pull_request'
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write # Required to allow automerge
+      pull-requests: write # Required to allow automerge
     steps:
       - name: Automerge PRs
-        uses: ansys/actions/hk-automerge-prs@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/hk-automerge-prs@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
