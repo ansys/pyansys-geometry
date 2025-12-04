@@ -442,7 +442,7 @@ class Modeler:
                     if full_path != fp_path:
                         if full_path.stat().st_size < pygeom_defaults.MAX_MESSAGE_LENGTH:
                             self._upload_file(full_path)
-                        elif self.client.backend_version == (25, 2, 0):
+                        elif self.client.backend_version >= (25, 2, 0):
                             self._upload_file_stream(full_path)
                         else:  # pragma: no cover
                             raise RuntimeError(
@@ -598,7 +598,7 @@ class Modeler:
                 api_version = ApiVersions.parse_input(api_version)
 
         # Prepare the script path
-        #f self.client.services.version == GeometryApiProtos.V0:
+        if self.client.services.version == GeometryApiProtos.V0:
             serv_path = self._upload_file(file_path)
         else:
             # Check if a design exists
