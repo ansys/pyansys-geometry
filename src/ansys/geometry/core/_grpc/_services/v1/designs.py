@@ -90,7 +90,6 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
                         data=chunk,
                         file_name=file_name,
                         open_mode=open_mode,
-                        import_named_selections=True,
                         import_options=import_options.to_dict(),
                         import_options_definitions=from_import_options_definitions_to_grpc_import_options_definition(import_options_definitions),
                     )

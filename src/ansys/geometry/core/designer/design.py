@@ -1018,8 +1018,7 @@ class Design(Component):
         This method is only available starting on Ansys release 24R2.
         """
         # Upload the file to the server if using v0 protos
-        #if self._grpc_client.services.version == GeometryApiProtos.V0:
-        if False:
+        if self._grpc_client.services.version == GeometryApiProtos.V0:
             filepath_server = self._modeler._upload_file(
                 file_location, import_options=import_options
             )
