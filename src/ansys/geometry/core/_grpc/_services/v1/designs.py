@@ -138,7 +138,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         from ansys.api.discovery.v1.design.designdoc_pb2 import GetAssemblyRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = GetAssemblyRequest(id=build_grpc_id(kwargs["active_design"].get("design_id").id))
+        request = GetAssemblyRequest(id=build_grpc_id(kwargs["active_design"].get("design_id")))
 
         # Call the gRPC service
         response = self.designdoc_stub.GetAssembly(request)
@@ -149,7 +149,16 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def close(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.commands.file_pb2 import CloseRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CloseRequest(design_id=build_grpc_id(kwargs["design_id"]))
+
+        # Call the gRPC service
+        _ = self.file_stub.Close(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def put_active(self, **kwargs) -> dict:  # noqa: D102
@@ -207,7 +216,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         if response.design:
             return {
-                "design_id": response.design.id,
+                "design_id": response.design.id.id,
                 "main_part_id": response.design.main_part_id.id,
                 "name": response.design.name,
             }
@@ -222,11 +231,49 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
     @protect_grpc
     def stream_design_tessellation(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.designdoc_pb2 import DesignTessellationRequest
+
+        from .conversions import (
+            from_grpc_edge_tess_to_raw_data,
+            from_grpc_tess_to_raw_data,
+            from_tess_options_to_grpc_tess_options,
+        )
+
+        # If there are options, convert to gRPC options
+        options = (
+            from_tess_options_to_grpc_tess_options(kwargs["options"])
+            if kwargs["options"] is not None
+            else None
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DesignTessellationRequest(
+            options=options,
+            include_faces=kwargs["include_faces"],
+            include_edges=kwargs["include_edges"],
+        )
+
+        # Call the gRPC service
+        response_stream = self.designdoc_stub.StreamDesignTessellation(request)
+
+        # Return the response - formatted as a dictionary
+        tess_map = {}
+        for elem in response_stream:
+            for body_id, body_tess in elem.body_tessellation.items():
+                tess = {}
+                for face_id, face_tess in body_tess.face_tessellation.items():
+                    tess[face_id] = from_grpc_tess_to_raw_data(face_tess)
+                for edge_id, edge_tess in body_tess.edge_tessellation.items():
+                    tess[edge_id] = from_grpc_edge_tess_to_raw_data(edge_tess)
+                tess_map[body_id] = tess
+
+        return {
+            "tessellation": tess_map,
+        }
 
     @protect_grpc
     def download_file(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        return self.save_as(**kwargs)
     
     def _serialize_assembly_response(self, response):
         def serialize_body(body):
@@ -339,7 +386,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         def serialize_beam_cross_section(cross_section):
             return {
                 "section_anchor": cross_section.section_anchor,
-                "section_angle": cross_section.section_angle,
+                "section_angle": cross_section.section_angle.value_in_geometry_units,
                 "section_frame": from_grpc_frame_to_frame(cross_section.section_frame),
                 "section_profile": [
                     serialize_beam_curve_list(curve_list)
@@ -349,16 +396,16 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
 
         def serialize_beam_properties(properties):
             return {
-                "area": properties.area,
-                "centroid_x": properties.centroid_x,
-                "centroid_y": properties.centroid_y,
-                "warping_constant": properties.warping_constant,
-                "ixx": properties.ixx,
-                "ixy": properties.ixy,
-                "iyy": properties.iyy,
-                "shear_center_x": properties.shear_center_x,
-                "shear_center_y": properties.shear_center_y,
-                "torsional_constant": properties.torsional_constant,
+                "area": properties.area.value_in_geometry_units,
+                "centroid_x": properties.centroid_x.value_in_geometry_units,
+                "centroid_y": properties.centroid_y.value_in_geometry_units,
+                "warping_constant": properties.warping_constant.value_in_geometry_units,
+                "ixx": properties.ixx.value_in_geometry_units,
+                "ixy": properties.ixy.value_in_geometry_units,
+                "iyy": properties.iyy.value_in_geometry_units,
+                "shear_center_x": properties.shear_center_x.value_in_geometry_units,
+                "shear_center_y": properties.shear_center_y.value_in_geometry_units,
+                "torsional_constant": properties.torsional_constant.value_in_geometry_units,
             }
 
         def serialize_beam(beam):

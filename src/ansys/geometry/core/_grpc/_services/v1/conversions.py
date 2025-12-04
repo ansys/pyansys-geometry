@@ -398,9 +398,9 @@ def from_grpc_frame_to_frame(frame: GRPCFrame) -> "Frame":
     return Frame(
         Point3D(
             input=[
-                frame.origin.x,
-                frame.origin.y,
-                frame.origin.z,
+                frame.origin.x.value_in_geometry_units,
+                frame.origin.y.value_in_geometry_units,
+                frame.origin.z.value_in_geometry_units,
             ],
             unit=DEFAULT_UNITS.SERVER_LENGTH,
         ),
