@@ -718,17 +718,11 @@ def from_sketch_polygon_to_grpc_polygon(polygon: "Polygon", plane: "Plane") -> G
     GRPCPolygon
         Geometry service gRPC polygon message. The unit is meters.
     """
-    from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
-
-    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-
     return GRPCPolygon(
         center=from_point2d_to_grpc_point(plane, polygon.center),
-        radius=GRPCQuantity(
-            value_in_geometry_units=polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-        ),
+        radius=from_length_to_grpc_quantity(polygon.inner_radius),
         numberofsides=polygon.n_sides,
-        angle=GRPCQuantity(value_in_geometry_units=polygon.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
+        angle=from_angle_to_grpc_quantity(polygon.angle),
     )
 
 
