@@ -105,7 +105,7 @@ def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathF
     else:
         fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
         temp_dir = tmp_path_factory.mktemp("test_design")
-        
+
         with pytest.raises(ValueError, match="Could not find file:"):
             modeler._upload_file(fake_path)
         with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):

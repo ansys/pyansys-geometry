@@ -81,7 +81,7 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
         return {}
 
     @protect_grpc
-    def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102            
+    def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetExportIdRequest(
             export_data=[

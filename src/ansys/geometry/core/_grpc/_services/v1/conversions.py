@@ -1427,12 +1427,10 @@ def from_import_options_definitions_to_grpc_import_options_definition(
     """
     definitions = {}
     for key, definition in import_options_definitions.to_dict().items():
-        definitions[key] = GRPCImportOptionDefinition(
-            string_option=str(definition)
-        )
-    
+        definitions[key] = GRPCImportOptionDefinition(string_option=str(definition))
+
     return definitions
-        
+
 
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
     """Check if the backend version is compatible with NURBS curves in sketches.
@@ -1576,24 +1574,27 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
         ],
     }
 
+
 def _check_write_body_facets_input(backend_version: "semver.Version", write_body_facets: bool):
-        """Check if the backend version is compatible with NURBS curves in sketches.
+    """Check if the backend version is compatible with NURBS curves in sketches.
 
-        Parameters
-        ----------
-        backend_version : semver.Version
-            The version of the backend.
-        write_body_facets : bool
-            Option to write out body facets.
-        """
-        if write_body_facets and backend_version < (26, 1, 0):
-            from ansys.geometry.core.logger import LOG
+    Parameters
+    ----------
+    backend_version : semver.Version
+        The version of the backend.
+    write_body_facets : bool
+        Option to write out body facets.
+    """
+    if write_body_facets and backend_version < (26, 1, 0):
+        from ansys.geometry.core.logger import LOG
 
-            LOG.warning(
-                "The usage of write_body_facets requires a minimum Ansys release version of "
-                + "26.1.0, but the current version used is "
-                + f"{backend_version}."
-            )
+        LOG.warning(
+            "The usage of write_body_facets requires a minimum Ansys release version of "
+            + "26.1.0, but the current version used is "
+            + f"{backend_version}."
+        )
+
+
 def get_standard_tracker_response(response) -> dict:
     """Get a standard dictionary response from a TrackerCommandResponse gRPC object.
 
