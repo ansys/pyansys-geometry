@@ -1041,7 +1041,7 @@ class Design(Component):
 
             try:
                 # Create zip archive
-                with ZipFile(temp_zip_path, 'w') as zipf:
+                with ZipFile(temp_zip_path, "w") as zipf:
                     # Add the main file
                     zipf.write(fp_path, fp_path.name)
 
@@ -1058,7 +1058,7 @@ class Design(Component):
                     filepath=temp_zip_path,
                     original_file_name=fp_path.name,
                     import_options=import_options,
-                    import_options_definitions=import_options_definitions
+                    import_options_definitions=import_options_definitions,
                 )
 
             finally:

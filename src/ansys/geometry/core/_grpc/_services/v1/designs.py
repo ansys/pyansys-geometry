@@ -91,7 +91,9 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
                         file_name=file_name,
                         open_mode=open_mode,
                         import_options=import_options.to_dict(),
-                        import_options_definitions=from_import_options_definitions_to_grpc_import_options_definition(import_options_definitions),
+                        import_options_definitions=from_import_options_definitions_to_grpc_import_options_definition(
+                            import_options_definitions
+                        ),
                     )
                     yield test_req
 
@@ -109,7 +111,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
                 file_name=kwargs["original_file_name"],
                 import_options=kwargs["import_options"],
                 import_options_definitions=kwargs["import_options_definitions"],
-                open_mode=open_mode
+                open_mode=open_mode,
             )
         )
 
@@ -187,7 +189,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
         data = bytes()
         for response in response_stream:
             data += response.data
-            
+
         return {
             "data": data,
         }
@@ -273,7 +275,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
     @protect_grpc
     def download_file(self, **kwargs) -> dict:  # noqa: D102
         return self.save_as(**kwargs)
-    
+
     def _serialize_assembly_response(self, response):
         def serialize_body(body):
             return {
@@ -329,8 +331,6 @@ class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
             return {"id": named_selection.id.id, "name": named_selection.name}
 
         def serialize_coordinate_systems(coordinate_systems):
-
-
             serialized_cs = []
             for cs in coordinate_systems.coordinate_systems:
                 serialized_cs.append(

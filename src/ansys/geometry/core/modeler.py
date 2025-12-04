@@ -471,7 +471,7 @@ class Modeler:
 
             try:
                 # Create zip archive
-                with ZipFile(temp_zip_path, 'w') as zipf:
+                with ZipFile(temp_zip_path, "w") as zipf:
                     # Add the main file
                     zipf.write(fp_path, fp_path.name)
 
