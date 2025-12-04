@@ -22,11 +22,9 @@
 """Module containing the bodies service implementation for v0."""
 
 import grpc
-import pint
 
 import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
@@ -462,11 +460,13 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def get_volume(self, **kwargs) -> dict:  # noqa: D102
+        from .conversions import from_grpc_volume_to_volume
+
         # Call the gRPC service
         resp = self.stub.GetVolume(request=build_grpc_id(kwargs["id"]))
 
         # Return the response - formatted as a dictionary
-        return {"volume": pint.Quantity(resp.volume, DEFAULT_UNITS.SERVER_VOLUME)}
+        return {"volume": from_grpc_volume_to_volume(resp.volume)}
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102

@@ -71,7 +71,7 @@ import pint
 
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import graphics_required
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 
 if TYPE_CHECKING:
@@ -1340,23 +1340,23 @@ def from_grpc_direction_to_unit_vector(direction: GRPCDirection) -> "UnitVector3
     return UnitVector3D([direction.x, direction.y, direction.z])
 
 
-def from_length_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
+def from_length_to_grpc_quantity(input: "Distance") -> GRPCQuantity:
     """Convert a ``Measurement`` containing a length to a gRPC quantity.
 
     Parameters
     ----------
     input : Measurement
-        Source measurement data (Measurement object or pint Quantity).
+        Source measurement data.
 
     Returns
     -------
     GRPCQuantity
         Converted gRPC quantity.
     """
-    from ansys.geometry.core.misc.measurements import Measurement
+    from ansys.geometry.core.misc.measurements import Distance
 
-    # Handle both Measurement objects (which have .value attribute) and raw pint Quantities
-    if isinstance(input, Measurement):
+    # Handle both Measurement objects (which have .value attribute)
+    if isinstance(input, Distance):
         # Measurement object
         return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
     else:
@@ -1379,7 +1379,7 @@ def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     """
     from ansys.geometry.core.misc.measurements import Measurement
 
-    # Handle both Measurement objects (which have .value attribute) and raw pint Quantities
+    # Handle both Measurement objects (which have .value attribute)
     if isinstance(input, Measurement):
         # Measurement object
         return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
