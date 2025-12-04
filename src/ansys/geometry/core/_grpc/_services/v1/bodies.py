@@ -22,10 +22,8 @@
 """Module containing the bodies service implementation for v1."""
 
 import grpc
-import pint
 
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_length
@@ -622,6 +620,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     def get_volume(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
 
+        from .conversions import from_grpc_volume_to_volume
+
         # Create the request with MultipleEntitiesRequest
         request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
 
@@ -632,11 +632,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         response_data = resp.response_data[0]
 
         # Return the response - formatted as a dictionary
-        return {
-            "volume": pint.Quantity(
-                response_data.volume.value_in_geometry_units, DEFAULT_UNITS.SERVER_VOLUME
-            )
-        }  # noqa: E501
+        return {"volume": from_grpc_volume_to_volume(response_data.volume)}
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
