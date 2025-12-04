@@ -788,6 +788,7 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
         direction = from_unit_vector_to_grpc_direction(curve.direction)
         grpc_curve = GRPCCurveGeometry(origin=origin, direction=direction)
     elif isinstance(curve, (Circle, Ellipse)):
+
         origin = from_point3d_to_grpc_point(curve.origin)
         reference = from_unit_vector_to_grpc_direction(curve.dir_x)
         axis = from_unit_vector_to_grpc_direction(curve.dir_z)
@@ -1337,7 +1338,15 @@ def from_length_to_grpc_quantity(input: "Distance") -> GRPCQuantity:
     GRPCQuantity
         Converted gRPC quantity.
     """
-    return GRPCQuantity(value_in_geometry_units=input.m_as(DEFAULT_UNITS.SERVER_LENGTH))
+    from ansys.geometry.core.misc.measurements import Distance
+
+    # Handle both Distance objects (which have .value attribute)
+    if isinstance(input, Distance):
+        # Distance object
+        return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
+    else:
+        # Raw pint Quantity
+        return GRPCQuantity(value_in_geometry_units=input.m_as(DEFAULT_UNITS.SERVER_LENGTH))
 
 
 def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
