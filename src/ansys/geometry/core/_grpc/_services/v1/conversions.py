@@ -1644,13 +1644,7 @@ def response_problem_area_for_body(response) -> dict:
         A dictionary representation of the ProblemAreaForBody object.
     """
     return {
-        "problems": [
-            {
-                "id": res.problem_area_id,
-                "bodies": res.body_ids
-            }
-            for res in response.result
-        ]
+        "problems": [{"id": res.problem_area_id, "bodies": res.body_ids} for res in response.result]
     }
 
 
@@ -1668,13 +1662,7 @@ def response_problem_area_for_face(response) -> dict:
         A dictionary representation of the ProblemAreaForFace object.
     """
     return {
-        "problems": [
-            {
-                "id": res.problem_area_id,
-                "faces": res.face_ids
-            }
-            for res in response.result
-        ]
+        "problems": [{"id": res.problem_area_id, "faces": res.face_ids} for res in response.result]
     }
 
 
@@ -1692,11 +1680,5 @@ def response_problem_area_for_edge(response) -> dict:
         A dictionary representation of the ProblemAreaForEdge object.
     """
     return {
-        "problems": [
-            {
-                "id": res.problem_area_id,
-                "edges": res.edge_ids
-            }
-            for res in response.result
-        ]
+        "problems": [{"id": res.problem_area_id, "edges": res.edge_ids} for res in response.result]
     }
