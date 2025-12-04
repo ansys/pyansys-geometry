@@ -180,12 +180,10 @@ def from_point3d_to_grpc_point(point: "Point3D") -> GRPCPoint:
     GRPCPoint
         Geometry service gRPC point message. The unit is meters.
     """
-    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-
     return GRPCPoint(
-        x=GRPCQuantity(value_in_geometry_units=point.x.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
-        y=GRPCQuantity(value_in_geometry_units=point.y.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
-        z=GRPCQuantity(value_in_geometry_units=point.z.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        x=from_length_to_grpc_quantity(point.x),
+        y=from_length_to_grpc_quantity(point.y),
+        z=from_length_to_grpc_quantity(point.z),
     )
 
 
@@ -230,15 +228,11 @@ def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
     GRPCPoint
         Geometry service gRPC point message. The unit is meters.
     """
-    from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
-
-    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-
     point3d = plane.transform_point2d_local_to_global(point2d)
     return GRPCPoint(
-        x=GRPCQuantity(value_in_geometry_units=point3d.x.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
-        y=GRPCQuantity(value_in_geometry_units=point3d.y.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
-        z=GRPCQuantity(value_in_geometry_units=point3d.z.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        x=from_length_to_grpc_quantity(point3d.x),
+        y=from_length_to_grpc_quantity(point3d.y),
+        z=from_length_to_grpc_quantity(point3d.z),
     )
 
 
@@ -794,7 +788,6 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
         direction = from_unit_vector_to_grpc_direction(curve.direction)
         grpc_curve = GRPCCurveGeometry(origin=origin, direction=direction)
     elif isinstance(curve, (Circle, Ellipse)):
-        from ansys.api.discovery.v1.commonmessages_pb2 import Quantity as GRPCQuantity
 
         origin = from_point3d_to_grpc_point(curve.origin)
         reference = from_unit_vector_to_grpc_direction(curve.dir_x)
@@ -805,15 +798,15 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
                 origin=origin,
                 reference=reference,
                 axis=axis,
-                radius=GRPCQuantity(value_in_geometry_units=curve.radius.m),
+                radius=from_length_to_grpc_quantity(curve.radius),
             )
         elif isinstance(curve, Ellipse):
             grpc_curve = GRPCCurveGeometry(
                 origin=origin,
                 reference=reference,
                 axis=axis,
-                major_radius=GRPCQuantity(value_in_geometry_units=curve.major_radius.m),
-                minor_radius=GRPCQuantity(value_in_geometry_units=curve.minor_radius.m),
+                major_radius=from_length_to_grpc_quantity(curve.major_radius),
+                minor_radius=from_length_to_grpc_quantity(curve.minor_radius),
             )
     elif isinstance(curve, NURBSCurve):
         grpc_curve = GRPCCurveGeometry(nurbs_curve=from_nurbs_curve_to_grpc_nurbs_curve(curve))
@@ -1051,15 +1044,15 @@ def from_trimmed_surface_to_grpc_trimmed_surface(
     """
     surface_geometry, surface_type = from_surface_to_grpc_surface(trimmed_surface.geometry)
 
-    # In v1, u_min/u_max/v_min/v_max are Quantity messages, not floats
-    # These are dimensionless parameters, so we use plain values
+    # In v1, u_min/u_max/v_min/v_max are Quantity messages
+    # These are dimensionless parameters
     return GRPCTrimmedSurface(
         surface=surface_geometry,
         type=surface_type,
-        u_min=GRPCQuantity(value_in_geometry_units=trimmed_surface.box_uv.interval_u.start),
-        u_max=GRPCQuantity(value_in_geometry_units=trimmed_surface.box_uv.interval_u.end),
-        v_min=GRPCQuantity(value_in_geometry_units=trimmed_surface.box_uv.interval_v.start),
-        v_max=GRPCQuantity(value_in_geometry_units=trimmed_surface.box_uv.interval_v.end),
+        u_min=from_parameter_to_grpc_quantity(trimmed_surface.box_uv.interval_u.start),
+        u_max=from_parameter_to_grpc_quantity(trimmed_surface.box_uv.interval_u.end),
+        v_min=from_parameter_to_grpc_quantity(trimmed_surface.box_uv.interval_v.start),
+        v_max=from_parameter_to_grpc_quantity(trimmed_surface.box_uv.interval_v.end),
     )
 
 
@@ -1394,6 +1387,22 @@ def from_grpc_volume_to_volume(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
         Converted volume quantity with server volume units.
     """
     return pint.Quantity(grpc_quantity.value_in_geometry_units, DEFAULT_UNITS.SERVER_VOLUME)
+
+
+def from_parameter_to_grpc_quantity(value: float) -> GRPCQuantity:
+    """Convert a dimensionless parameter to a gRPC quantity.
+
+    Parameters
+    ----------
+    value : float
+        Dimensionless parameter value (e.g., u/v surface parameters).
+
+    Returns
+    -------
+    GRPCQuantity
+        Converted gRPC quantity with the dimensionless value.
+    """
+    return GRPCQuantity(value_in_geometry_units=value)
 
 
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
