@@ -202,6 +202,24 @@ def from_grpc_direction_to_unit_vector(direction: GRPCDirection) -> "UnitVector3
     return UnitVector3D([direction.x, direction.y, direction.z])
 
 
+def from_grpc_volume_to_volume(grpc_volume: float) -> "pint.Quantity":
+    """Convert a gRPC volume float to a pint Quantity.
+
+    Parameters
+    ----------
+    grpc_volume : float
+        Source gRPC volume data.
+
+    Returns
+    -------
+    pint.Quantity
+        Converted volume quantity with server volume units.
+    """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
+    return pint.Quantity(grpc_volume, DEFAULT_UNITS.SERVER_VOLUME)
+
+
 def from_line_to_grpc_line(line: "Line") -> GRPCLine:
     """Convert a ``Line`` to a line gRPC message.
 
