@@ -1033,12 +1033,13 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             request = CombineIntersectBodiesRequest(request_data=[request_data])
             response = self.edit_stub.CombineIntersectBodies(request=request)
         elif type_bool_op == "unite":
-            # Create request data with repeated target_selection_ids
-            request_data = CombineMergeBodiesRequestData()
-            request_data.target_selection_ids.append(build_grpc_id(target_body.id))
-            for body in other_bodies:
-                request_data.target_selection_ids.append(build_grpc_id(body.id))
+            # Create request data with all body IDs
+            all_body_ids = [build_grpc_id(target_body.id)]
+            all_body_ids.extend([build_grpc_id(body.id) for body in other_bodies])
 
+            request_data = CombineMergeBodiesRequestData(
+                target_selection_ids=all_body_ids
+            )
             request = CombineMergeBodiesRequest(request_data=[request_data])
             response = self.edit_stub.CombineMergeBodies(request=request)
         else:
