@@ -34,6 +34,7 @@ from .conversions import (
     from_grpc_frame_to_frame,
     from_grpc_material_to_material,
     from_grpc_point_to_point3d,
+    from_line_to_grpc_line,
     from_plane_to_grpc_plane,
     from_point3d_to_grpc_point,
 )
@@ -67,9 +68,11 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
         lines = []
         for segment in kwargs["segments"]:
             lines.append(
-                Line(
-                    start=from_point3d_to_grpc_point(segment[0]),
-                    end=from_point3d_to_grpc_point(segment[1]),
+                from_line_to_grpc_line(
+                    Line(
+                        start=from_point3d_to_grpc_point(segment[0]),
+                        end=from_point3d_to_grpc_point(segment[1]),
+                    )
                 )
             )
 
@@ -99,9 +102,11 @@ class GRPCBeamsServiceV0(GRPCBeamsService):
         lines = []
         for segment in kwargs["segments"]:
             lines.append(
-                Line(
-                    start=from_point3d_to_grpc_point(segment[0]),
-                    end=from_point3d_to_grpc_point(segment[1]),
+                from_line_to_grpc_line(
+                    Line(
+                        start=from_point3d_to_grpc_point(segment[0]),
+                        end=from_point3d_to_grpc_point(segment[1]),
+                    )
                 )
             )
 
