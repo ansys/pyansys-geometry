@@ -215,17 +215,17 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request = SweepWithGuideRequest(
             request_data=[
                 SweepWithGuideRequestData(
-                    name=sweep_item["name"],
-                    parent_id=build_grpc_id(sweep_item["parent_id"]),
-                    plane=from_plane_to_grpc_plane(sweep_item["sketch"].plane),
+                    name=sweep_item.name,
+                    parent_id=build_grpc_id(sweep_item.parent_id),
+                    plane=from_plane_to_grpc_plane(sweep_item.sketch.plane),
                     geometries=from_sketch_shapes_to_grpc_geometries(
-                        sweep_item["sketch"].plane,
-                        sweep_item["sketch"].edges,
-                        sweep_item["sketch"].faces,
+                        sweep_item.sketch.plane,
+                        sweep_item.sketch.edges,
+                        sweep_item.sketch.faces,
                     ),
-                    path=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item["path"]),
-                    guide=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item["guide"]),
-                    tight_tolerance=sweep_item["tight_tolerance"],
+                    path=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item.path),
+                    guide=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item.guide),
+                    tight_tolerance=sweep_item.tight_tolerance,
                 )
                 for sweep_item in kwargs["sweep_data"]
             ],
@@ -458,15 +458,13 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             MoveTranslateRequestData,
         )
 
-        # Extract distance value if it's a Measurement object
-        distance = Distance(kwargs["distance"].value * kwargs["direction"], kwargs["distance"].unit)
         # Create the request with selection_ids, direction, and distance
         request = MoveTranslateRequest(
             request_data=[
                 MoveTranslateRequestData(
                     selection_ids=[build_grpc_id(body_id) for body_id in kwargs["ids"]],
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                    distance=from_length_to_grpc_quantity(distance),
+                    distance=from_length_to_grpc_quantity(kwargs["distance"]),
                 )
             ]
         )

@@ -1090,7 +1090,7 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
             origin=origin,
             reference=reference,
             axis=axis,
-            radius=from_length_to_grpc_quantity(surface.radius),
+            radius=GRPCQuantity(value_in_geometry_units=surface.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_SPHERE
     elif isinstance(surface, Cylinder):
@@ -1098,7 +1098,7 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
             origin=origin,
             reference=reference,
             axis=axis,
-            radius=from_length_to_grpc_quantity(surface.radius),
+            radius=GRPCQuantity(value_in_geometry_units=surface.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_CYLINDER
     elif isinstance(surface, Cone):
@@ -1106,8 +1106,8 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
             origin=origin,
             reference=reference,
             axis=axis,
-            radius=from_length_to_grpc_quantity(surface.radius),
-            half_angle=from_angle_to_grpc_quantity(surface.half_angle),
+            radius=GRPCQuantity(value_in_geometry_units=surface.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+            half_angle=GRPCQuantity(value_in_geometry_units=surface.half_angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_CONE
     elif isinstance(surface, Torus):
@@ -1115,8 +1115,8 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
             origin=origin,
             reference=reference,
             axis=axis,
-            major_radius=from_length_to_grpc_quantity(surface.major_radius),
-            minor_radius=from_length_to_grpc_quantity(surface.minor_radius),
+            major_radius=GRPCQuantity(value_in_geometry_units=surface.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+            minor_radius=GRPCQuantity(value_in_geometry_units=surface.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_TORUS
     elif isinstance(surface, NURBSSurface):
