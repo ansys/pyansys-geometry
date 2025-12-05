@@ -1037,9 +1037,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             all_body_ids = [build_grpc_id(target_body.id)]
             all_body_ids.extend([build_grpc_id(body.id) for body in other_bodies])
 
-            request_data = CombineMergeBodiesRequestData(
-                target_selection_ids=all_body_ids
-            )
+            request_data = CombineMergeBodiesRequestData(target_selection_ids=all_body_ids)
             request = CombineMergeBodiesRequest(request_data=[request_data])
             response = self.edit_stub.CombineMergeBodies(request=request)
         else:
