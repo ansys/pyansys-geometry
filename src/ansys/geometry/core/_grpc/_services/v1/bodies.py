@@ -1013,8 +1013,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         if type_bool_op == "intersect":
             request_data = CombineIntersectBodiesRequestData(
-                target_selection_ids=[build_grpc_id(target_body.id)],
-                tool_selection_ids=[build_grpc_id(body.id) for body in other_bodies],
+                target_selection_ids=[build_grpc_id(target_body)],
+                tool_selection_ids=[build_grpc_id(body) for body in other_bodies],
                 keep_cutter=keep_other,
                 subtract_from_target=False,
                 transfer_named_selections=transfer_named_selections,
@@ -1023,8 +1023,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             response = self.edit_stub.CombineIntersectBodies(request=request)
         elif type_bool_op == "subtract":
             request_data = CombineIntersectBodiesRequestData(
-                target_selection_ids=[build_grpc_id(target_body.id)],
-                tool_selection_ids=[build_grpc_id(body.id) for body in other_bodies],
+                target_selection_ids=[build_grpc_id(target_body)],
+                tool_selection_ids=[build_grpc_id(body) for body in other_bodies],
                 keep_cutter=keep_other,
                 subtract_from_target=True,
                 transfer_named_selections=transfer_named_selections,
@@ -1033,8 +1033,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             response = self.edit_stub.CombineIntersectBodies(request=request)
         elif type_bool_op == "unite":
             # Create request data with all body IDs
-            all_body_ids = [build_grpc_id(target_body.id)]
-            all_body_ids.extend([build_grpc_id(body.id) for body in other_bodies])
+            all_body_ids = [build_grpc_id(target_body)]
+            all_body_ids.extend([build_grpc_id(body) for body in other_bodies])
 
             request_data = CombineMergeBodiesRequestData(target_selection_ids=all_body_ids)
             request = CombineMergeBodiesRequest(request_data=[request_data])

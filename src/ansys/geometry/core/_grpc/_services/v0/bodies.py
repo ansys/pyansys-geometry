@@ -798,8 +798,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
         transfer_named_selections = kwargs["transfer_named_selections"]
 
         if type_bool_op == "intersect":
-            body_ids = [build_grpc_id(body.id) for body in other_bodies]
-            target_ids = [build_grpc_id(target_body.id)]
+            body_ids = [build_grpc_id(body) for body in other_bodies]
+            target_ids = [build_grpc_id(target_body)]
             request = CombineIntersectBodiesRequest(
                 target_selection=target_ids,
                 tool_selection=body_ids,
@@ -809,8 +809,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
             )
             response = self.command_stub.CombineIntersectBodies(request)
         elif type_bool_op == "subtract":
-            body_ids = [build_grpc_id(body.id) for body in other_bodies]
-            target_ids = [build_grpc_id(target_body.id)]
+            body_ids = [build_grpc_id(body) for body in other_bodies]
+            target_ids = [build_grpc_id(target_body)]
             request = CombineIntersectBodiesRequest(
                 target_selection=target_ids,
                 tool_selection=body_ids,
@@ -822,7 +822,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
         elif type_bool_op == "unite":
             bodies = [target_body]
             bodies.extend(other_bodies)
-            body_ids = [build_grpc_id(body.id) for body in bodies]
+            body_ids = [build_grpc_id(body) for body in bodies]
             request = CombineMergeBodiesRequest(target_selection=body_ids)
             response = self.command_stub.CombineMergeBodies(request)
         else:
