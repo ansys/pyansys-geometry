@@ -672,9 +672,13 @@ def from_sketch_ellipse_to_grpc_ellipse(ellipse: "SketchEllipse", plane: "Plane"
     """
     return GRPCEllipse(
         center=from_point2d_to_grpc_point(plane, ellipse.center),
-        majorradius=GRPCQuantity(value_in_geometry_units= ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),  # noqa: E501
-        minorradius=GRPCQuantity(value_in_geometry_units= ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),  # noqa: E501
-        angle=GRPCQuantity(value_in_geometry_units= ellipse.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
+        majorradius=GRPCQuantity(
+            value_in_geometry_units=ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),  # noqa: E501
+        minorradius=GRPCQuantity(
+            value_in_geometry_units=ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),  # noqa: E501
+        angle=GRPCQuantity(value_in_geometry_units=ellipse.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
     )
 
 
@@ -695,7 +699,9 @@ def from_sketch_circle_to_grpc_circle(circle: "SketchCircle", plane: "Plane") ->
     """
     return GRPCCircle(
         center=from_point2d_to_grpc_point(plane, circle.center),
-        radius=GRPCQuantity(value_in_geometry_units=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        radius=GRPCQuantity(
+            value_in_geometry_units=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),
     )
 
 
@@ -714,9 +720,11 @@ def from_sketch_polygon_to_grpc_polygon(polygon: "Polygon", plane: "Plane") -> G
     """
     return GRPCPolygon(
         center=from_point2d_to_grpc_point(plane, polygon.center),
-        radius=GRPCQuantity(value_in_geometry_units= polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),  # noqa: E501
+        radius=GRPCQuantity(
+            value_in_geometry_units=polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),  # noqa: E501
         numberofsides=polygon.n_sides,
-        angle=GRPCQuantity(value_in_geometry_units= polygon.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
+        angle=GRPCQuantity(value_in_geometry_units=polygon.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
     )
 
 
@@ -797,15 +805,21 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
                 origin=origin,
                 reference=reference,
                 axis=axis,
-                radius=GRPCQuantity(value_in_geometry_units=curve.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+                radius=GRPCQuantity(
+                    value_in_geometry_units=curve.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+                ),
             )
         elif isinstance(curve, Ellipse):
             grpc_curve = GRPCCurveGeometry(
                 origin=origin,
                 reference=reference,
                 axis=axis,
-                major_radius=GRPCQuantity(value_in_geometry_units=curve.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
-                minor_radius=GRPCQuantity(value_in_geometry_units=curve.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+                major_radius=GRPCQuantity(
+                    value_in_geometry_units=curve.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+                ),
+                minor_radius=GRPCQuantity(
+                    value_in_geometry_units=curve.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+                ),
             )
     elif isinstance(curve, NURBSCurve):
         grpc_curve = GRPCCurveGeometry(nurbs_curve=from_nurbs_curve_to_grpc_nurbs_curve(curve))
@@ -1340,7 +1354,6 @@ def from_length_to_grpc_quantity(input: "Distance") -> GRPCQuantity:
     return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
 
 
-
 def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     """Convert a ``Measurement`` containing an angle to a gRPC quantity.
 
@@ -1355,6 +1368,7 @@ def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
         Converted gRPC quantity.
     """
     return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
+
 
 def from_grpc_volume_to_volume(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
     """Convert a gRPC quantity representing volume to a pint Quantity.
