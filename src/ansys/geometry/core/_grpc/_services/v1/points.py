@@ -26,6 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.points import GRPCPointsService
+from .conversions import build_grpc_id, from_point3d_to_grpc_design_point
 
 
 class GRPCPointsServiceV1(GRPCPointsService):  # pragma: no cover
@@ -49,19 +50,17 @@ class GRPCPointsServiceV1(GRPCPointsService):  # pragma: no cover
 
     @protect_grpc
     def create_design_points(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.constructs.datumpoint_pb2_grpc import (
+        from ansys.api.discovery.v1.design.constructs.datumpoint_pb2 import (
             DatumPointCreationRequest,
             DatumPointCreationRequestData,
         )
 
-        from .conversions import from_point3d_to_grpc_point
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = DatumPointCreationRequest(
-            requestData=[
+            request_data=[
                 DatumPointCreationRequestData(
-                    points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
-                    parent=kwargs["parent_id"],
+                    points=[from_point3d_to_grpc_design_point(point) for point in kwargs["points"]],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
                 )
             ]
         )
