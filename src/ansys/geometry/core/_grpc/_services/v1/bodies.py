@@ -720,7 +720,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         resp = self.stub.RemoveAssignedCADMaterial(request=request)
 
         # Return the response - formatted as a dictionary
-        return {"successfully_removed": [id for id in resp.successfully_removed_ids]}
+        return {"successfully_removed": [id.id for id in resp.successfully_removed_ids]}
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
