@@ -185,17 +185,17 @@ class GRPCBodyServiceV0(GRPCBodyService):
         request = SweepWithGuideRequest(
             request_data=[
                 SweepWithGuideRequestData(
-                    name=sweep_item["name"],
-                    parent=build_grpc_id(sweep_item["parent_id"]),
-                    plane=from_plane_to_grpc_plane(sweep_item["sketch"].plane),
+                    name=sweep_item.name,
+                    parent=build_grpc_id(sweep_item.parent_id),
+                    plane=from_plane_to_grpc_plane(sweep_item.sketch.plane),
                     geometries=from_sketch_shapes_to_grpc_geometries(
-                        sweep_item["sketch"].plane,
-                        sweep_item["sketch"].edges,
-                        sweep_item["sketch"].faces,
+                        sweep_item.sketch.plane,
+                        sweep_item.sketch.edges,
+                        sweep_item.sketch.faces,
                     ),
-                    path=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item["path"]),
-                    guide=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item["guide"]),
-                    tight_tolerance=sweep_item["tight_tolerance"],
+                    path=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item.path),
+                    guide=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item.guide),
+                    tight_tolerance=sweep_item.tight_tolerance,
                 )
                 for sweep_item in kwargs["sweep_data"]
             ],
