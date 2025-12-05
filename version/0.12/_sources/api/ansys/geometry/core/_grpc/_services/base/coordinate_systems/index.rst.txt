@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``coordinate_systems.py`` module
+====================================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.coordinate_systems
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: coordinate_systems
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.coordinate_systems.GRPCCoordinateSystemService`
+            - Coordinate systems service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCCoordinateSystemService</api/ansys/geometry/core/_grpc/_services/base/coordinate_systems/GRPCCoordinateSystemService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the coordinate systems service implementation (abstraction layer).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

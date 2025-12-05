@@ -1,0 +1,217 @@
+:py:mod:`ansys.geometry.core.designer.edge`
+===========================================
+
+.. py:module:: ansys.geometry.core.designer.edge
+
+.. autoapi-nested-parse::
+
+   Provides the ``Edge`` class module.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.designer.edge.CurveType
+   ansys.geometry.core.designer.edge.Edge
+
+
+
+
+.. py:class:: CurveType
+
+
+   Bases: :py:obj:`enum.Enum`
+
+   
+   Enum holding the possible values for curve types by the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:attribute:: CURVETYPE_UNKNOWN
+      :value: 0
+
+      
+
+   .. py:attribute:: CURVETYPE_LINE
+      :value: 1
+
+      
+
+   .. py:attribute:: CURVETYPE_CIRCLE
+      :value: 2
+
+      
+
+   .. py:attribute:: CURVETYPE_ELLIPSE
+      :value: 3
+
+      
+
+   .. py:attribute:: CURVETYPE_NURBS
+      :value: 4
+
+      
+
+   .. py:attribute:: CURVETYPE_PROCEDURAL
+      :value: 5
+
+      
+
+
+.. py:class:: Edge(id: str, curve_type: CurveType, body: ansys.geometry.core.designer.body.Body, grpc_client: ansys.geometry.core.connection.GrpcClient)
+
+
+   
+   Represents a single edge of a body within the design assembly.
+
+   This class synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the body.
+
+       **curve_type** : :obj:`CurveType`
+           Type of curve that the edge forms.
+
+       **body** : :obj:`Body`
+           Parent body that the edge constructs.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting Geometry service instance for design modeling.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: id
+      :type: str
+
+      
+      ID of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: length
+      :type: pint.Quantity
+
+      
+      Calculated length of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: curve_type
+      :type: CurveType
+
+      
+      Curve type of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: faces
+      :type: beartype.typing.List[ansys.geometry.core.designer.face.Face]
+
+      
+      Get the faces that contain this edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

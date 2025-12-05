@@ -1,0 +1,620 @@
+
+
+
+
+Cone
+====
+
+.. py:class:: Cone(origin: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point3D], radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], half_angle: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Angle, ansys.geometry.core.typing.Real], reference: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_X, axis: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_Z)
+   :canonical: ansys.geometry.core.primitives.cone.Cone
+
+
+
+
+Provides 3D cone representation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Cone
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~transformed_copy`
+            - Create a transformed copy of the cone based on a transformation matrix.
+          * - :py:attr:`~mirrored_copy`
+            - Create a mirrored copy of the cone along the y-axis.
+          * - :py:attr:`~evaluate`
+            - Evaluate the cone at given parameters.
+          * - :py:attr:`~project_point`
+            - Project a point onto the cone and evaluate the cone.
+          * - :py:attr:`~get_u_parameterization`
+            - Get the parametrization conditions for the U parameter.
+          * - :py:attr:`~get_v_parameterization`
+            - Get the parametrization conditions for the V parameter.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~origin`
+            - Origin of the cone.
+          * - :py:attr:`~radius`
+            - Radius of the cone.
+          * - :py:attr:`~half_angle`
+            - Half angle of the apex.
+          * - :py:attr:`~dir_x`
+            - X-direction of the cone.
+          * - :py:attr:`~dir_y`
+            - Y-direction of the cone.
+          * - :py:attr:`~dir_z`
+            - Z-direction of the cone.
+          * - :py:attr:`~height`
+            - Height of the cone.
+          * - :py:attr:`~surface_area`
+            - Surface area of the cone.
+          * - :py:attr:`~volume`
+            - Volume of the cone.
+          * - :py:attr:`~apex`
+            - Apex point of the cone.
+          * - :py:attr:`~apex_param`
+            - Apex parameter of the cone.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Cone`` class.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.cone import Cone
+
+
+Property detail
+---------------
+.. py:property:: origin
+   :canonical: ansys.geometry.core.primitives.cone.Cone.origin
+   :type: Point3D
+
+
+   
+   Origin of the cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: radius
+   :canonical: ansys.geometry.core.primitives.cone.Cone.radius
+   :type: pint.Quantity
+
+
+   
+   Radius of the cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: half_angle
+   :canonical: ansys.geometry.core.primitives.cone.Cone.half_angle
+   :type: pint.Quantity
+
+
+   
+   Half angle of the apex.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_x
+   :canonical: ansys.geometry.core.primitives.cone.Cone.dir_x
+   :type: UnitVector3D
+
+
+   
+   X-direction of the cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_y
+   :canonical: ansys.geometry.core.primitives.cone.Cone.dir_y
+   :type: UnitVector3D
+
+
+   
+   Y-direction of the cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_z
+   :canonical: ansys.geometry.core.primitives.cone.Cone.dir_z
+   :type: UnitVector3D
+
+
+   
+   Z-direction of the cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: height
+   :canonical: ansys.geometry.core.primitives.cone.Cone.height
+   :type: pint.Quantity
+
+
+   
+   Height of the cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: surface_area
+   :canonical: ansys.geometry.core.primitives.cone.Cone.surface_area
+   :type: pint.Quantity
+
+
+   
+   Surface area of the cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: volume
+   :canonical: ansys.geometry.core.primitives.cone.Cone.volume
+   :type: pint.Quantity
+
+
+   
+   Volume of the cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: apex
+   :canonical: ansys.geometry.core.primitives.cone.Cone.apex
+   :type: Point3D
+
+
+   
+   Apex point of the cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: apex_param
+   :canonical: ansys.geometry.core.primitives.cone.Cone.apex_param
+   :type: Real
+
+
+   
+   Apex parameter of the cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Cone
+
+   
+   Create a transformed copy of the cone based on a transformation matrix.
+
+
+   :Parameters:
+
+       **matrix** : :obj:`Matrix44`
+           4x4 transformation matrix to apply to the cone.
+
+   :Returns:
+
+       :obj:`Cone`
+           New cone that is the transformed copy of the original cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: mirrored_copy() -> Cone
+
+   
+   Create a mirrored copy of the cone along the y-axis.
+
+
+
+   :Returns:
+
+       :obj:`Cone`
+           New cone that is a mirrored copy of the original cone.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __eq__(other: Cone) -> bool
+
+   
+   Equals operator for the ``Cone`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: evaluate(parameter: ansys.geometry.core.primitives.parameterization.ParamUV) -> ConeEvaluation
+
+   
+   Evaluate the cone at given parameters.
+
+
+   :Parameters:
+
+       **parameter** : :obj:`ParamUV`
+           Parameters (u,v) to evaluate the cone at.
+
+   :Returns:
+
+       :obj:`ConeEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> ConeEvaluation
+
+   
+   Project a point onto the cone and evaluate the cone.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Point to project onto the cone.
+
+   :Returns:
+
+       :obj:`ConeEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: get_u_parameterization() -> ansys.geometry.core.primitives.parameterization.Parameterization
+
+   
+   Get the parametrization conditions for the U parameter.
+
+   The U parameter specifies the clockwise angle around the axis (right-hand
+   corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
+
+
+   :Returns:
+
+       :obj:`Parameterization`
+           Information about how a cone's U parameter is parameterized.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: get_v_parameterization() -> ansys.geometry.core.primitives.parameterization.Parameterization
+
+   
+   Get the parametrization conditions for the V parameter.
+
+   The V parameter specifies the distance along the axis, with a zero parameter at
+   the XY plane of the cone.
+
+
+   :Returns:
+
+       :obj:`Parameterization`
+           Information about how a cone's V parameter is parameterized.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
