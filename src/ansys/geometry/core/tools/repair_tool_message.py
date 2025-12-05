@@ -92,3 +92,26 @@ class RepairToolMessage:
     def repaired(self) -> int:
         """Number of problem areas repaired during the repair operation."""
         return self._repaired
+
+
+def create_repair_message_from_response(response) -> "RepairToolMessage":
+    """Create a RepairToolMessage from a serialized response.
+
+    Parameters
+    ----------
+    response : serialized response
+        The serialized response object containing repair tool information.
+
+    Returns
+    -------
+    RepairToolMessage
+        An instance of RepairToolMessage populated with data from the response.
+    """
+    return RepairToolMessage(
+        success=response.get("success"),
+        created_bodies=response.get("created_bodies_monikers", []),
+        modified_bodies=response.get("modified_bodies_monikers", []),
+        deleted_bodies=response.get("deleted_bodies_monikers", []),
+        found=response.get("found", -1),
+        repaired=response.get("repaired", -1),
+    )
