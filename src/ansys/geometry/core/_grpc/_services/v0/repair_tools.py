@@ -25,6 +25,7 @@ from google.protobuf.wrappers_pb2 import Int32Value
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.logger import LOG
 
 from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
 from ..base.repair_tools import GRPCRepairToolsService
@@ -178,12 +179,27 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
     def find_missing_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindMissingFacesRequest
         from google.protobuf.wrappers_pb2 import DoubleValue
+        from ansys.geometry.core.logger import LOG
 
         from ..base.conversions import (
             from_measurement_to_server_angle,
             from_measurement_to_server_length,
         )
 
+        # Check the backend version to set optional parameters
+        if kwargs["backend_version"] < (26, 1, 0) and (
+            kwargs["angle"] is not None or kwargs["distance"] is not None
+        ):
+            # If the backend version is less than 26.1.0, set angle and distance to None
+            kwargs["angle"] = None
+            kwargs["distance"] = None
+
+            # Log a warning
+            LOG.warning(
+                "The backend version is less than 26.1.0, so angle and distance parameters will be"
+                "ignored. Please update the backend to use these parameters."
+            )
+        
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindMissingFacesRequest(
             faces=kwargs["faces"],
@@ -213,11 +229,26 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
     def find_small_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindSmallFacesRequest
         from google.protobuf.wrappers_pb2 import DoubleValue
+        from ansys.geometry.core.logger import LOG
 
         from ..base.conversions import (
             from_measurement_to_server_area,
             from_measurement_to_server_length,
         )
+
+        # Check the backend version to set optional parameters
+        if kwargs["backend_version"] < (26, 1, 0) and (
+            kwargs["area"] is not None or kwargs["width"] is not None
+        ):
+            # If the backend version is less than 26.1.0, set area and width to None
+            kwargs["area"] = None
+            kwargs["width"] = None
+
+            # Log a warning
+            LOG.warning(
+                "The backend version is less than 26.1.0, so area and width parameters will be"
+                "ignored. Please update the backend to use these parameters."
+            )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSmallFacesRequest(
@@ -248,8 +279,16 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
     def find_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
         from google.protobuf.wrappers_pb2 import DoubleValue
+        from ansys.geometry.core.logger import LOG
 
         from ..base.conversions import from_measurement_to_server_length
+
+        if kwargs["backend_version"] < (26, 1, 0) and kwargs["distance"] is not None:
+            # If the backend version is less than 26.1.0, set distance to None and log warning
+            kwargs["distance"] = None
+            LOG.warning(
+                "The backend version is less than 26.1.0, so distance parameter will be ignored. "
+            )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindStitchFacesRequest(
@@ -476,7 +515,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import InspectGeometryRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = InspectGeometryRequest(bodies=kwargs.get("bodies", []))
+        request = InspectGeometryRequest(bodies=kwargs.get("bodies"))
 
         # Call the gRPC service
         inspect_result_response = self.stub.InspectGeometry(request)
@@ -489,7 +528,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RepairGeometryRequest(bodies=kwargs.get("bodies", []))
+        request = RepairGeometryRequest(bodies=kwargs.get("bodies"))
 
         # Call the gRPC service
         response = self.stub.RepairGeometry(request)

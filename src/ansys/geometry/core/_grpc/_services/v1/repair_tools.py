@@ -142,19 +142,6 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
     def find_missing_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.repair_pb2 import FindMissingFacesRequest
 
-        from ansys.geometry.core.logger import LOG
-
-        # Check the backend version to set optional parameters
-        if kwargs["angle"] is not None or kwargs["distance"] is not None:
-            kwargs["angle"] = None
-            kwargs["distance"] = None
-
-            # Log a warning
-            LOG.warning(
-                "The backend version is less than 26.1.0, so angle and distance parameters will be"
-                "ignored. Please update the backend to use these parameters."
-            )
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindMissingFacesRequest(
             face_ids=[build_grpc_id(face) for face in kwargs["faces"]],
@@ -176,20 +163,6 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
     def find_small_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.repair_pb2 import FindSmallFacesRequest
 
-        from ansys.geometry.core.logger import LOG
-
-        # Check the backend version to set optional parameters
-        if kwargs["area"] is not None or kwargs["width"] is not None:
-            # If the backend version is less than 26.1.0, set area and width to None
-            kwargs["area"] = None
-            kwargs["width"] = None
-
-            # Log a warning
-            LOG.warning(
-                "The backend version is less than 26.1.0, so area and width parameters will be"
-                "ignored. Please update the backend to use these parameters."
-            )
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSmallFacesRequest(
             selection_id=[build_grpc_id(item) for item in kwargs["selection"]],
@@ -208,10 +181,6 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
     @protect_grpc
     def find_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.repair_pb2 import FindStitchFacesRequest
-
-        if kwargs["distance"] is not None:
-            # If the backend version is less than 26.1.0, set distance to None and log warning
-            kwargs["distance"] = None
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindStitchFacesRequest(
