@@ -123,7 +123,7 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
         request = CreateBeamProfileSegmentsRequest(
             request_data=[
                 CreateBeamProfileSegmentsRequestData(
-                    profile_id=kwargs["profile_id"],
+                    profile_id=build_grpc_id(kwargs["profile_id"]),
                     parent_id=build_grpc_id(kwargs["parent_id"]),
                     lines=lines,
                 )
