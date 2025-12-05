@@ -17,12 +17,12 @@ jobs:
     env:
       PACKAGE_DELETION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     permissions:
-      contents: write
-      packages: write
+      contents: write # Required to delete packages
+      packages: write # Required to delete packages
     steps:
 
       - name: "Perform versions cleanup - except certain tags"
-        uses: ansys/actions/hk-package-clean-except@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/hk-package-clean-except@46957117ba42d3d075c6cca0f6bbdc1ac2a9af04 # v10.2.0
         with:
           package-name: 'geometry'
           token: ${{ secrets.GITHUB_TOKEN }}
