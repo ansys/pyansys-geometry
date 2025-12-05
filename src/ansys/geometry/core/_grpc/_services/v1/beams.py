@@ -233,4 +233,4 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
         # Return the response - formatted as a dictionary
         # Note: response.ids is a repeated field, we return the first one
         created_beam_entity = response.ids[0]
-        return {"id": created_beam_entity}
+        return {"id": created_beam_entity.id}
