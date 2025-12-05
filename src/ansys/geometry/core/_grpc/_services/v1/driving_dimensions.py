@@ -33,6 +33,7 @@ from .conversions import (
     from_grpc_update_status_to_parameter_update_status,
 )
 
+
 class GRPCDrivingDimensionsServiceV1(GRPCDrivingDimensionsService):  # pragma: no cover
     """Driving Dimensions service for gRPC communication with the Geometry server.
 
@@ -48,19 +49,21 @@ class GRPCDrivingDimensionsServiceV1(GRPCDrivingDimensionsService):  # pragma: n
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.discovery.v1.design.parameters.drivingdimension_pb2_grpc import DrivingDimensionStub
+        from ansys.api.discovery.v1.design.parameters.drivingdimension_pb2_grpc import (
+            DrivingDimensionStub,
+        )
 
         self.stub = DrivingDimensionStub(channel)
 
     @protect_grpc
     def get_all_parameters(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import ParentEntityRequest, EntityIdentifier
+        from ansys.api.discovery.v1.commonmessages_pb2 import EntityIdentifier, ParentEntityRequest
 
         # Call the gRPC service
-        req = ParentEntityRequest(parent_id = EntityIdentifier())
+        req = ParentEntityRequest(parent_id=EntityIdentifier())
         if "parent_id" in kwargs:
-            req.parent_id = build_grpc_id(kwargs["parent_id"]) 
-            
+            req.parent_id = build_grpc_id(kwargs["parent_id"])
+
         response = self.stub.GetAll(req)
 
         # Return the response - formatted as a dictionary
@@ -74,11 +77,15 @@ class GRPCDrivingDimensionsServiceV1(GRPCDrivingDimensionsService):  # pragma: n
 
     @protect_grpc
     def set_parameter(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.parameters.drivingdimension_pb2 import SetDrivingDimensionRequest
+        from ansys.api.discovery.v1.design.parameters.drivingdimension_pb2 import (
+            SetDrivingDimensionRequest,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetDrivingDimensionRequest(
-            request_data=[from_driving_dimension_to_grpc_driving_dimension(kwargs["driving_dimension"])]
+            request_data=[
+                from_driving_dimension_to_grpc_driving_dimension(kwargs["driving_dimension"])
+            ]
         )
 
         # Call the gRPC service
@@ -86,5 +93,7 @@ class GRPCDrivingDimensionsServiceV1(GRPCDrivingDimensionsService):  # pragma: n
 
         # Return the response - formatted as a dictionary
         return {
-            "status": from_grpc_update_status_to_parameter_update_status(response.response_data[0].status),
+            "status": from_grpc_update_status_to_parameter_update_status(
+                response.response_data[0].status
+            ),
         }
