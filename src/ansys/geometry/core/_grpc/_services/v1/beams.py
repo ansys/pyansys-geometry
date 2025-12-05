@@ -33,6 +33,7 @@ from .conversions import (
     from_grpc_frame_to_frame,
     from_grpc_material_to_material,
     from_grpc_point_to_point3d,
+    from_line_to_grpc_line,
     from_plane_to_grpc_plane,
     from_point3d_to_grpc_point,
 )
@@ -53,11 +54,15 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
+        from ansys.api.discovery.v1.design.extensions.beam_pb2_grpc import (
+            BeamStub,
+        )
         from ansys.api.discovery.v1.engineeringdata.beamprofiledata_pb2_grpc import (
             BeamProfileDataStub,
         )
 
-        self.beam_commands_stub = BeamProfileDataStub
+        self.beam_profile_commands_stub = BeamProfileDataStub(channel)
+        self.beam_commands_stub = BeamStub(channel)
 
     @protect_grpc
     def create_beam_segments(self, **kwargs) -> dict:  # noqa: D102
@@ -71,9 +76,11 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
         lines = []
         for segment in kwargs["segments"]:
             lines.append(
-                Line(
-                    start=from_point3d_to_grpc_point(segment[0]),
-                    end=from_point3d_to_grpc_point(segment[1]),
+                from_line_to_grpc_line(
+                    Line(
+                        start=from_point3d_to_grpc_point(segment[0]),
+                        end=from_point3d_to_grpc_point(segment[1]),
+                    )
                 )
             )
 
@@ -89,7 +96,7 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
         )
 
         # Call the gRPC service
-        response = self.beam_commands_stub.CreateSegments(request)
+        response = self.beam_profile_commands_stub.CreateSegments(request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -113,9 +120,11 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
         lines = []
         for segment in kwargs["segments"]:
             lines.append(
-                Line(
-                    start=from_point3d_to_grpc_point(segment[0]),
-                    end=from_point3d_to_grpc_point(segment[1]),
+                from_line_to_grpc_line(
+                    Line(
+                        start=from_point3d_to_grpc_point(segment[0]),
+                        end=from_point3d_to_grpc_point(segment[1]),
+                    )
                 )
             )
 
@@ -131,7 +140,7 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
         )
 
         # Call the gRPC service
-        response = self.beam_commands_stub.CreateDescriptiveSegments(request)
+        response = self.beam_profile_commands_stub.CreateDescriptiveSegments(request)
 
         # Return the response - formatted as a dictionary
         return {
@@ -204,10 +213,19 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
 
     @protect_grpc
     def delete_beam_profile(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["beam_id"])])
+
+        # Call the gRPC service
+        _ = self.beam_profile_commands_stub.Delete(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
-    def create_beam_circular_profile(self, **kwargs) -> dict:  # noqa: D10
+    def create_beam_circular_profile(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.engineeringdata.beamprofiledata_pb2 import (
             CreateBeamProfileCircularRequest,
             CreateBeamProfileCircularRequestData,
@@ -228,7 +246,7 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
         )
 
         # Call the gRPC service
-        response = self.beam_commands_stub.CreateCircular(request)
+        response = self.beam_profile_commands_stub.CreateCircular(request)
 
         # Return the response - formatted as a dictionary
         # Note: response.ids is a repeated field, we return the first one
