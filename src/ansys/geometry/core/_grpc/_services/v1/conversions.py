@@ -1613,7 +1613,7 @@ def serialize_repair_command_response(response: GRPCEnhancedRepairToolResponse) 
         A dictionary representation of the EnhancedRepairToolResponse object.
     """
     return {
-        "success": response.tracked_changes.command_response.success,
+        "success": response.tracked_command_response.command_response.success,
         "found": response.found,
         "repaired": response.repaired,
         "complete_command_response": serialize_tracked_command_response(response.tracked_changes),
@@ -1644,7 +1644,7 @@ def response_problem_area_for_body(response) -> dict:
         A dictionary representation of the ProblemAreaForBody object.
     """
     return {
-        "problems": [{"id": res.problem_area_id, "bodies": res.body_ids} for res in response.result]
+        "problems": [{"id": res.problem_area_id, "bodies": [body.id for body in res.body_ids]} for res in response.result]
     }
 
 
@@ -1662,7 +1662,7 @@ def response_problem_area_for_face(response) -> dict:
         A dictionary representation of the ProblemAreaForFace object.
     """
     return {
-        "problems": [{"id": res.problem_area_id, "faces": res.face_ids} for res in response.result]
+        "problems": [{"id": res.problem_area_id, "faces": [face.id for face in res.face_ids]} for res in response.result]
     }
 
 
@@ -1680,5 +1680,5 @@ def response_problem_area_for_edge(response) -> dict:
         A dictionary representation of the ProblemAreaForEdge object.
     """
     return {
-        "problems": [{"id": res.problem_area_id, "edges": res.edge_ids} for res in response.result]
+        "problems": [{"id": res.problem_area_id, "edges": [edge.id for edge in res.edge_ids]} for res in response.result]
     }
