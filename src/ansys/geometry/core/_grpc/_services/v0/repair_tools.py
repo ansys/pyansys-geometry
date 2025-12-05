@@ -179,7 +179,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
     def find_missing_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindMissingFacesRequest
         from google.protobuf.wrappers_pb2 import DoubleValue
-        from ansys.geometry.core.logger import LOG
 
         from ..base.conversions import (
             from_measurement_to_server_angle,
@@ -199,7 +198,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 "The backend version is less than 26.1.0, so angle and distance parameters will be"
                 "ignored. Please update the backend to use these parameters."
             )
-        
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindMissingFacesRequest(
             faces=kwargs["faces"],
@@ -229,7 +228,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
     def find_small_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindSmallFacesRequest
         from google.protobuf.wrappers_pb2 import DoubleValue
-        from ansys.geometry.core.logger import LOG
 
         from ..base.conversions import (
             from_measurement_to_server_area,
@@ -279,7 +277,6 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
     def find_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import FindStitchFacesRequest
         from google.protobuf.wrappers_pb2 import DoubleValue
-        from ansys.geometry.core.logger import LOG
 
         from ..base.conversions import from_measurement_to_server_length
 
