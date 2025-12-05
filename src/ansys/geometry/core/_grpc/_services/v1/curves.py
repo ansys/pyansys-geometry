@@ -27,10 +27,10 @@ from ansys.geometry.core.errors import protect_grpc
 
 from ..base.curves import GRPCCurvesService
 from .conversions import (
+    from_angle_to_grpc_quantity,
     from_grpc_point_to_point3d,
     from_line_to_grpc_line,
     from_trimmed_curve_to_grpc_trimmed_curve,
-    from_angle_to_grpc_quantity,
 )
 
 
@@ -56,15 +56,18 @@ class GRPCCurvesServiceV1(GRPCCurvesService):  # pragma: no cover
     @protect_grpc
     def revolve_edges(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.edit_pb2 import (
-            RevolveCurvesRequest, 
+            RevolveCurvesRequest,
             RevolveCurvesRequestData,
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RevolveCurvesRequest(
-            request_data= [
+            request_data=[
                 RevolveCurvesRequestData(
-                    curves=[from_trimmed_curve_to_grpc_trimmed_curve(curve) for curve in kwargs["curves"]],
+                    curves=[
+                        from_trimmed_curve_to_grpc_trimmed_curve(curve)
+                        for curve in kwargs["curves"]
+                    ],
                     axis=from_line_to_grpc_line(kwargs["axis"]),
                     angle=from_angle_to_grpc_quantity(kwargs["angle"]),
                     symmetric=kwargs["symmetric"],
