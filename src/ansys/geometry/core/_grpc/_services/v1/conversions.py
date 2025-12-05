@@ -181,9 +181,9 @@ def from_point3d_to_grpc_point(point: "Point3D") -> GRPCPoint:
         Geometry service gRPC point message. The unit is meters.
     """
     return GRPCPoint(
-        x=from_length_to_grpc_quantity(point.x),
-        y=from_length_to_grpc_quantity(point.y),
-        z=from_length_to_grpc_quantity(point.z),
+        x=GRPCQuantity(value_in_geometry_units=point.x.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        y=GRPCQuantity(value_in_geometry_units=point.y.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        z=GRPCQuantity(value_in_geometry_units=point.z.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
     )
 
 
@@ -230,9 +230,9 @@ def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
     """
     point3d = plane.transform_point2d_local_to_global(point2d)
     return GRPCPoint(
-        x=from_length_to_grpc_quantity(point3d.x),
-        y=from_length_to_grpc_quantity(point3d.y),
-        z=from_length_to_grpc_quantity(point3d.z),
+        x=GRPCQuantity(value_in_geometry_units=point3d.x.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        y=GRPCQuantity(value_in_geometry_units=point3d.y.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        z=GRPCQuantity(value_in_geometry_units=point3d.z.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
     )
 
 
@@ -672,9 +672,9 @@ def from_sketch_ellipse_to_grpc_ellipse(ellipse: "SketchEllipse", plane: "Plane"
     """
     return GRPCEllipse(
         center=from_point2d_to_grpc_point(plane, ellipse.center),
-        majorradius=from_length_to_grpc_quantity(ellipse.major_radius),
-        minorradius=from_length_to_grpc_quantity(ellipse.minor_radius),
-        angle=from_angle_to_grpc_quantity(ellipse.angle),
+        majorradius=GRPCQuantity(value_in_geometry_units= ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),  # noqa: E501
+        minorradius=GRPCQuantity(value_in_geometry_units= ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),  # noqa: E501
+        angle=GRPCQuantity(value_in_geometry_units= ellipse.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
     )
 
 
@@ -695,7 +695,7 @@ def from_sketch_circle_to_grpc_circle(circle: "SketchCircle", plane: "Plane") ->
     """
     return GRPCCircle(
         center=from_point2d_to_grpc_point(plane, circle.center),
-        radius=from_length_to_grpc_quantity(circle.radius),
+        radius=GRPCQuantity(value_in_geometry_units=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
     )
 
 
@@ -714,9 +714,9 @@ def from_sketch_polygon_to_grpc_polygon(polygon: "Polygon", plane: "Plane") -> G
     """
     return GRPCPolygon(
         center=from_point2d_to_grpc_point(plane, polygon.center),
-        radius=from_length_to_grpc_quantity(polygon.inner_radius),
+        radius=GRPCQuantity(value_in_geometry_units= polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),  # noqa: E501
         numberofsides=polygon.n_sides,
-        angle=from_angle_to_grpc_quantity(polygon.angle),
+        angle=GRPCQuantity(value_in_geometry_units= polygon.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
     )
 
 
@@ -797,15 +797,15 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
                 origin=origin,
                 reference=reference,
                 axis=axis,
-                radius=from_length_to_grpc_quantity(curve.radius),
+                radius=GRPCQuantity(value_in_geometry_units=curve.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
             )
         elif isinstance(curve, Ellipse):
             grpc_curve = GRPCCurveGeometry(
                 origin=origin,
                 reference=reference,
                 axis=axis,
-                major_radius=from_length_to_grpc_quantity(curve.major_radius),
-                minor_radius=from_length_to_grpc_quantity(curve.minor_radius),
+                major_radius=GRPCQuantity(value_in_geometry_units=curve.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+                minor_radius=GRPCQuantity(value_in_geometry_units=curve.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
             )
     elif isinstance(curve, NURBSCurve):
         grpc_curve = GRPCCurveGeometry(nurbs_curve=from_nurbs_curve_to_grpc_nurbs_curve(curve))
@@ -1337,15 +1337,8 @@ def from_length_to_grpc_quantity(input: "Distance") -> GRPCQuantity:
     GRPCQuantity
         Converted gRPC quantity.
     """
-    from ansys.geometry.core.misc.measurements import Distance
+    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
 
-    # Handle both Distance objects (which have .value attribute)
-    if isinstance(input, Distance):
-        # Distance object
-        return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
-    else:
-        # Raw pint Quantity
-        return GRPCQuantity(value_in_geometry_units=input.m_as(DEFAULT_UNITS.SERVER_LENGTH))
 
 
 def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
@@ -1361,16 +1354,7 @@ def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     GRPCQuantity
         Converted gRPC quantity.
     """
-    from ansys.geometry.core.misc.measurements import Measurement
-
-    # Handle both Measurement objects (which have .value attribute)
-    if isinstance(input, Measurement):
-        # Measurement object
-        return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
-    else:
-        # Raw pint Quantity
-        return GRPCQuantity(value_in_geometry_units=input.m_as(DEFAULT_UNITS.SERVER_ANGLE))
-
+    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
 
 def from_grpc_volume_to_volume(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
     """Convert a gRPC quantity representing volume to a pint Quantity.

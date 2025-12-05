@@ -24,6 +24,7 @@
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.measurements import Distance
 
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_length
@@ -107,7 +108,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Apply direction (can be 1 or -1) to distance
-        distance_value = kwargs["distance"].value * kwargs["direction"]
+        # distance_value = kwargs["distance"].value * kwargs["direction"]
+        #distance=from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"],
+        distance = Distance(kwargs["distance"].value * kwargs["direction"], kwargs["distance"].unit)
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateExtrudedBodyRequest(
@@ -119,7 +122,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     geometries=from_sketch_shapes_to_grpc_geometries(
                         kwargs["sketch"].plane, kwargs["sketch"].edges, kwargs["sketch"].faces
                     ),
-                    distance=from_length_to_grpc_quantity(distance_value),
+                    distance=from_length_to_grpc_quantity(distance),
                 )
             ]
         )
@@ -252,8 +255,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Apply direction (can be 1 or -1) to distance
-        distance_value = kwargs["distance"].value * kwargs["direction"]
-
+        #distance_value = kwargs["distance"].value * kwargs["direction"]
+        distance = Distance(kwargs["distance"].value * kwargs["direction"], kwargs["distance"].unit)
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateExtrudedBodyFromFaceProfileRequest(
             request_data=[
@@ -261,7 +264,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     name=kwargs["name"],
                     parent_id=build_grpc_id(kwargs["parent_id"]),
                     face_id=build_grpc_id(kwargs["face_id"]),
-                    distance=from_length_to_grpc_quantity(distance_value),
+                    distance=from_length_to_grpc_quantity(distance),
                 )
             ]
         )
@@ -456,16 +459,14 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Extract distance value if it's a Measurement object
-        distance = kwargs["distance"]
-        distance_value = distance.value if hasattr(distance, "value") else distance
-
+        distance = Distance(kwargs["distance"].value * kwargs["direction"], kwargs["distance"].unit)
         # Create the request with selection_ids, direction, and distance
         request = MoveTranslateRequest(
             request_data=[
                 MoveTranslateRequestData(
                     selection_ids=[build_grpc_id(body_id) for body_id in kwargs["ids"]],
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                    distance=from_length_to_grpc_quantity(distance_value),
+                    distance=from_length_to_grpc_quantity(distance),
                 )
             ]
         )
