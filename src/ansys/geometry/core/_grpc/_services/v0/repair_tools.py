@@ -199,7 +199,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
                 "The backend version is less than 26.1.0, so angle and distance parameters will be"
                 "ignored. Please update the backend to use these parameters."
             )
-        
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindMissingFacesRequest(
             faces=kwargs["faces"],
