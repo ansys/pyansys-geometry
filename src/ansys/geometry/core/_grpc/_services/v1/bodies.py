@@ -109,7 +109,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Apply direction (can be 1 or -1) to distance
         # distance_value = kwargs["distance"].value * kwargs["direction"]
-        #distance=from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"],
+        # distance=from_measurement_to_server_length(kwargs["distance"]) * kwargs["direction"],
         distance = Distance(kwargs["distance"].value * kwargs["direction"], kwargs["distance"].unit)
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -255,7 +255,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Apply direction (can be 1 or -1) to distance
-        #distance_value = kwargs["distance"].value * kwargs["direction"]
+        # distance_value = kwargs["distance"].value * kwargs["direction"]
         distance = Distance(kwargs["distance"].value * kwargs["direction"], kwargs["distance"].unit)
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateExtrudedBodyFromFaceProfileRequest(
