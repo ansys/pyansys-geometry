@@ -1188,7 +1188,7 @@ def from_grpc_driving_dimension_to_driving_dimension(
         id=driving_dimension.id,
         name=driving_dimension.name,
         dimension_type=ParameterType(driving_dimension.dimension_type),
-        dimension_value=driving_dimension.dimension_value,
+        dimension_value=driving_dimension.dimension_value.value_in_geometry_units,
     )
 
 
@@ -1211,7 +1211,7 @@ def from_driving_dimension_to_grpc_driving_dimension(
         id=driving_dimension.id,
         name=driving_dimension.name,
         dimension_type=driving_dimension.dimension_type.value,
-        dimension_value=driving_dimension.dimension_value,
+        dimension_value=from_length_to_grpc_quantity(driving_dimension.dimension_value),
     )
 
 
