@@ -258,24 +258,6 @@ def from_point3d_to_grpc_design_point(point: "Point3D") -> GRPCDesignPoint:
     )
 
 
-def from_point3d_to_grpc_design_point(point: "Point3D") -> GRPCDesignPoint:
-    """Convert a ``Point3D`` class to a design point gRPC message.
-
-    Parameters
-    ----------
-    point : Point3D
-        Source point data.
-
-    Returns
-    -------
-    GRPCDesignPoint
-        Geometry service gRPC design point message. The unit is meters.
-    """
-    return GRPCDesignPoint(
-        position=from_point3d_to_grpc_point(point),
-    )
-
-
 def from_unit_vector_to_grpc_direction(unit_vector: "UnitVector3D") -> GRPCDirection:
     """Convert a ``UnitVector3D`` class to a unit vector gRPC message.
 
