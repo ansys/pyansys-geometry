@@ -214,12 +214,11 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
     @protect_grpc
     def find_interferences(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.repair_pb2 import FindInterferenceRequest
-        from google.protobuf.wrappers_pb2 import BoolValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindInterferenceRequest(
             bodY_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
-            cut_smaller_body=BoolValue(value=kwargs["cut_smaller_body"]),
+            cut_smaller_body=kwargs["cut_smaller_body"],
         )
 
         # Call the gRPC service
@@ -293,7 +292,6 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
     @protect_grpc
     def find_and_fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.repair_pb2 import FindStitchFacesRequest
-        from google.protobuf.wrappers_pb2 import BoolValue
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindStitchFacesRequest(
@@ -301,9 +299,9 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
             maximum_distance=from_length_to_grpc_quantity(kwargs["max_distance"])
             if kwargs["max_distance"] is not None
             else None,
-            allow_multiple_bodies=BoolValue(value=kwargs["allow_multiple_bodies"]),
-            maintain_components=BoolValue(value=kwargs["maintain_components"]),
-            check_for_coincidence=BoolValue(value=kwargs["check_for_coincidence"]),
+            allow_multiple_bodies=kwargs["allow_multiple_bodies"],
+            maintain_components=kwargs["maintain_components"],
+            check_for_coincidence=kwargs["check_for_coincidence"],
             comprehensive=kwargs["comprehensive_result"],
         )
 
