@@ -1365,6 +1365,7 @@ def from_length_to_grpc_quantity(input: "Distance") -> GRPCQuantity:
     """
     return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
 
+
 def from_grpc_quantity_to_distance(input: "GRPCQuantity") -> Distance:
     """Convert a gRPC quantity to ``Distance`` containing a length.
 
@@ -1396,6 +1397,7 @@ def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     """
     return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
 
+
 def from_grpc_angle_to_angle(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
     """Convert a gRPC quantity representing an angle to a pint Quantity.
 
@@ -1426,6 +1428,7 @@ def from_grpc_volume_to_volume(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
         Converted volume quantity with server volume units.
     """
     return pint.Quantity(grpc_quantity.value_in_geometry_units, DEFAULT_UNITS.SERVER_VOLUME)
+
 
 def from_grpc_quantity_to_float(grpc_quantity: GRPCQuantity) -> float:
     """Convert a gRPC quantity to a float.
