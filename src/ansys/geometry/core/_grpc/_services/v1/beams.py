@@ -24,16 +24,19 @@
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.beams import GRPCBeamsService
 from ..base.conversions import to_distance
 from .conversions import (
     build_grpc_id,
+    from_grpc_angle_to_angle,
     from_grpc_curve_to_curve,
     from_grpc_frame_to_frame,
+    from_grpc_quantity_to_distance,
+    from_grpc_quantity_to_float,
     from_grpc_material_to_material,
     from_grpc_point_to_point3d,
-    from_line_to_grpc_line,
     from_plane_to_grpc_plane,
     from_point3d_to_grpc_point,
 )
@@ -76,12 +79,12 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
         lines = []
         for segment in kwargs["segments"]:
             lines.append(
-                from_line_to_grpc_line(
+                
                     Line(
                         start=from_point3d_to_grpc_point(segment[0]),
                         end=from_point3d_to_grpc_point(segment[1]),
                     )
-                )
+                
             )
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -120,12 +123,12 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
         lines = []
         for segment in kwargs["segments"]:
             lines.append(
-                from_line_to_grpc_line(
+                
                     Line(
                         start=from_point3d_to_grpc_point(segment[0]),
                         end=from_point3d_to_grpc_point(segment[1]),
                     )
-                )
+                
             )
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -148,7 +151,7 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
                 {
                     "cross_section": {
                         "section_anchor": beam.cross_section.section_anchor,
-                        "section_angle": beam.cross_section.section_angle,
+                        "section_angle": (from_grpc_angle_to_angle(beam.cross_section.section_angle)).m_as(DEFAULT_UNITS.SERVER_ANGLE),
                         "section_frame": from_grpc_frame_to_frame(beam.cross_section.section_frame),
                         "section_profile": [
                             [
@@ -165,16 +168,16 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
                         ],
                     },
                     "properties": {
-                        "area": beam.properties.area,
+                        "area": from_grpc_quantity_to_float(beam.properties.area),
                         "centroid": ParamUV(beam.properties.centroid_x, beam.properties.centroid_y),
-                        "warping_constant": beam.properties.warping_constant,
-                        "ixx": beam.properties.ixx,
-                        "ixy": beam.properties.ixy,
-                        "iyy": beam.properties.iyy,
+                        "warping_constant": from_grpc_quantity_to_float(beam.properties.warping_constant),
+                        "ixx": from_grpc_quantity_to_float(beam.properties.ixx),
+                        "ixy": from_grpc_quantity_to_float(beam.properties.ixy),
+                        "iyy": from_grpc_quantity_to_float(beam.properties.iyy),
                         "shear_center": ParamUV(
                             beam.properties.shear_center_x, beam.properties.shear_center_y
                         ),
-                        "torsional_constant": beam.properties.torsional_constant,
+                        "torsional_constant": from_grpc_quantity_to_float(beam.properties.torsional_constant),
                     },
                     "id": beam.id.id,
                     "start": from_grpc_point_to_point3d(beam.shape.start),
@@ -189,7 +192,7 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
                         "start": from_grpc_point_to_point3d(beam.shape.start),
                         "end": from_grpc_point_to_point3d(beam.shape.end),
                         "interval": Interval(beam.shape.interval_start, beam.shape.interval_end),
-                        "length": to_distance(beam.shape.length).value,
+                        "length": from_grpc_quantity_to_distance(beam.shape.length)
                     },
                     "beam_type": beam.type,
                 }
@@ -216,7 +219,7 @@ class GRPCBeamsServiceV1(GRPCBeamsService):
         from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["beam_id"])])
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
 
         # Call the gRPC service
         _ = self.beam_profile_commands_stub.Delete(request)
