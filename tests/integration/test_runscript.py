@@ -25,7 +25,6 @@ import re
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.point import Point2D
