@@ -32,6 +32,7 @@ from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
+from ansys.geometry.core.misc.auxiliary import write_zip_file
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
@@ -460,28 +461,10 @@ class Modeler:
                 )
         else:
             # Zip file and pass filepath to service to open
-            import tempfile
-            from zipfile import ZipFile
-
             fp_path = Path(file_path).resolve()
 
-            # Create a temporary zip file with the same name as the original file
-            temp_dir = Path(tempfile.gettempdir())
-            temp_zip_path = temp_dir / f"{fp_path.stem}.zip"
-
             try:
-                # Create zip archive
-                with ZipFile(temp_zip_path, "w") as zipf:
-                    # Add the main file
-                    zipf.write(fp_path, fp_path.name)
-
-                    # If it's an assembly format, add all files from the same directory
-                    assembly_extensions = [".CATProduct", ".asm", ".solution", ".sldasm"]
-                    if any(ext in str(file_path) for ext in assembly_extensions):
-                        dir_path = fp_path.parent
-                        for file in dir_path.iterdir():
-                            if file.is_file() and file != fp_path:
-                                zipf.write(file, file.name)
+                temp_zip_path = write_zip_file(fp_path)
 
                 # Pass the zip file path to the service
                 self.client.services.designs.open(
@@ -491,6 +474,7 @@ class Modeler:
                     import_options_definitions=import_options_definitions,
                     open_mode="new",
                 )
+            
             finally:
                 # Clean up the temporary zip file
                 if temp_zip_path.exists():

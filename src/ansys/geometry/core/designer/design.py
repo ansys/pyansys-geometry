@@ -54,6 +54,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.auxiliary import write_zip_file
 from ansys.geometry.core.misc.checks import (
     ensure_design_is_active,
     min_backend_version,
@@ -1030,28 +1031,10 @@ class Design(Component):
             )
         else:
             # Zip file and pass filepath to service to open
-            import tempfile
-            from zipfile import ZipFile
-
             fp_path = Path(file_location).resolve()
 
-            # Create a temporary zip file with the same name as the original file
-            temp_dir = Path(tempfile.gettempdir())
-            temp_zip_path = temp_dir / f"{fp_path.stem}.zip"
-
             try:
-                # Create zip archive
-                with ZipFile(temp_zip_path, "w") as zipf:
-                    # Add the main file
-                    zipf.write(fp_path, fp_path.name)
-
-                    # If it's an assembly format, add all files from the same directory
-                    assembly_extensions = [".CATProduct", ".asm", ".solution", ".sldasm"]
-                    if any(ext in str(file_location) for ext in assembly_extensions):
-                        dir_path = fp_path.parent
-                        for file in dir_path.iterdir():
-                            if file.is_file() and file != fp_path:
-                                zipf.write(file, file.name)
+                temp_zip_path = write_zip_file(fp_path)
 
                 # Pass the zip file path to the service
                 self._grpc_client.services.designs.insert(
