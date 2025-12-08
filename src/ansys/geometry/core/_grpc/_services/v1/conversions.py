@@ -478,7 +478,11 @@ def from_grpc_edge_tess_to_pd(tess: GRPCEdgeTessellation) -> "pv.PolyData":
 
 def from_grpc_edge_tess_to_raw_data(tess: GRPCEdgeTessellation) -> dict:
     """Convert a ``EdgeTessellation`` to raw data."""
-    return {"vertices": [coord for pt in tess.vertices for coord in (pt.x, pt.y, pt.z)]}
+    return {
+        "vertices": [
+            coord.value_in_geometry_units for pt in tess.vertices for coord in (pt.x, pt.y, pt.z)
+        ]
+    }
 
 
 def from_tess_options_to_grpc_tess_options(
@@ -1204,15 +1208,18 @@ def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceTyp
     origin = from_grpc_point_to_point3d(surface.origin)
     axis = UnitVector3D([surface.axis.x, surface.axis.y, surface.axis.z])
     reference = UnitVector3D([surface.reference.x, surface.reference.y, surface.reference.z])
+    radius = surface.radius.value_in_geometry_units
+    major_radius = surface.major_radius.value_in_geometry_units
+    minor_radius = surface.minor_radius.value_in_geometry_units
 
     if surface_type == SurfaceType.SURFACETYPE_CONE:
-        result = Cone(origin, surface.radius, surface.half_angle, reference, axis)
+        result = Cone(origin, radius, surface.half_angle.value_in_geometry_units, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_CYLINDER:
-        result = Cylinder(origin, surface.radius, reference, axis)
+        result = Cylinder(origin, radius, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_SPHERE:
-        result = Sphere(origin, surface.radius, reference, axis)
+        result = Sphere(origin, radius, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_TORUS:
-        result = Torus(origin, surface.major_radius, surface.minor_radius, reference, axis)
+        result = Torus(origin, major_radius, minor_radius, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_PLANE:
         result = PlaneSurface(origin, reference, axis)
     else:
