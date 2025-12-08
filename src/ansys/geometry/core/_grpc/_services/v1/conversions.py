@@ -72,7 +72,7 @@ import pint
 
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import graphics_required
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 
 if TYPE_CHECKING:
@@ -181,8 +181,6 @@ def from_point3d_to_grpc_point(point: "Point3D") -> GRPCPoint:
     GRPCPoint
         Geometry service gRPC point message. The unit is meters.
     """
-    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-
     return GRPCPoint(
         x=GRPCQuantity(value_in_geometry_units=point.x.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
         y=GRPCQuantity(value_in_geometry_units=point.y.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
@@ -231,13 +229,11 @@ def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
     GRPCPoint
         Geometry service gRPC point message. The unit is meters.
     """
-    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-
     point3d = plane.transform_point2d_local_to_global(point2d)
     return GRPCPoint(
-        x=point3d.x.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        y=point3d.y.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        z=point3d.z.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        x=GRPCQuantity(value_in_geometry_units=point3d.x.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        y=GRPCQuantity(value_in_geometry_units=point3d.y.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+        z=GRPCQuantity(value_in_geometry_units=point3d.z.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
     )
 
 
@@ -320,10 +316,13 @@ def from_grpc_material_property_to_material_property(
     """
     from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
 
+    # In v1 API, id is an EntityIdentifier
+    property_id = material_property.id.id
+
     try:
-        mp_type = MaterialPropertyType.from_id(material_property.id)
+        mp_type = MaterialPropertyType.from_id(property_id)
     except ValueError:
-        mp_type = material_property.id
+        mp_type = property_id
 
     try:
         mp_quantity = pint.Quantity(material_property.value, material_property.units)
@@ -632,7 +631,7 @@ def from_sketch_nurbs_to_grpc_nurbs_curve(curve: "SketchNurbs", plane: "Plane") 
     GRPCNurbsCurve
         Geometry service gRPC NURBS curve message. The unit is meters.
     """
-    from ansys.api.geometry.v0.models_pb2 import (
+    from ansys.api.discovery.v1.design.designmessages_pb2 import (
         ControlPoint as GRPCControlPoint,
         NurbsData as GRPCNurbsData,
     )
@@ -672,13 +671,15 @@ def from_sketch_ellipse_to_grpc_ellipse(ellipse: "SketchEllipse", plane: "Plane"
     GRPCEllipse
         Geometry service gRPC ellipse message. The unit is meters.
     """
-    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-
     return GRPCEllipse(
         center=from_point2d_to_grpc_point(plane, ellipse.center),
-        majorradius=ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        minorradius=ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        angle=ellipse.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE),
+        majorradius=GRPCQuantity(
+            value_in_geometry_units=ellipse.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),  # noqa: E501
+        minorradius=GRPCQuantity(
+            value_in_geometry_units=ellipse.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),  # noqa: E501
+        angle=GRPCQuantity(value_in_geometry_units=ellipse.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
     )
 
 
@@ -697,11 +698,11 @@ def from_sketch_circle_to_grpc_circle(circle: "SketchCircle", plane: "Plane") ->
     GRPCCircle
         Geometry service gRPC circle message. The unit is meters.
     """
-    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-
     return GRPCCircle(
         center=from_point2d_to_grpc_point(plane, circle.center),
-        radius=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        radius=GRPCQuantity(
+            value_in_geometry_units=circle.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),
     )
 
 
@@ -718,13 +719,13 @@ def from_sketch_polygon_to_grpc_polygon(polygon: "Polygon", plane: "Plane") -> G
     GRPCPolygon
         Geometry service gRPC polygon message. The unit is meters.
     """
-    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-
     return GRPCPolygon(
         center=from_point2d_to_grpc_point(plane, polygon.center),
-        radius=polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        radius=GRPCQuantity(
+            value_in_geometry_units=polygon.inner_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),  # noqa: E501
         numberofsides=polygon.n_sides,
-        angle=polygon.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE),
+        angle=GRPCQuantity(value_in_geometry_units=polygon.angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)),
     )
 
 
@@ -802,15 +803,24 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
 
         if isinstance(curve, Circle):
             grpc_curve = GRPCCurveGeometry(
-                origin=origin, reference=reference, axis=axis, radius=curve.radius.m
+                origin=origin,
+                reference=reference,
+                axis=axis,
+                radius=GRPCQuantity(
+                    value_in_geometry_units=curve.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+                ),
             )
         elif isinstance(curve, Ellipse):
             grpc_curve = GRPCCurveGeometry(
                 origin=origin,
                 reference=reference,
                 axis=axis,
-                major_radius=curve.major_radius.m,
-                minor_radius=curve.minor_radius.m,
+                major_radius=GRPCQuantity(
+                    value_in_geometry_units=curve.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+                ),
+                minor_radius=GRPCQuantity(
+                    value_in_geometry_units=curve.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+                ),
             )
     elif isinstance(curve, NURBSCurve):
         grpc_curve = GRPCCurveGeometry(nurbs_curve=from_nurbs_curve_to_grpc_nurbs_curve(curve))
@@ -833,7 +843,7 @@ def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
     GRPCNurbsCurve
         Geometry service gRPC ``NURBSCurve`` message.
     """
-    from ansys.api.geometry.v0.models_pb2 import (
+    from ansys.api.discovery.v1.design.designmessages_pb2 import (
         ControlPoint as GRPCControlPoint,
         NurbsData as GRPCNurbsData,
     )
@@ -873,7 +883,7 @@ def from_nurbs_surface_to_grpc_nurbs_surface(surface: "NURBSSurface") -> GRPCNur
     GRPCNurbsSurface
         Geometry service gRPC ``NURBSSurface`` message.
     """
-    from ansys.api.geometry.v0.models_pb2 import (
+    from ansys.api.discovery.v1.design.designmessages_pb2 import (
         ControlPoint as GRPCControlPoint,
         NurbsData as GRPCNurbsData,
     )
@@ -1048,13 +1058,15 @@ def from_trimmed_surface_to_grpc_trimmed_surface(
     """
     surface_geometry, surface_type = from_surface_to_grpc_surface(trimmed_surface.geometry)
 
+    # In v1, u_min/u_max/v_min/v_max are Quantity messages
+    # These are dimensionless parameters
     return GRPCTrimmedSurface(
         surface=surface_geometry,
         type=surface_type,
-        u_min=trimmed_surface.box_uv.interval_u.start,
-        u_max=trimmed_surface.box_uv.interval_u.end,
-        v_min=trimmed_surface.box_uv.interval_v.start,
-        v_max=trimmed_surface.box_uv.interval_v.end,
+        u_min=from_parameter_to_grpc_quantity(trimmed_surface.box_uv.interval_u.start),
+        u_max=from_parameter_to_grpc_quantity(trimmed_surface.box_uv.interval_u.end),
+        v_min=from_parameter_to_grpc_quantity(trimmed_surface.box_uv.interval_v.start),
+        v_max=from_parameter_to_grpc_quantity(trimmed_surface.box_uv.interval_v.end),
     )
 
 
@@ -1090,12 +1102,22 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
         surface_type = GRPCSurfaceType.SURFACETYPE_PLANE
     elif isinstance(surface, Sphere):
         grpc_surface = GRPCSurface(
-            origin=origin, reference=reference, axis=axis, radius=surface.radius.m
+            origin=origin,
+            reference=reference,
+            axis=axis,
+            radius=GRPCQuantity(
+                value_in_geometry_units=surface.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+            ),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_SPHERE
     elif isinstance(surface, Cylinder):
         grpc_surface = GRPCSurface(
-            origin=origin, reference=reference, axis=axis, radius=surface.radius.m
+            origin=origin,
+            reference=reference,
+            axis=axis,
+            radius=GRPCQuantity(
+                value_in_geometry_units=surface.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+            ),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_CYLINDER
     elif isinstance(surface, Cone):
@@ -1103,8 +1125,12 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
             origin=origin,
             reference=reference,
             axis=axis,
-            radius=surface.radius.m,
-            half_angle=surface.half_angle.m,
+            radius=GRPCQuantity(
+                value_in_geometry_units=surface.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+            ),
+            half_angle=GRPCQuantity(
+                value_in_geometry_units=surface.half_angle.m_as(DEFAULT_UNITS.SERVER_ANGLE)
+            ),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_CONE
     elif isinstance(surface, Torus):
@@ -1112,8 +1138,12 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
             origin=origin,
             reference=reference,
             axis=axis,
-            major_radius=surface.major_radius.m,
-            minor_radius=surface.minor_radius.m,
+            major_radius=GRPCQuantity(
+                value_in_geometry_units=surface.major_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+            ),
+            minor_radius=GRPCQuantity(
+                value_in_geometry_units=surface.minor_radius.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+            ),
         )
         surface_type = GRPCSurfaceType.SURFACETYPE_TORUS
     elif isinstance(surface, NURBSSurface):
@@ -1256,18 +1286,21 @@ def from_material_to_grpc_material(
     GRPCMaterial
         Geometry service gRPC material message.
     """
-    return GRPCMaterial(
-        name=material.name,
-        material_properties=[
-            GRPCMaterialProperty(
-                id=property.type.value,
-                display_name=property.name,
-                value=property.quantity.m,
-                units=format(property.quantity.units),
-            )
-            for property in material.properties.values()
-        ],
-    )
+    # Create material properties
+    material_properties = []
+    for property in material.properties.values():
+        prop = GRPCMaterialProperty()
+        prop.id.CopyFrom(build_grpc_id(str(property.type.value)))
+        prop.display_name = property.name
+        prop.value = property.quantity.m
+        prop.units = format(property.quantity.units)
+        material_properties.append(prop)
+
+    # Create and return the material
+    grpc_material = GRPCMaterial()
+    grpc_material.name = material.name
+    grpc_material.material_properties.extend(material_properties)
+    return grpc_material
 
 
 def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
@@ -1318,12 +1351,12 @@ def from_grpc_direction_to_unit_vector(direction: GRPCDirection) -> "UnitVector3
     return UnitVector3D([direction.x, direction.y, direction.z])
 
 
-def from_length_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
-    """Convert a ``Measurement`` containing a length to a gRPC quantity.
+def from_length_to_grpc_quantity(input: "Distance") -> GRPCQuantity:
+    """Convert a ``Distance`` containing a length to a gRPC quantity.
 
     Parameters
     ----------
-    input : Measurement
+    input : Distance
         Source measurement data.
 
     Returns
@@ -1373,13 +1406,45 @@ def from_volume_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     ----------
     input : Measurement
         Source measurement data.
-
+    
     Returns
     -------
     GRPCQuantity
         Converted gRPC quantity.
     """
     return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_VOLUME))
+    
+
+def from_grpc_volume_to_volume(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
+    """Convert a gRPC quantity representing volume to a pint Quantity.
+
+    Parameters
+    ----------
+    grpc_quantity : GRPCQuantity
+        Source gRPC quantity data.
+
+    Returns
+    -------
+    pint.Quantity
+        Converted volume quantity with server volume units.
+    """
+    return pint.Quantity(grpc_quantity.value_in_geometry_units, DEFAULT_UNITS.SERVER_VOLUME)
+
+
+def from_parameter_to_grpc_quantity(value: float) -> GRPCQuantity:
+    """Convert a dimensionless parameter to a gRPC quantity.
+
+    Parameters
+    ----------
+    value : float
+        Dimensionless parameter value (e.g., u/v surface parameters).
+
+    Returns
+    -------
+    GRPCQuantity
+        Converted gRPC quantity with the dimensionless value.
+    """
+    return GRPCQuantity(value_in_geometry_units=value)
 
 
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
