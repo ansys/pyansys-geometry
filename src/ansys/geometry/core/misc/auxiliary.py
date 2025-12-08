@@ -404,7 +404,7 @@ def convert_opacity_to_hex(opacity: float) -> str:
 
 def write_zip_file(file_path: Path) -> Path:
     """Create a zip file from the given file path.
-    
+
     Parameters
     ----------
     file_path : str
@@ -434,5 +434,5 @@ def write_zip_file(file_path: Path) -> Path:
             for file in dir_path.iterdir():
                 if file.is_file() and file != file_path:
                     zipf.write(file, file.name)
-    
+
     return temp_zip_path

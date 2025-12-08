@@ -474,7 +474,7 @@ class Modeler:
                     import_options_definitions=import_options_definitions,
                     open_mode="new",
                 )
-            
+
             finally:
                 # Clean up the temporary zip file
                 if temp_zip_path.exists():
