@@ -70,8 +70,6 @@ def test_python_simple_script_ignore_api_version(
 def test_python_failing_script(modeler: Modeler):
     if modeler.client.backend_type == BackendType.CORE_LINUX:
         pytest.skip(reason="Skipping test_python_failing_script. Operation fails on github.")
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        modeler.create_design("test_design")
     with pytest.raises(GeometryRuntimeError):
         modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "failing_script.py")
 
