@@ -54,7 +54,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, Z
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.auxiliary import write_zip_file
+from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import (
     ensure_design_is_active,
     min_backend_version,
@@ -1034,7 +1034,7 @@ class Design(Component):
             fp_path = Path(file_location).resolve()
 
             try:
-                temp_zip_path = write_zip_file(fp_path)
+                temp_zip_path = prepare_file_for_server_upload(fp_path)
 
                 # Pass the zip file path to the service
                 self._grpc_client.services.designs.insert(

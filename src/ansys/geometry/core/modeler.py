@@ -32,7 +32,7 @@ from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
-from ansys.geometry.core.misc.auxiliary import write_zip_file
+from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
@@ -464,7 +464,7 @@ class Modeler:
             fp_path = Path(file_path).resolve()
 
             try:
-                temp_zip_path = write_zip_file(fp_path)
+                temp_zip_path = prepare_file_for_server_upload(fp_path)
 
                 # Pass the zip file path to the service
                 self.client.services.designs.open(

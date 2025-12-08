@@ -402,7 +402,7 @@ def convert_opacity_to_hex(opacity: float) -> str:
         raise ValueError(f"Invalid color value: {err}")
 
 
-def write_zip_file(file_path: Path) -> Path:
+def prepare_file_for_server_upload(file_path: Path) -> Path:
     """Create a zip file from the given file path.
 
     Parameters
