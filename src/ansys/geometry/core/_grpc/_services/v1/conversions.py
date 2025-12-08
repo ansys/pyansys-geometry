@@ -23,6 +23,9 @@
 
 from typing import TYPE_CHECKING
 
+from ansys.api.discovery.v1.commands.file_pb2 import (
+    ImportOptionDefinition as GRPCImportOptionDefinition,
+)
 from ansys.api.discovery.v1.commonenums_pb2 import (
     BackendType as GRPCBackendType,
     FileFormat as GRPCFileFormat,
@@ -42,8 +45,10 @@ from ansys.api.discovery.v1.commonmessages_pb2 import (
 )
 from ansys.api.discovery.v1.design.designmessages_pb2 import (
     CurveGeometry as GRPCCurveGeometry,
+    DatumPointEntity as GRPCDesignPoint,
     DrivingDimensionEntity as GRPCDrivingDimension,
     EdgeTessellation as GRPCEdgeTessellation,
+    EnhancedRepairToolMessage as GRPCEnhancedRepairToolResponse,
     Geometries as GRPCGeometries,
     Knot as GRPCKnot,
     MaterialEntity as GRPCMaterial,
@@ -89,7 +94,7 @@ if TYPE_CHECKING:
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.misc.measurements import Measurement
-    from ansys.geometry.core.misc.options import TessellationOptions
+    from ansys.geometry.core.misc.options import ImportOptionsDefinitions, TessellationOptions
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
         ParameterUpdateStatus,
@@ -233,6 +238,24 @@ def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
         x=GRPCQuantity(value_in_geometry_units=point3d.x.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
         y=GRPCQuantity(value_in_geometry_units=point3d.y.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
         z=GRPCQuantity(value_in_geometry_units=point3d.z.m_as(DEFAULT_UNITS.SERVER_LENGTH)),
+    )
+
+
+def from_point3d_to_grpc_design_point(point: "Point3D") -> GRPCDesignPoint:
+    """Convert a ``Point3D`` class to a design point gRPC message.
+
+    Parameters
+    ----------
+    point : Point3D
+        Source point data.
+
+    Returns
+    -------
+    GRPCDesignPoint
+        Geometry service gRPC design point message. The unit is meters.
+    """
+    return GRPCDesignPoint(
+        position=from_point3d_to_grpc_point(point),
     )
 
 
@@ -1270,6 +1293,45 @@ def from_grpc_update_status_to_parameter_update_status(
     return status_mapping.get(update_status, ParameterUpdateStatus.UNKNOWN)
 
 
+def from_design_file_format_to_grpc_file_export_format(
+    design_file_format: "DesignFileFormat",
+) -> GRPCFileFormat:
+    """Convert from a DesignFileFormat object to a gRPC FileExportFormat one.
+
+    Parameters
+    ----------
+    design_file_format : DesignFileFormat
+        The file format desired
+
+    Returns
+    -------
+    GRPCFileExportFormat
+        Converted gRPC File format
+    """
+    from ansys.geometry.core.designer.design import DesignFileFormat
+
+    if design_file_format == DesignFileFormat.SCDOCX:
+        return GRPCFileFormat.FILEFORMAT_SCDOCX
+    elif design_file_format == DesignFileFormat.PARASOLID_TEXT:
+        return GRPCFileFormat.FILEFORMAT_PARASOLID_TEXT
+    elif design_file_format == DesignFileFormat.PARASOLID_BIN:
+        return GRPCFileFormat.FILEFORMAT_PARASOLID_BINARY
+    elif design_file_format == DesignFileFormat.FMD:
+        return GRPCFileFormat.FILEFORMAT_FMD
+    elif design_file_format == DesignFileFormat.STEP:
+        return GRPCFileFormat.FILEFORMAT_STEP
+    elif design_file_format == DesignFileFormat.IGES:
+        return GRPCFileFormat.FILEFORMAT_IGES
+    elif design_file_format == DesignFileFormat.PMDB:
+        return GRPCFileFormat.FILEFORMAT_PMDB
+    elif design_file_format == DesignFileFormat.STRIDE:
+        return GRPCFileFormat.FILEFORMAT_STRIDE
+    elif design_file_format == DesignFileFormat.DISCO:
+        return GRPCFileFormat.FILEFORMAT_DISCO
+    else:
+        return None
+
+
 def from_material_to_grpc_material(
     material: "Material",
 ) -> GRPCMaterial:
@@ -1413,6 +1475,37 @@ def from_grpc_angle_to_angle(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
     """
     return pint.Quantity(grpc_quantity.value_in_geometry_units, DEFAULT_UNITS.SERVER_ANGLE)
 
+def from_area_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
+    """Convert a ``Measurement`` containing an area to a gRPC quantity.
+
+    Parameters
+    ----------
+    input : Measurement
+        Source measurement data.
+
+    Returns
+    -------
+    GRPCQuantity
+        Converted gRPC quantity.
+    """
+    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_AREA))
+
+
+def from_volume_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
+    """Convert a ``Measurement`` containing a volume to a gRPC quantity.
+
+    Parameters
+    ----------
+    input : Measurement
+        Source measurement data.
+
+    Returns
+    -------
+    GRPCQuantity
+        Converted gRPC quantity.
+    """
+    return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_VOLUME))
+
 
 def from_grpc_volume_to_volume(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
     """Convert a gRPC quantity representing volume to a pint Quantity.
@@ -1460,6 +1553,28 @@ def from_parameter_to_grpc_quantity(value: float) -> GRPCQuantity:
         Converted gRPC quantity with the dimensionless value.
     """
     return GRPCQuantity(value_in_geometry_units=value)
+
+
+def from_import_options_definitions_to_grpc_import_options_definition(
+    import_options_definitions: "ImportOptionsDefinitions",
+) -> GRPCImportOptionDefinition:
+    """Convert an ``ImportOptionsDefinitions`` to import options definition gRPC message.
+
+    Parameters
+    ----------
+    import_options_definitions : ImportOptionsDefinitions
+        Definition of the import options.
+
+    Returns
+    -------
+    GRPCImportOptionDefinition
+        Geometry service gRPC import options definition message.
+    """
+    definitions = {}
+    for key, definition in import_options_definitions.to_dict().items():
+        definitions[key] = GRPCImportOptionDefinition(string_option=str(definition))
+
+    return definitions
 
 
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
@@ -1527,45 +1642,6 @@ def from_enclosure_options_to_grpc_enclosure_options(
         frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
         cushion_proportion=enclosure_options.cushion_proportion,
     )
-
-
-def from_design_file_format_to_grpc_file_format(
-    design_file_format: "DesignFileFormat",
-) -> GRPCFileFormat:
-    """Convert from a ``DesignFileFormat`` object to a gRPC file format.
-
-    Parameters
-    ----------
-    design_file_format : DesignFileFormat
-        The file format desired
-
-    Returns
-    -------
-    GRPCFileFormat
-        Converted gRPC FileFormat.
-    """
-    from ansys.geometry.core.designer.design import DesignFileFormat
-
-    if design_file_format == DesignFileFormat.SCDOCX:
-        return GRPCFileFormat.FILEFORMAT_SCDOCX
-    elif design_file_format == DesignFileFormat.PARASOLID_TEXT:
-        return GRPCFileFormat.FILEFORMAT_PARASOLID_TEXT
-    elif design_file_format == DesignFileFormat.PARASOLID_BIN:
-        return GRPCFileFormat.FILEFORMAT_PARASOLID_BINARY
-    elif design_file_format == DesignFileFormat.FMD:
-        return GRPCFileFormat.FILEFORMAT_FMD
-    elif design_file_format == DesignFileFormat.STEP:
-        return GRPCFileFormat.FILEFORMAT_STEP
-    elif design_file_format == DesignFileFormat.IGES:
-        return GRPCFileFormat.FILEFORMAT_IGES
-    elif design_file_format == DesignFileFormat.PMDB:
-        return GRPCFileFormat.FILEFORMAT_PMDB
-    elif design_file_format == DesignFileFormat.STRIDE:
-        return GRPCFileFormat.FILEFORMAT_STRIDE
-    elif design_file_format == DesignFileFormat.DISCO:
-        return GRPCFileFormat.FILEFORMAT_DISCO
-    else:
-        return None
 
 
 def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> dict:
@@ -1681,3 +1757,93 @@ def get_tracker_response_with_created_bodies(response) -> dict:
         "created_bodies", []
     )
     return serialized_response
+
+
+def serialize_repair_command_response(response: GRPCEnhancedRepairToolResponse) -> dict:
+    """Serialize a EnhancedRepairToolResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCEnhancedRepairToolResponse
+        The gRPC EnhancedRepairToolResponse object to serialize.
+        A dictionary representation of the EnhancedRepairToolResponse object.
+    """
+    return {
+        "success": response.tracked_command_response.command_response.success,
+        "found": response.found,
+        "repaired": response.repaired,
+        "complete_command_response": serialize_tracked_command_response(response.tracked_changes),
+        "created_bodies_monikers": [
+            created_body.id for created_body in response.tracked_changes.get("created_bodies", [])
+        ],
+        "modified_bodies_monikers": [
+            modified_body.id
+            for modified_body in response.tracked_changes.get("modified_bodies", [])
+        ],
+        "deleted_bodies_monikers": [
+            deleted_body.id for deleted_body in response.tracked_changes.get("deleted_bodies", [])
+        ],
+    }
+
+
+def response_problem_area_for_body(response) -> dict:
+    """Get a dictionary response from problem areas for a body.
+
+    Parameters
+    ----------
+    response
+        The response to convert.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the ProblemAreaForBody object.
+    """
+    return {
+        "problems": [
+            {"id": res.problem_area_id, "bodies": [body.id for body in res.body_ids]}
+            for res in response.result
+        ]
+    }
+
+
+def response_problem_area_for_face(response) -> dict:
+    """Get a dictionary response from problem areas for a face.
+
+    Parameters
+    ----------
+    response
+        The response to convert.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the ProblemAreaForFace object.
+    """
+    return {
+        "problems": [
+            {"id": res.problem_area_id, "faces": [face.id for face in res.face_ids]}
+            for res in response.result
+        ]
+    }
+
+
+def response_problem_area_for_edge(response) -> dict:
+    """Get a dictionary response from problem areas for an edge.
+
+    Parameters
+    ----------
+    response
+        The response to convert.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the ProblemAreaForEdge object.
+    """
+    return {
+        "problems": [
+            {"id": res.problem_area_id, "edges": [edge.id for edge in res.edge_ids]}
+            for res in response.result
+        ]
+    }

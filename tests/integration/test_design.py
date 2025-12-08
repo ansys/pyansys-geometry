@@ -31,6 +31,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
@@ -86,18 +87,31 @@ from .conftest import FILES_DIR, IMPORT_FILES_DIR
 
 def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Validating error messages when opening up files"""
-    fake_file_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-    with pytest.raises(ValueError, match="Could not find file:"):
-        modeler._upload_file(fake_file_path)
-    file = tmp_path_factory.mktemp("test_design")
-    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-        modeler._upload_file(file)
-    fake_file_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-    with pytest.raises(ValueError, match="Could not find file:"):
-        modeler._upload_file_stream(fake_file_path)
-    file = tmp_path_factory.mktemp("test_design")
-    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-        modeler._upload_file_stream(file)
+    # If the protos version is v1 or higher, uploading files is not supported
+    if modeler.client.services.version != GeometryApiProtos.V0:
+        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+        with pytest.raises(
+            GeometryRuntimeError,
+            match="The '_upload_file' method is not supported in backend v1 and beyond.",
+        ):
+            modeler._upload_file(fake_path)
+        with pytest.raises(
+            GeometryRuntimeError,
+            match=("The '_upload_file_stream' method is not supported with backend v1 and beyond."),
+        ):
+            modeler._upload_file_stream(fake_path)
+    else:
+        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+        temp_dir = tmp_path_factory.mktemp("test_design")
+
+        with pytest.raises(ValueError, match="Could not find file:"):
+            modeler._upload_file(fake_path)
+        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+            modeler._upload_file(temp_dir)
+        with pytest.raises(ValueError, match="Could not find file:"):
+            modeler._upload_file_stream(fake_path)
+        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+            modeler._upload_file_stream(temp_dir)
 
 
 def test_modeler_open_files(modeler: Modeler):
@@ -1334,7 +1348,14 @@ def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_
         from ansys.geometry.core import Modeler
 
         modeler = Modeler(transport_mode=transport_mode)
-        path_on_server = modeler._upload_file_stream(file)
+        if modeler.client.services.version == GeometryApiProtos.V0:
+            path_on_server = modeler._upload_file_stream(file)
+        else:
+            with pytest.raises(
+                GeometryRuntimeError,
+                match="The '_upload_file_stream' method is not supported with backend v1 and beyond.",  # noqa: E501
+            ):
+                modeler._upload_file_stream(file)
         assert path_on_server is not None
     finally:
         pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
@@ -4059,6 +4080,9 @@ def test_legacy_export_download(
     modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, use_grpc_client_old_backend: Modeler
 ):
     # Test is meant to add test coverage for using an old backend to export and download
+    if modeler.client.services.version != GeometryApiProtos.V0:
+        pytest.skip("Test only applies to v0 backend")
+
     # Creating the directory and file to export
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")
