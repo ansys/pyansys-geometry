@@ -23,6 +23,9 @@
 
 from typing import TYPE_CHECKING
 
+from ansys.api.discovery.v1.commands.file_pb2 import (
+    ImportOptionDefinition as GRPCImportOptionDefinition,
+)
 from ansys.api.discovery.v1.commonenums_pb2 import (
     BackendType as GRPCBackendType,
     FileFormat as GRPCFileFormat,
@@ -42,6 +45,7 @@ from ansys.api.discovery.v1.commonmessages_pb2 import (
 )
 from ansys.api.discovery.v1.design.designmessages_pb2 import (
     CurveGeometry as GRPCCurveGeometry,
+    DatumPointEntity as GRPCDesignPoint,
     DrivingDimensionEntity as GRPCDrivingDimension,
     EdgeTessellation as GRPCEdgeTessellation,
     EnhancedRepairToolMessage as GRPCEnhancedRepairToolResponse,
@@ -90,7 +94,7 @@ if TYPE_CHECKING:
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.misc.measurements import Measurement
-    from ansys.geometry.core.misc.options import TessellationOptions
+    from ansys.geometry.core.misc.options import ImportOptionsDefinitions, TessellationOptions
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
         ParameterUpdateStatus,
@@ -237,6 +241,24 @@ def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
     )
 
 
+def from_point3d_to_grpc_design_point(point: "Point3D") -> GRPCDesignPoint:
+    """Convert a ``Point3D`` class to a design point gRPC message.
+
+    Parameters
+    ----------
+    point : Point3D
+        Source point data.
+
+    Returns
+    -------
+    GRPCDesignPoint
+        Geometry service gRPC design point message. The unit is meters.
+    """
+    return GRPCDesignPoint(
+        position=from_point3d_to_grpc_point(point),
+    )
+
+
 def from_unit_vector_to_grpc_direction(unit_vector: "UnitVector3D") -> GRPCDirection:
     """Convert a ``UnitVector3D`` class to a unit vector gRPC message.
 
@@ -376,9 +398,9 @@ def from_grpc_frame_to_frame(frame: GRPCFrame) -> "Frame":
     return Frame(
         Point3D(
             input=[
-                frame.origin.x,
-                frame.origin.y,
-                frame.origin.z,
+                frame.origin.x.value_in_geometry_units,
+                frame.origin.y.value_in_geometry_units,
+                frame.origin.z.value_in_geometry_units,
             ],
             unit=DEFAULT_UNITS.SERVER_LENGTH,
         ),
@@ -1271,6 +1293,45 @@ def from_grpc_update_status_to_parameter_update_status(
     return status_mapping.get(update_status, ParameterUpdateStatus.UNKNOWN)
 
 
+def from_design_file_format_to_grpc_file_export_format(
+    design_file_format: "DesignFileFormat",
+) -> GRPCFileFormat:
+    """Convert from a DesignFileFormat object to a gRPC FileExportFormat one.
+
+    Parameters
+    ----------
+    design_file_format : DesignFileFormat
+        The file format desired
+
+    Returns
+    -------
+    GRPCFileExportFormat
+        Converted gRPC File format
+    """
+    from ansys.geometry.core.designer.design import DesignFileFormat
+
+    if design_file_format == DesignFileFormat.SCDOCX:
+        return GRPCFileFormat.FILEFORMAT_SCDOCX
+    elif design_file_format == DesignFileFormat.PARASOLID_TEXT:
+        return GRPCFileFormat.FILEFORMAT_PARASOLID_TEXT
+    elif design_file_format == DesignFileFormat.PARASOLID_BIN:
+        return GRPCFileFormat.FILEFORMAT_PARASOLID_BINARY
+    elif design_file_format == DesignFileFormat.FMD:
+        return GRPCFileFormat.FILEFORMAT_FMD
+    elif design_file_format == DesignFileFormat.STEP:
+        return GRPCFileFormat.FILEFORMAT_STEP
+    elif design_file_format == DesignFileFormat.IGES:
+        return GRPCFileFormat.FILEFORMAT_IGES
+    elif design_file_format == DesignFileFormat.PMDB:
+        return GRPCFileFormat.FILEFORMAT_PMDB
+    elif design_file_format == DesignFileFormat.STRIDE:
+        return GRPCFileFormat.FILEFORMAT_STRIDE
+    elif design_file_format == DesignFileFormat.DISCO:
+        return GRPCFileFormat.FILEFORMAT_DISCO
+    else:
+        return None
+
+
 def from_material_to_grpc_material(
     material: "Material",
 ) -> GRPCMaterial:
@@ -1447,6 +1508,28 @@ def from_parameter_to_grpc_quantity(value: float) -> GRPCQuantity:
     return GRPCQuantity(value_in_geometry_units=value)
 
 
+def from_import_options_definitions_to_grpc_import_options_definition(
+    import_options_definitions: "ImportOptionsDefinitions",
+) -> GRPCImportOptionDefinition:
+    """Convert an ``ImportOptionsDefinitions`` to import options definition gRPC message.
+
+    Parameters
+    ----------
+    import_options_definitions : ImportOptionsDefinitions
+        Definition of the import options.
+
+    Returns
+    -------
+    GRPCImportOptionDefinition
+        Geometry service gRPC import options definition message.
+    """
+    definitions = {}
+    for key, definition in import_options_definitions.to_dict().items():
+        definitions[key] = GRPCImportOptionDefinition(string_option=str(definition))
+
+    return definitions
+
+
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
     """Check if the backend version is compatible with NURBS curves in sketches.
 
@@ -1512,45 +1595,6 @@ def from_enclosure_options_to_grpc_enclosure_options(
         frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
         cushion_proportion=enclosure_options.cushion_proportion,
     )
-
-
-def from_design_file_format_to_grpc_file_format(
-    design_file_format: "DesignFileFormat",
-) -> GRPCFileFormat:
-    """Convert from a ``DesignFileFormat`` object to a gRPC file format.
-
-    Parameters
-    ----------
-    design_file_format : DesignFileFormat
-        The file format desired
-
-    Returns
-    -------
-    GRPCFileFormat
-        Converted gRPC FileFormat.
-    """
-    from ansys.geometry.core.designer.design import DesignFileFormat
-
-    if design_file_format == DesignFileFormat.SCDOCX:
-        return GRPCFileFormat.FILEFORMAT_SCDOCX
-    elif design_file_format == DesignFileFormat.PARASOLID_TEXT:
-        return GRPCFileFormat.FILEFORMAT_PARASOLID_TEXT
-    elif design_file_format == DesignFileFormat.PARASOLID_BIN:
-        return GRPCFileFormat.FILEFORMAT_PARASOLID_BINARY
-    elif design_file_format == DesignFileFormat.FMD:
-        return GRPCFileFormat.FILEFORMAT_FMD
-    elif design_file_format == DesignFileFormat.STEP:
-        return GRPCFileFormat.FILEFORMAT_STEP
-    elif design_file_format == DesignFileFormat.IGES:
-        return GRPCFileFormat.FILEFORMAT_IGES
-    elif design_file_format == DesignFileFormat.PMDB:
-        return GRPCFileFormat.FILEFORMAT_PMDB
-    elif design_file_format == DesignFileFormat.STRIDE:
-        return GRPCFileFormat.FILEFORMAT_STRIDE
-    elif design_file_format == DesignFileFormat.DISCO:
-        return GRPCFileFormat.FILEFORMAT_DISCO
-    else:
-        return None
 
 
 def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> dict:
