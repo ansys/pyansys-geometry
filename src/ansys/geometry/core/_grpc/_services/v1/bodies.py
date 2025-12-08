@@ -1145,7 +1145,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             request_data=[
                 SetMidSurfaceThicknessRequestData(
                     ids=[build_grpc_id(id) for id in kwargs["ids"]],
-                    thickness=from_measurement_to_server_length(kwargs["thickness"]),
+                    thickness=from_length_to_grpc_quantity(kwargs["thickness"]),
                 )
             ]
         )
