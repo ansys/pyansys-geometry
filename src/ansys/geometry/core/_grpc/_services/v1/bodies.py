@@ -456,23 +456,23 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def translate(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.edit_pb2 import (
-            MoveTranslateRequest,
-            MoveTranslateRequestData,
+            TranslateRequest,
+            TranslateRequestData,
         )
 
         # Create the request with selection_ids, direction, and distance
-        request = MoveTranslateRequest(
+        request = TranslateRequest(
             request_data=[
-                MoveTranslateRequestData(
-                    selection_ids=[build_grpc_id(body_id) for body_id in kwargs["ids"]],
-                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                    distance=from_length_to_grpc_quantity(kwargs["distance"]),
-                )
+                TranslateRequestData(
+                    id=build_grpc_id(id),
+                    translation=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+                    distance=from_measurement_to_server_length(kwargs["distance"]),
+                ) for id in kwargs["ids"]
             ]
         )
 
         # Call the gRPC service
-        self.edit_stub.MoveTranslate(request=request)
+        self.edit_stub.Translate(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
