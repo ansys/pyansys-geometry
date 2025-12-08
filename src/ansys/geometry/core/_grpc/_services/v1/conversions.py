@@ -1475,6 +1475,7 @@ def from_grpc_angle_to_angle(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
     """
     return pint.Quantity(grpc_quantity.value_in_geometry_units, DEFAULT_UNITS.SERVER_ANGLE)
 
+
 def from_area_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     """Convert a ``Measurement`` containing an area to a gRPC quantity.
 
