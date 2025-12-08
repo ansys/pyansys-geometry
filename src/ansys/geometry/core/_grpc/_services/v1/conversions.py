@@ -1406,14 +1406,14 @@ def from_volume_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     ----------
     input : Measurement
         Source measurement data.
-    
+
     Returns
     -------
     GRPCQuantity
         Converted gRPC quantity.
     """
     return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_VOLUME))
-    
+
 
 def from_grpc_volume_to_volume(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
     """Convert a gRPC quantity representing volume to a pint Quantity.
