@@ -316,7 +316,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = InspectGeometryRequest(
-            body_ids=[build_grpc_id(body) for body in kwargs.get("bodies")]
+            body_ids=[build_grpc_id(body) for body in kwargs.get("body_ids", [])]
         )
 
         # Call the gRPC service
