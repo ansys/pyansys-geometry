@@ -31,6 +31,8 @@ from ..base.conversions import from_measurement_to_server_length
 from .conversions import (
     build_grpc_id,
     from_frame_to_grpc_frame,
+    from_grpc_edge_tess_to_pd,
+    from_grpc_edge_tess_to_raw_data,
     from_grpc_point_to_point3d,
     from_grpc_tess_to_pd,
     from_grpc_tess_to_raw_data,
@@ -1359,4 +1361,19 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         resp = self.stub.GetTessellationStream(request=request)
 
         # Return the response - formatted as a dictionary
-        return {"tessellation": from_grpc_tess_to_pd(resp)}
+        tess_map = {}
+        for elem in resp:
+            for face_id, face_tess in elem.response_data[0].face_tessellation.items():
+                tess_map[face_id] = (
+                    from_grpc_tess_to_raw_data(face_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_tess_to_pd(face_tess)
+                )
+            for edge_id, edge_tess in elem.response_data[0].edge_tessellation.items():
+                tess_map[edge_id] = (
+                    from_grpc_edge_tess_to_raw_data(edge_tess)
+                    if kwargs["raw_data"]
+                    else from_grpc_edge_tess_to_pd(edge_tess)
+                )
+
+        return {"tessellation": tess_map}
