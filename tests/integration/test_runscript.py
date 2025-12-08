@@ -37,8 +37,6 @@ from .conftest import DSCOSCRIPTS_FILES_DIR
 # Python (.py)
 @pytest.mark.skip(reason="New failure to be investigated.")
 def test_python_simple_script(modeler: Modeler):
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        modeler.create_design("test_design")
     result, _ = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.py")
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
     pattern_doc = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.Document", re.IGNORECASE)
@@ -51,8 +49,6 @@ def test_python_simple_script(modeler: Modeler):
 def test_python_simple_script_ignore_api_version(
     modeler: Modeler, caplog: pytest.LogCaptureFixture
 ):
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        modeler.create_design("test_design")
     result, _ = modeler.run_discovery_script_file(
         DSCOSCRIPTS_FILES_DIR / "simple_script.py",
         api_version=ApiVersions.LATEST,
@@ -101,8 +97,7 @@ def test_python_integrated_script(modeler: Modeler):
 
 # SpaceClaim (.scscript)
 def test_scscript_simple_script(modeler: Modeler):
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        modeler.create_design("test_design")
+    # Testing running a simple scscript file
     result, _ = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.scscript")
     assert len(result) == 2
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
@@ -114,8 +109,7 @@ def test_scscript_simple_script(modeler: Modeler):
 
 # Discovery (.dscript)
 def test_dscript_simple_script(modeler: Modeler):
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        modeler.create_design("test_design")
+    # Testing running a simple dscript file
     result, _ = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.dscript")
     assert len(result) == 2
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)

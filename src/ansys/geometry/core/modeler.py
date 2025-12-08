@@ -585,11 +585,6 @@ class Modeler:
         if self.client.services.version == GeometryApiProtos.V0:
             serv_path = self._upload_file(file_path)
         else:
-            # Check if a design exists
-            if self._design is None or not self._design.is_active:
-                raise GeometryRuntimeError(
-                    "No active design available. Create or open a design before running a script."
-                )
             serv_path = file_path
 
         self.client.log.debug(f"Running Discovery script file at {file_path}...")
