@@ -217,7 +217,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindInterferenceRequest(
-            bodY_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
+            body_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
             cut_smaller_body=kwargs["cut_smaller_body"],
         )
 
@@ -241,7 +241,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixShortEdges(request)
 
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.response_data)
 
     @protect_grpc
     def find_and_fix_extra_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -256,7 +256,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixExtraEdges(request)
 
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.response_data)
 
     @protect_grpc
     def find_and_fix_split_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -272,7 +272,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixSplitEdges(request)
 
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.response_data)
 
     @protect_grpc
     def find_and_fix_simplify(self, **kwargs) -> dict:  # noqa: D102
@@ -287,7 +287,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndSimplify(request)
 
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.response_data)
 
     @protect_grpc
     def find_and_fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
@@ -308,7 +308,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixStitchFaces(request)
 
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.response_data)
 
     @protect_grpc
     def inspect_geometry(self, **kwargs) -> dict:  # noqa: D102
@@ -320,10 +320,10 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         )
 
         # Call the gRPC service
-        inspect_result_response = self.stub.InspectGeometry(request)
+        response = self.stub.InspectGeometry(request)
 
         # Serialize and return the response
-        return self.__serialize_inspect_result_response(inspect_result_response)
+        return self.__serialize_inspect_result_response(response)
 
     @protect_grpc
     def repair_geometry(self, **kwargs) -> dict:  # noqa: D102
@@ -353,7 +353,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixDuplicateFaces(request)
 
         # Return the response - formatted as a dictionary
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def fix_missing_faces(self, **kwargs) -> dict:  # noqa: D102
@@ -368,7 +368,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixMissingFaces(request)
 
         # Return the response - formatted as a dictionary
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def fix_inexact_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -383,7 +383,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixInexactEdges(request)
 
         # Return the response - formatted as a dictionary
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def fix_extra_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -398,7 +398,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixExtraEdges(request)
 
         # Return the response - formatted as a dictionary
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def fix_short_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -413,7 +413,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixShortEdges(request)
 
         # Return the response - formatted as a dictionary
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def fix_small_faces(self, **kwargs) -> dict:  # noqa: D102
@@ -428,7 +428,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixSmallFaces(request)
 
         # Return the response - formatted as a dictionary
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def fix_split_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -443,7 +443,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixSplitEdges(request)
 
         # Return the response - formatted as a dictionary
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
@@ -458,7 +458,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixStitchFaces(request)
 
         # Return the response - formatted as a dictionary
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def fix_unsimplified_faces(self, **kwargs) -> dict:  # noqa: D102
@@ -488,7 +488,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixInterference(request)
 
         # Return the response - formatted as a dictionary
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.result)
 
     def __serialize_inspect_result_response(self, response) -> dict:  # noqa: D102
         def serialize_body(body):
