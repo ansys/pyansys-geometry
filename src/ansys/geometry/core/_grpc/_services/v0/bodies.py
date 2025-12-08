@@ -732,8 +732,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
         serialized_tracker_response = {}
         try:
             request = BooleanRequest(
-                body1=kwargs["target"].id,
-                tool_bodies=[other.id for other in kwargs["other"]],
+                body1=kwargs["target"],
+                tool_bodies=[other for other in kwargs["other"]],
                 method=kwargs["method"],
             )
             if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:

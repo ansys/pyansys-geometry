@@ -838,12 +838,16 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def mirror(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import MirrorRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import MirrorRequest, MirrorRequestData
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MirrorRequest(
-            selection_ids=[build_grpc_id(kwargs["id"])],
-            plane=from_plane_to_grpc_plane(kwargs["plane"]),
+            request_data=[
+                MirrorRequestData(
+                    ids=[build_grpc_id(kwargs["id"])],
+                    mirror_plane=from_plane_to_grpc_plane(kwargs["plane"]),
+                )
+            ]
         )
 
         # Call the gRPC service
@@ -1044,7 +1048,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         else:
             raise ValueError(f"Invalid boolean operation type: {type_bool_op}")
 
-        if not response.success:
+        if not response.tracked_command_response.command_response.success:
             raise ValueError(f"Boolean operation failed: {response}")
 
         # Return the response - formatted as a dictionary
@@ -1052,15 +1056,24 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import SplitBodyRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            SplitBodyRequest,
+            SplitBodyRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SplitBodyRequest(
-            selection=[build_grpc_id(id) for id in kwargs["body_ids"]],
-            split_by_plane=from_plane_to_grpc_plane(kwargs["plane"]) if kwargs["plane"] else None,
-            split_by_slicer=[build_grpc_id(id) for id in kwargs["slicer_ids"]],
-            split_by_faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
-            extend_surfaces=kwargs["extend_surfaces"],
+            request_data=[
+                SplitBodyRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["body_ids"]],
+                    split_by_plane=(
+                        from_plane_to_grpc_plane(kwargs["plane"]) if kwargs["plane"] else None
+                    ),
+                    split_by_slicer_ids=[build_grpc_id(id) for id in kwargs["slicer_ids"]],
+                    split_by_face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    extend_surfaces=kwargs["extend_surfaces"],
+                )
+            ]
         )
 
         # Call the gRPC service
@@ -1068,7 +1081,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {
-            "success": resp.success,
+            "success": resp.tracked_command_response.command_response.success,
         }
 
     @protect_grpc

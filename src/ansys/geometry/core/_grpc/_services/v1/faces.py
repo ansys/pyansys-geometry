@@ -607,7 +607,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "along_u": response.along_u,
-            "radius": response.radius,
+            "radius": response.radius.value_in_geometry_units,
         }
 
     @protect_grpc
@@ -622,7 +622,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
             request_data=[
                 OffsetFacesRequestData(
                     face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
-                    offset=from_measurement_to_server_length(kwargs["distance"]),
+                    offset=from_length_to_grpc_quantity(kwargs["distance"]),
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     extrude_type=kwargs["extrude_type"].value,
                 )
@@ -649,8 +649,8 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         request = FaceOffsetRequest(
             request_data=[
                 FaceOffsetRequestData(
-                    face1=build_grpc_id(kwargs["face1_id"]),
-                    face2=build_grpc_id(kwargs["face2_id"]),
+                    id1=build_grpc_id(kwargs["face1_id"]),
+                    id2=build_grpc_id(kwargs["face2_id"]),
                     set_baselines=kwargs["set_baselines"],
                     process_adjacent_faces=kwargs["process_adjacent_faces"],
                 )
