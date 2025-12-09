@@ -456,23 +456,24 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def translate(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.edit_pb2 import (
-            MoveTranslateRequest,
-            MoveTranslateRequestData,
+            TranslateRequest,
+            TranslateRequestData,
         )
 
         # Create the request with selection_ids, direction, and distance
-        request = MoveTranslateRequest(
+        request = TranslateRequest(
             request_data=[
-                MoveTranslateRequestData(
-                    selection_ids=[build_grpc_id(body_id) for body_id in kwargs["ids"]],
-                    direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                    distance=from_length_to_grpc_quantity(kwargs["distance"]),
+                TranslateRequestData(
+                    id=build_grpc_id(id),
+                    translation=from_unit_vector_to_grpc_direction(kwargs["direction"]),
+                    distance=from_measurement_to_server_length(kwargs["distance"]),
                 )
+                for id in kwargs["ids"]
             ]
         )
 
         # Call the gRPC service
-        self.edit_stub.MoveTranslate(request=request)
+        self.edit_stub.Translate(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -788,30 +789,27 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def rotate(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.edit_pb2 import (
-            MoveRotateRequest,
-            MoveRotateRequestData,
+            RotateOptions,
+            RotateRequest,
+            RotateRequestData,
         )
 
-        from ansys.geometry.core.shapes.curves.line import Line
+        from .conversions import from_angle_to_grpc_quantity
 
-        from .conversions import from_angle_to_grpc_quantity, from_line_to_grpc_line
-
-        # Create a Line from axis_origin and axis_direction
-        axis = Line(kwargs["axis_origin"], kwargs["axis_direction"])
+        # Create options
+        options = RotateOptions(
+            angle=from_angle_to_grpc_quantity(kwargs["angle"]),
+            axis_origin=from_point3d_to_grpc_point(kwargs["axis_origin"]),
+            axis_direction=from_unit_vector_to_grpc_direction(kwargs["axis_direction"]),
+        )
 
         # Create the request with selection_ids, axis, and angle
-        request = MoveRotateRequest(
-            request_data=[
-                MoveRotateRequestData(
-                    selection_ids=[build_grpc_id(kwargs["id"])],
-                    axis=from_line_to_grpc_line(axis),
-                    angle=from_angle_to_grpc_quantity(kwargs["angle"]),
-                )
-            ]
+        request = RotateRequest(
+            request_data=[RotateRequestData(id=build_grpc_id(kwargs["id"]), options=options)]
         )
 
         # Call the gRPC service
-        self.edit_stub.MoveRotate(request=request)
+        self.edit_stub.Rotate(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
@@ -838,12 +836,16 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def mirror(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import MirrorRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import MirrorRequest, MirrorRequestData
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MirrorRequest(
-            selection_ids=[build_grpc_id(kwargs["id"])],
-            plane=from_plane_to_grpc_plane(kwargs["plane"]),
+            request_data=[
+                MirrorRequestData(
+                    ids=[build_grpc_id(kwargs["id"])],
+                    mirror_plane=from_plane_to_grpc_plane(kwargs["plane"]),
+                )
+            ]
         )
 
         # Call the gRPC service
@@ -988,79 +990,74 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def boolean(self, **kwargs) -> dict:  # noqa: D102
-        # v1 uses the combine method instead of a separate boolean method
-        # Map the v0 parameters to v1 combine parameters
-        return self.combine(
-            target=kwargs["target"],
-            other=kwargs["other"],
-            type_bool_op=kwargs["method"],
+        from ansys.api.discovery.v1.operations.edit_pb2 import BooleanRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = BooleanRequest(
+            body1_id=build_grpc_id(kwargs["target"]),
+            tool_body_ids=[build_grpc_id(id) for id in kwargs["other"]],
+            method=kwargs["method"],
             keep_other=kwargs["keep_other"],
-            transfer_named_selections=False,
         )
+
+        # Call the gRPC service
+        response = self.edit_stub.Boolean(request=request)
+
+        if not response.tracked_command_response.command_response.success:
+            raise ValueError(f"Boolean operation failed: {kwargs['err_msg']}")
+
+        # Return the response - formatted as a dictionary
+        return {"complete_command_response": response}
 
     @protect_grpc
     def combine(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.edit_pb2 import (
             CombineIntersectBodiesRequest,
             CombineIntersectBodiesRequestData,
-            CombineMergeBodiesRequest,
-            CombineMergeBodiesRequestData,
         )
 
-        target_body = kwargs["target"]
-        other_bodies = kwargs["other"]
-        type_bool_op = kwargs["type_bool_op"]
-        keep_other = kwargs["keep_other"]
-        transfer_named_selections = kwargs.get("transfer_named_selections", False)
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CombineIntersectBodiesRequest(
+            request_data=[
+                CombineIntersectBodiesRequestData(
+                    target_selection_ids=[build_grpc_id(kwargs["target"])],
+                    tool_selection_ids=[build_grpc_id(id) for id in kwargs["other"]],
+                    keep_cutter=kwargs["keep_other"],
+                    subtract_from_target=True,
+                    transfer_named_selections=kwargs["transfer_named_selections"],
+                )
+            ]
+        )
 
-        if type_bool_op == "intersect":
-            request_data = CombineIntersectBodiesRequestData(
-                target_selection_ids=[build_grpc_id(target_body)],
-                tool_selection_ids=[build_grpc_id(body) for body in other_bodies],
-                keep_cutter=keep_other,
-                subtract_from_target=False,
-                transfer_named_selections=transfer_named_selections,
-            )
-            request = CombineIntersectBodiesRequest(request_data=[request_data])
-            response = self.edit_stub.CombineIntersectBodies(request=request)
-        elif type_bool_op == "subtract":
-            request_data = CombineIntersectBodiesRequestData(
-                target_selection_ids=[build_grpc_id(target_body)],
-                tool_selection_ids=[build_grpc_id(body) for body in other_bodies],
-                keep_cutter=keep_other,
-                subtract_from_target=True,
-                transfer_named_selections=transfer_named_selections,
-            )
-            request = CombineIntersectBodiesRequest(request_data=[request_data])
-            response = self.edit_stub.CombineIntersectBodies(request=request)
-        elif type_bool_op == "unite":
-            # Create request data with all body IDs
-            all_body_ids = [build_grpc_id(target_body)]
-            all_body_ids.extend([build_grpc_id(body) for body in other_bodies])
+        # Call the gRPC service
+        response = self.edit_stub.CombineIntersectBodies(request=request)
 
-            request_data = CombineMergeBodiesRequestData(target_selection_ids=all_body_ids)
-            request = CombineMergeBodiesRequest(request_data=[request_data])
-            response = self.edit_stub.CombineMergeBodies(request=request)
-        else:
-            raise ValueError(f"Invalid boolean operation type: {type_bool_op}")
-
-        if not response.success:
-            raise ValueError(f"Boolean operation failed: {response}")
+        if not response.tracked_command_response.command_response.success:
+            raise ValueError(f"Boolean operation failed: {kwargs['err_msg']}")
 
         # Return the response - formatted as a dictionary
         return {"complete_command_response": response}
 
     @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import SplitBodyRequest
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            SplitBodyRequest,
+            SplitBodyRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SplitBodyRequest(
-            selection=[build_grpc_id(id) for id in kwargs["body_ids"]],
-            split_by_plane=from_plane_to_grpc_plane(kwargs["plane"]) if kwargs["plane"] else None,
-            split_by_slicer=[build_grpc_id(id) for id in kwargs["slicer_ids"]],
-            split_by_faces=[build_grpc_id(id) for id in kwargs["face_ids"]],
-            extend_surfaces=kwargs["extend_surfaces"],
+            request_data=[
+                SplitBodyRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["body_ids"]],
+                    split_by_plane=(
+                        from_plane_to_grpc_plane(kwargs["plane"]) if kwargs["plane"] else None
+                    ),
+                    split_by_slicer_ids=[build_grpc_id(id) for id in kwargs["slicer_ids"]],
+                    split_by_face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    extend_surfaces=kwargs["extend_surfaces"],
+                )
+            ]
         )
 
         # Call the gRPC service
@@ -1068,7 +1065,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {
-            "success": resp.success,
+            "success": resp.tracked_command_response.command_response.success,
         }
 
     @protect_grpc
@@ -1145,7 +1142,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             request_data=[
                 SetMidSurfaceThicknessRequestData(
                     ids=[build_grpc_id(id) for id in kwargs["ids"]],
-                    thickness=from_measurement_to_server_length(kwargs["thickness"]),
+                    thickness=from_length_to_grpc_quantity(kwargs["thickness"]),
                 )
             ]
         )
