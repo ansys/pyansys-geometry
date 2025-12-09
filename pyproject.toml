@@ -82,7 +82,7 @@ doc = [
   "nbconvert==7.16.6",
   "nbsphinx==0.9.8",
   "notebook==7.5.0",
-  "numpydoc==1.9.0",
+  "numpydoc==1.10.0",
   "pdf2image==1.17.0",
   "quarto-cli==1.8.25",
   "sphinx==8.2.3",
@@ -119,7 +119,7 @@ general-all = [
   "vtk==9.5.2",
 ]
 tests-minimal = [
-  "pytest==8.4.2",
+  "pytest==9.0.0",
   "pytest-cov==7.0.0",
   "pytest-pyvista==0.3.2",
   "pyyaml==6.0.3",

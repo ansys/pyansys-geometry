@@ -640,7 +640,7 @@ class PrepareTools:
         parent_design = get_design_from_body(bodies[0])
 
         response = self._grpc_client._services.prepare_tools.create_box_enclosure(
-            bodies=bodies,
+            body_ids=[body.id for body in bodies],
             x_low=x_low,
             x_high=x_high,
             y_low=y_low,
@@ -723,7 +723,7 @@ class PrepareTools:
         parent_design = get_design_from_body(bodies[0])
 
         response = self._grpc_client._services.prepare_tools.create_cylinder_enclosure(
-            bodies=bodies,
+            body_ids=[body.id for body in bodies],
             axial_distance_low=axial_distance_low,
             axial_distance_high=axial_distance_high,
             radial_distance=radial_distance,
@@ -785,7 +785,7 @@ class PrepareTools:
         )
 
         response = self._grpc_client._services.prepare_tools.create_sphere_enclosure(
-            bodies=bodies,
+            body_ids=[body.id for body in bodies],
             radial_distance=radial_distance,
             enclosure_options=enclosure_options,
         )

@@ -2151,7 +2151,11 @@ class Body(IBody):
                 ]
 
         response = self._template._grpc_client.services.bodies.boolean(
-            target=self, other=grpc_other, method=method, err_msg=err_msg, keep_other=keep_other
+            target=self.id,
+            other=[other.id for other in grpc_other],
+            method=method,
+            err_msg=err_msg,
+            keep_other=keep_other,
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:

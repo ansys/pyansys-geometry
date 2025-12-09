@@ -92,12 +92,12 @@ def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathF
         fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
         with pytest.raises(
             GeometryRuntimeError,
-            match="The '_upload_file' method is not supported in backend v1 and beyond.",
+            match="The '_upload_file' method is not supported in protos v1 and beyond",
         ):
             modeler._upload_file(fake_path)
         with pytest.raises(
             GeometryRuntimeError,
-            match=("The '_upload_file_stream' method is not supported with backend v1 and beyond."),
+            match="The '_upload_file_stream' method is not supported with protos v1 and beyond",
         ):
             modeler._upload_file_stream(fake_path)
     else:
@@ -1322,8 +1322,12 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     assert file.exists()
 
     # Upload file
-    path_on_server = modeler._upload_file(file)
-    assert path_on_server is not None
+    if modeler.client.services.version != GeometryApiProtos.V0:
+        with pytest.raises(match="The '_upload_file' method is not supported in protos v1"):
+            modeler._upload_file(file)
+    else:
+        path_on_server = modeler._upload_file(file)
+        assert path_on_server is not None
 
 
 def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_mode: str):

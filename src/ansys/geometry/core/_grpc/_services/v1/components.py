@@ -89,10 +89,20 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.designmessages_pb2 import SetDesignEntityNameRequest
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            SetDesignEntityNameRequest,
+            SetDesignEntityNameRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SetDesignEntityNameRequest(id=build_grpc_id(kwargs["id"]), name=kwargs["name"])
+        request = SetDesignEntityNameRequest(
+            request_data=[
+                SetDesignEntityNameRequestData(
+                    id=build_grpc_id(kwargs["id"]),
+                    name=kwargs["name"],
+                )
+            ]
+        )
 
         # Call the gRPC service
         _ = self.stub.SetName(request)

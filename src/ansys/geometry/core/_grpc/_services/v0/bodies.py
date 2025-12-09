@@ -732,8 +732,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
         serialized_tracker_response = {}
         try:
             request = BooleanRequest(
-                body1=kwargs["target"].id,
-                tool_bodies=[other.id for other in kwargs["other"]],
+                body1=kwargs["target"],
+                tool_bodies=[other for other in kwargs["other"]],
                 method=kwargs["method"],
             )
             if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -754,8 +754,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 for body2 in kwargs["other"]:
                     tmp_resp = self.stub.Boolean(
                         request=BooleanRequest(
-                            body1=kwargs["target"].id,
-                            body2=body2.id,
+                            body1=kwargs["target"],
+                            body2=body2,
                             method=kwargs["method"],
                         )
                     ).empty_result
@@ -766,8 +766,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
             elif len(kwargs["other"]) == 1:
                 resp = self.stub.Boolean(
                     request=BooleanRequest(
-                        body1=kwargs["target"].id,
-                        body2=kwargs["other"][0].id,
+                        body1=kwargs["target"],
+                        body2=kwargs["other"][0],
                         method=kwargs["method"],
                     )
                 )

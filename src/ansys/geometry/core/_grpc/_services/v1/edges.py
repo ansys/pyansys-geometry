@@ -143,7 +143,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         return {
             "faces": [
                 {
-                    "id": face.id,
+                    "id": face.id.id,
                     "surface_type": face.surface_type,
                     "is_reversed": face.is_reversed,
                 }
@@ -238,8 +238,8 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         request = ExtrudeEdgesUpToRequest(
             request_data=[
                 ExtrudeEdgesUpToRequestData(
-                    edge_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
-                    up_to_selection_id=build_grpc_id(kwargs["up_to_selection_id"]),
+                    edge_ids=[build_grpc_id(id) for id in kwargs["edge_ids"]],
+                    up_to_selection_id=build_grpc_id(kwargs["up_to_selection"]),
                     seed_point=from_point3d_to_grpc_point(kwargs["seed_point"]),
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     extrude_type=kwargs["extrude_type"].value,
@@ -248,7 +248,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         )
 
         # Call the gRPC service and serialize the response
-        response = self.edit_stub.ExtrudeFacesUpTo(request=request)
+        response = self.edit_stub.ExtrudeEdgesUpTo(request=request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary

@@ -478,7 +478,11 @@ def from_grpc_edge_tess_to_pd(tess: GRPCEdgeTessellation) -> "pv.PolyData":
 
 def from_grpc_edge_tess_to_raw_data(tess: GRPCEdgeTessellation) -> dict:
     """Convert a ``EdgeTessellation`` to raw data."""
-    return {"vertices": [coord for pt in tess.vertices for coord in (pt.x, pt.y, pt.z)]}
+    return {
+        "vertices": [
+            coord.value_in_geometry_units for pt in tess.vertices for coord in (pt.x, pt.y, pt.z)
+        ]
+    }
 
 
 def from_tess_options_to_grpc_tess_options(
@@ -1204,15 +1208,18 @@ def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceTyp
     origin = from_grpc_point_to_point3d(surface.origin)
     axis = UnitVector3D([surface.axis.x, surface.axis.y, surface.axis.z])
     reference = UnitVector3D([surface.reference.x, surface.reference.y, surface.reference.z])
+    radius = surface.radius.value_in_geometry_units
+    major_radius = surface.major_radius.value_in_geometry_units
+    minor_radius = surface.minor_radius.value_in_geometry_units
 
     if surface_type == SurfaceType.SURFACETYPE_CONE:
-        result = Cone(origin, surface.radius, surface.half_angle, reference, axis)
+        result = Cone(origin, radius, surface.half_angle.value_in_geometry_units, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_CYLINDER:
-        result = Cylinder(origin, surface.radius, reference, axis)
+        result = Cylinder(origin, radius, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_SPHERE:
-        result = Sphere(origin, surface.radius, reference, axis)
+        result = Sphere(origin, radius, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_TORUS:
-        result = Torus(origin, surface.major_radius, surface.minor_radius, reference, axis)
+        result = Torus(origin, major_radius, minor_radius, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_PLANE:
         result = PlaneSurface(origin, reference, axis)
     else:
@@ -1264,7 +1271,7 @@ def from_driving_dimension_to_grpc_driving_dimension(
         id=driving_dimension.id,
         name=driving_dimension.name,
         dimension_type=driving_dimension.dimension_type.value,
-        dimension_value=from_length_to_grpc_quantity(driving_dimension.dimension_value),
+        dimension_value=GRPCQuantity(value_in_geometry_units=driving_dimension.dimension_value),
     )
 
 
@@ -1428,6 +1435,22 @@ def from_length_to_grpc_quantity(input: "Distance") -> GRPCQuantity:
     return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_LENGTH))
 
 
+def from_grpc_quantity_to_distance(input: "GRPCQuantity") -> Distance:
+    """Convert a gRPC quantity to ``Distance`` containing a length.
+
+    Parameters
+    ----------
+    input : GRPCQuantity
+        Source measurement data.
+
+    Returns
+    -------
+    Distance
+        Converted Distance quantity.
+    """
+    return Distance(input.value_in_geometry_units, DEFAULT_UNITS.SERVER_LENGTH)
+
+
 def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
     """Convert a ``Measurement`` containing an angle to a gRPC quantity.
 
@@ -1442,6 +1465,22 @@ def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
         Converted gRPC quantity.
     """
     return GRPCQuantity(value_in_geometry_units=input.value.m_as(DEFAULT_UNITS.SERVER_ANGLE))
+
+
+def from_grpc_angle_to_angle(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
+    """Convert a gRPC quantity representing an angle to a pint Quantity.
+
+    Parameters
+    ----------
+    grpc_quantity : GRPCQuantity
+        Source gRPC quantity data.
+
+    Returns
+    -------
+    Measurement
+        Converted angle quantity with server angle units.
+    """
+    return pint.Quantity(grpc_quantity.value_in_geometry_units, DEFAULT_UNITS.SERVER_ANGLE)
 
 
 def from_area_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
@@ -1490,6 +1529,22 @@ def from_grpc_volume_to_volume(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
         Converted volume quantity with server volume units.
     """
     return pint.Quantity(grpc_quantity.value_in_geometry_units, DEFAULT_UNITS.SERVER_VOLUME)
+
+
+def from_grpc_quantity_to_float(grpc_quantity: GRPCQuantity) -> float:
+    """Convert a gRPC quantity to a float.
+
+    Parameters
+    ----------
+    grpc_quantity : GRPCQuantity
+        Source gRPC quantity data.
+
+    Returns
+    -------
+    float
+        The float value contained in the quantity.
+    """
+    return grpc_quantity.value_in_geometry_units
 
 
 def from_parameter_to_grpc_quantity(value: float) -> GRPCQuantity:

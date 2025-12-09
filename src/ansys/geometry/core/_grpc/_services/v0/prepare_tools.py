@@ -311,7 +311,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateEnclosureBoxRequest(
-            bodies=[GRPCBody(id=body.id) for body in kwargs["bodies"]],
+            bodies=[GRPCBody(id=id) for id in kwargs["body_ids"]],
             x_low=from_measurement_to_server_length(kwargs["x_low"]),
             x_high=from_measurement_to_server_length(kwargs["x_high"]),
             y_low=from_measurement_to_server_length(kwargs["y_low"]),
@@ -345,7 +345,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateEnclosureCylinderRequest(
-            bodies=[GRPCBody(id=body.id) for body in kwargs["bodies"]],
+            bodies=[GRPCBody(id=id) for id in kwargs["body_ids"]],
             axial_distance_low=from_measurement_to_server_length(kwargs["axial_distance_low"]),
             axial_distance_high=from_measurement_to_server_length(kwargs["axial_distance_high"]),
             radial_distance=from_measurement_to_server_length(kwargs["radial_distance"]),
@@ -376,7 +376,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateEnclosureSphereRequest(
-            bodies=[GRPCBody(id=body.id) for body in kwargs["bodies"]],
+            bodies=[GRPCBody(id=id) for id in kwargs["body_ids"]],
             radial_distance=from_measurement_to_server_length(kwargs["radial_distance"]),
             enclosure_options=grpc_enclosure_options,
         )
