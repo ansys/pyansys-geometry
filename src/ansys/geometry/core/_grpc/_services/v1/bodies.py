@@ -1237,7 +1237,11 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Convert sketch and trimmed curves to gRPC format
         sketch = kwargs["sketch"]
-        curves = from_sketch_shapes_to_grpc_geometries(sketch.plane, sketch.edges, sketch.faces) if sketch else None
+        curves = (
+            from_sketch_shapes_to_grpc_geometries(sketch.plane, sketch.edges, sketch.faces)
+            if sketch
+            else None
+        )
 
         # Convert trimmed curves to gRPC format
         trimmed_curves = []
