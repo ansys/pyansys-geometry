@@ -251,7 +251,6 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
 
         from ansys.geometry.core.shapes.parameterization import Interval
 
-        from ..base.conversions import to_distance
         from .conversions import (
             from_grpc_curve_to_curve,
             from_grpc_point_to_point3d,
@@ -285,12 +284,12 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
                         "interval": Interval(
                             helix.trimmed_curve.interval_start, helix.trimmed_curve.interval_end
                         ),
-                        "length": to_distance(helix.trimmed_curve.length).value,
+                        "length": helix.trimmed_curve.length.value_in_geometry_units,
                     },
                     "edges": [
                         {
-                            "id": edge.id,
-                            "parent_id": edge.parent.id,
+                            "id": edge.id.id,
+                            "parent_id": edge.parent.id.id,
                             "curve_type": edge.curve_type,
                             "is_reversed": edge.is_reversed,
                         }

@@ -788,30 +788,32 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
     @protect_grpc
     def rotate(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.edit_pb2 import (
-            MoveRotateRequest,
-            MoveRotateRequestData,
+            RotateOptions,
+            RotateRequest,
+            RotateRequestData,
         )
 
-        from ansys.geometry.core.shapes.curves.line import Line
+        from .conversions import from_angle_to_grpc_quantity
 
-        from .conversions import from_angle_to_grpc_quantity, from_line_to_grpc_line
-
-        # Create a Line from axis_origin and axis_direction
-        axis = Line(kwargs["axis_origin"], kwargs["axis_direction"])
+        # Create options
+        options = RotateOptions(
+            angle=from_angle_to_grpc_quantity(kwargs["angle"]),
+            axis_origin=from_point3d_to_grpc_point(kwargs["axis_origin"]),
+            axis_direction=from_unit_vector_to_grpc_direction(kwargs["axis_direction"]),
+        )
 
         # Create the request with selection_ids, axis, and angle
-        request = MoveRotateRequest(
+        request = RotateRequest(
             request_data=[
-                MoveRotateRequestData(
-                    selection_ids=[build_grpc_id(kwargs["id"])],
-                    axis=from_line_to_grpc_line(axis),
-                    angle=from_angle_to_grpc_quantity(kwargs["angle"]),
+                RotateRequestData(
+                    id=build_grpc_id(kwargs["id"]),
+                    options=options
                 )
             ]
         )
 
         # Call the gRPC service
-        self.edit_stub.MoveRotate(request=request)
+        self.edit_stub.Rotate(request=request)
 
         # Return the response - formatted as a dictionary
         return {}
