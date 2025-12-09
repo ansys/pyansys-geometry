@@ -1234,12 +1234,13 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             ImprintCurvesRequest,
             ImprintCurvesRequestData,
         )
+
         # Convert sketch and trimmed curves to gRPC format
         sketch = kwargs["sketch"]
         curves = None
         if sketch:
-            curves = from_sketch_shapes_to_grpc_geometries(sketch.plane, sketch.edges, sketch.faces)            
-            
+            curves = from_sketch_shapes_to_grpc_geometries(sketch.plane, sketch.edges, sketch.faces)
+
         # Convert trimmed curves to gRPC format
         trimmed_curves = []
         if kwargs.get("tc"):
@@ -1260,7 +1261,6 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Call the gRPC service
         response = self.edit_stub.ImprintCurves(request=request).response_data[0]
-        
 
         # Return the response - formatted as a dictionary
         return {
