@@ -145,7 +145,6 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Call the gRPC service
         response = self.stub.EnhancedShareTopology(request).response_data
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
-        print(tracked_response)
 
         # Return the response - formatted as a dictionary
         return {
