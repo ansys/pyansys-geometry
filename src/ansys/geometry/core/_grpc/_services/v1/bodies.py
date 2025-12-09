@@ -467,7 +467,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     id=build_grpc_id(id),
                     translation=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     distance=from_measurement_to_server_length(kwargs["distance"]),
-                ) for id in kwargs["ids"]
+                )
+                for id in kwargs["ids"]
             ]
         )
 
@@ -804,12 +805,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Create the request with selection_ids, axis, and angle
         request = RotateRequest(
-            request_data=[
-                RotateRequestData(
-                    id=build_grpc_id(kwargs["id"]),
-                    options=options
-                )
-            ]
+            request_data=[RotateRequestData(id=build_grpc_id(kwargs["id"]), options=options)]
         )
 
         # Call the gRPC service

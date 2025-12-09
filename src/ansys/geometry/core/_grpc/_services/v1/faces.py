@@ -27,7 +27,6 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.conversions import (
-    from_measurement_to_server_length,
     to_area,
 )
 from ..base.faces import GRPCFacesService
