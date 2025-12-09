@@ -176,7 +176,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FindSmallFaces(request)
 
         # Return the response - formatted as a dictionary
-        return response_problem_area_for_face(response)
+        return response_problem_area_for_edge(response)
 
     @protect_grpc
     def find_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
