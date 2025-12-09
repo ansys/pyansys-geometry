@@ -1234,7 +1234,12 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             ImprintCurvesRequest,
             ImprintCurvesRequestData,
         )
-
+        # Convert sketch and trimmed curves to gRPC format
+        sketch = kwargs["sketch"]
+        curves = None
+        if sketch:
+            curves = from_sketch_shapes_to_grpc_geometries(sketch.plane, sketch.edges, sketch.faces)            
+            
         # Convert trimmed curves to gRPC format
         trimmed_curves = []
         if kwargs.get("tc"):
@@ -1245,17 +1250,37 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             request_data=[
                 ImprintCurvesRequestData(
                     body_ids=build_grpc_id(kwargs["id"]),
+                    curves=curves,
                     face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    plane=from_plane_to_grpc_plane(sketch.plane) if sketch else None,
                     trimmed_curves=trimmed_curves,
                 )
             ]
         )
 
         # Call the gRPC service
-        _ = self.edit_stub.ImprintCurves(request=request)
+        response = self.edit_stub.ImprintCurves(request=request).response_data[0]
+        
 
         # Return the response - formatted as a dictionary
-        return {}
+        return {
+            "edges": [
+                {
+                    "id": edge.id,
+                    "curve_type": edge.curve_type,
+                    "is_reversed": edge.is_reversed,
+                }
+                for edge in response.created_entities.edges
+            ],
+            "faces": [
+                {
+                    "id": face.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
+                }
+                for face in response.created_entities.faces
+            ],
+        }
 
     @protect_grpc
     def project_curves(self, **kwargs) -> dict:  # noqa: D102
