@@ -994,64 +994,50 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def boolean(self, **kwargs) -> dict:  # noqa: D102
-        # v1 uses the combine method instead of a separate boolean method
-        # Map the v0 parameters to v1 combine parameters
-        return self.combine(
-            target=kwargs["target"],
-            other=kwargs["other"],
-            type_bool_op=kwargs["method"],
+        from ansys.api.discovery.v1.operations.edit_pb2 import BooleanRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = BooleanRequest(
+            body1_id=build_grpc_id(kwargs["target"]),
+            tool_body_ids=[build_grpc_id(id) for id in kwargs["other"]],
+            method=kwargs["method"],
             keep_other=kwargs["keep_other"],
-            transfer_named_selections=False,
         )
+
+        # Call the gRPC service
+        response = self.edit_stub.Boolean(request=request)
+
+        if not response.tracked_command_response.command_response.success:
+            raise ValueError(f"Boolean operation failed: {kwargs['err_msg']}")
+
+        # Return the response - formatted as a dictionary
+        return {"complete_command_response": response}
 
     @protect_grpc
     def combine(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.edit_pb2 import (
             CombineIntersectBodiesRequest,
             CombineIntersectBodiesRequestData,
-            CombineMergeBodiesRequest,
-            CombineMergeBodiesRequestData,
         )
 
-        target_body = kwargs["target"]
-        other_bodies = kwargs["other"]
-        type_bool_op = kwargs["type_bool_op"]
-        keep_other = kwargs["keep_other"]
-        transfer_named_selections = kwargs.get("transfer_named_selections", False)
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CombineIntersectBodiesRequest(
+            request_data=[
+                CombineIntersectBodiesRequestData(
+                    target_selection_ids=[build_grpc_id(kwargs["target"])],
+                    tool_selection_ids=[build_grpc_id(id) for id in kwargs["other"]],
+                    keep_cutter=kwargs["keep_other"],
+                    subtract_from_target=True,
+                    transfer_named_selections=kwargs["transfer_named_selections"],
+                )
+            ]
+        )
 
-        if type_bool_op == "intersect":
-            request_data = CombineIntersectBodiesRequestData(
-                target_selection_ids=[build_grpc_id(target_body)],
-                tool_selection_ids=[build_grpc_id(body) for body in other_bodies],
-                keep_cutter=keep_other,
-                subtract_from_target=False,
-                transfer_named_selections=transfer_named_selections,
-            )
-            request = CombineIntersectBodiesRequest(request_data=[request_data])
-            response = self.edit_stub.CombineIntersectBodies(request=request)
-        elif type_bool_op == "subtract":
-            request_data = CombineIntersectBodiesRequestData(
-                target_selection_ids=[build_grpc_id(target_body)],
-                tool_selection_ids=[build_grpc_id(body) for body in other_bodies],
-                keep_cutter=keep_other,
-                subtract_from_target=True,
-                transfer_named_selections=transfer_named_selections,
-            )
-            request = CombineIntersectBodiesRequest(request_data=[request_data])
-            response = self.edit_stub.CombineIntersectBodies(request=request)
-        elif type_bool_op == "unite":
-            # Create request data with all body IDs
-            all_body_ids = [build_grpc_id(target_body)]
-            all_body_ids.extend([build_grpc_id(body) for body in other_bodies])
-
-            request_data = CombineMergeBodiesRequestData(target_selection_ids=all_body_ids)
-            request = CombineMergeBodiesRequest(request_data=[request_data])
-            response = self.edit_stub.CombineMergeBodies(request=request)
-        else:
-            raise ValueError(f"Invalid boolean operation type: {type_bool_op}")
+        # Call the gRPC service
+        response = self.edit_stub.CombineIntersectBodies(request=request)
 
         if not response.tracked_command_response.command_response.success:
-            raise ValueError(f"Boolean operation failed: {response}")
+            raise ValueError(f"Boolean operation failed: {kwargs['err_msg']}")
 
         # Return the response - formatted as a dictionary
         return {"complete_command_response": response}
