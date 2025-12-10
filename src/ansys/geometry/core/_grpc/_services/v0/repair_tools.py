@@ -517,7 +517,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import InspectGeometryRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = InspectGeometryRequest(bodies=kwargs.get("bodies", []))
+        request = InspectGeometryRequest(bodies=kwargs.get("body_ids", []))
 
         # Call the gRPC service
         inspect_result_response = self.stub.InspectGeometry(request)
@@ -530,7 +530,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RepairGeometryRequest(bodies=kwargs.get("bodies"))
+        request = RepairGeometryRequest(bodies=kwargs.get("body_ids"))
 
         # Call the gRPC service
         response = self.stub.RepairGeometry(request)

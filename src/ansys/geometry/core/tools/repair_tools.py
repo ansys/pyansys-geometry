@@ -875,7 +875,7 @@ class RepairTools:
         inspect_results = []
         design = self._modeler.get_active_design()
         for inspect_geometry_result in inspect_geometry_results:
-            body = get_bodies_from_ids(design, [inspect_geometry_result["body"]["id"]])
+            body = get_bodies_from_ids(design, [inspect_geometry_result["body"]["id"].id])
             issues = self.__create_issues_from_response(inspect_geometry_result.get("issues"))
             inspect_result = InspectResult(
                 grpc_client=self._grpc_client, body=body[0], issues=issues
