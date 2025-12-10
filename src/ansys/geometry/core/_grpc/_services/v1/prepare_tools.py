@@ -31,7 +31,6 @@ from .conversions import (
     build_grpc_id,
     from_enclosure_options_to_grpc_enclosure_options,
     from_length_to_grpc_quantity,
-    get_standard_tracker_response,
     serialize_tracked_command_response,
 )
 
@@ -190,7 +189,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {
-            "id": response.id,
+            "id": getattr(response, "id", None),
             "face_ids": [face.id for face in response.logo_faces],
         }
 
@@ -223,7 +222,9 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.FindAndRemoveLogos(request)
 
         # Return the response - formatted as a dictionary
-        return get_standard_tracker_response(response)
+        return {
+            "success": response.tracked_command_response.command_response.success
+        }
 
     @protect_grpc
     def remove_logo(self, **kwargs):  # noqa: D102
@@ -238,7 +239,10 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.RemoveLogo(request)
 
         # Return the response - formatted as a dictionary
-        return get_standard_tracker_response(response)
+        return {
+            "success": response.tracked_command_response.command_response.success
+        }
+
 
     @protect_grpc
     def detect_helixes(self, **kwargs) -> dict:  # noqa: D102
