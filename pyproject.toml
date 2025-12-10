@@ -97,7 +97,7 @@ tests = [
 ]
 general-all = [
   "ansys-platform-instancemanagement==1.1.2",
-  "ansys-tools-common==0.3.1",
+  "ansys-tools-common==0.4.0",
   "ansys-tools-visualization-interface==0.12.1",
   "beartype==0.22.8",
   "docker==7.1.0",
@@ -119,7 +119,7 @@ general-all = [
   "vtk==9.5.2",
 ]
 tests-minimal = [
-  "pytest==9.0.0",
+  "pytest==9.0.2",
   "pytest-cov==7.0.0",
   "pytest-pyvista==0.3.2",
   "pyyaml==6.0.3",
