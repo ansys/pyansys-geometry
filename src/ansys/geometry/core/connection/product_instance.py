@@ -32,7 +32,8 @@ import socket
 import subprocess  # nosec B404
 from typing import TYPE_CHECKING
 
-from ansys.tools.path import get_available_ansys_installations, get_latest_ansys_installation
+from ansys.tools.common.cyberchannel import verify_transport_mode, verify_uds_socket
+from ansys.tools.common.path import get_available_ansys_installations, get_latest_ansys_installation
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.logger import LOG
@@ -189,9 +190,12 @@ def prepare_and_start_backend(
     client_log_level: int = logging.INFO,
     server_logs_folder: str = None,
     client_log_file: str = None,
+    transport_mode: str | None = None,
+    uds_dir: Path | str | None = None,
+    uds_id: str | None = None,
+    certs_dir: Path | str | None = None,
     specific_minimum_version: int = None,
     server_working_dir: str | Path | None = None,
-    product_version: int | None = None,  # Deprecated, use `version` instead.
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
 
@@ -249,8 +253,21 @@ def prepare_and_start_backend(
     server_working_dir : str | Path, optional
         Sets the working directory for the product instance. If nothing is defined,
         the working directory will be inherited from the parent process.
-    product_version: ``int``, optional
-        The product version to be started. Deprecated, use `version` instead.
+    transport_mode : str | None
+        Transport mode selected, by default `None` and thus it will be selected
+        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+    uds_dir : Path | str | None
+        Directory to use for Unix Domain Sockets (UDS) transport mode.
+        By default `None` and thus it will use the "~/.conn" folder.
+    uds_id : str | None
+        Optional ID to use for the UDS socket filename.
+        By default `None` and thus it will use "aposdas_socket.sock".
+        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
 
     Returns
     -------
@@ -267,16 +284,6 @@ def prepare_and_start_backend(
         a SystemError will be raised.
     """
     from ansys.geometry.core.modeler import Modeler
-
-    # Handle deprecated product_version argument
-    if product_version is not None and version is not None:
-        raise ValueError(
-            "Both 'product_version' and 'version' arguments are provided. "
-            "Please use only 'version'."
-        )
-    if product_version is not None:
-        LOG.warning("The 'product_version' argument is deprecated. Please use 'version' instead.")
-        version = product_version
 
     if os.name != "nt" and not BackendType.is_linux_service(backend_type):  # pragma: no cover
         raise RuntimeError(
@@ -510,18 +517,41 @@ def prepare_and_start_backend(
             f"Cannot connect to backend {backend_type.name} using ``prepare_and_start_backend()``"
         )
 
+    # Handling transport mode conditions
+    exe_args, transport_values = _handle_transport_mode(
+        host=host,
+        transport_mode=transport_mode,
+        uds_dir=uds_dir,
+        uds_id=uds_id,
+        certs_dir=certs_dir,
+    )
+    # HACK: This is a temporary hack to pass in the certs dir consistently.
+    # Versions 252 and before were not handling the --certs-dir argument properly,
+    # so we need to set it explicitly here as an environment variable.
+    # This can be removed in future versions.
+    #
+    # Assign environment variables as needed
+    if transport_values["certs_dir"]:
+        env_copy["ANSYS_GRPC_CERTIFICATES"] = certs_dir
+
+    # On SpaceClaim and Discovery, we need to change the "--" to "/"
+    if backend_type in (BackendType.DISCOVERY, BackendType.SPACECLAIM):
+        exe_args = [arg.replace("--", "/") for arg in exe_args]
+
     LOG.info(f"Launching ProductInstance for {backend_type.name}")
     LOG.debug(f"Args: {args}")
+    LOG.debug(f"Exe args: {exe_args}")
+    LOG.debug(f"Transport mode values: {transport_values}")
     LOG.debug(f"Environment variables: {env_copy}")
 
     instance = ProductInstance(
-        __start_program(args, env_copy, server_working_dir=server_working_dir).pid
+        __start_program(args, exe_args, env_copy, server_working_dir=server_working_dir).pid
     )
 
     # Verify that the backend is ready to accept connections
     # before returning the Modeler instance.
     LOG.info("Waiting for backend to be ready...")
-    _wait_for_backend(host, port, timeout)
+    _wait_for_backend(host, port, timeout, transport_values)
 
     return Modeler(
         host=host,
@@ -530,6 +560,10 @@ def prepare_and_start_backend(
         product_instance=instance,
         logging_level=client_log_level,
         logging_file=client_log_file,
+        transport_mode=transport_values["transport_mode"],
+        uds_id=transport_values["uds_id"],
+        uds_dir=transport_values["uds_dir"],
+        certs_dir=transport_values["certs_dir"],
     )
 
 
@@ -548,7 +582,7 @@ def get_available_port() -> int:
     return port
 
 
-def _wait_for_backend(host: str, port: int, timeout: int):
+def _wait_for_backend(host: str, port: int, timeout: int, transport_values: dict[str, str]) -> None:
     """Check if the backend is ready to accept connections.
 
     Parameters
@@ -559,18 +593,33 @@ def _wait_for_backend(host: str, port: int, timeout: int):
         The backend's port number.
     timeout : int
         The timeout in seconds.
+    transport_values : dict[str, str]
+        The transport mode values dictionary.
     """
     import time
 
     start_time = time.time()
     while time.time() - start_time < timeout:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            if s.connect_ex((host, port)) == 0:
+        if transport_values["transport_mode"] == "uds":
+            # For UDS, we just check if the socket file exists.
+            if verify_uds_socket(
+                "aposdas_socket", transport_values["uds_dir"], transport_values["uds_id"]
+            ):
                 LOG.debug("Backend is ready to accept connections.")
                 return
             else:
                 LOG.debug("Still waiting for backend to be ready... Retrying in 5 seconds.")
                 time.sleep(5)
+                continue
+        # For other transport modes, we check if the port is open.
+        else:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                if s.connect_ex((host, port)) == 0:
+                    LOG.debug("Backend is ready to accept connections.")
+                    return
+                else:
+                    LOG.debug("Still waiting for backend to be ready... Retrying in 5 seconds.")
+                    time.sleep(5)
 
     raise ConnectionError("Timeout while waiting for backend to be ready.")
 
@@ -622,6 +671,7 @@ def _manifest_path_provider(
 
 def __start_program(
     args: list[str],
+    exe_args: list[str],
     local_env: dict[str, str],
     server_working_dir: str | os.PathLike | None = None,
 ) -> subprocess.Popen:
@@ -632,6 +682,8 @@ def __start_program(
     args : list[str]
         List of arguments to be passed to the program. The first list's item shall
         be the program path.
+    exe_args : list[str]
+        Additional command line arguments to be passed to the program.
     local_env : dict[str,str]
         Environment variables to be passed to the program.
     server_working_dir : str | Path, optional
@@ -649,7 +701,7 @@ def __start_program(
     """
     # private method and controlled input by library - excluding bandit check.
     return subprocess.Popen(  # nosec B603
-        args,
+        args + exe_args,
         stdin=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
@@ -732,3 +784,130 @@ def _get_common_env(
             env_copy[BACKEND_LOG_LEVEL_VARIABLE] = "0"
 
     return env_copy
+
+
+def _handle_transport_mode(
+    host: str,
+    transport_mode: str | None = None,
+    uds_dir: Path | str | None = None,
+    uds_id: str | None = None,
+    certs_dir: Path | str | None = None,
+) -> tuple[list[str], dict[str, str], str]:
+    """Handle transport mode conditions.
+
+    Parameters
+    ----------
+    host : str
+        The backend's ip address.
+    transport_mode : str | None
+        Transport mode selected, by default `None` and thus it will be selected
+        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+    uds_dir : Path | str | None
+        Directory to use for Unix Domain Sockets (UDS) transport mode.
+        By default `None` and thus it will use the "~/.conn" folder.
+    uds_id : str | None
+        Optional ID to use for the UDS socket filename.
+        By default `None` and thus it will use "aposdas_socket.sock".
+        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
+
+    Returns
+    -------
+    tuple[str, dict[str, str]]
+
+    """
+    # Localhost addresses
+    loopback_localhosts = ("localhost", "127.0.0.1")
+
+    # Command line arguments to be passed to the backend
+    exe_args = []
+
+    # If the transport mode is selected, simply use it... with caution.
+    if transport_mode is not None:
+        verify_transport_mode(transport_mode)
+    else:
+        # Select the transport mode based on the connection criteria.
+        # 1. if host is localhost.. either wnua or uds depending on the OS
+        if host in loopback_localhosts:
+            transport_mode = "wnua" if os.name == "nt" else "uds"
+        else:
+            # 2. if host is not localhost.. always default to mtls
+            transport_mode = "mtls"
+
+        LOG.info(
+            f"Transport mode not specified. Selected '{transport_mode}'"
+            " based on connection criteria."
+        )
+
+    # If mtls is selected -- verify certs_dir
+    if transport_mode == "mtls":
+        # Share the certificates directory if needed
+        if certs_dir is None:
+            certs_dir_env = os.getenv("ANSYS_GRPC_CERTIFICATES", None)
+            if certs_dir_env is not None:
+                certs_dir = certs_dir_env
+            else:
+                certs_dir = Path.cwd() / "certs"
+
+        if not Path(certs_dir).is_dir():  # pragma: no cover
+            raise RuntimeError(
+                "Transport mode 'mtls' was selected, but the expected"
+                f" certificates directory does not exist: {certs_dir}"
+            )
+        LOG.info(f"Using certificates directory: {Path(certs_dir).resolve().as_posix()}")
+
+        # Determine args to be passed to the backend
+        exe_args.append(f"--transport-mode={transport_mode}")
+        exe_args.append(f"--certs-dir={Path(certs_dir).resolve().as_posix()}")
+    elif transport_mode == "uds":
+        # UDS is only available for localhost connections
+        if host not in loopback_localhosts:
+            raise RuntimeError("Transport mode 'uds' is only available for localhost connections.")
+        # Share the uds_dir if needed
+        if uds_dir is None:
+            uds_dir = Path.home() / ".conn"
+
+        # If the folder does not exist, create it
+        uds_dir.mkdir(parents=True, exist_ok=True)
+
+        # Verify that the UDS file doesn't already exist
+        if verify_uds_socket("aposdas_socket", uds_dir, uds_id) is True:
+            raise RuntimeError("UDS socket file already exists.")
+
+        # Determine args to be passed to the backend
+        exe_args.append(f"--transport-mode={transport_mode}")
+        exe_args.append(f"--uds-dir={Path(uds_dir).resolve().as_posix()}")
+        if uds_id is not None:
+            exe_args.append(f"--uds-id={uds_id}")
+
+    elif transport_mode == "wnua":
+        # WNUA is only available on Windows for localhost connections
+        if os.name != "nt":  # pragma: no cover
+            raise RuntimeError("Transport mode 'wnua' is only available on Windows.")
+        if host not in loopback_localhosts:
+            raise RuntimeError("Transport mode 'wnua' is only available for localhost connections.")
+
+        # Determine args to be passed to the backend
+        exe_args.append(f"--transport-mode={transport_mode}")
+
+    elif transport_mode == "insecure":
+        # Determine args to be passed to the backend
+        exe_args.append(f"--transport-mode={transport_mode}")
+
+    else:  # pragma: no cover
+        raise RuntimeError(f"Transport mode '{transport_mode}' is not recognized.")
+
+    # Store the final transport values
+    transport_values = {
+        "transport_mode": transport_mode,
+        "uds_dir": uds_dir,
+        "uds_id": uds_id,
+        "certs_dir": certs_dir,
+    }
+
+    # Return the args to be passed to the backend, and the transport values
+    return exe_args, transport_values

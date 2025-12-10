@@ -635,6 +635,8 @@ class GeometryCommands:
         pitch_x = pitch_x if isinstance(pitch_x, Distance) else Distance(pitch_x)
         if pitch_y is not None:
             pitch_y = pitch_y if isinstance(pitch_y, Distance) else Distance(pitch_y)
+        else:
+            pitch_y = Distance(0)
 
         result = self._grpc_client.services.patterns.create_linear_pattern(
             selection_ids=[object.id for object in selection],
@@ -716,7 +718,7 @@ class GeometryCommands:
     def create_circular_pattern(
         self,
         selection: Union["Face", list["Face"]],
-        circular_axis: "Edge",
+        circular_axis: Union["Edge", Line],
         circular_count: int,
         circular_angle: Angle | Quantity | Real,
         two_dimensional: bool = False,
@@ -755,6 +757,7 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
+        from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
 
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
@@ -778,16 +781,29 @@ class GeometryCommands:
                     "a two-dimensional pattern is desired."
                 )
             )
+        if self._grpc_client.backend_version < (26, 1, 0) and isinstance(circular_axis, Line):
+            raise ValueError(
+                (
+                    "Using a Line as the circular axis is only supported "
+                    "starting in Ansys release 26R1."
+                )
+            )
 
         # Convert angle and pitch to appropriate objects
         if not isinstance(circular_angle, Angle):
             circular_angle = Angle(circular_angle)
-        if linear_pitch is not None and not isinstance(linear_pitch, Distance):
-            linear_pitch = Distance(linear_pitch)
+        if linear_pitch is not None:
+            linear_pitch = (
+                linear_pitch if isinstance(linear_pitch, Distance) else Distance(linear_pitch)
+            )
+        else:
+            linear_pitch = Distance(0)
+        if isinstance(circular_axis, Edge):
+            circular_axis = circular_axis.id
 
         result = self._grpc_client.services.patterns.create_circular_pattern(
             selection_ids=[object.id for object in selection],
-            circular_axis_id=circular_axis.id,
+            circular_axis=circular_axis,
             circular_count=circular_count,
             circular_angle=circular_angle,
             two_dimensional=two_dimensional,
@@ -1478,7 +1494,7 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._grpc_client._services.assembly_controls.create_align_condition(
+        result = self._grpc_client._services.assembly_condition.create_align_condition(
             parent_id=parent_component.id,
             geometric_a_id=geometry_a.id,
             geometric_b_id=geometry_b.id,
@@ -1487,7 +1503,7 @@ class GeometryCommands:
         get_design_from_component(parent_component)._update_design_inplace()
 
         return AlignCondition(
-            result.get("moniker"),
+            result.get("id"),
             result.get("is_deleted"),
             result.get("is_enabled"),
             result.get("is_satisfied"),
@@ -1534,7 +1550,7 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._grpc_client._services.assembly_controls.create_tangent_condition(
+        result = self._grpc_client._services.assembly_condition.create_tangent_condition(
             parent_id=parent_component.id,
             geometric_a_id=geometry_a.id,
             geometric_b_id=geometry_b.id,
@@ -1543,7 +1559,7 @@ class GeometryCommands:
         get_design_from_component(parent_component)._update_design_inplace()
 
         return TangentCondition(
-            result.get("moniker"),
+            result.get("id"),
             result.get("is_deleted"),
             result.get("is_enabled"),
             result.get("is_satisfied"),
@@ -1590,7 +1606,7 @@ class GeometryCommands:
         check_type(geometry_a, (Body, Face, Edge))
         check_type(geometry_b, (Body, Face, Edge))
 
-        result = self._grpc_client.services.assembly_controls.create_orient_condition(
+        result = self._grpc_client.services.assembly_condition.create_orient_condition(
             parent_id=parent_component.id,
             geometric_a_id=geometry_a.id,
             geometric_b_id=geometry_b.id,
@@ -1599,7 +1615,7 @@ class GeometryCommands:
         get_design_from_component(parent_component)._update_design_inplace()
 
         return OrientCondition(
-            result.get("moniker"),
+            result.get("id"),
             result.get("is_deleted"),
             result.get("is_enabled"),
             result.get("is_satisfied"),

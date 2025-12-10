@@ -94,6 +94,7 @@ def test_python_integrated_script(modeler: Modeler):
 
 # SpaceClaim (.scscript)
 def test_scscript_simple_script(modeler: Modeler):
+    # Testing running a simple scscript file
     result, _ = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.scscript")
     assert len(result) == 2
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
@@ -105,6 +106,7 @@ def test_scscript_simple_script(modeler: Modeler):
 
 # Discovery (.dscript)
 def test_dscript_simple_script(modeler: Modeler):
+    # Testing running a simple dscript file
     result, _ = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.dscript")
     assert len(result) == 2
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)

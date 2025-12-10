@@ -51,6 +51,12 @@ def pytest_addoption(parser):
         help=("Enable the tracker to update the design. Options: 'yes' or 'no'. By default, 'no'."),
         choices=("yes", "no"),
     )
+    parser.addoption(
+        "--proto-version",
+        action="store",
+        default="v0",
+        help=("Specify the proto version to use for the tests. By default, 'v0'."),
+    )
 
     parser.addoption(
         "--backwards-compatibility",
@@ -68,6 +74,14 @@ def pytest_addoption(parser):
         action="store",
         default="latest",
         help=("Specify the backend version to use for the tests. By default, 'latest'."),
+    )
+
+    parser.addoption(
+        "--transport-mode",
+        action="store",
+        default="insecure",
+        help=("Specify the transport mode to use for the tests. By default, 'insecure'."),
+        choices=("insecure", "uds", "wnua", "mtls"),
     )
 
 
@@ -157,6 +171,22 @@ def use_tracker(request):
 
     # Revert the state after the test session
     pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN = False
+
+
+@pytest.fixture(scope="session")
+def proto_version(request):
+    """Fixture to determine proto files version to be used."""
+    value: str = request.config.getoption("--proto-version", default="v0")
+    return value.lower()
+
+
+@pytest.fixture(scope="session")
+def transport_mode(request):
+    """Fixture to determine transport mode to be used."""
+
+    value: str = request.config.getoption("--transport-mode", default="insecure")
+
+    return value.lower()
 
 
 @pytest.fixture

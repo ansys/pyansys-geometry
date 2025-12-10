@@ -21,11 +21,13 @@
 # SOFTWARE.
 """Module containing the unsupported service implementation for v1."""
 
+from ansys.api.discovery.v1.commands.unsupported_pb2 import SetExportIdData, SetExportIdRequest
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.unsupported import GRPCUnsupportedService
+from .conversions import build_grpc_id
 
 
 class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
@@ -38,18 +40,61 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
     """
 
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.unsupported_pb2_grpc import UnsupportedStub
+        from ansys.api.discovery.v1.commands.unsupported_pb2_grpc import UnsupportedStub
 
         self.stub = UnsupportedStub(channel)
 
     @protect_grpc
     def get_import_id_map(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.commands.unsupported_pb2 import GetImportIdMapRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetImportIdMapRequest(type=kwargs["id_type"].value)
+
+        # Call the gRPC service
+        response = self.stub.GetImportIdMap(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id_map": {k: v.id for k, v in response.id_map.items()},  # dict[str, str]
+            "id_type": kwargs["id_type"],
+        }
 
     @protect_grpc
     def set_export_ids(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetExportIdRequest(
+            export_data=[
+                SetExportIdData(
+                    moniker_id=build_grpc_id(data.moniker),
+                    id=data.value,
+                    type=data.id_type.value,
+                )
+                for data in kwargs["export_data"]
+            ]
+        )
+
+        # Call the gRPC service
+        _ = self.stub.SetExportId(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetExportIdRequest(
+            export_data=[
+                SetExportIdData(
+                    moniker_id=build_grpc_id(kwargs["export_data"].moniker),
+                    id=kwargs["export_data"].value,
+                    type=kwargs["export_data"].id_type.value,
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        _ = self.stub.SetExportId(request)
+
+        # Return the response - formatted as a dictionary
+        return {}

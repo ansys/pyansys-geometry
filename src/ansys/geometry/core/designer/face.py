@@ -39,6 +39,7 @@ from ansys.geometry.core.misc.auxiliary import (
     DEFAULT_COLOR,
     convert_color_to_hex,
     convert_opacity_to_hex,
+    get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
     ensure_design_is_active,
@@ -58,6 +59,7 @@ if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
 
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.selection import NamedSelection
 
 
 @unique
@@ -267,6 +269,7 @@ class Face:
             Vertex(
                 vertex_resp.get("id"),
                 vertex_resp.get("position"),
+                self.body,
             )
             for vertex_resp in response.get("vertices")
         ]
@@ -529,6 +532,21 @@ class Face:
         )
 
         return result.get("success")
+
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get named selections associated with the edge.
+
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections that include the edge.
+        """
+        included_ns = []
+        for ns in get_design_from_body(self.body).named_selections:
+            if any(face.id == self.id for face in ns.faces):
+                included_ns.append(ns)
+
+        return included_ns
 
     @graphics_required
     def tessellate(self, tess_options: TessellationOptions | None = None) -> "pv.PolyData":

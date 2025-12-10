@@ -22,11 +22,9 @@
 """Module containing the bodies service implementation for v0."""
 
 import grpc
-import pint
 
 import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.errors import protect_grpc
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
 from ..base.bodies import GRPCBodyService
 from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
@@ -187,17 +185,19 @@ class GRPCBodyServiceV0(GRPCBodyService):
         request = SweepWithGuideRequest(
             request_data=[
                 SweepWithGuideRequestData(
-                    name=data.name,
-                    parent=build_grpc_id(data.parent_id),
-                    plane=from_plane_to_grpc_plane(data.sketch.plane),
+                    name=sweep_item.name,
+                    parent=build_grpc_id(sweep_item.parent_id),
+                    plane=from_plane_to_grpc_plane(sweep_item.sketch.plane),
                     geometries=from_sketch_shapes_to_grpc_geometries(
-                        data.sketch.plane, data.sketch.edges, data.sketch.faces
+                        sweep_item.sketch.plane,
+                        sweep_item.sketch.edges,
+                        sweep_item.sketch.faces,
                     ),
-                    path=from_trimmed_curve_to_grpc_trimmed_curve(data.path),
-                    guide=from_trimmed_curve_to_grpc_trimmed_curve(data.guide),
-                    tight_tolerance=data.tight_tolerance,
+                    path=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item.path),
+                    guide=from_trimmed_curve_to_grpc_trimmed_curve(sweep_item.guide),
+                    tight_tolerance=sweep_item.tight_tolerance,
                 )
-                for data in kwargs["sweep_data"]
+                for sweep_item in kwargs["sweep_data"]
             ],
         )
 
@@ -213,8 +213,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
                     "master_id": body.master_id,
                     "is_surface": body.is_surface,
                 }
+                for body in resp.bodies
             ]
-            for body in resp.bodies
         }
 
     @protect_grpc
@@ -460,11 +460,13 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def get_volume(self, **kwargs) -> dict:  # noqa: D102
+        from .conversions import from_grpc_volume_to_volume
+
         # Call the gRPC service
         resp = self.stub.GetVolume(request=build_grpc_id(kwargs["id"]))
 
         # Return the response - formatted as a dictionary
-        return {"volume": pint.Quantity(resp.volume, DEFAULT_UNITS.SERVER_VOLUME)}
+        return {"volume": from_grpc_volume_to_volume(resp.volume)}
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
@@ -730,8 +732,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
         serialized_tracker_response = {}
         try:
             request = BooleanRequest(
-                body1=kwargs["target"].id,
-                tool_bodies=[other.id for other in kwargs["other"]],
+                body1=kwargs["target"],
+                tool_bodies=[other for other in kwargs["other"]],
                 method=kwargs["method"],
             )
             if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -752,8 +754,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 for body2 in kwargs["other"]:
                     tmp_resp = self.stub.Boolean(
                         request=BooleanRequest(
-                            body1=kwargs["target"].id,
-                            body2=body2.id,
+                            body1=kwargs["target"],
+                            body2=body2,
                             method=kwargs["method"],
                         )
                     ).empty_result
@@ -764,8 +766,8 @@ class GRPCBodyServiceV0(GRPCBodyService):
             elif len(kwargs["other"]) == 1:
                 resp = self.stub.Boolean(
                     request=BooleanRequest(
-                        body1=kwargs["target"].id,
-                        body2=kwargs["other"][0].id,
+                        body1=kwargs["target"],
+                        body2=kwargs["other"][0],
                         method=kwargs["method"],
                     )
                 )
@@ -793,39 +795,45 @@ class GRPCBodyServiceV0(GRPCBodyService):
         other_bodies = kwargs["other"]
         type_bool_op = kwargs["type_bool_op"]
         keep_other = kwargs["keep_other"]
+        transfer_named_selections = kwargs["transfer_named_selections"]
 
         if type_bool_op == "intersect":
-            body_ids = [build_grpc_id(body.id) for body in other_bodies]
-            target_ids = [build_grpc_id(target_body.id)]
+            body_ids = [build_grpc_id(body) for body in other_bodies]
+            target_ids = [build_grpc_id(target_body)]
             request = CombineIntersectBodiesRequest(
                 target_selection=target_ids,
                 tool_selection=body_ids,
                 subtract_from_target=False,
                 keep_cutter=keep_other,
+                transfer_named_selections=transfer_named_selections,
             )
             response = self.command_stub.CombineIntersectBodies(request)
         elif type_bool_op == "subtract":
-            body_ids = [build_grpc_id(body.id) for body in other_bodies]
-            target_ids = [build_grpc_id(target_body.id)]
+            body_ids = [build_grpc_id(body) for body in other_bodies]
+            target_ids = [build_grpc_id(target_body)]
             request = CombineIntersectBodiesRequest(
                 target_selection=target_ids,
                 tool_selection=body_ids,
                 subtract_from_target=True,
                 keep_cutter=keep_other,
+                transfer_named_selections=transfer_named_selections,
             )
             response = self.command_stub.CombineIntersectBodies(request)
         elif type_bool_op == "unite":
             bodies = [target_body]
             bodies.extend(other_bodies)
-            body_ids = [build_grpc_id(body.id) for body in bodies]
+            body_ids = [build_grpc_id(body) for body in bodies]
             request = CombineMergeBodiesRequest(target_selection=body_ids)
             response = self.command_stub.CombineMergeBodies(request)
         else:
             raise ValueError("Unknown operation requested")
         if not response.success:
             raise ValueError(
-                f"Operation of type '{type_bool_op}' failed: {kwargs['err_msg']}.\n"
-                f"Involving bodies:{target_body}, {other_bodies}"
+                (
+                    f"Operation of type '{type_bool_op}' failed: "
+                    f"{kwargs.get('err_msg', 'No error message provided.')}. "
+                    f"Involving bodies: {target_body}, {other_bodies}"
+                )
             )
 
         # Return the response - formatted as a dictionary

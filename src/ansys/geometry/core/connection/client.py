@@ -39,7 +39,6 @@ import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG, PyGeometryCustomAdapter
-from ansys.geometry.core.misc.checks import deprecated_method
 from ansys.geometry.core.typing import Real
 
 try:
@@ -48,7 +47,13 @@ except ModuleNotFoundError:  # pragma: no cover
     pass
 
 
-def _create_geometry_channel(target: str) -> grpc.Channel:
+def _create_geometry_channel(
+    target: str,
+    transport_mode: str,
+    uds_dir: Path | str | None = None,
+    uds_id: str | None = None,
+    certs_dir: Path | str | None = None,
+) -> grpc.Channel:
     """Create a Geometry service gRPC channel.
 
     Parameters
@@ -56,6 +61,20 @@ def _create_geometry_channel(target: str) -> grpc.Channel:
     target : str
         Target of the channel. This is usually a string in the form of
         ``host:port``.
+    transport_mode : str
+        Transport mode selected. Options are: "insecure", "uds", "wnua", "mtls"
+    uds_dir : Path | str | None
+        Directory to use for Unix Domain Sockets (UDS) transport mode.
+        By default `None` and thus it will use the "~/.conn" folder.
+    uds_id : str | None
+        Optional ID to use for the UDS socket filename.
+        By default `None` and thus it will use "aposdas_socket.sock".
+        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
 
     Returns
     -------
@@ -66,16 +85,38 @@ def _create_geometry_channel(target: str) -> grpc.Channel:
     -----
     Contains specific options for the Geometry service.
     """
-    return grpc.insecure_channel(
-        target,
-        options=[
-            ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
-            ("grpc.max_send_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
-        ],
+    from ansys.tools.common.cyberchannel import create_channel
+
+    # Split target into host and port
+    host, port = target.split(":")
+
+    # Add specific gRPC options for the Geometry service
+    grpc_options = [
+        ("grpc.max_receive_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
+        ("grpc.max_send_message_length", pygeom_defaults.MAX_MESSAGE_LENGTH),
+    ]
+
+    # Create the channel accordingly
+    return create_channel(
+        transport_mode=transport_mode,
+        host=host,
+        port=port,
+        uds_service="aposdas_socket",
+        uds_dir=uds_dir,
+        uds_id=uds_id,
+        certs_dir=certs_dir,
+        grpc_options=grpc_options,
     )
 
 
-def wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Channel:
+def wait_until_healthy(
+    channel: grpc.Channel | str,
+    timeout: float,
+    transport_mode: str | None = None,
+    uds_dir: Path | str | None = None,
+    uds_id: str | None = None,
+    certs_dir: Path | str | None = None,
+) -> grpc.Channel:
     """Wait until a channel is healthy before returning.
 
     Parameters
@@ -93,6 +134,21 @@ def wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Chan
           is made with the remaining time.
         * If the total elapsed time exceeds the value for the ``timeout`` parameter,
           a ``TimeoutError`` is raised.
+    transport_mode : str | None
+        Transport mode selected. Needed if channel is a string.
+        Options are: "insecure", "uds", "wnua", "mtls".
+    uds_dir : Path | str | None
+        Directory to use for Unix Domain Sockets (UDS) transport mode.
+        By default `None` and thus it will use the "~/.conn" folder.
+    uds_id : str | None
+        Optional ID to use for the UDS socket filename.
+        By default `None` and thus it will use "aposdas_socket.sock".
+        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
 
     Returns
     -------
@@ -108,14 +164,37 @@ def wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Chan
     t_max = time.time() + timeout
     t_out = 0.1
 
-    # If the channel is a string, create a channel using the default insecure channel
+    # If the channel is a string, create a channel using the specified transport mode
     channel_creation_required = True if isinstance(channel, str) else False
     tmp_channel = None
+
+    # If transport mode is not specified and a channel creation is required, raise an error
+    if channel_creation_required:
+        if transport_mode is None:
+            raise ValueError(
+                "Transport mode must be specified."
+                " Use 'transport_mode' parameter with one of the possible options."
+                " Options are: 'insecure', 'uds', 'wnua', 'mtls'. See the following"
+                " documentation for more details:"
+                " https://geometry.docs.pyansys.com/version/stable/user_guide/connection.html#securing-connections"
+            )
+        else:
+            from ansys.tools.common.cyberchannel import verify_transport_mode
+
+            verify_transport_mode(transport_mode)
 
     while time.time() < t_max:
         try:
             tmp_channel = (
-                _create_geometry_channel(channel) if channel_creation_required else channel
+                _create_geometry_channel(
+                    channel,
+                    transport_mode=transport_mode,
+                    uds_dir=uds_dir,
+                    uds_id=uds_id,
+                    certs_dir=certs_dir,
+                )
+                if channel_creation_required
+                else channel
             )
             health_stub = health_pb2_grpc.HealthStub(tmp_channel)
             request = health_pb2.HealthCheckRequest(service="")
@@ -176,8 +255,24 @@ class GrpcClient:
         Logging level to apply to the client.
     logging_file : str or Path, default: None
         File to output the log to, if requested.
-    proto_version: str or None, default: None
-        Version of the gRPC protocol to use. If ``None``, the latest version is used.
+    proto_version : str | None, default: None
+        Protocol version to use for communication with the server. If None, v0 is used.
+        Available versions are "v0", "v1", etc.
+    transport_mode : str | None
+        Transport mode selected. Needed if ``channel`` is not provided.
+        Options are: "insecure", "uds", "wnua", "mtls".
+    uds_dir : Path | str | None
+        Directory to use for Unix Domain Sockets (UDS) transport mode.
+        By default `None` and thus it will use the "~/.conn" folder.
+    uds_id : str | None
+        Optional ID to use for the UDS socket filename.
+        By default `None` and thus it will use "aposdas_socket.sock".
+        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
     """
 
     @check_input_types
@@ -193,6 +288,10 @@ class GrpcClient:
         logging_level: int = logging.INFO,
         logging_file: Path | str | None = None,
         proto_version: str | None = None,
+        transport_mode: str | None = None,
+        uds_dir: Path | str | None = None,
+        uds_id: str | None = None,
+        certs_dir: Path | str | None = None,
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
@@ -207,7 +306,19 @@ class GrpcClient:
             self._channel = wait_until_healthy(channel, self._grpc_health_timeout)
         else:
             self._target = f"{host}:{port}"
-            self._channel = wait_until_healthy(self._target, self._grpc_health_timeout)
+            self._channel = wait_until_healthy(
+                self._target,
+                self._grpc_health_timeout,
+                transport_mode=transport_mode,
+                uds_dir=uds_dir,
+                uds_id=uds_id,
+                certs_dir=certs_dir,
+            )
+
+            # HACK: If we are using UDS, the target needs to be updated to reflect
+            # the actual socket file being used.
+            if transport_mode == "uds":
+                self._target = self._channel._channel.target().decode()
 
         # Initialize the gRPC services
         self._services = _GRPCServices(self._channel, version=proto_version)
@@ -259,22 +370,6 @@ class GrpcClient:
             Backend version.
         """
         return self._backend_version
-
-    @property
-    @deprecated_method(
-        info="Multiple designs for the same service are no longer supported.",
-        version="0.9.0",
-        remove="0.11.0",
-    )
-    def multiple_designs_allowed(self) -> bool:
-        """Flag indicating whether multiple designs are allowed.
-
-        Notes
-        -----
-        Currently, only one design is allowed per service. This method will always
-        return ``False``.
-        """
-        return False
 
     @property
     def channel(self) -> grpc.Channel:

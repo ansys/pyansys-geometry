@@ -450,6 +450,26 @@ def test_circular_pattern(modeler: Modeler):
         )
 
 
+def test_circular_pattern_about_line(modeler: Modeler):
+    """Test circular pattern about line."""
+    design = modeler.create_design("d1")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 20, 20), 20)
+
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-5, -5]), 1), 20)
+    base.subtract(cutout)
+
+    assert base.volume.m == pytest.approx(Quantity(7937.1681, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 7
+
+    # full two-dimensional test - creates 3 rings around the center
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+    success = modeler.geometry_commands.create_circular_pattern(base.faces[-1], axis, 8, np.pi * 2)
+
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(7497.3452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 14
+
+
 def test_fill_pattern(modeler: Modeler):
     """Test fill pattern."""
     design = modeler.create_design("d1")

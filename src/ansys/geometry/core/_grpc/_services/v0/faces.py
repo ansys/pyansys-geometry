@@ -35,6 +35,7 @@ from ..base.faces import GRPCFacesService
 from .conversions import (
     build_grpc_id,
     from_grpc_curve_to_curve,
+    from_grpc_direction_to_unit_vector,
     from_grpc_point_to_point3d,
     from_grpc_surface_to_surface,
     from_line_to_grpc_line,
@@ -212,8 +213,6 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
     def get_normal(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.faces_pb2 import GetNormalRequest
 
-        from ansys.geometry.core.math.vector import UnitVector3D
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = GetNormalRequest(
             id=kwargs["id"],
@@ -226,9 +225,7 @@ class GRPCFacesServiceV0(GRPCFacesService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {
-            "normal": UnitVector3D(
-                [response.direction.x, response.direction.y, response.direction.z]
-            ),
+            "normal": from_grpc_direction_to_unit_vector(response.direction),
         }
 
     @protect_grpc

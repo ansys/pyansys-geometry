@@ -19,20 +19,20 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the DBU Application service implementation for v0."""
+"""Module containing the Commands Script service implementation for v1."""
 
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.dbuapplication import GRPCDbuApplicationService
+from ..base.commands_script import GRPCCommandsScriptService
 
 
-class GRPCDbuApplicationServiceV0(GRPCDbuApplicationService):
-    """DBU Application service for gRPC communication with the Geometry server.
+class GRPCCommandsScriptServiceV1(GRPCCommandsScriptService):  # pragma: no cover
+    """Commands Script service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
-    DBU Application service. It is specifically designed for the v0 version
+    Commands Script service. It is specifically designed for the v1 version
     of the Geometry API.
 
     Parameters
@@ -43,13 +43,13 @@ class GRPCDbuApplicationServiceV0(GRPCDbuApplicationService):
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.dbu.v0.dbuapplication_pb2_grpc import DbuApplicationStub
+        from ansys.api.discovery.v1.commands.script_pb2_grpc import ScriptStub
 
-        self.stub = DbuApplicationStub(channel)
+        self.stub = ScriptStub(channel)
 
     @protect_grpc
-    def run_script(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.dbu.v0.dbuapplication_pb2 import RunScriptFileRequest
+    def run_script_file(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commands.script_pb2 import RunScriptFileRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RunScriptFileRequest(
@@ -63,7 +63,7 @@ class GRPCDbuApplicationServiceV0(GRPCDbuApplicationService):
 
         # Return the response - formatted as a dictionary
         return {
-            "success": response.success,
-            "message": response.message,
+            "success": response.command_response.success,
+            "message": response.command_response.message,
             "values": None if not response.values else dict(response.values),
         }

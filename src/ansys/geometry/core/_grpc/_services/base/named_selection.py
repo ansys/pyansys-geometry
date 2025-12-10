@@ -53,3 +53,8 @@ class GRPCNamedSelectionService(ABC):  # pragma: no cover
     def delete_named_selection(self, **kwargs) -> dict:
         """Delete a named selection by id."""
         pass
+
+    @abstractmethod
+    def rename_named_selection(self, **kwargs) -> dict:
+        """Rename a named selection by id."""
+        pass

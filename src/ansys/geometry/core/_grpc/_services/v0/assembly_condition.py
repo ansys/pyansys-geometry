@@ -19,21 +19,21 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Module containing the assembly controls service implementation for v0."""
+"""Module containing the assembly condition service implementation for v0."""
 
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.assembly_controls import GRPCAssemblyControlsService
+from ..base.assembly_condition import GRPCAssemblyConditionService
 from .conversions import build_grpc_id
 
 
-class GRPCAssemblyControlsServiceV0(GRPCAssemblyControlsService):
-    """Assembly controls service for gRPC communication with the Geometry server.
+class GRPCAssemblyConditionServiceV0(GRPCAssemblyConditionService):
+    """Assembly condition service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
-    assembly controls service. It is specifically designed for the v0 version of the
+    assembly condition service. It is specifically designed for the v0 version of the
     Geometry API.
 
     Parameters
@@ -66,7 +66,7 @@ class GRPCAssemblyControlsServiceV0(GRPCAssemblyControlsService):
 
         # Return the response - formatted as a dictionary
         return {
-            "moniker": resp.condition.moniker,
+            "id": resp.condition.moniker,
             "is_deleted": resp.condition.is_deleted,
             "is_enabled": resp.condition.is_enabled,
             "is_satisfied": resp.condition.is_satisfied,
@@ -93,7 +93,7 @@ class GRPCAssemblyControlsServiceV0(GRPCAssemblyControlsService):
 
         # Return the response - formatted as a dictionary
         return {
-            "moniker": resp.condition.moniker,
+            "id": resp.condition.moniker,
             "is_deleted": resp.condition.is_deleted,
             "is_enabled": resp.condition.is_enabled,
             "is_satisfied": resp.condition.is_satisfied,
@@ -120,7 +120,7 @@ class GRPCAssemblyControlsServiceV0(GRPCAssemblyControlsService):
 
         # Return the response - formatted as a dictionary
         return {
-            "moniker": resp.condition.moniker,
+            "id": resp.condition.moniker,
             "is_deleted": resp.condition.is_deleted,
             "is_enabled": resp.condition.is_enabled,
             "is_satisfied": resp.condition.is_satisfied,

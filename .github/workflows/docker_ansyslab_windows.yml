@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  packages: read
+  packages: read # Needs access to the Geometry docker image
 
 env:
   WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:core-windows-latest

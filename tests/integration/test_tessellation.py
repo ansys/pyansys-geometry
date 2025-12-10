@@ -74,33 +74,59 @@ def test_body_tessellate(modeler: Modeler):
     blocks_2 = body_2.tessellate()
     assert "MultiBlock" in str(blocks_2)
     assert blocks_2.n_blocks == 3
-    if not BackendType.is_core_service(modeler.client.backend_type):
-        assert blocks_2.bounds == pytest.approx(
-            [0.019999999999999997, 0.04, 0.020151922469877917, 0.03984807753012208, 0.0, 0.03],
-            rel=1e-6,
-            abs=1e-8,
-        )
+    if modeler._grpc_client.backend_version < (26, 1, 0):
+        if not BackendType.is_core_service(modeler.client.backend_type):
+            assert blocks_2.bounds == pytest.approx(
+                [0.019999999999999997, 0.04, 0.020151922469877917, 0.03984807753012208, 0.0, 0.03],
+                rel=1e-6,
+                abs=1e-8,
+            )
+        else:
+            assert blocks_2.bounds == pytest.approx(
+                [0.019999999999999997, 0.04, 0.020151922469877917, 0.03984807753012208, 0.0, 0.03],
+                rel=1e-6,
+                abs=1e-8,
+            )
     else:
-        assert blocks_2.bounds == pytest.approx(
-            [0.019999999999999997, 0.04, 0.020151922469877917, 0.03984807753012208, 0.0, 0.03],
-            rel=1e-6,
-            abs=1e-8,
-        )
+        if not BackendType.is_core_service(modeler.client.backend_type):
+            assert blocks_2.bounds == pytest.approx(
+                [0.019999999999999997, 0.04, 0.02000513783799312, 0.03999486216200688, 0.0, 0.03],
+                rel=1e-6,
+                abs=1e-8,
+            )
+        else:
+            assert blocks_2.bounds == pytest.approx(
+                [0.019999999999999997, 0.04, 0.02000513783799312, 0.03999486216200688, 0.0, 0.03],
+                rel=1e-6,
+                abs=1e-8,
+            )
 
     assert blocks_2.center == pytest.approx([0.03, 0.03, 0.015], rel=1e-6, abs=1e-8)
 
     # Tessellate the body merging the individual faces
     mesh_2 = body_2.tessellate(merge=True)
-    if not BackendType.is_core_service(modeler.client.backend_type):
-        assert "PolyData" in str(mesh_2)
-        assert mesh_2.n_cells == 72
-        assert mesh_2.n_points == 76
-        assert mesh_2.n_arrays == 0
+    if modeler._grpc_client.backend_version < (26, 1, 0):
+        if not BackendType.is_core_service(modeler.client.backend_type):
+            assert "PolyData" in str(mesh_2)
+            assert mesh_2.n_cells == 72
+            assert mesh_2.n_points == 76
+            assert mesh_2.n_arrays == 0
+        else:
+            assert "PolyData" in str(mesh_2)
+            assert mesh_2.n_cells == 72
+            assert mesh_2.n_points == 76
+            assert mesh_2.n_arrays == 0
     else:
-        assert "PolyData" in str(mesh_2)
-        assert mesh_2.n_cells == 72
-        assert mesh_2.n_points == 76
-        assert mesh_2.n_arrays == 0
+        if not BackendType.is_core_service(modeler.client.backend_type):
+            assert "PolyData" in str(mesh_2)
+            assert mesh_2.n_cells == 392
+            assert mesh_2.n_points == 396
+            assert mesh_2.n_arrays == 0
+        else:
+            assert "PolyData" in str(mesh_2)
+            assert mesh_2.n_cells == 392
+            assert mesh_2.n_points == 396
+            assert mesh_2.n_arrays == 0
 
     # Make sure instance body tessellation is the same as original
     comp_1_instance = design.add_component("Component_1_Instance", comp_1)
@@ -198,24 +224,44 @@ def test_component_tessellate(modeler: Modeler):
     mesh = comp.tessellate()
     comp.plot()
     assert "PolyData" in str(mesh)
-    if not BackendType.is_core_service(modeler.client.backend_type):
-        assert mesh.n_cells == 3280
-        assert mesh.n_arrays == 0
-        assert mesh.n_points == 3300
-        assert mesh.bounds == pytest.approx(
-            [-25.0, 25.0, -24.999251562526105, 24.999251562526105, 0.0, 20.0],
-            rel=1e-6,
-            abs=1e-8,
-        )
+    if modeler._grpc_client.backend_version < (26, 1, 0):
+        if not BackendType.is_core_service(modeler.client.backend_type):
+            assert mesh.n_cells == 3280
+            assert mesh.n_arrays == 0
+            assert mesh.n_points == 3300
+            assert mesh.bounds == pytest.approx(
+                [-25.0, 25.0, -24.999251562526105, 24.999251562526105, 0.0, 20.0],
+                rel=1e-6,
+                abs=1e-8,
+            )
+        else:
+            assert mesh.n_cells == 3280
+            assert mesh.n_arrays == 0
+            assert mesh.n_points == 3300
+            assert mesh.bounds == pytest.approx(
+                [-25.0, 25.0, -24.999251562526105, 24.999251562526105, 0.0, 20.0],
+                rel=1e-6,
+                abs=1e-8,
+            )
     else:
-        assert mesh.n_cells == 3280
-        assert mesh.n_arrays == 0
-        assert mesh.n_points == 3300
-        assert mesh.bounds == pytest.approx(
-            [-25.0, 25.0, -24.999251562526105, 24.999251562526105, 0.0, 20.0],
-            rel=1e-6,
-            abs=1e-8,
-        )
+        if not BackendType.is_core_service(modeler.client.backend_type):
+            assert mesh.n_cells == 976
+            assert mesh.n_arrays == 0
+            assert mesh.n_points == 996
+            assert mesh.bounds == pytest.approx(
+                [-25.0, 25.0, -24.991140278086316, 24.991140278086316, 0.0, 20.0],
+                rel=1e-6,
+                abs=1e-8,
+            )
+        else:
+            assert mesh.n_cells == 976
+            assert mesh.n_arrays == 0
+            assert mesh.n_points == 996
+            assert mesh.bounds == pytest.approx(
+                [-25.0, 25.0, -24.991140278086316, 24.991140278086316, 0.0, 20.0],
+                rel=1e-6,
+                abs=1e-8,
+            )
 
 
 def test_get_design_tessellation(modeler: Modeler):

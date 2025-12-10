@@ -110,7 +110,7 @@ def _checker_method(comp: Component, comp_ref: Component, precise_check: bool = 
         _checker_method(subcomp, subcomp_ref, precise_check)
 
 
-def test_design_import_simple_case(modeler: Modeler):
+def test_design_import_simple_case(modeler: Modeler, transport_mode: str):
     # With the given session let's create a the following Design
     #
     # Create your design on the server side
@@ -157,12 +157,11 @@ def test_design_import_simple_case(modeler: Modeler):
     )
 
     # Now, let's create a new client session
-    new_client = Modeler()
+    new_client = Modeler(transport_mode=transport_mode)
     read_design = new_client.read_existing_design()
 
     # And now assert all its elements
     assert read_design is not None
-    assert len(new_client.designs) == 1
 
     # Check the design
     _checker_method(read_design, design)

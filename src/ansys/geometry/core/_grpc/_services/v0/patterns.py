@@ -30,7 +30,7 @@ from ..base.conversions import (
     from_measurement_to_server_length,
 )
 from ..base.patterns import GRPCPatternsService
-from .conversions import build_grpc_id, from_unit_vector_to_grpc_direction
+from .conversions import build_grpc_id, from_line_to_grpc_line, from_unit_vector_to_grpc_direction
 
 
 class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
@@ -64,9 +64,7 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
             pitch_x=from_measurement_to_server_length(kwargs["pitch_x"]),
             two_dimensional=kwargs["two_dimensional"],
             count_y=kwargs["count_y"],
-            pitch_y=(
-                from_measurement_to_server_length(kwargs["pitch_y"]) if kwargs["pitch_y"] else None
-            ),
+            pitch_y=from_measurement_to_server_length(kwargs["pitch_y"]),
         )
 
         # Call the gRPC service
@@ -104,6 +102,8 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
     def create_circular_pattern(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import CreateCircularPatternRequest
 
+        from ansys.geometry.core.shapes.curves.line import Line
+
         # Create direction if not None
         radial_direction = (
             from_unit_vector_to_grpc_direction(kwargs["radial_direction"])
@@ -111,23 +111,24 @@ class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
             else None
         )
 
-        # Create linear pitch if not None
-        linear_pitch = (
-            from_measurement_to_server_length(kwargs["linear_pitch"])
-            if kwargs["linear_pitch"]
-            else None
-        )
+        # Create line if axis is a line object
+        circular_axis, axis = None, None
+        if isinstance(kwargs["circular_axis"], Line):
+            axis = from_line_to_grpc_line(kwargs["circular_axis"])
+        else:
+            circular_axis = build_grpc_id(kwargs["circular_axis"])
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateCircularPatternRequest(
             selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
-            circular_axis=build_grpc_id(kwargs["circular_axis_id"]),
             circular_count=kwargs["circular_count"],
+            circular_axis=circular_axis,
             circular_angle=from_measurement_to_server_angle(kwargs["circular_angle"]),
             two_dimensional=kwargs["two_dimensional"],
             linear_count=kwargs["linear_count"],
-            linear_pitch=linear_pitch,
+            linear_pitch=from_measurement_to_server_length(kwargs["linear_pitch"]),
             radial_direction=radial_direction,
+            axis=axis,
         )
 
         # Call the gRPC service

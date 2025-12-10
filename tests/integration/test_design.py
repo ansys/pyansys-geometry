@@ -31,6 +31,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
@@ -86,18 +87,31 @@ from .conftest import FILES_DIR, IMPORT_FILES_DIR
 
 def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Validating error messages when opening up files"""
-    fake_file_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-    with pytest.raises(ValueError, match="Could not find file:"):
-        modeler._upload_file(fake_file_path)
-    file = tmp_path_factory.mktemp("test_design")
-    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-        modeler._upload_file(file)
-    fake_file_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-    with pytest.raises(ValueError, match="Could not find file:"):
-        modeler._upload_file_stream(fake_file_path)
-    file = tmp_path_factory.mktemp("test_design")
-    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-        modeler._upload_file_stream(file)
+    # If the protos version is v1 or higher, uploading files is not supported
+    if modeler.client.services.version != GeometryApiProtos.V0:
+        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+        with pytest.raises(
+            GeometryRuntimeError,
+            match="The '_upload_file' method is not supported in protos v1 and beyond",
+        ):
+            modeler._upload_file(fake_path)
+        with pytest.raises(
+            GeometryRuntimeError,
+            match="The '_upload_file_stream' method is not supported with protos v1 and beyond",
+        ):
+            modeler._upload_file_stream(fake_path)
+    else:
+        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+        temp_dir = tmp_path_factory.mktemp("test_design")
+
+        with pytest.raises(ValueError, match="Could not find file:"):
+            modeler._upload_file(fake_path)
+        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+            modeler._upload_file(temp_dir)
+        with pytest.raises(ValueError, match="Could not find file:"):
+            modeler._upload_file_stream(fake_path)
+        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+            modeler._upload_file_stream(temp_dir)
 
 
 def test_modeler_open_files(modeler: Modeler):
@@ -594,6 +608,39 @@ def test_named_selections(modeler: Modeler):
     # Try deleting a named selection by name
     design.delete_named_selection("OnlyCircle")
     assert len(design.named_selections) == 3
+
+
+def test_rename_named_selection(modeler: Modeler):
+    """Test for renaming and verifying a ``NamedSelection``."""
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelection_Test")
+
+    # Create 2 Sketch objects and draw a circle and a polygon (all client side)
+    sketch_1 = Sketch()
+    sketch_1.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch_2 = Sketch()
+    sketch_2.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
+
+    # Build 2 independent components and bodies
+    circle_comp = design.add_component("CircleComponent")
+    body_circle_comp = circle_comp.extrude_sketch("Circle", sketch_1, Quantity(50, UNITS.mm))
+    polygon_comp = design.add_component("PolygonComponent")
+    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
+
+    # Create the NamedSelection
+    only_circle = design.create_named_selection("OnlyCircle", bodies=[body_circle_comp])
+    design.create_named_selection("OnlyPolygon", bodies=[body_polygon_comp])
+    design.create_named_selection("CircleAndPolygon", bodies=[body_circle_comp, body_polygon_comp])
+
+    # Check that the named selections are available
+    assert len(design.named_selections) == 3
+
+    # Rename the only circle NS
+    only_circle.name = "JustCircle"
+    assert only_circle.name == "JustCircle"
+    assert design.named_selections[0].name == "JustCircle"
+    assert design.named_selections[1].name == "OnlyPolygon"
+    assert design.named_selections[2].name == "CircleAndPolygon"
 
 
 def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
@@ -1275,11 +1322,15 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     assert file.exists()
 
     # Upload file
-    path_on_server = modeler._upload_file(file)
-    assert path_on_server is not None
+    if modeler.client.services.version != GeometryApiProtos.V0:
+        with pytest.raises(match="The '_upload_file' method is not supported in protos v1"):
+            modeler._upload_file(file)
+    else:
+        path_on_server = modeler._upload_file(file)
+        assert path_on_server is not None
 
 
-def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory):
+def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_mode: str):
     """Test uploading a file to the server."""
     # Define a new maximum message length
     import ansys.geometry.core.connection.defaults as pygeom_defaults
@@ -1300,8 +1351,15 @@ def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory):
         # Upload file - necessary to import the Modeler class and create an instance
         from ansys.geometry.core import Modeler
 
-        modeler = Modeler()
-        path_on_server = modeler._upload_file_stream(file)
+        modeler = Modeler(transport_mode=transport_mode)
+        if modeler.client.services.version == GeometryApiProtos.V0:
+            path_on_server = modeler._upload_file_stream(file)
+        else:
+            with pytest.raises(
+                GeometryRuntimeError,
+                match="The '_upload_file_stream' method is not supported with backend v1 and beyond.",  # noqa: E501
+            ):
+                modeler._upload_file_stream(file)
         assert path_on_server is not None
     finally:
         pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
@@ -3807,8 +3865,6 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     assert design.bodies[1].vertices[0].y.magnitude == pytest.approx(-0.00288675, 1e-6, 1e-6)
     assert design.bodies[1].vertices[0].z.magnitude == pytest.approx(0.01, 1e-6, 1e-6)
 
-    print(design.bodies[1].vertices[0].id == "S,~sEbf61ff70-bc08-477a-8a5e-a7c7dc955f40.853__")
-
     assert design.bodies[0].vertices == []
     assert design.bodies[1].vertices[1].position == pytest.approx(
         Point3D([0.033, -0.0057735, 0.01]), 1e-6, 1e-6
@@ -4028,6 +4084,9 @@ def test_legacy_export_download(
     modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, use_grpc_client_old_backend: Modeler
 ):
     # Test is meant to add test coverage for using an old backend to export and download
+    if modeler.client.services.version != GeometryApiProtos.V0:
+        pytest.skip("Test only applies to v0 backend")
+
     # Creating the directory and file to export
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")
@@ -4091,12 +4150,190 @@ def test_combine_merge(modeler: Modeler):
     assert box1.volume.m == pytest.approx(Quantity(2.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
 
-def test_design_update_with_tracker_response(modeler: Modeler):
-    design = modeler.open_file(FILES_DIR / "hollowCylinder1.dsco")
+def test_combine_subtract_transfer_ns(modeler: Modeler):
+    input_file = Path(FILES_DIR, "sub_valid.scdocx")
+    design = modeler.open_file(input_file)
 
-    assert len(design.components) == 1
-    body = design.components[0].bodies[0]
-    inside_faces = [body.faces[0]]
-    sealing_faces = [body.faces[1], body.faces[2]]
-    modeler.prepare_tools.extract_volume_from_faces(sealing_faces, inside_faces)
-    assert len(design.components) == 2
+    inside = design.bodies[0]
+    outside = design.bodies[1]
+
+    assert len(design.named_selections) == 2
+    outside._combine_subtract(inside)
+
+    assert len(design.bodies) == 1
+    assert len(design.named_selections) == 2
+
+
+def test_faces_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with faces."""
+    design = modeler.create_design("faces_named_selections")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # create named selection from faces
+    face_ns1 = [box.faces[0], box.faces[1]]
+    face_ns2 = [box.faces[2], box.faces[3]]
+    design.create_named_selection("face_ns_1", faces=face_ns1)
+    design.create_named_selection("face_ns_2", faces=face_ns2)
+
+    # Check that faces return the correct named selections
+    for face in box.faces:
+        ns_list = face.get_named_selections()
+        if any(f.id == face.id for f in face_ns1):
+            assert len(ns_list) == 1
+            assert any(ns.name == "face_ns_1" for ns in ns_list)
+        elif any(f.id == face.id for f in face_ns2):
+            assert len(ns_list) == 1
+            assert any(ns.name == "face_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this face
+
+
+def test_edges_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with edges."""
+    design = modeler.create_design("edges_named_selections")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # create named selection from edges
+    edge_ns1 = [box.edges[0], box.edges[1]]
+    edge_ns2 = [box.edges[2], box.edges[3]]
+    design.create_named_selection("edge_ns_1", edges=edge_ns1)
+    design.create_named_selection("edge_ns_2", edges=edge_ns2)
+
+    # Check that edges return the correct named selections
+    for edge in box.edges:
+        ns_list = edge.get_named_selections()
+        if any(e.id == edge.id for e in edge_ns1):
+            assert len(ns_list) == 1
+            assert any(ns.name == "edge_ns_1" for ns in ns_list)
+        elif any(e.id == edge.id for e in edge_ns2):
+            assert len(ns_list) == 1
+            assert any(ns.name == "edge_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this edge
+
+
+def test_body_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with bodies."""
+    design = modeler.create_design("body_named_selections")
+    box1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    box2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 2]), 1, 1), 1)
+
+    # create named selection from bodies
+    design.create_named_selection("body_ns_1", bodies=[box1])
+    design.create_named_selection("body_ns_2", bodies=[box2])
+
+    # Check that bodies return the correct named selections
+    for body in design.bodies:
+        ns_list = body.get_named_selections()
+        if body.id == box1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "body_ns_1" for ns in ns_list)
+        elif body.id == box2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "body_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this body
+
+
+def test_beams_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with beams."""
+    design = modeler.create_design("beam_named_selections")
+    profile = design.add_beam_circular_profile("profile1", Distance(0.1, UNITS.m))
+    beam1 = design.create_beam(Point3D([0, 0, 0]), Point3D([1, 0, 0]), profile)
+    beam2 = design.create_beam(Point3D([0, 1, 0]), Point3D([1, 1, 0]), profile)
+
+    # create named selection from beams
+    design.create_named_selection("beam_ns_1", beams=[beam1])
+    design.create_named_selection("beam_ns_2", beams=[beam2])
+
+    # Check that beams return the correct named selections
+    for beam in design.beams:
+        ns_list = beam.get_named_selections()
+        if beam.id == beam1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "beam_ns_1" for ns in ns_list)
+        elif beam.id == beam2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "beam_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this beam
+
+
+def test_vertices_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with vertices."""
+    design = modeler.create_design("vertex_named_selections")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # create named selection from vertices
+    vertex_ns1 = [box.vertices[0], box.vertices[1]]
+    vertex_ns2 = [box.vertices[2], box.vertices[3]]
+    vertex_ns3 = [box.vertices[4], box.vertices[5]]
+    vertex_ns4 = [box.vertices[4], box.vertices[5]]
+
+    design.create_named_selection("vertex_ns_1", vertices=vertex_ns1)
+    design.create_named_selection("vertex_ns_2", vertices=vertex_ns2)
+    design.create_named_selection("vertex_ns_3", vertices=vertex_ns3)
+    design.create_named_selection("vertex_ns_4", vertices=vertex_ns4)
+
+    # Check that vertices return the correct named selections
+    for vertex in box.vertices:
+        ns_list = vertex.get_named_selections()
+        if any(v.id == vertex.id for v in vertex_ns1):
+            assert len(ns_list) == 1
+            assert any(ns.name == "vertex_ns_1" for ns in ns_list)
+        elif any(v.id == vertex.id for v in vertex_ns2):
+            assert len(ns_list) == 1
+            assert any(ns.name == "vertex_ns_2" for ns in ns_list)
+        elif any(v.id == vertex.id for v in vertex_ns3):
+            assert len(ns_list) == 2
+            assert any(ns.name == "vertex_ns_3" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this vertex
+
+
+def test_components_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with components."""
+    design = modeler.create_design("component_named_selections")
+    comp1 = design.add_component("Component1")
+    comp2 = design.add_component("Component2")
+    design.add_component("Component3")
+
+    # create named selection from components
+    design.create_named_selection("component_ns_1", components=[comp1])
+    design.create_named_selection("component_ns_2", components=[comp2])
+
+    # Check that components return the correct named selections
+    for component in design.components:
+        ns_list = component.get_named_selections()
+        if component.id == comp1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "component_ns_1" for ns in ns_list)
+        elif component.id == comp2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "component_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this component
+
+
+def test_design_point_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with design points."""
+    design = modeler.create_design("design_point_named_selections")
+    dp1 = design.add_design_point("DesignPoint1", Point3D([0, 0, 0]))
+    dp2 = design.add_design_point("DesignPoint2", Point3D([1, 1, 1]))
+    design.add_design_point("DesignPoint3", Point3D([2, 2, 2]))
+
+    # create named selection from design points
+    design.create_named_selection("design_point_ns_1", design_points=[dp1])
+    design.create_named_selection("design_point_ns_2", design_points=[dp2])
+
+    # Check that design points return the correct named selections
+    for design_point in design.design_points:
+        ns_list = design_point.get_named_selections()
+        if design_point.id == dp1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "design_point_ns_1" for ns in ns_list)
+        elif design_point.id == dp2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "design_point_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this design point

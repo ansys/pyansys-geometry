@@ -26,13 +26,13 @@ SOFTWARE.
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| <= 0.7  | :x:                |
-| 0.8.x   | :white_check_mark: |
-| 0.9.x   | :white_check_mark: |
-| 0.10.x  | :white_check_mark: |
-| dev     | :white_check_mark: |
+| Version    | Supported          |
+| ---------- | ------------------ |
+| <= 0.11    | :x:                |
+| 0.12.x     | :white_check_mark: |
+| 0.13.x     | :white_check_mark: |
+| 0.14.x     | :white_check_mark: |
+| 0.15.dev0  | :white_check_mark: |
 
 ## Reporting a vulnerability
 

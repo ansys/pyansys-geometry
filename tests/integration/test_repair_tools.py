@@ -48,6 +48,14 @@ def test_find_split_edges(modeler: Modeler):
     problem_areas = modeler.repair_tools.find_split_edges(design.bodies, 25, 150)
     assert len(problem_areas) == 3
 
+    # Try with default values
+    problem_areas = modeler.repair_tools.find_split_edges(design.bodies)
+    assert len(problem_areas) == 3
+
+    # Try with values that yield no results
+    problem_areas = modeler.repair_tools.find_split_edges(design.bodies, 0, 0)
+    assert len(problem_areas) == 0
+
 
 def test_find_split_edge_id(modeler: Modeler):
     """Test whether problem area has the id."""
