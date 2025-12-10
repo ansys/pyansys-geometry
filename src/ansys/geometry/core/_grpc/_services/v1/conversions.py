@@ -1729,6 +1729,7 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
         ],
     }
 
+
 def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:
     """Serialize a RepairToolResponse object into a dictionary.
 

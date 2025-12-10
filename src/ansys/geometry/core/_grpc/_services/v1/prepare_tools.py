@@ -222,9 +222,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.FindAndRemoveLogos(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.tracked_command_response.command_response.success
-        }
+        return {"success": response.tracked_command_response.command_response.success}
 
     @protect_grpc
     def remove_logo(self, **kwargs):  # noqa: D102
@@ -239,10 +237,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.RemoveLogo(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "success": response.tracked_command_response.command_response.success
-        }
-
+        return {"success": response.tracked_command_response.command_response.success}
 
     @protect_grpc
     def detect_helixes(self, **kwargs) -> dict:  # noqa: D102
