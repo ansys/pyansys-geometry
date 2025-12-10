@@ -1778,30 +1778,29 @@ def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:
         The gRPC RepairToolResponse object to serialize.
         A dictionary representation of the RepairToolResponse object.
     """
-    found = hasattr(response.result, "found")
     return {
-        "success": response.result.tracked_command_response.command_response.success,
-        "found": getattr(response.result, "found", -1),
-        "repaired": getattr(response.result, "repaired", -1),
+        "success": response.tracked_command_response.command_response.success,
+        "found": getattr(response, "found", -1),
+        "repaired": getattr(response, "repaired", -1),
         "complete_command_response": serialize_tracked_command_response(
-            response.result.tracked_command_response
+            response.tracked_command_response
         ),
         "created_bodies_monikers": [
             created_body.id
             for created_body in getattr(
-                response.result.tracked_command_response.tracked_changes, "created_bodies", []
+                response.tracked_command_response.tracked_changes, "created_bodies", []
             )
         ],
         "modified_bodies_monikers": [
             modified_body.id
             for modified_body in getattr(
-                response.result.tracked_command_response.tracked_changes, "modified_bodies", []
+                response.tracked_command_response.tracked_changes, "modified_bodies", []
             )
         ],
         "deleted_bodies_monikers": [
             deleted_body.id
             for deleted_body in getattr(
-                response.result.tracked_command_response.tracked_changes, "deleted_bodies", []
+                response.tracked_command_response.tracked_changes, "deleted_bodies", []
             )
         ],
     }
