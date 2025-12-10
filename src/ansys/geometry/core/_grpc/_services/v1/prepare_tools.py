@@ -142,14 +142,14 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.stub.EnhancedShareTopology(request).response_data
+        response = self.stub.EnhancedShareTopology(request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
-            "found": response.found,
-            "repaired": response.repaired,
+            "found": getattr(response, "found", -1),
+            "repaired": getattr(response, "repaired", -1),
             "created_bodies_monikers": [
                 created_body.get("id").id
                 for created_body in tracked_response.get("created_bodies", [])
