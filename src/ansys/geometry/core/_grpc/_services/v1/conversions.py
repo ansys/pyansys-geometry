@@ -1683,7 +1683,7 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
             "parent_id": body.parent_id,
             "is_surface": body.is_surface,
         }
-    
+
     def serialize_component(component):
         return {
             "id": component.id,
