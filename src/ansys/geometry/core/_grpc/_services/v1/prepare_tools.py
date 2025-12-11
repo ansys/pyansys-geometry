@@ -67,10 +67,14 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Call the gRPC service
         response = self.stub.ExtractVolumeFromFaces(request)
 
+        serialized_tracker_response = serialize_tracked_command_response(response=response.changes)
+
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
             "created_bodies": [body.id.id for body in response.created_bodies],
+            "complete_command_response": serialized_tracker_response,
         }
 
     @protect_grpc
