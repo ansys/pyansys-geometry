@@ -493,7 +493,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
     def __serialize_inspect_result_response(self, response) -> dict:  # noqa: D102
         def serialize_body(body):
             return {
-                "id": body.id,
+                "id": body.id.id,
                 "name": body.name,
                 "can_suppress": body.can_suppress,
                 "transform_to_master": {
@@ -502,13 +502,13 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
                     "m22": body.transform_to_master.m22,
                     "m33": body.transform_to_master.m33,
                 },
-                "master_id": body.master_id,
-                "parent_id": body.parent_id,
+                "master_id": body.master_id.id,
+                "parent_id": body.parent_id.id,
             }
 
         def serialize_face(face):
             return {
-                "id": face.id,
+                "id": face.id.id,
                 "surface_type": face.surface_type,
                 "export_id": face.export_id,
                 "is_reversed": getattr(face, "is_reversed", False),
@@ -517,7 +517,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         def serialize_edge(edge):
             return {
-                "id": edge.id,
+                "id": edge.id.id,
                 "curve_type": edge.curve_type,
                 "export_id": edge.export_id,
                 "length": edge.length,
