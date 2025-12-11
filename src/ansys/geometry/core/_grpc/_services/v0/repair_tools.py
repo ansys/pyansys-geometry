@@ -29,6 +29,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
 from ..base.repair_tools import GRPCRepairToolsService
 from .conversions import (
+    build_grpc_id,
     serialize_tracker_command_response,
 )
 
@@ -517,7 +518,9 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import InspectGeometryRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = InspectGeometryRequest(bodies=kwargs.get("bodies", []))
+        request = InspectGeometryRequest(
+            bodies=[build_grpc_id(id) for id in kwargs.get("body_ids", [])]
+        )
 
         # Call the gRPC service
         inspect_result_response = self.stub.InspectGeometry(request)
@@ -530,7 +533,7 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
         from ansys.api.geometry.v0.repairtools_pb2 import RepairGeometryRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RepairGeometryRequest(bodies=kwargs.get("bodies"))
+        request = RepairGeometryRequest(bodies=kwargs.get("body_ids"))
 
         # Call the gRPC service
         response = self.stub.RepairGeometry(request)
