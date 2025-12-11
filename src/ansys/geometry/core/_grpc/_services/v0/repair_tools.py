@@ -29,8 +29,8 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length
 from ..base.repair_tools import GRPCRepairToolsService
 from .conversions import (
-    serialize_tracker_command_response,
     build_grpc_id,
+    serialize_tracker_command_response,
 )
 
 
