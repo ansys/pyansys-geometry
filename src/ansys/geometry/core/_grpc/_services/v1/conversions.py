@@ -1683,6 +1683,54 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
             "parent_id": body.parent_id,
             "is_surface": body.is_surface,
         }
+    
+    def serialize_component(component):
+        return {
+            "id": component.id,
+            "name": getattr(component, "name", ""),
+            "display_name": getattr(component, "display_name", ""),
+            "part_occurrence": {
+                "id": getattr(component.part_occurrence, "id", "")
+                if hasattr(component, "part_occurrence")
+                else "",
+                "name": getattr(component.part_occurrence, "name", "")
+                if hasattr(component, "part_occurrence")
+                else "",
+            }
+            if hasattr(component, "part_occurrence")
+            else None,
+            "placement": {
+                "m00": getattr(component.placement, "m00", 1.0)
+                if hasattr(component, "placement")
+                else 1.0,
+                "m11": getattr(component.placement, "m11", 1.0)
+                if hasattr(component, "placement")
+                else 1.0,
+                "m22": getattr(component.placement, "m22", 1.0)
+                if hasattr(component, "placement")
+                else 1.0,
+                "m33": getattr(component.placement, "m33", 1.0)
+                if hasattr(component, "placement")
+                else 1.0,
+            },
+            "part_master": {
+                "id": getattr(component.part_master, "id", "")
+                if hasattr(component, "part_master")
+                else "",
+                "name": getattr(component.part_master, "name", "")
+                if hasattr(component, "part_master")
+                else "",
+            }
+            if hasattr(component, "part_master")
+            else None,
+            "master_id": getattr(component, "master_id", ""),
+            "parent_id": getattr(component, "parent_id", ""),
+        }
+
+    def serialize_part(part):
+        return {
+            "id": part.id,
+        }
 
     def serialize_entity_identifier(entity):
         """Serialize an EntityIdentifier object into a dictionary."""
@@ -1692,6 +1740,25 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
 
     return {
         "success": getattr(response.command_response, "success", False),
+        "created_parts": [serialize_part(part) for part in getattr(response, "created_parts", [])],
+        "modified_parts": [
+            serialize_part(part) for part in getattr(response, "modified_parts", [])
+        ],
+        "deleted_parts": [
+            serialize_entity_identifier(entity) for entity in getattr(response, "deleted_parts", [])
+        ],
+        "created_components": [
+            serialize_component(component)
+            for component in getattr(response, "created_components", [])
+        ],
+        "modified_components": [
+            serialize_component(component)
+            for component in getattr(response, "modified_components", [])
+        ],
+        "deleted_components": [
+            serialize_entity_identifier(entity)
+            for entity in getattr(response, "deleted_components", [])
+        ],
         "created_bodies": [
             serialize_body(body) for body in getattr(response.tracked_changes, "created_bodies", [])
         ],
