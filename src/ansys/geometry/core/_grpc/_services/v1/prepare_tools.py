@@ -190,13 +190,16 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {
-            "id": response.id,
+            "id": response.logo_problem_area_id.id,
             "face_ids": [face.id for face in response.logo_faces],
         }
 
     @protect_grpc
     def find_and_remove_logos(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.prepare_pb2 import FindLogoOptions, FindLogosRequest
+        from ansys.api.discovery.v1.operations.prepare_pb2 import (
+            FindAndRemoveLogosRequest,
+            FindLogoOptions,
+        )
 
         # Check height objects
         min_height = (
@@ -211,7 +214,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = FindLogosRequest(
+        request = FindAndRemoveLogosRequest(
             body_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=FindLogoOptions(
                 min_height=min_height,
@@ -223,7 +226,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.FindAndRemoveLogos(request)
 
         # Return the response - formatted as a dictionary
-        return get_standard_tracker_response(response)
+        return get_standard_tracker_response(response.tracked_command_response)
 
     @protect_grpc
     def remove_logo(self, **kwargs):  # noqa: D102
