@@ -459,6 +459,11 @@ class Modeler:
                 raise RuntimeError(
                     "File is too large to upload. Service versions above 25R2 support streaming."
                 )
+        elif self.client.services.version == GeometryApiProtos.V0:
+            self.client.services.designs.open(
+                filepath=file_path,
+                import_options=import_options,
+            )
         else:
             # Zip file and pass filepath to service to open
             fp_path = Path(file_path).resolve()
