@@ -1,5 +1,6 @@
 name: v1 Protos Testing
 on:
+  pull_request:
   workflow_dispatch:
 
 env:
