@@ -1265,7 +1265,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         return {
             "edges": [
                 {
-                    "id": edge.id,
+                    "id": edge.id.id,
                     "curve_type": edge.curve_type,
                     "is_reversed": edge.is_reversed,
                 }
@@ -1273,7 +1273,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             ],
             "faces": [
                 {
-                    "id": face.id,
+                    "id": face.id.id,
                     "surface_type": face.surface_type,
                     "is_reversed": face.is_reversed,
                 }
@@ -1345,7 +1345,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        resp = self.edit_stub.ImprintProjectedCurves(request=request)
+        resp = self.edit_stub.ImprintProjectedCurves(request=request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
@@ -1355,8 +1355,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     "surface_type": face.surface_type,
                     "is_reversed": face.is_reversed,
                 }
-                for face in resp.response_data[0].faces
-            ]
+                for face in resp.created_entities.faces
+            ],
         }
 
     @protect_grpc
