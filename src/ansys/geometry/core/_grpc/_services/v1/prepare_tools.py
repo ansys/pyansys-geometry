@@ -69,7 +69,6 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
 
         serialized_tracker_response = serialize_tracked_command_response(response=response.changes)
 
-
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
