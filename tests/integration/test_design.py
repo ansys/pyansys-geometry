@@ -4338,6 +4338,7 @@ def test_design_point_get_named_selections(modeler: Modeler):
         else:
             assert len(ns_list) == 0  # No named selection for this design point
 
+
 def test_check_design_update(modeler: Modeler):
     """Test that design updates are tracked when USE_TRACKER_TO_UPDATE_DESIGN is enabled."""
     # import ansys.geometry.core as pyansys_geo
