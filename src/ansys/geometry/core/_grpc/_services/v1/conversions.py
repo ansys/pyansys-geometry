@@ -48,7 +48,6 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     DatumPointEntity as GRPCDesignPoint,
     DrivingDimensionEntity as GRPCDrivingDimension,
     EdgeTessellation as GRPCEdgeTessellation,
-    EnhancedRepairToolMessage as GRPCEnhancedRepairToolResponse,
     Geometries as GRPCGeometries,
     Knot as GRPCKnot,
     MaterialEntity as GRPCMaterial,
@@ -71,6 +70,9 @@ from ansys.api.discovery.v1.geometryenums_pb2 import (
 )
 from ansys.api.discovery.v1.operations.prepare_pb2 import (
     EnclosureOptions as GRPCEnclosureOptions,
+)
+from ansys.api.discovery.v1.operations.repair_pb2 import (
+    RepairToolMessage as GRPCRepairToolResponse,
 )
 import pint
 
@@ -1728,68 +1730,39 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
     }
 
 
-def get_standard_tracker_response(response) -> dict:
-    """Get a standard dictionary response from a TrackerCommandResponse gRPC object.
+def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:
+    """Serialize a RepairToolResponse object into a dictionary.
 
     Parameters
     ----------
-    response : TrackerCommandResponse
-        The gRPC TrackerCommandResponse object.
-
-    Returns
-    -------
-    dict
-        A dictionary representing the standard tracker response
-    """
-    return {
-        "success": response.command_response.success,
-        "tracker_response": serialize_tracked_command_response(response.tracked_changes),
-    }
-
-
-def get_tracker_response_with_created_bodies(response) -> dict:
-    """Get a dictionary response from a TrackerCommandResponse gRPC object including created bodies.
-
-    Parameters
-    ----------
-    response : TrackerCommandResponse
-        The gRPC TrackerCommandResponse object.
-
-    Returns
-    -------
-    dict
-        A dictionary representing the tracker response with created bodies.
-    """
-    serialized_response = get_standard_tracker_response(response)
-    serialized_response["created_bodies"] = serialized_response["tracker_response"].get(
-        "created_bodies", []
-    )
-    return serialized_response
-
-
-def serialize_repair_command_response(response: GRPCEnhancedRepairToolResponse) -> dict:
-    """Serialize a EnhancedRepairToolResponse object into a dictionary.
-
-    Parameters
-    ----------
-    response : GRPCEnhancedRepairToolResponse
-        The gRPC EnhancedRepairToolResponse object to serialize.
-        A dictionary representation of the EnhancedRepairToolResponse object.
+    response : GRPCRepairToolResponse
+        The gRPC RepairToolResponse object to serialize.
+        A dictionary representation of the RepairToolResponse object.
     """
     return {
         "success": response.tracked_command_response.command_response.success,
-        "found": response.found,
-        "repaired": response.repaired,
-        "complete_command_response": serialize_tracked_command_response(response.tracked_changes),
+        "found": getattr(response, "found", -1),
+        "repaired": getattr(response, "repaired", -1),
+        "complete_command_response": serialize_tracked_command_response(
+            response.tracked_command_response
+        ),
         "created_bodies_monikers": [
-            created_body.id for created_body in response.tracked_changes.get("created_bodies", [])
+            created_body.id.id
+            for created_body in getattr(
+                response.tracked_command_response.tracked_changes, "created_bodies", []
+            )
         ],
         "modified_bodies_monikers": [
-            modified_body.id
-            for modified_body in response.tracked_changes.get("modified_bodies", [])
+            modified_body.id.id
+            for modified_body in getattr(
+                response.tracked_command_response.tracked_changes, "modified_bodies", []
+            )
         ],
         "deleted_bodies_monikers": [
-            deleted_body.id for deleted_body in response.tracked_changes.get("deleted_bodies", [])
+            deleted_body.id
+            for deleted_body in getattr(
+                response.tracked_command_response.tracked_changes, "deleted_bodies", []
+            )
         ],
     }
 

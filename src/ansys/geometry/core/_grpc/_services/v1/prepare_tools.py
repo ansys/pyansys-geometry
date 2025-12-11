@@ -31,7 +31,6 @@ from .conversions import (
     build_grpc_id,
     from_enclosure_options_to_grpc_enclosure_options,
     from_length_to_grpc_quantity,
-    get_standard_tracker_response,
     serialize_tracked_command_response,
 )
 
@@ -142,14 +141,14 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        response = self.stub.EnhancedShareTopology(request).response_data
+        response = self.stub.EnhancedShareTopology(request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
-            "found": response.found,
-            "repaired": response.repaired,
+            "found": getattr(response, "found", -1),
+            "repaired": getattr(response, "repaired", -1),
             "created_bodies_monikers": [
                 created_body.get("id").id
                 for created_body in tracked_response.get("created_bodies", [])
@@ -190,13 +189,16 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
 
         # Return the response - formatted as a dictionary
         return {
-            "id": response.id,
+            "id": getattr(response, "id", None),
             "face_ids": [face.id for face in response.logo_faces],
         }
 
     @protect_grpc
     def find_and_remove_logos(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.prepare_pb2 import FindLogoOptions, FindLogosRequest
+        from ansys.api.discovery.v1.operations.prepare_pb2 import (
+            FindAndRemoveLogosRequest,
+            FindLogoOptions,
+        )
 
         # Check height objects
         min_height = (
@@ -211,7 +213,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = FindLogosRequest(
+        request = FindAndRemoveLogosRequest(
             body_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=FindLogoOptions(
                 min_height=min_height,
@@ -223,7 +225,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.FindAndRemoveLogos(request)
 
         # Return the response - formatted as a dictionary
-        return get_standard_tracker_response(response)
+        return {"success": response.tracked_command_response.command_response.success}
 
     @protect_grpc
     def remove_logo(self, **kwargs):  # noqa: D102
@@ -238,7 +240,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         response = self.stub.RemoveLogo(request)
 
         # Return the response - formatted as a dictionary
-        return get_standard_tracker_response(response)
+        return {"success": response.tracked_command_response.command_response.success}
 
     @protect_grpc
     def detect_helixes(self, **kwargs) -> dict:  # noqa: D102

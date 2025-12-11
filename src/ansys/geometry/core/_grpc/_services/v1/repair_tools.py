@@ -157,7 +157,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FindMissingFaces(request)
 
         # Return the response - formatted as a dictionary
-        return response_problem_area_for_face(response)
+        return response_problem_area_for_edge(response)
 
     @protect_grpc
     def find_small_faces(self, **kwargs) -> dict:  # noqa: D102
@@ -241,7 +241,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixShortEdges(request)
 
-        return serialize_repair_command_response(response.response_data)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def find_and_fix_extra_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -256,7 +256,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixExtraEdges(request)
 
-        return serialize_repair_command_response(response.response_data)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def find_and_fix_split_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -272,7 +272,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixSplitEdges(request)
 
-        return serialize_repair_command_response(response.response_data)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def find_and_fix_simplify(self, **kwargs) -> dict:  # noqa: D102
@@ -287,7 +287,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndSimplify(request)
 
-        return serialize_repair_command_response(response.response_data)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def find_and_fix_stitch_faces(self, **kwargs) -> dict:  # noqa: D102
@@ -308,7 +308,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         # Call the gRPC service
         response = self.stub.FindAndFixStitchFaces(request)
 
-        return serialize_repair_command_response(response.response_data)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def inspect_geometry(self, **kwargs) -> dict:  # noqa: D102
@@ -331,14 +331,14 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RepairGeometryRequest(
-            body_ids=[build_grpc_id(body) for body in kwargs.get("bodies")]
+            body_ids=[build_grpc_id(body) for body in kwargs.get("body_ids")]
         )
 
         # Call the gRPC service
         response = self.stub.RepairGeometry(request)
 
         # Return the response - formatted as a dictionary
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def fix_duplicate_faces(self, **kwargs) -> dict:  # noqa: D102
@@ -473,7 +473,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         response = self.stub.FixAdjustSimplify(request)
 
         # Return the response - formatted as a dictionary
-        return serialize_repair_command_response(response)
+        return serialize_repair_command_response(response.result)
 
     @protect_grpc
     def fix_interference(self, **kwargs) -> dict:  # noqa: D102
@@ -493,7 +493,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
     def __serialize_inspect_result_response(self, response) -> dict:  # noqa: D102
         def serialize_body(body):
             return {
-                "id": body.id,
+                "id": body.id.id,
                 "name": body.name,
                 "can_suppress": body.can_suppress,
                 "transform_to_master": {
@@ -502,13 +502,13 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
                     "m22": body.transform_to_master.m22,
                     "m33": body.transform_to_master.m33,
                 },
-                "master_id": body.master_id,
-                "parent_id": body.parent_id,
+                "master_id": body.master_id.id,
+                "parent_id": body.parent_id.id,
             }
 
         def serialize_face(face):
             return {
-                "id": face.id,
+                "id": face.id.id,
                 "surface_type": face.surface_type,
                 "export_id": face.export_id,
                 "is_reversed": getattr(face, "is_reversed", False),
@@ -517,7 +517,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         def serialize_edge(edge):
             return {
-                "id": edge.id,
+                "id": edge.id.id,
                 "curve_type": edge.curve_type,
                 "export_id": edge.export_id,
                 "length": edge.length,
