@@ -1,0 +1,309 @@
+
+
+
+
+
+
+:class:`Curve`
+==============
+
+
+.. py:class:: ansys.geometry.core.shapes.curves.curve.Curve
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Provides the abstract base class representing a 3D curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: Curve
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~parameterization`
+            - Parameterize the curve.
+          * - :py:attr:`~contains_param`
+            - Check a parameter is within the parametric range of the curve.
+          * - :py:attr:`~contains_point`
+            - Check a point is contained by the curve.
+          * - :py:attr:`~transformed_copy`
+            - Create a transformed copy of the curve.
+          * - :py:attr:`~__eq__`
+            - Determine if two curves are equal.
+          * - :py:attr:`~evaluate`
+            - Evaluate the curve at the given parameter.
+          * - :py:attr:`~project_point`
+            - Project a point to the curve.
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~trim`
+            - Trim this curve by bounding it with an interval.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.curves.curve import Curve
+
+
+
+Method detail
+-------------
+
+.. py:method:: parameterization() -> ansys.geometry.core.shapes.parameterization.Parameterization
+   :abstractmethod:
+
+
+   
+   Parameterize the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_param(param: ansys.geometry.core.typing.Real) -> bool
+   :abstractmethod:
+
+
+   
+   Check a parameter is within the parametric range of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.point.Point3D) -> bool
+   :abstractmethod:
+
+
+   
+   Check a point is contained by the curve.
+
+   The point can either lie within the curve or on its boundary.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Curve
+   :abstractmethod:
+
+
+   
+   Create a transformed copy of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __eq__(other: Curve) -> bool
+   :abstractmethod:
+
+
+   
+   Determine if two curves are equal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate(parameter: ansys.geometry.core.typing.Real) -> ansys.geometry.core.shapes.curves.curve_evaluation.CurveEvaluation
+   :abstractmethod:
+
+
+   
+   Evaluate the curve at the given parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> ansys.geometry.core.shapes.curves.curve_evaluation.CurveEvaluation
+   :abstractmethod:
+
+
+   
+   Project a point to the curve.
+
+   This method returns the evaluation at the closest point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: trim(interval: ansys.geometry.core.shapes.parameterization.Interval) -> ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve
+
+   
+   Trim this curve by bounding it with an interval.
+
+
+
+
+
+   :Returns:
+
+       :obj:`TrimmedCurve`
+           The resulting bounded curve.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

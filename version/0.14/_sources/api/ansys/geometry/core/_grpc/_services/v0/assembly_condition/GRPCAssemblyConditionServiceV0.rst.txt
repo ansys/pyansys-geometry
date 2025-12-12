@@ -1,0 +1,172 @@
+
+
+
+
+
+
+:class:`GRPCAssemblyConditionServiceV0`
+=======================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.assembly_condition.GRPCAssemblyConditionServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.assembly_condition.GRPCAssemblyConditionService`
+
+
+   
+   Assembly condition service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   assembly condition service. It is specifically designed for the v0 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCAssemblyConditionServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_align_condition`
+            - Create an align condition between two geometry objects.
+          * - :py:attr:`~create_tangent_condition`
+            - Create a tangent condition between two geometry objects.
+          * - :py:attr:`~create_orient_condition`
+            - Create an orient condition between two geometry objects.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.assembly_condition import GRPCAssemblyConditionServiceV0
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_align_condition(**kwargs) -> dict
+
+   
+   Create an align condition between two geometry objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_tangent_condition(**kwargs) -> dict
+
+   
+   Create a tangent condition between two geometry objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_orient_condition(**kwargs) -> dict
+
+   
+   Create an orient condition between two geometry objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
