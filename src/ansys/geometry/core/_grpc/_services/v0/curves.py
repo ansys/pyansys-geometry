@@ -28,8 +28,10 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.conversions import from_measurement_to_server_angle
 from ..base.curves import GRPCCurvesService
 from .conversions import (
+    from_curve_to_grpc_curve,
     from_grpc_point_to_point3d,
     from_line_to_grpc_line,
+    from_surface_to_grpc_surface,
     from_trimmed_curve_to_grpc_trimmed_curve,
 )
 
@@ -83,6 +85,35 @@ class GRPCCurvesServiceV0(GRPCCurvesService):  # pragma: no cover
 
         # Call the gRPC service
         response = self.stub.IntersectCurves(request)
+
+        # Return the result - formatted as a dictionary
+        return {
+            "intersect": response.intersect,
+            "points": [from_grpc_point_to_point3d(point) for point in response.points],
+        }
+
+    @protect_grpc
+    def intersect_curve_and_surface(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import (
+            IntersectCurveAndSurfaceRequest,
+            IntersectCurveAndSurfaceRequestData,
+        )
+
+        surface, surface_type = from_surface_to_grpc_surface(kwargs["surface"])
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = IntersectCurveAndSurfaceRequest(
+            request_data=[
+                IntersectCurveAndSurfaceRequestData(
+                    curve=from_curve_to_grpc_curve(kwargs["curve"]),
+                    surface=surface,
+                    surface_type=surface_type,
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.stub.IntersectCurveAndSurface(request).response_data[0]
 
         # Return the result - formatted as a dictionary
         return {
