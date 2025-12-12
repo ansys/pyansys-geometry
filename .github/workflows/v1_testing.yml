@@ -1,5 +1,6 @@
 name: v1 Protos Testing
 on:
+  pull_request:
   workflow_dispatch:
 
 env:
@@ -88,6 +89,14 @@ jobs:
         run: |
           pytest -v --proto-version=v1
 
+      - name: Upload integration test logs
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: v1-windows-integration-test-logs-${{ matrix.python-version }}
+          path: tests/integration/logs/integration_tests_logs.txt
+          retention-days: 7
+
       - name: Stop the Geometry service
         if: always()
         run: |
@@ -156,6 +165,14 @@ jobs:
         timeout-minutes: 20 # Sometimes hangs...
         run: |
           pytest -v --proto-version=v1
+
+      - name: Upload integration test logs
+        if: always()
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        with:
+          name: v1-linux-integration-test-logs-${{ matrix.python-version }}
+          path: tests/integration/logs/integration_tests_logs.txt
+          retention-days: 7
 
       - name: Stop the Geometry service
         if: always()
