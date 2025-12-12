@@ -47,3 +47,8 @@ class GRPCCurvesService(ABC):  # pragma: no cover
     def intersect_curves(self, **kwargs) -> dict:
         """Get intersection points of curves."""
         pass
+
+    @abstractmethod
+    def intersect_curve_and_surface(self, **kwargs) -> dict:
+        """Get intersection points of a curve and surface."""
+        pass
