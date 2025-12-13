@@ -1408,6 +1408,8 @@ class Design(Component):
     def _update_from_tracker(self, tracker_response: dict):
         """Update the design with the changed entities while preserving unchanged ones.
 
+        This method is alternative to update_design_inplace method.
+
         Parameters
         ----------
         tracker_response : dict
@@ -1430,6 +1432,7 @@ class Design(Component):
         # Handle created parts
         for part_info in tracker_response.get("created_parts", []):
             part_id = part_info["id"]
+            # fall back to string if id is not an object with id attribute.
             part_name = part_info.get("name", f"Part_{part_id}")
             self._grpc_client.log.debug(
                 f"Processing created part: ID={part_id}, Name='{part_name}'"
@@ -1525,8 +1528,8 @@ class Design(Component):
 
             # # Find and assign parent component
             parent_id = component_info.get("parent_id")
-            self._find_and_add_component(
-                component_info, parent_id, self.components, created_components_dict
+            self._find_and_add_component_to_design(
+                component_info, self.components, created_parts_dict, created_master_components_dict
             )
 
         # Handle modified components
@@ -1573,7 +1576,7 @@ class Design(Component):
                 )
                 continue
 
-            new_body = self._find_and_add_body(
+            new_body = self._find_and_add_body_to_design(
                 body_info, self.components, created_parts_dict, created_components_dict
             )
             if not new_body:
@@ -1837,7 +1840,7 @@ class Design(Component):
                 continue
 
             # Try to add the component to the appropriate parent
-            new_component = self._find_and_add_component(
+            new_component = self._find_and_add_component_to_design(
                 component_info, self.components, created_parts
             )
             if new_component:
@@ -1849,9 +1852,9 @@ class Design(Component):
 
         return created_components_dict
 
-    def _handle_modified_components(self, modified_components):
+    def _handle_modified_components(self, serialized_modified_components):
         """Handle modification of existing components from tracker response."""
-        for component_info in modified_components:
+        for component_info in serialized_modified_components:
             component_id = component_info["id"]
             component_name = component_info.get("name", f"Component_{component_id}")
             self._grpc_client.log.debug(
@@ -1913,7 +1916,7 @@ class Design(Component):
                 )
                 continue
 
-            new_body = self._find_and_add_body(
+            new_body = self._find_and_add_body_to_design(
                 body_info, self.components, created_parts, created_components
             )
             if not new_body:
@@ -2046,9 +2049,13 @@ class Design(Component):
 
         return False
 
-    def _find_and_add_component(
-        self, component_info, parent_components, created_parts=None, created_master_components=None
-    ):
+    def _find_and_add_component_to_design(
+        self,
+        component_info: dict,
+        parent_components: list["Component"],
+        created_parts: dict[str, Part] | None = None,
+        created_master_components: dict[str, MasterComponent] | None = None,
+    ) -> "Component | None":
         """Recursively find the appropriate parent and add a new component to it.
 
         Parameters
@@ -2056,7 +2063,7 @@ class Design(Component):
         component_info : dict
             Information about the component to create.
         parent_components : list
-            List of parent components to search.
+            List of potential parent components to search.
         created_parts : dict, optional
             Dictionary of created parts from previous step.
         created_master_components : dict, optional
@@ -2067,7 +2074,11 @@ class Design(Component):
         Component or None
             The newly created component if successful, None otherwise.
         """
-        parent_id = component_info.get("parent_id")
+        # Early return if there are no components to search through
+        if not parent_components:
+            return None
+            
+        new_component_parent_id = component_info.get("parent_id")
         master_id = component_info.get("master_id")
 
         # Find the master component for this component
@@ -2076,7 +2087,7 @@ class Design(Component):
             master_component = created_master_components.get(master_id)
 
         # Check if this should be added to the root design
-        if parent_id == self.id:
+        if new_component_parent_id == self.id:
             # Create the Component object with master_component
             new_component = Component(
                 parent_component=None,
@@ -2093,24 +2104,27 @@ class Design(Component):
 
         # Search through existing components for the parent
         for component in parent_components:
-            # if component.id == parent_id:
-            # new_component = Component(
-            #     name=component_info["name"],
-            #     template=component,
-            #     grpc_client=self._grpc_client,
-            #     master_component=master_component,
-            #     preexisting_id=component_info["id"],
-            #     read_existing_comp=True,
-            # )
-            # component.components.append(new_component)
-            # self._grpc_client.log.debug(
-            #     f"Added component '{component_info['id']}' to component '{component.name}'"
-            # )
-            # return new_component
+            if component.id == new_component_parent_id:
+                new_component = Component(
+                    name=component_info["name"],
+                    template=component,
+                    grpc_client=self._grpc_client,
+                    master_component=master_component,
+                    preexisting_id=component_info["id"],
+                    read_existing_comp=True,
+                )
+                component.components.append(new_component)
+                self._grpc_client.log.debug(
+                    f"Added component '{component_info['id']}' to component '{component.name}'"
+                )
+                return new_component
 
-            self._find_and_add_component(
+            # Recursively search in child components
+            result = self._find_and_add_component_to_design(
                 component_info, component.components, created_parts, created_master_components
             )
+            if result:
+                return result
 
         return None
 
@@ -2162,35 +2176,42 @@ class Design(Component):
         existing_body.name = body_info["name"]
         existing_body._template._is_surface = body_info.get("is_surface", False)
 
-    def _find_and_add_body(
-        self, body_info, components, created_parts=None, created_components=None
-    ):
+    def _find_and_add_body_to_design(
+        self,
+        tracked_body_info: dict,
+        components: list["Component"],
+        created_parts: dict[str, Part] | None = None,
+        created_components: dict[str, "Component"] | None = None,
+    ) -> MasterBody | None:
         """Recursively find the appropriate component and add a new body to it.
 
         Parameters
         ----------
         body_info : dict
             Information about the body to create.
-        components : list
+        components : list[Component]
             List of components to search.
-        created_parts : dict, optional
+        created_parts : dict[str, Part], optional
             Dictionary of created parts from previous step.
-        created_components : dict, optional
+        created_components : dict[str, Component], optional
             Dictionary of created components from previous step.
 
         Returns
         -------
-        MasterBody or None
+        MasterBody | None
             The newly created body if successful, None otherwise.
         """
+        if not components:
+            return None
+        
         for component in components:
             parent_id_for_body = component._master_component.part.id
-            if parent_id_for_body == body_info.get("parent_id"):
+            if parent_id_for_body == tracked_body_info.get("parent_id"):
                 new_body = MasterBody(
-                    body_info["id"],
-                    body_info["name"],
+                    tracked_body_info["id"],
+                    tracked_body_info["name"],
                     self._grpc_client,
-                    is_surface=body_info.get("is_surface", False),
+                    is_surface=tracked_body_info.get("is_surface", False),
                 )
                 component._master_component.part.bodies.append(new_body)
                 component._clear_cached_bodies()
@@ -2200,8 +2221,8 @@ class Design(Component):
                 )
                 return new_body
 
-            result = self._find_and_add_body(
-                body_info, component.components, created_parts, created_components
+            result = self._find_and_add_body_to_design(
+                tracked_body_info, component.components, created_parts, created_components
             )
             if result:
                 return result
