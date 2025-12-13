@@ -1718,7 +1718,7 @@ class Design(Component):
         # Early return if there are no components to search through
         if not parent_components:
             return None
-            
+
         new_component_parent_id = component_info.get("parent_id")
         master_id = component_info.get("master_id")
 
@@ -1844,7 +1844,7 @@ class Design(Component):
         """
         if not components:
             return None
-        
+
         for component in components:
             parent_id_for_body = component._master_component.part.id
             if parent_id_for_body == tracked_body_info.get("parent_id"):
