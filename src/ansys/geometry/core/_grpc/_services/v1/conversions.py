@@ -1660,7 +1660,7 @@ def from_enclosure_options_to_grpc_enclosure_options(
 def serialize_body(body: GRPCBodyEntity) -> dict:
     """Serialize a GRPCBodyEntity object into a dictionary.
 
-    It is not directly converted to a pygeometry object because we'll assign it is place and 
+    It is not directly converted to a pygeometry object because we'll assign it is place and
     construct the object while updating the design object by the tracker output.
 
     Parameters
@@ -1677,23 +1677,31 @@ def serialize_body(body: GRPCBodyEntity) -> dict:
     body_id = body.id.id
     body_name = body.name
     body_can_suppress = body.can_suppress
-    body_master_id = body.master_id.id.id if hasattr(body.master_id, "id") and hasattr(body.master_id.id, "id") else (body.master_id.id if hasattr(body.master_id, "id") else "")
-    body_parent_id = body.parent_id.id.id if hasattr(body.parent_id, "id") and hasattr(body.parent_id.id, "id") else (body.parent_id.id if hasattr(body.parent_id, "id") else "")
+    body_master_id = (
+        body.master_id.id.id
+        if hasattr(body.master_id, "id") and hasattr(body.master_id.id, "id")
+        else (body.master_id.id if hasattr(body.master_id, "id") else "")
+    )
+    body_parent_id = (
+        body.parent_id.id.id
+        if hasattr(body.parent_id, "id") and hasattr(body.parent_id.id, "id")
+        else (body.parent_id.id if hasattr(body.parent_id, "id") else "")
+    )
     body_is_surface = body.is_surface
-    
+
     # Extract transform_to_master matrix
     transform_m00 = body.transform_to_master.m00
     transform_m11 = body.transform_to_master.m11
     transform_m22 = body.transform_to_master.m22
     transform_m33 = body.transform_to_master.m33
-    
+
     transform_to_master = {
         "m00": transform_m00,
         "m11": transform_m11,
         "m22": transform_m22,
         "m33": transform_m33,
     }
-    
+
     return {
         "id": body_id,
         "name": body_name,
@@ -1718,6 +1726,7 @@ def serialize_component(component: GRPCComponentEntity) -> dict:
     dict
         A dictionary representation of the ComponentEntity object without gRPC dependencies.
     """
+
     def extract_id(obj):
         if hasattr(obj, "id"):
             if hasattr(obj.id, "id"):
@@ -1729,7 +1738,7 @@ def serialize_component(component: GRPCComponentEntity) -> dict:
     component_id = component.id.id
     component_name = component.name
     component_display_name = component.display_name
-    
+
     # Extract part_occurrence
     part_occurrence = None
     if hasattr(component, "part_occurrence"):
@@ -1739,7 +1748,7 @@ def serialize_component(component: GRPCComponentEntity) -> dict:
             "id": part_occurrence_id,
             "name": part_occurrence_name,
         }
-    
+
     # Extract placement matrix
     placement_m00 = 1.0
     placement_m11 = 1.0
@@ -1750,14 +1759,14 @@ def serialize_component(component: GRPCComponentEntity) -> dict:
         placement_m11 = component.placement.m11
         placement_m22 = component.placement.m22
         placement_m33 = component.placement.m33
-    
+
     placement = {
         "m00": placement_m00,
         "m11": placement_m11,
         "m22": placement_m22,
         "m33": placement_m33,
     }
-    
+
     # Extract part_master
     part_master = None
     if hasattr(component, "part_master"):
@@ -1767,11 +1776,11 @@ def serialize_component(component: GRPCComponentEntity) -> dict:
             "id": part_master_id,
             "name": part_master_name,
         }
-    
+
     # Extract master_id and parent_id
     master_id = extract_id(component.master_id) if hasattr(component, "master_id") else ""
     parent_id = extract_id(component.parent_id) if hasattr(component, "parent_id") else ""
-    
+
     return {
         "id": component_id,
         "name": component_name,
@@ -1835,52 +1844,46 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
     """
     # Extract command response success status
     success = getattr(response.command_response, "success", False)
-    
+
     # Extract tracked changes
     tracked_changes = response.tracked_changes
-    
+
     # Extract and serialize parts
-    created_parts = [
-        serialize_part(part) 
-        for part in getattr(tracked_changes, "created_parts", [])
-    ]
+    created_parts = [serialize_part(part) for part in getattr(tracked_changes, "created_parts", [])]
     modified_parts = [
-        serialize_part(part) 
-        for part in getattr(tracked_changes, "modified_parts", [])
+        serialize_part(part) for part in getattr(tracked_changes, "modified_parts", [])
     ]
     deleted_parts = [
-        serialize_entity_identifier(entity) 
+        serialize_entity_identifier(entity)
         for entity in getattr(tracked_changes, "deleted_parts", [])
     ]
-    
+
     # Extract and serialize components
     created_components = [
-        serialize_component(component) 
+        serialize_component(component)
         for component in getattr(tracked_changes, "created_components", [])
     ]
     modified_components = [
-        serialize_component(component) 
+        serialize_component(component)
         for component in getattr(tracked_changes, "modified_components", [])
     ]
     deleted_components = [
-        serialize_entity_identifier(entity) 
+        serialize_entity_identifier(entity)
         for entity in getattr(tracked_changes, "deleted_components", [])
     ]
-    
+
     # Extract and serialize bodies
     created_bodies = [
-        serialize_body(body) 
-        for body in getattr(tracked_changes, "created_bodies", [])
+        serialize_body(body) for body in getattr(tracked_changes, "created_bodies", [])
     ]
     modified_bodies = [
-        serialize_body(body) 
-        for body in getattr(tracked_changes, "modified_bodies", [])
+        serialize_body(body) for body in getattr(tracked_changes, "modified_bodies", [])
     ]
     deleted_bodies = [
-        serialize_entity_identifier(entity) 
+        serialize_entity_identifier(entity)
         for entity in getattr(tracked_changes, "deleted_bodies", [])
     ]
-    
+
     return {
         "success": success,
         "created_parts": created_parts,
