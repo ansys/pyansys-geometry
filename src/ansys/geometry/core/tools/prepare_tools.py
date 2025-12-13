@@ -158,7 +158,7 @@ class PrepareTools:
                 if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
                     parent_design._update_design_inplace()
                 else:
-                    parent_design._update_from_tracker(response.get("tracker_response"))
+                    parent_design._update_from_tracker(response.get("complete_command_response"))
             return get_bodies_from_ids(parent_design, bodies_ids)
         else:
             self._grpc_client.log.info("Failed to extract volume from faces...")
