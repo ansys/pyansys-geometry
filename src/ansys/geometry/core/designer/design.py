@@ -1848,16 +1848,18 @@ class Design(Component):
         for component in components:
             parent_id_for_body = component._master_component.part.id
             if parent_id_for_body == tracked_body_info.get("parent_id"):
-                new_body = MasterBody(
+                new_master_body = MasterBody(
                     tracked_body_info["id"],
                     tracked_body_info["name"],
                     self._grpc_client,
                     is_surface=tracked_body_info.get("is_surface", False),
                 )
-                component._master_component.part.bodies.append(new_body)
+                
+                component._master_component.part.bodies.append(new_master_body)
+
                 component._clear_cached_bodies()
                 self._grpc_client.log.debug(
-                    f"Added new body '{new_body.name}' (ID: {new_body.id}) "
+                    f"Added new body '{new_master_body.name}' (ID: {new_master_body.id}) "
                     f"to component '{component.name}' (ID: {component.id})"
                 )
                 return new_body
