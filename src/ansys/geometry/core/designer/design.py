@@ -1909,4 +1909,3 @@ class Design(Component):
                 return True
 
         return False
-
