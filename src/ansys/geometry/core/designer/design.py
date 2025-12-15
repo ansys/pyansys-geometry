@@ -1854,7 +1854,7 @@ class Design(Component):
                     self._grpc_client,
                     is_surface=tracked_body_info.get("is_surface", False),
                 )
-                
+
                 component._master_component.part.bodies.append(new_master_body)
 
                 component._clear_cached_bodies()
