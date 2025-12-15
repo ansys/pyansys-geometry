@@ -1547,10 +1547,10 @@ class Design(Component):
         # ================== HANDLE BODIES ==================
 
         # Handle created bodies
-        for body_info in tracker_response.get("created_bodies", []):
-            body_id = body_info["id"]
-            body_name = body_info["name"]
-            is_surface = body_info.get("is_surface", False)
+        for created_body_info in tracker_response.get("created_bodies", []):
+            body_id = created_body_info["id"]
+            body_name = created_body_info["name"]
+            is_surface = created_body_info.get("is_surface", False)
             self._grpc_client.log.debug(
                 f"Processing created body: ID={body_id}, Name='{body_name}'"
             )
@@ -1562,7 +1562,7 @@ class Design(Component):
                 continue
 
             new_body = self._find_and_add_body_to_design(
-                body_info, self.components, created_parts_dict, created_components_dict
+                created_body_info, self.components, created_parts_dict, created_components_dict
             )
             if not new_body:
                 new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
@@ -1909,3 +1909,4 @@ class Design(Component):
                 return True
 
         return False
+
