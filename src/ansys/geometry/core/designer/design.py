@@ -1862,7 +1862,7 @@ class Design(Component):
                     f"Added new body '{new_master_body.name}' (ID: {new_master_body.id}) "
                     f"to component '{component.name}' (ID: {component.id})"
                 )
-                return new_body
+                return new_master_body
 
             result = self._find_and_add_body_to_design(
                 tracked_body_info, component.components, created_parts, created_components
