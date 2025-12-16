@@ -4341,10 +4341,10 @@ def test_design_point_get_named_selections(modeler: Modeler):
 
 def test_check_design_update(modeler: Modeler):
     """Test that design updates are tracked when USE_TRACKER_TO_UPDATE_DESIGN is enabled."""
-    # import ansys.geometry.core as pyansys_geo
-
-    # Enable design tracking
-    # pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN = True
+    
+    # Enable design tracking explicitly for this test.
+    import ansys.geometry.core as pyansys_geo
+    pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN = True
 
     # Open a disco file
     design = modeler.open_file(Path(FILES_DIR, "hollowCylinder1.dsco"))
