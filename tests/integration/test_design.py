@@ -4374,3 +4374,47 @@ def test_check_design_update(modeler: Modeler):
     # Verify new component was created with the extracted body
     assert len(design.components[1].bodies) > 0, "Component 1 should have bodies"
     assert design.components[1].bodies[0].name, "Body in component 1 should have a name"
+
+def test_design_update_with_booleans(modeler: Modeler):
+    """Test that design updates are tracked when performing boolean operations."""
+    # Open a design file with multiple components
+    design = modeler.open_file(Path(FILES_DIR, "intersect-with-2-components 2.scdocx"))
+
+    # Check initial state
+    initial_num_components = len(design.components)
+    assert initial_num_components >= 3, "Design should have at least 3 components"
+    
+    # Record initial body counts
+    initial_bodies_comp0 = len(design.components[0].bodies)
+    initial_bodies_comp1 = len(design.components[1].bodies)
+    initial_bodies_comp2 = len(design.components[2].bodies)
+    
+    assert initial_bodies_comp0 > 0, "Component 0 should have at least one body"
+    assert initial_bodies_comp1 > 0, "Component 1 should have at least one body"
+    
+    # Get bodies for boolean operation
+    b0 = design.components[0].bodies[0]
+    b1 = design.components[1].bodies[0]
+    
+    # Perform unite operation
+    b0.unite(b1)
+    
+    # Check state after boolean operation
+    final_num_components = len(design.components)
+    
+    # Component 0 should still exist with the united body
+    final_bodies_comp0 = len(design.components[0].bodies)
+    assert final_bodies_comp0 > 0, "Component 0 should still have bodies after unite"
+    
+    # Get the new body and verify it has faces
+    new_body = design.components[0].bodies[0]
+    assert len(new_body.faces) > 0, "United body should have faces"
+    
+    # Component 1 should have one less body after unite
+    final_bodies_comp1 = len(design.components[1].bodies)
+    assert final_bodies_comp1 == initial_bodies_comp1 - 1, "Component 1 should have one less body after unite"
+    
+    # Component 2 should remain unchanged
+    final_bodies_comp2 = len(design.components[2].bodies)
+    assert final_bodies_comp2 == initial_bodies_comp2, "Component 2 should remain unchanged"
+    
