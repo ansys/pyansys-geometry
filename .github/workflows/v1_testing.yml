@@ -87,8 +87,10 @@ jobs:
 
       - name: Testing
         timeout-minutes: 20 # Sometimes hangs...
+        env:
+          USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --proto-version=v1 --use-tracker=${{ matrix.use-tracker }}
+          pytest -v --proto-version=v1 --use-tracker=$env:USE_TRACKER
 
       - name: Upload integration test logs
         if: always()
@@ -165,8 +167,10 @@ jobs:
 
       - name: Testing
         timeout-minutes: 20 # Sometimes hangs...
+        env:
+          USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --proto-version=v1 --use-tracker=${{ matrix.use-tracker }}
+          pytest -v --proto-version=v1 --use-tracker=${USE_TRACKER}
 
       - name: Upload integration test logs
         if: always()
