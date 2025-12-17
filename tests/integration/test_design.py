@@ -4342,14 +4342,8 @@ def test_design_point_get_named_selections(modeler: Modeler):
 def test_check_design_update(modeler: Modeler):
     """Test that design updates are tracked when USE_TRACKER_TO_UPDATE_DESIGN is enabled."""
 
-    # Enable design tracking explicitly for this test.
-    import ansys.geometry.core as pyansys_geo
-
-    pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN = True
-
     # Open a disco file
-    design = modeler.open_file(Path(FILES_DIR, "hollowCylinder1.dsco"))
-
+    design = modeler.open_file(Path(FILES_DIR, "hollowCylinder1_sc.scdocx"))
     # Record initial state
     initial_component_count = len(design.components)
     assert initial_component_count > 0, "Design should have at least one component"
@@ -4420,3 +4414,33 @@ def test_design_update_with_booleans(modeler: Modeler):
     # Component 2 should remain unchanged
     final_bodies_comp2 = len(design.components[2].bodies)
     assert final_bodies_comp2 == initial_bodies_comp2, "Component 2 should remain unchanged"
+
+def test_check_design_update_2(modeler: Modeler):
+    """Test that design updates are tracked when USE_TRACKER_TO_UPDATE_DESIGN is enabled."""
+
+    # Open a disco file
+    design = modeler.open_file(Path(FILES_DIR, "hollowCylinder2.dsco"))
+    # Record initial state
+    initial_component_count = len(design.components)
+    assert initial_component_count > 0, "Design should have at least one component"
+
+    # Get the body and faces
+    body = design.components[0].bodies[0]
+    inside_faces = [body.faces[0]]
+    sealing_faces = [body.faces[1], body.faces[2]]
+
+    # Extract volume from faces - this should trigger design update tracking
+    modeler.prepare_tools.extract_volume_from_faces(sealing_faces, inside_faces)
+
+    # Verify design was updated with new component
+    assert len(design.components) > initial_component_count, (
+        "Design should have more components after extract_volume_from_faces"
+    )
+
+    # Verify first component still has bodies
+    assert len(design.components[0].bodies) > 0, "Component 0 should have bodies"
+    assert design.components[0].bodies[0].name, "Body in component 0 should have a name"
+
+    # Verify new component was created with the extracted body
+    assert len(design.components[1].bodies) > 0, "Component 1 should have bodies"
+    assert design.components[1].bodies[0].name, "Body in component 1 should have a name"

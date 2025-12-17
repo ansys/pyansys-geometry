@@ -1660,7 +1660,7 @@ def from_enclosure_options_to_grpc_enclosure_options(
 def serialize_body(body: GRPCBodyEntity) -> dict:
     """Serialize a GRPCBodyEntity object into a dictionary.
 
-    It is not directly converted to a pygeometry object because we'll assign it is place and
+    It is not directly converted to a pygeometry object because we'll assign it in place and
     construct the object while updating the design object by the tracker output.
 
     Parameters
