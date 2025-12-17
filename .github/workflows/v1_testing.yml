@@ -28,6 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.10', '3.13']
+        use-tracker: ['no', 'yes']
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -87,7 +88,7 @@ jobs:
       - name: Testing
         timeout-minutes: 20 # Sometimes hangs...
         run: |
-          pytest -v --proto-version=v1
+          pytest -v --proto-version=v1 --use-tracker=${{ matrix.use-tracker }}
 
       - name: Upload integration test logs
         if: always()
@@ -111,6 +112,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.10', '3.13']
+        use-tracker: ['no', 'yes']
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -164,7 +166,7 @@ jobs:
       - name: Testing
         timeout-minutes: 20 # Sometimes hangs...
         run: |
-          pytest -v --proto-version=v1
+          pytest -v --proto-version=v1 --use-tracker=${{ matrix.use-tracker }}
 
       - name: Upload integration test logs
         if: always()
