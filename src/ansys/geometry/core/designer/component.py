@@ -167,7 +167,7 @@ class Component:
         created on the server.
     master_component : MasterComponent, default: None
         Master component to use to create a nested component instance instead
-        of creating a new conponent.
+        of creating a new component.
     read_existing_comp : bool, default: False
         Whether an existing component on the service should be read. This
         parameter is only valid when connecting to an existing service session.

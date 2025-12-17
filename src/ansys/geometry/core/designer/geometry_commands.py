@@ -53,7 +53,9 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import Angle, Distance
+from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.line import Line
+from ansys.geometry.core.shapes.surfaces.surface import Surface
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -1848,3 +1850,33 @@ class GeometryCommands:
 
         design = get_design_from_edge(edges[0])
         design._update_design_inplace()
+
+    @min_backend_version(26, 1, 0)
+    def intersect_curve_and_surface(
+        self,
+        curve: Curve,
+        surface: Surface,
+    ) -> list[Point3D]:
+        """Find the intersection points of a curve and a surface.
+
+        Parameters
+        ----------
+        curve : Curve
+            Curve to intersect.
+        surface : Surface
+            Surface to intersect.
+
+        Returns
+        -------
+        list[Point3D]
+            Points of intersection.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        response = self._grpc_client._services.curves.intersect_curve_and_surface(
+            curve=curve, surface=surface
+        )
+
+        return [] if response.get("intersect") is False else response.get("points")
