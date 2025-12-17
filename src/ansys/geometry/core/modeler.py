@@ -459,6 +459,11 @@ class Modeler:
                 raise RuntimeError(
                     "File is too large to upload. Service versions above 25R2 support streaming."
                 )
+        elif self.client.services.version == GeometryApiProtos.V0:
+            self.client.services.designs.open(
+                filepath=file_path,
+                import_options=import_options,
+            )
         else:
             # Zip file and pass filepath to service to open
             fp_path = Path(file_path).resolve()
@@ -582,17 +587,23 @@ class Modeler:
                 api_version = ApiVersions.parse_input(api_version)
 
         # Prepare the script path
+        self.client.log.debug(f"Running Discovery script file at {file_path}...")
         if self.client.services.version == GeometryApiProtos.V0:
             serv_path = self._upload_file(file_path)
+            response = self.client.services.commands_script.run_script_file(
+                script_path=serv_path,
+                script_args=script_args,
+                api_version=api_version.value if api_version is not None else None,
+            )
         else:
-            serv_path = file_path
-
-        self.client.log.debug(f"Running Discovery script file at {file_path}...")
-        response = self.client.services.commands_script.run_script_file(
-            script_path=serv_path,
-            script_args=script_args,
-            api_version=api_version.value if api_version is not None else None,
-        )
+            file_path = Path(file_path).resolve()
+            serv_path = prepare_file_for_server_upload(file_path)
+            response = self.client.services.commands_script.run_script_file(
+                script_path=serv_path,
+                original_path=file_path.name,
+                script_args=script_args,
+                api_version=api_version.value if api_version is not None else None,
+            )
 
         if not response.get("success"):
             raise GeometryRuntimeError(response.get("message"))
