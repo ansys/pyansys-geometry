@@ -4415,6 +4415,7 @@ def test_design_update_with_booleans(modeler: Modeler):
     final_bodies_comp2 = len(design.components[2].bodies)
     assert final_bodies_comp2 == initial_bodies_comp2, "Component 2 should remain unchanged"
 
+
 def test_check_design_update_2(modeler: Modeler):
     """Test that design updates are tracked when USE_TRACKER_TO_UPDATE_DESIGN is enabled."""
 
