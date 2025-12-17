@@ -97,6 +97,10 @@ jobs:
     runs-on: windows-latest
     env:
       PYVISTA_OFF_SCREEN: true
+    strategy:
+      fail-fast: false
+      matrix:
+        proto-version: [v0, v1]
     permissions:
       contents: read
       packages: read # Needs access to the Geometry docker image
@@ -133,6 +137,7 @@ jobs:
         env:
           TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
           PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
+          PROTO_VERSION: ${{ matrix.proto-version }}
         run: |
           # Write command to file launch.txt for sanitizing purposes
           echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING $env:ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
@@ -140,12 +145,14 @@ jobs:
           $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
           Invoke-Expression $command.Line
           Start-Sleep -Seconds 10
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+          python -c "import os; from ansys.geometry.core.connection.validate import validate; validate(proto_version=os.getenv('PROTO_VERSION'))"
 
       - name: Run PyAnsys Geometry tests
         timeout-minutes: 20 # Sometimes hangs...
+        env:
+          PROTO_VERSION: ${{ matrix.proto-version }}
         run: |
-          pytest -v
+          pytest -v --proto-version=$env:PROTO_VERSION
 
       - name: Stop the Geometry service
         if: always()
@@ -188,6 +195,10 @@ jobs:
     needs: manifests
     if: needs.manifests.outputs.skip_core_linux == 0
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        proto-version: [v0, v1]
     permissions:
       contents: read
       packages: read # Needs access to the Geometry docker image
@@ -216,6 +227,7 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           group-dependencies-name: "tests"
+          pytest-extra-args: "--proto-version=${{ matrix.proto-version }}"
 
       - name: Stop the Geometry service
         if: always()
