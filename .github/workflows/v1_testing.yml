@@ -28,6 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.10', '3.13']
+        use-tracker: ['no', 'yes']
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -86,14 +87,16 @@ jobs:
 
       - name: Testing
         timeout-minutes: 20 # Sometimes hangs...
+        env:
+          USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --proto-version=v1
+          pytest -v --proto-version=v1 --use-tracker=$env:USE_TRACKER
 
       - name: Upload integration test logs
         if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
-          name: v1-windows-integration-test-logs-${{ matrix.python-version }}
+          name: v1-windows-integration-test-logs-${{ matrix.python-version }}-tracker-${{ matrix.use-tracker }}
           path: tests/integration/logs/integration_tests_logs.txt
           retention-days: 7
 
@@ -111,6 +114,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.10', '3.13']
+        use-tracker: ['no', 'yes']
 
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -163,14 +167,16 @@ jobs:
 
       - name: Testing
         timeout-minutes: 20 # Sometimes hangs...
+        env:
+          USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --proto-version=v1
+          pytest -v --proto-version=v1 --use-tracker=${USE_TRACKER}
 
       - name: Upload integration test logs
         if: always()
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
-          name: v1-linux-integration-test-logs-${{ matrix.python-version }}
+          name: v1-linux-integration-test-logs-${{ matrix.python-version }}-tracker-${{ matrix.use-tracker }}
           path: tests/integration/logs/integration_tests_logs.txt
           retention-days: 7
 
