@@ -1869,7 +1869,7 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
     ]
     deleted_components = [
         serialize_entity_identifier(entity)
-        for entity in getattr(tracked_changes, "deleted_components", [])
+        for entity in getattr(tracked_changes, "deleted_component_ids", [])
     ]
 
     # Extract and serialize bodies
@@ -1881,7 +1881,7 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
     ]
     deleted_bodies = [
         serialize_entity_identifier(entity)
-        for entity in getattr(tracked_changes, "deleted_bodies", [])
+        for entity in getattr(tracked_changes, "deleted_body_ids", [])
     ]
 
     created_faces = [
