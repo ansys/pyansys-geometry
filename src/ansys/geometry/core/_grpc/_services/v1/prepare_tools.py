@@ -78,6 +78,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
             "created_bodies": [body.id.id for body in response.created_bodies],
             "complete_command_response": serialized_tracker_response,
         }
+
     @protect_grpc
     def extract_volume_from_edge_loops(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.prepare_pb2 import ExtractVolumeFromEdgeLoopsRequest
