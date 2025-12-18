@@ -1561,7 +1561,7 @@ class Design(Component):
                 )
                 continue
 
-            new_body = self._find_and_add_body_to_design(
+            new_body = self._find_and_add_body(
                 created_body_info, self.components, created_parts_dict, created_components_dict
             )
             if not new_body:
@@ -1817,7 +1817,7 @@ class Design(Component):
         existing_body.name = body_info["name"]
         existing_body._template._is_surface = body_info.get("is_surface", False)
 
-    def _find_and_add_body_to_design(
+    def _find_and_add_body(
         self,
         tracked_body_info: dict,
         components: list["Component"],
@@ -1864,7 +1864,7 @@ class Design(Component):
                 )
                 return new_master_body
 
-            result = self._find_and_add_body_to_design(
+            result = self._find_and_add_body(
                 tracked_body_info, component.components, created_parts, created_components
             )
             if result:
