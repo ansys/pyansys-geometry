@@ -837,7 +837,7 @@ class RepairTools:
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response["tracker_response"])
+            parent_design._update_from_tracker(response["complete_command_response"])
 
         # Build the response message
         return create_repair_message_from_response(response)
