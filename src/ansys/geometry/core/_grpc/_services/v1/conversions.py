@@ -1883,7 +1883,7 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
         serialize_entity_identifier(entity)
         for entity in getattr(tracked_changes, "deleted_bodies", [])
     ]
-    
+
     created_faces = [
         serialize_entity_identifier(entity)
         for entity in getattr(tracked_changes, "created_faces", [])
@@ -1908,7 +1908,6 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
         serialize_entity_identifier(entity)
         for entity in getattr(tracked_changes, "deleted_edges", [])
     ]
-    
 
     return {
         "success": success,
