@@ -1715,10 +1715,6 @@ class Design(Component):
         Component or None
             The newly created component if successful, None otherwise.
         """
-        # Early return if there are no components to search through
-        if not parent_components:
-            return None
-
         new_component_parent_id = component_info.get("parent_id")
         master_id = component_info.get("master_id")
 
@@ -1731,7 +1727,7 @@ class Design(Component):
         if new_component_parent_id == self.id:
             # Create the Component object with master_component
             new_component = Component(
-                parent_component=None,
+                parent_component=self,
                 name=component_info["name"],
                 template=self,
                 grpc_client=self._grpc_client,
@@ -1748,6 +1744,7 @@ class Design(Component):
             if component.id == new_component_parent_id:
                 new_component = Component(
                     name=component_info["name"],
+                    parent_component=component,
                     template=component,
                     grpc_client=self._grpc_client,
                     master_component=master_component,
