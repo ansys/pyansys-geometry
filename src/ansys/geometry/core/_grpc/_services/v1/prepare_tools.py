@@ -78,7 +78,6 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
             "created_bodies": [body.id.id for body in response.created_bodies],
             "complete_command_response": serialized_tracker_response,
         }
-
     @protect_grpc
     def extract_volume_from_edge_loops(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.prepare_pb2 import ExtractVolumeFromEdgeLoopsRequest
@@ -92,10 +91,15 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Call the gRPC service
         response = self.stub.ExtractVolumeFromEdgeLoops(request)
 
+        serialized_tracker_response = serialize_tracked_command_response(
+            response=response.tracked_command_response
+        )
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
             "created_bodies": [body.id.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -111,9 +115,13 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Call the gRPC service
         response = self.stub.RemoveRounds(request)
 
+        serialized_tracker_response = serialize_tracked_command_response(
+            response=response.tracked_command_response
+        )
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -130,9 +138,13 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Call the gRPC service
         response = self.stub.ShareTopology(request)
 
+        serialized_tracker_response = serialize_tracked_command_response(
+            response=response.tracked_command_response
+        )
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -153,6 +165,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
+            "tracker_response": tracked_response,
             "found": getattr(response, "found", -1),
             "repaired": getattr(response, "repaired", -1),
             "created_bodies_monikers": [
