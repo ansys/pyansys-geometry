@@ -145,13 +145,13 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
         return {
             "success": tracked_response.get("success"),
             "modified_bodies": [
-                body.get("id").id for body in tracked_response.get("modified_bodies")
+                body.get("id") for body in tracked_response.get("modified_bodies")
             ],
             "modified_faces": [
-                face.get("id").id for face in tracked_response.get("modified_faces")
+                face.get("id") for face in tracked_response.get("modified_faces")
             ],
             "modified_edges": [
-                edge.get("id").id for edge in tracked_response.get("modified_edges")
+                edge.get("id") for edge in tracked_response.get("modified_edges")
             ],
         }
 

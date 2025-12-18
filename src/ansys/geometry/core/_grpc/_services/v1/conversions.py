@@ -1883,6 +1883,32 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
         serialize_entity_identifier(entity)
         for entity in getattr(tracked_changes, "deleted_bodies", [])
     ]
+    
+    created_faces = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "created_faces", [])
+    ]
+    modified_faces = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "modified_faces", [])
+    ]
+    deleted_faces = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_faces", [])
+    ]
+    created_edges = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "created_edges", [])
+    ]
+    modified_edges = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "modified_edges", [])
+    ]
+    deleted_edges = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_edges", [])
+    ]
+    
 
     return {
         "success": success,
@@ -1895,6 +1921,12 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
         "created_bodies": created_bodies,
         "modified_bodies": modified_bodies,
         "deleted_bodies": deleted_bodies,
+        "created_faces": created_faces,
+        "modified_faces": modified_faces,
+        "deleted_faces": deleted_faces,
+        "created_edges": created_edges,
+        "modified_edges": modified_edges,
+        "deleted_edges": deleted_edges,
     }
 
 
