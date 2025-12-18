@@ -388,5 +388,3 @@ backends:
       - tests/integration/test_design.py::test_check_design_update
       - tests/integration/test_design.py::test_check_design_update_2
 
-      
-
