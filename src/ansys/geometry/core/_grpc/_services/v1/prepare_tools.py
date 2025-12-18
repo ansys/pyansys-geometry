@@ -156,11 +156,11 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
             "found": getattr(response, "found", -1),
             "repaired": getattr(response, "repaired", -1),
             "created_bodies_monikers": [
-                created_body.get("id").id
+                created_body.get("id")
                 for created_body in tracked_response.get("created_bodies", [])
             ],
             "modified_bodies_monikers": [
-                modified_body.get("id").id
+                modified_body.get("id")
                 for modified_body in tracked_response.get("modified_bodies", [])
             ],
         }
