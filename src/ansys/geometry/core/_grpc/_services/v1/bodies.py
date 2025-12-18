@@ -43,6 +43,7 @@ from .conversions import (
     from_tess_options_to_grpc_tess_options,
     from_trimmed_curve_to_grpc_trimmed_curve,
     from_unit_vector_to_grpc_direction,
+    serialize_tracked_command_response,
 )
 
 
@@ -1006,8 +1007,9 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         if not response.tracked_command_response.command_response.success:
             raise ValueError(f"Boolean operation failed: {kwargs['err_msg']}")
 
+        serialized_response = serialize_tracked_command_response(response.tracked_command_response)
         # Return the response - formatted as a dictionary
-        return {"complete_command_response": response}
+        return {"complete_command_response": serialized_response}
 
     @protect_grpc
     def combine(self, **kwargs) -> dict:  # noqa: D102
