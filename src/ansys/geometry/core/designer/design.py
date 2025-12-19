@@ -1871,7 +1871,9 @@ class Design(Component):
     def _find_and_update_body(self, body_info, component):
         """Recursively find and update an existing body in the component hierarchy."""
         for body in component.bodies:
-            if body.master_id == body_info["id"]:
+            # Use master_id if available, otherwise use regular id
+            body_master_id = getattr(body, "master_id", None) or body._template.id
+            if body_master_id == body_info["id"]:
                 self._update_body(body, body_info)
                 self._grpc_client.log.debug(
                     f"Updated body '{body.name}' (ID: {body.id}) in component "
