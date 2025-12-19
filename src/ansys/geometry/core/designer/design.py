@@ -1685,7 +1685,6 @@ class Design(Component):
             if hasattr(existing_part, "_is_alive"):
                 existing_part._is_alive = False
             self._grpc_client.log.debug(f"Removed part (ID: {part_id})")
-            # TODO: Implement actual removal logic based on where parts are stored
             return True
 
         return False
