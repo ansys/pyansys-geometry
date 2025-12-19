@@ -171,13 +171,14 @@ def wait_until_healthy(
     # If transport mode is not specified and a channel creation is required, raise an error
     if channel_creation_required:
         if transport_mode is None:
-            raise ValueError(
-                "Transport mode must be specified."
-                " Use 'transport_mode' parameter with one of the possible options."
-                " Options are: 'insecure', 'uds', 'wnua', 'mtls'. See the following"
-                " documentation for more details:"
-                " https://geometry.docs.pyansys.com/version/stable/user_guide/connection.html#securing-connections"
-            )
+            # raise ValueError(
+            #     "Transport mode must be specified."
+            #     " Use 'transport_mode' parameter with one of the possible options."
+            #     " Options are: 'insecure', 'uds', 'wnua', 'mtls'. See the following"
+            #     " documentation for more details:"
+            #     " https://geometry.docs.pyansys.com/version/stable/user_guide/connection.html#securing-connections"
+            # )
+            transport_mode = "insecure"
         else:
             from ansys.tools.common.cyberchannel import verify_transport_mode
 
