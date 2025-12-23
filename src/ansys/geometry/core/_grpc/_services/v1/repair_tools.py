@@ -441,7 +441,7 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Call the gRPC service
         response = self.stub.FixSplitEdges(request)
-        
+
         # Return the response - formatted as a dictionary
         return serialize_repair_command_response(response.result)
 
