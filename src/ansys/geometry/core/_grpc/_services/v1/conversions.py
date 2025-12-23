@@ -1942,9 +1942,7 @@ def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:
         "success": response.tracked_command_response.command_response.success,
         "found": getattr(response, "found", -1),
         "repaired": getattr(response, "repaired", -1),
-        "tracker_response": serialize_tracked_command_response(
-            response.tracked_command_response
-        ),
+        "tracker_response": serialize_tracked_command_response(response.tracked_command_response),
         "created_bodies_monikers": [
             created_body.id.id
             for created_body in getattr(
