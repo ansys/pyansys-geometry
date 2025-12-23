@@ -32,6 +32,7 @@ import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core._grpc._version import GeometryApiProtos
+from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
     Component,
