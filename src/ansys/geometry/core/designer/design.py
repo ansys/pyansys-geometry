@@ -1871,7 +1871,7 @@ class Design(Component):
     def _find_and_update_body(self, body_info, component):
         """Recursively find and update an existing body in the component hierarchy."""
         for body in component.bodies:
-            # Use master_id if available, 
+            # Use master_id if available,
             body_master_id = (
                 getattr(body, "master_id", None)
                 or (body._template.id if hasattr(body, "_template") and body._template else None)

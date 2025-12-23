@@ -395,4 +395,3 @@ backends:
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
 
-
