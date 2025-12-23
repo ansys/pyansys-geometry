@@ -178,23 +178,18 @@ jobs:
       matrix:
         proto-version: ["v1", "v0"]
         use-tracker: ['no', 'yes']
+        docker-image: ["core-windows-latest", "core-windows-latest-unstable"]
         include:
+          # Add tracker-label based on use-tracker
+          - use-tracker: 'no'
+            tracker-label: "Without tracker"
+          - use-tracker: 'yes'
+            tracker-label: "With tracker"
+          # Add experimental flag based on docker-image
           - docker-image: "core-windows-latest"
             experimental: false
-            use-tracker: 'no'
-            tracker-label: "Without tracker"
-          - docker-image: "core-windows-latest"
-            experimental: false
-            use-tracker: 'yes'
-            tracker-label: "With tracker"
           - docker-image: "core-windows-latest-unstable"
             experimental: true
-            use-tracker: 'no'
-            tracker-label: "Without tracker"
-          - docker-image: "core-windows-latest-unstable"
-            experimental: true
-            use-tracker: 'yes'
-            tracker-label: "With tracker"
 
     steps:
       - name: Calculate SKIP_UNSTABLE
