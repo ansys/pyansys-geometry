@@ -328,10 +328,13 @@ class NURBSCurve(Curve):
 
         # Function to minimize (distance squared)
         def distance_squared(
-            u: float, geomdl_nurbs_curbe: "geomdl_nurbs.Curve", point: np.ndarray
+            u: float, geomdl_nurbs_curve: "geomdl_nurbs.Curve", point: np.ndarray
         ) -> np.ndarray:
-            point_on_curve = np.array(geomdl_nurbs_curbe.evaluate_single(u))
-            return float(np.sum((point_on_curve - point) ** 2))
+            point_on_curve = np.array(geomdl_nurbs_curve.evaluate_single(u))
+            diff = point_on_curve - point
+            result = np.dot(diff, diff)
+            # Ensure scalar return value
+            return float(result) if np.ndim(result) == 0 else float(result.item())
 
         # Define the domain and initial guess (midpoint of the domain by default)
         domain = self._nurbs_curve.domain
