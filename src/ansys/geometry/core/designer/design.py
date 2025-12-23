@@ -1449,7 +1449,6 @@ class Design(Component):
             # Create new part
             new_part = Part(part_id, part_name, [], [])
             created_parts_dict[part_id] = new_part
-            # TODO: Add part to appropriate collection/registry
             self._grpc_client.log.debug(f"Created new part '{part_name}' (ID: {part_id})")
 
         # Handle modified parts
@@ -1466,7 +1465,6 @@ class Design(Component):
                 if hasattr(existing_part, "_is_alive"):
                     existing_part._is_alive = False
                 self._grpc_client.log.debug(f"Removed part (ID: {part_id})")
-                # TODO: Implement actual removal logic based on where parts are stored
             else:
                 self._grpc_client.log.warning(f"Could not find part to delete: ID={part_id}")
 
