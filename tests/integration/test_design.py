@@ -1245,69 +1245,69 @@ def test_body_rotation(modeler: Modeler):
         assert not np.allclose(old_vertex, new_vertex)
 
 
-# def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-#     """Test for downloading a design in multiple modes and verifying the
-#     correct download.
-#     """
-#     # Create your design on the server side
-#     design = modeler.create_design("MultipleBodyTranslation_Test")
+def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test for downloading a design in multiple modes and verifying the
+    correct download.
+    """
+    # Create your design on the server side
+    design = modeler.create_design("MultipleBodyTranslation_Test")
 
-#     # Create a Sketch object and draw a circle
-#     sketch = Sketch()
-#     sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+    # Create a Sketch object and draw a circle
+    sketch = Sketch()
+    sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
 
-#     # Extrude the sketch
-#     design.extrude_sketch(name="MyCylinder", sketch=sketch, distance=Quantity(50, UNITS.mm))
+    # Extrude the sketch
+    design.extrude_sketch(name="MyCylinder", sketch=sketch, distance=Quantity(50, UNITS.mm))
 
-#     # Download the design
-#     file = tmp_path_factory.mktemp("scdoc_files_download") / "dummy_folder" / "cylinder.scdocx"
-#     design.download(file)
+    # Download the design
+    file = tmp_path_factory.mktemp("scdoc_files_download") / "dummy_folder" / "cylinder.scdocx"
+    design.download(file)
 
-#     # Check that the file exists
-#     assert file.exists()
+    # Check that the file exists
+    assert file.exists()
 
-#     # Check that we can also save it (even if it is not accessible on the server)
-#     if BackendType.is_linux_service(modeler.client.backend_type):
-#         file_save = "/tmp/cylinder-temp.scdocx"
-#     else:
-#         file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
+    # Check that we can also save it (even if it is not accessible on the server)
+    if BackendType.is_linux_service(modeler.client.backend_type):
+        file_save = "/tmp/cylinder-temp.scdocx"
+    else:
+        file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
 
-#     design.save(file_location=file_save)
+    design.save(file_location=file_save)
 
-#     # Check for other exports - Windows backend...
-#     if not BackendType.is_core_service(modeler.client.backend_type):
-#         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
-#         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
+    # Check for other exports - Windows backend...
+    if not BackendType.is_core_service(modeler.client.backend_type):
+        binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
+        text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
-#         # Windows-only HOOPS exports for now
-#         step_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.stp"
-#         design.download(step_file, format=DesignFileFormat.STEP)
-#         assert step_file.exists()
+        # Windows-only HOOPS exports for now
+        step_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.stp"
+        design.download(step_file, format=DesignFileFormat.STEP)
+        assert step_file.exists()
 
-#         iges_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.igs"
-#         design.download(iges_file, format=DesignFileFormat.IGES)
-#         assert iges_file.exists()
+        iges_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.igs"
+        design.download(iges_file, format=DesignFileFormat.IGES)
+        assert iges_file.exists()
 
-#     # Linux backend...
-#     else:
-#         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
-#         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
+    # Linux backend...
+    else:
+        binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
+        text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
 
-#     # FMD
-#     fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
-#     design.download(fmd_file, format=DesignFileFormat.FMD)
-#     assert fmd_file.exists()
+    # FMD
+    fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
+    design.download(fmd_file, format=DesignFileFormat.FMD)
+    assert fmd_file.exists()
 
-#     # PMDB
-#     pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
+    # PMDB
+    pmdb_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.pmdb"
 
-#     design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN)
-#     design.download(text_parasolid_file, format=DesignFileFormat.PARASOLID_TEXT)
-#     design.download(pmdb_file, format=DesignFileFormat.PMDB)
+    design.download(binary_parasolid_file, format=DesignFileFormat.PARASOLID_BIN)
+    design.download(text_parasolid_file, format=DesignFileFormat.PARASOLID_TEXT)
+    design.download(pmdb_file, format=DesignFileFormat.PMDB)
 
-#     assert binary_parasolid_file.exists()
-#     assert text_parasolid_file.exists()
-#     assert pmdb_file.exists()
+    assert binary_parasolid_file.exists()
+    assert text_parasolid_file.exists()
+    assert pmdb_file.exists()
 
 
 def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
