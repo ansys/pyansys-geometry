@@ -167,7 +167,7 @@ jobs:
           fi
 
   testing-windows:
-    name: Testing and coverage (Windows)
+    name: Testing and coverage (Windows) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }})
     needs: [smoke-tests, manifests]
     runs-on: windows-latest
     continue-on-error: ${{ matrix.experimental }}
@@ -181,8 +181,20 @@ jobs:
         include:
           - docker-image: "core-windows-latest"
             experimental: false
+            use-tracker: 'no'
+            tracker-label: "Without tracker"
+          - docker-image: "core-windows-latest"
+            experimental: false
+            use-tracker: 'yes'
+            tracker-label: "With tracker"
           - docker-image: "core-windows-latest-unstable"
             experimental: true
+            use-tracker: 'no'
+            tracker-label: "Without tracker"
+          - docker-image: "core-windows-latest-unstable"
+            experimental: true
+            use-tracker: 'yes'
+            tracker-label: "With tracker"
 
     steps:
       - name: Calculate SKIP_UNSTABLE
@@ -276,7 +288,7 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         timeout-minutes: 20 # Sometimes hangs...
         run: |
-          pytest -v
+          pytest -v --proto-version=${proto-version} --use-tracker=${use-tracker}
 
       - name: Upload integration test logs
         if: always()
