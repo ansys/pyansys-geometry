@@ -4394,9 +4394,6 @@ def test_design_update_with_booleans(modeler: Modeler):
     # Perform unite operation
     b0.unite(b1)
 
-    # Check state after boolean operation
-    final_num_components = len(design.components)
-
     # Component 0 should still exist with the united body
     final_bodies_comp0 = len(design.components[0].bodies)
     assert final_bodies_comp0 > 0, "Component 0 should still have bodies after unite"
