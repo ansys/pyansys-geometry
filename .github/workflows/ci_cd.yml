@@ -176,6 +176,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        proto-version: ["v1", "v0"]
+        use-tracker: ['no', 'yes']
         include:
           - docker-image: "core-windows-latest"
             experimental: false
@@ -370,6 +372,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        proto-version: ["v1", "v0"]
+        use-tracker: ['no', 'yes']
         include:
           - docker-image: "core-linux-latest"
             experimental: false
