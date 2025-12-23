@@ -331,7 +331,7 @@ class NURBSCurve(Curve):
             u: float, geomdl_nurbs_curbe: "geomdl_nurbs.Curve", point: np.ndarray
         ) -> np.ndarray:
             point_on_curve = np.array(geomdl_nurbs_curbe.evaluate_single(u))
-            return np.sum((point_on_curve - point) ** 2)
+            return float(np.sum((point_on_curve - point) ** 2))
 
         # Define the domain and initial guess (midpoint of the domain by default)
         domain = self._nurbs_curve.domain
