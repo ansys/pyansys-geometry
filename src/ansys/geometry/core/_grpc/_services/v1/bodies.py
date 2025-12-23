@@ -1041,7 +1041,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             raise ValueError(f"Boolean operation failed: {kwargs['err_msg']}")
 
         # Return the response - formatted as a dictionary
-        return {"complete_command_response": serialized_response}
+        return {"tracker_response": serialized_response}
 
     @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
