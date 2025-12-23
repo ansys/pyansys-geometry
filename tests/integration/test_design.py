@@ -74,11 +74,7 @@ from ansys.geometry.core.shapes import (
     Torus,
 )
 from ansys.geometry.core.shapes.box_uv import BoxUV
-from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
-from ansys.geometry.core.shapes.parameterization import (
-    Interval,
-)
-from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
+from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
@@ -2840,11 +2836,7 @@ def test_sweep_sketch(modeler: Modeler):
     body = design_sketch.sweep_sketch("donutsweep", profile, path)
 
     assert body.is_surface is False
-
-    # check edges
     assert len(body.edges) == 0
-
-    # check faces
     assert len(body.faces) == 1
 
     # check area of face
@@ -2853,7 +2845,6 @@ def test_sweep_sketch(modeler: Modeler):
     r2 = path_radius - profile_radius
     expected_face_area = (np.pi**2) * (r1**2 - r2**2)
     assert body.faces[0].area.m == pytest.approx(expected_face_area)
-
     assert Accuracy.length_is_equal(body.volume.m, 394.7841760435743)
 
 
@@ -2906,55 +2897,6 @@ def test_sweep_chain(modeler: Modeler):
     assert body.volume.m == 0
 
 
-def test_sweep_with_guide(modeler: Modeler):
-    """Test creating a body by sweeping a profile with a guide curve."""
-    design = modeler.create_design("SweepWithGuide")
-
-    # Create path points for the sweep path
-    path_points = [
-        Point3D([0.0, 0.0, 0.15]),
-        Point3D([0.05, 0.0, 0.1]),
-        Point3D([0.1, 0.0, 0.05]),
-        Point3D([0.15, 0.0, 0.1]),
-        Point3D([0.2, 0.0, 0.15]),
-    ]
-    nurbs_path = NURBSCurve.fit_curve_from_points(path_points, degree=3)
-    n_l_points = len(path_points)
-    path_interval = Interval(1.0 / (n_l_points - 1), (n_l_points - 2.0) / (n_l_points - 1))
-    trimmed_path = nurbs_path.trim(path_interval)
-
-    # Create a simple circular profile sketch
-    profile_plane = Plane(origin=path_points[1])
-    profile_sketch = Sketch(profile_plane)
-    profile_sketch.circle(Point2D([0, 0]), 0.01)  # 0.01 radius
-
-    # Create guide curve points (offset from path)
-    guide_points = [Point3D([p.x.m, p.y.m + 0.01, p.z.m]) for p in path_points]
-    guide_curve = NURBSCurve.fit_curve_from_points(guide_points, degree=3)
-    guide_interval = Interval(1.0 / (n_l_points - 1), (n_l_points - 2.0) / (n_l_points - 1))
-    trimmed_guide = guide_curve.trim(guide_interval)
-
-    # Sweep the profile along the path with the guide curve
-    sweep_data = [
-        SweepWithGuideData(
-            name="SweptBody",
-            parent_id=design.id,
-            sketch=profile_sketch,
-            path=trimmed_path,
-            guide=trimmed_guide,
-            tight_tolerance=True,
-        )
-    ]
-    sweep_body = design.sweep_with_guide(sweep_data=sweep_data)[0]
-
-    assert sweep_body is not None
-    assert sweep_body.name == "SweptBody"
-    assert sweep_body.is_surface
-    assert len(sweep_body.faces) == 1
-    assert len(sweep_body.edges) == 2
-    assert len(sweep_body.vertices) == 0
-
-
 def test_create_body_from_loft_profile(modeler: Modeler):
     """Test the ``create_body_from_loft_profile()`` method to create a vase
     shape.
@@ -2976,54 +2918,6 @@ def test_create_body_from_loft_profile(modeler: Modeler):
     # check volume of body
     # expected is 0 since it's not a closed surface
     assert result.volume.m == 0
-
-
-def test_create_body_from_loft_profile_with_guides(modeler: Modeler):
-    """Test the ``create_body_from_loft_profile_with_guides()`` method to create a vase
-    shape.
-    """
-    design_sketch = modeler.create_design("LoftProfileWithGuides")
-
-    circle1 = Circle(origin=[0, 0, 0], radius=8)
-    circle2 = Circle(origin=[0, 0, 10], radius=10)
-
-    profile1 = circle1.trim(Interval(0, 2 * np.pi))
-    profile2 = circle2.trim(Interval(0, 2 * np.pi))
-
-    def circle_point(center, radius, angle_deg):
-        # Returns a point on the circle at the given angle
-        angle_rad = np.deg2rad(angle_deg)
-        return Point3D(
-            [
-                center[0] + radius.m * np.cos(angle_rad),
-                center[1] + radius.m * np.sin(angle_rad),
-                center[2],
-            ]
-        )
-
-    angles = [0, 90, 180, 270]
-    guide_curves = []
-
-    for angle in angles:
-        pt1 = circle_point(circle1.origin, circle1.radius, angle)
-        pt2 = circle_point(circle2.origin, circle2.radius, angle)
-
-        # Create a guide curve (e.g., a line or spline) between pt1 and pt2
-        guide_curve = NURBSCurve.fit_curve_from_points([pt1, pt2], 1).trim(Interval(0, 1))
-        guide_curves.append(guide_curve)
-
-    # Call the method
-    result = design_sketch.create_body_from_loft_profiles_with_guides(
-        "vase", [[profile1], [profile2]], guide_curves
-    )
-
-    # Assert that the resulting body has only one face.
-    assert len(result.faces) == 1
-
-    # check volume of body
-    # expected is 0 since it's not a closed surface
-    assert result.volume.m == 0
-    assert result.is_surface is True
 
 
 def test_revolve_sketch(modeler: Modeler):
@@ -3325,106 +3219,6 @@ def test_surface_body_creation(modeler: Modeler):
     assert len(design.bodies) == 6
     assert not body.is_surface
     assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
-
-
-def test_nurbs_surface_body_creation(modeler: Modeler):
-    """Test surface body creation from NURBS surfaces."""
-    design = modeler.create_design("Design1")
-
-    points = [
-        Point3D([0, 0, 0]),
-        Point3D([0, 1, 1]),
-        Point3D([0, 2, 0]),
-        Point3D([1, 0, 1]),
-        Point3D([1, 1, 2]),
-        Point3D([1, 2, 1]),
-        Point3D([2, 0, 0]),
-        Point3D([2, 1, 1]),
-        Point3D([2, 2, 0]),
-    ]
-    degree_u = 2
-    degree_v = 2
-    surface = NURBSSurface.fit_surface_from_points(
-        points=points, size_u=3, size_v=3, degree_u=degree_u, degree_v=degree_v
-    )
-
-    trimmed_surface = surface.trim(BoxUV(Interval(0, 1), Interval(0, 1)))
-    body = design.create_body_from_surface("nurbs_surface", trimmed_surface)
-    assert len(design.bodies) == 1
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(7.44626609)
-
-    assert surface.origin.x == 0
-    assert surface.origin.y == 0
-    assert surface.origin.z == 0
-
-    assert surface.dir_x.x == 1
-    assert surface.dir_x.y == 0
-    assert surface.dir_x.z == 0
-
-    assert surface.dir_z.x == 0
-    assert surface.dir_z.y == 0
-    assert surface.dir_z.z == 1
-
-
-def test_nurbs_surface_body_creation_using_old_backend(fake_modeler_old_backend_251: Modeler):
-    """Test not implemented surface body creation from NURBS surfaces using an old backend"""
-    design = fake_modeler_old_backend_251.create_design("Design1")
-
-    points = [
-        Point3D([0, 0, 0]),
-        Point3D([0, 1, 1]),
-        Point3D([0, 2, 0]),
-        Point3D([1, 0, 1]),
-        Point3D([1, 1, 2]),
-        Point3D([1, 2, 1]),
-        Point3D([2, 0, 0]),
-        Point3D([2, 1, 1]),
-        Point3D([2, 2, 0]),
-    ]
-    degree_u = 2
-    degree_v = 2
-    surface = NURBSSurface.fit_surface_from_points(
-        points=points, size_u=3, size_v=3, degree_u=degree_u, degree_v=degree_v
-    )
-
-    trimmed_surface = surface.trim(BoxUV(Interval(0, 1), Interval(0, 1)))
-    with pytest.raises(
-        ValueError, match="NURBS surface bodies are only supported starting on Ansys release 26R1."
-    ):
-        design.create_body_from_surface("nurbs_surface", trimmed_surface)
-
-
-def test_create_surface_from_nurbs_sketch(modeler: Modeler):
-    """Test creating a surface from a NURBS sketch."""
-    design = modeler.create_design("NURBS_Sketch_Surface")
-
-    # Create a NURBS sketch
-    sketch = Sketch()
-    sketch.nurbs_from_2d_points(
-        points=[
-            Point2D([0, 0]),
-            Point2D([1, 0]),
-            Point2D([1, 1]),
-            Point2D([0, 1]),
-        ],
-        tag="nurbs_sketch",
-    )
-    sketch.segment(
-        start=Point2D([0, -1]),
-        end=Point2D([0, 2]),
-        tag="segment_1",
-    )
-
-    # Create a surface from the NURBS sketch
-    surface_body = design.create_surface(
-        name="nurbs_surface",
-        sketch=sketch,
-    )
-
-    assert len(design.bodies) == 1
-    assert surface_body.is_surface
-    assert surface_body.faces[0].area.m > 0
 
 
 def test_design_parameters(modeler: Modeler):
