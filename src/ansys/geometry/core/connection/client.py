@@ -353,7 +353,7 @@ class GrpcClient:
         Options are ``Windows Service``, ``Linux Service``, ``Discovery``,
         and ``SpaceClaim``.
 
-        Notesf
+        Notes
         -----
         This method might return ``None`` because determining the backend type is
         not straightforward.
