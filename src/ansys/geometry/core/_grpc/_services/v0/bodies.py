@@ -782,7 +782,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             )
 
         # Return the response - formatted as a dictionary
-        return {"complete_command_response": serialized_tracker_response}
+        return {"tracker_response": serialized_tracker_response}
 
     @protect_grpc
     def combine(self, **kwargs) -> dict:  # noqa: D102
@@ -837,7 +837,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             )
 
         # Return the response - formatted as a dictionary
-        return {"complete_command_response": serialize_tracker_command_response(response=response)}
+        return {"tracker_response": serialize_tracker_command_response(response=response)}
 
     @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
