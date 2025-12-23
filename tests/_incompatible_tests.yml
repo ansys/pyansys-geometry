@@ -128,6 +128,10 @@ backends:
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
+      # Tracker is introduced in 25.2
+      - tests/integration/test_design.py::test_design_update_with_booleans
+      - tests/integration/test_design.py::test_check_design_update
+      - tests/integration/test_design.py::test_check_design_update_2
 
   - version: "24.2"
     incompatible_tests:
@@ -250,6 +254,10 @@ backends:
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
+      # Tracker is introduced in 25.2
+      - tests/integration/test_design.py::test_design_update_with_booleans
+      - tests/integration/test_design.py::test_check_design_update
+      - tests/integration/test_design.py::test_check_design_update_2
 
   - version: "25.1"
     incompatible_tests:
@@ -340,7 +348,10 @@ backends:
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
-
+      # Tracker is introduced in 25.2
+      - tests/integration/test_design.py::test_design_update_with_booleans
+      - tests/integration/test_design.py::test_check_design_update
+      - tests/integration/test_design.py::test_check_design_update_2
   - version: "25.2"
     incompatible_tests:
       # Model used is too new for this version
@@ -383,8 +394,5 @@ backends:
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
-      # Tracker is introduced in 25.2
-      - tests/integration/test_design.py::test_design_update_with_booleans
-      - tests/integration/test_design.py::test_check_design_update
-      - tests/integration/test_design.py::test_check_design_update_2
+
 

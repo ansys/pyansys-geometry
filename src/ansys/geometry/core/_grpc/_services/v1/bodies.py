@@ -1009,7 +1009,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         serialized_response = serialize_tracked_command_response(response.tracked_command_response)
         # Return the response - formatted as a dictionary
-        return {"complete_command_response": serialized_response}
+        return {"tracker_response": serialized_response}
 
     @protect_grpc
     def combine(self, **kwargs) -> dict:  # noqa: D102

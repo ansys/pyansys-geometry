@@ -142,7 +142,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response.get("complete_command_response"))
+            parent_design._update_from_tracker(response.get("tracker_response"))
 
         message = create_repair_message_from_response(response)
         return message
@@ -196,7 +196,7 @@ class MissingFaceProblemAreas(ProblemArea):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response.get("complete_command_response"))
+            parent_design._update_from_tracker(response.get("tracker_response"))
 
         message = create_repair_message_from_response(response)
         return message
@@ -251,7 +251,7 @@ class InexactEdgeProblemAreas(ProblemArea):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response.get("complete_command_response"))
+            parent_design._update_from_tracker(response.get("tracker_response"))
 
         message = create_repair_message_from_response(response)
         return message
@@ -305,7 +305,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response.get("complete_command_response"))
+            parent_design._update_from_tracker(response.get("tracker_response"))
 
         message = create_repair_message_from_response(response)
         return message
@@ -359,7 +359,7 @@ class ShortEdgeProblemAreas(ProblemArea):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response.get("complete_command_response"))
+            parent_design._update_from_tracker(response.get("tracker_response"))
 
         message = create_repair_message_from_response(response)
         return message
@@ -413,7 +413,7 @@ class SmallFaceProblemAreas(ProblemArea):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response.get("complete_command_response"))
+            parent_design._update_from_tracker(response.get("tracker_response"))
 
         message = create_repair_message_from_response(response)
         return message
@@ -467,7 +467,7 @@ class SplitEdgeProblemAreas(ProblemArea):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response.get("complete_command_response"))
+            parent_design._update_from_tracker(response.get("tracker_response"))
 
         message = create_repair_message_from_response(response)
         return message
@@ -521,7 +521,7 @@ class StitchFaceProblemAreas(ProblemArea):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response.get("complete_command_response"))
+            parent_design._update_from_tracker(response.get("tracker_response"))
 
         message = create_repair_message_from_response(response)
         return message
@@ -570,7 +570,7 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response.get("complete_command_response"))
+            parent_design._update_from_tracker(response.get("tracker_response"))
 
         message = create_repair_message_from_response(response)
         return message
@@ -624,7 +624,7 @@ class InterferenceProblemAreas(ProblemArea):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response.get("complete_command_response"))
+            parent_design._update_from_tracker(response.get("tracker_response"))
 
         ## The tool does not return the created or modified objects.
         ## https://github.com/ansys/pyansys-geometry/issues/1319

@@ -76,7 +76,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         return {
             "success": response.tracked_command_response.command_response.success,
             "created_bodies": [body.id.id for body in response.created_bodies],
-            "complete_command_response": serialized_tracker_response,
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
