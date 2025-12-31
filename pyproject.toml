@@ -33,7 +33,7 @@ dependencies = [
   "grpcio>=1.35.0,<2",
   "grpcio-health-checking>=1.45.0,<2",
   "matplotlib>=3,<4",
-  "numpy>=1.20.3,<3",
+  "numpy>=1.20.3,<2.4",
   "pint>=0.18,<1",
   "protobuf>=3.20.2,<7",
   "requests>=2,<3",
@@ -69,7 +69,7 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # only available when a developer clones the repository and installs the package
 # for local development.
 dev = [
-  "pre-commit==4.5.0",
+  "pre-commit==4.5.1",
   { include-group = "doc" },
   { include-group = "tests" },
 ]

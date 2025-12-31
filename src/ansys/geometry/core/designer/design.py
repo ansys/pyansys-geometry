@@ -1405,17 +1405,176 @@ class Design(Component):
         # Read the existing design
         self.__read_existing_design()
 
-    def _update_from_tracker(self, tracker_response: list[dict]):
-        """Update the design with the changed bodies while preserving unchanged ones."""
+    def _update_from_tracker(self, tracker_response: dict):
+        """Update the design with the changed entities while preserving unchanged ones.
+
+        This method is alternative to update_design_inplace method.
+
+        Parameters
+        ----------
+        tracker_response : dict
+            Dictionary containing lists of created, modified, and deleted entities
+            including parts, components, bodies, faces, edges, and other geometry entities.
+            Processing order: parts → components → bodies → deletions (reverse dependency order).
+        """
         self._grpc_client.log.debug(
             f"Starting _update_from_tracker with response: {tracker_response}"
         )
-        self._handle_modified_bodies(tracker_response.get("modified_bodies", []))
-        self._handle_deleted_bodies(tracker_response.get("deleted_bodies", []))
-        self._handle_created_bodies(tracker_response.get("created_bodies", []))
 
-    def _handle_modified_bodies(self, modified_bodies):
-        for body_info in modified_bodies:
+        # Track created entities for use in subsequent steps
+        created_parts_dict = {}
+        created_master_components_dict = {}
+        created_components_dict = {}
+        created_bodies_dict = {}
+
+        # ================== HANDLE PARTS ==================
+
+        # Handle created parts
+        for part_info in tracker_response.get("created_parts", []):
+            part_id = part_info["id"]
+            # fall back to string if id is not an object with id attribute.
+            part_name = part_info.get("name", f"Part_{part_id}")
+            self._grpc_client.log.debug(
+                f"Processing created part: ID={part_id}, Name='{part_name}'"
+            )
+
+            # Check if part already exists
+            existing_part = self._find_existing_part(part_id)
+            if existing_part:
+                self._grpc_client.log.debug(
+                    f"Created part '{part_name}' (ID: {part_id}) already exists."
+                )
+                continue
+
+            # Create new part
+            new_part = Part(part_id, part_name, [], [])
+            created_parts_dict[part_id] = new_part
+            self._grpc_client.log.debug(f"Created new part '{part_name}' (ID: {part_id})")
+
+        # Handle modified parts
+        # Do nothing for now, because this will almost always have the root part.
+
+        # Handle deleted parts
+        for part_info in tracker_response.get("deleted_parts", []):
+            part_id = part_info["id"]
+            self._grpc_client.log.debug(f"Processing deleted part: ID={part_id}")
+
+            existing_part = self._find_existing_part(part_id)
+            if existing_part:
+                # Mark as not alive (if applicable)
+                if hasattr(existing_part, "_is_alive"):
+                    existing_part._is_alive = False
+                self._grpc_client.log.debug(f"Removed part (ID: {part_id})")
+            else:
+                self._grpc_client.log.warning(f"Could not find part to delete: ID={part_id}")
+
+        # ================== HANDLE COMPONENTS ==================
+
+        # Handle created master components
+        for component_info in tracker_response.get("created_components", []):
+            # Check and create master components.
+            if component_info.get("id") == component_info.get("master_id"):
+                # This is a MasterComponent
+                master_part_id = component_info.get("part_master").get("id")
+                master_part = created_parts_dict.get(master_part_id) or self._find_existing_part(
+                    master_part_id
+                )
+                if not master_part:
+                    self._grpc_client.log.warning(
+                        f"Could not find part for MasterComponent ID={component_info.get('id')}"
+                    )
+                    continue
+
+                new_master = MasterComponent(
+                    component_info["id"],
+                    component_info.get("name", f"MasterComponent_{component_info['id']}"),
+                    master_part,
+                    component_info.get("placement"),
+                )
+                created_master_components_dict[component_info["id"]] = new_master
+                self._grpc_client.log.debug(
+                    f"Created new MasterComponent: ID={new_master.id}, Name='{new_master.name}'"
+                )
+                continue
+
+        # Handle created occurrence components
+        for component_info in tracker_response.get("created_components", []):
+            # This is an OccurrenceComponent
+            master_part_id = component_info.get("part_master").get("id")
+            master_part = created_parts_dict.get(master_part_id) or self._find_existing_part(
+                master_part_id
+            )
+            if not master_part:
+                self._grpc_client.log.warning(
+                    f"Could not find part for Component ID={component_info.get('id')}"
+                )
+                continue
+
+            # Find and assign parent component
+            self._find_and_add_component_to_design(
+                component_info, self.components, created_parts_dict, created_master_components_dict
+            )
+
+        # Handle modified components
+        for component_info in tracker_response.get("modified_components", []):
+            component_id = component_info["id"]
+            component_name = component_info.get("name", f"Component_{component_id}")
+            self._grpc_client.log.debug(
+                f"Processing modified component: ID={component_id}, Name='{component_name}'"
+            )
+
+            # Try to find and update the component
+            updated = self._find_and_update_component(component_info, self.components)
+            if not updated:
+                self._grpc_client.log.warning(
+                    f"Could not find component to update: '{component_name}' (ID: {component_id})"
+                )
+
+        # Handle deleted components
+        for component_info in tracker_response.get("deleted_components", []):
+            component_id = component_info["id"]
+            self._grpc_client.log.debug(f"Processing deleted component: ID={component_id}")
+
+            # Try to find and remove the component
+            removed = self._find_and_remove_component(component_info, self.components)
+            if not removed:
+                self._grpc_client.log.warning(
+                    f"Could not find component to delete: ID={component_id}"
+                )
+
+        # ================== HANDLE BODIES ==================
+
+        # Handle created bodies
+        for created_body_info in tracker_response.get("created_bodies", []):
+            body_id = created_body_info["id"]
+            body_name = created_body_info["name"]
+            is_surface = created_body_info.get("is_surface", False)
+            self._grpc_client.log.debug(
+                f"Processing created body: ID={body_id}, Name='{body_name}'"
+            )
+
+            if any(body.id == body_id for body in self.bodies):
+                self._grpc_client.log.debug(
+                    f"Created body '{body_name}' (ID: {body_id}) already exists at root level."
+                )
+                continue
+
+            new_body = self._find_and_add_body(
+                created_body_info, self.components, created_parts_dict, created_components_dict
+            )
+            if not new_body:
+                new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
+                self._master_component.part.bodies.append(new_body)
+                self._clear_cached_bodies()
+                self._grpc_client.log.debug(
+                    f"Added new body '{body_name}' (ID: {body_id}) to root level."
+                )
+
+            if new_body:
+                created_bodies_dict[body_id] = new_body
+
+        # Handle modified bodies
+        for body_info in tracker_response.get("modified_bodies", []):
             body_id = body_info["id"]
             body_name = body_info["name"]
             self._grpc_client.log.debug(
@@ -1437,8 +1596,8 @@ class Design(Component):
                     if self._find_and_update_body(body_info, component):
                         break
 
-    def _handle_deleted_bodies(self, deleted_bodies):
-        for body_info in deleted_bodies:
+        # Handle deleted bodies
+        for body_info in tracker_response.get("deleted_bodies", []):
             body_id = body_info["id"]
             self._grpc_client.log.debug(f"Processing deleted body: ID={body_id}")
             removed = False
@@ -1462,31 +1621,189 @@ class Design(Component):
                     if self._find_and_remove_body(body_info, component):
                         break
 
-    def _handle_created_bodies(self, created_bodies):
-        for body_info in created_bodies:
-            body_id = body_info["id"]
-            body_name = body_info["name"]
-            is_surface = body_info.get("is_surface", False)
-            self._grpc_client.log.debug(
-                f"Processing created body: ID={body_id}, Name='{body_name}'"
+    # ================== HELPER METHODS ==================
+    #
+    # Processing order for tracker updates:
+    # 1. Parts (foundational - no dependencies)
+    # 2. Components (depend on parts via master_component.part)
+    # 3. Bodies (depend on parts/components as containers)
+    # 4. Deletions (reverse order to avoid dependency issues)
+
+    def _find_existing_part(self, part_id):
+        """Find if a part with the given ID already exists."""
+        # Search through master component parts
+        if hasattr(self, "_master_component") and self._master_component:
+            if self._master_component.part.id == part_id:
+                return self._master_component.part
+
+        # Search through all component master parts
+        for component in self._get_all_components():
+            if (
+                hasattr(component, "_master_component")
+                and component._master_component
+                and component._master_component.part.id == part_id
+            ):
+                return component._master_component.part
+
+        return None
+
+    def _get_all_components(self):
+        """Get all components in the hierarchy recursively."""
+        all_components = []
+
+        def _collect_components(components):
+            for comp in components:
+                all_components.append(comp)
+                _collect_components(comp.components)
+
+        _collect_components(self.components)
+        return all_components
+
+    def _find_and_update_part(self, part_info):
+        """Find and update an existing part."""
+        part_id = part_info["id"]
+        existing_part = self._find_existing_part(part_id)
+
+        if existing_part:
+            # Update part properties
+            if "name" in part_info:
+                existing_part._name = part_info["name"]
+            self._grpc_client.log.debug(f"Updated part '{existing_part.name}' (ID: {part_id})")
+            return True
+
+        return False
+
+    def _find_and_remove_part(self, part_info):
+        """Find and remove a part from the design."""
+        part_id = part_info["id"]
+        existing_part = self._find_existing_part(part_id)
+
+        if existing_part:
+            # Mark as not alive (if applicable)
+            if hasattr(existing_part, "_is_alive"):
+                existing_part._is_alive = False
+            self._grpc_client.log.debug(f"Removed part (ID: {part_id})")
+            return True
+
+        return False
+
+    def _find_and_add_component_to_design(
+        self,
+        component_info: dict,
+        parent_components: list["Component"],
+        created_parts: dict[str, Part] | None = None,
+        created_master_components: dict[str, MasterComponent] | None = None,
+    ) -> "Component | None":
+        """Recursively find the appropriate parent and add a new component to it.
+
+        Parameters
+        ----------
+        component_info : dict
+            Information about the component to create.
+        parent_components : list
+            List of potential parent components to search.
+        created_parts : dict, optional
+            Dictionary of created parts from previous step.
+        created_master_components : dict, optional
+            Dictionary of created master components from current step.
+
+        Returns
+        -------
+        Component or None
+            The newly created component if successful, None otherwise.
+        """
+        new_component_parent_id = component_info.get("parent_id")
+        master_id = component_info.get("master_id")
+
+        # Find the master component for this component
+        master_component = None
+        if created_master_components and master_id:
+            master_component = created_master_components.get(master_id)
+
+        # Check if this should be added to the root design
+        if new_component_parent_id == self.id:
+            # Create the Component object with master_component
+            new_component = Component(
+                parent_component=self,
+                name=component_info["name"],
+                template=self,
+                grpc_client=self._grpc_client,
+                master_component=master_component,
+                preexisting_id=component_info["id"],
+                read_existing_comp=True,
             )
+            self.components.append(new_component)
+            self._grpc_client.log.debug(f"Added component '{component_info['id']}' to root design")
+            return new_component
 
-            if any(body.id == body_id for body in self.bodies):
-                self._grpc_client.log.debug(
-                    f"Created body '{body_name}' (ID: {body_id}) already exists at root level."
+        # Search through existing components for the parent
+        for component in parent_components:
+            if component.id == new_component_parent_id:
+                new_component = Component(
+                    name=component_info["name"],
+                    parent_component=component,
+                    template=component,
+                    grpc_client=self._grpc_client,
+                    master_component=master_component,
+                    preexisting_id=component_info["id"],
+                    read_existing_comp=True,
                 )
-                continue
+                component.components.append(new_component)
+                self._grpc_client.log.debug(
+                    f"Added component '{component_info['id']}' to component '{component.name}'"
+                )
+                return new_component
 
-            added = self._find_and_add_body(body_info, self.components)
-            if not added:
-                new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
-                self._master_component.part.bodies.append(new_body)
-                self._clear_cached_bodies()
+            # Recursively search in child components
+            result = self._find_and_add_component_to_design(
+                component_info, component.components, created_parts, created_master_components
+            )
+            if result:
+                return result
+
+        return None
+
+    # This method is subject to change based on how component updates are defined.
+    def _find_and_update_component(self, component_info, components):
+        """Recursively find and update an existing component in the hierarchy."""
+        component_id = component_info["id"]
+
+        for component in components:
+            if component.id == component_id:
+                # Update component properties
+                if "name" in component_info:
+                    component._name = component_info["name"]
                 self._grpc_client.log.debug(
-                    f"Added new body '{body_name}' (ID: {body_id}) to root level."
+                    f"Updated component '{component.name}' (ID: {component.id})"
                 )
+                return True
+
+            if self._find_and_update_component(component_info, component.components):
+                return True
+
+        return False
+
+    def _find_and_remove_component(self, component_info, components, parent_component=None):
+        """Recursively find and remove a component from the hierarchy."""
+        component_id = component_info["id"]
+
+        for i, component in enumerate(components):
+            if component.id == component_id:
+                component._is_alive = False
+                components.pop(i)
+                self._grpc_client.log.debug(
+                    f"Removed component '{component.name}' (ID: {component_id}) "
+                    f"from {'root design' if parent_component is None else parent_component.name}"
+                )
+                return True
+
+            if self._find_and_remove_component(component_info, component.components, component):
+                return True
+
+        return False
 
     def _update_body(self, existing_body, body_info):
+        """Update an existing body with new information from tracker response."""
         self._grpc_client.log.debug(
             f"Updating body '{existing_body.name}' "
             f"(ID: {existing_body.id}) with new info: {body_info}"
@@ -1494,33 +1811,71 @@ class Design(Component):
         existing_body.name = body_info["name"]
         existing_body._template._is_surface = body_info.get("is_surface", False)
 
-    def _find_and_add_body(self, body_info, components):
+    def _find_and_add_body(
+        self,
+        tracked_body_info: dict,
+        components: list["Component"],
+        created_parts: dict[str, Part] | None = None,
+        created_components: dict[str, "Component"] | None = None,
+    ) -> MasterBody | None:
+        """Recursively find the appropriate component and add a new body to it.
+
+        Parameters
+        ----------
+        body_info : dict
+            Information about the body to create.
+        components : list[Component]
+            List of components to search.
+        created_parts : dict[str, Part], optional
+            Dictionary of created parts from previous step.
+        created_components : dict[str, Component], optional
+            Dictionary of created components from previous step.
+
+        Returns
+        -------
+        MasterBody | None
+            The newly created body if successful, None otherwise.
+        """
+        if not components:
+            return None
+
         for component in components:
             parent_id_for_body = component._master_component.part.id
-            if parent_id_for_body == body_info["parent_id"]:
-                new_body = MasterBody(
-                    body_info["id"],
-                    body_info["name"],
+            if parent_id_for_body == tracked_body_info.get("parent_id"):
+                new_master_body = MasterBody(
+                    tracked_body_info["id"],
+                    tracked_body_info["name"],
                     self._grpc_client,
-                    is_surface=body_info.get("is_surface", False),
+                    is_surface=tracked_body_info.get("is_surface", False),
                 )
-                # component.bodies.append(new_body)
-                component._master_component.part.bodies.append(new_body)
+
+                component._master_component.part.bodies.append(new_master_body)
+
                 component._clear_cached_bodies()
                 self._grpc_client.log.debug(
-                    f"Added new body '{new_body.name}' (ID: {new_body.id}) "
+                    f"Added new body '{new_master_body.name}' (ID: {new_master_body.id}) "
                     f"to component '{component.name}' (ID: {component.id})"
                 )
-                return True
+                return new_master_body
 
-            if self._find_and_add_body(body_info, component.components):
-                return True
+            result = self._find_and_add_body(
+                tracked_body_info, component.components, created_parts, created_components
+            )
+            if result:
+                return result
 
-        return False
+        return None
 
     def _find_and_update_body(self, body_info, component):
+        """Recursively find and update an existing body in the component hierarchy."""
         for body in component.bodies:
-            if body.id == body_info["id"]:
+            # Use master_id if available,
+            body_master_id = (
+                getattr(body, "master_id", None)
+                or (body._template.id if hasattr(body, "_template") and body._template else None)
+                or body.id
+            )
+            if body_master_id == body_info["id"]:
                 self._update_body(body, body_info)
                 self._grpc_client.log.debug(
                     f"Updated body '{body.name}' (ID: {body.id}) in component "
@@ -1535,11 +1890,11 @@ class Design(Component):
         return False
 
     def _find_and_remove_body(self, body_info, component):
+        """Recursively find and remove a body from the component hierarchy."""
         for body in component.bodies:
             body_info_id = body_info["id"]
             if body.id == f"{component.id}/{body_info_id}":
                 body._is_alive = False
-                # component.bodies.remove(body)
                 for bd in component._master_component.part.bodies:
                     if bd.id == body_info_id:
                         component._master_component.part.bodies.remove(bd)
