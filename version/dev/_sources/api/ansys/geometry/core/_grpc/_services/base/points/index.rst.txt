@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``points.py`` module
+========================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.points
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: points
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.points.GRPCPointsService`
+            - Points service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCPointsService</api/ansys/geometry/core/_grpc/_services/base/points/GRPCPointsService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the points service implementation (abstraction layer).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

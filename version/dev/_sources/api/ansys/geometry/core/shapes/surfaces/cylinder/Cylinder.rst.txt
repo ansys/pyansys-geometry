@@ -1,0 +1,571 @@
+
+
+
+
+
+
+:class:`Cylinder`
+=================
+
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.cylinder.Cylinder(origin: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.point.Point3D, radius: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, reference: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_X, axis: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_Z)
+
+   Bases: :py:obj:`ansys.geometry.core.shapes.surfaces.surface.Surface`
+
+
+   
+   Provides 3D cylinder representation.
+
+
+   :Parameters:
+
+       **origin** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Point3D`
+           Origin of the cylinder.
+
+       **radius** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Radius of the cylinder.
+
+       **reference** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`
+           X-axis direction.
+
+       **axis** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`
+           Z-axis direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: Cylinder
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~contains_param`
+            - Check a parameter is within the parametric range of the surface.
+          * - :py:attr:`~contains_point`
+            - Check a point is contained by the surface.
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~surface_area`
+            - Get the surface area of the cylinder.
+          * - :py:attr:`~volume`
+            - Get the volume of the cylinder.
+          * - :py:attr:`~transformed_copy`
+            - Create a transformed copy of the cylinder from a transformation matrix.
+          * - :py:attr:`~mirrored_copy`
+            - Create a mirrored copy of the cylinder along the y-axis.
+          * - :py:attr:`~evaluate`
+            - Evaluate the cylinder at the given parameters.
+          * - :py:attr:`~project_point`
+            - Project a point onto the cylinder and evaluate the cylinder.
+          * - :py:attr:`~parameterization`
+            - Parameterize the cylinder surface as a tuple (U and V respectively).
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~origin`
+            - Origin of the cylinder.
+          * - :py:attr:`~radius`
+            - Radius of the cylinder.
+          * - :py:attr:`~dir_x`
+            - X-direction of the cylinder.
+          * - :py:attr:`~dir_y`
+            - Y-direction of the cylinder.
+          * - :py:attr:`~dir_z`
+            - Z-direction of the cylinder.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Cylinder`` class.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder
+
+Property detail
+---------------
+
+.. py:property:: origin
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Origin of the cylinder.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: radius
+   :type: pint.Quantity
+
+
+   
+   Radius of the cylinder.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_x
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   X-direction of the cylinder.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_y
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Y-direction of the cylinder.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_z
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Z-direction of the cylinder.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: surface_area(height: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real) -> pint.Quantity
+
+   
+   Get the surface area of the cylinder.
+
+
+   :Parameters:
+
+       **height** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Height to bound the cylinder at.
+
+
+
+   :Returns:
+
+       :obj:`~pint.Quantity`
+           Surface area of the temporarily bounded cylinder.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   By nature, a cylinder is infinite. If you want to get the surface area,
+   you must bound it by a height. Normally a cylinder surface is not closed
+   (does not have "caps" on the ends). This method assumes that the cylinder
+   is closed for the purpose of getting the surface area.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: volume(height: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real) -> pint.Quantity
+
+   
+   Get the volume of the cylinder.
+
+
+   :Parameters:
+
+       **height** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Height to bound the cylinder at.
+
+
+
+   :Returns:
+
+       :obj:`~pint.Quantity`
+           Volume of the temporarily bounded cylinder.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   By nature, a cylinder is infinite. If you want to get the surface area,
+   you must bound it by a height. Normally a cylinder surface is not closed
+   (does not have "caps" on the ends). This method assumes that the cylinder
+   is closed for the purpose of getting the surface area.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Cylinder
+
+   
+   Create a transformed copy of the cylinder from a transformation matrix.
+
+
+   :Parameters:
+
+       **matrix** : :obj:`Matrix44`
+           4X4 transformation matrix to apply to the cylinder.
+
+
+
+   :Returns:
+
+       :obj:`Cylinder`
+           New cylinder that is the transformed copy of the original cylinder.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: mirrored_copy() -> Cylinder
+
+   
+   Create a mirrored copy of the cylinder along the y-axis.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Cylinder`
+           New cylinder that is a mirrored copy of the original cylinder.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __eq__(other: Cylinder) -> bool
+
+   
+   Equals operator for the ``Cylinder`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate(parameter: ansys.geometry.core.shapes.parameterization.ParamUV) -> CylinderEvaluation
+
+   
+   Evaluate the cylinder at the given parameters.
+
+
+   :Parameters:
+
+       **parameter** : :obj:`ParamUV`
+           Parameters (u,v) to evaluate the cylinder at.
+
+
+
+   :Returns:
+
+       :obj:`CylinderEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> CylinderEvaluation
+
+   
+   Project a point onto the cylinder and evaluate the cylinder.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Point to project onto the cylinder.
+
+
+
+   :Returns:
+
+       :obj:`CylinderEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: parameterization() -> tuple[ansys.geometry.core.shapes.parameterization.Parameterization, ansys.geometry.core.shapes.parameterization.Parameterization]
+
+   
+   Parameterize the cylinder surface as a tuple (U and V respectively).
+
+   The U parameter specifies the clockwise angle around the axis (right-hand
+   corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
+
+   The V parameter specifies the distance along the axis, with a zero parameter at
+   the XY plane of the cylinder.
+
+
+
+
+   :Returns:
+
+       :class:`python:tuple`\[:obj:`Parameterization`, :obj:`Parameterization`]
+           Information about how a cylinder's u and v parameters are parameterized, respectively.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_param(param_uv: ansys.geometry.core.shapes.parameterization.ParamUV) -> bool
+   :abstractmethod:
+
+
+   
+   Check a parameter is within the parametric range of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.point.Point3D) -> bool
+   :abstractmethod:
+
+
+   
+   Check a point is contained by the surface.
+
+   The point can either lie within the surface or on its boundary.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

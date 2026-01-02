@@ -1,0 +1,101 @@
+
+
+
+
+
+
+The ``mating_conditions.py`` module
+===================================
+
+.. py:module:: ansys.geometry.core.designer.mating_conditions
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: mating_conditions
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.mating_conditions.MatingCondition`
+            - MatingCondition dataclass.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.mating_conditions.AlignCondition`
+            - AlignCondition dataclass.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.mating_conditions.TangentCondition`
+            - TangentCondition dataclass.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.mating_conditions.OrientCondition`
+            - OrientCondition dataclass.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> MatingCondition</api/ansys/geometry/core/designer/mating_conditions/MatingCondition>
+    <span class="nf nf-cod-symbol_class"></span> AlignCondition</api/ansys/geometry/core/designer/mating_conditions/AlignCondition>
+    <span class="nf nf-cod-symbol_class"></span> TangentCondition</api/ansys/geometry/core/designer/mating_conditions/TangentCondition>
+    <span class="nf nf-cod-symbol_class"></span> OrientCondition</api/ansys/geometry/core/designer/mating_conditions/OrientCondition>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides dataclasses for mating conditions.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,712 @@
+
+
+
+
+
+
+:class:`NURBSSurface`
+=====================
+
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.nurbs.NURBSSurface(origin: ansys.geometry.core.math.Point3D = ZERO_POINT3D, reference: ansys.geometry.core.math.vector.UnitVector3D = UNITVECTOR3D_X, axis: ansys.geometry.core.math.vector.UnitVector3D = UNITVECTOR3D_Z, geomdl_object: geomdl.NURBS.Surface = None)
+
+   Bases: :py:obj:`ansys.geometry.core.shapes.surfaces.surface.Surface`
+
+
+   
+   Represents a NURBS surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This class is a wrapper around the NURBS surface class from the `geomdl` library.
+   By leveraging the `geomdl` library, this class provides a high-level interface
+   to create and manipulate NURBS surfaces. The `geomdl` library is a powerful
+   library for working with NURBS curves and surfaces. For more information, see
+   https://pypi.org/project/geomdl/.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: NURBSSurface
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~transformed_copy`
+            - Create a transformed copy of the surface.
+          * - :py:attr:`~contains_param`
+            - Check a parameter is within the parametric range of the surface.
+          * - :py:attr:`~contains_point`
+            - Check a point is contained by the surface.
+          * - :py:attr:`~project_point`
+            - Project a point to the surface.
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~from_control_points`
+            - Create a NURBS surface from control points and knot vectors.
+          * - :py:attr:`~fit_surface_from_points`
+            - Fit a NURBS surface to a set of points.
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~parameterization`
+            - Get the parametrization of the NURBS surface.
+          * - :py:attr:`~evaluate`
+            - Evaluate the surface at the given parameter.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~geomdl_nurbs_surface`
+            - Get the underlying `geomdl` NURBS surface object.
+          * - :py:attr:`~control_points`
+            - Get the control points of the NURBS surface.
+          * - :py:attr:`~degree_u`
+            - Get the degree of the surface in the U direction.
+          * - :py:attr:`~degree_v`
+            - Get the degree of the surface in the V direction.
+          * - :py:attr:`~knotvector_u`
+            - Get the knot vector for the u-direction of the surface.
+          * - :py:attr:`~knotvector_v`
+            - Get the knot vector for the v-direction of the surface.
+          * - :py:attr:`~weights`
+            - Get the weights of the control points.
+          * - :py:attr:`~origin`
+            - Get the origin of the surface.
+          * - :py:attr:`~dir_x`
+            - Get the reference direction of the surface.
+          * - :py:attr:`~dir_z`
+            - Get the axis direction of the surface.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Determine if two surfaces are equal.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
+
+Property detail
+---------------
+
+.. py:property:: geomdl_nurbs_surface
+   :type: geomdl.NURBS.Surface
+
+
+   
+   Get the underlying `geomdl` NURBS surface object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This property gives access to the full functionality of the NURBS surface
+   coming from the `geomdl` library. Use with caution.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: control_points
+   :type: list[ansys.geometry.core.math.Point3D]
+
+
+   
+   Get the control points of the NURBS surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: degree_u
+   :type: int
+
+
+   
+   Get the degree of the surface in the U direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: degree_v
+   :type: int
+
+
+   
+   Get the degree of the surface in the V direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: knotvector_u
+   :type: list[ansys.geometry.core.typing.Real]
+
+
+   
+   Get the knot vector for the u-direction of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: knotvector_v
+   :type: list[ansys.geometry.core.typing.Real]
+
+
+   
+   Get the knot vector for the v-direction of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: weights
+   :type: list[ansys.geometry.core.typing.Real]
+
+
+   
+   Get the weights of the control points.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: origin
+   :type: ansys.geometry.core.math.Point3D
+
+
+   
+   Get the origin of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_x
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Get the reference direction of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_z
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Get the axis direction of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: from_control_points(degree_u: int, degree_v: int, knots_u: list[ansys.geometry.core.typing.Real], knots_v: list[ansys.geometry.core.typing.Real], control_points: list[ansys.geometry.core.math.Point3D], weights: list[ansys.geometry.core.typing.Real] = None, origin: ansys.geometry.core.math.Point3D = ZERO_POINT3D, reference: ansys.geometry.core.math.vector.UnitVector3D = UNITVECTOR3D_X, axis: ansys.geometry.core.math.vector.UnitVector3D = UNITVECTOR3D_Z) -> NURBSSurface
+   :classmethod:
+
+
+   
+   Create a NURBS surface from control points and knot vectors.
+
+
+   :Parameters:
+
+       **degree_u** : :class:`python:int`
+           Degree of the surface in the U direction.
+
+       **degree_v** : :class:`python:int`
+           Degree of the surface in the V direction.
+
+       **knots_u** : :class:`python:list`\[:obj:`Real`]
+           Knot vector for the U direction.
+
+       **knots_v** : :class:`python:list`\[:obj:`Real`]
+           Knot vector for the V direction.
+
+       **control_points** : :class:`python:list`\[:obj:`Point3D`]
+           Control points for the surface.
+
+       **weights** : :class:`python:list`\[:obj:`Real`], :obj:`optional`
+           Weights for the control points. If not provided, all weights are set to 1.
+
+       **delta** : :class:`python:float`, :obj:`optional`
+           Evaluation delta for the surface. Default is 0.01.
+
+       **origin** : :obj:`Point3D`, :obj:`optional`
+           Origin of the surface. Default is (0, 0, 0).
+
+       **reference** : :obj:`UnitVector3D`, :obj:`optional`
+           Reference direction of the surface. Default is (1, 0, 0).
+
+       **axis** : :obj:`UnitVector3D`, :obj:`optional`
+           Axis direction of the surface. Default is (0, 0, 1).
+
+
+
+   :Returns:
+
+       :obj:`NURBSSurface`
+           Created NURBS surface.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: fit_surface_from_points(points: list[ansys.geometry.core.math.Point3D], size_u: int, size_v: int, degree_u: int, degree_v: int, origin: ansys.geometry.core.math.Point3D = ZERO_POINT3D, reference: ansys.geometry.core.math.vector.UnitVector3D = UNITVECTOR3D_X, axis: ansys.geometry.core.math.vector.UnitVector3D = UNITVECTOR3D_Z) -> NURBSSurface
+   :classmethod:
+
+
+   
+   Fit a NURBS surface to a set of points.
+
+
+   :Parameters:
+
+       **points** : :class:`python:list`\[:obj:`Point3D`]
+           Points to fit the surface to.
+
+       **size_u** : :class:`python:int`
+           Number of control points in the U direction.
+
+       **size_v** : :class:`python:int`
+           Number of control points in the V direction.
+
+       **degree_u** : :class:`python:int`
+           Degree of the surface in the U direction.
+
+       **degree_v** : :class:`python:int`
+           Degree of the surface in the V direction.
+
+       **origin** : :obj:`Point3D`, :obj:`optional`
+           Origin of the surface. Default is (0, 0, 0).
+
+       **reference** : :obj:`UnitVector3D`, :obj:`optional`
+           Reference direction of the surface. Default is (1, 0, 0).
+
+       **axis** : :obj:`UnitVector3D`, :obj:`optional`
+           Axis direction of the surface. Default is (0, 0, 1).
+
+
+
+   :Returns:
+
+       :obj:`NURBSSurface`
+           Fitted NURBS surface.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __eq__(other: NURBSSurface) -> bool
+
+   
+   Determine if two surfaces are equal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: parameterization() -> tuple[ansys.geometry.core.shapes.parameterization.Parameterization, ansys.geometry.core.shapes.parameterization.Parameterization]
+
+   
+   Get the parametrization of the NURBS surface.
+
+   The parameter is defined in the interval [0, 1] by default. Information
+   is provided about the parameter type and form.
+
+
+
+
+   :Returns:
+
+       :class:`python:tuple`\[:obj:`Parameterization`, :obj:`Parameterization`]
+           Parameterization in the U and V directions respectively.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> NURBSSurface
+   :abstractmethod:
+
+
+   
+   Create a transformed copy of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate(parameter: ansys.geometry.core.shapes.parameterization.ParamUV) -> ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation
+
+   
+   Evaluate the surface at the given parameter.
+
+
+   :Parameters:
+
+       **parameter** : :obj:`ParamUV`
+           Parameter to evaluate the surface at.
+
+
+
+   :Returns:
+
+       :obj:`SurfaceEvaluation`
+           Evaluation of the surface at the given parameter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_param(param: ansys.geometry.core.shapes.parameterization.ParamUV) -> bool
+   :abstractmethod:
+
+
+   
+   Check a parameter is within the parametric range of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.Point3D) -> bool
+   :abstractmethod:
+
+
+   
+   Check a point is contained by the surface.
+
+   The point can either lie within the surface or on its boundary.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: project_point(point: ansys.geometry.core.math.Point3D) -> ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation
+   :abstractmethod:
+
+
+   
+   Project a point to the surface.
+
+   This method returns the evaluation at the closest point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

@@ -1,0 +1,166 @@
+
+
+
+
+
+
+:class:`InspectResult`
+======================
+
+
+.. py:class:: ansys.geometry.core.tools.check_geometry.InspectResult(grpc_client: ansys.geometry.core.connection.client.GrpcClient, body: ansys.geometry.core.designer.body.Body, issues: list[GeometryIssue])
+
+   
+   Provides the result of the inspect geometry operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: InspectResult
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~repair`
+            - Repair the problem area.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~body`
+            - The body for which issues are found.
+          * - :py:attr:`~issues`
+            - The list of issues for the body.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.check_geometry import InspectResult
+
+Property detail
+---------------
+
+.. py:property:: body
+   :type: ansys.geometry.core.designer.body.Body
+
+
+   
+   The body for which issues are found.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: issues
+   :type: list[GeometryIssue]
+
+
+   
+   The list of issues for the body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: repair() -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Repair the problem area.
+
+
+
+
+
+   :Returns:
+
+       :obj:`RepairToolMessage`
+           Message containing created and/or modified bodies.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
