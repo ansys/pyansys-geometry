@@ -47,7 +47,7 @@ from .conversions import (
 )
 
 
-class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
+class GRPCBodyServiceV1(GRPCBodyService):
     """Body service for gRPC communication with the Geometry server.
 
     This class provides methods to create and manipulate bodies in the

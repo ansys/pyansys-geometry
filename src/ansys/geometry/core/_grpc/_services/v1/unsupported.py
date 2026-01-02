@@ -30,7 +30,7 @@ from ..base.unsupported import GRPCUnsupportedService
 from .conversions import build_grpc_id
 
 
-class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
+class GRPCUnsupportedServiceV1(GRPCUnsupportedService):
     """Unsupported service for gRPC communication with the Geometry server.
 
     Parameters

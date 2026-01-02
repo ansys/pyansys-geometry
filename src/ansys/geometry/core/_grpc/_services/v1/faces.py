@@ -45,7 +45,7 @@ from .conversions import (
 )
 
 
-class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
+class GRPCFacesServiceV1(GRPCFacesService):
     """Faces service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

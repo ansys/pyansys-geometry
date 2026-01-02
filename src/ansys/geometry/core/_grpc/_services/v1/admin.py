@@ -32,7 +32,7 @@ from ..base.admin import GRPCAdminService
 from .conversions import from_grpc_backend_type_to_backend_type
 
 
-class GRPCAdminServiceV1(GRPCAdminService):  # pragma: no cover
+class GRPCAdminServiceV1(GRPCAdminService):
     """Admin service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

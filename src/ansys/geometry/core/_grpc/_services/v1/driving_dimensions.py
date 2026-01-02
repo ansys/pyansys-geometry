@@ -34,7 +34,7 @@ from .conversions import (
 )
 
 
-class GRPCDrivingDimensionsServiceV1(GRPCDrivingDimensionsService):  # pragma: no cover
+class GRPCDrivingDimensionsServiceV1(GRPCDrivingDimensionsService):
     """Driving Dimensions service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

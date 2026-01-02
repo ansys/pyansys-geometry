@@ -30,7 +30,7 @@ from ..base.measurement_tools import GRPCMeasurementToolsService
 from .conversions import build_grpc_id
 
 
-class GRPCMeasurementToolsServiceV1(GRPCMeasurementToolsService):  # pragma: no cover
+class GRPCMeasurementToolsServiceV1(GRPCMeasurementToolsService):
     """Measurement tools service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

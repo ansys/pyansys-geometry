@@ -75,7 +75,7 @@ class GRPCAdminServiceV0(GRPCAdminService):
             product_build_info = (
                 response.backend_version_info.strip() if response.backend_version_info else "N/A"
             )
-        else:  # pragma: no cover
+        else:
             # If the version is not available, set a default version
             backend_version = semver.Version(24, 1, 0)
             api_server_build_info = "N/A"

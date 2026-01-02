@@ -36,7 +36,7 @@ from .conversions import (
 )
 
 
-class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
+class GRPCDesignsServiceV1(GRPCDesignsService):
     """Designs service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

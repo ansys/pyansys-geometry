@@ -36,7 +36,7 @@ from .conversions import (
 )
 
 
-class GRPCCurvesServiceV1(GRPCCurvesService):  # pragma: no cover
+class GRPCCurvesServiceV1(GRPCCurvesService):
     """Curves service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

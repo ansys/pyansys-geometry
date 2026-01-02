@@ -84,7 +84,7 @@ from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
     import semver
 

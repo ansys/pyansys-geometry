@@ -28,7 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.unsupported import GRPCUnsupportedService
 
 
-class GRPCUnsupportedServiceV0(GRPCUnsupportedService):  # pragma: no cover
+class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
     """Unsupported service for gRPC communication with the Geometry server.
 
     Parameters
