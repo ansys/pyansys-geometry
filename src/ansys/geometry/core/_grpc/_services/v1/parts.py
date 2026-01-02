@@ -28,7 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.parts import GRPCPartsService
 
 
-class GRPCPartsServiceV1(GRPCPartsService):
+class GRPCPartsServiceV1(GRPCPartsService):  # pragma: no cover
     """Parts service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
@@ -43,26 +43,8 @@ class GRPCPartsServiceV1(GRPCPartsService):
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.discovery.v1.commands.file_pb2_grpc import FileStub
-
-        self.stub = FileStub(channel)
+        raise NotImplementedError("GRPCPartsServiceV1 is not implemented.")
 
     @protect_grpc
     def export(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commands.file_pb2 import SaveRequest
-
-        from .conversions import from_design_file_format_to_grpc_file_format
-
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = SaveRequest(format=from_design_file_format_to_grpc_file_format(kwargs["format"]))
-
-        # Call the gRPC service
-        response_stream = self.stub.Save(request)
-
-        # Return the response - formatted as a dictionary
-        data = bytes()
-        for response in response_stream:
-            data += response.data
-        return {
-            "data": data,
-        }
+        raise NotImplementedError("GRPCPartsServiceV1.export is not implemented.")

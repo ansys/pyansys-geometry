@@ -552,7 +552,8 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._parts = GRPCPartsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:
+            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
+                # The parts services is not required/made available in v1
                 self._parts = GRPCPartsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
