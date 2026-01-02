@@ -127,10 +127,9 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._admin = GRPCAdminServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._admin = GRPCAdminServiceV1(self.channel)
-            else:  # pragma: no cover
+            else:
                 # This should never happen as the version is set in the constructor
                 raise ValueError(f"Unsupported version: {self.version}")
 
@@ -153,10 +152,9 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._assembly_condition = GRPCAssemblyConditionServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._assembly_condition = GRPCAssemblyConditionServiceV1(self.channel)
-            else:  # pragma: no cover
+            else:
                 # This should never happen as the version is set in the constructor
                 raise ValueError(f"Unsupported version: {self.version}")
 
@@ -179,10 +177,9 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._beams = GRPCBeamsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._beams = GRPCBeamsServiceV1(self.channel)
-            else:  # pragma: no cover
+            else:
                 # This should never happen as the version is set in the constructor
                 raise ValueError(f"Unsupported version: {self.version}")
 
@@ -205,8 +202,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._bodies = GRPCBodyServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._bodies = GRPCBodyServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -231,8 +227,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._commands = GRPCCommandsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._commands = GRPCCommandsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -257,8 +252,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._components = GRPCComponentsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._components = GRPCComponentsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -283,8 +277,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._coordinate_systems = GRPCCoordinateSystemServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._coordinate_systems = GRPCCoordinateSystemServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -309,8 +302,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._curves = GRPCCurvesServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._curves = GRPCCurvesServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -335,8 +327,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._designs = GRPCDesignsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._designs = GRPCDesignsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -361,8 +352,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._commands_script = GRPCCommandsScriptServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._commands_script = GRPCCommandsScriptServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -387,8 +377,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._driving_dimensions = GRPCDrivingDimensionsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._driving_dimensions = GRPCDrivingDimensionsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -413,8 +402,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._edges = GRPCEdgesServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._edges = GRPCEdgesServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -439,8 +427,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._faces = GRPCFacesServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._faces = GRPCFacesServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -465,8 +452,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._materials = GRPCMaterialsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._materials = GRPCMaterialsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -491,8 +477,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._measurement_tools = GRPCMeasurementToolsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._measurement_tools = GRPCMeasurementToolsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -518,7 +503,6 @@ class _GRPCServices:
             if self.version == GeometryApiProtos.V0:
                 self._model_tools = GRPCModelToolsServiceV0(self.channel)
             elif self.version == GeometryApiProtos.V1:
-                # V1 is not implemented yet
                 self._model_tools = GRPCModelToolsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -543,8 +527,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._named_selection = GRPCNamedSelectionServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._named_selection = GRPCNamedSelectionServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -569,8 +552,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._parts = GRPCPartsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._parts = GRPCPartsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -595,10 +577,9 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._patterns = GRPCPatternsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._patterns = GRPCPatternsServiceV1(self.channel)
-            else:
+            else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
                 raise ValueError(f"Unsupported version: {self.version}")
 
@@ -621,8 +602,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._points = GRPCPointsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._points = GRPCPointsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -647,8 +627,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._prepare_tools = GRPCPrepareToolsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._prepare_tools = GRPCPrepareToolsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -672,8 +651,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._repair_tools = GRPCRepairToolsServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._repair_tools = GRPCRepairToolsServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
@@ -697,8 +675,7 @@ class _GRPCServices:
 
             if self.version == GeometryApiProtos.V0:
                 self._unsupported = GRPCUnsupportedServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:  # pragma: no cover
-                # V1 is not implemented yet
+            elif self.version == GeometryApiProtos.V1:
                 self._unsupported = GRPCUnsupportedServiceV1(self.channel)
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor

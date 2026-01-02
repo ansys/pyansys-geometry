@@ -28,7 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.commands_script import GRPCCommandsScriptService
 
 
-class GRPCCommandsScriptServiceV1(GRPCCommandsScriptService):  # pragma: no cover
+class GRPCCommandsScriptServiceV1(GRPCCommandsScriptService):
     """Commands Script service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

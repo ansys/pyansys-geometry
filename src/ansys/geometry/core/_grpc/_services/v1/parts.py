@@ -28,7 +28,7 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.parts import GRPCPartsService
 
 
-class GRPCPartsServiceV1(GRPCPartsService):  # pragma: no cover
+class GRPCPartsServiceV1(GRPCPartsService):
     """Parts service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

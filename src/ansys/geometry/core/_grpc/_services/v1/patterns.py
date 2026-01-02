@@ -33,7 +33,7 @@ from .conversions import (
 )
 
 
-class GRPCPatternsServiceV1(GRPCPatternsService):  # pragma: no cover
+class GRPCPatternsServiceV1(GRPCPatternsService):
     """Patterns service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

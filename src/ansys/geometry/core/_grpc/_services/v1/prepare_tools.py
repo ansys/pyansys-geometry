@@ -35,7 +35,7 @@ from .conversions import (
 )
 
 
-class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
+class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
     """Prepare tools service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

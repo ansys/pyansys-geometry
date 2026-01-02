@@ -30,7 +30,7 @@ from ..base.coordinate_systems import GRPCCoordinateSystemService
 from .conversions import from_frame_to_grpc_frame, from_grpc_frame_to_frame
 
 
-class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):  # pragma: no cover
+class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):
     """Coordinate systems service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

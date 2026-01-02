@@ -39,7 +39,7 @@ from .conversions import (
 )
 
 
-class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
+class GRPCEdgesServiceV1(GRPCEdgesService):
     """Edges service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

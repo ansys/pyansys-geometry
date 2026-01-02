@@ -33,7 +33,7 @@ from ..base.patterns import GRPCPatternsService
 from .conversions import build_grpc_id, from_line_to_grpc_line, from_unit_vector_to_grpc_direction
 
 
-class GRPCPatternsServiceV0(GRPCPatternsService):  # pragma: no cover
+class GRPCPatternsServiceV0(GRPCPatternsService):
     """Patterns service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
