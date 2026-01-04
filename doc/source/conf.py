@@ -175,6 +175,10 @@ html_theme_options = {
     ],
     "ansys_sphinx_theme_autoapi": {
         "project": project,
+        "no_index_modules": [
+            # Caused by v1 and v0 grpc conversion methods
+            "ansys.geometry.core._grpc._services.v0.conversions",
+        ],
     },
     "cheatsheet": {
         "file": "cheatsheet/cheat_sheet.qmd",
@@ -287,7 +291,6 @@ suppress_warnings = [
     "config.cache",
     "design.fa-build",
     "toc.not_included",  # Caused by the autoapi extension and the "_grpc" folder
-    "autoapi.duplicate_object",  # Caused by v1 and v0 grpc conversion methods
 ]
 
 # Examples gallery customization
