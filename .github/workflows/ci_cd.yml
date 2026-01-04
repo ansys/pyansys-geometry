@@ -282,8 +282,11 @@ jobs:
       - name: Testing
         if: env.SKIP_UNSTABLE == 'false'
         timeout-minutes: 20 # Sometimes hangs...
+        env:
+          PROTO_VERSION: ${{ matrix.proto-version }}
+          USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --proto-version=${{ matrix.proto-version }} --use-tracker=${{ matrix.use-tracker }}
+          pytest -v --proto-version=$env:PROTO_VERSION --use-tracker=$env:USE_TRACKER
 
       - name: Upload integration test logs
         if: always()
