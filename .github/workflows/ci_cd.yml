@@ -167,7 +167,7 @@ jobs:
           fi
 
   testing-windows:
-    name: Testing and coverage (Windows) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }})
+    name: Testing and coverage (Windows) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }}, ${{ matrix.docker-image }})
     needs: [smoke-tests, manifests]
     runs-on: windows-latest
     continue-on-error: ${{ matrix.experimental }}
@@ -283,7 +283,7 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         timeout-minutes: 20 # Sometimes hangs...
         run: |
-          pytest -v --proto-version=${proto-version} --use-tracker=${use-tracker}
+          pytest -v --proto-version=${{ matrix.proto-version }} --use-tracker=${{ matrix.use-tracker }}
 
       - name: Upload integration test logs
         if: always()
