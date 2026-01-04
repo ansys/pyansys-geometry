@@ -287,6 +287,7 @@ suppress_warnings = [
     "config.cache",
     "design.fa-build",
     "toc.not_included",  # Caused by the autoapi extension and the "_grpc" folder
+    "autosummary.duplicate_object",  # Caused by v1 and v0 grpc conversion methods
 ]
 
 # Examples gallery customization
