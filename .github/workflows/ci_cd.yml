@@ -167,8 +167,7 @@ jobs:
           fi
 
   testing-windows:
-    name: Testing and coverage (Windows) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }}, ${{ matrix.docker-image
-      }})
+    name: Testing and coverage (Windows) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }}, ${{ matrix.docker-image }})
     needs: [smoke-tests, manifests]
     runs-on: windows-latest
     continue-on-error: ${{ matrix.experimental }}
@@ -374,7 +373,7 @@ jobs:
           docker rm ${GEO_CONT_NAME}
 
   testing-linux:
-    name: Testing and coverage (Linux)
+    name: Testing and coverage (Linux) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }}, ${{ matrix.docker-image }})
     needs: [smoke-tests, manifests]
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
@@ -385,10 +384,17 @@ jobs:
       matrix:
         proto-version: ["v1", "v0"]
         use-tracker: ['no', 'yes']
+        docker-image: ["core-windows-latest", "core-windows-latest-unstable"]
         include:
-          - docker-image: "core-linux-latest"
+          # Add tracker-label based on use-tracker
+          - use-tracker: 'no'
+            tracker-label: "Without tracker"
+          - use-tracker: 'yes'
+            tracker-label: "With tracker"
+          # Add experimental flag based on docker-image
+          - docker-image: "core-windows-latest"
             experimental: false
-          - docker-image: "core-linux-latest-unstable"
+          - docker-image: "core-windows-latest-unstable"
             experimental: true
 
     steps:
