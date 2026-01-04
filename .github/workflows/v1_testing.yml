@@ -2,6 +2,9 @@ name: v1 Protos Testing
 on:
   pull_request:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 env:
   MAIN_PYTHON_VERSION: '3.13'
@@ -94,11 +97,19 @@ jobs:
 
       - name: Upload integration test logs
         if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: v1-windows-integration-test-logs-${{ matrix.python-version }}-tracker-${{ matrix.use-tracker }}
           path: tests/integration/logs/integration_tests_logs.txt
           retention-days: 7
+
+      - name: Upload coverage to Codecov (Windows)
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        if: matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.use-tracker == 'no'
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: .cov/xml
 
       - name: Stop the Geometry service
         if: always()
@@ -172,9 +183,17 @@ jobs:
         run: |
           pytest -v --proto-version=v1 --use-tracker=${USE_TRACKER}
 
+      - name: Upload coverage to Codecov (Linux)
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        if: matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.use-tracker == 'no'
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: .cov/xml
+
       - name: Upload integration test logs
         if: always()
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: v1-linux-integration-test-logs-${{ matrix.python-version }}-tracker-${{ matrix.use-tracker }}
           path: tests/integration/logs/integration_tests_logs.txt

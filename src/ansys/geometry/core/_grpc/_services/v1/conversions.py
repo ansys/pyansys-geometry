@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -44,6 +44,8 @@ from ansys.api.discovery.v1.commonmessages_pb2 import (
     Quantity as GRPCQuantity,
 )
 from ansys.api.discovery.v1.design.designmessages_pb2 import (
+    BodyEntity as GRPCBodyEntity,
+    ComponentEntity as GRPCComponentEntity,
     CurveGeometry as GRPCCurveGeometry,
     DatumPointEntity as GRPCDesignPoint,
     DrivingDimensionEntity as GRPCDrivingDimension,
@@ -55,6 +57,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     Matrix as GRPCMatrix,
     NurbsCurve as GRPCNurbsCurve,
     NurbsSurface as GRPCNurbsSurface,
+    PartEntity as GRPCPartEntity,
     Surface as GRPCSurface,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
@@ -81,7 +84,7 @@ from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
     import semver
 
@@ -1654,6 +1657,178 @@ def from_enclosure_options_to_grpc_enclosure_options(
     )
 
 
+def serialize_body(body: GRPCBodyEntity) -> dict:
+    """Serialize a GRPCBodyEntity object into a dictionary.
+
+    It is not directly converted to a pygeometry object because we'll assign it in place and
+    construct the object while updating the design object by the tracker output.
+
+    Parameters
+    ----------
+    body : GRPCBodyEntity
+        The gRPC BodyEntity object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the BodyEntity object without gRPC dependencies.
+    """
+    # Extract basic fields
+    body_id = body.id.id
+    body_name = body.name
+    body_can_suppress = body.can_suppress
+    body_master_id = (
+        body.master_id.id.id
+        if hasattr(body.master_id, "id") and hasattr(body.master_id.id, "id")
+        else (body.master_id.id if hasattr(body.master_id, "id") else "")
+    )
+    body_parent_id = (
+        body.parent_id.id.id
+        if hasattr(body.parent_id, "id") and hasattr(body.parent_id.id, "id")
+        else (body.parent_id.id if hasattr(body.parent_id, "id") else "")
+    )
+    body_is_surface = body.is_surface
+
+    # Extract transform_to_master matrix
+    transform_m00 = body.transform_to_master.m00
+    transform_m11 = body.transform_to_master.m11
+    transform_m22 = body.transform_to_master.m22
+    transform_m33 = body.transform_to_master.m33
+
+    transform_to_master = {
+        "m00": transform_m00,
+        "m11": transform_m11,
+        "m22": transform_m22,
+        "m33": transform_m33,
+    }
+
+    return {
+        "id": body_id,
+        "name": body_name,
+        "can_suppress": body_can_suppress,
+        "transform_to_master": transform_to_master,
+        "master_id": body_master_id,
+        "parent_id": body_parent_id,
+        "is_surface": body_is_surface,
+    }
+
+
+def serialize_component(component: GRPCComponentEntity) -> dict:
+    """Serialize a GRPCComponentEntity object into a dictionary.
+
+    Parameters
+    ----------
+    component : GRPCComponentEntity
+        The gRPC ComponentEntity object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the ComponentEntity object without gRPC dependencies.
+    """
+
+    def extract_id(obj):
+        if hasattr(obj, "id"):
+            if hasattr(obj.id, "id"):
+                return obj.id.id
+            return obj.id
+        return ""
+
+    # Extract basic fields
+    component_id = component.id.id
+    component_name = component.name
+    component_display_name = component.display_name
+
+    # Extract part_occurrence
+    part_occurrence = None
+    if hasattr(component, "part_occurrence"):
+        part_occurrence_id = extract_id(component.part_occurrence)
+        part_occurrence_name = component.part_occurrence.name
+        part_occurrence = {
+            "id": part_occurrence_id,
+            "name": part_occurrence_name,
+        }
+
+    # Extract placement matrix
+    placement_m00 = 1.0
+    placement_m11 = 1.0
+    placement_m22 = 1.0
+    placement_m33 = 1.0
+    if hasattr(component, "placement"):
+        placement_m00 = component.placement.m00
+        placement_m11 = component.placement.m11
+        placement_m22 = component.placement.m22
+        placement_m33 = component.placement.m33
+
+    placement = {
+        "m00": placement_m00,
+        "m11": placement_m11,
+        "m22": placement_m22,
+        "m33": placement_m33,
+    }
+
+    # Extract part_master
+    part_master = None
+    if hasattr(component, "part_master"):
+        part_master_id = extract_id(component.part_master)
+        part_master_name = component.part_master.name
+        part_master = {
+            "id": part_master_id,
+            "name": part_master_name,
+        }
+
+    # Extract master_id and parent_id
+    master_id = extract_id(component.master_id) if hasattr(component, "master_id") else ""
+    parent_id = extract_id(component.parent_id) if hasattr(component, "parent_id") else ""
+
+    return {
+        "id": component_id,
+        "name": component_name,
+        "display_name": component_display_name,
+        "part_occurrence": part_occurrence,
+        "placement": placement,
+        "part_master": part_master,
+        "master_id": master_id,
+        "parent_id": parent_id,
+    }
+
+
+def serialize_part(part: GRPCPartEntity) -> dict:
+    """Serialize a GRPCPartEntity object into a dictionary.
+
+    Parameters
+    ----------
+    part : GRPCPartEntity
+        The gRPC PartEntity object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the PartEntity object without gRPC dependencies.
+    """
+    return {
+        "id": part.id.id,
+    }
+
+
+def serialize_entity_identifier(entity: EntityIdentifier) -> dict:
+    """Serialize an EntityIdentifier object into a dictionary.
+
+    Parameters
+    ----------
+    entity : EntityIdentifier
+        The gRPC EntityIdentifier object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the EntityIdentifier object without gRPC dependencies.
+    """
+    return {
+        "id": entity.id,
+    }
+
+
 def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> dict:
     """Serialize a TrackedCommandResponse object into a dictionary.
 
@@ -1667,66 +1842,90 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
     dict
         A dictionary representation of the TrackedCommandResponse object.
     """
+    # Extract command response success status
+    success = getattr(response.command_response, "success", False)
 
-    def serialize_body(body):
-        return {
-            "id": body.id,
-            "name": body.name,
-            "can_suppress": body.can_suppress,
-            "transform_to_master": {
-                "m00": body.transform_to_master.m00,
-                "m11": body.transform_to_master.m11,
-                "m22": body.transform_to_master.m22,
-                "m33": body.transform_to_master.m33,
-            },
-            "master_id": body.master_id,
-            "parent_id": body.parent_id,
-            "is_surface": body.is_surface,
-        }
+    # Extract tracked changes
+    tracked_changes = response.tracked_changes
 
-    def serialize_entity_identifier(entity):
-        """Serialize an EntityIdentifier object into a dictionary."""
-        return {
-            "id": entity.id,
-        }
+    # Extract and serialize parts
+    created_parts = [serialize_part(part) for part in getattr(tracked_changes, "created_parts", [])]
+    modified_parts = [
+        serialize_part(part) for part in getattr(tracked_changes, "modified_parts", [])
+    ]
+    deleted_parts = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_parts", [])
+    ]
+
+    # Extract and serialize components
+    created_components = [
+        serialize_component(component)
+        for component in getattr(tracked_changes, "created_components", [])
+    ]
+    modified_components = [
+        serialize_component(component)
+        for component in getattr(tracked_changes, "modified_components", [])
+    ]
+    deleted_components = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_component_ids", [])
+    ]
+
+    # Extract and serialize bodies
+    created_bodies = [
+        serialize_body(body) for body in getattr(tracked_changes, "created_bodies", [])
+    ]
+    modified_bodies = [
+        serialize_body(body) for body in getattr(tracked_changes, "modified_bodies", [])
+    ]
+    deleted_bodies = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_body_ids", [])
+    ]
+
+    created_faces = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "created_faces", [])
+    ]
+    modified_faces = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "modified_faces", [])
+    ]
+    deleted_faces = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_faces", [])
+    ]
+    created_edges = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "created_edges", [])
+    ]
+    modified_edges = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "modified_edges", [])
+    ]
+    deleted_edges = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_edges", [])
+    ]
 
     return {
-        "success": getattr(response.command_response, "success", False),
-        "created_bodies": [
-            serialize_body(body) for body in getattr(response.tracked_changes, "created_bodies", [])
-        ],
-        "modified_bodies": [
-            serialize_body(body)
-            for body in getattr(response.tracked_changes, "modified_bodies", [])
-        ],
-        "deleted_bodies": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "deleted_bodies", [])
-        ],
-        "created_faces": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "created_face_ids", [])
-        ],
-        "modified_faces": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "modified_face_ids", [])
-        ],
-        "deleted_faces": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "deleted_face_ids", [])
-        ],
-        "created_edges": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "created_edge_ids", [])
-        ],
-        "modified_edges": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "modified_edge_ids", [])
-        ],
-        "deleted_edges": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "deleted_edge_ids", [])
-        ],
+        "success": success,
+        "created_parts": created_parts,
+        "modified_parts": modified_parts,
+        "deleted_parts": deleted_parts,
+        "created_components": created_components,
+        "modified_components": modified_components,
+        "deleted_components": deleted_components,
+        "created_bodies": created_bodies,
+        "modified_bodies": modified_bodies,
+        "deleted_bodies": deleted_bodies,
+        "created_faces": created_faces,
+        "modified_faces": modified_faces,
+        "deleted_faces": deleted_faces,
+        "created_edges": created_edges,
+        "modified_edges": modified_edges,
+        "deleted_edges": deleted_edges,
     }
 
 
@@ -1743,9 +1942,7 @@ def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:
         "success": response.tracked_command_response.command_response.success,
         "found": getattr(response, "found", -1),
         "repaired": getattr(response, "repaired", -1),
-        "complete_command_response": serialize_tracked_command_response(
-            response.tracked_command_response
-        ),
+        "tracker_response": serialize_tracked_command_response(response.tracked_command_response),
         "created_bodies_monikers": [
             created_body.id.id
             for created_body in getattr(

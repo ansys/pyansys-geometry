@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -45,7 +45,7 @@ from .conversions import (
 )
 
 
-class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
+class GRPCFacesServiceV1(GRPCFacesService):
     """Faces service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
@@ -352,9 +352,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "created_bodies": [
-                body.get("id").id for body in tracked_response.get("created_bodies")
-            ],
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
         }
 
     @protect_grpc
@@ -515,9 +513,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "created_bodies": [
-                body.get("id").id for body in tracked_response.get("created_bodies")
-            ],
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
         }
 
     @protect_grpc

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -29,7 +29,7 @@ from ..base.points import GRPCPointsService
 from .conversions import build_grpc_id, from_point3d_to_grpc_design_point
 
 
-class GRPCPointsServiceV1(GRPCPointsService):  # pragma: no cover
+class GRPCPointsServiceV1(GRPCPointsService):
     """Points service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
