@@ -167,7 +167,8 @@ jobs:
           fi
 
   testing-windows:
-    name: Testing and coverage (Windows) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }}, ${{ matrix.docker-image }})
+    name: Testing and coverage (Windows) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }}, ${{ matrix.docker-image
+      }})
     needs: [smoke-tests, manifests]
     runs-on: windows-latest
     continue-on-error: ${{ matrix.experimental }}
