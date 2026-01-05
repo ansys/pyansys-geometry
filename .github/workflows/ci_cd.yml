@@ -384,7 +384,7 @@ jobs:
       matrix:
         proto-version: ["v1", "v0"]
         use-tracker: ['no', 'yes']
-        docker-image: ["core-windows-latest", "core-windows-latest-unstable"]
+        docker-image: ["core-linux-latest", "core-linux-latest-unstable"]
         include:
           # Add tracker-label based on use-tracker
           - use-tracker: 'no'
@@ -392,9 +392,9 @@ jobs:
           - use-tracker: 'yes'
             tracker-label: "With tracker"
           # Add experimental flag based on docker-image
-          - docker-image: "core-windows-latest"
+          - docker-image: "core-linux-latest"
             experimental: false
-          - docker-image: "core-windows-latest-unstable"
+          - docker-image: "core-linux-latest-unstable"
             experimental: true
 
     steps:
