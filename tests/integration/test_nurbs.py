@@ -165,6 +165,30 @@ def test_create_body_from_loft_profile_with_guides(modeler: Modeler):
     assert result.is_surface is True
 
 
+def test_extrude_nurbs_sketch_with_old_backend(fake_modeler_old_backend_251: Modeler):
+    """Test extruding a NURBS sketch using an old backend."""
+    design = fake_modeler_old_backend_251.create_design("ExtrudeNURBSSketchOldBackend")
+
+    # Create a NURBS sketch
+    sketch = Sketch()
+    sketch.nurbs_from_2d_points(
+        points=[
+            Point2D([0, 0]),
+            Point2D([1, 0]),
+            Point2D([1, 1]),
+            Point2D([0, 1]),
+            Point2D([0, 0]),
+        ],
+        tag="nurbs_sketch",
+    )
+
+    # Extrude the NURBS sketch
+    with pytest.raises(
+        ValueError, match="NURBS sketch extrusion is only supported starting on Ansys release 26R1"
+    ):
+        design.extrude_sketch("extruded_body", sketch, distance=5)
+
+
 def test_nurbs_surface_body_creation(modeler: Modeler):
     """Test surface body creation from NURBS surfaces."""
     design = modeler.create_design("Design1")
