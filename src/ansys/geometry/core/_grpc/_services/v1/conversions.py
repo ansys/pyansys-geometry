@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -44,6 +44,8 @@ from ansys.api.discovery.v1.commonmessages_pb2 import (
     Quantity as GRPCQuantity,
 )
 from ansys.api.discovery.v1.design.designmessages_pb2 import (
+    BodyEntity as GRPCBodyEntity,
+    ComponentEntity as GRPCComponentEntity,
     CurveGeometry as GRPCCurveGeometry,
     DatumPointEntity as GRPCDesignPoint,
     DrivingDimensionEntity as GRPCDrivingDimension,
@@ -55,6 +57,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     Matrix as GRPCMatrix,
     NurbsCurve as GRPCNurbsCurve,
     NurbsSurface as GRPCNurbsSurface,
+    PartEntity as GRPCPartEntity,
     Surface as GRPCSurface,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
@@ -81,7 +84,7 @@ from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
     import semver
 
@@ -175,7 +178,7 @@ def build_grpc_id(id: str) -> EntityIdentifier:
 
 
 def from_point3d_to_grpc_point(point: "Point3D") -> GRPCPoint:
-    """Convert a ``Point3D`` class to a point gRPC message.
+    """Convert a v1 ``Point3D`` class to a point gRPC message.
 
     Parameters
     ----------
@@ -195,7 +198,7 @@ def from_point3d_to_grpc_point(point: "Point3D") -> GRPCPoint:
 
 
 def from_grpc_point_to_point3d(point: GRPCPoint) -> "Point3D":
-    """Convert a point gRPC message class to a ``Point3D`` class.
+    """Convert a v1 point gRPC message class to a ``Point3D`` class.
 
     Parameters
     ----------
@@ -221,7 +224,7 @@ def from_grpc_point_to_point3d(point: GRPCPoint) -> "Point3D":
 
 
 def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
-    """Convert a ``Point2D`` class to a point gRPC message.
+    """Convert a v1 ``Point2D`` class to a point gRPC message.
 
     Parameters
     ----------
@@ -244,7 +247,7 @@ def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
 
 
 def from_point3d_to_grpc_design_point(point: "Point3D") -> GRPCDesignPoint:
-    """Convert a ``Point3D`` class to a design point gRPC message.
+    """Convert a v1 ``Point3D`` class to a design point gRPC message.
 
     Parameters
     ----------
@@ -262,7 +265,7 @@ def from_point3d_to_grpc_design_point(point: "Point3D") -> GRPCDesignPoint:
 
 
 def from_unit_vector_to_grpc_direction(unit_vector: "UnitVector3D") -> GRPCDirection:
-    """Convert a ``UnitVector3D`` class to a unit vector gRPC message.
+    """Convert a v1 ``UnitVector3D`` class to a unit vector gRPC message.
 
     Parameters
     ----------
@@ -278,7 +281,7 @@ def from_unit_vector_to_grpc_direction(unit_vector: "UnitVector3D") -> GRPCDirec
 
 
 def from_line_to_grpc_line(line: "Line") -> GRPCLine:
-    """Convert a ``Line`` to a line gRPC message.
+    """Convert a v1 ``Line`` to a line gRPC message.
 
     Parameters
     ----------
@@ -296,7 +299,7 @@ def from_line_to_grpc_line(line: "Line") -> GRPCLine:
 
 
 def from_grpc_material_to_material(material: GRPCMaterial) -> "Material":
-    """Convert a material gRPC message to a ``Material`` class.
+    """Convert a v1 material gRPC message to a ``Material`` class.
 
     Parameters
     ----------
@@ -326,7 +329,7 @@ def from_grpc_material_to_material(material: GRPCMaterial) -> "Material":
 def from_grpc_material_property_to_material_property(
     material_property: GRPCMaterialProperty,
 ) -> "MaterialProperty":
-    """Convert a material property gRPC message to a ``MaterialProperty`` class.
+    """Convert a v1 material property gRPC message to a ``MaterialProperty`` class.
 
     Parameters
     ----------
@@ -360,7 +363,7 @@ def from_grpc_material_property_to_material_property(
 
 
 def from_frame_to_grpc_frame(frame: "Frame") -> GRPCFrame:
-    """Convert a ``Frame`` class to a frame gRPC message.
+    """Convert a v1 ``Frame`` class to a frame gRPC message.
 
     Parameters
     ----------
@@ -380,7 +383,7 @@ def from_frame_to_grpc_frame(frame: "Frame") -> GRPCFrame:
 
 
 def from_grpc_frame_to_frame(frame: GRPCFrame) -> "Frame":
-    """Convert a frame gRPC message to a ``Frame`` class.
+    """Convert a v1 frame gRPC message to a ``Frame`` class.
 
     Parameters
     ----------
@@ -424,7 +427,7 @@ def from_grpc_frame_to_frame(frame: GRPCFrame) -> "Frame":
 
 
 def from_plane_to_grpc_plane(plane: "Plane") -> GRPCPlane:
-    """Convert a ``Plane`` class to a plane gRPC message.
+    """Convert a v1 ``Plane`` class to a plane gRPC message.
 
     Parameters
     ----------
@@ -447,7 +450,7 @@ def from_plane_to_grpc_plane(plane: "Plane") -> GRPCPlane:
 
 @graphics_required
 def from_grpc_tess_to_pd(tess: GRPCTessellation) -> "pv.PolyData":
-    """Convert a ``Tessellation`` to ``pyvista.PolyData``."""
+    """Convert a v1 ``Tessellation`` to ``pyvista.PolyData``."""
     # lazy imports here to improve initial load
     import numpy as np
     import pyvista as pv
@@ -459,13 +462,13 @@ def from_grpc_tess_to_pd(tess: GRPCTessellation) -> "pv.PolyData":
 
 
 def from_grpc_tess_to_raw_data(tess: GRPCTessellation) -> dict:
-    """Convert a ``Tessellation`` to raw data."""
+    """Convert a v1 ``Tessellation`` to raw data."""
     return {"vertices": tess.vertices, "faces": tess.faces}
 
 
 @graphics_required
 def from_grpc_edge_tess_to_pd(tess: GRPCEdgeTessellation) -> "pv.PolyData":
-    """Convert a ``EdgeTessellation`` to ``pyvista.PolyData``."""
+    """Convert a v1 ``EdgeTessellation`` to ``pyvista.PolyData``."""
     # lazy imports here to improve initial load
     import numpy as np
     import pyvista as pv
@@ -479,7 +482,7 @@ def from_grpc_edge_tess_to_pd(tess: GRPCEdgeTessellation) -> "pv.PolyData":
 
 
 def from_grpc_edge_tess_to_raw_data(tess: GRPCEdgeTessellation) -> dict:
-    """Convert a ``EdgeTessellation`` to raw data."""
+    """Convert a v1 ``EdgeTessellation`` to raw data."""
     return {
         "vertices": [
             coord.value_in_geometry_units for pt in tess.vertices for coord in (pt.x, pt.y, pt.z)
@@ -490,7 +493,7 @@ def from_grpc_edge_tess_to_raw_data(tess: GRPCEdgeTessellation) -> dict:
 def from_tess_options_to_grpc_tess_options(
     options: "TessellationOptions",
 ) -> GRPCTessellationOptions:
-    """Convert a ``TessellationOptions`` class to a tessellation options gRPC message.
+    """Convert a v1 ``TessellationOptions`` class to a tessellation options gRPC message.
 
     Parameters
     ----------
@@ -583,7 +586,7 @@ def from_sketch_edges_to_grpc_geometries(
     edges: list["SketchEdge"],
     plane: "Plane",
 ) -> tuple[list[GRPCLine], list[GRPCArc], list[GRPCNurbsCurve]]:
-    """Convert a list of ``SketchEdge`` to a gRPC message.
+    """Convert a v1 list of ``SketchEdge`` to a gRPC message.
 
     Parameters
     ----------
@@ -616,7 +619,7 @@ def from_sketch_edges_to_grpc_geometries(
 
 
 def from_sketch_arc_to_grpc_arc(arc: "Arc", plane: "Plane") -> GRPCArc:
-    """Convert an ``Arc`` class to an arc gRPC message.
+    """Convert a v1 ``Arc`` class to an arc gRPC message.
 
     Parameters
     ----------
@@ -645,7 +648,7 @@ def from_sketch_arc_to_grpc_arc(arc: "Arc", plane: "Plane") -> GRPCArc:
 
 
 def from_sketch_nurbs_to_grpc_nurbs_curve(curve: "SketchNurbs", plane: "Plane") -> GRPCNurbsCurve:
-    """Convert a ``SketchNurbs`` class to a NURBS curve gRPC message.
+    """Convert a v1 ``SketchNurbs`` class to a NURBS curve gRPC message.
 
     Parameters
     ----------
@@ -687,7 +690,7 @@ def from_sketch_nurbs_to_grpc_nurbs_curve(curve: "SketchNurbs", plane: "Plane") 
 
 
 def from_sketch_ellipse_to_grpc_ellipse(ellipse: "SketchEllipse", plane: "Plane") -> GRPCEllipse:
-    """Convert a ``SketchEllipse`` class to an ellipse gRPC message.
+    """Convert a v1 ``SketchEllipse`` class to an ellipse gRPC message.
 
     Parameters
     ----------
@@ -712,7 +715,7 @@ def from_sketch_ellipse_to_grpc_ellipse(ellipse: "SketchEllipse", plane: "Plane"
 
 
 def from_sketch_circle_to_grpc_circle(circle: "SketchCircle", plane: "Plane") -> GRPCCircle:
-    """Convert a ``SketchCircle`` class to a circle gRPC message.
+    """Convert a v1 ``SketchCircle`` class to a circle gRPC message.
 
     Parameters
     ----------
@@ -735,7 +738,7 @@ def from_sketch_circle_to_grpc_circle(circle: "SketchCircle", plane: "Plane") ->
 
 
 def from_sketch_polygon_to_grpc_polygon(polygon: "Polygon", plane: "Plane") -> GRPCPolygon:
-    """Convert a ``Polygon`` class to a polygon gRPC message.
+    """Convert a v1 ``Polygon`` class to a polygon gRPC message.
 
     Parameters
     ----------
@@ -758,7 +761,7 @@ def from_sketch_polygon_to_grpc_polygon(polygon: "Polygon", plane: "Plane") -> G
 
 
 def from_sketch_segment_to_grpc_line(segment: "SketchSegment", plane: "Plane") -> GRPCLine:
-    """Convert a ``Segment`` class to a line gRPC message.
+    """Convert a v1 ``Segment`` class to a line gRPC message.
 
     Parameters
     ----------
@@ -777,7 +780,7 @@ def from_sketch_segment_to_grpc_line(segment: "SketchSegment", plane: "Plane") -
 
 
 def from_trimmed_curve_to_grpc_trimmed_curve(curve: "TrimmedCurve") -> GRPCTrimmedCurve:
-    """Convert a ``TrimmedCurve`` to a trimmed curve gRPC message.
+    """Convert a v1 ``TrimmedCurve`` to a trimmed curve gRPC message.
 
     Parameters
     ----------
@@ -801,7 +804,7 @@ def from_trimmed_curve_to_grpc_trimmed_curve(curve: "TrimmedCurve") -> GRPCTrimm
 
 
 def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
-    """Convert a ``Curve`` object to a curve gRPC message.
+    """Convert a v1 ``Curve`` object to a curve gRPC message.
 
     Parameters
     ----------
@@ -859,7 +862,7 @@ def from_curve_to_grpc_curve(curve: "Curve") -> GRPCCurveGeometry:
 
 
 def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
-    """Convert a ``NURBSCurve`` to a NURBS curve gRPC message.
+    """Convert a v1 ``NURBSCurve`` to a NURBS curve gRPC message.
 
     Parameters
     ----------
@@ -899,7 +902,7 @@ def from_nurbs_curve_to_grpc_nurbs_curve(curve: "NURBSCurve") -> GRPCNurbsCurve:
 
 
 def from_nurbs_surface_to_grpc_nurbs_surface(surface: "NURBSSurface") -> GRPCNurbsSurface:
-    """Convert a ``NURBSSurface`` to a NURBS surface gRPC message.
+    """Convert a v1 ``NURBSSurface`` to a NURBS surface gRPC message.
 
     Parameters
     ----------
@@ -946,7 +949,7 @@ def from_nurbs_surface_to_grpc_nurbs_surface(surface: "NURBSSurface") -> GRPCNur
 
 
 def from_grpc_nurbs_curve_to_nurbs_curve(curve: GRPCNurbsCurve) -> "NURBSCurve":
-    """Convert a NURBS curve gRPC message to a ``NURBSCurve``.
+    """Convert a v1 NURBS curve gRPC message to a ``NURBSCurve``.
 
     Parameters
     ----------
@@ -984,7 +987,7 @@ def from_grpc_nurbs_curve_to_nurbs_curve(curve: GRPCNurbsCurve) -> "NURBSCurve":
 
 
 def from_knots_to_grpc_knots(knots: list[float]) -> list[GRPCKnot]:
-    """Convert a list of knots to a list of gRPC knot messages.
+    """Convert a v1 list of knots to a list of gRPC knot messages.
 
     Parameters
     ----------
@@ -1018,7 +1021,7 @@ def from_knots_to_grpc_knots(knots: list[float]) -> list[GRPCKnot]:
 
 
 def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
-    """Convert a curve gRPC message to a ``Curve``.
+    """Convert a v1 curve gRPC message to a ``Curve``.
 
     Parameters
     ----------
@@ -1072,7 +1075,7 @@ def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
 def from_trimmed_surface_to_grpc_trimmed_surface(
     trimmed_surface: "TrimmedSurface",
 ) -> GRPCTrimmedSurface:
-    """Convert a ``TrimmedSurface`` to a trimmed surface gRPC message.
+    """Convert a v1 ``TrimmedSurface`` to a trimmed surface gRPC message.
 
     Parameters
     ----------
@@ -1099,7 +1102,7 @@ def from_trimmed_surface_to_grpc_trimmed_surface(
 
 
 def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCSurfaceType]:
-    """Convert a ``Surface`` object to a surface gRPC message.
+    """Convert a v1 ``Surface`` object to a surface gRPC message.
 
     Parameters
     ----------
@@ -1187,7 +1190,7 @@ def from_surface_to_grpc_surface(surface: "Surface") -> tuple[GRPCSurface, GRPCS
 
 
 def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceType") -> "Surface":
-    """Convert a surface gRPC message to a ``Surface`` class.
+    """Convert a v1 surface gRPC message to a ``Surface`` class.
 
     Parameters
     ----------
@@ -1232,7 +1235,7 @@ def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceTyp
 def from_grpc_driving_dimension_to_driving_dimension(
     driving_dimension: GRPCDrivingDimension,
 ) -> "Parameter":
-    """Convert a gRPC driving dimension to a driving dimension object.
+    """Convert a v1 gRPC driving dimension to a driving dimension object.
 
     Parameters
     ----------
@@ -1257,7 +1260,7 @@ def from_grpc_driving_dimension_to_driving_dimension(
 def from_driving_dimension_to_grpc_driving_dimension(
     driving_dimension: "Parameter",
 ) -> GRPCDrivingDimension:
-    """Convert a driving dimension object to a gRPC driving dimension.
+    """Convert a v1 driving dimension object to a gRPC driving dimension.
 
     Parameters
     ----------
@@ -1280,7 +1283,7 @@ def from_driving_dimension_to_grpc_driving_dimension(
 def from_grpc_update_status_to_parameter_update_status(
     update_status: GRPCUpdateStatus,
 ) -> "ParameterUpdateStatus":
-    """Convert a gRPC update status to a parameter update status.
+    """Convert a v1 gRPC update status to a parameter update status.
 
     Parameters
     ----------
@@ -1344,7 +1347,7 @@ def from_design_file_format_to_grpc_file_export_format(
 def from_material_to_grpc_material(
     material: "Material",
 ) -> GRPCMaterial:
-    """Convert a ``Material`` class to a material gRPC message.
+    """Convert a v1 ``Material`` class to a material gRPC message.
 
     Parameters
     ----------
@@ -1374,7 +1377,7 @@ def from_material_to_grpc_material(
 
 
 def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
-    """Convert a gRPC matrix to a matrix.
+    """Convert a v1 gRPC matrix to a matrix.
 
     Parameters
     ----------
@@ -1404,7 +1407,7 @@ def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
 
 
 def from_grpc_direction_to_unit_vector(direction: GRPCDirection) -> "UnitVector3D":
-    """Convert a gRPC direction to a unit vector.
+    """Convert a v1 gRPC direction to a unit vector.
 
     Parameters
     ----------
@@ -1422,7 +1425,7 @@ def from_grpc_direction_to_unit_vector(direction: GRPCDirection) -> "UnitVector3
 
 
 def from_length_to_grpc_quantity(input: "Distance") -> GRPCQuantity:
-    """Convert a ``Distance`` containing a length to a gRPC quantity.
+    """Convert a v1 ``Distance`` containing a length to a gRPC quantity.
 
     Parameters
     ----------
@@ -1438,7 +1441,7 @@ def from_length_to_grpc_quantity(input: "Distance") -> GRPCQuantity:
 
 
 def from_grpc_quantity_to_distance(input: "GRPCQuantity") -> Distance:
-    """Convert a gRPC quantity to ``Distance`` containing a length.
+    """Convert a v1 gRPC quantity to ``Distance`` containing a length.
 
     Parameters
     ----------
@@ -1454,7 +1457,7 @@ def from_grpc_quantity_to_distance(input: "GRPCQuantity") -> Distance:
 
 
 def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
-    """Convert a ``Measurement`` containing an angle to a gRPC quantity.
+    """Convert a v1 ``Measurement`` containing an angle to a gRPC quantity.
 
     Parameters
     ----------
@@ -1470,7 +1473,7 @@ def from_angle_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
 
 
 def from_grpc_angle_to_angle(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
-    """Convert a gRPC quantity representing an angle to a pint Quantity.
+    """Convert a v1 gRPC quantity representing an angle to a pint Quantity.
 
     Parameters
     ----------
@@ -1486,7 +1489,7 @@ def from_grpc_angle_to_angle(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
 
 
 def from_area_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
-    """Convert a ``Measurement`` containing an area to a gRPC quantity.
+    """Convert a v1 ``Measurement`` containing an area to a gRPC quantity.
 
     Parameters
     ----------
@@ -1502,7 +1505,7 @@ def from_area_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
 
 
 def from_volume_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
-    """Convert a ``Measurement`` containing a volume to a gRPC quantity.
+    """Convert a v1 ``Measurement`` containing a volume to a gRPC quantity.
 
     Parameters
     ----------
@@ -1518,7 +1521,7 @@ def from_volume_to_grpc_quantity(input: "Measurement") -> GRPCQuantity:
 
 
 def from_grpc_volume_to_volume(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
-    """Convert a gRPC quantity representing volume to a pint Quantity.
+    """Convert a v1 gRPC quantity representing volume to a pint Quantity.
 
     Parameters
     ----------
@@ -1534,7 +1537,7 @@ def from_grpc_volume_to_volume(grpc_quantity: GRPCQuantity) -> "pint.Quantity":
 
 
 def from_grpc_quantity_to_float(grpc_quantity: GRPCQuantity) -> float:
-    """Convert a gRPC quantity to a float.
+    """Convert a v1 gRPC quantity to a float.
 
     Parameters
     ----------
@@ -1550,7 +1553,7 @@ def from_grpc_quantity_to_float(grpc_quantity: GRPCQuantity) -> float:
 
 
 def from_parameter_to_grpc_quantity(value: float) -> GRPCQuantity:
-    """Convert a dimensionless parameter to a gRPC quantity.
+    """Convert a v1 dimensionless parameter to a gRPC quantity.
 
     Parameters
     ----------
@@ -1568,7 +1571,7 @@ def from_parameter_to_grpc_quantity(value: float) -> GRPCQuantity:
 def from_import_options_definitions_to_grpc_import_options_definition(
     import_options_definitions: "ImportOptionsDefinitions",
 ) -> GRPCImportOptionDefinition:
-    """Convert an ``ImportOptionsDefinitions`` to import options definition gRPC message.
+    """Convert a v1 ``ImportOptionsDefinitions`` to import options definition gRPC message.
 
     Parameters
     ----------
@@ -1654,6 +1657,178 @@ def from_enclosure_options_to_grpc_enclosure_options(
     )
 
 
+def serialize_body(body: GRPCBodyEntity) -> dict:
+    """Serialize a GRPCBodyEntity object into a dictionary.
+
+    It is not directly converted to a pygeometry object because we'll assign it in place and
+    construct the object while updating the design object by the tracker output.
+
+    Parameters
+    ----------
+    body : GRPCBodyEntity
+        The gRPC BodyEntity object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the BodyEntity object without gRPC dependencies.
+    """
+    # Extract basic fields
+    body_id = body.id.id
+    body_name = body.name
+    body_can_suppress = body.can_suppress
+    body_master_id = (
+        body.master_id.id.id
+        if hasattr(body.master_id, "id") and hasattr(body.master_id.id, "id")
+        else (body.master_id.id if hasattr(body.master_id, "id") else "")
+    )
+    body_parent_id = (
+        body.parent_id.id.id
+        if hasattr(body.parent_id, "id") and hasattr(body.parent_id.id, "id")
+        else (body.parent_id.id if hasattr(body.parent_id, "id") else "")
+    )
+    body_is_surface = body.is_surface
+
+    # Extract transform_to_master matrix
+    transform_m00 = body.transform_to_master.m00
+    transform_m11 = body.transform_to_master.m11
+    transform_m22 = body.transform_to_master.m22
+    transform_m33 = body.transform_to_master.m33
+
+    transform_to_master = {
+        "m00": transform_m00,
+        "m11": transform_m11,
+        "m22": transform_m22,
+        "m33": transform_m33,
+    }
+
+    return {
+        "id": body_id,
+        "name": body_name,
+        "can_suppress": body_can_suppress,
+        "transform_to_master": transform_to_master,
+        "master_id": body_master_id,
+        "parent_id": body_parent_id,
+        "is_surface": body_is_surface,
+    }
+
+
+def serialize_component(component: GRPCComponentEntity) -> dict:
+    """Serialize a GRPCComponentEntity object into a dictionary.
+
+    Parameters
+    ----------
+    component : GRPCComponentEntity
+        The gRPC ComponentEntity object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the ComponentEntity object without gRPC dependencies.
+    """
+
+    def extract_id(obj):
+        if hasattr(obj, "id"):
+            if hasattr(obj.id, "id"):
+                return obj.id.id
+            return obj.id
+        return ""
+
+    # Extract basic fields
+    component_id = component.id.id
+    component_name = component.name
+    component_display_name = component.display_name
+
+    # Extract part_occurrence
+    part_occurrence = None
+    if hasattr(component, "part_occurrence"):
+        part_occurrence_id = extract_id(component.part_occurrence)
+        part_occurrence_name = component.part_occurrence.name
+        part_occurrence = {
+            "id": part_occurrence_id,
+            "name": part_occurrence_name,
+        }
+
+    # Extract placement matrix
+    placement_m00 = 1.0
+    placement_m11 = 1.0
+    placement_m22 = 1.0
+    placement_m33 = 1.0
+    if hasattr(component, "placement"):
+        placement_m00 = component.placement.m00
+        placement_m11 = component.placement.m11
+        placement_m22 = component.placement.m22
+        placement_m33 = component.placement.m33
+
+    placement = {
+        "m00": placement_m00,
+        "m11": placement_m11,
+        "m22": placement_m22,
+        "m33": placement_m33,
+    }
+
+    # Extract part_master
+    part_master = None
+    if hasattr(component, "part_master"):
+        part_master_id = extract_id(component.part_master)
+        part_master_name = component.part_master.name
+        part_master = {
+            "id": part_master_id,
+            "name": part_master_name,
+        }
+
+    # Extract master_id and parent_id
+    master_id = extract_id(component.master_id) if hasattr(component, "master_id") else ""
+    parent_id = extract_id(component.parent_id) if hasattr(component, "parent_id") else ""
+
+    return {
+        "id": component_id,
+        "name": component_name,
+        "display_name": component_display_name,
+        "part_occurrence": part_occurrence,
+        "placement": placement,
+        "part_master": part_master,
+        "master_id": master_id,
+        "parent_id": parent_id,
+    }
+
+
+def serialize_part(part: GRPCPartEntity) -> dict:
+    """Serialize a GRPCPartEntity object into a dictionary.
+
+    Parameters
+    ----------
+    part : GRPCPartEntity
+        The gRPC PartEntity object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the PartEntity object without gRPC dependencies.
+    """
+    return {
+        "id": part.id.id,
+    }
+
+
+def serialize_entity_identifier(entity: EntityIdentifier) -> dict:
+    """Serialize an EntityIdentifier object into a dictionary.
+
+    Parameters
+    ----------
+    entity : EntityIdentifier
+        The gRPC EntityIdentifier object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the EntityIdentifier object without gRPC dependencies.
+    """
+    return {
+        "id": entity.id,
+    }
+
+
 def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> dict:
     """Serialize a TrackedCommandResponse object into a dictionary.
 
@@ -1667,66 +1842,90 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
     dict
         A dictionary representation of the TrackedCommandResponse object.
     """
+    # Extract command response success status
+    success = getattr(response.command_response, "success", False)
 
-    def serialize_body(body):
-        return {
-            "id": body.id,
-            "name": body.name,
-            "can_suppress": body.can_suppress,
-            "transform_to_master": {
-                "m00": body.transform_to_master.m00,
-                "m11": body.transform_to_master.m11,
-                "m22": body.transform_to_master.m22,
-                "m33": body.transform_to_master.m33,
-            },
-            "master_id": body.master_id,
-            "parent_id": body.parent_id,
-            "is_surface": body.is_surface,
-        }
+    # Extract tracked changes
+    tracked_changes = response.tracked_changes
 
-    def serialize_entity_identifier(entity):
-        """Serialize an EntityIdentifier object into a dictionary."""
-        return {
-            "id": entity.id,
-        }
+    # Extract and serialize parts
+    created_parts = [serialize_part(part) for part in getattr(tracked_changes, "created_parts", [])]
+    modified_parts = [
+        serialize_part(part) for part in getattr(tracked_changes, "modified_parts", [])
+    ]
+    deleted_parts = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_parts", [])
+    ]
+
+    # Extract and serialize components
+    created_components = [
+        serialize_component(component)
+        for component in getattr(tracked_changes, "created_components", [])
+    ]
+    modified_components = [
+        serialize_component(component)
+        for component in getattr(tracked_changes, "modified_components", [])
+    ]
+    deleted_components = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_component_ids", [])
+    ]
+
+    # Extract and serialize bodies
+    created_bodies = [
+        serialize_body(body) for body in getattr(tracked_changes, "created_bodies", [])
+    ]
+    modified_bodies = [
+        serialize_body(body) for body in getattr(tracked_changes, "modified_bodies", [])
+    ]
+    deleted_bodies = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_body_ids", [])
+    ]
+
+    created_faces = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "created_faces", [])
+    ]
+    modified_faces = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "modified_faces", [])
+    ]
+    deleted_faces = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_faces", [])
+    ]
+    created_edges = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "created_edges", [])
+    ]
+    modified_edges = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "modified_edges", [])
+    ]
+    deleted_edges = [
+        serialize_entity_identifier(entity)
+        for entity in getattr(tracked_changes, "deleted_edges", [])
+    ]
 
     return {
-        "success": getattr(response.command_response, "success", False),
-        "created_bodies": [
-            serialize_body(body) for body in getattr(response.tracked_changes, "created_bodies", [])
-        ],
-        "modified_bodies": [
-            serialize_body(body)
-            for body in getattr(response.tracked_changes, "modified_bodies", [])
-        ],
-        "deleted_bodies": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "deleted_bodies", [])
-        ],
-        "created_faces": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "created_face_ids", [])
-        ],
-        "modified_faces": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "modified_face_ids", [])
-        ],
-        "deleted_faces": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "deleted_face_ids", [])
-        ],
-        "created_edges": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "created_edge_ids", [])
-        ],
-        "modified_edges": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "modified_edge_ids", [])
-        ],
-        "deleted_edges": [
-            serialize_entity_identifier(entity)
-            for entity in getattr(response.tracked_changes, "deleted_edge_ids", [])
-        ],
+        "success": success,
+        "created_parts": created_parts,
+        "modified_parts": modified_parts,
+        "deleted_parts": deleted_parts,
+        "created_components": created_components,
+        "modified_components": modified_components,
+        "deleted_components": deleted_components,
+        "created_bodies": created_bodies,
+        "modified_bodies": modified_bodies,
+        "deleted_bodies": deleted_bodies,
+        "created_faces": created_faces,
+        "modified_faces": modified_faces,
+        "deleted_faces": deleted_faces,
+        "created_edges": created_edges,
+        "modified_edges": modified_edges,
+        "deleted_edges": deleted_edges,
     }
 
 
@@ -1743,9 +1942,7 @@ def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:
         "success": response.tracked_command_response.command_response.success,
         "found": getattr(response, "found", -1),
         "repaired": getattr(response, "repaired", -1),
-        "complete_command_response": serialize_tracked_command_response(
-            response.tracked_command_response
-        ),
+        "tracker_response": serialize_tracked_command_response(response.tracked_command_response),
         "created_bodies_monikers": [
             created_body.id.id
             for created_body in getattr(

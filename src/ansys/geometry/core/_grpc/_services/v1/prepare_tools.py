@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -35,7 +35,7 @@ from .conversions import (
 )
 
 
-class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
+class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
     """Prepare tools service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
@@ -67,10 +67,16 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Call the gRPC service
         response = self.stub.ExtractVolumeFromFaces(request)
 
+        # Convert grpc tracked command response to serialized format.
+        serialized_tracker_response = serialize_tracked_command_response(
+            response=response.tracked_command_response
+        )
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
             "created_bodies": [body.id.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -86,10 +92,15 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Call the gRPC service
         response = self.stub.ExtractVolumeFromEdgeLoops(request)
 
+        serialized_tracker_response = serialize_tracked_command_response(
+            response=response.tracked_command_response
+        )
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
             "created_bodies": [body.id.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -105,9 +116,13 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Call the gRPC service
         response = self.stub.RemoveRounds(request)
 
+        serialized_tracker_response = serialize_tracked_command_response(
+            response=response.tracked_command_response
+        )
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -124,9 +139,13 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Call the gRPC service
         response = self.stub.ShareTopology(request)
 
+        serialized_tracker_response = serialize_tracked_command_response(
+            response=response.tracked_command_response
+        )
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -147,14 +166,15 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
+            "tracker_response": tracked_response,
             "found": getattr(response, "found", -1),
             "repaired": getattr(response, "repaired", -1),
             "created_bodies_monikers": [
-                created_body.get("id").id
+                created_body.get("id")
                 for created_body in tracked_response.get("created_bodies", [])
             ],
             "modified_bodies_monikers": [
-                modified_body.get("id").id
+                modified_body.get("id")
                 for modified_body in tracked_response.get("modified_bodies", [])
             ],
         }
@@ -323,10 +343,15 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Call the gRPC service
         response = self.stub.CreateEnclosureBox(request)
 
+        serialized_tracker_response = serialize_tracked_command_response(
+            response=response.tracked_command_response
+        )
+
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
             "created_bodies": [body.id.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -349,10 +374,14 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
         # Call the gRPC service
         response = self.stub.CreateEnclosureCylinder(request)
 
+        serialized_tracker_response = serialize_tracked_command_response(
+            response=response.tracked_command_response
+        )
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
             "created_bodies": [body.id.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc
@@ -372,11 +401,14 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):  # pragma: no cover
 
         # Call the gRPC service
         response = self.stub.CreateEnclosureSphere(request)
-
+        serialized_tracker_response = serialize_tracked_command_response(
+            response=response.tracked_command_response
+        )
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
             "created_bodies": [body.id.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
         }
 
     @protect_grpc

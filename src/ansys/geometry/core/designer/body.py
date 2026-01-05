@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -2102,7 +2102,7 @@ class Body(IBody):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
     @reset_tessellation_cache
     @ensure_design_is_active
@@ -2129,7 +2129,7 @@ class Body(IBody):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
     @reset_tessellation_cache
     @ensure_design_is_active
@@ -2165,7 +2165,7 @@ class Body(IBody):
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
             parent_design = get_design_from_body(self)
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
     def __repr__(self) -> str:
         """Represent the ``Body`` as a string."""

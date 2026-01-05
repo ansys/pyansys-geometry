@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -36,7 +36,7 @@ from .conversions import (
 )
 
 
-class GRPCDesignsServiceV1(GRPCDesignsService):  # pragma: no cover
+class GRPCDesignsServiceV1(GRPCDesignsService):
     """Designs service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -34,7 +34,7 @@ from .conversions import (
 )
 
 
-class GRPCDrivingDimensionsServiceV1(GRPCDrivingDimensionsService):  # pragma: no cover
+class GRPCDrivingDimensionsServiceV1(GRPCDrivingDimensionsService):
     """Driving Dimensions service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's

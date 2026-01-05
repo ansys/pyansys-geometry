@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -29,7 +29,7 @@ from ..base.named_selection import GRPCNamedSelectionService
 from .conversions import build_grpc_id
 
 
-class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):  # pragma: no cover
+class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
     """Named Selection service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
