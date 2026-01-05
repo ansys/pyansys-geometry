@@ -178,13 +178,13 @@ jobs:
       fail-fast: false
       matrix:
         proto-version: ["v1", "v0"]
-        use-tracker: ['no', 'yes']
+        use-tracker: ["no", "yes"]
         docker-image: ["core-windows-latest", "core-windows-latest-unstable"]
         include:
           # Add tracker-label based on use-tracker
-          - use-tracker: 'no'
+          - use-tracker: "no"
             tracker-label: "Without tracker"
-          - use-tracker: 'yes'
+          - use-tracker: "yes"
             tracker-label: "With tracker"
           # Add experimental flag based on docker-image
           - docker-image: "core-windows-latest"
@@ -194,7 +194,7 @@ jobs:
         exclude:
           # Only use tracker with proto-version v1
           - proto-version: "v0"
-            use-tracker: 'yes'
+            use-tracker: "yes"
 
     steps:
       - name: Calculate SKIP_UNSTABLE
@@ -387,13 +387,13 @@ jobs:
       fail-fast: false
       matrix:
         proto-version: ["v1", "v0"]
-        use-tracker: ['no', 'yes']
+        use-tracker: ["no", "yes"]
         docker-image: ["core-linux-latest", "core-linux-latest-unstable"]
         include:
           # Add tracker-label based on use-tracker
-          - use-tracker: 'no'
+          - use-tracker: "no"
             tracker-label: "Without tracker"
-          - use-tracker: 'yes'
+          - use-tracker: "yes"
             tracker-label: "With tracker"
           # Add experimental flag based on docker-image
           - docker-image: "core-linux-latest"
@@ -403,7 +403,7 @@ jobs:
         exclude:
           # Only use tracker with proto-version v1
           - proto-version: "v0"
-            use-tracker: 'yes'
+            use-tracker: "yes"
 
     steps:
       - name: Calculate SKIP_UNSTABLE
