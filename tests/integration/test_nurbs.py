@@ -31,8 +31,10 @@ from ansys.geometry.core.math import (
     Point2D,
     Point3D,
 )
+from ansys.geometry.core.math.vector import Vector3D
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.circle import Circle
+from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
@@ -165,11 +167,11 @@ def test_create_body_from_loft_profile_with_guides(modeler: Modeler):
     assert result.is_surface is True
 
 
-def test_extrude_nurbs_sketch_with_old_backend(fake_modeler_old_backend_251: Modeler):
-    """Test extruding a NURBS sketch using an old backend."""
-    design = fake_modeler_old_backend_251.create_design("ExtrudeNURBSSketchOldBackend")
+def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler):
+    """Test doing NURBS operations using an old backend."""
+    design = fake_modeler_old_backend_252.create_design("ExtrudeNURBSSketchOldBackend")
 
-    # Create a NURBS sketch
+    # Create the NURBS sketch, path, and surface needed for testing
     sketch = Sketch()
     sketch.nurbs_from_2d_points(
         points=[
@@ -182,12 +184,84 @@ def test_extrude_nurbs_sketch_with_old_backend(fake_modeler_old_backend_251: Mod
         tag="nurbs_sketch",
     )
 
+    path = NURBSCurve.fit_curve_from_points(
+        points=[
+            Point3D([0, 0, 0]),
+            Point3D([0, 5, 0]),
+            Point3D([5, 5, 0]),
+            Point3D([5, 0, 0]),
+            Point3D([0, 0, 0]),
+        ],
+        degree=3,
+    ).trim(Interval(0, 1))
+    
+    chain = Line(Point3D([0, 0, 0]), Vector3D([0, 0, 1])).trim(Interval(0, 10))
+
+    points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+    degree_u = 2
+    degree_v = 2
+    surface = NURBSSurface.fit_surface_from_points(
+        points=points, size_u=3, size_v=3, degree_u=degree_u, degree_v=degree_v
+    ).trim(BoxUV(Interval(0, 1), Interval(0, 1)))
+
     # Extrude the NURBS sketch
     with pytest.raises(
-        ValueError, match="NURBS sketch extrusion is only supported starting on Ansys release 26R1"
+        ValueError, match="NURBS sketch extrusion requires a minimum Ansys release version of 26R1"
     ):
         design.extrude_sketch("extruded_body", sketch, distance=5)
 
+    with pytest.raises(
+        ValueError,
+        match="Revolving a NURBS sketch requires a minimum Ansys release version of 26R1"
+    ):
+        design.revolve_sketch("revolved_body", sketch, Vector3D([0, 0, 1]), 90, Point3D([0, 0, 0]))
+
+    with pytest.raises(
+        ValueError, match="Sweeping a NURBS sketch requires a minimum Ansys release version of 26R1"
+    ):
+        design.sweep_sketch("swept_body", sketch, [path])
+
+    with pytest.raises(
+        ValueError, match="Sweeping NURBS curves requires a minimum Ansys release version of 26R1"
+    ):
+        design.sweep_chain("swept_chain_body", [path], [chain])
+
+    with pytest.raises(
+        ValueError,
+        match="Creating a body from NURBS profiles requires a minimum Ansys release "
+        "version of 26R1",
+    ):
+        design.create_body_from_loft_profile("lofted_body", [[path]])
+
+    with pytest.raises(
+        ValueError,
+        match="Creating a surface from a NURBS sketch requires a minimum Ansys release "
+        "version of 26R1",
+    ):
+        design.create_surface("nurbs_srface", sketch)
+
+    with pytest.raises(
+        ValueError,
+        match="Creating a body from NURBS surfaces requires a minimum Ansys release version of 26R1"
+    ):
+        design.create_body_from_surface("nurbs_surface", surface)
+
+    with pytest.raises(
+        ValueError,
+        match="Creating a surface from NURBS curves requires a minimum Ansys release "
+        "version of 26R1"
+    ):
+        design.create_surface_from_trimmed_curves("nurbs_surface", [path])
 
 def test_nurbs_surface_body_creation(modeler: Modeler):
     """Test surface body creation from NURBS surfaces."""

@@ -588,7 +588,7 @@ class Component:
             from ansys.geometry.core.sketch.nurbs import SketchNurbs
             if any(isinstance(edge, SketchNurbs) for edge in sketch.edges):
                 raise ValueError(
-                    "NURBS sketch extrusion is only supported starting on Ansys release 26R1, "
+                    "NURBS sketch extrusion requires a minimum Ansys release version of 26R1, "
                     "but the current version used is lower."
                 )
 
@@ -962,8 +962,8 @@ class Component:
             for profile in profiles:
                 if any(isinstance(tc.geometry, NURBSCurve) for tc in profile):
                     raise ValueError(
-                        "NURBS functionality requires a minimum Ansys release version of "
-                        "26R1, but the current version used is lower."
+                        "Creating a body from NURBS profiles requires a minimum Ansys "
+                        "release version of 26R1, but the current version used is lower."
                     )
 
         self._grpc_client.log.debug(f"Creating a loft profile body on {self.id}.")
@@ -1120,7 +1120,8 @@ class Component:
             isinstance(trimmed_surface.geometry, NURBSSurface)
         ):
             raise ValueError(
-                "NURBS surface bodies are only supported starting on Ansys release 26R1."
+                "Creating a body from NURBS surfaces requires a minimum Ansys "
+                "release version of 26R1."
             )
 
         self._grpc_client.log.debug(
@@ -1159,7 +1160,8 @@ class Component:
         if self._grpc_client.backend_version < (26, 1, 0):
             if any(isinstance(tc.geometry, NURBSCurve) for tc in trimmed_curves):
                 raise ValueError(
-                    "NURBS surface bodies are only supported starting on Ansys release 26R1."
+                    "Creating a surface from NURBS curves requires a minimum Ansys release version "
+                    "of 26R1."
                 )
 
         self._grpc_client.log.debug(
