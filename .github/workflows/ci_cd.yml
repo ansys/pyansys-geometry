@@ -191,6 +191,10 @@ jobs:
             experimental: false
           - docker-image: "core-windows-latest-unstable"
             experimental: true
+        exclude:
+          # Only use tracker with proto-version v1
+          - proto-version: "v0"
+            use-tracker: 'yes'
 
     steps:
       - name: Calculate SKIP_UNSTABLE
@@ -396,6 +400,10 @@ jobs:
             experimental: false
           - docker-image: "core-linux-latest-unstable"
             experimental: true
+        exclude:
+          # Only use tracker with proto-version v1
+          - proto-version: "v0"
+            use-tracker: 'yes'
 
     steps:
       - name: Calculate SKIP_UNSTABLE
