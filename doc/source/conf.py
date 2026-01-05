@@ -289,11 +289,6 @@ suppress_warnings = [
     "toc.not_included",  # Caused by the autoapi extension and the "_grpc" folder
 ]
 
-# Exclude v0 conversions to avoid duplicate warnings with v1
-autoapi_ignore = [
-    "*/_grpc/_services/v0/conversions.py",
-]
-
 # Examples gallery customization
 nbsphinx_execute = "always"
 nbsphinx_custom_formats = {
@@ -479,6 +474,68 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
             logger.info(f"Converted {count} notebooks to scripts")
 
 
+def fix_autoapi_currentmodule(app: sphinx.application.Sphinx, exception):
+    """Fix py:currentmodule directives in autoapi-generated RST files.
+
+    This function replaces short module names with full module paths in the
+    py:currentmodule directives to avoid duplicate object description warnings
+    when multiple modules have the same name (e.g., v0.conversions and v1.conversions).
+
+    Parameters
+    ----------
+    app : sphinx.application.Sphinx
+        Sphinx instance containing all the configuration for the documentation build.
+    exception : Exception
+        Exception raised during the build process.
+    """
+    if exception is not None:
+        return
+
+    api_dir = Path(app.srcdir) / "api"
+    if not api_dir.exists():
+        logger.info("No api directory found, skipping currentmodule fix...")
+        return
+
+    logger.info("Fixing autoapi py:currentmodule directives...")
+
+    # Find all index.rst files in the api directory
+    index_files = list(api_dir.glob("**/index.rst"))
+    count = 0
+
+    for index_file in index_files:
+        try:
+            content = index_file.read_text(encoding="utf-8")
+            original_content = content
+
+            # Extract the full module path from the py:module directive
+            import re
+
+            module_match = re.search(r"\.\. py:module:: ([\w.]+)", content)
+            if not module_match:
+                continue
+
+            full_module_path = module_match.group(1)
+            short_module_name = full_module_path.split(".")[-1]
+
+            # Replace short currentmodule with full path
+            pattern = f".. py:currentmodule:: {re.escape(short_module_name)}\n"
+            replacement = f".. py:currentmodule:: {full_module_path}\n"
+
+            if pattern in content:
+                content = content.replace(pattern, replacement)
+
+                if content != original_content:
+                    index_file.write_text(content, encoding="utf-8")
+                    count += 1
+                    logger.debug(f"Fixed currentmodule in {index_file.relative_to(app.srcdir)}")
+
+        except Exception as e:
+            logger.warning(f"Error processing {index_file}: {e}")
+
+    if count > 0:
+        logger.info(f"Fixed py:currentmodule in {count} files")
+
+
 def setup(app: sphinx.application.Sphinx):
     """Run different hook functions during the documentation build.
 
@@ -488,6 +545,13 @@ def setup(app: sphinx.application.Sphinx):
         Sphinx instance containing all the configuration for the documentation build.
     """
     logger.info("Configuring Sphinx hooks...")
+
+    # Fix autoapi currentmodule directives after source files are read
+    logger.info("Connecting source-read hook for fixing autoapi currentmodule...")
+    app.connect(
+        "env-before-read-docs",
+        lambda app, env, docnames: fix_autoapi_currentmodule(app, None),
+    )
 
     if BUILD_EXAMPLES:
         # Run at the end of the build process
