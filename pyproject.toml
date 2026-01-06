@@ -113,7 +113,7 @@ general-all = [
   "pyvista[jupyter]==0.46.4",
   "requests==2.32.5",
   "scipy==1.15.3; python_version<'3.11'",
-  "scipy==1.16.2; python_version>='3.11'",
+  "scipy==1.16.3; python_version>='3.11'",
   "semver==3.0.4",
   "six==1.17.0",
   "vtk==9.5.2",
