@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -196,7 +196,7 @@ def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler
         ],
         degree=3,
     ).trim(Interval(0, 1))
-    
+
     chain = Line(Point3D([0, 0, 0]), Vector3D([0, 0, 1])).trim(Interval(0, 10))
 
     points = [
@@ -224,7 +224,7 @@ def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler
 
     with pytest.raises(
         ValueError,
-        match="Revolving a NURBS sketch requires a minimum Ansys release version of 26R1"
+        match="Revolving a NURBS sketch requires a minimum Ansys release version of 26R1",
     ):
         design.revolve_sketch("revolved_body", sketch, Vector3D([0, 0, 1]), 90, Point3D([0, 0, 0]))
 
@@ -236,7 +236,7 @@ def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler
     with pytest.raises(
         ValueError, match="Sweeping a NURBS sketch requires a minimum Ansys release version of 26R1"
     ):
-        design.sweep_sketch("swept_body", line_sketch, [path])    
+        design.sweep_sketch("swept_body", line_sketch, [path])
 
     with pytest.raises(
         ValueError, match="Sweeping NURBS curves requires a minimum Ansys release version of 26R1"
@@ -259,14 +259,14 @@ def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler
 
     with pytest.raises(
         ValueError,
-        match="Creating a body from NURBS surfaces requires a minimum Ansys release version of 26R1"
+        match="Creating a body from NURBS surfaces requires a minimum Ansys release version of 26R1",
     ):
         design.create_body_from_surface("nurbs_surface", surface)
 
     with pytest.raises(
         ValueError,
         match="Creating a surface from NURBS curves requires a minimum Ansys release "
-        "version of 26R1"
+        "version of 26R1",
     ):
         design.create_surface_from_trimmed_curves("nurbs_surface", [path])
 
@@ -370,7 +370,7 @@ def test_nurbs_surface_body_creation_using_old_backend(fake_modeler_old_backend_
     trimmed_surface = surface.trim(BoxUV(Interval(0, 1), Interval(0, 1)))
     with pytest.raises(
         ValueError,
-        match="Creating a body from NURBS surfaces requires a minimum Ansys release version of 26R1"
+        match="Creating a body from NURBS surfaces requires a minimum Ansys release version of 26R1",
     ):
         design.create_body_from_surface("nurbs_surface", trimmed_surface)
 

@@ -1746,7 +1746,7 @@ class Body(IBody):
     @ensure_design_is_active
     def imprint_curves(  # noqa: D102
         self, faces: list[Face], sketch: Sketch = None, trimmed_curves: list[TrimmedCurve] = None
-    ) -> tuple[list[Edge], list[Face]]:   
+    ) -> tuple[list[Edge], list[Face]]:
         if sketch is None and self._template._grpc_client.backend_version < (25, 2, 0):
             raise ValueError(
                 "A sketch must be provided for imprinting when using API versions below 25.2.0."
@@ -1754,16 +1754,18 @@ class Body(IBody):
 
         if sketch is None and trimmed_curves is None:
             raise ValueError("Either a sketch or edges must be provided for imprinting.")
-        
+
         if self._grpc_client.backend_version < (26, 1, 0):
             from ansys.geometry.core.sketch.nurbs import SketchNurbs
+
             if sketch and any(isinstance(edge, SketchNurbs) for edge in sketch.edges):
                 raise ValueError(
                     "Imprinting a NURBS sketch requires a minimum Ansys release version of "
                     "26R1, but the current version used is lower."
                 )
-            
+
             from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
+
             if any(isinstance(tc.geometry, NURBSCurve) for tc in trimmed_curves or []):
                 raise ValueError(
                     "Imprinting NURBS curves requires a minimum Ansys release version of "
@@ -1819,6 +1821,7 @@ class Body(IBody):
     ) -> list[Face]:
         if self._grpc_client.backend_version < (26, 1, 0):
             from ansys.geometry.core.sketch.nurbs import SketchNurbs
+
             if any(isinstance(edge, SketchNurbs) for edge in sketch.edges):
                 raise ValueError(
                     "Imprinting a NURBS sketch requires a minimum Ansys release version of "
@@ -1858,6 +1861,7 @@ class Body(IBody):
     ) -> list[Face]:
         if self._grpc_client.backend_version < (26, 1, 0):
             from ansys.geometry.core.sketch.nurbs import SketchNurbs
+
             if any(isinstance(edge, SketchNurbs) for edge in sketch.edges):
                 raise ValueError(
                     "Imprinting a NURBS sketch requires a minimum Ansys release version of "
