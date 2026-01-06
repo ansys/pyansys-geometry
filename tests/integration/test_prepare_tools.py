@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,12 +21,16 @@
 # SOFTWARE.
 """Testing of prepare tools."""
 
+import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.math.frame import Frame
+from ansys.geometry.core.math.point import Point2D, Point3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.measurements import UNITS
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.tools.prepare_tools import EnclosureOptions
 
 from .conftest import FILES_DIR
 
@@ -234,3 +238,106 @@ def test_helix_detection(modeler: Modeler):
     # Test with multiple bodies
     result = modeler.prepare_tools.detect_helixes(bodies)
     assert len(result["helixes"]) == 2
+
+
+def test_box_enclosure(modeler):
+    """Tests creation of a box enclosure."""
+    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
+    bodies = [design.bodies[0]]
+    enclosure_options = EnclosureOptions()
+    modeler.prepare_tools.create_box_enclosure(
+        bodies, 0.005, 0.01, 0.01, 0.005, 0.10, 0.10, enclosure_options
+    )
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 1
+    # verify that a body is created in a new component
+    volume_when_subtracting = design.components[0].bodies[0].volume
+    enclosure_options = EnclosureOptions(subtract_bodies=False)
+    modeler.prepare_tools.create_box_enclosure(
+        bodies, 0.005, 0.01, 0.01, 0.005, 0.10, 0.10, enclosure_options
+    )
+    assert len(design.components) == 2
+    assert len(design.components[1].bodies) == 1
+    volume_without_subtracting = design.components[1].bodies[0].volume
+    # verify that the volume without subtracting is greater than the one with subtraction
+    assert volume_without_subtracting > volume_when_subtracting
+    # verify that an enclosure can be created with zero cushion
+    modeler.prepare_tools.create_box_enclosure(
+        bodies, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, enclosure_options
+    )
+    assert len(design.components) == 3
+    assert len(design.components[2].bodies) == 1
+
+
+def test_cylinder_enclosure(modeler):
+    """Tests creation of a cylinder enclosure."""
+    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
+    bodies = [design.bodies[0]]
+    origin = Vector3D([0.0, 0.0, 0.0])
+    direction_x = UnitVector3D([0, 1, 0])
+    direction_y = UnitVector3D([0, 0, 1])
+    frame = Frame(origin, direction_x, direction_y)
+    enclosure_options = EnclosureOptions(frame=frame)
+    modeler.prepare_tools.create_cylinder_enclosure(bodies, 0.1, 0.1, 0.1, enclosure_options)
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 1
+    bounding_box = design.components[0].bodies[0].bounding_box
+    # check that the cylinder has been placed in the appropriate position based upon the frame
+    assert np.allclose(bounding_box.center, Point3D([0.0, 0.0, 0.01]))
+
+
+def test_sphere_enclosure(modeler):
+    """Tests creation of a sphere enclosure."""
+    design = modeler.open_file(FILES_DIR / "BoxWithRound.scdocx")
+    bodies = [design.bodies[0]]
+    enclosure_options = EnclosureOptions()
+    modeler.prepare_tools.create_sphere_enclosure(bodies, 0.1, enclosure_options)
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 1
+
+
+def test_detect_sweepable_bodies(modeler: Modeler):
+    """Test body sweepability detection."""
+    design = modeler.open_file(FILES_DIR / "DifferentShapes.scdocx")
+
+    bodies = design.bodies
+    assert len(bodies) == 6
+
+    # Test sweepability of the body
+    is_sweepable, faces = modeler.prepare_tools.detect_sweepable_bodies([bodies[0]])[0]
+    assert is_sweepable
+    assert len(faces) == 0
+
+    # Test non-sweepable body
+    is_sweepable, faces = modeler.prepare_tools.detect_sweepable_bodies([bodies[2]])[0]
+    assert not is_sweepable
+    assert len(faces) == 0
+
+    # Test sweepability of a body and getting faces
+    is_sweepable, faces = modeler.prepare_tools.detect_sweepable_bodies(
+        [bodies[0]], get_source_target_faces=True
+    )[0]
+    assert is_sweepable
+    assert len(faces) == 2
+
+    # Test multiple bodies at once
+    result = modeler.prepare_tools.detect_sweepable_bodies(bodies)
+    assert len(result) == 6
+    assert result[0][0]  # first body is sweepable
+    assert result[1][0]  # second body is sweepable
+    assert not result[2][0]  # third body is not sweepable
+    assert not result[3][0]  # fourth body is not sweepable
+
+    # Test with multiple bodys and getting faces
+    result = modeler.prepare_tools.detect_sweepable_bodies(bodies, get_source_target_faces=True)
+    assert len(result) == 6
+    assert result[0][0]  # first body is sweepable
+    assert len(result[0][1]) == 2  # two faces for first body
+    assert result[1][0]  # second body is sweepable
+    assert len(result[1][1]) == 2  # two faces for second body
+    assert not result[2][0]  # third body is not sweepable
+    assert len(result[2][1]) == 0  # no faces for third body
+
+    # Test with empty input
+    result = modeler.prepare_tools.detect_sweepable_bodies([])
+    assert result == []

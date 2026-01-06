@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -67,6 +67,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.selection import NamedSelection
 
 # TODO: Temporary fix for boolean operations
 # This is a temporary fix for the boolean operations issue. The issue is that the
@@ -573,6 +574,17 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get the named selections associated with the body.
+
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections associated with the body.
+        """
+        return
+
+    @abstractmethod
     def get_raw_tessellation(
         self,
         transform: Matrix44 = IDENTITY_MATRIX44,
@@ -856,6 +868,35 @@ class IBody(ABC):
         """
         return
 
+    def _combine_subtract(
+        self,
+        other: Union["Body", Iterable["Body"]],
+        keep_other: bool = False,
+        transfer_named_selections=True,
+    ) -> None:
+        """Subtract bodies from this body.
+
+        Parameters
+        ----------
+        other : Union[Body, list[Body]]
+            The body or list of bodies to combine with this body.
+        keep_other : bool, default: False
+            Whether to retain the other bodies or not.
+
+        Warnings
+        --------
+        This is a specialized boolean operation that has the ability to transfer named
+        selections. It may behave differently than the encouraged ``subtract()``.
+
+        Notes
+        -----
+        The ``self`` parameter is directly modified with the result, and
+        the ``other`` parameter is consumed. Thus, it is important to make
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the united body is retained.
+        """
+        return
+
 
 class MasterBody(IBody):
     """Represents solids and surfaces organized within the design assembly.
@@ -1052,6 +1093,7 @@ class MasterBody(IBody):
             Vertex(
                 vertex_resp.get("id"),
                 vertex_resp.get("position"),
+                body,
             )
             for vertex_resp in response.get("vertices")
         ]
@@ -1279,6 +1321,14 @@ class MasterBody(IBody):
             "Copy method is not implemented on the MasterBody. Call this method on a body instead."
         )
 
+    def get_named_selections(self) -> list["NamedSelection"]:  # noqa: D102
+        raise NotImplementedError(
+            """
+            get_named_selections is not implemented at the MasterBody level.
+            Instead, call this method on a body.
+            """
+        )
+
     @min_backend_version(26, 1, 0)
     def get_raw_tessellation(  # noqa: D102
         self,
@@ -1359,7 +1409,12 @@ class MasterBody(IBody):
 
             self._tessellation = response.get("tessellation")
 
-        pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
+        if transform == IDENTITY_MATRIX44:
+            pdata = list(self._tessellation.values())
+        else:
+            pdata = [
+                tess.transform(transform, inplace=False) for tess in self._tessellation.values()
+            ]
         comp = pv.MultiBlock(pdata)
 
         if merge:
@@ -1421,6 +1476,16 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Combining and merging to body {self.id}.")
         self._grpc_client.services.bodies.combine_merge(
             body_ids=[self.id] + [body.id for body in other]
+        )
+
+    def _combine_subtract(  # noqa: D102
+        self,
+        other: Union["Body", Iterable["Body"]],
+        keep_other: bool = False,
+        transfer_named_selections=True,
+    ) -> None:
+        raise NotImplementedError(
+            "MasterBody does not implement combine_subtract. Call this method on a body instead."
         )
 
     def plot(  # noqa: D102
@@ -1486,6 +1551,7 @@ class Body(IBody):
         self._name = name
         self._parent_component = parent_component
         self._template = template
+        self._grpc_client = template._grpc_client
 
     def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``Body`` methods that require a tessellation cache update.
@@ -1881,6 +1947,15 @@ class Body(IBody):
         return Body(body_id, response.get("name"), parent, tb)
 
     @ensure_design_is_active
+    def get_named_selections(self) -> list["NamedSelection"]:  # noqa: D102
+        included_ns = []
+        for ns in get_design_from_body(self).named_selections:
+            if any(body.id == self.id for body in ns.bodies):
+                included_ns.append(ns)
+
+        return included_ns
+
+    @ensure_design_is_active
     def get_raw_tessellation(  # noqa: D102
         self,
         tess_options: TessellationOptions | None = None,
@@ -2006,6 +2081,29 @@ class Body(IBody):
     def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
         self._template.combine_merge(other)
 
+    @min_backend_version(26, 1, 0)
+    def _combine_subtract(  # noqa: D102
+        self,
+        other: Union["Body", Iterable["Body"]],
+        keep_other: bool = False,
+        transfer_named_selections=True,
+    ) -> None:
+        parent_design = get_design_from_body(self)
+        other = other if isinstance(other, Iterable) else [other]
+
+        response = self._template._grpc_client.services.bodies.combine(
+            target=self.id,
+            other=[body.id for body in other],
+            type_bool_op="subtract",
+            keep_other=keep_other,
+            transfer_named_selections=transfer_named_selections,
+        )
+
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response["tracker_response"])
+
     @reset_tessellation_cache
     @ensure_design_is_active
     @check_input_types
@@ -2020,13 +2118,18 @@ class Body(IBody):
         other = other if isinstance(other, Iterable) else [other]
 
         response = self._template._grpc_client.services.bodies.combine(
-            target=self, other=other, type_bool_op=method, err_msg=err_msg, keep_other=keep_other
+            target=self.id,
+            other=[body.id for body in other],
+            type_bool_op=method,
+            err_msg=err_msg,
+            keep_other=keep_other,
+            transfer_named_selections=False,
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
     @reset_tessellation_cache
     @ensure_design_is_active
@@ -2048,7 +2151,11 @@ class Body(IBody):
                 ]
 
         response = self._template._grpc_client.services.bodies.boolean(
-            target=self, other=grpc_other, method=method, err_msg=err_msg, keep_other=keep_other
+            target=self.id,
+            other=[other.id for other in grpc_other],
+            method=method,
+            err_msg=err_msg,
+            keep_other=keep_other,
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -2058,7 +2165,7 @@ class Body(IBody):
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
             parent_design = get_design_from_body(self)
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
     def __repr__(self) -> str:
         """Represent the ``Body`` as a string."""

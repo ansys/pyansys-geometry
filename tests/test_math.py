@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -36,7 +36,6 @@ from ansys.geometry.core.math import (
     ZERO_VECTOR2D,
     ZERO_VECTOR3D,
     BoundingBox,
-    BoundingBox2D,
     Frame,
     Matrix,
     Matrix33,
@@ -1227,56 +1226,6 @@ def test_add_sub_point():
         vector_3d + "a"
 
 
-def test_bounding_box_expands_and_evaluates_bounds_comparisons():
-    bounding_box = BoundingBox2D()
-    point1x = 1
-    point1y = 5
-    point2x = -4
-    point2y = -2
-    point3x = 7
-    point3y = 8
-    point4x = -100
-    point4y = 100
-
-    bounding_box.add_point_components(point1x, point1y)
-    assert 1 == bounding_box.x_min
-    assert 1 == bounding_box.x_max
-    assert 5 == bounding_box.y_min
-    assert 5 == bounding_box.y_max
-
-    bounding_box.add_point_components(point2x, point2y)
-    assert -4 == bounding_box.x_min
-    assert 1 == bounding_box.x_max
-    assert -2 == bounding_box.y_min
-    assert 5 == bounding_box.y_max
-
-    bounding_box.add_point_components(point3x, point3y)
-    assert -4 == bounding_box.x_min
-    assert 7 == bounding_box.x_max
-    assert -2 == bounding_box.y_min
-    assert 8 == bounding_box.y_max
-
-    bounding_box.add_point(Point2D([point4x, point4y]))
-    assert -100 == bounding_box.x_min
-    assert 7 == bounding_box.x_max
-    assert -2 == bounding_box.y_min
-    assert 100 == bounding_box.y_max
-
-    bounding_box2 = BoundingBox2D(0, 10, 0, 10)
-    assert bounding_box2.contains_point_components(5, 5)
-    assert not bounding_box2.contains_point_components(100, 100)
-    assert bounding_box2.contains_point(Point2D([3, 4]))
-    assert not bounding_box2.contains_point(Point2D([3, 14]))
-
-    bounding_box2.add_points([Point2D([-100, -100]), Point2D([100, 100])])
-    assert bounding_box2.contains_point(Point2D([100, -100]))
-    assert bounding_box2.contains_point(Point2D([-100, 100]))
-
-    copy_bbox_1 = BoundingBox2D(x_min=-100, x_max=7, y_min=-2, y_max=100)
-    assert copy_bbox_1 == bounding_box
-    assert copy_bbox_1 != bounding_box2
-
-
 @pytest.mark.parametrize(
     "a,b_ref",
     [
@@ -1380,33 +1329,6 @@ def test_circle_intersections_coincident():
     intersections = get_two_circle_intersections(x0, y0, r0, x1, y1, r1)
 
     assert intersections is None
-
-
-def test_bounding_box2d_intersection():
-    """Test the intersection of two bounding boxes"""
-    # Create the two boxes
-    box1 = BoundingBox2D(0, 1, 0, 1)
-    box2 = BoundingBox2D(0.5, 1.5, 0, 1)
-
-    # Get intersection and check
-    intersection = BoundingBox2D.intersect_bboxes(box1, box2)
-    assert intersection is not None
-    assert intersection == BoundingBox2D(0.5, 1, 0, 1)
-
-
-def test_bounding_box2d_no_intersection():
-    """Test that the bounding box intersection returns None in the case of no overlap"""
-    # Create the two boxes
-    box1 = BoundingBox2D(0, 1, 0, 1)
-    box2 = BoundingBox2D(2, 3, 0, 1)
-
-    # Get intersection for x and check
-    intersection = BoundingBox2D.intersect_bboxes(box1, box2)
-    assert intersection is None
-    # Get intersection for y and check
-    boxfirst = BoundingBox2D(0, 5, 0, 5)
-    boxsecond = BoundingBox2D(3, 8, 6, 8)
-    assert BoundingBox2D.intersect_bboxes(boxfirst, boxsecond) is None
 
 
 def test_bounding_box_evaluates_bounds_comparisons():

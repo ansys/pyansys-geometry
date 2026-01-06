@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -24,6 +24,7 @@
 from typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_component
 from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.units import UNITS
 
@@ -31,6 +32,7 @@ if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
 
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.selection import NamedSelection
 
 
 class DesignPoint:
@@ -44,14 +46,11 @@ class DesignPoint:
         User-defined label for the design points.
     points : Point3D
         3D point constituting the design points.
-    parent_component : Component | None
+    parent_component : Component
         Parent component to place the new design point under within the design assembly.
-        Its default value is None.
     """
 
-    def __init__(
-        self, id: str, name: str, point: Point3D, parent_component: Union["Component", None] = None
-    ):
+    def __init__(self, id: str, name: str, point: Point3D, parent_component: Union["Component"]):
         """Initialize the ``DesignPoints`` class."""
         self._id = id
         self._name = name
@@ -77,6 +76,21 @@ class DesignPoint:
     def parent_component(self) -> "Component":
         """Component node that the design point is under."""
         return self._parent_component
+
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get named selections that contain this design point.
+
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections that contain this design point.
+        """
+        included_ns = []
+        for ns in get_design_from_component(self.parent_component).named_selections:
+            if any(dp.id == self.id for dp in ns.design_points):
+                included_ns.append(ns)
+
+        return included_ns
 
     def __repr__(self) -> str:
         """Represent the design points as a string."""

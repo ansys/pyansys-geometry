@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -39,11 +39,11 @@ import ansys.geometry.core.logger as logger
 LOG_LEVELS = {"CRITICAL": 50, "ERROR": 40, "WARNING": 30, "INFO": 20, "DEBUG": 10}
 
 
-def test_add_instance():
+def test_add_instance(transport_mode: str):
     """Testing adding an instance logger while checking if log has certain key"""
     base_name = "root"
     instance_logger_1 = LOG.add_instance_logger(
-        name=base_name, client_instance=GrpcClient(), level=10
+        name=base_name, client_instance=GrpcClient(transport_mode=transport_mode), level=10
     )
     instance_logger_1.info("This is a message from the first instance logger.")
     with pytest.raises(KeyError, match="There is no instances with name root_4."):

@@ -27,6 +27,7 @@ env:
   ANSRV_GEO_PORT: 710
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo_nightly
+  IS_WORKFLOW_RUNNING: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -44,7 +45,7 @@ jobs:
       skip_core_linux: ${{ steps.services.outputs.skip_core_linux }}
     permissions:
       contents: read
-      packages: read
+      packages: read # Needs access to the Geometry docker image
     strategy:
       matrix:
         include:
@@ -96,16 +97,20 @@ jobs:
     runs-on: windows-latest
     env:
       PYVISTA_OFF_SCREEN: true
+    strategy:
+      fail-fast: false
+      matrix:
+        proto-version: [v0, v1]
     permissions:
       contents: read
-      packages: read
+      packages: read # Needs access to the Geometry docker image
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -132,6 +137,7 @@ jobs:
         env:
           TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
           PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
+          PROTO_VERSION: ${{ matrix.proto-version }}
         run: |
           # Write command to file launch.txt for sanitizing purposes
           echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING $env:ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
@@ -139,12 +145,14 @@ jobs:
           $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
           Invoke-Expression $command.Line
           Start-Sleep -Seconds 10
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+          python -c "import os; from ansys.geometry.core.connection.validate import validate; validate(proto_version=os.getenv('PROTO_VERSION'))"
 
       - name: Run PyAnsys Geometry tests
         timeout-minutes: 20 # Sometimes hangs...
+        env:
+          PROTO_VERSION: ${{ matrix.proto-version }}
         run: |
-          pytest -v
+          pytest -v --proto-version=$env:PROTO_VERSION
 
       - name: Stop the Geometry service
         if: always()
@@ -187,9 +195,13 @@ jobs:
     needs: manifests
     if: needs.manifests.outputs.skip_core_linux == 0
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        proto-version: [v0, v1]
     permissions:
       contents: read
-      packages: read
+      packages: read # Needs access to the Geometry docker image
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
@@ -209,12 +221,13 @@ jobs:
         uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        uses: ansys/actions/tests-pytest@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
         env:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           group-dependencies-name: "tests"
+          pytest-extra-args: "--proto-version=${{ matrix.proto-version }}"
 
       - name: Stop the Geometry service
         if: always()
@@ -261,7 +274,7 @@ jobs:
       WINDOWS_UNSTABLE: ghcr.io/ansys/geometry:core-windows-latest-unstable
       WINDOWS_STABLE_GHCR: ghcr.io/ansys/geometry:core-windows-latest
     permissions:
-      packages: write
+      packages: write # Required to promote the Geometry docker image
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
@@ -288,7 +301,7 @@ jobs:
       LINUX_UNSTABLE: ghcr.io/ansys/geometry:core-linux-latest-unstable
       LINUX_STABLE_GHCR: ghcr.io/ansys/geometry:core-linux-latest
     permissions:
-      packages: write
+      packages: write # Required to promote the Geometry docker image
     steps:
       - name: Login in Github Container registry
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0

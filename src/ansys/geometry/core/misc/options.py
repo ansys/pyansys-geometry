@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -64,6 +64,23 @@ class ImportOptions:
     def to_dict(self):
         """Provide the dictionary representation of the ImportOptions class."""
         return {k: bool(v) for k, v in asdict(self).items()}
+
+
+@dataclass
+class ImportOptionsDefinitions:
+    """Import options definitions when opening a file.
+
+    Parameters
+    ----------
+    import_named_selections_keys : string = None
+        Import the named selections keys associated with the root component being inserted.
+    """
+
+    import_named_selections_keys: str = None
+
+    def to_dict(self):
+        """Provide the dictionary representation of the ImportOptionsDefinitions class."""
+        return {k: str(v) for k, v in asdict(self).items()}
 
 
 class TessellationOptions:

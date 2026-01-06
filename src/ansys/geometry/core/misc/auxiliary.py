@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Auxiliary functions for the PyAnsys Geometry library."""
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -28,6 +29,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.design import Design
+    from ansys.geometry.core.designer.designpoint import DesignPoint
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
     from ansys.geometry.core.designer.vertex import Vertex
@@ -140,6 +142,11 @@ def __traverse_all_bodies(comp: Union["Design", "Component"]) -> list["Body"]:
 def __traverse_all_beams(comp: Union["Design", "Component"]) -> list["Body"]:
     """Traverse all beams in a design/component and all its subcomponents."""
     return __traverse_component_elem("beams", comp)
+
+
+def __traverse_all_design_points(comp: Union["Design", "Component"]) -> list["DesignPoint"]:
+    """Traverse all design points in a design/component and all its subcomponents."""
+    return __traverse_component_elem("design_points", comp)
 
 
 def get_all_bodies_from_design(design: "Design") -> list["Body"]:
@@ -305,6 +312,31 @@ def get_beams_from_ids(design: "Design", beam_ids: list[str]) -> list["Beam"]:
     return [beam for beam in __traverse_all_beams(design) if beam.id in beam_ids]  # noqa: E501
 
 
+def get_design_points_from_ids(
+    design: "Design", design_point_ids: list[str]
+) -> list["DesignPoint"]:
+    """Find the ``DesignPoint`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the design points.
+    design_point_ids : list[str]
+        List of design point ids.
+
+    Returns
+    -------
+    list[DesignPoint]
+        List of DesignPoint objects.
+
+    Notes
+    -----
+    This method takes a design and design point ids, and gets their corresponding ``DesignPoint``
+    objects.
+    """
+    return [dp for dp in __traverse_all_design_points(design) if dp.id in design_point_ids]
+
+
 def convert_color_to_hex(
     color: str | tuple[float, float, float] | tuple[float, float, float, float],
 ) -> str:
@@ -368,3 +400,39 @@ def convert_opacity_to_hex(opacity: float) -> str:
             raise ValueError("Opacity value must be between 0 and 1.")
     except ValueError as err:
         raise ValueError(f"Invalid color value: {err}")
+
+
+def prepare_file_for_server_upload(file_path: Path) -> Path:
+    """Create a zip file from the given file path.
+
+    Parameters
+    ----------
+    file_path : str
+        The path to the file to be zipped.
+
+    Returns
+    -------
+    Path
+        The path to the created zip file.
+    """
+    import tempfile
+    from zipfile import ZipFile
+
+    # Create a temporary zip file with the same name as the original file
+    temp_dir = Path(tempfile.gettempdir())
+    temp_zip_path = temp_dir / f"{file_path.stem}.zip"
+
+    # Create zip archive
+    with ZipFile(temp_zip_path, "w") as zipf:
+        # Add the main file
+        zipf.write(file_path, file_path.name)
+
+        # If it's an assembly format, add all files from the same directory
+        assembly_extensions = [".CATProduct", ".asm", ".solution", ".sldasm"]
+        if any(ext in str(file_path) for ext in assembly_extensions):
+            dir_path = file_path.parent
+            for file in dir_path.iterdir():
+                if file.is_file() and file != file_path:
+                    zipf.write(file, file.name)
+
+    return temp_zip_path

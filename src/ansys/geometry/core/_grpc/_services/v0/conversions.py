@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -56,6 +56,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
+from ansys.api.geometry.v0.preparetools_pb2 import EnclosureOptions as GRPCEnclosureOptions
 import pint
 
 from ansys.geometry.core.errors import GeometryRuntimeError
@@ -95,6 +96,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.sketch.nurbs import SketchNurbs
     from ansys.geometry.core.sketch.polygon import Polygon
     from ansys.geometry.core.sketch.segment import SketchSegment
+    from ansys.geometry.core.tools.prepare_tools import EnclosureOptions
 
 
 def from_point3d_to_grpc_point(point: "Point3D") -> GRPCPoint:
@@ -180,6 +182,42 @@ def from_unit_vector_to_grpc_direction(unit_vector: "UnitVector3D") -> GRPCDirec
         Geometry service gRPC direction message.
     """
     return GRPCDirection(x=unit_vector.x, y=unit_vector.y, z=unit_vector.z)
+
+
+def from_grpc_direction_to_unit_vector(direction: GRPCDirection) -> "UnitVector3D":
+    """Convert a gRPC direction message to a ``UnitVector3D`` class.
+
+    Parameters
+    ----------
+    direction : GRPCDirection
+        Source direction data.
+
+    Returns
+    -------
+    UnitVector3D
+        Converted unit vector.
+    """
+    from ansys.geometry.core.math.vector import UnitVector3D
+
+    return UnitVector3D([direction.x, direction.y, direction.z])
+
+
+def from_grpc_volume_to_volume(grpc_volume: float) -> "pint.Quantity":
+    """Convert a gRPC volume float to a pint Quantity.
+
+    Parameters
+    ----------
+    grpc_volume : float
+        Source gRPC volume data.
+
+    Returns
+    -------
+    pint.Quantity
+        Converted volume quantity with server volume units.
+    """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
+    return pint.Quantity(grpc_volume, DEFAULT_UNITS.SERVER_VOLUME)
 
 
 def from_line_to_grpc_line(line: "Line") -> GRPCLine:
@@ -1410,3 +1448,27 @@ def serialize_tracker_command_response(**kwargs) -> dict:
             for entity in getattr(response, "deleted_bodies", [])
         ],
     }
+
+
+def from_enclosure_options_to_grpc_enclosure_options(
+    enclosure_options: "EnclosureOptions",
+) -> GRPCEnclosureOptions:
+    """Convert enclosure_options to grpc definition.
+
+    Parameters
+    ----------
+    enclosure_options : EnclosureOptions
+        Definition of the enclosure options.
+
+    Returns
+    -------
+    GRPCEnclosureOptions
+        Grpc converted definition.
+    """
+    frame = enclosure_options.frame
+    return GRPCEnclosureOptions(
+        create_shared_topology=enclosure_options.create_shared_topology,
+        subtract_bodies=enclosure_options.subtract_bodies,
+        frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
+        cushion_proportion=enclosure_options.cushion_proportion,
+    )

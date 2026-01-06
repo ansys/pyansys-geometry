@@ -13,7 +13,7 @@ updates:
         - "ansys-api-discovery"
         - "ansys-platform-instancemanagement"
         - "ansys-sphinx-theme"
-        - "ansys-tools-path"
+        - "ansys-tools-common"
         - "ansys-tools-visualization-interface"
     labels:
       - "maintenance"
@@ -45,14 +45,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    # TODO: This should be activated once it's supported
-    # cooldown:
-    #   default-days: 5  # Fallback cooldown if no specific rule applies
-    #   semver-major-days: 30  # Cooldown for major version updates
-    #   semver-minor-days: 7   # Cooldown for minor version updates
-    #   semver-patch-days: 3   # Cooldown for patch updates
-    #   exclude:
-    #     - "ansys/actions/*"
+    cooldown:
+      default-days: 7 # semver-* options are not applicable for GitHub Actions
+      exclude:
+        - "ansys/actions/*"
     labels:
       - "maintenance"
     assignees:

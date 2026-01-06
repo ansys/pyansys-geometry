@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -232,7 +232,7 @@ def test_fix_small_face(modeler: Modeler):
     """Test to read geometry and find and fix it's small face problem areas."""
     design = modeler.open_file(FILES_DIR / "SmallFaces.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies, 2.84e-8, None)
-    assert len(problem_areas) == 2
+    assert len(problem_areas) == 6
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies, None, 0.00036)
     assert len(problem_areas) == 9
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)

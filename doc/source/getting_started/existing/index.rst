@@ -22,10 +22,20 @@ From Python, establish a connection to the existing client session by creating a
 
     from ansys.geometry.core import Modeler
 
-    modeler = Modeler(host="localhost", port=50051)
+    modeler = Modeler(host="localhost", port=50051, transport_mode="wnua")  # On Windows
+    # or
+    modeler = Modeler(host="localhost", port=50051, transport_mode="uds")  # On Linux
+    # or
+    modeler = Modeler(host="localhost", port=50051, transport_mode="insecure")  # For any OS using insecure gRPC
 
 If no error messages are received, your connection is established successfully.
 Note that your local port number might differ from the one shown in the preceding code.
+
+.. note::
+
+    Starting from PyAnsys Geometry 0.14, the ``transport_mode`` parameter is required.
+    For detailed information about available transport modes, secure connections, and
+    compatibility with different Ansys releases, see :ref:`user_guide_connection_securing`.
 
 Verify the connection
 ---------------------

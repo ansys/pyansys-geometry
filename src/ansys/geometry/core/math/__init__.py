@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,7 +21,7 @@
 # SOFTWARE.
 """PyAnsys Geometry math subpackage."""
 
-from ansys.geometry.core.math.bbox import BoundingBox, BoundingBox2D
+from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.constants import (
     DEFAULT_POINT2D,
     DEFAULT_POINT3D,

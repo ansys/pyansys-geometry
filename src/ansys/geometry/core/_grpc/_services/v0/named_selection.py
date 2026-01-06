@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -26,7 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.named_selection import GRPCNamedSelectionService
-from .conversions import build_grpc_id, from_grpc_point_to_point3d
+from .conversions import build_grpc_id
 
 
 class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
@@ -64,9 +64,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
             "faces": [face.id for face in response.faces],
             "edges": [edge.id for edge in response.edges],
             "beams": [beam.id.id for beam in response.beams],
-            "design_points": [
-                (dp.id, from_grpc_point_to_point3d(dp.points[0])) for dp in response.design_points
-            ],
+            "design_points": [dp.id for dp in response.design_points],
             "components": [comp.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
         }
@@ -104,6 +102,22 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
 
         # Call the gRPC service
         self.stub.Delete(request)
+
+        # Return the response - empty dictionary
+        return {}
+
+    @protect_grpc
+    def rename_named_selection(self, **kwargs):  # noqa: D102
+        from ansys.api.geometry.v0.namedselections_pb2 import SetNameRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetNameRequest(
+            id=build_grpc_id(kwargs["id"]),
+            new_name=kwargs["new_name"],
+        )
+
+        # Call the gRPC service
+        self.stub.SetName(request)
 
         # Return the response - empty dictionary
         return {}

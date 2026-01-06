@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -222,6 +222,7 @@ class GRPCBodyService(ABC):  # pragma: no cover
     @abstractmethod
     def combine(self, **kwargs) -> dict:
         """Boolean operation through command."""
+        pass
 
     def split_body(self, **kwargs) -> dict:
         """Split a body."""

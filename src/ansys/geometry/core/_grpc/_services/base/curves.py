@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -46,4 +46,9 @@ class GRPCCurvesService(ABC):  # pragma: no cover
     @abstractmethod
     def intersect_curves(self, **kwargs) -> dict:
         """Get intersection points of curves."""
+        pass
+
+    @abstractmethod
+    def intersect_curve_and_surface(self, **kwargs) -> dict:
+        """Get intersection points of a curve and surface."""
         pass

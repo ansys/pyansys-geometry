@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -66,6 +66,8 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
+
+    from ansys.geometry.core.designer.selection import NamedSelection
 
 
 @unique
@@ -165,7 +167,7 @@ class Component:
         created on the server.
     master_component : MasterComponent, default: None
         Master component to use to create a nested component instance instead
-        of creating a new conponent.
+        of creating a new component.
     read_existing_comp : bool, default: False
         Whether an existing component on the service should be read. This
         parameter is only valid when connecting to an existing service session.
@@ -1980,3 +1982,18 @@ class Component:
         """
         ids = [self.id, *[o.id for o in others or []]]
         self._grpc_client._services.components.make_independent(ids=ids)
+
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get the named selections of the component.
+
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections belonging to the component.
+        """
+        included_ns = []
+        for ns in get_design_from_component(self).named_selections:
+            if any(comp.id == self.id for comp in ns.components):
+                included_ns.append(ns)
+
+        return included_ns
