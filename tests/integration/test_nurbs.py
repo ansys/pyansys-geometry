@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -196,7 +196,7 @@ def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler
         ],
         degree=3,
     ).trim(Interval(0, 1))
-    
+
     chain = Line(Point3D([0, 0, 0]), Vector3D([0, 0, 1])).trim(Interval(0, 10))
 
     points = [
