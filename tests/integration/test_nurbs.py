@@ -224,7 +224,7 @@ def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler
 
     with pytest.raises(
         ValueError,
-        match="Revolving a NURBS sketch requires a minimum Ansys release version of 26R1"
+        match="Revolving a NURBS sketch requires a minimum Ansys release version of 26R1",
     ):
         design.revolve_sketch("revolved_body", sketch, Vector3D([0, 0, 1]), 90, Point3D([0, 0, 0]))
 
@@ -236,7 +236,7 @@ def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler
     with pytest.raises(
         ValueError, match="Sweeping a NURBS sketch requires a minimum Ansys release version of 26R1"
     ):
-        design.sweep_sketch("swept_body", line_sketch, [path])    
+        design.sweep_sketch("swept_body", line_sketch, [path])
 
     with pytest.raises(
         ValueError, match="Sweeping NURBS curves requires a minimum Ansys release version of 26R1"
@@ -260,14 +260,14 @@ def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler
     with pytest.raises(
         ValueError,
         match="Creating a body from NURBS surfaces requires a minimum Ansys release version "
-        "of 26R1"
+        "of 26R1",
     ):
         design.create_body_from_surface("nurbs_surface", surface)
 
     with pytest.raises(
         ValueError,
         match="Creating a surface from NURBS curves requires a minimum Ansys release "
-        "version of 26R1"
+        "version of 26R1",
     ):
         design.create_surface_from_trimmed_curves("nurbs_surface", [path])
 
@@ -279,7 +279,19 @@ def test_imprint_nurbs_curves_old_backend(fake_modeler_old_backend_252: Modeler)
     # Create a body to imprint onto
     box_body = design.extrude_sketch("box_body", Sketch().box(Point2D([0, 0]), 5, 5), 5)
 
-    # Create NURBS curves to imprint
+    # Create NURBS sketch and curves to imprint
+    sketch = Sketch()
+    sketch.nurbs_from_2d_points(
+        points=[
+            Point2D([0, 0]),
+            Point2D([1, 0]),
+            Point2D([1, 1]),
+            Point2D([0, 1]),
+            Point2D([0, 0]),
+        ],
+        tag="nurbs_sketch",
+    )
+
     nurbs_curve1 = NURBSCurve.fit_curve_from_points(
         points=[
             Point3D([2, 2, 0]),
@@ -304,6 +316,15 @@ def test_imprint_nurbs_curves_old_backend(fake_modeler_old_backend_252: Modeler)
         box_body.imprint_curves(
             faces=[box_body.faces[0]],
             trimmed_curves=[nurbs_curve1, nurbs_curve2],
+        )
+
+    with pytest.raises(
+        ValueError, match="Imprinting a NURBS sketch requires a minimum Ansys release version "
+        "of 26R1"
+    ):
+        box_body.imprint_curves(
+            faces=[box_body.faces[0]],
+            sketch=sketch,
         )
 
 
@@ -372,7 +393,7 @@ def test_nurbs_surface_body_creation_using_old_backend(fake_modeler_old_backend_
     with pytest.raises(
         ValueError,
         match="Creating a body from NURBS surfaces requires a minimum Ansys release version "
-        "of 26R1"
+        "of 26R1",
     ):
         design.create_body_from_surface("nurbs_surface", trimmed_surface)
 
