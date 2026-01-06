@@ -663,7 +663,7 @@ class Component:
         if self._grpc_client.backend_version < (26, 1, 0):
             from ansys.geometry.core.sketch.nurbs import SketchNurbs
             has_nurbs_edges = any(isinstance(edge, SketchNurbs) for edge in sketch.edges)
-            has_nurbs_curves = any(isinstance(tc, NURBSCurve) for tc in path)
+            has_nurbs_curves = any(isinstance(tc.geometry, NURBSCurve) for tc in path)
             if has_nurbs_edges or has_nurbs_curves:
                 raise ValueError(
                     "Sweeping a NURBS sketch requires a minimum Ansys release version of "
