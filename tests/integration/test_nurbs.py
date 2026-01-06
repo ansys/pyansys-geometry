@@ -31,7 +31,7 @@ from ansys.geometry.core.math import (
     Point2D,
     Point3D,
 )
-from ansys.geometry.core.math.vector import Vector3D
+from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.line import Line
@@ -255,7 +255,7 @@ def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler
         match="Creating a surface from a NURBS sketch requires a minimum Ansys release "
         "version of 26R1",
     ):
-        design.create_surface("nurbs_srface", sketch)
+        design.create_surface("nurbs_surface", sketch)
 
     with pytest.raises(
         ValueError,
@@ -272,8 +272,8 @@ def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler
         design.create_surface_from_trimmed_curves("nurbs_surface", [path])
 
 
-def test_imprint_nurbs_curves_old_backend(fake_modeler_old_backend_252: Modeler):
-    """Test imprinting NURBS curves using an old backend."""
+def test_imprint_project_nurbs_old_backend(fake_modeler_old_backend_252: Modeler):
+    """Test imprinting and projecting NURBS curves using an old backend."""
     design = fake_modeler_old_backend_252.create_design("ImprintNURBSCurvesOldBackend")
 
     # Create a body to imprint onto
@@ -326,6 +326,12 @@ def test_imprint_nurbs_curves_old_backend(fake_modeler_old_backend_252: Modeler)
             faces=[box_body.faces[0]],
             sketch=sketch,
         )
+
+    with pytest.raises(
+        ValueError, match="Projecting a NURBS sketch requires a minimum Ansys release version "
+        "of 26R1"
+    ):
+        box_body.project_curves(UnitVector3D([0, 0, 1]), sketch, True)
 
 
 def test_nurbs_surface_body_creation(modeler: Modeler):

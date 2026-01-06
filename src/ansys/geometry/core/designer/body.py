@@ -1824,7 +1824,7 @@ class Body(IBody):
 
             if any(isinstance(edge, SketchNurbs) for edge in sketch.edges):
                 raise ValueError(
-                    "Imprinting a NURBS sketch requires a minimum Ansys release version of "
+                    "Projecting a NURBS sketch requires a minimum Ansys release version of "
                     "26R1, but the current version used is lower."
                 )
 
