@@ -330,6 +330,7 @@ class NURBSCurve(Curve):
         def distance_squared(
             u: float, geomdl_nurbs_curve: "geomdl_nurbs.Curve", point: np.ndarray
         ) -> np.ndarray:
+            u = u[0] if isinstance(u, np.ndarray) else u
             point_on_curve = np.array(geomdl_nurbs_curve.evaluate_single(u))
             return np.sum((point_on_curve - point) ** 2)
 
