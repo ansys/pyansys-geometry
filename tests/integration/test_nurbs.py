@@ -328,8 +328,8 @@ def test_imprint_project_nurbs_old_backend(fake_modeler_old_backend_252: Modeler
         )
 
     with pytest.raises(
-        ValueError, match="Projecting a NURBS sketch requires a minimum Ansys release version "
-        "of 26R1"
+        ValueError,
+        match="Projecting a NURBS sketch requires a minimum Ansys release version of 26R1",
     ):
         box_body.project_curves(UnitVector3D([0, 0, 1]), sketch, True)
 
