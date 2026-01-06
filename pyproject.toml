@@ -106,7 +106,7 @@ general-all = [
   "grpcio-health-checking==1.75.0",
   "matplotlib==3.10.8",
   "numpy==2.2.6; python_version<'3.11'",
-  "numpy==2.3.3; python_version>='3.11'",
+  "numpy==2.4.0; python_version>='3.11'",
   "pint==0.25.2",
   "protobuf==6.32.1",
   "pygltflib==1.16.5",
