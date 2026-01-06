@@ -319,8 +319,8 @@ def test_imprint_project_nurbs_old_backend(fake_modeler_old_backend_252: Modeler
         )
 
     with pytest.raises(
-        ValueError, match="Imprinting a NURBS sketch requires a minimum Ansys release version "
-        "of 26R1"
+        ValueError,
+        match="Imprinting a NURBS sketch requires a minimum Ansys release version of 26R1",
     ):
         box_body.imprint_curves(
             faces=[box_body.faces[0]],
