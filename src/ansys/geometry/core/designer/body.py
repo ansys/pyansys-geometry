@@ -51,6 +51,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
+    check_nurbs_compatibility,
     check_type,
     check_type_all_elements_in_iterable,
     ensure_design_is_active,
@@ -1755,22 +1756,7 @@ class Body(IBody):
         if sketch is None and trimmed_curves is None:
             raise ValueError("Either a sketch or edges must be provided for imprinting.")
 
-        if self._grpc_client.backend_version < (26, 1, 0):
-            from ansys.geometry.core.sketch.nurbs import SketchNurbs
-
-            if sketch and any(isinstance(edge, SketchNurbs) for edge in sketch.edges):
-                raise ValueError(
-                    "Imprinting a NURBS sketch requires a minimum Ansys release version of "
-                    "26R1, but the current version used is lower."
-                )
-
-            from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
-
-            if any(isinstance(tc.geometry, NURBSCurve) for tc in trimmed_curves or []):
-                raise ValueError(
-                    "Imprinting NURBS curves requires a minimum Ansys release version of "
-                    "26R1, but the current version used is lower."
-                )
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch, trimmed_curves)
 
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
@@ -1819,14 +1805,7 @@ class Body(IBody):
         closest_face: bool,
         only_one_curve: bool = False,
     ) -> list[Face]:
-        if self._grpc_client.backend_version < (26, 1, 0):
-            from ansys.geometry.core.sketch.nurbs import SketchNurbs
-
-            if any(isinstance(edge, SketchNurbs) for edge in sketch.edges):
-                raise ValueError(
-                    "Projecting a NURBS sketch requires a minimum Ansys release version of "
-                    "26R1, but the current version used is lower."
-                )
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch)
 
         self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 

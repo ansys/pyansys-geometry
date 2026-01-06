@@ -50,6 +50,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import get_design_from_component
 from ansys.geometry.core.misc.checks import (
+    check_nurbs_compatibility,
     ensure_design_is_active,
     graphics_required,
     min_backend_version,
@@ -57,11 +58,9 @@ from ansys.geometry.core.misc.checks import (
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.curves.circle import Circle
-from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
-from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -584,14 +583,7 @@ class Component:
         The newly created body is placed under this component within the design assembly.
         Extruding a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
-        if self._grpc_client.backend_version < (26, 1, 0):
-            from ansys.geometry.core.sketch.nurbs import SketchNurbs
-
-            if any(isinstance(edge, SketchNurbs) for edge in sketch.edges):
-                raise ValueError(
-                    "NURBS sketch extrusion requires a minimum Ansys release version of 26R1, "
-                    "but the current version used is lower."
-                )
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch)
 
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
@@ -661,16 +653,7 @@ class Component:
         This method is only available starting on Ansys release 24R2.
         Sweeping a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
-        if self._grpc_client.backend_version < (26, 1, 0):
-            from ansys.geometry.core.sketch.nurbs import SketchNurbs
-
-            has_nurbs_edges = any(isinstance(edge, SketchNurbs) for edge in sketch.edges)
-            has_nurbs_curves = any(isinstance(tc.geometry, NURBSCurve) for tc in path)
-            if has_nurbs_edges or has_nurbs_curves:
-                raise ValueError(
-                    "Sweeping a NURBS sketch requires a minimum Ansys release version of "
-                    "26R1, but the current version used is lower."
-                )
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch, path)
 
         self._grpc_client.log.debug(f"Creating a sweeping profile on {self.id}. Creating body...")
         response = self._grpc_client.services.bodies.create_sweeping_profile_body(
@@ -714,12 +697,7 @@ class Component:
         This method is only available starting on Ansys release 24R2.
         Sweeping NURBS curves requires a minimum Ansys release version of 26R1.
         """
-        if self._grpc_client.backend_version < (26, 1, 0):
-            if any(isinstance(tc.geometry, NURBSCurve) for tc in chain + path):
-                raise ValueError(
-                    "Sweeping NURBS curves requires a minimum Ansys release version of 26R1, "
-                    "but the current version used is lower."
-                )
+        check_nurbs_compatibility(self._grpc_client.backend_version, curves=path + chain)
 
         self._grpc_client.log.debug(f"Creating a sweeping chain on {self.id}. Creating body...")
         response = self._grpc_client.services.bodies.create_sweeping_chain(
@@ -791,14 +769,7 @@ class Component:
         This method is only available starting on Ansys release 24R2.
         Revolving a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
-        if self._grpc_client.backend_version < (26, 1, 0):
-            from ansys.geometry.core.sketch.nurbs import SketchNurbs
-
-            if any(isinstance(edge, SketchNurbs) for edge in sketch.edges):
-                raise ValueError(
-                    "Revolving a NURBS sketch requires a minimum Ansys release version of "
-                    "26R1, but the current version used is lower."
-                )
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch)
 
         # Based on the reference axis and the sketch plane's normal, retrieve the orthogonal
         # vector (i.e. this is the reference vector for the Circle object). Assuming a distance of 1
@@ -960,14 +931,10 @@ class Component:
         This method is only available starting on Ansys release 24R2.
         Creating bodies from NURBS profiles requires a minimum Ansys release version of 26R1.
         """
-        # Check if any profiles contain NURBS curves and issue a warning
-        if self._grpc_client.backend_version < (26, 1, 0):
-            for profile in profiles:
-                if any(isinstance(tc.geometry, NURBSCurve) for tc in profile):
-                    raise ValueError(
-                        "Creating a body from NURBS profiles requires a minimum Ansys "
-                        "release version of 26R1, but the current version used is lower."
-                    )
+        check_nurbs_compatibility(
+            self._grpc_client.backend_version,
+            curves=[curve for prof in profiles for curve in prof],
+        )
 
         self._grpc_client.log.debug(f"Creating a loft profile body on {self.id}.")
         response = self._grpc_client.services.bodies.create_extruded_body_from_loft_profiles(
@@ -1041,14 +1008,7 @@ class Component:
         --------
         Creating a surface from a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
-        if self._grpc_client.backend_version < (26, 1, 0):
-            from ansys.geometry.core.sketch.nurbs import SketchNurbs
-
-            if any(isinstance(edge, SketchNurbs) for edge in sketch.edges):
-                raise ValueError(
-                    "Creating a surface from a NURBS sketch requires a minimum Ansys release "
-                    "version of 26R1, but the current version used is lower."
-                )
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch)
 
         self._grpc_client.log.debug(
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
@@ -1119,13 +1079,7 @@ class Component:
         This method is only available starting on Ansys release 25R1.
         Creating a body from NURBS surfaces requires a minimum Ansys release version of 26R1.
         """
-        if (self._grpc_client.backend_version < (26, 1, 0)) and (
-            isinstance(trimmed_surface.geometry, NURBSSurface)
-        ):
-            raise ValueError(
-                "Creating a body from NURBS surfaces requires a minimum Ansys "
-                "release version of 26R1."
-            )
+        check_nurbs_compatibility(self._grpc_client.backend_version, surfaces=[trimmed_surface])
 
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
@@ -1160,12 +1114,7 @@ class Component:
         This method is only available starting on Ansys release 24R2.
         Creating a surface from NURBS curves requires a minimum Ansys release version of 26R1.
         """
-        if self._grpc_client.backend_version < (26, 1, 0):
-            if any(isinstance(tc.geometry, NURBSCurve) for tc in trimmed_curves):
-                raise ValueError(
-                    "Creating a surface from NURBS curves requires a minimum Ansys release version "
-                    "of 26R1."
-                )
+        check_nurbs_compatibility(self._grpc_client.backend_version, curves=trimmed_curves)
 
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed curves provided on {self.id}. Creating body..."
