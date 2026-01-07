@@ -235,9 +235,9 @@ def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFact
 
 
 def test_export_to_disco_with_facets(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
-    """Test exporting a design to dsco format with facets only available. in 261"""
-    """This is a duplicate to ensure disco exporting is still covered before 261"""
+    """Test exporting a design to dsco format with facets only available in 261"""
     skip_if_spaceclaim(modeler, test_export_to_disco.__name__, "disco export")
+
     # Create a demo design
     design = _create_demo_design(modeler)
 
