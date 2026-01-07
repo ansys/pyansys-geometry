@@ -126,6 +126,7 @@ backends:
       # Export body facets added in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
       # Tracker is introduced in 25.2
@@ -252,6 +253,7 @@ backends:
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
       # Tracker is introduced in 25.2
@@ -344,6 +346,7 @@ backends:
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # NURBS surface creation only available from 26.1 onwards
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
@@ -390,6 +393,7 @@ backends:
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # NURBS surface creation only available from 26.1 onwards
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1

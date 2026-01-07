@@ -1267,7 +1267,7 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     else:
         file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
 
-    design.save(file_location=file_save)
+    design.save(file_location=file_save, write_body_facets=True)
 
     # Check for other exports - Windows backend...
     if not BackendType.is_core_service(modeler.client.backend_type):
@@ -3657,6 +3657,7 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     assert design.bodies[1].vertices[0].x.magnitude == pytest.approx(0.028, 1e-6, 1e-6)
     assert design.bodies[1].vertices[0].y.magnitude == pytest.approx(-0.00288675, 1e-6, 1e-6)
     assert design.bodies[1].vertices[0].z.magnitude == pytest.approx(0.01, 1e-6, 1e-6)
+    assert design.bodies[1].vertices[0].id == "S,~sEbf61ff70-bc08-477a-8a5e-a7c7dc955f40.853__"
 
     assert design.bodies[0].vertices == []
     assert design.bodies[1].vertices[1].position == pytest.approx(
@@ -3748,13 +3749,19 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
     location = tmp_path_factory.mktemp("test_export_to_scdocx")
     file_location = location / f"{design.name}.scdocx"
-    design.export_to_scdocx(location)
+    exported_file = design.export_to_scdocx(location, write_body_facets=True)
+    assert exported_file.stat().st_size == pytest.approx(216551, 1e-3, 100)
     assert file_location.exists()
     design_read = modeler.open_file(file_location)
     assert len(design_read.named_selections) == 5
 
     exportedtestns = design_read._named_selections["Test"]
     assert len(exportedtestns.vertices) == 2
+
+    location = tmp_path_factory.mktemp("test_export_to_scdocx")
+    file_location = location / f"{design.name}.scdocx"
+    exported_file = design_read.export_to_scdocx(location, write_body_facets=False)
+    assert exported_file.stat().st_size == pytest.approx(26202, 1e-3, 100)
 
 
 @pytest.mark.parametrize(

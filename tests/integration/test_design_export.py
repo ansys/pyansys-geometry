@@ -219,7 +219,37 @@ def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFact
     file_location = location / f"{design.name}.dsco"
 
     # Export to dsco
-    design.export_to_disco(location)
+    exported_file = design.export_to_disco(location)
+
+    # Checking file size to ensure facets are exported
+    assert exported_file.stat().st_size == pytest.approx(20464, 1e-3, 100)
+
+    # Check the exported file
+    assert file_location.exists()
+
+    # Import the dsco
+    design_read = modeler.open_file(file_location)
+
+    # Check the imported design
+    _checker_method(design_read, design, True)
+
+
+def test_export_to_disco_with_facets(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test exporting a design to dsco format with facets only available in 261"""
+    skip_if_spaceclaim(modeler, test_export_to_disco.__name__, "disco export")
+
+    # Create a demo design
+    design = _create_demo_design(modeler)
+
+    # Define the location and expected file location
+    location = tmp_path_factory.mktemp("test_export_to_disco")
+    file_location = location / f"{design.name}.dsco"
+
+    # Export to dsco
+    exported_file = design.export_to_disco(location, write_body_facets=True)
+
+    # Checking file size to ensure facets are exported
+    assert exported_file.stat().st_size == pytest.approx(53844, 1e-3, 100)
 
     # Check the exported file
     assert file_location.exists()
