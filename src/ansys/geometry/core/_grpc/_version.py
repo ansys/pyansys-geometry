@@ -133,17 +133,9 @@ def set_proto_version(
     # If no version specified... Attempt to use all of them, starting
     # with the latest version
     if version is None:
-        # TODO: Once blitz is over, we will enable this...
-        # https://github.com/ansys/pyansys-geometry/issues/2366
-        #
-        # ---> REPLACE THIS BLOCK <---
-        # version = GeometryApiProtos.get_latest_version()
-        # while not version.verify_supported(channel):
-        #     version = GeometryApiProtos.from_int_value(version.value[0] - 1)
-        # ---> REPLACE THIS BLOCK <---
-        # ---> DELETE THIS BLOCK <---
-        version = GeometryApiProtos.V0
-        # ---> DELETE THIS BLOCK <---
+        version = GeometryApiProtos.get_latest_version()
+        while not version.verify_supported(channel):
+            version = GeometryApiProtos.from_int_value(version.value[0] - 1)
 
     # Return the version
     return version
