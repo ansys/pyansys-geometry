@@ -375,6 +375,7 @@ class LocalDockerInstance:
                 image=f"{pygeom_defaults.GEOMETRY_SERVICE_DOCKER_IMAGE}:{image.value[2]}",
                 detach=True,
                 auto_remove=True,
+                network_mode="bridge" if docker_os == "linux" else "nat",
                 name=name,
                 ports={"50051/tcp": port},
                 volumes=volumes,
@@ -383,6 +384,7 @@ class LocalDockerInstance:
                     "LOG_LEVEL": os.getenv("ANSRV_GEO_LOG_LEVEL", 2),
                     "ENABLE_TRACE": os.getenv("ANSRV_GEO_ENABLE_TRACE", 0),
                     "USE_DEBUG_MODE": os.getenv("ANSRV_GEO_USE_DEBUG_MODE", 0),
+                    "SERVER_ENDPOINT": "50051@0.0.0.0",
                     "ANSYS_GRPC_CERTIFICATES": "/certs"
                     if image.value[1] == "linux"
                     else "C:/certs",
@@ -396,6 +398,10 @@ class LocalDockerInstance:
         except (ContainerError, APIError) as err:
             raise RuntimeError(
                 f"Geometry service Docker image error when initialized. Error: {err.explanation}"
+            )
+        except Exception as ex:  # pragma: no cover
+            raise RuntimeError(
+                f"Geometry service Docker image could not be launched. Error: {str(ex)}"
             )
 
         # If the deployment went fine, this means that you have deployed the service.
