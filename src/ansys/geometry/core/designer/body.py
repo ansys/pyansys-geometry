@@ -1756,7 +1756,9 @@ class Body(IBody):
         if sketch is None and trimmed_curves is None:
             raise ValueError("Either a sketch or edges must be provided for imprinting.")
 
-        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch, curves=trimmed_curves)
+        check_nurbs_compatibility(
+            self._grpc_client.backend_version, sketch=sketch, curves=trimmed_curves
+        )
 
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
