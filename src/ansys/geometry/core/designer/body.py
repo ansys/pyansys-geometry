@@ -1756,7 +1756,7 @@ class Body(IBody):
         if sketch is None and trimmed_curves is None:
             raise ValueError("Either a sketch or edges must be provided for imprinting.")
 
-        check_nurbs_compatibility(self._grpc_client.backend_version, sketch, trimmed_curves)
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch, curves=trimmed_curves)
 
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
@@ -1805,7 +1805,7 @@ class Body(IBody):
         closest_face: bool,
         only_one_curve: bool = False,
     ) -> list[Face]:
-        check_nurbs_compatibility(self._grpc_client.backend_version, sketch)
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
 
         self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
@@ -1838,7 +1838,7 @@ class Body(IBody):
         closest_face: bool,
         only_one_curve: bool = False,
     ) -> list[Face]:
-        check_nurbs_compatibility(self._grpc_client.backend_version, sketch)
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
 
         self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 

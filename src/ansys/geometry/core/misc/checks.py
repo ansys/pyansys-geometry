@@ -292,7 +292,7 @@ def check_type_all_elements_in_iterable(
 
 
 def check_nurbs_compatibility(
-    backend_version: "semver.Version",
+    backend_version: semver.Version,
     sketch: "Sketch" = None,
     curves: list["TrimmedCurve"] = None,
     surfaces: list["TrimmedSurface"] = None,

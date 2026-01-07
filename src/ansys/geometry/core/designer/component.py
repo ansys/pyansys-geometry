@@ -583,7 +583,7 @@ class Component:
         The newly created body is placed under this component within the design assembly.
         Extruding a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
-        check_nurbs_compatibility(self._grpc_client.backend_version, sketch)
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
 
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
@@ -653,7 +653,7 @@ class Component:
         This method is only available starting on Ansys release 24R2.
         Sweeping a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
-        check_nurbs_compatibility(self._grpc_client.backend_version, sketch, path)
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch, curves=path)
 
         self._grpc_client.log.debug(f"Creating a sweeping profile on {self.id}. Creating body...")
         response = self._grpc_client.services.bodies.create_sweeping_profile_body(
@@ -769,7 +769,7 @@ class Component:
         This method is only available starting on Ansys release 24R2.
         Revolving a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
-        check_nurbs_compatibility(self._grpc_client.backend_version, sketch)
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
 
         # Based on the reference axis and the sketch plane's normal, retrieve the orthogonal
         # vector (i.e. this is the reference vector for the Circle object). Assuming a distance of 1
@@ -1008,7 +1008,7 @@ class Component:
         --------
         Creating a surface from a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
-        check_nurbs_compatibility(self._grpc_client.backend_version, sketch)
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
 
         self._grpc_client.log.debug(
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
