@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -43,10 +43,8 @@ class GRPCPartsServiceV1(GRPCPartsService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.parts_pb2_grpc import PartsStub
-
-        self.stub = PartsStub(channel)
+        raise NotImplementedError("GRPCPartsServiceV1 is not implemented.")
 
     @protect_grpc
     def export(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        raise NotImplementedError("GRPCPartsServiceV1.export is not implemented.")

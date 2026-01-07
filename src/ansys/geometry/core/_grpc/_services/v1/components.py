@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -26,9 +26,9 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.components import GRPCComponentsService
-from ..base.conversions import from_measurement_to_server_angle
 from .conversions import (
     build_grpc_id,
+    from_angle_to_grpc_quantity,
     from_grpc_matrix_to_matrix,
     from_point3d_to_grpc_point,
     from_unit_vector_to_grpc_direction,
@@ -80,7 +80,7 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
         # Note: response.components is a repeated field, we return the first one
         component = response.components[0]
         return {
-            "id": component.id,
+            "id": component.id.id,
             "name": component.name,
             "instance_name": component.instance_name,
             "template": kwargs["template_id"],  # template_id from input
@@ -89,10 +89,20 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.designmessages_pb2 import SetDesignEntityNameRequest
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            SetDesignEntityNameRequest,
+            SetDesignEntityNameRequestData,
+        )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = SetDesignEntityNameRequest(id=build_grpc_id(kwargs["id"]), name=kwargs["name"])
+        request = SetDesignEntityNameRequest(
+            request_data=[
+                SetDesignEntityNameRequestData(
+                    id=build_grpc_id(kwargs["id"]),
+                    name=kwargs["name"],
+                )
+            ]
+        )
 
         # Call the gRPC service
         _ = self.stub.SetName(request)
@@ -132,7 +142,7 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
                     translation=translation,
                     rotation_axis_origin=origin,
                     rotation_axis_direction=direction,
-                    rotation_angle=from_measurement_to_server_angle(kwargs["rotation_angle"]),
+                    rotation_angle=from_angle_to_grpc_quantity(kwargs["rotation_angle"]),
                 )
             ],
         )
@@ -143,7 +153,7 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
         # Return the response - formatted as a dictionary
         # Note: response.matrices is a map<string, Matrix>
         # Get the matrix for our component ID
-        matrix_value = response.matrices.get(kwargs["id"].id)
+        matrix_value = response.matrices.get(kwargs["id"])
         return {"matrix": from_grpc_matrix_to_matrix(matrix_value) if matrix_value else None}
 
     @protect_grpc

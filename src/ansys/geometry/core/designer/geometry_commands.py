@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -53,7 +53,9 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import Angle, Distance
+from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.line import Line
+from ansys.geometry.core.shapes.surfaces.surface import Surface
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -635,6 +637,8 @@ class GeometryCommands:
         pitch_x = pitch_x if isinstance(pitch_x, Distance) else Distance(pitch_x)
         if pitch_y is not None:
             pitch_y = pitch_y if isinstance(pitch_y, Distance) else Distance(pitch_y)
+        else:
+            pitch_y = Distance(0)
 
         result = self._grpc_client.services.patterns.create_linear_pattern(
             selection_ids=[object.id for object in selection],
@@ -790,8 +794,12 @@ class GeometryCommands:
         # Convert angle and pitch to appropriate objects
         if not isinstance(circular_angle, Angle):
             circular_angle = Angle(circular_angle)
-        if linear_pitch is not None and not isinstance(linear_pitch, Distance):
-            linear_pitch = Distance(linear_pitch)
+        if linear_pitch is not None:
+            linear_pitch = (
+                linear_pitch if isinstance(linear_pitch, Distance) else Distance(linear_pitch)
+            )
+        else:
+            linear_pitch = Distance(0)
         if isinstance(circular_axis, Edge):
             circular_axis = circular_axis.id
 
@@ -1842,3 +1850,33 @@ class GeometryCommands:
 
         design = get_design_from_edge(edges[0])
         design._update_design_inplace()
+
+    @min_backend_version(26, 1, 0)
+    def intersect_curve_and_surface(
+        self,
+        curve: Curve,
+        surface: Surface,
+    ) -> list[Point3D]:
+        """Find the intersection points of a curve and a surface.
+
+        Parameters
+        ----------
+        curve : Curve
+            Curve to intersect.
+        surface : Surface
+            Surface to intersect.
+
+        Returns
+        -------
+        list[Point3D]
+            Points of intersection.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        response = self._grpc_client._services.curves.intersect_curve_and_surface(
+            curve=curve, surface=surface
+        )
+
+        return [] if response.get("intersect") is False else response.get("points")

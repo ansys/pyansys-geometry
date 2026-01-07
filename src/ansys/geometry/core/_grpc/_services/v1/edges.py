@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -39,7 +39,7 @@ from .conversions import (
 )
 
 
-class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
+class GRPCEdgesServiceV1(GRPCEdgesService):
     """Edges service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
@@ -143,7 +143,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         return {
             "faces": [
                 {
-                    "id": face.id,
+                    "id": face.id.id,
                     "surface_type": face.surface_type,
                     "is_reversed": face.is_reversed,
                 }
@@ -222,9 +222,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "created_bodies": [
-                body.get("id").id for body in tracked_response.get("created_bodies")
-            ],
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
         }
 
     @protect_grpc
@@ -238,8 +236,8 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         request = ExtrudeEdgesUpToRequest(
             request_data=[
                 ExtrudeEdgesUpToRequestData(
-                    edge_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
-                    up_to_selection_id=build_grpc_id(kwargs["up_to_selection_id"]),
+                    edge_ids=[build_grpc_id(id) for id in kwargs["edge_ids"]],
+                    up_to_selection_id=build_grpc_id(kwargs["up_to_selection"]),
                     seed_point=from_point3d_to_grpc_point(kwargs["seed_point"]),
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     extrude_type=kwargs["extrude_type"].value,
@@ -248,15 +246,13 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         )
 
         # Call the gRPC service and serialize the response
-        response = self.edit_stub.ExtrudeFacesUpTo(request=request)
+        response = self.edit_stub.ExtrudeEdgesUpTo(request=request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "created_bodies": [
-                body.get("id").id for body in tracked_response.get("created_bodies")
-            ],
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
         }
 
     @protect_grpc

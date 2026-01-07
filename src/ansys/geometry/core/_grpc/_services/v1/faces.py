@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -27,7 +27,6 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.conversions import (
-    from_measurement_to_server_length,
     to_area,
 )
 from ..base.faces import GRPCFacesService
@@ -46,7 +45,7 @@ from .conversions import (
 )
 
 
-class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
+class GRPCFacesServiceV1(GRPCFacesService):
     """Faces service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
@@ -353,9 +352,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "created_bodies": [
-                body.get("id").id for body in tracked_response.get("created_bodies")
-            ],
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
         }
 
     @protect_grpc
@@ -516,9 +513,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "created_bodies": [
-                body.get("id").id for body in tracked_response.get("created_bodies")
-            ],
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
         }
 
     @protect_grpc
@@ -607,7 +602,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "along_u": response.along_u,
-            "radius": response.radius,
+            "radius": response.radius.value_in_geometry_units,
         }
 
     @protect_grpc
@@ -622,7 +617,7 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
             request_data=[
                 OffsetFacesRequestData(
                     face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
-                    offset=from_measurement_to_server_length(kwargs["distance"]),
+                    offset=from_length_to_grpc_quantity(kwargs["distance"]),
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     extrude_type=kwargs["extrude_type"].value,
                 )
@@ -649,8 +644,8 @@ class GRPCFacesServiceV1(GRPCFacesService):  # pragma: no cover
         request = FaceOffsetRequest(
             request_data=[
                 FaceOffsetRequestData(
-                    face1=build_grpc_id(kwargs["face1_id"]),
-                    face2=build_grpc_id(kwargs["face2_id"]),
+                    id1=build_grpc_id(kwargs["face1_id"]),
+                    id2=build_grpc_id(kwargs["face2_id"]),
                     set_baselines=kwargs["set_baselines"],
                     process_adjacent_faces=kwargs["process_adjacent_faces"],
                 )

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -44,17 +44,17 @@ class GRPCMaterialsServiceV1(GRPCMaterialsService):
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.discovery.v1.design.data.cadmaterial_pb2_grpc import MaterialsStub
+        from ansys.api.discovery.v1.design.data.cadmaterial_pb2_grpc import CADMaterialStub
 
-        self.stub = MaterialsStub(channel)
+        self.stub = CADMaterialStub(channel)
 
     @protect_grpc
     def add_material(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.data.cadmaterial_pb2_grpc import CreateRequest
+        from ansys.api.discovery.v1.design.data.cadmaterial_pb2 import CreateRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateRequest(
-            request_data=from_material_to_grpc_material(kwargs["material"]),
+            request_data=[from_material_to_grpc_material(kwargs["material"])],
         )
 
         # Call the gRPC service
@@ -65,7 +65,7 @@ class GRPCMaterialsServiceV1(GRPCMaterialsService):
 
     @protect_grpc
     def remove_material(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.design.data.cadmaterial_pb2_grpc import DeleteRequest
+        from ansys.api.discovery.v1.design.data.cadmaterial_pb2 import DeleteRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DeleteRequest(

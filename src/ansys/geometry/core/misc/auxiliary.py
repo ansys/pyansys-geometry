@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Auxiliary functions for the PyAnsys Geometry library."""
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -399,3 +400,39 @@ def convert_opacity_to_hex(opacity: float) -> str:
             raise ValueError("Opacity value must be between 0 and 1.")
     except ValueError as err:
         raise ValueError(f"Invalid color value: {err}")
+
+
+def prepare_file_for_server_upload(file_path: Path) -> Path:
+    """Create a zip file from the given file path.
+
+    Parameters
+    ----------
+    file_path : str
+        The path to the file to be zipped.
+
+    Returns
+    -------
+    Path
+        The path to the created zip file.
+    """
+    import tempfile
+    from zipfile import ZipFile
+
+    # Create a temporary zip file with the same name as the original file
+    temp_dir = Path(tempfile.gettempdir())
+    temp_zip_path = temp_dir / f"{file_path.stem}.zip"
+
+    # Create zip archive
+    with ZipFile(temp_zip_path, "w") as zipf:
+        # Add the main file
+        zipf.write(file_path, file_path.name)
+
+        # If it's an assembly format, add all files from the same directory
+        assembly_extensions = [".CATProduct", ".asm", ".solution", ".sldasm"]
+        if any(ext in str(file_path) for ext in assembly_extensions):
+            dir_path = file_path.parent
+            for file in dir_path.iterdir():
+                if file.is_file() and file != file_path:
+                    zipf.write(file, file.name)
+
+    return temp_zip_path

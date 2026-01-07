@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -61,9 +61,9 @@ class GRPCAssemblyConditionServiceV1(GRPCAssemblyConditionService):
         request = CreateAlignRequest(
             request_data=[
                 CreateAlignRequestData(
-                    parent=build_grpc_id(kwargs["parent_id"]),
-                    geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
-                    geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    geometric_a_id=build_grpc_id(kwargs["geometric_a_id"]),
+                    geometric_b_id=build_grpc_id(kwargs["geometric_b_id"]),
                 )
             ]
         )
@@ -93,9 +93,9 @@ class GRPCAssemblyConditionServiceV1(GRPCAssemblyConditionService):
         request = CreateTangentRequest(
             request_data=[
                 CreateTangentRequestData(
-                    parent=build_grpc_id(kwargs["parent_id"]),
-                    geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
-                    geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    geometric_a_id=build_grpc_id(kwargs["geometric_a_id"]),
+                    geometric_b_id=build_grpc_id(kwargs["geometric_b_id"]),
                 )
             ]
         )
@@ -125,9 +125,9 @@ class GRPCAssemblyConditionServiceV1(GRPCAssemblyConditionService):
         request = CreateOrientRequest(
             request_data=[
                 CreateOrientRequestData(
-                    parent=build_grpc_id(kwargs["parent_id"]),
-                    geometric_a=build_grpc_id(kwargs["geometric_a_id"]),
-                    geometric_b=build_grpc_id(kwargs["geometric_b_id"]),
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    geometric_a_id=build_grpc_id(kwargs["geometric_a_id"]),
+                    geometric_b_id=build_grpc_id(kwargs["geometric_b_id"]),
                 )
             ]
         )

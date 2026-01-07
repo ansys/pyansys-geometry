@@ -22,7 +22,7 @@ concurrency:
 
 permissions:
   contents: read
-  packages: read
+  packages: read # Needs access to the Geometry docker image
 
 jobs:
 
@@ -45,7 +45,7 @@ jobs:
             backend-version: "25.1"
 
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
 
@@ -129,7 +129,7 @@ jobs:
           pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION -rf
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -166,7 +166,7 @@ jobs:
             backend-version: "25.2"
             windows-runner: "windows-2025"
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
 
@@ -220,7 +220,7 @@ jobs:
           pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION -rf
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:

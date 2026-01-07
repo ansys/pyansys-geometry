@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -26,6 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.commands import GRPCCommandsService
+from .conversions import build_grpc_id
 
 
 class GRPCCommandsServiceV1(GRPCCommandsService):
@@ -43,10 +44,32 @@ class GRPCCommandsServiceV1(GRPCCommandsService):
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.commands_pb2_grpc import CommandsStub
+        from ansys.api.discovery.v1.design.designentity_pb2_grpc import DesignEntityStub
 
-        self.stub = CommandsStub(channel)
+        self.stub = DesignEntityStub(channel)
 
     @protect_grpc
     def set_name(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            SetDesignEntityNameRequest,
+            SetDesignEntityNameRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetDesignEntityNameRequest(
+            request_data=[
+                SetDesignEntityNameRequestData(
+                    id=build_grpc_id(id),
+                    name=kwargs["name"],
+                )
+                for id in kwargs["selection_ids"]
+            ]
+        )
+
+        # Call the gRPC service
+        result = self.stub.SetName(request)
+
+        # Return the result - formatted as a dictionary
+        return {
+            "success": len(result.successfully_set_ids) == len(kwargs["selection_ids"]),
+        }

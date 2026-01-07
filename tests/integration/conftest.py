@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -236,6 +236,17 @@ def use_grpc_client_old_backend(modeler: Modeler):
 def fake_modeler_old_backend_251(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
     modeler._grpc_client._backend_version = (25, 1, 0)
+
+    yield modeler
+
+    # Code here runs after the test, reverting the state
+    modeler._grpc_client._backend_version = currentbackend
+
+
+@pytest.fixture(scope="function")
+def fake_modeler_old_backend_252(modeler: Modeler):
+    currentbackend = modeler._grpc_client._backend_version
+    modeler._grpc_client._backend_version = (25, 2, 0)
 
     yield modeler
 

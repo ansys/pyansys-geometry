@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -27,12 +27,14 @@ from typing import TYPE_CHECKING, Optional
 
 from grpc import Channel
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
+from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
-from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
@@ -293,28 +295,35 @@ class Modeler:
         This method creates a file on the server that has the same name and extension
         as the file on the client.
         """
-        from pathlib import Path
+        if self.client.services.version == GeometryApiProtos.V0:
+            from pathlib import Path
 
-        fp_path = Path(file_path).resolve()
+            fp_path = Path(file_path).resolve()
 
-        if not fp_path.exists():
-            raise ValueError(f"Could not find file: {file_path}")
-        if fp_path.is_dir():
-            raise ValueError("File path must lead to a file, not a directory.")
+            if not fp_path.exists():
+                raise ValueError(f"Could not find file: {file_path}")
+            if fp_path.is_dir():
+                raise ValueError("File path must lead to a file, not a directory.")
 
-        file_name = fp_path.name
+            file_name = fp_path.name
 
-        with fp_path.open(mode="rb") as file:
-            data = file.read()
+            with fp_path.open(mode="rb") as file:
+                data = file.read()
 
-        response = self.client.services.designs.upload_file(
-            data=data,
-            file_name=file_name,
-            open_file=open_file,
-            import_options=import_options,
-        )
+            response = self.client.services.designs.upload_file(
+                data=data,
+                file_name=file_name,
+                open_file=open_file,
+                import_options=import_options,
+            )
 
-        return response.get("file_path")
+            return response.get("file_path")
+        else:
+            raise GeometryRuntimeError(
+                "The '_upload_file' method is not supported in protos v1 and beyond. "
+                "Use 'modeler.open_file()' to open files or 'design.insert_file()' "
+                "to insert files into an existing design."
+            )
 
     def _upload_file_stream(
         self,
@@ -343,26 +352,34 @@ class Modeler:
         This method creates a file on the server that has the same name and extension
         as the file on the client.
         """
-        from pathlib import Path
+        if self.client.services.version == GeometryApiProtos.V0:
+            from pathlib import Path
 
-        fp_path = Path(file_path).resolve()
+            fp_path = Path(file_path).resolve()
 
-        if not fp_path.exists():
-            raise ValueError(f"Could not find file: {file_path}")
-        if fp_path.is_dir():
-            raise ValueError("File path must lead to a file, not a directory.")
+            if not fp_path.exists():
+                raise ValueError(f"Could not find file: {file_path}")
+            if fp_path.is_dir():
+                raise ValueError("File path must lead to a file, not a directory.")
 
-        response = self.client.services.designs.upload_file_stream(
-            file_path=fp_path, open_file=open_file, import_options=import_options
-        )
+            response = self.client.services.designs.upload_file_stream(
+                file_path=fp_path, open_file=open_file, import_options=import_options
+            )
 
-        return response.get("file_path")
+            return response.get("file_path")
+        else:
+            raise GeometryRuntimeError(
+                "The '_upload_file_stream' method is not supported with protos v1 and beyond. "
+                "Use 'modeler.open_file()' to open files or 'design.insert_file()' "
+                "to insert files into an existing design."
+            )
 
     def open_file(
         self,
         file_path: str | Path,
         upload_to_server: bool = True,
         import_options: ImportOptions = ImportOptions(),
+        import_options_definitions: ImportOptionsDefinitions = ImportOptionsDefinitions(),
     ) -> "Design":
         """Open a file.
 
@@ -411,8 +428,10 @@ class Modeler:
         if self._design is not None and self._design.is_active:
             self._design.close()
 
-        # Format-specific logic - upload the whole containing folder for assemblies
-        if upload_to_server:
+        # Format-specific logic - upload the whole containing folder for assemblies. If backend's
+        # version is > 26.1.0 we're going to upload the file no matter what, as streaming is
+        # supported.
+        if upload_to_server and self.client.services.version == GeometryApiProtos.V0:
             fp_path = Path(file_path)
             file_size_kb = fp_path.stat().st_size
             if any(
@@ -440,11 +459,31 @@ class Modeler:
                 raise RuntimeError(
                     "File is too large to upload. Service versions above 25R2 support streaming."
                 )
-        else:
+        elif self.client.services.version == GeometryApiProtos.V0:
             self.client.services.designs.open(
                 filepath=file_path,
                 import_options=import_options,
             )
+        else:
+            # Zip file and pass filepath to service to open
+            fp_path = Path(file_path).resolve()
+
+            try:
+                temp_zip_path = prepare_file_for_server_upload(fp_path)
+
+                # Pass the zip file path to the service
+                self.client.services.designs.open(
+                    filepath=temp_zip_path,
+                    original_file_name=fp_path.name,
+                    import_options=import_options,
+                    import_options_definitions=import_options_definitions,
+                    open_mode="new",
+                )
+
+            finally:
+                # Clean up the temporary zip file
+                if temp_zip_path.exists():
+                    temp_zip_path.unlink()
 
         return self.read_existing_design()
 
@@ -547,14 +586,24 @@ class Modeler:
                 # but this method has been tested independently
                 api_version = ApiVersions.parse_input(api_version)
 
-        serv_path = self._upload_file(file_path)
-
+        # Prepare the script path
         self.client.log.debug(f"Running Discovery script file at {file_path}...")
-        response = self.client.services.commands_script.run_script_file(
-            script_path=serv_path,
-            script_args=script_args,
-            api_version=api_version.value if api_version is not None else None,
-        )
+        if self.client.services.version == GeometryApiProtos.V0:
+            serv_path = self._upload_file(file_path)
+            response = self.client.services.commands_script.run_script_file(
+                script_path=serv_path,
+                script_args=script_args,
+                api_version=api_version.value if api_version is not None else None,
+            )
+        else:
+            file_path = Path(file_path).resolve()
+            serv_path = prepare_file_for_server_upload(file_path)
+            response = self.client.services.commands_script.run_script_file(
+                script_path=serv_path,
+                original_path=file_path.name,
+                script_args=script_args,
+                api_version=api_version.value if api_version is not None else None,
+            )
 
         if not response.get("success"):
             raise GeometryRuntimeError(response.get("message"))
