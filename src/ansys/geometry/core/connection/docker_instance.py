@@ -384,12 +384,10 @@ class LocalDockerInstance:
                     "LOG_LEVEL": os.getenv("ANSRV_GEO_LOG_LEVEL", 2),
                     "ENABLE_TRACE": os.getenv("ANSRV_GEO_ENABLE_TRACE", 0),
                     "USE_DEBUG_MODE": os.getenv("ANSRV_GEO_USE_DEBUG_MODE", 0),
+                    "SERVER_ENDPOINT": "50051@0.0.0.0",
                     "ANSYS_GRPC_CERTIFICATES": "/certs"
                     if image.value[1] == "linux"
                     else "C:/certs",
-                    "SERVER_ENDPOINT": "50051@0.0.0.0"
-                    if image.value[2].startswith("windows")
-                    else "",  # This is mostly needed for DMS based images only
                 },
                 command=f"--transport-mode={transport_mode}",
             )
