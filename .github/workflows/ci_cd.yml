@@ -182,11 +182,11 @@ jobs:
         docker-image: ["core-windows-latest", "core-windows-latest-unstable"]
         include:
           # Add tracker-label based on use-tracker
+          # Add experimental flag based on docker-image
           - use-tracker: "no"
             tracker-label: "Without tracker"
           - use-tracker: "yes"
             tracker-label: "With tracker"
-          # Add experimental flag based on docker-image
           - docker-image: "core-windows-latest"
             experimental: false
           - docker-image: "core-windows-latest-unstable"
@@ -391,11 +391,11 @@ jobs:
         docker-image: ["core-linux-latest", "core-linux-latest-unstable"]
         include:
           # Add tracker-label based on use-tracker
+          # Add experimental flag based on docker-image
           - use-tracker: "no"
             tracker-label: "Without tracker"
           - use-tracker: "yes"
             tracker-label: "With tracker"
-          # Add experimental flag based on docker-image
           - docker-image: "core-linux-latest"
             experimental: false
           - docker-image: "core-linux-latest-unstable"
