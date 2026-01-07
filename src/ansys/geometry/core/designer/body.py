@@ -51,6 +51,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
+    check_nurbs_compatibility,
     check_type,
     check_type_all_elements_in_iterable,
     ensure_design_is_active,
@@ -1747,22 +1748,6 @@ class Body(IBody):
     def imprint_curves(  # noqa: D102
         self, faces: list[Face], sketch: Sketch = None, trimmed_curves: list[TrimmedCurve] = None
     ) -> tuple[list[Edge], list[Face]]:
-        """Imprint curves onto the specified faces using a sketch or edges.
-
-        Parameters
-        ----------
-        faces : list[Face]
-            The list of faces to imprint the curves onto.
-        sketch : Sketch, optional
-            The sketch containing curves to imprint.
-        trimmed_curves : list[TrimmedCurve], optional
-            The list of curves to be imprinted. If sketch is provided, this parameter is ignored.
-
-        Returns
-        -------
-        tuple[list[Edge], list[Face]]
-            A tuple containing the list of new edges and faces created by the imprint operation.
-        """
         if sketch is None and self._template._grpc_client.backend_version < (25, 2, 0):
             raise ValueError(
                 "A sketch must be provided for imprinting when using API versions below 25.2.0."
@@ -1770,6 +1755,10 @@ class Body(IBody):
 
         if sketch is None and trimmed_curves is None:
             raise ValueError("Either a sketch or edges must be provided for imprinting.")
+
+        check_nurbs_compatibility(
+            self._grpc_client.backend_version, sketch=sketch, curves=trimmed_curves
+        )
 
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
@@ -1818,6 +1807,8 @@ class Body(IBody):
         closest_face: bool,
         only_one_curve: bool = False,
     ) -> list[Face]:
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
+
         self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         project_response = self._template._grpc_client.services.bodies.project_curves(
@@ -1849,6 +1840,8 @@ class Body(IBody):
         closest_face: bool,
         only_one_curve: bool = False,
     ) -> list[Face]:
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
+
         self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         response = self._template._grpc_client.services.bodies.imprint_projected_curves(
