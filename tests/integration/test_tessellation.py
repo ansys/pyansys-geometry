@@ -26,6 +26,7 @@ import pytest
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.math import Plane, Point2D, UnitVector3D, Vector3D
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.misc.units import UNITS, Quantity
 from ansys.geometry.core.sketch import Sketch
 
@@ -141,6 +142,38 @@ def test_body_tessellate(modeler: Modeler):
     comp_1.bodies[0].translate(UnitVector3D([1, 0, 0]), 1)
 
     assert comp_1.bodies[0]._template._tessellation is None
+
+
+def test_body_tessellate_with_options(modeler: Modeler):
+    """Test the body tessellation with custom tessellation options."""
+    # Create a simple body
+    design = modeler.create_design("TessOptions")
+    sketch = Sketch().circle(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m))
+    body = design.extrude_sketch("Body", sketch, Quantity(2, UNITS.m))
+
+    # Test with default tessellation (no options)
+    mesh_default = body.tessellate(merge=True)
+    assert "PolyData" in str(mesh_default)
+
+    # Test with fine tessellation options (smaller deviations = more triangles)
+    fine_options = TessellationOptions(
+        surface_deviation=0.001, angle_deviation=0.1, max_aspect_ratio=0, max_edge_length=0
+    )
+    mesh_fine = body.tessellate(merge=True, tess_options=fine_options, reset_cache=True)
+    assert "PolyData" in str(mesh_fine)
+    # Fine tessellation should have more cells/points than default
+    assert mesh_fine.n_cells == 156
+    assert mesh_fine.n_points == 160
+
+    # Test with coarse tessellation options (larger deviations = fewer triangles)
+    coarse_options = TessellationOptions(
+        surface_deviation=0.1, angle_deviation=0.5, max_aspect_ratio=0, max_edge_length=0
+    )
+    mesh_coarse = body.tessellate(merge=True, tess_options=coarse_options, reset_cache=True)
+    assert "PolyData" in str(mesh_coarse)
+    # Coarse tessellation should have fewer cells/points than fine
+    assert mesh_coarse.n_cells < mesh_fine.n_cells
+    assert mesh_coarse.n_points < mesh_fine.n_points
 
 
 @pytest.mark.skipif(
