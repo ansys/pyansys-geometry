@@ -155,17 +155,16 @@ def test_body_tessellate_with_options(modeler: Modeler):
     mesh_default = body.tessellate(merge=True)
     assert "PolyData" in str(mesh_default)
 
-    # Test with fine tessellation options (smaller deviations = more triangles)
+    # Test with tessellation options
     fine_options = TessellationOptions(
         surface_deviation=0.001, angle_deviation=0.1, max_aspect_ratio=0, max_edge_length=0
     )
     mesh_fine = body.tessellate(merge=True, tess_options=fine_options, reset_cache=True)
     assert "PolyData" in str(mesh_fine)
-    # Fine tessellation should have more cells/points than default
     assert mesh_fine.n_cells == 156
     assert mesh_fine.n_points == 160
 
-    # Test with coarse tessellation options (larger deviations = fewer triangles)
+    # Test with different tessellation options
     coarse_options = TessellationOptions(
         surface_deviation=0.1, angle_deviation=0.5, max_aspect_ratio=0, max_edge_length=0
     )
