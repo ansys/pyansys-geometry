@@ -638,6 +638,15 @@ def test_rename_named_selection(modeler: Modeler):
     assert design.named_selections[2].name == "CircleAndPolygon"
 
 
+def test_add_member_to_named_selection(modeler: Modeler):
+    """Test for adding members to a ``NamedSelection``."""
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelection_Test")
+
+    # Create 2 Sketch objects and draw a circle and a polygon (all client side)
+    sketch_1 = Sketch()
+
+
 def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
     # Try to vefify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))

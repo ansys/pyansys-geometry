@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Module for creating a named selection."""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import Beam
@@ -253,6 +253,30 @@ class NamedSelection:
             self._vertices = get_vertices_from_ids(self._design, self._ids_cached["vertices"])
 
         return self._vertices
+    
+    @min_backend_version(26, 1, 0)
+    def add_members(
+        self,
+        members: list[Union[Body, Face, Edge, Beam, DesignPoint, Component, Vertex]],
+    ) -> None:
+        """Add a member to the named selection.
+
+        Parameters
+        ----------
+        member : Body, Face, Edge, Beam, DesignPoint, Component, or Vertex
+            The member to add to the named selection.
+        """
+        ids = []
+        for member in members:
+            ids.append(member.id)
+
+        self._grpc_client.services.named_selection.add_members(
+            id=self._id,
+            members=ids,
+        )
+
+        # Update the local cache
+        self.__verify_ns()
 
     def __verify_ns(self) -> None:
         """Verify that the contents of the named selection are up to date."""

@@ -121,3 +121,7 @@ class GRPCNamedSelectionServiceV0(GRPCNamedSelectionService):
 
         # Return the response - empty dictionary
         return {}
+
+    @protect_grpc
+    def add_members(self, **kwargs):  # noqa: D102
+        raise NotImplementedError("GRPCNamedSelectionServiceV0.add_members is not implemented.")
