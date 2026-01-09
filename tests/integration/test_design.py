@@ -640,11 +640,37 @@ def test_rename_named_selection(modeler: Modeler):
 
 def test_add_member_to_named_selection(modeler: Modeler):
     """Test for adding members to a ``NamedSelection``."""
-    # Create your design on the server side
-    design = modeler.create_design("NamedSelection_Test")
+    # Open the design
+    design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
 
-    # Create 2 Sketch objects and draw a circle and a polygon (all client side)
-    sketch_1 = Sketch()
+    # Check that there are 6 Named Selections
+    assert len(design.named_selections) == 6
+
+    # Add a member to the first named selection
+    ns = design.named_selections[0]
+    assert len(ns.bodies) == 1
+    
+    new_body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    new_ns = ns.add_members(bodies=[new_body])
+    assert len(new_ns.bodies) == 2
+    assert np.isin([new_body.id], [body.id for body in new_ns.bodies]).all()
+
+    # Try adding multiple members
+    assert len(new_ns.design_points) == 0
+    assert len(new_ns.faces) == 0
+
+    dp1 = design.add_design_point("dp1", Point3D([1, 0, 0]))
+    dp2 = design.add_design_point("dp2", Point3D([1, 0, 1]))
+    dp3 = design.add_design_point("dp3", Point3D([1, 0, 2]))
+
+    new_ns = new_ns.add_members(
+        design_points=[dp1, dp2, dp3],
+        faces=[new_body.faces[0]]
+    )
+
+    assert len(new_ns.bodies) == 2
+    assert len(new_ns.design_points) == 3
+    assert len(new_ns.faces) == 1
 
 
 def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):

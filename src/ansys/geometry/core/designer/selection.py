@@ -97,21 +97,14 @@ class NamedSelection:
         self._design = design
         self._grpc_client = grpc_client
 
-        # Create empty arrays if there are none of a type
-        if bodies is None:
-            bodies = []
-        if faces is None:
-            faces = []
-        if edges is None:
-            edges = []
-        if beams is None:
-            beams = []
-        if design_points is None:
-            design_points = []
-        if components is None:
-            components = []
-        if vertices is None:
-            vertices = []
+        # Convert None to empty lists
+        bodies = bodies if bodies is not None else []
+        faces = faces if faces is not None else []
+        edges = edges if edges is not None else []
+        beams = beams if beams is not None else []
+        design_points = design_points if design_points is not None else []
+        components = components if components is not None else []
+        vertices = vertices if vertices is not None else []
 
         # Instantiate
         self._bodies = bodies
@@ -254,25 +247,74 @@ class NamedSelection:
 
         return self._vertices
     
-    @min_backend_version(26, 1, 0)
     def add_members(
         self,
-        members: list[Union[Body, Face, Edge, Beam, DesignPoint, Component, Vertex]],
-    ) -> None:
-        """Add a member to the named selection.
+        bodies: list[Body] | None = None,
+        faces: list[Face] | None = None,
+        edges: list[Edge] | None = None,
+        beams: list[Beam] | None = None,
+        design_points: list[DesignPoint] | None = None,
+        components: list[Component] | None = None,
+        vertices: list[Vertex] | None = None,
+    ) -> "NamedSelection":
+        """Add members to the named selection.
 
         Parameters
         ----------
-        member : Body, Face, Edge, Beam, DesignPoint, Component, or Vertex
-            The member to add to the named selection.
-        """
-        ids = []
-        for member in members:
-            ids.append(member.id)
+        members : list of Body, Face, Edge, Beam, DesignPoint, Component, or Vertex
+            The members to add to the named selection.
 
-        self._grpc_client.services.named_selection.add_members(
+        Returns
+        -------
+        NamedSelection
+            The new named selection with the added members.
+
+        Notes
+        -----
+        Named selections are immutable. This method creates a new named selection with the added 
+        members.
+        """
+        # Convert None to empty lists
+        bodies = bodies if bodies is not None else []
+        faces = faces if faces is not None else []
+        edges = edges if edges is not None else []
+        beams = beams if beams is not None else []
+        design_points = design_points if design_points is not None else []
+        components = components if components is not None else []
+        vertices = vertices if vertices is not None else []
+        
+        new_ns = NamedSelection(
+            self._name,
+            self._design,
+            self._grpc_client,
+            bodies=bodies + self.bodies,
+            faces=faces + self.faces,
+            edges=edges + self.edges,
+            beams=beams + self.beams,
+            design_points=design_points + self.design_points,
+            components=components + self.components,
+            vertices=vertices + self.vertices,
+        )
+
+        # Delete the old NS server-side
+        self._grpc_client.services.named_selection.delete_named_selection(id=self._id)
+        
+        return new_ns
+
+    def remove_members(
+        self,
+        members: list[Union[Body, Face, Edge, Beam, DesignPoint, Component, Vertex]],
+    ) -> None:
+        """Remove members from the named selection.
+
+        Parameters
+        ----------
+        members : list of Body, Face, Edge, Beam, DesignPoint, Component, or Vertex
+            The members to remove from the named selection.
+        """
+        self._grpc_client.services.named_selection.remove_members(
             id=self._id,
-            members=ids,
+            members=[member.id for member in members],
         )
 
         # Update the local cache

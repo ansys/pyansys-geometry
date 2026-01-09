@@ -141,21 +141,3 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
 
         # Return the response - empty dictionary
         return {}
-
-    @protect_grpc
-    def add_members(self, **kwargs):  # noqa: D102
-        from ansys.api.discovery.v1.design.selections.namedselection_pb2 import (
-            AddMembersRequest,
-        )
-
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = AddMembersRequest(
-            named_selection_id=build_grpc_id(kwargs["id"]),
-            members_ids=[build_grpc_id(id) for id in kwargs["members"]],
-        )
-
-        # Call the gRPC service
-        self.stub.AddMembers(request)
-
-        # Return the response - empty dictionary
-        return {}
