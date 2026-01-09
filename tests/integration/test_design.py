@@ -640,20 +640,21 @@ def test_rename_named_selection(modeler: Modeler):
 
 def test_add_member_to_named_selection(modeler: Modeler):
     """Test for adding members to a ``NamedSelection``."""
-    # Open the design
-    design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
+    # Create the design
+    design = modeler.create_design("named_selection_addition")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    # Check that there are 6 Named Selections
-    assert len(design.named_selections) == 6
+    design.create_named_selection("box_ns", bodies=[box])
+    assert len(design.named_selections) == 1
 
     # Add a member to the first named selection
     ns = design.named_selections[0]
     assert len(ns.bodies) == 1
     
-    new_body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    new_ns = ns.add_members(bodies=[new_body])
+    box2 = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    new_ns = ns.add_members(bodies=[box2])
     assert len(new_ns.bodies) == 2
-    assert np.isin([new_body.id], [body.id for body in new_ns.bodies]).all()
+    assert np.isin([box.id, box2.id], [body.id for body in new_ns.bodies]).all()
 
     # Try adding multiple members
     assert len(new_ns.design_points) == 0
@@ -665,7 +666,7 @@ def test_add_member_to_named_selection(modeler: Modeler):
 
     new_ns = new_ns.add_members(
         design_points=[dp1, dp2, dp3],
-        faces=[new_body.faces[0]]
+        faces=[box2.faces[0]]
     )
 
     assert len(new_ns.bodies) == 2
@@ -675,14 +676,22 @@ def test_add_member_to_named_selection(modeler: Modeler):
 
 def test_remove_member_from_named_selection(modeler: Modeler):
     """Test for removing members from a ``NamedSelection``."""
-    # Open the design
-    design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
+    # Creatae the design
+    design = modeler.create_design("named_selection_removal")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    beam = design.create_beam(
+        Point3D([0, 0, 0]),
+        Point3D([1, 1, 1]),
+        design.add_beam_circular_profile("CircleProfile", Quantity(10, UNITS.mm))
+    )
+    dp = design.add_design_point("dp1", Point3D([1, 0, 0]))
 
-    # Check that there are 6 Named Selections
-    assert len(design.named_selections) == 6
+    design.create_named_selection("ns", bodies=[box], beams=[beam], design_points=[dp])
+    design.create_named_selection("ns2", bodies=[box])
+    assert len(design.named_selections) == 2
 
     # Add a member to the first named selection
-    ns = design._named_selections["Group2"]
+    ns = design._named_selections["ns"]
     assert len(ns.bodies) == 1
     assert len(ns.beams) == 1
     assert len(ns.design_points) == 1
@@ -694,7 +703,7 @@ def test_remove_member_from_named_selection(modeler: Modeler):
     assert len(ns.design_points) == 1
 
     # Try to remove from a NS with only 1 body
-    ns = design.named_selections[0]
+    ns = design._named_selections["ns2"]
     assert len(ns.bodies) == 1
 
     with pytest.raises(
