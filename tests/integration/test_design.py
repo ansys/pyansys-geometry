@@ -650,7 +650,7 @@ def test_add_member_to_named_selection(modeler: Modeler):
     # Add a member to the first named selection
     ns = design.named_selections[0]
     assert len(ns.bodies) == 1
-    
+
     box2 = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     new_ns = ns.add_members(bodies=[box2])
     assert len(new_ns.bodies) == 2
@@ -664,10 +664,7 @@ def test_add_member_to_named_selection(modeler: Modeler):
     dp2 = design.add_design_point("dp2", Point3D([1, 0, 1]))
     dp3 = design.add_design_point("dp3", Point3D([1, 0, 2]))
 
-    new_ns = new_ns.add_members(
-        design_points=[dp1, dp2, dp3],
-        faces=[box2.faces[0]]
-    )
+    new_ns = new_ns.add_members(design_points=[dp1, dp2, dp3], faces=[box2.faces[0]])
 
     assert len(new_ns.bodies) == 2
     assert len(new_ns.design_points) == 3
@@ -682,7 +679,7 @@ def test_remove_member_from_named_selection(modeler: Modeler):
     beam = design.create_beam(
         Point3D([0, 0, 0]),
         Point3D([1, 1, 1]),
-        design.add_beam_circular_profile("CircleProfile", Quantity(10, UNITS.mm))
+        design.add_beam_circular_profile("CircleProfile", Quantity(10, UNITS.mm)),
     )
     dp = design.add_design_point("dp1", Point3D([1, 0, 0]))
 
