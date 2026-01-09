@@ -31,6 +31,7 @@ from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.vertex import Vertex
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import (
     get_beams_from_ids,
     get_bodies_from_ids,
@@ -274,6 +275,9 @@ class NamedSelection:
         Named selections are immutable. This method creates a new named selection with the added 
         members.
         """
+        # Update cache
+        self.__verify_ns()
+
         # Convert None to empty lists
         bodies = bodies if bodies is not None else []
         faces = faces if faces is not None else []
@@ -287,13 +291,13 @@ class NamedSelection:
             self._name,
             self._design,
             self._grpc_client,
-            bodies=bodies + self.bodies,
-            faces=faces + self.faces,
-            edges=edges + self.edges,
-            beams=beams + self.beams,
-            design_points=design_points + self.design_points,
-            components=components + self.components,
-            vertices=vertices + self.vertices,
+            bodies=bodies + self._bodies,
+            faces=faces + self._faces,
+            edges=edges + self._edges,
+            beams=beams + self._beams,
+            design_points=design_points + self._design_points,
+            components=components + self._components,
+            vertices=vertices + self._vertices,
         )
 
         # Delete the old NS server-side
@@ -304,21 +308,42 @@ class NamedSelection:
     def remove_members(
         self,
         members: list[Union[Body, Face, Edge, Beam, DesignPoint, Component, Vertex]],
-    ) -> None:
+    ) -> "NamedSelection":
         """Remove members from the named selection.
 
         Parameters
         ----------
         members : list of Body, Face, Edge, Beam, DesignPoint, Component, or Vertex
             The members to remove from the named selection.
-        """
-        self._grpc_client.services.named_selection.remove_members(
-            id=self._id,
-            members=[member.id for member in members],
-        )
 
-        # Update the local cache
+        Returns
+        -------
+        NamedSelection
+            The new named selection with the members removed.
+        """
+        # Update cache
         self.__verify_ns()
+
+        # Check to make sure NS will not be empty after removal
+        if (
+            len(members) >= len(self._bodies) + len(self._faces) + len(self._edges)
+            + len(self._beams) + len(self._design_points) + len(self._components)
+            + len(self._vertices)
+        ):
+            raise GeometryRuntimeError("NamedSelection cannot be empty after removal.")
+
+        return NamedSelection(
+            self._name,
+            self._design,
+            self._grpc_client,
+            bodies=[body for body in self._bodies if body not in members],
+            faces=[face for face in self._faces if face not in members],
+            edges=[edge for edge in self._edges if edge not in members],
+            beams=[beam for beam in self._beams if beam not in members],
+            design_points=[dp for dp in self._design_points if dp not in members],
+            components=[component for component in self._components if component not in members],
+            vertices=[vertex for vertex in self._vertices if vertex not in members],
+        )
 
     def __verify_ns(self) -> None:
         """Verify that the contents of the named selection are up to date."""

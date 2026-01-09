@@ -673,6 +673,37 @@ def test_add_member_to_named_selection(modeler: Modeler):
     assert len(new_ns.faces) == 1
 
 
+def test_remove_member_from_named_selection(modeler: Modeler):
+    """Test for removing members from a ``NamedSelection``."""
+    # Open the design
+    design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
+
+    # Check that there are 6 Named Selections
+    assert len(design.named_selections) == 6
+
+    # Add a member to the first named selection
+    ns = design._named_selections["Group2"]
+    assert len(ns.bodies) == 1
+    assert len(ns.beams) == 1
+    assert len(ns.design_points) == 1
+
+    # Remove the body from the named selection
+    ns = ns.remove_members(members=[ns.bodies[0]])
+    assert len(ns.bodies) == 0
+    assert len(ns.beams) == 1
+    assert len(ns.design_points) == 1
+
+    # Try to remove from a NS with only 1 body
+    ns = design.named_selections[0]
+    assert len(ns.bodies) == 1
+
+    with pytest.raises(
+        GeometryRuntimeError,
+        match="NamedSelection cannot be empty after removal.",
+    ):
+        ns.remove_members(members=[ns.bodies[0]])
+
+
 def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
     # Try to vefify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
