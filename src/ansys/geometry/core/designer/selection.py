@@ -247,7 +247,7 @@ class NamedSelection:
             self._vertices = get_vertices_from_ids(self._design, self._ids_cached["vertices"])
 
         return self._vertices
-    
+
     def add_members(
         self,
         bodies: list[Body] | None = None,
@@ -272,7 +272,7 @@ class NamedSelection:
 
         Notes
         -----
-        Named selections are immutable. This method creates a new named selection with the added 
+        Named selections are immutable. This method creates a new named selection with the added
         members.
         """
         # Update cache
@@ -286,7 +286,7 @@ class NamedSelection:
         design_points = design_points if design_points is not None else []
         components = components if components is not None else []
         vertices = vertices if vertices is not None else []
-        
+
         new_ns = NamedSelection(
             self._name,
             self._design,
@@ -302,7 +302,7 @@ class NamedSelection:
 
         # Delete the old NS server-side
         self._grpc_client.services.named_selection.delete_named_selection(id=self._id)
-        
+
         return new_ns
 
     def remove_members(
@@ -325,11 +325,9 @@ class NamedSelection:
         self.__verify_ns()
 
         # Check to make sure NS will not be empty after removal
-        if (
-            len(members) >= len(self._bodies) + len(self._faces) + len(self._edges)
-            + len(self._beams) + len(self._design_points) + len(self._components)
-            + len(self._vertices)
-        ):
+        if len(members) >= len(self._bodies) + len(self._faces) + len(self._edges) + len(
+            self._beams
+        ) + len(self._design_points) + len(self._components) + len(self._vertices):
             raise GeometryRuntimeError("NamedSelection cannot be empty after removal.")
 
         return NamedSelection(
