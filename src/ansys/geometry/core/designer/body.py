@@ -1471,95 +1471,121 @@ class MasterBody(IBody):
         from vtkmodules.vtkCommonCore import vtkPoints
         from vtkmodules.vtkCommonDataModel import vtkCellArray, vtkMultiBlockDataSet, vtkPolyData
 
+        def _process_vertices(vertex_data: list[float]):
+            """Process vertex data and create VTK points."""
+            points = vtkPoints()
+            # Each vertex has 3 coordinates (x, y, z) and vertex_data
+            # is a flat list, so we reshape it accordingly
+            point_data = np.array(vertex_data).reshape(-1, 3)
+            for point in point_data:
+                points.InsertNextPoint(point[0], point[1], point[2])
+            return points
+
+        def _process_faces(face_data: list[int]):
+            """Process face data and create VTK cells."""
+            cells = vtkCellArray()
+            cell_array = np.array(face_data)
+
+            # Algorithm to read the cell array:
+            # The first integer indicates the number of points that define the face.
+            # The next 'count' integers are the point indices.
+            # This pattern repeats for all faces.
+            if len(cell_array) > 0:
+                i = 0
+                while i < len(cell_array):
+                    if i < len(cell_array):
+                        count = int(cell_array[i])
+                        if i + count < len(cell_array):
+                            cells.InsertNextCell(count)
+                            for j in range(count):
+                                cells.InsertCellPoint(int(cell_array[i + 1 + j]))
+                            i += count + 1
+                        else:
+                            break
+                    else:
+                        break
+            return cells
+
+        def _process_edges(vertex_data: list[float]):
+            """Process edge data and create VTK line cells."""
+            line_cells = vtkCellArray()
+
+            # Each line is defined by two consecutive vertices, and
+            # each vertex has 3 coordinates (x, y, z)... so the number of lines
+            # is total number of vertices divided by 3, minus 1
+            n_lines = len(vertex_data) // 3 - 1
+            if n_lines > 0:
+                for i in range(n_lines):
+                    line_cells.InsertNextCell(2)
+                    line_cells.InsertCellPoint(i)
+                    line_cells.InsertCellPoint(i + 1)
+            return line_cells
+
+        def _create_polydata_from_tess_data(tess_data: dict):
+            """Create a VTK PolyData object from tessellation data."""
+            if not tess_data or len(tess_data.get("vertices", [])) == 0:
+                return None
+
+            polydata = vtkPolyData()
+            vertex_data = tess_data["vertices"]
+
+            # Set points
+            points = _process_vertices(vertex_data)
+            polydata.SetPoints(points)
+
+            # Set face cells
+            if "faces" in tess_data:
+                cells = _process_faces(tess_data["faces"])
+                polydata.SetPolys(cells)
+
+            # Set edge lines
+            if include_edges and tess_data.get("is_edge", False):
+                line_cells = _process_edges(vertex_data)
+                polydata.SetLines(line_cells)
+
+            return polydata if polydata.GetNumberOfPoints() > 0 else None
+
+        def _merge_vtk_objects(
+            vtk_objects: list[vtkPolyData], merge: bool
+        ) -> Union[vtkPolyData, vtkMultiBlockDataSet]:
+            """Merge VTK objects into a single PolyData or MultiBlock."""
+            if not vtk_objects:  # pragma: no cover
+                self._grpc_client.log.warning("No valid tessellation data to convert.")
+                return vtkPolyData() if merge else vtkMultiBlockDataSet()
+
+            if merge:
+                append_filter = vtk.vtkAppendPolyData()
+                for vtk_obj in vtk_objects:
+                    append_filter.AddInputData(vtk_obj)
+                append_filter.Update()
+                return append_filter.GetOutput()
+            else:
+                multiblock = vtkMultiBlockDataSet()
+                multiblock.SetNumberOfBlocks(len(vtk_objects))
+                for i, vtk_obj in enumerate(vtk_objects):
+                    multiblock.SetBlock(i, vtk_obj)
+                return multiblock
+
+        ###### Main method logic #######
+        # Use provided raw tessellation data or fetch it
         _raw_tessellation = _raw_tessellation or self.get_raw_tessellation(
             include_faces=include_faces, include_edges=include_edges
         )
 
+        # Check if tessellation data is available
         if not _raw_tessellation:
             self._grpc_client.log.warning("No tessellation data available.")
             return vtkPolyData() if merge else vtkMultiBlockDataSet()
 
         # Convert raw tessellation data to VTK PolyData objects
         vtk_objects = []
-
         for _, tess_data in _raw_tessellation.items():
-            if tess_data and len(tess_data.get("vertices", [])) > 0:
-                # Create VTK PolyData
-                polydata = vtkPolyData()
+            polydata = _create_polydata_from_tess_data(tess_data)
+            if polydata:
+                vtk_objects.append(polydata)
 
-                # Add points - vertices are stored as flat list [x1,y1,z1,x2,y2,z2,...]
-                points = vtkPoints()
-                vertex_data = tess_data["vertices"]
-                # Reshape flat list into groups of 3 (x, y, z coordinates)
-                point_data = np.array(vertex_data).reshape(-1, 3)
-                for point in point_data:
-                    points.InsertNextPoint(point[0], point[1], point[2])
-                polydata.SetPoints(points)
-
-                # Add cells
-                if "faces" in tess_data:
-                    cells = vtkCellArray()
-                    # Handle different possible keys for triangle data
-                    cell_data = tess_data.get("faces", [])
-                    cell_array = np.array(cell_data)
-
-                    if len(cell_array) > 0:
-                        # Array format: [count, p1, p2, p3, count, p1, p2, p3, ...]
-                        # Parse the flat array where each cell starts with a count
-                        # followed by point indices
-                        i = 0
-                        while i < len(cell_array):
-                            if i < len(cell_array):  # Ensure we can read the count
-                                count = int(cell_array[i])
-                                if i + count < len(cell_array):  # Ensure we have enough indices
-                                    cells.InsertNextCell(count)
-                                    for j in range(count):
-                                        cells.InsertCellPoint(int(cell_array[i + 1 + j]))
-                                    i += count + 1  # Move to next cell (count + indices)
-                                else:
-                                    break  # Not enough data left
-                            else:
-                                break  # Can't read count
-                        polydata.SetPolys(cells)
-
-                # Add lines for edges if requested and "is_edge" is True in tess_data
-                # Lines are made from the vertices directly
-                if include_edges and tess_data.get("is_edge", False):
-                    line_cells = vtkCellArray()
-                    # Take the vertex_data directly (those are the vertices) and
-                    # build lines between consecutive points
-                    n_lines = len(vertex_data) // 3 - 1  # Number of lines is number of points - 1
-                    line_array = [
-                        (i, i + 1) for i in range(n_lines)
-                    ]  # Create line segments between consecutive points
-                    if len(line_array) > 0:
-                        for line in line_array:
-                            line_cells.InsertNextCell(2)  # 2 points per line
-                            line_cells.InsertCellPoint(line[0])
-                            line_cells.InsertCellPoint(line[1])
-                        polydata.SetLines(line_cells)
-
-                if polydata.GetNumberOfPoints() > 0:
-                    vtk_objects.append(polydata)
-
-        if not vtk_objects:  # pragma: no cover
-            self._grpc_client.log.warning("No valid tessellation data to convert.")
-            return vtkPolyData() if merge else vtkMultiBlockDataSet()
-
-        if merge:
-            # Merge all VTK PolyData objects into one
-            append_filter = vtk.vtkAppendPolyData()
-            for vtk_obj in vtk_objects:
-                append_filter.AddInputData(vtk_obj)
-            append_filter.Update()
-            return append_filter.GetOutput()
-        else:
-            # Return as VTK MultiBlock
-            multiblock = vtkMultiBlockDataSet()
-            multiblock.SetNumberOfBlocks(len(vtk_objects))
-            for i, vtk_obj in enumerate(vtk_objects):
-                multiblock.SetBlock(i, vtk_obj)
-            return multiblock
+        # Merge VTK objects if required
+        return _merge_vtk_objects(vtk_objects, merge)
 
     @reset_tessellation_cache
     @check_input_types
