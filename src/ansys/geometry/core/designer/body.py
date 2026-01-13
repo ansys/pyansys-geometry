@@ -692,6 +692,8 @@ class IBody(ABC):
     def tessellate_to_vtk(
         self,
         merge: bool = False,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
         include_faces: bool = True,
         include_edges: bool = False,
         _raw_tessellation: dict | None = None,
@@ -704,6 +706,11 @@ class IBody(ABC):
             Whether to merge the body into a single mesh. When ``False`` (default), the
             number of triangles are preserved and only the topology is merged.
             When ``True``, the individual faces of the tessellation are merged.
+        tess_options : TessellationOptions | None, default: None
+            A set of options to determine the tessellation quality.
+        reset_cache : bool, default: False
+            Whether to reset the tessellation cache and re-request the tessellation
+            from the server.
         include_faces : bool, default: True
             Whether to include face tessellation data in the output.
         include_edges : bool, default: False
@@ -1461,6 +1468,8 @@ class MasterBody(IBody):
     def tessellate_to_vtk(  # noqa: D102
         self,
         merge: bool = False,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
         include_faces: bool = True,
         include_edges: bool = False,
         _raw_tessellation: dict | None = None,
@@ -1569,7 +1578,10 @@ class MasterBody(IBody):
         ###### Main method logic #######
         # Use provided raw tessellation data or fetch it
         _raw_tessellation = _raw_tessellation or self.get_raw_tessellation(
-            include_faces=include_faces, include_edges=include_edges
+            tess_options=tess_options,
+            reset_cache=reset_cache,
+            include_faces=include_faces,
+            include_edges=include_edges,
         )
 
         # Check if tessellation data is available
@@ -2163,16 +2175,25 @@ class Body(IBody):
     def tessellate_to_vtk(  # noqa: D102
         self,
         merge: bool = False,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
         include_faces: bool = True,
         include_edges: bool = False,
         _raw_tessellation: dict | None = None,
     ) -> Union["vtkPolyData", "vtkMultiBlockDataSet"]:
         return self._template.tessellate_to_vtk(
             merge=merge,
+            tess_options=tess_options,
+            reset_cache=reset_cache,
             include_faces=include_faces,
             include_edges=include_edges,
             _raw_tessellation=_raw_tessellation
-            or self.get_raw_tessellation(include_faces=include_faces, include_edges=include_edges),
+            or self.get_raw_tessellation(
+                tess_options=tess_options,
+                reset_cache=reset_cache,
+                include_faces=include_faces,
+                include_edges=include_edges,
+            ),
         )
 
     @ensure_design_is_active
