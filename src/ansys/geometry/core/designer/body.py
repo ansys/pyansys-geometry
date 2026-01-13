@@ -689,7 +689,7 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def tessellate_to_vtk(
+    def get_vtk_tessellation(
         self,
         merge: bool = False,
         tess_options: TessellationOptions | None = None,
@@ -1465,7 +1465,7 @@ class MasterBody(IBody):
             return comp
 
     @graphics_required
-    def tessellate_to_vtk(  # noqa: D102
+    def get_vtk_tessellation(  # noqa: D102
         self,
         merge: bool = False,
         tess_options: TessellationOptions | None = None,
@@ -2172,7 +2172,7 @@ class Body(IBody):
         )
 
     @graphics_required
-    def tessellate_to_vtk(  # noqa: D102
+    def get_vtk_tessellation(  # noqa: D102
         self,
         merge: bool = False,
         tess_options: TessellationOptions | None = None,
@@ -2181,7 +2181,7 @@ class Body(IBody):
         include_edges: bool = False,
         _raw_tessellation: dict | None = None,
     ) -> Union["vtkPolyData", "vtkMultiBlockDataSet"]:
-        return self._template.tessellate_to_vtk(
+        return self._template.get_vtk_tessellation(
             merge=merge,
             tess_options=tess_options,
             reset_cache=reset_cache,

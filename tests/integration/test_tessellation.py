@@ -350,7 +350,7 @@ def test_get_body_raw_tessellation(modeler: Modeler):
 @pytest.mark.skipif(
     not are_graphics_available(), reason="Skipping due to graphics requirements missing"
 )
-def test_body_tessellate_to_vtk(modeler: Modeler):
+def test_body_get_vtk_tessellation(modeler: Modeler):
     """Test the body tessellation to VTK objects."""
     from vtkmodules.vtkCommonDataModel import vtkMultiBlockDataSet, vtkPolyData
 
@@ -362,26 +362,26 @@ def test_body_tessellate_to_vtk(modeler: Modeler):
     design = modeler.create_design("VTK_Test_Design")
     body = design.extrude_sketch(name="CylinderBody", sketch=sketch, distance=Quantity(80, UNITS.m))
 
-    # Test tessellate_to_vtk without merge (should return vtkMultiBlockDataSet)
-    vtk_multiblock = body.tessellate_to_vtk(merge=False, include_faces=True, include_edges=False)
+    # Test get_vtk_tessellation without merge (should return vtkMultiBlockDataSet)
+    vtk_multiblock = body.get_vtk_tessellation(merge=False, include_faces=True, include_edges=False)
     assert isinstance(vtk_multiblock, vtkMultiBlockDataSet)
     assert vtk_multiblock.GetNumberOfBlocks() > 0
 
-    # Test tessellate_to_vtk with merge (should return vtkPolyData)
-    vtk_polydata = body.tessellate_to_vtk(merge=True, include_faces=True, include_edges=False)
+    # Test get_vtk_tessellation with merge (should return vtkPolyData)
+    vtk_polydata = body.get_vtk_tessellation(merge=True, include_faces=True, include_edges=False)
     assert isinstance(vtk_polydata, vtkPolyData)
     assert vtk_polydata.GetNumberOfPoints() > 0
     assert vtk_polydata.GetNumberOfCells() > 0
 
     # Test with both faces and edges
-    vtk_with_edges = body.tessellate_to_vtk(merge=True, include_faces=True, include_edges=True)
+    vtk_with_edges = body.get_vtk_tessellation(merge=True, include_faces=True, include_edges=True)
     assert isinstance(vtk_with_edges, vtkPolyData)
     assert vtk_with_edges.GetNumberOfPoints() > 0
     assert vtk_with_edges.GetNumberOfCells() > 0
 
     # Test with provided raw tessellation data
     raw_tess = body.get_raw_tessellation(include_faces=True, include_edges=False)
-    vtk_from_raw = body.tessellate_to_vtk(merge=True, _raw_tessellation=raw_tess)
+    vtk_from_raw = body.get_vtk_tessellation(merge=True, _raw_tessellation=raw_tess)
     assert isinstance(vtk_from_raw, vtkPolyData)
     assert vtk_from_raw.GetNumberOfPoints() > 0
     assert vtk_from_raw.GetNumberOfCells() > 0
@@ -390,8 +390,8 @@ def test_body_tessellate_to_vtk(modeler: Modeler):
 @pytest.mark.skipif(
     not are_graphics_available(), reason="Skipping due to graphics requirements missing"
 )
-def test_body_tessellate_to_vtk_empty_data(modeler: Modeler):
-    """Test tessellate_to_vtk with empty or invalid data."""
+def test_body_get_vtk_tessellation_empty_data(modeler: Modeler):
+    """Test get_vtk_tessellation with empty or invalid data."""
     from vtkmodules.vtkCommonDataModel import vtkMultiBlockDataSet, vtkPolyData
 
     # Create a simple box
@@ -407,11 +407,11 @@ def test_body_tessellate_to_vtk_empty_data(modeler: Modeler):
     body.get_raw_tessellation = lambda **kwargs: {}
     body._template.get_raw_tessellation = lambda **kwargs: {}
 
-    empty_vtk_merged = body.tessellate_to_vtk(merge=True, _raw_tessellation={})
+    empty_vtk_merged = body.get_vtk_tessellation(merge=True, _raw_tessellation={})
     assert isinstance(empty_vtk_merged, vtkPolyData)
     assert empty_vtk_merged.GetNumberOfPoints() == 0
 
-    empty_vtk_multiblock = body.tessellate_to_vtk(merge=False, _raw_tessellation={})
+    empty_vtk_multiblock = body.get_vtk_tessellation(merge=False, _raw_tessellation={})
     assert isinstance(empty_vtk_multiblock, vtkMultiBlockDataSet)
     assert empty_vtk_multiblock.GetNumberOfBlocks() == 0
 
@@ -430,7 +430,7 @@ def test_vtk_integration_with_pyvista(modeler: Modeler):
     body = design.extrude_sketch("Circle", sketch, Quantity(10, UNITS.m))
 
     # Get VTK object and wrap with PyVista
-    vtk_obj = body.tessellate_to_vtk(merge=True, include_faces=True, include_edges=True)
+    vtk_obj = body.get_vtk_tessellation(merge=True, include_faces=True, include_edges=True)
     pv_obj = pv.wrap(vtk_obj)
 
     # Verify PyVista object properties
