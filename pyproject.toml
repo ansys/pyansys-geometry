@@ -81,7 +81,7 @@ doc = [
   "myst-parser==4.0.1",
   "nbconvert==7.16.6",
   "nbsphinx==0.9.8",
-  "notebook==7.5.1",
+  "notebook==7.5.2",
   "numpydoc==1.10.0",
   "pdf2image==1.17.0",
   "quarto-cli==1.8.25",
