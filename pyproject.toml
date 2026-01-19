@@ -110,7 +110,7 @@ general-all = [
   "pint==0.25.2",
   "protobuf==6.33.4",
   "pygltflib==1.16.5",
-  "pyvista[jupyter]==0.46.4",
+  "pyvista[jupyter]==0.46.5",
   "requests==2.32.5",
   "scipy==1.15.3; python_version<'3.11'",
   "scipy==1.16.3; python_version>='3.11'",
