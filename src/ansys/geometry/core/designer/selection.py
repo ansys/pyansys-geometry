@@ -262,8 +262,20 @@ class NamedSelection:
 
         Parameters
         ----------
-        members : list of Body, Face, Edge, Beam, DesignPoint, Component, or Vertex
-            The members to add to the named selection.
+    bodies : list[Body], default: None
+        All bodies to add to the named selection.
+    faces : list[Face], default: None
+        All faces to add to the named selection.
+    edges : list[Edge], default: None
+        All edges to add to the named selection.
+    beams : list[Beam], default: None
+        All beams to add to the named selection.
+    design_points : list[DesignPoints], default: None
+        All design points to add to the named selection.
+    components: list[Component], default: None
+        All components to add to the named selection.
+    vertices: list[Vertex], default: None
+        All vertices to add to the named selection.
 
         Returns
         -------
