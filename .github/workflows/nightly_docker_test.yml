@@ -165,7 +165,7 @@ jobs:
           PROTO_VERSION: ${{ matrix.proto-version }}
           USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --proto-version=$env:PROTO_VERSION --use-tracker=$env:USE-TRACKER
+          pytest -v --proto-version=$env:PROTO_VERSION --use-tracker=$env:USE_TRACKER
 
       - name: Stop the Geometry service
         if: always()
