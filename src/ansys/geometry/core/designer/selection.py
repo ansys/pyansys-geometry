@@ -346,7 +346,7 @@ class NamedSelection:
         ) + len(self._design_points) + len(self._components) + len(self._vertices):
             raise GeometryRuntimeError("NamedSelection cannot be empty after removal.")
 
-        new_ns =  NamedSelection(
+        new_ns = NamedSelection(
             self._name,
             self._design,
             self._grpc_client,
@@ -364,7 +364,7 @@ class NamedSelection:
 
         # Reassign the named selection to self so that changes are reflected
         self = new_ns
-        
+
         return self
 
     def __verify_ns(self) -> None:
