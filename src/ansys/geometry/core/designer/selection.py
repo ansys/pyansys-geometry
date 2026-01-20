@@ -334,7 +334,8 @@ class NamedSelection:
         Returns
         -------
         NamedSelection
-            The new named selection with the members removed.
+            The new named selection with the members removed. Changes are also reflected on
+            the same named selection upon which the method is called.
         """
         # Update cache
         self.__verify_ns()
