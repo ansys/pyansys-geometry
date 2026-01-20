@@ -155,3 +155,46 @@ class TessellationOptions:
         Whether triangles on opposite sides of an edge should match.
         """
         return self._watertight
+
+
+@dataclass
+class RayFireOptions:
+    """Additional options for ray fire operations.
+
+    Parameters
+    ----------
+    radius : Real
+        The radius of the ray.
+    direction : UnitVector3D
+        The direction for the ray to be fired in.
+    max_distance : Real
+        The maximum distance the ray should travel.
+    min_distance : Real
+        The minimum distance the ray should travel.
+    tight_tolerance : bool
+        Whether to use a tight tolerance for the ray fire operation.
+    pick_back_faces : bool
+        Whether to pick back faces during the ray fire operation.
+    max_hits : int
+        The maximum number of hits the ray should register.
+    request_params : bool
+        Whether to request additional parameters for the ray fire operation.
+    request_secondary : bool
+        Whether to request secondary hits for the ray fire operation.
+    """
+
+    from ansys.geometry.core.math.vector import UnitVector3D
+
+    radius: Real
+    direction: UnitVector3D
+    max_distance: Real
+    min_distance: Real
+    tight_tolerance: bool
+    pick_back_faces: bool
+    max_hits: int
+    request_params: bool
+    request_secondary: bool
+
+    def to_dict(self):
+        """Provide the dictionary representation of the RayFireOptions class."""
+        return {k: v for k, v in asdict(self).items()}

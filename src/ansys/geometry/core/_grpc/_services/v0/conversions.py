@@ -30,6 +30,7 @@ from ansys.api.dbu.v0.dbumodels_pb2 import (
     PartExportFormat as GRPCPartExportFormat,
 )
 from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus as GRPCUpdateStatus
+from ansys.api.geometry.v0.commands_pb2 import RayFireAddtionalOptions as GRPCRayFireOptions
 from ansys.api.geometry.v0.models_pb2 import (
     Arc as GRPCArc,
     Circle as GRPCCircle,
@@ -77,7 +78,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.plane import Plane
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
-    from ansys.geometry.core.misc.options import TessellationOptions
+    from ansys.geometry.core.misc.options import RayFireOptions, TessellationOptions
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
         ParameterUpdateStatus,
@@ -1357,6 +1358,31 @@ def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
         )
     )
 
+
+def from_rayfire_options_to_grpc_rayfire_options(options: "RayFireOptions") -> "GRPCRayFireOptions":
+    """Convert a ``RayFireOptions`` class to a gRPC RayFireOptions message.
+
+    Parameters
+    ----------
+    options : RayFireOptions
+        Source ray fire options.
+
+    Returns
+    -------
+    GRPCRayFireOptions
+        Geometry service gRPC RayFireOptions message.
+    """
+    return GRPCRayFireOptions(
+        radius=options.radius,
+        direction=from_unit_vector_to_grpc_direction(options.direction),
+        max_distance=options.max_distance,
+        min_distance=options.min_distance,
+        tight_tolerance=options.tight_tolerance,
+        pick_back_faces=options.pick_back_faces,
+        max_hits=options.max_hits,
+        request_params=options.request_params,
+        request_secondary=options.request_secondary,
+    )
 
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
     """Check if the backend version is compatible with NURBS curves in sketches.

@@ -53,3 +53,23 @@ class GRPCUnsupportedService(ABC):  # pragma: no cover
     def set_single_export_id(self, **kwargs) -> dict:
         """Set a single export ID for an entity."""
         pass
+
+    @abstractmethod
+    def rayfire(self, **kwargs) -> dict:
+        """Perform a rayfire operation to find impacted bodies."""
+        pass
+
+    @abstractmethod
+    def rayfire_ordered(self, **kwargs) -> dict:
+        """Perform a rayfire ordered operation."""
+        pass
+
+    @abstractmethod
+    def rayfire_faces(self, **kwargs) -> dict:
+        """Perform a rayfire operation to find impacted faces."""
+        pass
+
+    @abstractmethod
+    def rayfire_ordered_uv(self, **kwargs) -> dict:
+        """Perform a rayfire ordered UV operation."""
+        pass
