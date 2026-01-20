@@ -280,7 +280,8 @@ class NamedSelection:
         Returns
         -------
         NamedSelection
-            The new named selection with the added members.
+            The new named selection with the added members. Changes are also reflected on
+            the same named selection upon which the method is called.
 
         Notes
         -----
