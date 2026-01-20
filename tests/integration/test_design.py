@@ -652,23 +652,23 @@ def test_add_member_to_named_selection(modeler: Modeler):
     assert len(ns.bodies) == 1
 
     box2 = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    new_ns = ns.add_members(bodies=[box2])
-    assert len(new_ns.bodies) == 2
-    assert np.isin([box.id, box2.id], [body.id for body in new_ns.bodies]).all()
+    ns.add_members(bodies=[box2])
+    assert len(ns.bodies) == 2
+    assert np.isin([box.id, box2.id], [body.id for body in ns.bodies]).all()
 
     # Try adding multiple members
-    assert len(new_ns.design_points) == 0
-    assert len(new_ns.faces) == 0
+    assert len(ns.design_points) == 0
+    assert len(ns.faces) == 0
 
     dp1 = design.add_design_point("dp1", Point3D([1, 0, 0]))
     dp2 = design.add_design_point("dp2", Point3D([1, 0, 1]))
     dp3 = design.add_design_point("dp3", Point3D([1, 0, 2]))
 
-    new_ns = new_ns.add_members(design_points=[dp1, dp2, dp3], faces=[box2.faces[0]])
+    ns.add_members(design_points=[dp1, dp2, dp3], faces=[box2.faces[0]])
 
-    assert len(new_ns.bodies) == 2
-    assert len(new_ns.design_points) == 3
-    assert len(new_ns.faces) == 1
+    assert len(ns.bodies) == 2
+    assert len(ns.design_points) == 3
+    assert len(ns.faces) == 1
 
 
 def test_remove_member_from_named_selection(modeler: Modeler):
@@ -694,7 +694,7 @@ def test_remove_member_from_named_selection(modeler: Modeler):
     assert len(ns.design_points) == 1
 
     # Remove the body from the named selection
-    ns = ns.remove_members(members=[ns.bodies[0]])
+    ns.remove_members(members=[ns.bodies[0]])
     assert len(ns.bodies) == 0
     assert len(ns.beams) == 1
     assert len(ns.design_points) == 1

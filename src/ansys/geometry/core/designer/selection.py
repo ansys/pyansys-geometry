@@ -166,6 +166,7 @@ class NamedSelection:
     @property
     def bodies(self) -> list[Body]:
         """All bodies in the named selection."""
+        print("getting bodies:", self.id)
         self.__verify_ns()
         if self._bodies is None:
             # Get all bodies from the named selection
@@ -315,8 +316,11 @@ class NamedSelection:
 
         # Delete the old NS server-side
         self._grpc_client.services.named_selection.delete_named_selection(id=self._id)
+
         # Reassign the named selection to self so that changes are reflected
-        self = new_ns
+        self.__dict__.update(new_ns.__dict__)
+        print("new id", new_ns.id)
+        print("self id", self.id)
 
         return self
 
@@ -363,7 +367,7 @@ class NamedSelection:
         self._grpc_client.services.named_selection.delete_named_selection(id=self._id)
 
         # Reassign the named selection to self so that changes are reflected
-        self = new_ns
+        self.__dict__.update(new_ns.__dict__)
 
         return self
 
