@@ -317,7 +317,7 @@ class NamedSelection:
         self._grpc_client.services.named_selection.delete_named_selection(id=self._id)
         # Reassign the named selection to self so that changes are reflected
         self = new_ns
-        
+
         return self
 
     def remove_members(
