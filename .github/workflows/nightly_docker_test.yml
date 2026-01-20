@@ -163,8 +163,9 @@ jobs:
         timeout-minutes: 20 # Sometimes hangs...
         env:
           PROTO_VERSION: ${{ matrix.proto-version }}
+          USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --proto-version=$env:PROTO_VERSION
+          pytest -v --proto-version=$env:PROTO_VERSION --use-tracker=$env:USE-TRACKER
 
       - name: Stop the Geometry service
         if: always()
@@ -251,7 +252,7 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           group-dependencies-name: "tests"
-          pytest-extra-args: "--proto-version=${{ matrix.proto-version }}"
+          pytest-extra-args: "--proto-version=${{ matrix.proto-version }} --use-tracker=${{ matrix.use-tracker }}"
 
       - name: Stop the Geometry service
         if: always()
