@@ -345,7 +345,7 @@ class NamedSelection:
         ) + len(self._design_points) + len(self._components) + len(self._vertices):
             raise GeometryRuntimeError("NamedSelection cannot be empty after removal.")
 
-        return NamedSelection(
+        new_ns =  NamedSelection(
             self._name,
             self._design,
             self._grpc_client,
@@ -357,6 +357,14 @@ class NamedSelection:
             components=[component for component in self._components if component not in members],
             vertices=[vertex for vertex in self._vertices if vertex not in members],
         )
+
+        # Delete the old NS server-side
+        self._grpc_client.services.named_selection.delete_named_selection(id=self._id)
+
+        # Reassign the named selection to self so that changes are reflected
+        self = new_ns
+        
+        return self
 
     def __verify_ns(self) -> None:
         """Verify that the contents of the named selection are up to date."""
