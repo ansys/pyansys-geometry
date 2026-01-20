@@ -464,7 +464,7 @@ class Design(Component):
     def export_to_disco(
         self, location: Path | str | None = None, write_body_facets: bool = False
     ) -> Path:
-        """Export the design to an dsco file.
+        """Export the design to a DISCO file.
 
         Parameters
         ----------
@@ -482,14 +482,14 @@ class Design(Component):
         # Define the file location
         file_location = self.__build_export_file_location(location, "dsco")
 
-        # Export the design to an dsco file
+        # Export the design to a DISCO file
         self.download(file_location, DesignFileFormat.DISCO, write_body_facets)
 
         # Return the file location
         return file_location
 
     def export_to_stride(self, location: Path | str | None = None) -> Path:
-        """Export the design to an stride file.
+        """Export the design to a stride file.
 
         Parameters
         ----------
@@ -505,7 +505,7 @@ class Design(Component):
         # Define the file location
         file_location = self.__build_export_file_location(location, "stride")
 
-        # Export the design to an stride file
+        # Export the design to a stride file
         self.download(file_location, DesignFileFormat.STRIDE)
 
         # Return the file location
