@@ -101,6 +101,18 @@ jobs:
       fail-fast: false
       matrix:
         proto-version: [v0, v1]
+        use-tracker: ["no", "yes"]
+        include:
+          # Add tracker-label based on use-tracker
+          # Add experimental flag based on docker-image
+          - use-tracker: "no"
+            tracker-label: "Without tracker"
+          - use-tracker: "yes"
+            tracker-label: "With tracker"
+        exclude:
+          # Only use tracker with proto-version v1
+          - proto-version: "v0"
+            use-tracker: "yes"
     permissions:
       contents: read
       packages: read # Needs access to the Geometry docker image
@@ -151,8 +163,9 @@ jobs:
         timeout-minutes: 20 # Sometimes hangs...
         env:
           PROTO_VERSION: ${{ matrix.proto-version }}
+          USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --proto-version=$env:PROTO_VERSION
+          pytest -v --proto-version=$env:PROTO_VERSION --use-tracker=$env:USE_TRACKER
 
       - name: Stop the Geometry service
         if: always()
@@ -199,6 +212,18 @@ jobs:
       fail-fast: false
       matrix:
         proto-version: [v0, v1]
+        use-tracker: ["no", "yes"]
+        include:
+          # Add tracker-label based on use-tracker
+          # Add experimental flag based on docker-image
+          - use-tracker: "no"
+            tracker-label: "Without tracker"
+          - use-tracker: "yes"
+            tracker-label: "With tracker"
+        exclude:
+          # Only use tracker with proto-version v1
+          - proto-version: "v0"
+            use-tracker: "yes"
     permissions:
       contents: read
       packages: read # Needs access to the Geometry docker image
@@ -227,7 +252,7 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           group-dependencies-name: "tests"
-          pytest-extra-args: "--proto-version=${{ matrix.proto-version }}"
+          pytest-extra-args: "--proto-version=${{ matrix.proto-version }} --use-tracker=${{ matrix.use-tracker }}"
 
       - name: Stop the Geometry service
         if: always()
