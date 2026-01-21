@@ -3323,6 +3323,12 @@ def test_design_parameters(modeler: Modeler):
     test_parameters[0].dimension_type = ParameterType.DIMENSIONTYPE_AREA
     assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
+    # Update a parameter with a unit value
+    test_parameters[1].dimension_value = Quantity(800, UNITS.mm ** 2)
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.SUCCESS
+    assert test_parameters[1].dimension_value == pytest.approx(0.0008, rel=1e-8)
+
 
 def test_cached_bodies(modeler: Modeler):
     """Test that bodies are cached correctly.
