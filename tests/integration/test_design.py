@@ -638,6 +638,78 @@ def test_rename_named_selection(modeler: Modeler):
     assert design.named_selections[2].name == "CircleAndPolygon"
 
 
+def test_add_member_to_named_selection(modeler: Modeler):
+    """Test for adding members to a ``NamedSelection``."""
+    # Create the design
+    design = modeler.create_design("named_selection_addition")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    design.create_named_selection("box_ns", bodies=[box])
+    assert len(design.named_selections) == 1
+
+    # Add a member to the first named selection
+    ns = design.named_selections[0]
+    assert len(ns.bodies) == 1
+
+    box2 = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    ns.add_members(bodies=[box2])
+    assert len(ns.bodies) == 2
+    assert np.isin([box.id, box2.id], [body.id for body in ns.bodies]).all()
+
+    # Try adding multiple members
+    assert len(ns.design_points) == 0
+    assert len(ns.faces) == 0
+
+    dp1 = design.add_design_point("dp1", Point3D([1, 0, 0]))
+    dp2 = design.add_design_point("dp2", Point3D([1, 0, 1]))
+    dp3 = design.add_design_point("dp3", Point3D([1, 0, 2]))
+
+    ns.add_members(design_points=[dp1, dp2, dp3], faces=[box2.faces[0]])
+
+    assert len(ns.bodies) == 2
+    assert len(ns.design_points) == 3
+    assert len(ns.faces) == 1
+
+
+def test_remove_member_from_named_selection(modeler: Modeler):
+    """Test for removing members from a ``NamedSelection``."""
+    # Creatae the design
+    design = modeler.create_design("named_selection_removal")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    beam = design.create_beam(
+        Point3D([0, 0, 0]),
+        Point3D([1, 1, 1]),
+        design.add_beam_circular_profile("CircleProfile", Quantity(10, UNITS.mm)),
+    )
+    dp = design.add_design_point("dp1", Point3D([1, 0, 0]))
+
+    design.create_named_selection("ns", bodies=[box], beams=[beam], design_points=[dp])
+    design.create_named_selection("ns2", bodies=[box])
+    assert len(design.named_selections) == 2
+
+    # Add a member to the first named selection
+    ns = design._named_selections["ns"]
+    assert len(ns.bodies) == 1
+    assert len(ns.beams) == 1
+    assert len(ns.design_points) == 1
+
+    # Remove the body from the named selection
+    ns.remove_members(members=[ns.bodies[0]])
+    assert len(ns.bodies) == 0
+    assert len(ns.beams) == 1
+    assert len(ns.design_points) == 1
+
+    # Try to remove from a NS with only 1 body
+    ns = design._named_selections["ns2"]
+    assert len(ns.bodies) == 1
+
+    with pytest.raises(
+        GeometryRuntimeError,
+        match="NamedSelection cannot be empty after removal.",
+    ):
+        ns.remove_members(members=[ns.bodies[0]])
+
+
 def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
     # Try to vefify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
