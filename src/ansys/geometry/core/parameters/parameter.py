@@ -83,14 +83,14 @@ class Parameter:
 
     def _convert_to_default_units(self, value: Quantity | Real, dim_type: ParameterType) -> Real:
         """Convert a value to default units based on dimension type.
-        
+
         Parameters
         ----------
         value : Quantity | Real
             The value to convert.
         dim_type : ParameterType
             The dimension type to determine the appropriate unit.
-            
+
         Returns
         -------
         Real
@@ -98,7 +98,7 @@ class Parameter:
         """
         if not isinstance(value, Quantity):
             return value
-        
+
         unit_map = {
             ParameterType.DIMENSIONTYPE_LINEAR: DEFAULT_UNITS.LENGTH,
             ParameterType.DIMENSIONTYPE_DIAMETRIC: DEFAULT_UNITS.LENGTH,
@@ -108,11 +108,11 @@ class Parameter:
             ParameterType.DIMENSIONTYPE_VOLUME: DEFAULT_UNITS.VOLUME,
             ParameterType.DIMENSIONTYPE_ANGULAR: DEFAULT_UNITS.ANGLE,
         }
-        
+
         default_unit = unit_map.get(dim_type)
         if default_unit is None:
             return value.magnitude
-        
+
         return value.m_as(default_unit)
 
     @property
@@ -133,7 +133,7 @@ class Parameter:
     @dimension_value.setter
     def dimension_value(self, value: Quantity | Real):
         """Set the value of the parameter.
-        
+
         Parameters
         ----------
         value : Quantity | Real

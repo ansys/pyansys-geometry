@@ -102,7 +102,7 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
     def AREA(self) -> Unit:  # noqa: N802
         """Default area unit for PyAnsys Geometry."""
         return self._length * self._length
-    
+
     @property
     def VOLUME(self) -> Unit:  # noqa: N802
         """Default volume unit for PyAnsys Geometry."""
