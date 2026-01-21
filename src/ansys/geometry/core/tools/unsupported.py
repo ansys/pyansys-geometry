@@ -36,6 +36,8 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.math.point import Point3D
+    from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.modeler import Modeler
 
 
@@ -287,3 +289,41 @@ class UnsupportedCommands:
             for edge in body.edges
             if self.__is_occurrence(moniker, edge.id)
         ]
+
+    def rayfire(
+        self,
+        body: "Body",
+        faces: list["Face"],
+        direction: "UnitVector3D",
+        points: list["Point3D"],
+        max_distance: float,
+    ) -> dict:
+        """Perform rayfire operation.
+
+        Parameters
+        ----------
+        body : Body
+            Body to perform rayfire on.
+        faces : list[Face]
+            Faces to consider.
+        direction : UnitVector3D
+            Direction of the ray.
+        points : list[Point3D]
+            Starting points for rays.
+        max_distance : float
+            Maximum distance to check.
+
+        Returns
+        -------
+        dict
+            Rayfire results.
+        """
+        response = self._grpc_client.services.unsupported.rayfire(
+            body_id=body.id,
+            face_ids=[face.id for face in faces],
+            direction=direction,
+            points=points,
+            max_distance=max_distance,
+        )
+
+        return response

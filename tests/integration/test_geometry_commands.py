@@ -1581,3 +1581,20 @@ def test_intersect_curve_and_surface(modeler: Modeler):
     assert len(points) == 2
     assert np.allclose(points[0], Point3D([-1, 0, 0]))
     assert np.allclose(points[1], Point3D([1, 0, 0]))
+
+
+def test_rayfire_simple_case(modeler: Modeler):
+    """Test the rayfire operation with a simple case."""
+    design = modeler.create_design("rayfire_simple_case")
+
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    face = box.faces[1]
+    direction = UnitVector3D([1, 0, 0])
+    points = [Point3D([-2, 0, 1])]
+    max_distance = 10.0
+
+    result = modeler.unsupported.rayfire(
+        body=box, faces=[face], direction=direction, points=points, max_distance=max_distance
+    )
+    print(result)
+    assert result is not None

@@ -129,14 +129,13 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
         return {
             "response_data": [
                 {
-                    "impacts"
-                    [
+                    "impacts": [
                         {
                             "body_id": impact.body,
                             "point": from_grpc_point_to_point3d(impact.point)
                         }
+                        for impact in data.single_ray_fire_impacts.impacts
                     ]
-                    for impact in data.single_ray_fire_impacts.impacts
                 }
                 for data in response.response_data
             ]
