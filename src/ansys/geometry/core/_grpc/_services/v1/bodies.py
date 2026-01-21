@@ -1254,7 +1254,7 @@ class GRPCBodyServiceV1(GRPCBodyService):
         request = ImprintCurvesRequest(
             request_data=[
                 ImprintCurvesRequestData(
-                    body_ids=build_grpc_id(kwargs["id"]),
+                    body_id=build_grpc_id(kwargs["id"]),
                     curves=curves,
                     face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
                     plane=from_plane_to_grpc_plane(sketch.plane) if sketch else None,
