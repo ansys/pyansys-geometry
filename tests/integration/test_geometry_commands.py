@@ -1517,7 +1517,7 @@ def test_failures_to_extrude(modeler: Modeler):
     assert len(design.bodies[0].faces) == 1
 
     # Only fails before 252
-    if modeler._grpc_client.backend_version <= (25, 2, 0):
+    if modeler._grpc_client.backend_version >= (25, 2, 0):
         assert len(design.bodies[1].faces) == 4
     else:
         assert len(design.bodies[1].faces) == 1
