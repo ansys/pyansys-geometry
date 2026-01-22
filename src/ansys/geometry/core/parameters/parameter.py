@@ -68,7 +68,7 @@ class Parameter:
     dimension_type : ParameterType
         Type of the parameter.
     dimension_value : Quantity | Real
-        Value of the parameter. If a Quantity, it will be converted to default units
+        Value of the parameter. If a Real, it will be assigned default units
         based on the dimension_type.
     """
 
@@ -81,7 +81,9 @@ class Parameter:
         self._dimension_type = dimension_type
         self._dimension_value = self._convert_to_default_units(dimension_value, dimension_type)
 
-    def _convert_to_default_units(self, value: Quantity | Real, dim_type: ParameterType) -> Real:
+    def _convert_to_default_units(
+        self, value: Quantity | Real, dim_type: ParameterType
+    ) -> Quantity:
         """Convert a value to default units based on dimension type.
 
         Parameters
@@ -96,7 +98,7 @@ class Parameter:
         Real
             The value in default units (or the original value if not a Quantity).
         """
-        if not isinstance(value, Quantity):
+        if not isinstance(value, Real):
             return value
 
         unit_map = {
@@ -111,7 +113,7 @@ class Parameter:
 
         default_unit = unit_map.get(dim_type)
         if default_unit is None:
-            return value.magnitude
+            return Quantity(value, "")
 
         return value.m_as(default_unit)
 
@@ -126,7 +128,7 @@ class Parameter:
         self._name = value
 
     @property
-    def dimension_value(self) -> Real:
+    def dimension_value(self) -> Quantity:
         """Get the value of the parameter."""
         return self._dimension_value
 
@@ -137,7 +139,7 @@ class Parameter:
         Parameters
         ----------
         value : Quantity | Real
-            The new value. If a Quantity, it will be converted to default units
+            The new value. If a Real, it will be assigned default units
             based on the dimension_type.
         """
         self._dimension_value = self._convert_to_default_units(value, self._dimension_type)

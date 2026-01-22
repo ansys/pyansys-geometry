@@ -3330,6 +3330,11 @@ def test_design_parameters(modeler: Modeler):
     assert test_parameters[1].dimension_value == pytest.approx(0.0008, rel=1e-8)
 
 
+def test_unitless_design_parameter(modeler: Modeler):
+    # TODO
+    pass
+
+
 def test_cached_bodies(modeler: Modeler):
     """Test that bodies are cached correctly.
 
