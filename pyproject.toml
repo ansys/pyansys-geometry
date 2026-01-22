@@ -26,7 +26,7 @@ classifiers = [
 ]
 
 dependencies = [
-  "ansys-api-discovery==1.0.20",
+  "ansys-api-discovery==1.0.22",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -81,7 +81,7 @@ doc = [
   "myst-parser==4.0.1",
   "nbconvert==7.16.6",
   "nbsphinx==0.9.8",
-  "notebook==7.5.1",
+  "notebook==7.5.2",
   "numpydoc==1.10.0",
   "pdf2image==1.17.0",
   "quarto-cli==1.8.25",
@@ -97,7 +97,7 @@ tests = [
 ]
 general-all = [
   "ansys-platform-instancemanagement==1.1.2",
-  "ansys-tools-common==0.4.0",
+  "ansys-tools-common==0.4.1",
   "ansys-tools-visualization-interface==0.12.1",
   "beartype==0.22.9",
   "docker==7.1.0",
@@ -108,9 +108,9 @@ general-all = [
   "numpy==2.2.6; python_version<'3.11'",
   "numpy==2.4.0; python_version>='3.11'",
   "pint==0.25.2",
-  "protobuf==6.33.3",
+  "protobuf==6.33.4",
   "pygltflib==1.16.5",
-  "pyvista[jupyter]==0.46.4",
+  "pyvista[jupyter]==0.46.5",
   "requests==2.32.5",
   "scipy==1.15.3; python_version<'3.11'",
   "scipy==1.16.3; python_version>='3.11'",
