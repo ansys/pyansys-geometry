@@ -28,4 +28,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tags-kept: 'windows-latest, windows-latest-unstable, core-windows-latest, core-windows-latest-unstable, core-linux-latest,
             core-linux-latest-unstable, 24.1, 24.2, 25.1, windows-24.1, windows-24.2, windows-25.1, windows-25.2, core-windows-25.2,
-            core-linux-25.2, simba-plugin-geometry'
+            core-linux-25.2, core-windows-26.1, core-linux-26.1, core-windows-27.1, core-linux-27.1, simba-plugin-geometry'
