@@ -1515,7 +1515,7 @@ def test_failures_to_extrude(modeler: Modeler):
             True,
             True,
         )
-        
+
         assert len(design.bodies[1].faces) == 4
 
 
