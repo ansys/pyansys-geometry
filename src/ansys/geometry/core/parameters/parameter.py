@@ -56,6 +56,17 @@ class ParameterUpdateStatus(Enum):
     UNKNOWN = 3
 
 
+UNIT_MAP = {
+    ParameterType.DIMENSIONTYPE_LINEAR: DEFAULT_UNITS.LENGTH,
+    ParameterType.DIMENSIONTYPE_DIAMETRIC: DEFAULT_UNITS.LENGTH,
+    ParameterType.DIMENSIONTYPE_RADIAL: DEFAULT_UNITS.LENGTH,
+    ParameterType.DIMENSIONTYPE_ARC: DEFAULT_UNITS.LENGTH,
+    ParameterType.DIMENSIONTYPE_AREA: DEFAULT_UNITS.AREA,
+    ParameterType.DIMENSIONTYPE_VOLUME: DEFAULT_UNITS.VOLUME,
+    ParameterType.DIMENSIONTYPE_ANGULAR: DEFAULT_UNITS.ANGLE,
+}
+
+
 class Parameter:
     """Represents a parameter.
 
@@ -79,9 +90,9 @@ class Parameter:
         self.id = id
         self._name = name
         self._dimension_type = dimension_type
-        self._dimension_value = self._convert_to_default_units(dimension_value, dimension_type)
+        self._dimension_value = self._convert_to_quantity(dimension_value, dimension_type)
 
-    def _convert_to_default_units(
+    def _convert_to_quantity(
         self, value: Quantity | Real, dim_type: ParameterType
     ) -> Quantity:
         """Convert a value to default units based on dimension type.
@@ -101,21 +112,11 @@ class Parameter:
         if not isinstance(value, Real):
             return value
 
-        unit_map = {
-            ParameterType.DIMENSIONTYPE_LINEAR: DEFAULT_UNITS.LENGTH,
-            ParameterType.DIMENSIONTYPE_DIAMETRIC: DEFAULT_UNITS.LENGTH,
-            ParameterType.DIMENSIONTYPE_RADIAL: DEFAULT_UNITS.LENGTH,
-            ParameterType.DIMENSIONTYPE_ARC: DEFAULT_UNITS.LENGTH,
-            ParameterType.DIMENSIONTYPE_AREA: DEFAULT_UNITS.AREA,
-            ParameterType.DIMENSIONTYPE_VOLUME: DEFAULT_UNITS.VOLUME,
-            ParameterType.DIMENSIONTYPE_ANGULAR: DEFAULT_UNITS.ANGLE,
-        }
-
-        default_unit = unit_map.get(dim_type)
+        default_unit = UNIT_MAP.get(dim_type)
         if default_unit is None:
             return Quantity(value, "")
 
-        return value.m_as(default_unit)
+        return Quantity(value, default_unit)
 
     @property
     def name(self) -> str:
@@ -142,7 +143,7 @@ class Parameter:
             The new value. If a Real, it will be assigned default units
             based on the dimension_type.
         """
-        self._dimension_value = self._convert_to_default_units(value, self._dimension_type)
+        self._dimension_value = self._convert_to_quantity(value, self._dimension_type)
 
     @property
     def dimension_type(self) -> ParameterType:
