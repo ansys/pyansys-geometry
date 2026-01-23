@@ -1635,6 +1635,7 @@ class Component:
 
         # Kill itself
         self._is_alive = False
+        self.parent_component.components.remove(self)
 
     @graphics_required
     def tessellate(
