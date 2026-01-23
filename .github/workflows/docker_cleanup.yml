@@ -24,9 +24,34 @@ jobs:
       - name: "Perform versions cleanup - except certain tags"
         # TODO: Once the usage of regex in tags-kept is supported in a released
         # version, change 'main' to the latest released version
-        uses: ansys/actions/hk-package-clean-except@main  # zizmor: ignore-line
+        uses: ansys/actions/hk-package-clean-except@main # zizmor: ignore-line
         with:
           package-name: 'geometry'
           token: ${{ secrets.GITHUB_TOKEN }}
-          tags-kept: '^core-windows-\d+\.\d+(\.\d+)?$, ^core-linux-\d+\.\d+(\.\d+)?$, ^windows-\d+\.\d+$,
-            ^\d+\.\d+$, ^.*-latest$, ^.*-latest-unstable$, simba-plugin-geometry'
+          tags-kept: '^core-windows-\d+\.\d+(\.\d+)?$, ^core-linux-\d+\.\d+(\.\d+)?$, ^windows-\d+\.\d+$, ^\d+\.\d+$, ^.*-latest$,
+            ^.*-latest-unstable$, simba-plugin-geometry'
+
+  cleanup-build-tags:
+    name: Cleaning unnecessary packages (build tags older than 4 months)
+    runs-on: ubuntu-latest
+    needs: cleanup
+    env:
+      PACKAGE_DELETION_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write # Required to delete packages
+      packages: write # Required to delete packages
+    steps:
+
+      - name: "Perform versions cleanup - build tags older than 4 months"
+        # TODO: Once the usage of regex in tags-kept is supported in a released
+        # version, change 'main' to the latest released version
+        uses: ansys/actions/hk-package-clean-except@main # zizmor: ignore-line
+        with:
+          package-name: 'geometry'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # The main difference from the previous job is that here we are deleting
+          # build tags older than 4 months, since the optional build number is not
+          # included in the kept tags regex.
+          tags-kept: '^core-windows-\d+\.\d+$, ^core-linux-\d+\.\d+$, ^windows-\d+\.\d+$, ^\d+\.\d+$, ^.*-latest$, ^.*-latest-unstable$,
+            simba-plugin-geometry'
+          allow-last-days: 120
