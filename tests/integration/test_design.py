@@ -3634,6 +3634,12 @@ def test_get_body_bounding_box(modeler: Modeler):
     assert center.z.m == 0.5
 
 
+def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
+    design = modeler.create_design("body_bounding_box_tight_tolerance")
+
+    
+
+
 def test_extrude_faces_failure_log_to_file(modeler: Modeler):
     """Test that the failure to extrude faces logs the correct message to a file."""
     # Create a design and body for testing

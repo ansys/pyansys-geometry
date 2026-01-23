@@ -639,12 +639,20 @@ class GRPCBodyServiceV1(GRPCBodyService):
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import (
-            MultipleEntitiesRequest,
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            GetBoundingBoxRequest,
+            GetBoundingBoxRequestData,
         )
 
         # Create the request with MultipleEntitiesRequest
-        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+        request = GetBoundingBoxRequest(
+            request_data=[
+                GetBoundingBoxRequestData(
+                    body_id=build_grpc_id(kwargs["id"]),
+                    tight_tolerance=kwargs.get("tight_tolerance", False)
+                )
+            ]
+        )
 
         # Call the gRPC service
         resp = self.stub.GetBoundingBox(request=request)
