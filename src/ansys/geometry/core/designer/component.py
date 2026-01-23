@@ -1630,7 +1630,7 @@ class Component:
             elem._is_alive = False
 
         # Now, go to the nested components and kill them as well
-        for component in self.components:
+        for component in list(self.components):
             component._kill_component_on_client()
 
         # Kill itself
