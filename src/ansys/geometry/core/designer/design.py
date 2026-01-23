@@ -91,7 +91,7 @@ class DesignFileFormat(Enum):
     def __str__(self):
         """Represent object in string format."""
         return self.value
-    
+
 
 @unique
 class DesignFileExtensions(Enum):
@@ -323,11 +323,12 @@ class Design(Component):
 
         # Check if the file format matches path extension
         valid_extensions = DESIGN_FILE_FORMAT_EXTENSIONS.get(format, [])
-        file_ext = file_location.suffix.lower().lstrip('.')
+        file_ext = file_location.suffix.lower().lstrip(".")
         if file_ext not in valid_extensions:
             raise GeometryRuntimeError(
                 f"File extension '{file_location.suffix}' does not match the requested format"
-                f" {format}. Valid extensions: {', '.join('.' + ext for ext in valid_extensions)}")
+                f" {format}. Valid extensions: {', '.join('.' + ext for ext in valid_extensions)}"
+            )
 
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format} format.")

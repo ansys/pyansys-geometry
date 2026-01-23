@@ -3912,7 +3912,7 @@ def test_failure_for_export(modeler: Modeler, tmp_path_factory: pytest.TempPathF
     reexported_file = Path(working_directory, "reexported.scdocx")
     design = modeler.create_design("Assembly")
     design.insert_file(original_file)
-    
+
     # Giving the download an incorrect file extension in the file path for the chosen format
     reexported_file = Path(working_directory, "reexported.x_t")
     with pytest.raises(
@@ -3920,11 +3920,9 @@ def test_failure_for_export(modeler: Modeler, tmp_path_factory: pytest.TempPathF
         match="does not match the requested format",
     ):
         design.download(file_location=reexported_file, format=DesignFileFormat.STEP)
-    
+
     # Exporting to the invalid type to get an error
-    with pytest.raises(
-        TypeError, match="does not match the requested format"
-    ):
+    with pytest.raises(TypeError, match="does not match the requested format"):
         design.download(file_location=reexported_file, format=DesignFileFormat.INVALID)
 
 
