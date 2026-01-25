@@ -857,12 +857,12 @@ class GRPCBodyServiceV1(GRPCBodyService):
 
     @protect_grpc
     def map(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import MapRequest, MapRequestData
+        from ansys.api.discovery.v1.operations.edit_pb2 import MapBodyRequest, MapBodyRequestData
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = MapRequest(
+        request = MapBodyRequest(
             request_data=[
-                MapRequestData(
+                MapBodyRequestData(
                     id=build_grpc_id(kwargs["id"]),
                     frame=from_frame_to_grpc_frame(kwargs["frame"]),
                 )
@@ -1254,7 +1254,7 @@ class GRPCBodyServiceV1(GRPCBodyService):
         request = ImprintCurvesRequest(
             request_data=[
                 ImprintCurvesRequestData(
-                    body_ids=build_grpc_id(kwargs["id"]),
+                    body_id=build_grpc_id(kwargs["id"]),
                     curves=curves,
                     face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
                     plane=from_plane_to_grpc_plane(sketch.plane) if sketch else None,
