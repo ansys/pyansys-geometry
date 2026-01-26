@@ -295,7 +295,7 @@ class IBody(ABC):
         This method is only available starting on Ansys release 25R2.
         """
         return
-    
+
     @abstractmethod
     def get_bounding_box(self, tight_tolerance: bool) -> BoundingBox:
         """Get the bounding box of the body.
@@ -1191,7 +1191,7 @@ class MasterBody(IBody):
             max_corner=response.get("max"),
             center=response.get("center"),
         )
-    
+
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight_tolerance: bool) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
@@ -1929,7 +1929,7 @@ class Body(IBody):
             max_corner=response.get("max"),
             center=response.get("center"),
         )
-    
+
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight_tolerance: bool) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
