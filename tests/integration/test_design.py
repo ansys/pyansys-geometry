@@ -1078,22 +1078,20 @@ def test_delete_body_component(modeler: Modeler):
     assert comp_1.components[1].is_alive
     assert comp_1.components[1].bodies[0].is_alive
     assert not comp_2.is_alive
-    assert not comp_2.components[0].is_alive
     assert comp_3.is_alive
     assert comp_3.bodies[0].is_alive
 
     # Do the same checks but calling them from the design object
     assert design.is_alive
+    assert len(design.components) == 2
     assert design.components[0].is_alive
     assert design.components[0].components[0].is_alive
     assert design.components[0].components[0].components[0].is_alive
     assert design.components[0].components[0].components[0].bodies[0].is_alive
     assert design.components[0].components[1].is_alive
     assert design.components[0].components[1].bodies[0].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert design.components[2].is_alive
-    assert design.components[2].bodies[0].is_alive
+    assert design.components[1].is_alive
+    assert design.components[1].bodies[0].is_alive
 
     # Let's delete now the body_2 object
     design.delete_body(body_2)
@@ -1106,7 +1104,6 @@ def test_delete_body_component(modeler: Modeler):
     assert comp_1.components[1].is_alive
     assert not body_2.is_alive
     assert not comp_2.is_alive
-    assert not comp_2.components[0].is_alive
     assert comp_3.is_alive
 
     # Do the same checks but calling them from the design object
@@ -1116,47 +1113,30 @@ def test_delete_body_component(modeler: Modeler):
     assert design.components[0].components[0].components[0].is_alive
     assert design.components[0].components[0].components[0].bodies[0].is_alive
     assert design.components[0].components[1].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert design.components[2].is_alive
-    assert design.components[2].bodies[0].is_alive
+    assert design.components[1].is_alive
+    assert design.components[1].bodies[0].is_alive
 
     # Finally, let's delete the most complex one - comp_1
     design.delete_component(comp_1)
 
     # Check that all the underlying objects are still alive except for comp_2, body_2 and comp_1
     assert not comp_1.is_alive
-    assert not comp_1.components[0].is_alive
-    assert not comp_1.components[0].components[0].is_alive
-    assert not comp_1.components[1].is_alive
     assert not comp_2.is_alive
-    assert not comp_2.components[0].is_alive
     assert comp_3.is_alive
     assert comp_3.bodies[0].is_alive
 
     # Do the same checks but calling them from the design object
     assert design.is_alive
-    assert not design.components[0].is_alive
-    assert not design.components[0].components[0].is_alive
-    assert not design.components[0].components[0].components[0].is_alive
-    assert not design.components[0].components[1].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert design.components[2].is_alive
-    assert design.components[2].bodies[0].is_alive
+    assert len(design.components) == 1
+    assert design.components[0].is_alive
+    assert design.components[0].bodies[0].is_alive
 
     # Finally, let's delete the entire design
     design.delete_component(comp_3)
 
     # Check everything is dead
     assert design.is_alive
-    assert not design.components[0].is_alive
-    assert not design.components[0].components[0].is_alive
-    assert not design.components[0].components[0].components[0].is_alive
-    assert not design.components[0].components[1].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert not design.components[2].is_alive
+    assert len(design.components) == 0
 
     # Try deleting the Design object itself - this is forbidden
     with pytest.raises(ValueError, match="The design itself cannot be deleted."):
