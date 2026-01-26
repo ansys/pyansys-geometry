@@ -107,7 +107,7 @@ general-all = [
   "matplotlib==3.10.8",
   "numpy==2.2.6; python_version<'3.11'",
   "numpy==2.4.0; python_version>='3.11'",
-  "pint==0.25.2",
+  "pint==0.24.4",
   "protobuf==6.33.4",
   "pygltflib==1.16.5",
   "pyvista[jupyter]==0.46.5",
