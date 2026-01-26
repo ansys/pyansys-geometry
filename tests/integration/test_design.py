@@ -3635,9 +3635,26 @@ def test_get_body_bounding_box(modeler: Modeler):
 
 
 def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
-    design = modeler.create_design("body_bounding_box_tight_tolerance")
-
+    """Test getting the bounding box of a body with tight tolerance."""
+    if modeler.client.services.version == GeometryApiProtos.V0:
+        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
     
+    design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
+    yarn_body = design.bodies[0]
+
+    tight_bounding_box = yarn_body.get_bounding_box(tight_tolerance=True)
+
+    assert tight_bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
+    assert tight_bounding_box.min_corner.y.m == pytest.approx(5.2771026530260073e-17)
+    assert tight_bounding_box.min_corner.z.m == pytest.approx(0.100708473482868)
+
+    assert tight_bounding_box.max_corner.x.m == pytest.approx(1.41421356238489)
+    assert tight_bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
+    assert tight_bounding_box.max_corner.z.m == pytest.approx(0.196642053388603)
+
+    assert tight_bounding_box.center.x.m == pytest.approx(1.08440444008654)
+    assert tight_bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert tight_bounding_box.center.z.m == pytest.approx(0.148675263435735)
 
 
 def test_extrude_faces_failure_log_to_file(modeler: Modeler):
