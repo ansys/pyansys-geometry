@@ -104,6 +104,11 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         return self._length * self._length
 
     @property
+    def VOLUME(self) -> Unit:  # noqa: N802
+        """Default volume unit for PyAnsys Geometry."""
+        return self._length * self._length * self._length
+
+    @property
     def SERVER_LENGTH(self) -> Unit:  # noqa: N802
         """Default length unit for gRPC messages.
 
