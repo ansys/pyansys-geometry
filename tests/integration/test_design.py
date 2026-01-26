@@ -3638,7 +3638,7 @@ def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
     """Test getting the bounding box of a body with tight tolerance."""
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
-    
+
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
     yarn_body = design.bodies[0]
 
