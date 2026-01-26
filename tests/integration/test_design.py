@@ -3923,7 +3923,7 @@ def test_failure_for_export(modeler: Modeler, tmp_path_factory: pytest.TempPathF
     
     # Exporting to the invalid type to get an error
     with pytest.raises(
-        TypeError, match="does not match the requested format"
+        GeometryRuntimeError, match="does not match the requested format"
     ):
         design.download(file_location=reexported_file, format=DesignFileFormat.INVALID)
 
