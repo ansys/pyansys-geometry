@@ -3642,6 +3642,22 @@ def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
     yarn_body = design.bodies[0]
 
+    # Test getting regular bounding box
+    bounding_box = yarn_body.bounding_box
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.750637531716012)
+    assert bounding_box.min_corner.y.m == pytest.approx(-0.340634843063073)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.0134380239342444)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.75484840496883)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.663576030656712)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.288244080618053)
+
+    assert bounding_box.center.x.m == pytest.approx(1.25274296834242)
+    assert bounding_box.center.y.m == pytest.approx(0.161470593796819)
+    assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
+
+    # Test getting tight bounding box
     tight_bounding_box = yarn_body.get_bounding_box(tight_tolerance=True)
 
     assert tight_bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
