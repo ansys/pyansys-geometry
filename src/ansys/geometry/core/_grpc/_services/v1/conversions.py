@@ -58,7 +58,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     NurbsCurve as GRPCNurbsCurve,
     NurbsSurface as GRPCNurbsSurface,
     PartEntity as GRPCPartEntity,
-    RayFireAdditionalOptions as GRPCRayFireOptions,
+    #RayFireAdditionalOptions as GRPCRayFireOptions,
     Surface as GRPCSurface,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
@@ -1663,7 +1663,7 @@ def from_enclosure_options_to_grpc_enclosure_options(
     )
 
 
-def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> GRPCRayFireOptions:
+def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> None:
     """Convert a ``RayFireOptions`` class to a gRPC RayFireOptions message.
 
     Parameters
@@ -1676,17 +1676,18 @@ def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> G
     GRPCRayFireOptions
         Geometry service gRPC RayFireOptions message.
     """
-    return GRPCRayFireOptions(
-        radius=options.radius,
-        direction=from_unit_vector_to_grpc_direction(options.direction),
-        max_distance=options.max_distance,
-        min_distance=options.min_distance,
-        tight_tolerance=options.tight_tolerance,
-        pick_back_faces=options.pick_back_faces,
-        max_hits=options.max_hits,
-        request_params=options.request_params,
-        request_secondary=options.request_secondary,
-    )
+    return
+    # return GRPCRayFireOptions(
+    #     radius=options.radius,
+    #     direction=from_unit_vector_to_grpc_direction(options.direction),
+    #     max_distance=options.max_distance,
+    #     min_distance=options.min_distance,
+    #     tight_tolerance=options.tight_tolerance,
+    #     pick_back_faces=options.pick_back_faces,
+    #     max_hits=options.max_hits,
+    #     request_params=options.request_params,
+    #     request_secondary=options.request_secondary,
+    # )
 
 
 def serialize_body(body: GRPCBodyEntity) -> dict:
