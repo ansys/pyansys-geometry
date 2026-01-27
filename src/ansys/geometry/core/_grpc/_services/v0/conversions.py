@@ -78,7 +78,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.plane import Plane
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
-    from ansys.geometry.core.misc.options import RayFireOptions, TessellationOptions
+    from ansys.geometry.core.misc.options import RayfireOptions, TessellationOptions
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
         ParameterUpdateStatus,
@@ -1359,7 +1359,7 @@ def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
     )
 
 
-def from_rayfire_options_to_grpc_rayfire_options(options: "RayFireOptions") -> "GRPCRayFireOptions":
+def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> GRPCRayFireOptions:
     """Convert a ``RayFireOptions`` class to a gRPC RayFireOptions message.
 
     Parameters

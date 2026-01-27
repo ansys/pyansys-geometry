@@ -44,6 +44,7 @@ from .base.parts import GRPCPartsService
 from .base.patterns import GRPCPatternsService
 from .base.points import GRPCPointsService
 from .base.prepare_tools import GRPCPrepareToolsService
+from .base.rayfire import GRPCRayfireService
 from .base.repair_tools import GRPCRepairToolsService
 from .base.unsupported import GRPCUnsupportedService
 
@@ -107,6 +108,7 @@ class _GRPCServices:
         self._patterns = None
         self._points = None
         self._prepare_tools = None
+        self._rayfire = None
         self._repair_tools = None
         self._unsupported = None
 
@@ -635,6 +637,30 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._prepare_tools
+    
+    @property
+    def rayfire(self) -> GRPCRayfireService:
+        """
+        Get the rayfire service for the specified version.
+
+        Returns
+        -------
+        RayfireServiceBase
+            The rayfire service for the specified version.
+        """
+        if not self._rayfire:
+            from .v0.rayfire import GRPCRayfireServiceV0
+            from .v1.rayfire import GRPCRayfireServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._rayfire = GRPCRayfireServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:
+                self._rayfire = GRPCRayfireServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._rayfire
 
     @property
     def repair_tools(self) -> GRPCRepairToolsService:

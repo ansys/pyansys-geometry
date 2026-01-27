@@ -24,7 +24,9 @@
 from dataclasses import asdict, dataclass
 
 from beartype import beartype as check_input_types
+from pint import Quantity
 
+from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.typing import Real
 
 
@@ -158,18 +160,18 @@ class TessellationOptions:
 
 
 @dataclass
-class RayFireOptions:
+class RayfireOptions:
     """Additional options for ray fire operations.
 
     Parameters
     ----------
-    radius : Real
+    radius : Distance | Quantity | Real
         The radius of the ray.
     direction : UnitVector3D
         The direction for the ray to be fired in.
-    max_distance : Real
+    max_distance : Distance | Quantity | Real
         The maximum distance the ray should travel.
-    min_distance : Real
+    min_distance : Distance | Quantity | Real
         The minimum distance the ray should travel.
     tight_tolerance : bool
         Whether to use a tight tolerance for the ray fire operation.
@@ -185,10 +187,10 @@ class RayFireOptions:
 
     from ansys.geometry.core.math.vector import UnitVector3D
 
-    radius: Real
+    radius: Distance | Quantity | Real
     direction: UnitVector3D
-    max_distance: Real
-    min_distance: Real
+    max_distance: Distance | Quantity | Real
+    min_distance: Distance | Quantity | Real
     tight_tolerance: bool
     pick_back_faces: bool
     max_hits: int
