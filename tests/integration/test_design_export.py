@@ -35,6 +35,7 @@ from ansys.geometry.core.sketch import Sketch
 from ..conftest import are_graphics_available
 from .conftest import (
     FILES_DIR,
+    skip_if_core_service,
     skip_if_discovery,
     skip_if_spaceclaim,
     skip_if_windows,
@@ -308,6 +309,7 @@ def test_export_to_parasolid_binary(modeler: Modeler, tmp_path_factory: pytest.T
 
 def test_export_to_step(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to STEP format."""
+    skip_if_core_service(modeler, test_export_to_step.__name__, "step_export")
     # Create a demo design
     design = _create_demo_design(modeler)
 
@@ -331,6 +333,7 @@ def test_export_to_step(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 
 def test_export_to_iges(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to IGES format."""
+    skip_if_core_service(modeler, test_export_to_iges.__name__, "iges_export")
     # Create a demo design
     design = _create_demo_design(modeler)
 
