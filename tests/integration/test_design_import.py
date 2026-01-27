@@ -374,7 +374,7 @@ def test_design_import_with_named_selections(modeler: Modeler):
     # Open the design
     design = modeler.open_file(Path(FILES_DIR, "NamedSelectionImport.scdocx"))
 
-    # Check that there are 5 Named Selections
+    # Check that there are 6 Named Selections
     assert len(design.named_selections) == 6
 
     # Get full body named selection
