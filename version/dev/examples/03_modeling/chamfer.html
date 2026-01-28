@@ -1,0 +1,937 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Modeling: Chamfer edges and faces &#8212; PyAnsys Geometry</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=99899407" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8bee615f"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/03_modeling/chamfer';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Applied: Create a NACA 4-digit airfoil" href="../04_applied/01_naca_airfoils.html" />
+    <link rel="prev" title="Modeling: Using design parameters" href="design_parameters.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.15.dev0" />
+  <meta property="og:site_name" content="PyAnsys" />
+  <meta name="physics" content="CAD" />
+  <link rel="canonical" href="https://geometry.docs.pyansys.com/version/stable/examples/03_modeling/chamfer.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Geometry - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Geometry - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">101 examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/01_math.html">PyAnsys Geometry 101: Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/02_units.html">PyAnsys Geometry 101: Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/03_sketching.html">PyAnsys Geometry 101: Sketching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/04_modeling.html">PyAnsys Geometry 101: Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/05_plotter_picker.html">PyAnsys Geometry 101: Plotter</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Sketching examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/basic_usage.html">Sketching: Basic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/dynamic_sketch_plane.html">Sketching: Dynamic sketch plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/advanced_sketching_gears.html">Sketching: Parametric sketching for gears</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modeling examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="add_design_material.html">Modeling: Single body with material assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plate_with_hole.html">Modeling: Rectangular plate with multiple bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cut_operation_on_extrude.html">Modeling: Extruded plate with cut operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tessellation_usage.html">Modeling: Tessellation of two bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_organization.html">Modeling: Design organization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_operations.html">Modeling: Boolean operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scale_map_mirror_bodies.html">Modeling: Scale, map and mirror bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweep_chain_profile.html">Modeling: Sweep chain and sweep sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="revolving.html">Modeling: Revolving a sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="export_design.html">Modeling: Exporting designs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_tree.html">Modeling: Visualization of the design tree on terminal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service_colors.html">Modeling: Body color assignment and usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surface_bodies.html">Modeling: Surface bodies and trimmed surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_parameters.html">Modeling: Using design parameters</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Modeling: Chamfer edges and faces</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Applied examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/01_naca_airfoils.html">Applied: Create a NACA 4-digit airfoil</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/02_naca_fluent.html">Applied: Prepare a NACA airfoil for a Fluent simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/03_ahmed_body_fluent.html">Applied: Develop an external aerodynamic simulation model for Fluent analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../99_misc/template.html">Miscellaneous: Example template</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../examples.html" class="nav-link">Examples</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Modeling: Chamfer edges and faces</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/chamfer.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/chamfer.py">Python script</a>.</p>
+</div>
+<hr class="docutils" />
+<section id="Modeling:-Chamfer-edges-and-faces">
+<h1>Modeling: Chamfer edges and faces<a class="headerlink" href="#Modeling:-Chamfer-edges-and-faces" title="Link to this heading">#</a></h1>
+<p>A chamfer is an angled cut on an edge. Chamfers can be created using the <code class="docutils literal notranslate"><span class="pre">Modeler.geometry_commands</span></code> module.</p>
+<section id="Create-a-block">
+<h2>Create a block<a class="headerlink" href="#Create-a-block" title="Link to this heading">#</a></h2>
+<p>Launch the modeler and create a block.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">launch_modeler</span><span class="p">,</span> <span class="n">Modeler</span>
+
+<span class="n">modeler</span> <span class="o">=</span> <span class="n">launch_modeler</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">modeler</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Ansys Geometry Modeler (0x7f7b58124590)
+
+Ansys Geometry Modeler Client (0x7f7b580982f0)
+  Target:     localhost:700
+  Connection: Healthy
+  Backend info:
+    Version:            26.1.0
+    Backend type:       CORE_LINUX
+    Backend number:     20260109.2
+    API server number:  1799
+    CADIntegration:     1.1.0.147+4b5a32abd6
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/pyansys-geometry/pyansys-geometry/.venv/lib/python3.13/site-packages/ansys/tools/common/cyberchannel.py:187: UserWarning: Starting gRPC client without TLS on localhost:700. This is INSECURE. Consider using a secure connection.
+  warn(f&#34;Starting gRPC client without TLS on {target}. This is INSECURE. Consider using a secure connection.&#34;)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.sketch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sketch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">Point2D</span>
+
+<span class="n">design</span> <span class="o">=</span> <span class="n">modeler</span><span class="o">.</span><span class="n">create_design</span><span class="p">(</span><span class="s2">&quot;chamfer_block&quot;</span><span class="p">)</span>
+<span class="n">body</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span><span class="s2">&quot;block&quot;</span><span class="p">,</span> <span class="n">Sketch</span><span class="p">()</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">body</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "5e0cf4c5741b475d819a9f34d82370a3"}</script></div>
+</div>
+</section>
+<section id="Chamfer-edges">
+<h2>Chamfer edges<a class="headerlink" href="#Chamfer-edges" title="Link to this heading">#</a></h2>
+<p>Create a uniform chamfer on all edges of the block.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeler</span><span class="o">.</span><span class="n">geometry_commands</span><span class="o">.</span><span class="n">chamfer</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">body</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "bfff7a94f9b24477b6288d1c04cc19e8"}</script></div>
+</div>
+</section>
+<section id="Chamfer-faces">
+<h2>Chamfer faces<a class="headerlink" href="#Chamfer-faces" title="Link to this heading">#</a></h2>
+<p>The chamfer of a face can also be modified. Create a chamfer on a single edge and then modify the chamfer distance value by providing the newly created face that represents the chamfer.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">body</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span><span class="s2">&quot;box&quot;</span><span class="p">,</span> <span class="n">Sketch</span><span class="p">()</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">modeler</span><span class="o">.</span><span class="n">geometry_commands</span><span class="o">.</span><span class="n">chamfer</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">edges</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">distance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">body</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "395c6cb0135a494bbba86edf46e65ad5"}</script></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeler</span><span class="o">.</span><span class="n">geometry_commands</span><span class="o">.</span><span class="n">chamfer</span><span class="p">(</span><span class="n">body</span><span class="o">.</span><span class="n">faces</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">distance</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">body</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "91a48a2606294af4ac1d7962c304eeed"}</script></div>
+</div>
+</section>
+<section id="Close-session">
+<h2>Close session<a class="headerlink" href="#Close-session" title="Link to this heading">#</a></h2>
+<p>When you finish interacting with your modeling service, you should close the active server session. This frees resources wherever the service is running.</p>
+<p>Close the server session.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"027a8f4709954178a8ac56a504a9f93e": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "451a770ec4a9429e97319d71dc14ebb0": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "5e0cf4c5741b475d819a9f34d82370a3": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_027a8f4709954178a8ac56a504a9f93e", "placeholder": "\u200b", "style": "IPY_MODEL_451a770ec4a9429e97319d71dc14ebb0", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}, "e549155c8d2742e4a939ae37c5626bc6": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "db2b15f19a3e4333a3c55a0e8fc84364": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "bfff7a94f9b24477b6288d1c04cc19e8": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_e549155c8d2742e4a939ae37c5626bc6", "placeholder": "\u200b", "style": "IPY_MODEL_db2b15f19a3e4333a3c55a0e8fc84364", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}, "10b2df2fc54f4cbf966729d4bd252e8f": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "ac795afce2ee4bd2b67e888def2d3c93": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "395c6cb0135a494bbba86edf46e65ad5": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_10b2df2fc54f4cbf966729d4bd252e8f", "placeholder": "\u200b", "style": "IPY_MODEL_ac795afce2ee4bd2b67e888def2d3c93", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}, "40742f08f5e745208d1eb7ba757bcea8": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "28839c61649b4389a797c14bab4ac591": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "91a48a2606294af4ac1d7962c304eeed": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_40742f08f5e745208d1eb7ba757bcea8", "placeholder": "\u200b", "style": "IPY_MODEL_28839c61649b4389a797c14bab4ac591", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}}, "version_major": 2, "version_minor": 0}
+</script></section>
+</section>
+<hr class="docutils" />
+<div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/chamfer.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/chamfer.py">Python script</a>.</p>
+</div>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Create-a-block">Create a block</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Chamfer-edges">Chamfer edges</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Chamfer-faces">Chamfer faces</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Close-session">Close session</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pyansys-geometry/edit/main/doc/source/examples/03_modeling/chamfer.mystnb">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/03_modeling/chamfer.mystnb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text", "objectID"], "limit": 10, "minMatchCharLength": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.6.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

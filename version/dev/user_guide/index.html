@@ -1,0 +1,828 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>User guide &#8212; PyAnsys Geometry</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=99899407" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../_static/documentation_options.js?v=8bee615f"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Launching and connecting to a Modeler instance" href="connection.html" />
+    <link rel="prev" title="Frequently asked questions" href="../getting_started/faq.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.15.dev0" />
+  <meta property="og:site_name" content="PyAnsys" />
+  <meta name="physics" content="CAD" />
+  <link rel="canonical" href="https://geometry.docs.pyansys.com/version/stable/user_guide/index.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Geometry - Home"/>
+    <img src="../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Geometry - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="connection.html">Launching and connecting to a Modeler instance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primitives.html">Primitives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shapes.html">Sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="designer.html">Designer</a></li>
+</ul>
+</div>
+</nav></div>
+        <div class="sidebar-primary-item">
+  
+  <div class="sidebar-cheatsheets">
+    <h4>PyAnsys Geometry cheat sheet</h4>
+    
+    
+    
+    
+    <a href="../_static/cheat_sheet.pdf">
+      <img src="../_static/cheat_sheet.png" alt="PyAnsys Geometry cheat sheet" />
+    </a>
+  </div>
+</div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">User guide</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="user-guide">
+<span id="ref-user-guide"></span><h1>User guide<a class="headerlink" href="#user-guide" title="Link to this heading">#</a></h1>
+<p>This section provides an overview of the PyAnsys Geometry library,
+explaining key concepts and approaches for connection, primitives,
+sketches (2D basic shape elements), and model designs.</p>
+<div class="toctree-wrapper compound">
+</div>
+<section id="pyansys-geometry-overview">
+<h2>PyAnsys Geometry overview<a class="headerlink" href="#pyansys-geometry-overview" title="Link to this heading">#</a></h2>
+<p>PyAnsys Geometry is a Python wrapper for the Ansys Geometry service.
+Here are some of the key features of PyAnsys Geometry:</p>
+<ul class="simple">
+<li><p>Ability to use the library alongside other Python libraries</p></li>
+<li><p>A <em>functional-style</em> API for a clean and easy coding experience</p></li>
+<li><p>Built-in examples</p></li>
+</ul>
+</section>
+<section id="simple-interactive-example">
+<h2>Simple interactive example<a class="headerlink" href="#simple-interactive-example" title="Link to this heading">#</a></h2>
+<p>This simple interactive example shows how to start an instance of
+the Geometry server and create a geometry model.</p>
+<section id="start-geometry-server-instance">
+<h3>Start Geometry server instance<a class="headerlink" href="#start-geometry-server-instance" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="../api/ansys/geometry/core/modeler/index.html#module-ansys.geometry.core.modeler" title="ansys.geometry.core.modeler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Modeler()</span></code></a> class
+within the <code class="docutils literal notranslate"><span class="pre">ansys-geometry-core</span></code> library creates an instance of
+the Geometry service. By default, the <code class="docutils literal notranslate"><span class="pre">Modeler</span></code> instance connects to
+<code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;localhost&quot;</span></code>) on port <code class="docutils literal notranslate"><span class="pre">50051</span></code>. You can change this
+by modifying the <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code> parameters of the <code class="docutils literal notranslate"><span class="pre">Modeler</span></code> object,
+but note that you must also modify your <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code> command by changing
+the <code class="docutils literal notranslate"><span class="pre">&lt;HOST-PORT&gt;:50051</span></code> argument.</p>
+<p>This code starts an instance of the Geometry service:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Modeler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">modeler</span> <span class="o">=</span> <span class="n">Modeler</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="create-geometry-model">
+<h3>Create geometry model<a class="headerlink" href="#create-geometry-model" title="Link to this heading">#</a></h3>
+<p>Once an instance has started, you can create a
+geometry model by initializing the <a class="reference internal" href="shapes.html#ref-sketch"><span class="std std-ref">sketch</span></a> subpackage and using the
+<a class="reference internal" href="primitives.html#ref-primitives"><span class="std std-ref">shapes</span></a> subpackage.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plane</span><span class="p">,</span> <span class="n">Point3D</span><span class="p">,</span> <span class="n">Point2D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNITS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.sketch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sketch</span>
+
+<span class="c1"># Define our sketch</span>
+<span class="n">origin</span> <span class="o">=</span> <span class="n">Point3D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span class="n">plane</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">direction_x</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">direction_y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Create the sketch</span>
+<span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="jupyter_cell docutils container">
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major": 2, "version_minor": 0, "model_id": "4823646331fa41bead63057e55cda584"}
+</script></div>
+</div>
+</section>
+</section>
+</section>
+
+
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"3351997bb607452d96c25223727d433f": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "2ca30dc3309e406ea735e03440eaa0a3": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "4823646331fa41bead63057e55cda584": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_3351997bb607452d96c25223727d433f", "placeholder": "\u200b", "style": "IPY_MODEL_2ca30dc3309e406ea735e03440eaa0a3", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}}, "version_major": 2, "version_minor": 0}
+</script>
+
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pyansys-geometry-overview">PyAnsys Geometry overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-interactive-example">Simple interactive example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#start-geometry-server-instance">Start Geometry server instance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#create-geometry-model">Create geometry model</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pyansys-geometry/edit/main/doc/source/user_guide/index.rst">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user_guide/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text", "objectID"], "limit": 10, "minMatchCharLength": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.6.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

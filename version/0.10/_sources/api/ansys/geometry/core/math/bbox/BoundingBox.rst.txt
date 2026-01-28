@@ -1,0 +1,351 @@
+
+
+
+
+
+
+:class:`BoundingBox`
+====================
+
+
+.. py:class:: ansys.geometry.core.math.bbox.BoundingBox(min_corner: ansys.geometry.core.math.point.Point3D, max_corner: ansys.geometry.core.math.point.Point3D, center: ansys.geometry.core.math.point.Point3D = None)
+
+   
+   Maintains the box structure for Bounding Boxes.
+
+
+   :Parameters:
+
+       **min_corner** : :obj:`Point3D`
+           Minimum corner for the box.
+
+       **max_corner** : :obj:`Point3D`
+           Maximum corner for the box.
+
+       **center** : :obj:`Point3D`
+           Center of the box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: BoundingBox
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~contains_point`
+            - Evaluate whether a point lies within the box.
+          * - :py:attr:`~contains_point_components`
+            - Check if point components are within box.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~min_corner`
+            - Minimum corner of the bounding box.
+          * - :py:attr:`~max_corner`
+            - Maximum corner of the bounding box.
+          * - :py:attr:`~center`
+            - Center of the bounding box.
+
+
+
+   .. tab-item:: Static methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~intersect_bboxes`
+            - Find the intersection of 2 BoundingBox objects.
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``BoundingBox`` class.
+          * - :py:attr:`~__ne__`
+            - Not equals operator for the ``BoundingBox`` class.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.bbox import BoundingBox
+
+Property detail
+---------------
+
+.. py:property:: min_corner
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Minimum corner of the bounding box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: max_corner
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Maximum corner of the bounding box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: center
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Center of the bounding box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.point.Point3D) -> bool
+
+   
+   Evaluate whether a point lies within the box.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Point to compare against the bounds.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the point is contained in the bounding box. Otherwise, ``False``.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_point_components(x: ansys.geometry.core.typing.Real, y: ansys.geometry.core.typing.Real, z: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Check if point components are within box.
+
+
+   :Parameters:
+
+       **x** : :obj:`Real`
+           Point X component to compare against the bounds.
+
+       **y** : :obj:`Real`
+           Point Y component to compare against the bounds.
+
+       **z** : :obj:`Real`
+           Point Z component to compare against the bounds.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the components are contained in the bounding box. Otherwise, ``False``.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __eq__(other: BoundingBox) -> bool
+
+   
+   Equals operator for the ``BoundingBox`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __ne__(other: BoundingBox) -> bool
+
+   
+   Not equals operator for the ``BoundingBox`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: intersect_bboxes(box_1: BoundingBox, box_2: BoundingBox) -> Union[None, BoundingBox]
+   :staticmethod:
+
+
+   
+   Find the intersection of 2 BoundingBox objects.
+
+
+   :Parameters:
+
+       **box_1: BoundingBox**
+           The box to consider the intersection of with respect to box_2.
+
+       **box_2: BoundingBox**
+           The box to consider the intersection of with respect to box_1.
+
+
+
+   :Returns:
+
+       BoundingBox:
+           The box representing the intersection of the two passed in boxes.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

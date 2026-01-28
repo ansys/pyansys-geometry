@@ -1,0 +1,952 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>PyAnsys Geometry 101: Sketching &#8212; PyAnsys Geometry</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=99899407" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8bee615f"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/01_getting_started/03_sketching';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="PyAnsys Geometry 101: Modeling" href="04_modeling.html" />
+    <link rel="prev" title="PyAnsys Geometry 101: Units" href="02_units.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.15.dev0" />
+  <meta property="og:site_name" content="PyAnsys" />
+  <meta name="physics" content="CAD" />
+  <link rel="canonical" href="https://geometry.docs.pyansys.com/version/stable/examples/01_getting_started/03_sketching.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Geometry - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Geometry - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">101 examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="01_math.html">PyAnsys Geometry 101: Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_units.html">PyAnsys Geometry 101: Units</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">PyAnsys Geometry 101: Sketching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_modeling.html">PyAnsys Geometry 101: Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_plotter_picker.html">PyAnsys Geometry 101: Plotter</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Sketching examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/basic_usage.html">Sketching: Basic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/dynamic_sketch_plane.html">Sketching: Dynamic sketch plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/advanced_sketching_gears.html">Sketching: Parametric sketching for gears</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modeling examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/add_design_material.html">Modeling: Single body with material assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/plate_with_hole.html">Modeling: Rectangular plate with multiple bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/cut_operation_on_extrude.html">Modeling: Extruded plate with cut operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/tessellation_usage.html">Modeling: Tessellation of two bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/design_organization.html">Modeling: Design organization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/boolean_operations.html">Modeling: Boolean operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/scale_map_mirror_bodies.html">Modeling: Scale, map and mirror bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/sweep_chain_profile.html">Modeling: Sweep chain and sweep sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/revolving.html">Modeling: Revolving a sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/export_design.html">Modeling: Exporting designs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/design_tree.html">Modeling: Visualization of the design tree on terminal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/service_colors.html">Modeling: Body color assignment and usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/surface_bodies.html">Modeling: Surface bodies and trimmed surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/design_parameters.html">Modeling: Using design parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_modeling/chamfer.html">Modeling: Chamfer edges and faces</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Applied examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/01_naca_airfoils.html">Applied: Create a NACA 4-digit airfoil</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/02_naca_fluent.html">Applied: Prepare a NACA airfoil for a Fluent simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/03_ahmed_body_fluent.html">Applied: Develop an external aerodynamic simulation model for Fluent analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../99_misc/template.html">Miscellaneous: Example template</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../examples.html" class="nav-link">Examples</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">PyAnsys Geometry 101: Sketching</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/01_getting_started/03_sketching.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/01_getting_started/03_sketching.py">Python script</a>.</p>
+</div>
+<hr class="docutils" />
+<section id="PyAnsys-Geometry-101:-Sketching">
+<h1>PyAnsys Geometry 101: Sketching<a class="headerlink" href="#PyAnsys-Geometry-101:-Sketching" title="Link to this heading">#</a></h1>
+<p>With PyAnsys Geometry, you can build powerful dynamic sketches without communicating with the Geometry service. This example shows how to build some simple sketches.</p>
+<section id="Perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#Perform-required-imports" title="Link to this heading">#</a></h2>
+<p>Perform the required imports.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pint</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plane</span><span class="p">,</span> <span class="n">Point2D</span><span class="p">,</span> <span class="n">Point3D</span><span class="p">,</span> <span class="n">Vector3D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNITS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.sketch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sketch</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Add-a-box-to-sketch">
+<h2>Add a box to sketch<a class="headerlink" href="#Add-a-box-to-sketch" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Sketch</span></code> object is the starting point. Once it is created, you can dynamically add various curves to the sketch. Here are some of the curves that are available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">arc</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">box</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">circle</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ellipse</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gear</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">polygon</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">segment</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">slot</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">trapezoid</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">triangle</span></code></p></li>
+</ul>
+<p>Add a box to the sketch.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">()</span>
+
+<span class="n">sketch</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Point2D</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">Point2D</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+
+<span class="n">sketch</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "598b721699104a8ca01c47c40eb044c1"}</script></div>
+</div>
+<p>A <em>functional-style sketching API</em> is also implemented. It allows you to append curves to the sketch with the idea of <em>never picking up your pen</em>.</p>
+<p>Use the functional-style sketching API to add a box.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">()</span>
+
+<span class="p">(</span>
+    <span class="n">sketch</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="o">.</span><span class="n">segment_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="o">.</span><span class="n">segment_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="o">.</span><span class="n">segment_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+<span class="p">)</span>
+
+<span class="n">sketch</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "feaa6371aaf8461c8a811bc6216f52dc"}</script></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">Sketch</span></code> object uses the XY plane by default. You can define your own custom plane using three parameters: <code class="docutils literal notranslate"><span class="pre">origin</span></code>, <code class="docutils literal notranslate"><span class="pre">direction_x</span></code>, and <code class="docutils literal notranslate"><span class="pre">direction_y</span></code>.</p>
+<p>Add a box on a custom plane.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plane</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="n">Point3D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">direction_x</span><span class="o">=</span><span class="n">Vector3D</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">direction_y</span><span class="o">=</span><span class="n">Vector3D</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+
+<span class="n">sketch</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">sketch</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "d5f528b684a748bcbc21a34178a3e7aa"}</script></div>
+</div>
+</section>
+<section id="Combine-concepts-to-create-powerful-sketches">
+<h2>Combine concepts to create powerful sketches<a class="headerlink" href="#Combine-concepts-to-create-powerful-sketches" title="Link to this heading">#</a></h2>
+<p>Combine these simple concepts to create powerful sketches.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Complex Fluent API Sketch - PCB</span>
+
+<span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">()</span>
+
+<span class="p">(</span>
+    <span class="n">sketch</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">Point2D</span><span class="p">([</span><span class="mi">40</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="s2">&quot;LowerEdge&quot;</span><span class="p">)</span>
+      <span class="o">.</span><span class="n">arc_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mf">41.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">Point2D</span><span class="p">([</span><span class="mi">40</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;SupportedCorner&quot;</span><span class="p">)</span>
+      <span class="o">.</span><span class="n">segment_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mf">41.5</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">))</span>
+      <span class="o">.</span><span class="n">arc_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">43</span><span class="p">,</span> <span class="mf">6.5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">Point2D</span><span class="p">([</span><span class="mi">43</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
+      <span class="o">.</span><span class="n">segment_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">55</span><span class="p">,</span> <span class="mf">6.5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">))</span>
+      <span class="o">.</span><span class="n">arc_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mf">56.5</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">Point2D</span><span class="p">([</span><span class="mi">55</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">))</span>
+      <span class="o">.</span><span class="n">segment_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mf">56.5</span><span class="p">,</span> <span class="mi">35</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">))</span>
+      <span class="o">.</span><span class="n">arc_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">55</span><span class="p">,</span> <span class="mf">36.5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">Point2D</span><span class="p">([</span><span class="mi">55</span><span class="p">,</span> <span class="mi">35</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">))</span>
+      <span class="o">.</span><span class="n">segment_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">36.5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">))</span>
+      <span class="o">.</span><span class="n">segment_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">))</span>
+      <span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="s2">&quot;Anchor1&quot;</span><span class="p">)</span>
+      <span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">51</span><span class="p">,</span> <span class="mf">34.5</span><span class="p">],</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="s2">&quot;Anchor2&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">sketch</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/pyansys-geometry/pyansys-geometry/.venv/lib/python3.13/site-packages/ansys/geometry/core/sketch/arc.py:180: PyVistaDeprecationWarning:
+../../../../.venv/lib/python3.13/site-packages/ansys/geometry/core/sketch/arc.py:180: Arguments &#39;pointa&#39;, &#39;pointb&#39;, &#39;center&#39; must be passed as keyword arguments to function &#39;CircularArc&#39;.
+From version 0.50, passing these as positional arguments will result in a TypeError.
+  return pv.CircularArc(
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "eb503b65b457402197a65d8ba282e3f7"}</script></div>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"40431e02d6954e16a067374bc37d1df8": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "b781cd1ff9314a0b9a54d3803930ec22": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "598b721699104a8ca01c47c40eb044c1": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_40431e02d6954e16a067374bc37d1df8", "placeholder": "\u200b", "style": "IPY_MODEL_b781cd1ff9314a0b9a54d3803930ec22", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}, "af9fb5a5769f446cbee9d8ee5ea6ed3e": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "be566c5cefec49fd894c4fa7ccc6a929": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "feaa6371aaf8461c8a811bc6216f52dc": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_af9fb5a5769f446cbee9d8ee5ea6ed3e", "placeholder": "\u200b", "style": "IPY_MODEL_be566c5cefec49fd894c4fa7ccc6a929", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;UEsDBBQAAAAIAGuYPFzJ8fo4GhQAAJB5AAAKAAAAaW5kZXguanNvbu1caXPbuLL9K1Ou980zCQHut+p+sOQlmWsniq3EiVOuFEVClmJJ1Gjxlsp/f+gGCYAA5EiOMzXvXalSDNEHOGh0NxYSML/tDLL5gM13/vXbtx0ael4vIr04JGEeFzRJ+yHJCSX9PIsDGnyhQR8zQhl+s16B33/bWdxPGeQ/HJXZwqd7s1l2D/KbxTWI+X+dcjhZzEGWl5MFmyxAvrfid7WfrEi39zq3P06rn5lu/na+c31I1KN50Sd5Efhh32dB4UeM+Ly1hGQ+874QetwwyloFNKO85y132qTNRiMp1s1yJTVsifbD5TVc9lX6HVwOVfoTXF7JZoVJL2ZBQkmSpUWUJEUvz/wiirKI9gq/F34hUdPXaxVYy9f72SJztkv/vd57aTvE7S4zHJrl//1vbC9NijxPSVIERT+lHtfZK/IiDXsQwr0g+OJHvhHca5V4enRfjD+Nb+jF+M+ZUH/ZCg719GEWv7oZ63h02EwHjTT+jpp4xyivp4G/Y/B1tPpBPzN9E1+xVk+rX0ujvjMd5/rOjPxaGn/HTbxjlNfTqK/B19HqR32N9M3d+fIuDlT9Whr1Heg413dg5NfS+Gs18Y5RXk+jvgZfR6sf9TXSYM9BT6tfS9f2VbiwbyO/lq7tq+Mdo7yeru3byK/VX9tXTwv/N/VtGfq2DH1bhr4tQ9+WoW/L0Ldl6Nsy9G0Z+urpG234wPq1NOp7peNc3ysjv5Y2f1i/UV5Po74Gnz6cob5GGu3ZNezbNezbNezbNezbNezbNezbNezbNezbNezbNezbbcbDwNB3YOg7MPQdGPoODH0Hhr4DQ9+Boe/A0Hdg6KuncTx4MMaHB2N8eND0HRj5tTT+Wk28Y5TX03J80PNr9cvx4aFp31bXGH+7xvjbNcbfrjH+do3xt2uMv11j/O0a42/XGH+7xvirpXE++2rMb1+N+e2rpu/YyK+l8XfUxDtGeT0t5zc9v1a/nN+qNC4TvIglxPMI8RMSFL0ky0IW8tm+30tZRtLoC5/8m8u99Ur8zHqvpYUXXMQibw6XA7zFpR6u/94oHIVtvMVBJZC44DuR5fcVfqDw95JE4Go92YJBrHUghSK/Wl8eKFzwYXkc+boS15Ruw23rncQF3zVc/oOVKhz52reyUR8RV3zYqP13tZICF3weXN7C5Ujhov14i0GQSVzwdVQj5hJvKdJT2eiW8scB8mPTCokLvjPEQfVWIHHBh6qj0V8pHPmE0d9LI75S/jhHHNJtrG+g+HK4olNeKxz5jhBH+15LXPBdIA61tN9LXPCVcO3B5U+FCz7UF0kmEhd8qMQruG1fSVzwoT8YXP6jcOR7hfGD/vhL4oKvj/rCpT2XOPK1segQLsfIdyv5XqO+aN+lxAXfV9QXyycSF3yIj+ByonDk+xP50bR3Ehd8Y8Sh6v3XEhd8aAo04onCkQ+DvI2m9iQu+KaIg/777yUu+JBqBpc3Cke+Y8Qxq+j0im+BOOa/lrjgw9sbuLxVuOBDfbGRscQFHzKfwK0YJGLJt49F7+HSUTgKT5AfrbYrccH3gPpi+UTigg9xInPuK3+8QX7wR6slcXH1UV/MCfW12ooPGxHC5VTigu8t8oF9W4cSF3wR4tCUg08SF3wYj6jUqcQFHw4i++APMSicKn+kiIMqB9cSF3zoD3yGPZN4xXdb37WOJY58YlB6B7dikDmWfAdA3UIvdpHPk3zvkA/LdyQu+BA/hVvR0o7ig3hr4VDyXuKC7xT5Id5bZxIXfDgUovDwROKCDzs9dsUPEhd8Z9ge9McHiQs+7DpnoP/hJ4kLPvCHGFQ/SFzwdZEP7NvC8e5c8WGodDF/KXHBB64Vk9C5xAUf9rxDuBWD7rn0bwtD5z007dCTOPIdoj9wvvso8YoP+bF8X+KCD6v6ALdiEO8rPvQHNuWTxAXfB+RHfwwlLvjQKOeYH9NfFR/GYwa3FxIXfOfIh/YdS1zw4fyAk+5RLnHBh/GI810mccH3EeMH/TGVuODD+eEjFD0qJS740B9omUzigg8bdYT+mEtc8OH8+AlKHXkSR74jjEfsZD3kU/OvmBTRvrcSF3w4P1wA36sDiQs+jEec73KJV3zIj/H+IHHBh43I4BYnTYELPvQHzneFxAVfhu1Bf1CJCz6cH9Apr3KJCz70B84HTOJ74l1Z2u/HUd7Pg37W7xd+mqWhX2R+5IUFo17M7Hdl65X4dW8Ht+ltepveprfpbXqb/lvSuFJgQd/rFxGLc7+XJbRHvDwogjAN+z1CkqL4QgPaXCmsV+KZVgr7bx5ObvEZa+/EP+mKZ6q98XR8IV7EI76rsicVfn1RvYh/OHk4eanK1y8OL9SL+oZlRH0P+cNJJ/dPHvb9Nw8Ht7uYvvjrYtyNFT4HHNf8L2v8qPsScV7nQyeR5QV+zmv9+rJqT3tP4J5QMr+r+Or6RLq7H2Xji+tdhceIQxkoj/jp9UvEv0KtL1V5xEPe0k8Cv4J91pey/N6fqj1oT60+TE8lvivtvb9b4dy+IeAB2leVFzjaV+BoX9Nfyr6xsq9Wn7JvoOw7lfbdVfaNlX3H0r67yr7qxb5mb2mPuj0KV8/sGB+Ac/tiGlr6kKjyiKdo3zp/tY/9srZvHQ9oL81ftX3r9sh4reqr7XvUTSr71uUFXtv3CF7Uo32b8Y726Kp4QHtp/kL8q2pPjdf1YfpBlhdpCvZNqv7U1u2xV8ebivc6fndV/Gr+UvG7q+JXq0/Fb6ri91bGr7DvkepPaA8t3tG+WjzI/l7xob209qjyAse0wNG+5niB9nun9yduDy3eEb/S40Hgtb/Qno32cFyrTzv2wp/nYJie52zCcBieZrNqlPTuPBg3hwVPUG285QPrx7dTNjk6PmWTgs3Oh5OivIWs01k5ZbPFsDotNFmOe2z2tn+c3bMZiChUVbApFJvkItvnRpX8F4ZhEUUkT/xC1a8Q36NxkXo7TYV0fdjMoUsvy6+vZuVyAmyfyQvv99/qyyXPrWAKuPeCN7i+AH4zZLfTcrYQoAdyg2FxW54NC1YcD68Gi+HkiuckXDyC5GE5GpW37WzMZlktB5vwew9VZXM2u2HtclTOWst+30L22XQxaCATls3ao+F0yqvqjLIJ65Yjzj7JwSJcOQ8qyasMp9nkih3cTbPJfFhOMEPI4eWcnQ0y7rt5RcoFWFOHsZFoAkjLPB8toeBpthiWgp6Lx9ndcLwcv6mcDGWAJwCX8Zl2luWL4Q1oQ9b2uuZby+tRQTy31yu72j7vl3k2wpM1wm0kDoGQkJR6KU3SCNzoFKJHp+V8uBD2+kxfxHEc0TglSRBHScit6xRFHgWRF3GtUypD5/3UCpxL0z+imjCKvTj0g4QkkZ9E3JrRizQiiR+kSRp6CVfzEnrshvYLPNKPqNt+e/midHWZm+F82BuOhov7Kmanw/w6641YlSxm2ZWW5MHTgg4EhRezJYPImQ2vhpNm0x3GtcA59xtz9lPOyBudNUr+oRftl7OcvZ1mfy2BoJ+N5qyWdnn3mI+WubAaQhCZvC4M3M+fd+ZscZJNpziAfOZRPF9Ah/rX/3xTFg4CP/a97zuXl5CFF+gIo92vLBJ4lPoRFrlctyNo7jI7glDAcKTU2vQhHz/KEYwsQ14hr3XRLad8lLm6r/r2DEfM7nDMZL/OYMG8l+dsPj8pC1ZlBJdkMxmoehRzxx+X5fVy2oVoOGtkVEU/6NHk4XocRrt7XJ+/yVCBP0gtt2rWBDi68FZki6qyeYtxBzMwQjXw2n59PZkuF/A88CPX/lHwTLyA5mKtdatL8+Is28zLmi/dXq51MbzdKUf3VVNMf0/FOcKnHMGF8wWjbD63TiROhHN2lATU6q54+qon/XY5npYTJrTxwY/DByhAYYKYQXhUhhkPJ/qcAu57IeKjIuCSyXI0wkHvJzN7mzEHJKDEDyMKzkhD4ip7+R1n+QlrWn3dM76G1RsnPCrDQzWG0Y0TIk6bE2VzQn9o89htGWxdf8hGRVVy08O+RvsaT+R1YHXZ3WI5Y7+1y3JWDCe8Xz8tyqjW4uh5o2zDwHHbEgKFL0mqyUv01bofz9jVcL6YSZD3+i7aY77z/ZEJf/UIIsYjY+RojmSr1uu4DkWDhmDGm2y0ZM6Rf9CQ8yWlmL0z7k1siAT1KXySTbACVchcFvUYXy1jWS2j58iY9cob1szYWDHoU9SelbdeHMDCxaqxBrPRdJBJn94wWCudiRjD2UpI2pqvVb5qziI4ZxXsjj8coP2rTItq8fT5Mw3BDPiP38K0s7aEWBJqSXxLElqS2JKkdl02NbGZSGKr5NDSLkjtGn1bdd/WNLD1CiK7zbYSoc0V2VyRnSu29Ypt7RO7jamtRGrTE8/mJ57DIS7zU4eXqO0T4ge2LHAEWODQL3ToFzr0ixz6xbYJSOyoI3G0I3G0I3Xoktq6UM9uL3XYlE/4Dpkjph12ptQOO+rbNqUO21NHYFOHP2jg0C9w9KbAoXPgaK+jX9DQ0TaHz2noaIcpC/D+aTLfIaMOmWfLoPmWLHLIHPUGxJb5qUMWOmQO/ahDF+qolzraQRw6E4d+niOfZ+cjqZ2PpI58id02ktj6kdhuB4ns9pLItgsJHbo4fEkCOw4IdBdL5mgHdbSDOPQjDv0cNiWerV9qmyCxa0jsCmKbP7bpI7sFoR2Mjv4T2Lkc0e4IbEdcO0xLbQ9Qh6NsekdIE0dBu0bbqDaTo4E2tSWxrf7rJcSS+JYksCSRJUlsZpua2NzEpqqcpYuoXbByfENzR2NCW2TTB3YLAztXaOcK7VyRXWNsmz12WJDaItuqqa1EPRo0ZQ67EruGehRqyKjdBOKwbT36NWSBw8WhQ7/QoV/k0C9y6Bc7bJA46kgc7Ugd7UhtXepZqylz5HNEOXXEdD2rNmV2O+pZuhn8tl2oI7CpI7LrVURT5qg3cOjs6APU4ct6NdSUOXqsowOtJQsk8LjMd8ioQ0ZsmZyldFnikIUOmaPewLNlcrGgyxzt8B1laeSQOdpGHDoTh36eo72erQs+w1gym48kdr0ksfXDZyxLZvuDRLadSejQxeFzfFa0ZLZNicP2hDraQR36EYd+DpviM7QhS231UruGxK4gtvljmz6y6SPbEaGdy9EtAjvqApvLEde+I+QcEefoTA5bO1zisL6tl8NcdqNt1W2d7MosiR1ej0suv+Nb7Q333apdPOcGqrYFaO+/4Ra+2rKEd9TFsN9fzle83Lyst8CcSDbuwQbo6qLzKcuXo2y2OgcrVr1X1SqQb7QrXeUb0JpfZqgFnfIWDyfwJRHKy2mWV1vHmFa7dtURhEoVa18QjmL0s5y1lyPtEEJ/Vk4WthjfoVfvY0OsB7ZizofFYiBrHmknMh7x/eOb50my3Tw3Ns+F2rOTbDEb3skKPcflSQBuPW20Oe/5RRr0Nt2cD/148835KhyMQKkU2G7OP/vmfGXZJ27OEz/ky4HNvKz50u3l59mcX/cTQn/T7jyvzrlxyoeJKEjhF0ckTGBfXNsbdUCPbJU+J9eT92i9FylJqZ/ECV8sh54Pa6QV2988mu+bXlv7iw5/y+5+6Hk/3uymK6yzcoN/7T/YW2eH/005G/Mp41dF509EwQ8yk00ODKyR+XLDMwC14bCWjf9CYoPDF8949oIGPz5u8uuO+Kx5auf5z2KsnjCq6Wd7FmN7FmN7FkO0eXsWoyHbnsXYnsXAjrg9i2HJtmcxtmcxtmcxGqLtWYznlmzPYoTbsxiGbHsWY3sWA2XbsxiWLHTItmcxtmcxtmcxGqLtWYzHJT86i+HeZq02bX/JWQzrdWW+EjHPYlgZrLMYVo6//SyG94KsexaD/CPPYvg+LTLr7xqF7/HTGw7Hz2+Hi3wg3/4u2GReWwP63iMudh+0IPVpiebnJQzv1WWzUW3hO/leut7RmLC9yRW+ePar/f0F126JfvkAr/rnO+a5isvaivX2zCuWFbLlc/yex55iEZU94YsR3NCMrDj08gRDx7ahvRdpzFcwqcdXnl6cBLC25jKV9GMxahhuIIREfKZNYy9I0iCN8IsdcRR5Af/5fCmfxvC67QVvgsdXB5SEYcpzkn+Qz8QnS36R19IV3/n46e4BzkkTz0+5SaMkovAAwmV+8+fsPHDMKAjSwA+4mjQOgziGNRAXp1GY0jChEU1SL0rgxSavNkiS2OPeCwISJ3H0X+K6Pn3GkY0ENAljeY03GOhSP41S7hHeDcPUS4LKHNxbfkA9/lAYcGXDKEri/xbH5M/Yp57smD/+n3sGl1uNg2F7+A0p+YGnFZ9eEd+Gqs+EZUXxYchuYSH4yLE/POe7aRG+HNWK1A1a9UEYXKhskh/m243yp3Sj/DC8bJQ/F/wrl2mPfKWN0SD62a+0WQH7tK+06Tme+JU2PMDr/Eqbjmz+lbbf/ynfaPO+/77uR4uUZ61jLlnorVgxrv2NthVDlHMBbnxZjWjlrC+rcTnBd8Rw88gHVVa2DuaHjJmt27tj8/9LR8CNA9v4NC7//SCJ43rWEyHEp7hBeVupDmQ7H8EE0NSdT3D3AHcX+A1gPov0h1c74hkcTpDL/rEYTk/hEPSyngaiSpgVw+VchHHiNX5U5Dhmkyt8rsTeDXNKf2FTCbFGJqbjG4ZjBAb93d7dcC6fwfHNBLzti7G59w0wwLf9HExwQfrQAOWbjcsnT2RVB9pkVqqiUozSRrW8vDbUri7PVz1alT8uIrpIfZh6vBDn04ME35LyNcQCh89v0D1OWf91sxtpU4aIhLf901L/m4QNP9KY18O1/a1I8G6PDbKboThB903XIkjy3BNxPMtlm1csCIv5wp1FjRYZDAKy/37+Q/U81+2lNoqIoDi7n+TAwyYwJBTaylEfpPnvfwFQSwECFAMUAAAACABrmDxcyfH6OBoUAACQeQAACgAAAAAAAAAAAAAAgAEAAAAAaW5kZXguanNvblBLBQYAAAAAAQABADgAAABCFAAAAAA=&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}, "14e8ded9e3714ce1a0eef2d06431d414": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "41ac00b19b6e42729bae1bb5f02ebf56": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "d5f528b684a748bcbc21a34178a3e7aa": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_14e8ded9e3714ce1a0eef2d06431d414", "placeholder": "\u200b", "style": "IPY_MODEL_41ac00b19b6e42729bae1bb5f02ebf56", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}, "c0d2acfef3b2409b94650391a59d420f": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "1212812e07344a4d8ccb9daafcab31d0": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "eb503b65b457402197a65d8ba282e3f7": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_c0d2acfef3b2409b94650391a59d420f", "placeholder": "\u200b", "style": "IPY_MODEL_1212812e07344a4d8ccb9daafcab31d0", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;UEsDBBQAAAAIAGuYPFwqVjffqDUAAG3pAAAKAAAAaW5kZXguanNvbu19Z7Mjua3oX3FNvW+yrc7hVt0Pyllq5bC1tdXqoBxb2eX//kiQ7KDmmT0zu/bzffdMrWWBIEAABEi0gCP949vSDpZe8O2//vKPb7pmS9rcnXuKKBmCotim5HiKYRqKq6iiIPymCYILMzERevNJir/+5dvlefQwQXl7sC+akjuf7Scev102eBj9n3VY7S8BHnMO+4u3v+Dx62bTyq2uVXedNU5+tT8Y1+/WPRf+y++qRXdZKCH84TbeLUqtUQKfvT93ptHWED7bE3a7+dN9xPH36jmvDdWzu85chcDO55VtAj9uNQUtyI8Q/tgWKzPXS+KD1uF4XxmIv6Gvn1JuXFo+4/huWx32584UrS80r6PpsDFK4IuFS2842T/cQbbR6+ekbNZM4C/qVfJVueQOzGJHuaiF0fKVoD/ozfq20sf0xnh6L5/EBL5yyWhlw7URvTeTZpdXVk3gdwfDmL8cD9F3tInmK5uHkLCPmd1M2lnHLWa1Rtna5upuAp9ZLQdqtzBB+KKc6TmymaR/XbeZfabecosZe/163NoPVYzjJzt3N3eyGedl2LJ+mDzEYwL/vJV3rbx9QfjOOgh2w1k9ge++rk2vu506r4y802fZvdNL0m+Gi/Ytm3XWRrshlnueX07gzYK+HZcLW2dt5uRtr355LKU4vqMYl0V5WXPWmftztS80X8cE/jRwe7vJ5OgMzOn9Njjdy6ME/nxpVhZdr+4MsjkvqB4Hu0sCnxXc+nFn7BE+W2zM5buc5K81xeMhXyw7RaMyddpSqdZL0jf2D2EjrpxiRut374WG4ibw1efrVVjOs/MXn95YOkJWdLT5K5vhrb/N1dR+YSnP13z59+vFpjJ8SvMP9PcO23NfmSvzIt9+hdLZ2M2mmXmRb/9J71mRX6u6/TJavP2zB5X7uDCY2Wv+/o+NgaItDjcb7T/Pf9rtverUV017wPe/UXtQK1abN/sD/82Wh4vFYDS3i9kCz//t69rYTNbWDAUeL35utWV77ixbCM+Nv1tn26029oPZmh+/4jS4ZY+9zWzNj//FPj8bWK/s7IPzQ9yWNqdhfzcbZOu882eeCZyrs5wgPPf82uTrr4fpDGcDQ+OefwXLdecTd1bkn59zvV706rsnwnPPX+MgapNGZjArZjO881vtDLOTpZ1HeO757z36116mrCG8zrs/InrDb1qtRvlm3j5Y/1V+DbKj1zGBd5qh/MPceltrVN3rB/q7nUJ3NmjOLnz7mepqfGkub8sgwb/D7G9U+rfnbLtWE3hRZPtnutXa3O/UtucP9v/Ymuen9fb2lKA/MP8xnYe1PhVW5onvf8ZL8rf3Xe1yTOAPzH/NgdhatJyrefjA/41Rv5Bvjy4JfHbE4sc8adaz57XM/QfxZ6xK4uVZeuz58ZsxtFHOObntXeL8cFj8Z4erZzazrfQSeHsdnh8Fp7xtZS1zm6B/sPMnOx72+8deY5bAx86vm/Z4qs+ym8DHzr9uaW9VxUcvgd+/2PlpZGumKF5cccM/f81bsGkru3k9gTd74fn9XKNr6Ky2E/hagZ3/2Y2KcoDyoZzAR/eHqZcbalWZHBN4bc7unw/oo/uLu/7ZZPefeefJH7s/czz9Y/cv135mP7y/7zz7P4fs/ufvX68Y5g/c/Y/yj+yY5z8TieUvGZPnf69MmP9keP4b5U98/3+0w/wrw4ufKH8zh7z4q5gs/zMkXvxG+aPp8uI/ln9yz49in+Wvps87f6L816jxzq8ofzYN3vkXy7993vkZy9+5528s/xd453f0/GAseOe/sj8Mzxt/eVqbpZX02me03TLhH6J0nnQGi9M6W1j3LvlR007g+2er+mqe/dPaKPmmszy0Ggl87llqNoyXi/jbrZLjCoaWwJuHzcN+nOeIv+YX1wulfUrSF4Jp77SeIHyQf3TNm5dc31Fks73fDxB+nXkelImVXL+Y901XrXZO60xmcqkNgpuUwNecST3rT2pIvsttYDrBfbVK3N8VdEGdXgWkX6adv71G+U4Cv97IjVbzqqP177VzYK/zUgK/P3S0znMnYPpWVssNVl4Cf1DEW8fXzgi/uerL+mZdSOCf25lpbxprxN807MN0sN4l8GpLLxx8bYbwipod2t6wksBvz2q283p2Ef4QdIfdgvBOn/VL93EF4SuPjNvLljIJfEnclPxxG+ln6o3uxO2N7AR+Zp3G7Ur9jvA777WcKKNrAr+a+bdx7rFF/NvGYDF+jpP6bU7WdDIWZ9g/1mJrm6n0k/bJoweXermN8F1992jYu+T+5Fr3pnVo5xHeXQ6njWoluf5peXK625yI9n9TvneCwi65P3Zhv5h2u0dk/+39OtXbFS2B11bTR6FxdxDekIVMeysl8fNCv3Detrof0TfWVuXVdUofrS/WymPhMpBPA7787eJoi1K3M8Jz9e+eTvXgiuJvwLdfX589L8JteBrw7e+UraaURf4/4O/f3e+5m2zfRHju/htVqZAtN16IP9d/rEN2JeavR4Tn+p9R1fz5dofk5/tv4eZvjr3xGOG5/t9yik9xu2ufBvz4aQenvVjQygjPjb/eojCV1QfSjx+/duck7u2LhOl58R8oq2lph/x/wD8/nsXZdteanU4D/vkzdfIbyVW3aH3u+SU8643nyVwiPPf8k4PW/TgQPYTnnp9C/zFRp5c59g/e+bs6nuyuiuJvwD+/C35BCuT2FPHP885/41JvT5d5hOffHzH6yqoptQ+q9MH6mdL2XrmM1MoH8htX9Vh51GvjD/TPdHZ28VreJ9cXC8x+GacYjHud3Uf2R6nPSRvvpOT60f5lG5e7rSP/X/L335iPZ9tnr3Rd8v3HbChneX7YFJZ8/8tMjYck2K8k/8h/Eb15bJ/6zyXf/83N+Fkoz/qdJT9+Ms16QZNOvaR/RPGX6TavnZe/TO5/FL+Zxazdyei5d/ow/guDW9nI3JPrR+eH0dZd6xH40oJ//hirnZaXy7dVAh+dXxm93igozVsngY/OP+O6VMbHbEZL4KPz01AalWdp7V0T+Oj8Nc6bWbMkZZLrR+d3dpO9DFe6Zyfw0flvrkdWo3/PjBP46P4wW21lm592kvjo/uHTR/cXf/3o/uPLH92ffP2j+9e48OwX3d98+0f3P3//ovyBv/+x/IPrP1H+wve/KP/h+2+UP/H9P8q/+PET5W/8+IvyP378RvkjP/6j/JN/fkT5K//8ifJf/vmV67P8mX/+Rfk3//yM8nf++Rvl//zzO/b8wD3/v/3zr3/5ZpqGLmuK6mi24Yia4Zm+M7fnwlz050g/7zdJkJqJssznKGJlmeFqf5ElTlWm4G234XCsMDOLZMzD6wK/tPBLCQa7+HWKX6r4pQCTNvilATAoCS9t2EigN/ALUJbwa76G3w7wSxmYDvHrGGBMmgciEKWC3+YD2HNYFOgV/NbHL8CpAKKtAMb0BVhqi1/qmL4ApAcQEqMK8PaMX5pAL+DXK8CYvghKPUBzTF8E/WFSG9MXQX8Zv3RASdBfAxjoQX8Tv1hAb4Tm7GL6EpY6D6v0wChY/3wFYExaAqXrGO7jtyWsfx6EGAA91j9vYRgsV8b65/sAY/oyGGmE4RGmL2P98yD0GKPKWP/8HMMToMeq5T2AMT1Ikl/i1ymmr+Cl85toU0DeHcD3cJOOGLZhPsgLmzbH61VA3huGySaCvE+AMT3ZVBHDLqavgrywyR5GVUFeHcOw6VWQNwMwpidOAAZeYPoalpc4xRLT17DqBfBX4iRYlQL46wrowWnAX9dAj/eLONEGv9bxAgXwV+JUWP8C+OsWkxInA9Ps8Ns6Vp043R7osSoFEJ04IRatAKIcMD1xSmB9xPQNTEqc9IRRDfy2AP4KLw2sfwH89YzpiRODvwaYvgn6g79eMH0T9Ad/JU4O+oO/XoEe9Ad/vQE91p8EwR3Tt7D+RRggQYH1L4KXPMDV//u/yYEmGL5niLqrGbbnyIYrK64wVzVPVzzZttXfREkx/OSJ9jmS90oz90zjVppzb/8KF2dtjY3+4nXgwreMsbbs7pTBzmKxsYbDM4NrqxKC1QaDX4PNxnLyYjh/W9tYM/vC4KIUILz+YPBBaW2scbuwLBK4Wb9vrFHBZ/Bp3t1YU6O2HBC4bAgbq7fNMNi9DjeW52cZ/LAQ3m+0l2sCZx/DrdU3Dku6Xn2lbK3ZpMPgTmm6tXq7/Iqu19oi/LyUXbH1qgg/KjVWlJ+kCFvLuy0YvNQQ/0m1uKL8ynOEd73HmvJbut2t1b0Ga8pP7AQILjzXlD63aO0se1BcM/v0DjvLmy82lN545XbWvIWeaAkcCM7O8g/mhs4flBVE75pbOv9W7SJ4UtvS9XLTYGe5hrel8ytaaWcNK7kdnV9oIn5zK9gx+wX3ndUzNzs6f9Sp7azxa7en8wMfzZ/2Xnsqj5y7761h0DxQvPAs7S37dDlQftvidI/m2wfKryoEe8vJ9Y4D5h8Goq8OjpTfutraW97TO1F+tuIgfnWUeVH7qIh+OBueKd49KXtrHphnit8baH2vdA8ofuV299ZscQkovnVF/JzS60LxO3+ztwbH4oXib93gYHnt+ZXi90vhYM225pXiO8iXrMH1cKP49SZ3QPs3v7H1y6WDNa9N7lS/6bh2sIZ55071lycI7p+OD4ovHloIf848KN6sI/zkMn8ye9gIns1zL7qeNEf8J8PLi84XA7S+X1gKlN/CQPJ5JVek89HxcbB62lKk/HQP6TcxzhKdf8xuDpZ7NSTmfwvnaHWXI5nOr/W6R8uVXwrlJz9zR6ufmSl0fu8pIHyvpNL54/XmaM2ykkbnl4fDozW2rxqd740QvS+edRY/5eBoDZybQeVp76ZHy1vLBp2/3qP5XrNs0vkr+YDoV9MMnd+cdjG/e5b5Qw3J47TbWUo/OSJ+U2WSG8D9m9NUBclzbeTWBK5oSN/xIJt7EVhvIPzIlPJ0/kRH9MP5LU/nu03E3zePhSKBGy20/mSyK9D5voPkm4qbAuXnXJD8g+amSOfnL5jfdluk/Dou0n9+2xfp/EIGzR+b5xLj10H8h/K9ROevrgvE7yGVKb/29Y72Y2KW6fxFx0D2kkplys+2aki+e7tC8bqF+M1P4wrlV7wh/afCokr5vXzE35VOVTq/YSF9ZiWxSvnVfCTvrJir0fmXG4KdfLNG+alZBHfPk9rr+/DhA7jiI33sjHOk/M83BA/d1ZHKc7zh/XX2R7pe7ob07VcvDEYX9Mka7p5Hyk9Z1E7WoC6fKL/ZfXiy3JJ+ovwGi8XJ6m1yJ0q/ywUny5eLDO51jZM1qVRPlN/w0TpZ423jTPk98g7it2idKb9t736y5s0Og5/90snyrtaZ8pv00fzJrHtm/FYCknfRDSi/4xrxH00sBo9fB/RsnmkHlJ9TwvwejYDyUwQk/zhXDSi/Sxnp78oFBqtlhB9tzQvl54wRvbOQLpTfWEL8e/qNwYc9Xr+wuzD9q0i+Udm5UH7dKZK/5/SulN9uhvjNJiUG91Wkv1OWrpTf6ITmz3L7K+V3PaP98OdjBrtzBenjla6U/9JA8owOjxvlZ7SnyD6Ww+DzFck3W5VvlP/dx/stXG5r5q+I32g9YLCyCM6Wbco3Ft/LzRnZ274zeZ+Ls9XzdAZnBlMEt+075W9uhmcUvzKDu1sEj0/9O+UvSd0zyhfOd8r/PkGwLxcYbBwQPBxNH5T//IjoJ9kzg1saWs9uGw/Gf+4geNp8UP7bAMk3rUwZ3HIPZ6u/WT8o/9L1fkb51ZnB7ZtyRvfb40n573u5wJplRAb3Vq0A0ctPul6rOA2skScxeDzcIHzu9WTxVL4H1kS7MHgqI35jZ/tk/qB0A8vt2wyezBaBNTfaL7pe0ED0PTPD4I5RCixPPzM42x6i9UaTF13fyBwQ/TPLYPQsdLFsZfui63uP4cXy+zUGF/rBxZqujwx+CGj+uF19hfEwvViTzIrBr939Yrm+xuCS0kLzZ12ByrNQNxerb68ZXG0ifr3qi8FyC/Hr13MC87+LcLFGdoPBL7+L5J33GJy5B1era4wFKl9/1bpa08eEwSivuFq9U4Qv164oH+sx2KxsrtZo2BCovFeldLX8IMvg/Qzh7faTwVsd4Ye7FYNPDsJ75w6DhQ7CTwcKgwtZvH7LF9l506vdrNmowOBr4XCzuts1g+ub1s0aP3MMPojBzZpfbQY3q92b5XsPBt9r95vVe1UYPLGHN6t/njA4d1YQPrtl8NmdIvrXLZzvGYi/LjO4lFvcrfHcYPCjn7tb/sD8CD5v3OX34KmUX1rTapbB5f12ieKjJNL9exzLS8u7Nxns2MclOj/HDC4H7aU1VzYMDswLwt9FBveyPbReuc5gIfdYWf3HksGDwmhlTR46g68vcWW52pTBle1sZY0aKoPtiorwA4fBBwXhx92iSP3leUR4XwgYLDcRfqbOGCwGCD/s1xl8ySC899QZ7GcRfmY9GNxYztbWoHsSmf/1xbXlqFsGN0qjtTW6bhjslR9ry12H+OO+vbaGpZPEzoPpcW3Nyg8Gb7Uy4jfWGTzSl4jeqUnsPGipCF+fMniSQetNK2cGH/3L2url8hKV9/Yoo+fJ5YzB54KLnh/HAoPttYjwub5E5cuU6+h5sf1k8Gi83FiD/ZjBiyqa3w8MmcrnHtF8p7NhcKeB+PsbS2bngY4evJ2lyeDyJY/o11cGtzo99PzaXsos/8qi9abVMYOD+2VrjY8dmeVDS3NrOX6Nwd1XHT2/5ssKi7fSCD2v6iUGiyN3aw2XFYWuh3ih51+/weDp5IGeZ8tdha7XPaiYfspgeYbWG7trha7XOpcRv+qdwd0WWn84yqosn3XbaP6iq7L800Ow3VgzOLgh2DsoaphftXfWwO8yuNVD8EQ9qpS/36+j59FhSaP8vXUZPb/2lwyuC3kE53Ma5b8cquh5t7hk8Gb0QPxXJY2dp9IRPa8aB43yDybuzpqdOwx+1HroediU9PD8R+vZXV8PnxdERC83GJw9bXdWNy/r7Pyej9DzeG2jU35VB9GP/CGDGy0kT98uG5S/dJkhfE02mD9csX7VE4ObmQuSz/YNyl/wkXwzd2Qwf7CQvs6mZbLzc+Hu0flZZvD6bqLnbTVjUn63JcKjTTYpv00e49cCg3NPhPevd5PyLz/VvTVaXjPseaDYQ8/PtSBD+dUGFwRnzwwub8p7lB+fM5TfaTND/B7nDOUnD9H8wfCSZeevmEfyFm8MroojRJ95ZJn+2y2CZ0KW5VfbB3qeP8hZyq9eQfSOrjO4WGkj/S4L+iFzblNB/EbnAoODHdLPMTa5AYGdMeI/7lQZ/KocsTwnBj/GSF4330KGBHi8Q+vPnjcGryQEjxWUIcVhIwn3t07xJXBh4OeqAoNhvVmlzWCQZ1jZMRjk9Z4ZBoM+s+qEwaBvH6WvFAZ7OLVaqShE9hoGSwaDPR1HZTDYezDrMxj2YzY6MRj2y+sUGAz72dPmDIb9Ho5fDAZ/GM2bDAZ/GVXXDAZ/GjT1cD72N//QLw2EyB/t4YnB4K+DXoHB4M92e8Zg8He/fQ/pcTz0KzUGQ7z0rz6DIZ56DYnBEG9us8VgiMfxbc1giFf3rDKYxHOuW1pTe+F4Hxx2DIbzoD81GAznhTfqMRjOk0l7z2A4b9x8OB/OI/8azofzyq+E/OE8m3d0BpPzTg/lgfNwVt0wGM5L+6YwGM7T6aFVov4C521fWTAYzuPZ8MVgOK/naoXBcJ7b7ozBcN6P8gGD4T6YLzMMhvvCfXZD/vg+mT9XDIb7ZrQSwvn4PrLlMoPhvprfxgyG+2xa3DMY7jv/JTMY7sO+UCtT/4L7steaMhjuU/u+ZzDct74jMRjuY39UZjDc13Z9yGC4z7v5NYPhvu8+HgyGfMAZZRgM+UL/2WIw5BODzIzBkG/40pbBkI+M7SeDIV+Z7EJ+pyfiPxg0GAz5zmw9YjDkQ7a1YDDkS6PBmcGQT9kvMVwf51v2OctgyMeG93qZ+jvJ12p9BkM+N7nPGQz5XvewYTDkg4NNwGDIF7uBEOJxPjlRdAaTfLNeYDDko0M3XB/y1dnDYjDJZ8sjBkO+2x+F8kA+PFouGAz5cv+4ZTDk07PjMZQP59v29sJgyMdHoweDIV+fmaH8kM9PXTm0D873uxeNwfA80BcNBsPzgvcwGQzPE0M3G87HzxuDTI7B8Dzi9kMYnle6dv4jmPz7PTj6B4UpwzVtQ3Hnmql7si26vqu60lwVPc135p6k/qZIWrLS/jmKP1JpJ5V1+AeVyxnUG6GUWQwHSX2X1GPhvgUiqAwX4C0kBVAZLgI9FE2hMkzK9fDaBxgq6zAJKsNlKNpCkRIqwxUowsKHyFAZhnJpHowKleEqFAlBKKgM16DoCUtDZbgORUxgtccvpB0AUCeAgR6UuOCXJtBDZwAMtqCyDvq/8AtpHwD9JYChsg5Kq/ilA5V10B+YWEAP+mfxC2k3gEozSN2FyjooCU0HPaisQ6UZFu1DZR0qzVBPhXJvCSrNUOSHfIm0K0DRfgiVdaiMg5AjqKxj/fNQVCftDFj/vA0w0MMmuBieAD10BoBSU6iUQ2fAGsPvlXbY+grIC5sE/lIB/mBfGyrxwB/sO4f5wB/s60AlHfiDfUGIKvAH+7pQiQenAPt6UInH9s2DfX2gh0p+lomTq0ElG+y7gEo6OAFYaQmVdKhkg31XUImHSjbYF5SsQSUb7Av5JvFssO8GKulQyQb7bqGSDpVssC8YpQ6VbLDvDujByUC1PdBDJR9EPUAlHSr5sDS0KzSgkg+sjlCJB6cE1Akq8Vj/AjjZGeihkg+dDDDYBP2hkyGASjroD50MF6ikg/7glFeoxIP+0MkATJqgP3Qy3DA9iWQI/Tumb+GBIgTxAyrxWP8ihCYs2sL6FyHUnkAPQQKhAxvUwksX4TwAfyFBBfYVML4N/MG+IuCBP9iXBB3wB/tKmDUJQrCvDPTQKQD2VTB9BzoFwL4kSKFTAOyrYlIStGBfDb/tYCuSINaBHuQF05CgxqoXQVUD05MgB/uamN7C9iVBn8EoC9u3CPYFJ7WwfYtg3yx5XsnD//DcBebdwnAJw/kuhqcYrmK4ACfoBsMNgO8YvufBil2sNYYNDHcxXML0+RqGBxguY/r8EMNjgDF9foHhGYYrmD4fYNjBcBXoFQz7GK5h+kIJwyuAMX2hi+EthuuYvuBg+IDhBqYvHDB8xnAT6AUMXwHG9EXQ/4HhFqYvgv4CsQe4Qh62vkv9pQj8FQx3MP8i8NcxbGH+ReCfARjzL2H+ebBvF/MvYf55sG8P05ewffNg3z6mL2H75sG+faDH9s2DfQdAj+2bB/sOMX0Z2zcP9h1h+jKWNw/2HWH6MrZvHuw7xvRlbN882HcC9Ni+ebDvFNNXsH3zYN8ppq9g++bBvjNMX8H658G+NqavYP3zYN850GP982DfOaavgv5gXwfTV0F/sK+L6augv4xhD9NXQX8NYKAH/U0M+0CP9S/AZbbA9DWsf6GI4SWmr2H9CxWAMX0N61+oY3iF6WtYf3RJI3gN9Fj/goXhDaavY/0LfYAxfR3rXxhheIvp61h/dKkjeIfp61j/wjz0lzqWF523IQz8wb6QeHlzSfY9TzJ9X/UNV3Yd0TA0dy74hjo35+JvhiwlG4I+R/GpfqCifbG5mVf8X40cFPF/0BJE3jZErWWQedmCST8yATykF8X2q3Q3Gd5lKf/oaRE80BN859G7so8EnFeL4AvXXqZkRvxpip5XyhbJDo+TnAGnV65+mlUGSrQ+4PN6uaBkGP8OOQhzk5pZIHiQj+CLQmP0InhIqQl/fzkOMpH8CrMA6VtEN1f1MCT4aslcrZVIP8J/6R27oXw7Sj88rzzKH+tP8C1LPFH58B9vU/yrpbdC+a8Uf6wWTKqfszZqBJ/vXx9UfrAfka+smaVQP5HikaAOxWP7EnxltlOp/FVlcqbyTw7ZXKi/SeXvd6qaFWXnxD/KTyu3NqL9uVNVF06W2adA8S/n3qJ4vH8EX5ucSwOCVyaHIcWbhSWlh/01qPwLh+CR0nmF4BtqtUbxsP8Ev5utpllm30bRoPoN6R9rgn8QfNtbtyi+9WrRLwsoWPf1MMvs36H4fqekUfzGKQphfHQpHvyL4JXqhtIjUXsvgncGYoPgwf8IvrB1BhS/9C49il96226W7d+I4nfH7YzipUaZ0pcbyoTaF/yX2K8hSi2CR/s7o/h7dsT+WBb7N92fYDineFFrsy8LeLVkSg/+T/B6uaxQ+9UU7CGwUu/uUzzER7xZnP5bFI33oYb4pOdHDrd8EKK10RStCE/iHwkyoOfD2qiL9Pw4TmqGGdELVL6KEp4/LXr+4D/yZh8RYv7kfFGqCxq/BfyRrELtu5mF8fmk8Yfs06TxoZdLShh/Ao0/kI/gre5xEsaXROMrnynblD/Iz+KnRuOrufCWNL6cgdQIz7caPd86ZW1bZPLtqHzIqer0fAP9Cf6eHR/C869B8cXWK3gx+StUfuS/TYHgUfzeqX7lhl4Nz8cWPR9RfAoDpt+Z6of8r03xYF+Cn+3mu/D89Oj5ieLLKDL9m1R/5D/+gcqfo33gOH6MKH4WUfzkw/gRovjJRfFTDOMniOJnGcVPOYyfTRQ/+Sh+qmH8OFH8PKP4qYfxM4zipx/FTzOMn1YUP68oftph/JSi+BlE8WOF8ZOn8QP+RfDIP3oUj7+wgOIf1pDSg/8RfGP0sKj9yppYoudXWRtRPPgnwdu70YbgrelhQvHD89KjeOy/9Hw7T6bUfugkoX/sXyya4wXdH+zfBO+hq4riJweZ3g/I/xyKB/8n+GA4ofSl9dKj9jtW82Z4fnDyD/75glvKWP7h0fwEudFtaER4ll88WH5h3fdDcj7g71KgeKDvUvnmi/D8ebESyMZfhvQ3So/2Jz9g9/+d3v/Ivr1NGJ+1F7vfu/R+R/wHizD+umt2fz/o/Y3uv60Txtd0wO7nEb2fQf4wfhY0vq55jeZHyD+mh/B8W9P1lclpGMo3o/Ih/9+vWf7k0fwJ7a+9CM+/M8W3Xp1XKP+c4pH/3gYsv8rS/Aq5UuCE5+OLyrf0br1QvwvFI0HlIsu/fJp/ofv7Og3PT43KL6LbN9T/RvVH/pNZs/wsF8XPPYqffBg/ShQ/3Sh+imH83KP4eUTxUw7j5xDFTy+Kn2oYP4sofp5R/NTC+JlG8dOP4qcRxk83ip9XFD+tMH5qUfwMovjphPGTi+KnFOVn3TA/U6P8bBPlZ/0wP3tE+Vkpys+GYX52jPKzbZSfjcP8bBnlZ+UoP5uG+Zkb5We7KD+zw/xsFOVnlSg/c8L8rB3lZ/soP/PC/Kwc5WfVKD/j5B9fzzdfzzdfzzfU/l/PN3/6803sfKF/A6bYkmkKnmtoqif7iux6gq4bui5JtiJ7tvGbrMnJT3w+R/HzfwFmVu7jm98Lymdy/Aw1HbdohvBNaQhxeKip9ySs36/ZCIZ/b/hONklvvfG33ubHYSyf5Sfh26hzNZr3SN5yBIO85ThevSdhJK8YwfDvDd8Rk/TWG3/rbX4cBnlHSfg2zxQucXmbEQzyNuN49Z6Ekbx6BMO/N3xHT9Jbb/ytt/lxGOSdJ2FsX+fNvs6bfZ03+zpv9nXe7Ou82dd5s6/zZl/nzb7Om32dN3mNZvDmD8GbPwThekmY+UPw5g8RviMm6a03/tbb/Dgc+UME37rRUiBvBBJ5c3G8ek/CSF7O8RPHd+5xGMn7xt96mx+HQd5uEgb7Ft/sW3yzb/HNvsU3+xbf7Ft8s2/xzb7FN/sW3+xbfLNvDAb/Lb75b/HNf4tv/lt889/im/8W3/y3+Oa/xTf/Lb75b/HNf2MwnA9xeZsRHJ4PcXmbyflwPsTlfcN39CS99cbfepsfh8PzofgWb2/2Nd7sa7zZ13izr/FmX+PNvsabfY03+xpv9jXe7BuH4X5bv91v67f7bf12v63f7rf12/22frvf1m/32/rtflu/3W/rt/uNwpAmCJpniIIgirIhKu7csG3VU+dzxZ+bni2a2m+qICQ7cj5H8Uc6cvKR+vCW/AU8BB1U4HNRh047wpMHHXgL+6GEeMIv+u6MYoQvRfhhyITg4S3pM4FmjFI4SOZH371RivCEH9BDYj8I8TGh4RsNSAfQIOIXfXdHOcIDv9h3eZCviYj4RR1HpHllEvGDTYaOjkqEJ/pH3wVih3jCL9axFIT4fMS0Fyqdj/Yj9l0ibogn/GIdT0qIJ/xAdDB6NcIDv9h3kSxCPOE3BjyGSTPLMuIXdVDVIjzwI21bYN9NiCf8ou82Ic0tm4hf1IFVj/CEH8gLTPYhnvCLvhuFNLvsI35RB1cjwgM/0uwD+3EK8YRf7LtVghAP/GLftUKaXe4hv1hH2DXEE37QEUKae4wQT/gBHr77ohXhgV+so+wR4gk/0vyDlyYdY4+IX/RdL60ID/xiHWlCiCf8SDMQ6YAI8YQfsIKv3WhHeOAX++4YEvQRv6jDjXw3jBLxg7eQ73QiPOEH8oKSeogn/IAz6ZC7h3hySAEpdMhYER4GY99dkwnxhF+sw84I8YQf4MVwZjHaj+i7b/L5EE9eZZAXZkJHXCHiF3Xs9UI84dcBftBxVw7xhF/0XTqlaYgn/KKOv16IJ/zgEIHPoMih0Iv2I/ountImxBN+UcdgP8RTfnf2jnQE9sP9iH+Xzz3Ew2jsu30GwE8I+cU6EK0QT/gBvoffEk2tiF/03UDDEE/4xToY+yGe8IOjEAZJh2I/4gdBD6E4CvGEX6wDchTiCT8InT6Wn3Q4jiJ+0CEITEYhnvCLfVcRnHfjiF+so/IQ4gk/6Fgkh26IJ/xi33XkhHjCL9aRKYR44FeG/YD7bhLiKT/gD/R+iCf8oo5Ocoj7ET/YD1BlGuIJv9h3La1CPOEXffcSuRTXEb+oQ3QW4gm/MfAD++5CPOEXfXcT6QjdRfzAH+G+s0M84TcB/4H9OIZ4wi/23U+HEE/4RR2qdogn/EjbMOxHEOIJv9h3RwkhHvjFvktqDvyi+zfW8XoP8YQf3A8z6EgthXjCD/wR7jsnxFN+wB/8/RXiCT9QwsZvyXdPvSJ+UUetG+IJv9h3W0khnvCD+4G0TTshnvCD/YD7wAvxOfp9Sb6va47vKL7t+65s2qYqu7asCarrSYLupT8r+xzFv6476gv+gr/gL/gL/oK/4H8LTPqoFV/wXc3THXluG9JcFBz8S3ym6s9F0XDd3yTlvY/6UxR/UqYQ60OM9QlGfXyxPjsA3/vUYn1ksT6vqA/r3TJkPaiTO7jvRoY+AIBnuE6vR/gg7GvKMnxlkAU81ImNkJ7gx7jOmqX6FHIEH+urCuLrEXhQ1KDPKMLrYV8Cpgd8b5MF/Bqvmo3oAa9Cnwjri1oUs1FfQz3SB+wZWw/gY4jPhPYuZige2VeFvgWwb0RP8GBflfY1IPu+71dkXz2yb2y9yL5KZN9jaN9MZF89su8utG8msm+sr8mI7xftE6PyRvjomR38A+Npn5L1CvuIsmGfT9EM+3AwTOvYWWZf5g9gr9h+MfsyfUJ/pesx+1YGBrUvoyd4Zl/oewD7Jv0d7DGI/AHsFdsvwK8jfRierQfwK6QnsAR9AjSeCnF75Ji/Rf7O/DcT+W9svyL/zUT+G1sv8l8z8t976L/EvpUonsAeMX8H+8b8IYx3yg/sFdMnoid4gCXaF4Hs+35esD6kKJ6QPWL+zvpsIn8geLZfrI8k0gfhY+uxPglEj57n8DEdON7eg2P4aJ/pKSk8BHxurvAPrCqx8xYdrJPO0dtXmj1v73rn8WrvHu546vF8OHrny4r+euv+upt7547ftJ/eGQ9JeCnXO2KyvUOm/ZJYEv1TVdXVJccwZSNaP8Rovjz3NVv4lhQoLo935sgyt53N4ny47jG3X8S/C3/9C3v5Fc2O0BLGC3+X/voX9oLxt5V3Px7OF4IU8Pgbh8v90F+5nttcLZaX1X6BZopoeIvB8mG7PdwL9s4722wc2wS9F0BUL/DON69w2B7O+avvpzBF73hZJjB7zz4XtqvjES1lbe29NzhsEfe9gy2ChBPwIg6d0LP3C6/0ONr7YHXYwwQVoa+B11/aaO8CyhQNwEqW522JCnj04DjbKybs2ZfVgbBHwzv7sdpdd226yZgmoJ6yQjft2XYuqxuWRvzsrsf3NrnruqD4qiHzd53aNb3n/sGxt9BZQ7dNMA1DV0xTlxVdNWWZbqNAdvB4CFYXYh80WVQkSRMNQ5IUwRQVA3xBlCVZV2RDUgVNRILxxpi7DI8pZ/n1fU/oUrKIWGiqKWimoAuijilkVZYUTZI1xNIwdVX5FQfqj5lN8+dz2ZvzzZZzLgdepNxWwWq+2q4uT+qqx5Wzsedbj4Lu2V7EQOQzeRw3mPhyvnrYYc6rxWqf1J5r4zdkgLbL44Yn4oiUthOUf4uT+oez43WO9umKGfj2NvDY6ABFRbC9OsRqgMIOidYCf/3ll2+Bd2nZxyOcG78g5w0uOI7+6//8I3I/2ZYcX/jnt19/xVMQgUWM9vyIRPMdx9YlIPn10/4fbde7/xMB3jYylPp9D9GxcdjiA2WFFkSrXgaHIzpcFk8a0mc4KAernReGs43z5JzjeEHQOrgenYi3xD7HfDXaE7TxzcNhcz0OsDf0ExMj0lHcmwRIw/Eh94S0vG2DAH8T2Xhq5dgAHCpIC/tCFwvyHtpgDxuBnrfpfa3tj9cLfgz4va39m4smIYLYFse0+5ha8WVx/kO7HN9L/i4zWd522zpsn1SV9/0+kvbBn/ohdNxXsLWDINWJuCe78y0awXINPvjddHbZFw6742HvEXFkvJGrFyZAy2HHww5CTbNb7eldJankPiGgik7S+D8VvINyRVP21+0WjsKPGMhagl5QfpdBnPr3V1NEVTc0UdZlWdIkU4xTa7KgS+iKMUXdEEyTu/Sv/4STcPtM7tinfyPlbccSXSF00/A6bxv21lXC3S8x2i+02Ef7FeormibfXqChv/K2cC388uHV9b1YIJH1FgPJmPwo4YREChJOVcP2srdXj3uGLRPj+DqHe8i+XM9w2YTI+GW0t/ewQET0fsfPPZTuAW1sosCZaM8PNy85MXH3xQ/bXGouu+bwFZxakSHt7XEJSSfs1M3Dt36fbDGcu2SkENvBaB49fUU4fV3vgbJbsD+ddKFpwC+/SJAKwX8SZECfHxFTI1JqRE6NqKkRPTViptdKsxbTnEQjLRJHyjShlF5RTosupyVV0nIpWlrntBBqmpeW5qWlZ+lpufS09EZaRzMthJlmLwpp/qLA2RCe+SXOLknpPRFlJT2mcBxM4cincuRTOfJpHPn0tAlEnbOGwdHD4OhhcmQx07JIQlpfiWNTSUzzk3g+zbEzeuRJj8lpm0oc20scx5Y4+yEpHPkUTjQpHJkVjr6cuJBUjm6cPZdUjh7vYwq8/7kxmTMmccaE9BhWPzWmccY46ypiekw2OWMqZ4wjn8SRReKsK3H0EDkyixz5BM48IT1PNNPzRJMzz0jrJhpp+UQ9rQdKvjhjabuIKkcWzl6KStoPRBwuqTGOHhJHD5Ejn8iRj2NTUUjLZ6ZNYKRXMNIL6Gn+epq9ltZATTsjJ36U9CyOt3Mcm+PXHNNK6R2QOBuVZs9xaZFDmF4xbdQ0J46CadapkbTV//UjYmpETo0oqREtNWKkOadZi2neYpoV3az4kJQmpBufkJyjjJoeSrNX0hoq6VlqepaanqWlV9TTZtc5FpTSQ2mrmmkh2GmQHOPYVUyvwE6hxJiUVkHk2JadfokxhbPFKkc+lSOfxpFP48inc2xgcNYwOHqYHD3MtCzs1kqOceZxvFzi+DS7VZNjaT3YLZ10/rRdJI5jSxzPZllEcoyzrsKRmRMDEmcvWTaUHONELCeAPjWmhIjvj8mcMYkzJqbHwlsqPmZwxlTOGGddRUiPhclCfIyjh8yhlTTOGEc3kSOzyJFP4OgrpGWBZ5jUWJqfaKTXFY20fPCMlRpL74eope0sqhxZOHsOz4qpsbRNRY7tRYmjh8SRT+TIx7EpPEO/jZlp8cz0CkZ6AT3NX0+z19LstfRGqOlZnLBQ0l6npHlx/FrmuBzH4zjBxLE1Z0s41k/LxTFXWum06GmZ0oulRtLu9f2RX/8Jn6/+WAWJ1aO4pcBYMStdSYIadFR8w58KuyvfvwYffLj5KyvmcDH2bo5LeR+TBkfPuW7t88czPPejz1VjC4SfVFNZw09AGf9wAhuwDneorqOUCMYPR9uhZau/64n6E62hU1FSFS7cS+Dbjle4bmNVdP982F/Sw1C5oZ/HqrAuQnrjlXtZhiJvYy0F39v7D6vnEkLoX2XgP1wGFhXTnqs/UgbGpjc14ccKhLHtettIKsBXGfhPLwNTy/5kGRhRG6b3Y7sc20v+Lv8pZeDP/0z5H6kD/15dMVYHFiE3/p3CIq4Ca7iKapoCyuckWdZ+qIYrU2JFk1UV55J/Zv03Ue7VNFMSUEpsmOiRFmdZHxRD8ame3JlP/1DHv6Xcq+CnhN/ZFUVUP1Xu/YnvxH7TMdG4zfxv4D0u17P3l8LhcHZXe3QA/JwzSpHWhvyJIvcPusTnJ3/AGZ8g24PDrjkS1Sziz95iFVzOIRKdDwMwSPDtnx+X2b971uCT66vM/lVm/yqzE52/yuyJsa8y+1eZHQLxq8yeGvsqs3+V2b/K7ImhrzL7nz3yVWZXv8rsb2NfZfavMjuMfZXZU2MqZ+yrzP5VZv8qsyeGvsrs3x/5Tpn9OxU6Wu/7KrP/eJmdEP4PL7Pb4leZ/a3MTsQ+t+zLefUIFxQ4Lz+FgOLTj/01t2Crwg+V8TV/rpvSDxZ4Y+7w/reNRICvMv6f/9fcxLI/+9fcqq/6zg/+NXe0l/xd/lPK+J/+qZl/UxUfLcctnP4Niu/kL6BVBZkAZ3rxuvw76jul0j+T1x+p8asondZMEz1E6Ogtv5vggz/p/vRX//9bavzqx3+CH9WkpQ/M82GN/9Pf7PqZGn/7cN6hO+Nf5Z5/xA2+P1n8kY6BT0z+9QebAJjhYJUf/iq9H2i/+BO7LyTlT+6++MHJiqigJ29VQ4/9smCq4r+pGeM7Nwa5f76aMb6aMb6aMYjOX80YibGvZoyvZgwIxK9mjNTYVzPGVzPGVzNGYuirGePPHvlqxlC/mjHexr6aMb6aMWDsqxkjNaZyxr6aMb6aMb6aMRJDX80Y3x/5vWYMbp2VVW3/Jc0YqY8rnQ8x780YqQmpZozUjP8H33kgfrYZQ/xPbMZQfVcwjQ/2Hn6jgbPxwX11cZbhp78Xbx8wa8A3TH+8xfxOC5G1S7z9DkFy9xitvWUWfoSfS7OKxt7L7RfwwbNMC/wXJN0V9mWEP+oPvr03VvzKrMjKM1XPdkPNA/jhh1zEhSz2E78xIOuCKH3w5RI/YWg9bWjh76aOMhhTQJmnoBsKzq3RWATKOjk13n/CQRTxLziYuqAYpmJq+HO+v+uaJijon4xSeVPHH7f9XZNlAWUHkqiqJpop/gftGflti3/BriGM7Xzwgxp/ODzw5piGIJvIpJqhSfgBBI3JyX/c4MFFf0UxFVlBYkq6qug6zoHQsKmppqQakiYZpqAZ8OMdyCsMQxfQ7imKqBu69r9k6+ay9udtnahIhqqHr/oPHHSmbGom2hEUhqopGAo1B9otWcFfi4Aeb2VJ1TRD/9+yMfMPej//rRvzt//PdwbSrURnWA5+bCj8JaAPf6wD/4gQawqzXXe08u44EfxO3x98n9YPkLDe4B8lQRlsjITZgDuf5Tafnc+u6E/Pp5fDj8zHJ9IPzZ/TL0X6MKv/6BfAEEbw9dRv4fzgL4ClfPznfgEsPuMnfwEMmn65vwAWx/z4L4D99T/l97+Ef/7107/6Fu7s29Fq+JJufLDnn//9L/6pxs3Z337BS4zRcX7BC3/6iZ6h8JuP+34+1E4XkKPbqd+0yz284H9S2/hbkzc8wIf//Q4IV4E9Jy6EbsXl4U5Fx8y+TbAJsKrfpvjdC7+bwe/LoovHXy2+kcd23HUexsdldezhxukruzk0Omi7q2tA3NhI/lCQRGY0vf0CHkUhuvE15F/SrMhwjBm5wW8enBHg9I/cYxWEj+3wYQb+gFAHdZ8JpAIFAoQ0IId9JZDhhyG//uzdxwLoR24l6pXklH5bFtHHjtoPT3mcKMWW/D0SFiKsAXt3IT3toqDK2HAo77jA+fkPHB89z6+93wzhnUFcoeP3Dok/ZPj+LwA67HxO//Ag3s65t7RvK9Jl949E157h6QJx3LMTKvlB0ugGF96U+PFg46gPA/aXv0Whxnv7a+zYIF7Qf+4dzMfb4zPAjWWX8VMZ/fu/UEsBAhQDFAAAAAgAa5g8XCpWN9+oNQAAbekAAAoAAAAAAAAAAAAAAIABAAAAAGluZGV4Lmpzb25QSwUGAAAAAAEAAQA4AAAA0DUAAAAA&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}}, "version_major": 2, "version_minor": 0}
+</script></section>
+</section>
+<hr class="docutils" />
+<div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/01_getting_started/03_sketching.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/01_getting_started/03_sketching.py">Python script</a>.</p>
+</div>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Perform-required-imports">Perform required imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Add-a-box-to-sketch">Add a box to sketch</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Combine-concepts-to-create-powerful-sketches">Combine concepts to create powerful sketches</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pyansys-geometry/edit/main/doc/source/examples/01_getting_started/03_sketching.mystnb">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/01_getting_started/03_sketching.mystnb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text", "objectID"], "limit": 10, "minMatchCharLength": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.6.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,325 @@
+
+
+
+
+
+
+:class:`Point2D`
+================
+
+
+.. py:class:: ansys.geometry.core.math.point.Point2D(input: numpy.ndarray | ansys.geometry.core.typing.RealSequence = DEFAULT_POINT2D_VALUES, unit: pint.Unit | None = None)
+
+   Bases: :py:obj:`numpy.ndarray`, :py:obj:`ansys.geometry.core.misc.units.PhysicalQuantity`
+
+
+   
+   Provides geometry primitive representation for a 2D point.
+
+
+   :Parameters:
+
+       **input** : :obj:`~numpy.ndarray` | :obj:`RealSequence`, default: :obj:`DEFAULT_POINT2D_VALUES`
+           Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
+           or as a ``RealSequence``.
+
+       **unit** : :obj:`~pint.Unit` | :data:`python:None`, default: :obj:`DEFAULT_UNITS.LENGTH`
+           Units for defining 2D point values. If not specified, the default unit is
+           ``DEFAULT_UNITS.LENGTH``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+.. py:currentmodule:: Point2D
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~unit`
+            - Get the unit of the object.
+          * - :py:attr:`~base_unit`
+            - Get the base unit of the object.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~x`
+            - X plane component value.
+          * - :py:attr:`~y`
+            - Y plane component value.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~flat`
+            - 
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Point2D`` class.
+          * - :py:attr:`~__ne__`
+            - Not equals operator for the ``Point2D`` class.
+          * - :py:attr:`~__add__`
+            - Add operation for the ``Point2D`` class.
+          * - :py:attr:`~__sub__`
+            - Subtraction operation for the ``Point2D`` class.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.point import Point2D
+
+Property detail
+---------------
+
+.. py:property:: x
+   :type: pint.Quantity
+
+
+   
+   X plane component value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: y
+   :type: pint.Quantity
+
+
+   
+   Y plane component value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: flat
+
+
+
+Method detail
+-------------
+
+.. py:method:: __eq__(other: Point2D) -> bool
+
+   
+   Equals operator for the ``Point2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __ne__(other: Point2D) -> bool
+
+   
+   Not equals operator for the ``Point2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __add__(other: Union[Point2D, ansys.geometry.core.math.vector.Vector2D]) -> Point2D
+
+   
+   Add operation for the ``Point2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __sub__(other: Point2D) -> Point2D
+
+   
+   Subtraction operation for the ``Point2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: unit() -> pint.Unit
+
+   
+   Get the unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: base_unit() -> pint.Unit
+
+   
+   Get the base unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

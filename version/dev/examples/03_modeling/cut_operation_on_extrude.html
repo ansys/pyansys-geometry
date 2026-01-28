@@ -1,0 +1,921 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Modeling: Extruded plate with cut operations &#8212; PyAnsys Geometry</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=99899407" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8bee615f"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/03_modeling/cut_operation_on_extrude';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Modeling: Tessellation of two bodies" href="tessellation_usage.html" />
+    <link rel="prev" title="Modeling: Rectangular plate with multiple bodies" href="plate_with_hole.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.15.dev0" />
+  <meta property="og:site_name" content="PyAnsys" />
+  <meta name="physics" content="CAD" />
+  <link rel="canonical" href="https://geometry.docs.pyansys.com/version/stable/examples/03_modeling/cut_operation_on_extrude.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Geometry - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Geometry - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">101 examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/01_math.html">PyAnsys Geometry 101: Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/02_units.html">PyAnsys Geometry 101: Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/03_sketching.html">PyAnsys Geometry 101: Sketching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/04_modeling.html">PyAnsys Geometry 101: Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/05_plotter_picker.html">PyAnsys Geometry 101: Plotter</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Sketching examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/basic_usage.html">Sketching: Basic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/dynamic_sketch_plane.html">Sketching: Dynamic sketch plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/advanced_sketching_gears.html">Sketching: Parametric sketching for gears</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modeling examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="add_design_material.html">Modeling: Single body with material assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plate_with_hole.html">Modeling: Rectangular plate with multiple bodies</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Modeling: Extruded plate with cut operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tessellation_usage.html">Modeling: Tessellation of two bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_organization.html">Modeling: Design organization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_operations.html">Modeling: Boolean operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scale_map_mirror_bodies.html">Modeling: Scale, map and mirror bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweep_chain_profile.html">Modeling: Sweep chain and sweep sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="revolving.html">Modeling: Revolving a sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="export_design.html">Modeling: Exporting designs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_tree.html">Modeling: Visualization of the design tree on terminal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service_colors.html">Modeling: Body color assignment and usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surface_bodies.html">Modeling: Surface bodies and trimmed surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_parameters.html">Modeling: Using design parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chamfer.html">Modeling: Chamfer edges and faces</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Applied examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/01_naca_airfoils.html">Applied: Create a NACA 4-digit airfoil</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/02_naca_fluent.html">Applied: Prepare a NACA airfoil for a Fluent simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/03_ahmed_body_fluent.html">Applied: Develop an external aerodynamic simulation model for Fluent analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../99_misc/template.html">Miscellaneous: Example template</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../examples.html" class="nav-link">Examples</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Modeling: Extruded plate with cut operations</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/cut_operation_on_extrude.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/cut_operation_on_extrude.py">Python script</a>.</p>
+</div>
+<hr class="docutils" />
+<section id="Modeling:-Extruded-plate-with-cut-operations">
+<h1>Modeling: Extruded plate with cut operations<a class="headerlink" href="#Modeling:-Extruded-plate-with-cut-operations" title="Link to this heading">#</a></h1>
+<p>As seen in the <a class="reference internal" href="plate_with_hole.html"><span class="doc">Rectangular plate with multiple bodies</span></a> example, you can create a complex sketch with holes and extrude it to create a body. However, you can also perform cut operations on the extruded body to achieve similar results.</p>
+<section id="Perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#Perform-required-imports" title="Link to this heading">#</a></h2>
+<p>Perform the required imports.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pint</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">launch_modeler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plane</span><span class="p">,</span> <span class="n">Point3D</span><span class="p">,</span> <span class="n">Point2D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNITS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.sketch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sketch</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Define-sketch-profile-without-holes">
+<h2>Define sketch profile without holes<a class="headerlink" href="#Define-sketch-profile-without-holes" title="Link to this heading">#</a></h2>
+<p>Create a sketch profile for the proposed design. The sketch is the same as the <a class="reference internal" href="plate_with_hole.html"><span class="doc">Rectangular plate with multiple bodies</span></a> example, but without the holes.</p>
+<p>These holes are created by performing cut operations on the extruded body in the next steps.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">()</span>
+<span class="p">(</span><span class="n">sketch</span><span class="o">.</span><span class="n">segment</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">),</span> <span class="n">Point2D</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+    <span class="o">.</span><span class="n">segment_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+    <span class="o">.</span><span class="n">segment_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+    <span class="o">.</span><span class="n">segment_to_point</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+    <span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+<span class="p">)</span>
+
+<span class="n">modeler</span> <span class="o">=</span> <span class="n">launch_modeler</span><span class="p">()</span>
+<span class="n">design</span> <span class="o">=</span> <span class="n">modeler</span><span class="o">.</span><span class="n">create_design</span><span class="p">(</span><span class="s2">&quot;ExtrudedPlateNoHoles&quot;</span><span class="p">)</span>
+<span class="n">body</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PlateLayer&quot;</span><span class="p">,</span> <span class="n">sketch</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+
+<span class="n">design</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/pyansys-geometry/pyansys-geometry/.venv/lib/python3.13/site-packages/ansys/tools/common/cyberchannel.py:187: UserWarning: Starting gRPC client without TLS on localhost:700. This is INSECURE. Consider using a secure connection.
+  warn(f&#34;Starting gRPC client without TLS on {target}. This is INSECURE. Consider using a secure connection.&#34;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "3680940596b440319ec19daf25d865a4"}</script></div>
+</div>
+</section>
+<section id="Define-sketch-profile-for-holes">
+<h2>Define sketch profile for holes<a class="headerlink" href="#Define-sketch-profile-for-holes" title="Link to this heading">#</a></h2>
+<p>Create a sketch profile for the holes in the proposed design. The holes are created by sketching circles at the four corners of the plate. First create a reference sketch for all the circles. This sketch is translated to the four corners of the plate.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sketch_hole</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">()</span>
+<span class="n">sketch_hole</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">),</span> <span class="n">Quantity</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+
+<span class="n">hole_centers</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Plane</span><span class="p">(</span><span class="n">Point3D</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">)),</span>
+    <span class="n">Plane</span><span class="p">(</span><span class="n">Point3D</span><span class="p">([</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">)),</span>
+    <span class="n">Plane</span><span class="p">(</span><span class="n">Point3D</span><span class="p">([</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">)),</span>
+    <span class="n">Plane</span><span class="p">(</span><span class="n">Point3D</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">)),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Perform-cut-operations-on-the-extruded-body">
+<h2>Perform cut operations on the extruded body<a class="headerlink" href="#Perform-cut-operations-on-the-extruded-body" title="Link to this heading">#</a></h2>
+<p>Perform cut operations on the extruded body to create holes at the four corners of the plate.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">center</span> <span class="ow">in</span> <span class="n">hole_centers</span><span class="p">:</span>
+    <span class="n">sketch_hole</span><span class="o">.</span><span class="n">plane</span> <span class="o">=</span> <span class="n">center</span>
+    <span class="n">design</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;H_</span><span class="si">{</span><span class="n">center</span><span class="o">.</span><span class="n">origin</span><span class="o">.</span><span class="n">x</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">center</span><span class="o">.</span><span class="n">origin</span><span class="o">.</span><span class="n">y</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">sketch</span><span class="o">=</span><span class="n">sketch_hole</span><span class="p">,</span>
+        <span class="n">distance</span><span class="o">=</span><span class="n">Quantity</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">),</span>
+        <span class="n">cut</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="n">design</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "71ab1fee7d6140a186a2f2b078e26446"}</script></div>
+</div>
+</section>
+<section id="Close-the-modeler">
+<h2>Close the modeler<a class="headerlink" href="#Close-the-modeler" title="Link to this heading">#</a></h2>
+<p>Close the modeler to free up resources and release the connection.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"9bd38c722fcc412a9e1fc6bee959f1f3": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "c5a370e5a85a4ab39ebaa513fd2fbd63": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "3680940596b440319ec19daf25d865a4": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_9bd38c722fcc412a9e1fc6bee959f1f3", "placeholder": "\u200b", "style": "IPY_MODEL_c5a370e5a85a4ab39ebaa513fd2fbd63", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}, "89b0258d82c64211876e205746b62aed": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "23658c681a71417dae2ad1349a0754cc": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "71ab1fee7d6140a186a2f2b078e26446": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_89b0258d82c64211876e205746b62aed", "placeholder": "\u200b", "style": "IPY_MODEL_23658c681a71417dae2ad1349a0754cc", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}}, "version_major": 2, "version_minor": 0}
+</script></section>
+</section>
+<hr class="docutils" />
+<div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/cut_operation_on_extrude.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/cut_operation_on_extrude.py">Python script</a>.</p>
+</div>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Perform-required-imports">Perform required imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Define-sketch-profile-without-holes">Define sketch profile without holes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Define-sketch-profile-for-holes">Define sketch profile for holes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Perform-cut-operations-on-the-extruded-body">Perform cut operations on the extruded body</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Close-the-modeler">Close the modeler</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pyansys-geometry/edit/main/doc/source/examples/03_modeling/cut_operation_on_extrude.mystnb">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/03_modeling/cut_operation_on_extrude.mystnb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text", "objectID"], "limit": 10, "minMatchCharLength": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.6.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

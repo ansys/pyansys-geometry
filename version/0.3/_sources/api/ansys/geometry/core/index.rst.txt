@@ -1,0 +1,235 @@
+
+
+
+
+
+The ``ansys.geometry.core`` library
+===================================
+
+.. py:module:: ansys.geometry.core
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: core
+.. tab-set::
+
+    .. tab-item:: Subpackages
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.connection`
+            - PyAnsys Geometry connection subpackage.
+
+
+          * - :py:attr:`~ansys.geometry.core.designer`
+            - PyAnsys Geometry designer subpackage.
+
+
+          * - :py:attr:`~ansys.geometry.core.materials`
+            - PyAnsys Geometry materials subpackage.
+
+
+          * - :py:attr:`~ansys.geometry.core.math`
+            - PyAnsys Geometry math subpackage.
+
+
+          * - :py:attr:`~ansys.geometry.core.misc`
+            - Provides the PyAnsys Geometry miscellaneous subpackage.
+
+
+          * - :py:attr:`~ansys.geometry.core.plotting`
+            - Provides the PyAnsys Geometry plotting subpackage.
+
+
+          * - :py:attr:`~ansys.geometry.core.primitives`
+            - PyAnsys Geometry primitives subpackage.
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch`
+            - PyAnsys Geometry sketch subpackage.
+
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.errors`
+            - Provides PyAnsys Geometry-specific errors.
+
+
+          * - :py:attr:`~ansys.geometry.core.logger`
+            - Provides a general framework for logging in PyAnsys Geometry.
+
+
+          * - :py:attr:`~ansys.geometry.core.modeler`
+            - Provides for interacting with the Geometry service.
+
+
+          * - :py:attr:`~ansys.geometry.core.typing`
+            - Provides typing of values for PyAnsys Geometry.
+
+
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~__version__`
+            - PyAnsys Geometry version.
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~USE_TRAME`
+            - Global constant for checking whether to use `trame <https://kitware.github.io/trame/>`_
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🖿 connection<connection/index.rst>
+    🖿 designer<designer/index.rst>
+    🖿 materials<materials/index.rst>
+    🖿 math<math/index.rst>
+    🖿 misc<misc/index.rst>
+    🖿 plotting<plotting/index.rst>
+    🖿 primitives<primitives/index.rst>
+    🖿 sketch<sketch/index.rst>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🗎 errors<errors/index.rst>
+    🗎 logger<logger/index.rst>
+    🗎 modeler<modeler/index.rst>
+    🗎 typing<typing/index.rst>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry is a Python wrapper for the Ansys Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: USE_TRAME
+   :value: False
+
+   
+   Global constant for checking whether to use `trame <https://kitware.github.io/trame/>`_
+   for visualization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: __version__
+
+   
+   PyAnsys Geometry version.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

@@ -1,0 +1,322 @@
+:py:mod:`ansys.geometry.core.math.frame`
+========================================
+
+.. py:module:: ansys.geometry.core.math.frame
+
+.. autoapi-nested-parse::
+
+   Provides the ``Frame`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.math.frame.Frame
+
+
+
+
+.. py:class:: Frame(origin: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point3D] = ZERO_POINT3D, direction_x: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_X, direction_y: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_Y)
+
+
+   
+   Primitive representation of a frame (an origin and three fundamental directions).
+
+
+   :Parameters:
+
+       **origin** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`Point3D`], default: :obj:`ZERO_POINT3D`
+           Centered origin of the ``Frame``. The default is the Cartesian origin.
+
+       **direction_x** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`UnitVector3D`, :obj:`Vector3D`], default: :obj:`UNITVECTOR3D_X`
+           X-axis direction.
+
+       **direction_y** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`UnitVector3D`, :obj:`Vector3D`], default: :obj:`UNITVECTOR3D_Y`
+           Y-axis direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: origin
+      :type: ansys.geometry.core.math.point.Point3D
+
+      
+      Origin of the ``Frame``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: direction_x
+      :type: ansys.geometry.core.math.vector.UnitVector3D
+
+      
+      X-axis direction of the ``Frame``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: direction_y
+      :type: ansys.geometry.core.math.vector.UnitVector3D
+
+      
+      Y-axis direction of the ``Frame``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: direction_z
+      :type: ansys.geometry.core.math.vector.UnitVector3D
+
+      
+      Z-axis direction of the ``Frame``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: global_to_local_rotation
+      :type: ansys.geometry.core.math.matrix.Matrix33
+
+      
+      Global to local space transformation matrix.
+
+
+
+      :Returns:
+
+          :obj:`Matrix33`
+              A 3x3 matrix representing the transformation from global to local
+              coordinate space excluding origin translation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: local_to_global_rotation
+      :type: ansys.geometry.core.math.matrix.Matrix33
+
+      
+      Local to global space transformation matrix.
+
+
+
+      :Returns:
+
+          :obj:`Matrix33`
+              A 3x3 matrix representing the transformation from local to global
+              coordinate space.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: transformation_matrix
+      :type: ansys.geometry.core.math.matrix.Matrix44
+
+      
+      Full 4x4 transformation matrix.
+
+
+
+      :Returns:
+
+          :obj:`Matrix44`
+              A 4x4 matrix representing the transformation from global to local
+              coordinate space.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: transform_point2d_local_to_global(point: ansys.geometry.core.math.point.Point2D) -> ansys.geometry.core.math.point.Point3D
+
+      
+      Transform a ``Point2D`` to a global ``Point3D`` object.
+
+      Express a local, plane-contained ``Point2D`` object in the global
+      coordinate system, thus representing it as a ``Point3D`` object.
+
+      :Parameters:
+
+          **point** : :obj:`Point2D`
+              ``Point2D`` local object to express in global coordinates.
+
+      :Returns:
+
+          :obj:`Point3D`
+              Global coordinates ``Point3D`` object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: Frame) -> bool
+
+      
+      Equals operator for the ``Frame`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __ne__(other: Frame) -> bool
+
+      
+      Not equals operator for the ``Frame`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
