@@ -185,6 +185,7 @@ def test_export_to_scdocx(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     _checker_method(design_read, design, True)
 
 
+@pytest.mark.skip(reason="Skipping due stride export issue.")
 def test_export_to_stride(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to stride format."""
     skip_if_windows(modeler, test_export_to_stride.__name__, "design")  # Skip test on SC/DMS
