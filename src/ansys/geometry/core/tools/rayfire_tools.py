@@ -220,7 +220,7 @@ class RayfireTools:
         ray_radius: Distance | Quantity | Real,
         points: list["Point3D"],
         max_distance: Distance | Quantity | Real,
-        tight_tolerance: bool,
+        tight_tolerance: bool = False,
     ) -> dict:
         """Perform a rayfire ordered operation.
         
