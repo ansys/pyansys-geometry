@@ -93,33 +93,13 @@ class DesignFileFormat(Enum):
         return self.value
 
 
-@unique
-class DesignFileExtensions(Enum):
-    """Provides supported file extensions that can be downloaded for designs."""
-
-    SCDOCX = "scdocx"
-    PARASOLID_TEXT = "x_t"
-    PARASOLID_BIN = "x_b"
-    FMD = "fmd"
-    STEP = "stp"
-    IGES = "igs"
-    PMDB = "pmdb"
-    STRIDE = "stride"
-    DISCO = "dsco"
-    INVALID = "INVALID"
-
-    def __str__(self):
-        """Represent object in string format."""
-        return self.value
-
-
 # Mapping of DesignFileFormat to list of valid file extensions
 DESIGN_FILE_FORMAT_EXTENSIONS = {
     DesignFileFormat.SCDOCX: ["scdocx"],
     DesignFileFormat.PARASOLID_TEXT: ["x_t", "xmt_txt"],
     DesignFileFormat.PARASOLID_BIN: ["x_b", "xmt_bin"],
     DesignFileFormat.FMD: ["fmd"],
-    DesignFileFormat.STEP: ["stp"],
+    DesignFileFormat.STEP: ["stp", "step"],
     DesignFileFormat.IGES: ["igs"],
     DesignFileFormat.PMDB: ["pmdb"],
     DesignFileFormat.STRIDE: ["stride"],
