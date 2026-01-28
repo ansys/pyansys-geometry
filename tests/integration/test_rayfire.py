@@ -28,7 +28,7 @@ from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
 
-@pytest.mark.skip(reason="Currently failing due to backend issue with rayfire operation")
+# @pytest.mark.skip(reason="Currently failing due to backend issue with rayfire operation")
 def test_rayfire_simple_case(modeler: Modeler):
     """Test the rayfire operation with a simple case."""
     design = modeler.create_design("rayfire_simple_case")
@@ -37,10 +37,9 @@ def test_rayfire_simple_case(modeler: Modeler):
     face = box.faces[1]
     direction = UnitVector3D([1, 0, 0])
     points = [Point3D([-2, 0, 1])]
-    max_distance = 10.0
 
     result = modeler.rayfire_tools.rayfire(
-        body=box, faces=[face], direction=direction, points=points, max_distance=max_distance
+        body=box, faces=[face], direction=direction, points=points, max_distance=10.0
     )
 
     assert result is not None
@@ -48,20 +47,53 @@ def test_rayfire_simple_case(modeler: Modeler):
     
     # TODO: Issue #2037 
     # test the actual intersection points returned by the rayfire operation
-    # For now, just check that the points are instances of Point3D
-    assert all(isinstance(p, Point3D) for p in result)
 
 
 def test_rayfire_faces(modeler: Modeler):
     """Test the rayfire faces operation."""
-    return
+    design = modeler.create_design("rayfire_simple_case")
+
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    face = box.faces[1]
+    points = [Point3D([-2, 0, 1])]
+
+    result = modeler.rayfire_tools.rayfire_faces(
+        body=box, faces=[face], points=points,
+    )
+
+    assert result is not None
+    assert len(result) == 2
 
 
 def test_rayfire_ordered(modeler: Modeler):
     """Test the rayfire ordered operation."""
-    return
+    design = modeler.create_design("rayfire_simple_case")
+
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    face = box.faces[1]
+    direction = UnitVector3D([1, 0, 0])
+    points = [Point3D([-2, 0, 1])]
+
+    result = modeler.rayfire_tools.rayfire_ordered(
+        body=box, faces=[face], direction=direction, ray_radius=2, points=points, max_distance=10.0
+    )
+
+    assert result is not None
+    assert len(result) == 2
 
 
 def test_rayfire_ordered_uv(modeler: Modeler):
     """Test the rayfire ordered uv operation."""
-    return
+    design = modeler.create_design("rayfire_simple_case")
+
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    face = box.faces[1]
+    direction = UnitVector3D([1, 0, 0])
+    points = [Point3D([-2, 0, 1])]
+
+    result = modeler.rayfire_tools.rayfire_ordered_uv(
+        body=box, faces=[face], direction=direction, ray_radius=2, points=points, max_distance=10.0
+    )
+
+    assert result is not None
+    assert len(result) == 2

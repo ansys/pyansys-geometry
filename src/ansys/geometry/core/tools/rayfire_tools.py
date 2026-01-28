@@ -98,7 +98,7 @@ class RayfireTools:
             Direction of the ray.
         points : list[Point3D]
             Starting points for rays.
-        max_distance : Distance
+        max_distance : Distance | Quantity | Real
             Maximum distance to check.
 
         Returns
@@ -128,7 +128,7 @@ class RayfireTools:
         body: "Body",
         faces: list["Face"],
         points: list["Point3D"],
-        options: RayfireOptions,
+        options: RayfireOptions | None = None,
     ) -> dict:
         """Perform the rayfire operation on faces.
         
@@ -140,7 +140,7 @@ class RayfireTools:
             Faces to consider.
         points : list[Point3D]
             Starting points for rays.
-        options : RayfireOptions
+        options : RayfireOptions, default: None
             Options for the rayfire operation.
 
         Returns
@@ -167,7 +167,7 @@ class RayfireTools:
             body_id=body.id,
             face_ids=[face.id for face in faces],
             points=points,
-            options=options.to_dict(),
+            options=options,
         )
 
         return response
@@ -181,7 +181,7 @@ class RayfireTools:
         ray_radius: Distance | Quantity | Real,
         points: list["Point3D"],
         max_distance: Distance | Quantity | Real,
-        tight_tolerance: bool,
+        tight_tolerance: bool = False,
     ) -> dict:
         """Perform a rayfire ordered operation.
         
@@ -197,9 +197,9 @@ class RayfireTools:
             The radius of the ray.
         points : list[Point3D]
             Starting points for rays.
-        max_distance : Distance
+        max_distance : Distance | Quantity | Real
             Maximum distance to check.
-        tight_tolerance : bool
+        tight_tolerance : bool, default: False
             Whether to use a tight tolerance for the ray fire operation.
 
         Returns
@@ -251,7 +251,7 @@ class RayfireTools:
             The radius of the ray.
         points : list[Point3D]
             Starting points for rays.
-        max_distance : Distance
+        max_distance : Distance | Quantity | Real
             Maximum distance to check.
         tight_tolerance : bool
             Whether to use a tight tolerance for the ray fire operation.

@@ -25,6 +25,7 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import from_measurement_to_server_length
 from ..base.rayfire import GRPCRayfireService
 from .conversions import (
     build_grpc_id,
@@ -65,7 +66,7 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
                     faces=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
-                    max_distance=kwargs["max_distance"],
+                    max_distance=from_measurement_to_server_length(kwargs["max_distance"]),
                 )
             ]
         )
@@ -103,9 +104,9 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
                     body=build_grpc_id(kwargs["body_id"]),
                     faces=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                    ray_radius=kwargs["ray_radius"],
+                    ray_radius=from_measurement_to_server_length(kwargs["ray_radius"]),
                     points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
-                    max_distance=kwargs["max_distance"],
+                    max_distance=from_measurement_to_server_length(kwargs["max_distance"]),
                     tight_tolerance=kwargs["tight_tolerance"],
                 )
             ]
@@ -144,6 +145,13 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
 
         from .conversions import from_rayfire_options_to_grpc_rayfire_options
 
+        # Create options
+        options = (
+            from_rayfire_options_to_grpc_rayfire_options(kwargs["options"])
+            if kwargs["options"]
+            else None
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = RayFireFacesRequest(
             request_data=[
@@ -151,7 +159,7 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
                     body=build_grpc_id(kwargs["body_id"]),
                     faces=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
                     points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
-                    options=from_rayfire_options_to_grpc_rayfire_options(kwargs["options"]),
+                    options=options,
                 )
             ]
         )
@@ -194,9 +202,9 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
                     body=build_grpc_id(kwargs["body_id"]),
                     faces=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                    ray_radius=kwargs["ray_radius"],
+                    ray_radius=from_measurement_to_server_length(kwargs["ray_radius"]),
                     points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
-                    max_distance=kwargs["max_distance"],
+                    max_distance=from_measurement_to_server_length(kwargs["max_distance"]),
                     tight_tolerance=kwargs["tight_tolerance"],
                 )
             ]
