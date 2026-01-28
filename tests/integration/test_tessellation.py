@@ -144,6 +144,37 @@ def test_body_tessellate(modeler: Modeler):
     assert comp_1.bodies[0]._template._tessellation is None
 
 
+def test_body_tessellate_with_options(modeler: Modeler):
+    """Test the body tessellation with custom tessellation options."""
+    # Create a simple body
+    design = modeler.create_design("TessOptions")
+    sketch = Sketch().circle(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m))
+    body = design.extrude_sketch("Body", sketch, Quantity(2, UNITS.m))
+
+    # Test with default tessellation (no options)
+    mesh_default = body.tessellate(merge=True)
+    assert "PolyData" in str(mesh_default)
+
+    # Test with tessellation options
+    fine_options = TessellationOptions(
+        surface_deviation=0.001, angle_deviation=0.1, max_aspect_ratio=0, max_edge_length=0
+    )
+    mesh_fine = body.tessellate(merge=True, tess_options=fine_options, reset_cache=True)
+    assert "PolyData" in str(mesh_fine)
+    assert mesh_fine.n_cells == 156
+    assert mesh_fine.n_points == 160
+
+    # Test with different tessellation options
+    coarse_options = TessellationOptions(
+        surface_deviation=0.1, angle_deviation=0.5, max_aspect_ratio=0, max_edge_length=0
+    )
+    mesh_coarse = body.tessellate(merge=True, tess_options=coarse_options, reset_cache=True)
+    assert "PolyData" in str(mesh_coarse)
+    # Coarse tessellation should have fewer cells/points than fine
+    assert mesh_coarse.n_cells < mesh_fine.n_cells
+    assert mesh_coarse.n_points < mesh_fine.n_points
+
+
 @pytest.mark.skipif(
     not are_graphics_available(), reason="Skipping due to graphics requirements missing"
 )
