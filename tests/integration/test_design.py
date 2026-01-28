@@ -3614,6 +3614,45 @@ def test_get_body_bounding_box(modeler: Modeler):
     assert center.z.m == 0.5
 
 
+def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
+    """Test getting the bounding box of a body with tight tolerance."""
+    if modeler.client.services.version == GeometryApiProtos.V0:
+        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
+
+    design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
+    yarn_body = design.bodies[0]
+
+    # Test getting regular bounding box
+    bounding_box = yarn_body.bounding_box
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.750637531716012)
+    assert bounding_box.min_corner.y.m == pytest.approx(-0.340634843063073)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.0134380239342444)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.75484840496883)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.663576030656712)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.288244080618053)
+
+    assert bounding_box.center.x.m == pytest.approx(1.25274296834242)
+    assert bounding_box.center.y.m == pytest.approx(0.161470593796819)
+    assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
+
+    # Test getting tight bounding box
+    tight_bounding_box = yarn_body.get_bounding_box(tight_tolerance=True)
+
+    assert tight_bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
+    assert tight_bounding_box.min_corner.y.m == pytest.approx(5.2771026530260073e-17)
+    assert tight_bounding_box.min_corner.z.m == pytest.approx(0.100708473482868)
+
+    assert tight_bounding_box.max_corner.x.m == pytest.approx(1.41421356238489)
+    assert tight_bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
+    assert tight_bounding_box.max_corner.z.m == pytest.approx(0.196642053388603)
+
+    assert tight_bounding_box.center.x.m == pytest.approx(1.08440444008654)
+    assert tight_bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert tight_bounding_box.center.z.m == pytest.approx(0.148675263435735)
+
+
 def test_extrude_faces_failure_log_to_file(modeler: Modeler):
     """Test that the failure to extrude faces logs the correct message to a file."""
     # Create a design and body for testing
