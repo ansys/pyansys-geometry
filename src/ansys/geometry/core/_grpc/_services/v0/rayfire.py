@@ -72,21 +72,16 @@ class GRPCRayfireServiceV0(GRPCRayfireService):
         )
 
         # Call the gRPC service
-        response = self.stub.RayFire(request)
+        response = self.stub.RayFire(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
-            "response_data": [
+            "impacts": [
                 {
-                    "impacts": [
-                        {
-                            "body_id": impact.body,
-                            "point": from_grpc_point_to_point3d(impact.point)
-                        }
-                        for impact in data.single_ray_fire_impacts.impacts
-                    ]
+                    "body_id": impact.body,
+                    "point": from_grpc_point_to_point3d(impact.point)
                 }
-                for data in response.response_data
+                for impact in response.single_ray_fire_impacts.impacts
             ]
         }
 
@@ -113,26 +108,21 @@ class GRPCRayfireServiceV0(GRPCRayfireService):
         )
 
         # Call the gRPC service
-        response = self.stub.RayFireOrdered(request)
+        response = self.stub.RayFireOrdered(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
-            "response_data": [
+            "ordered_impacts": [
                 {
-                    "ordered_impacts": [
+                    [
                         {
-                            [
-                                {
-                                    "body_id": impact.body,
-                                    "point": from_grpc_point_to_point3d(impact.point)
-                                }
-                                for impact in ordered_impacts.impacts
-                            ]
+                            "body_id": impact.body,
+                            "point": from_grpc_point_to_point3d(impact.point)
                         }
-                        for ordered_impacts in data.ordered_ray_fire_impacts
+                        for impact in ordered_impacts.impacts
                     ]
                 }
-                for data in response.response_data
+                for ordered_impacts in response.ordered_ray_fire_impacts
             ]
         }
 
@@ -162,26 +152,21 @@ class GRPCRayfireServiceV0(GRPCRayfireService):
         )
 
         # Call the gRPC service
-        response = self.stub.RayFireFaces(request)
+        response = self.stub.RayFireFaces(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
-            "response_data": [
+            "face_impacts": [
                 {
-                    "face_impacts": [
+                    [
                         {
-                            [
-                                {
-                                    "face_id": impact.face,
-                                    "point": from_grpc_point_to_point3d(impact.point)
-                                }
-                                for impact in face_impact.impacts
-                            ]
+                            "face_id": impact.face,
+                            "point": from_grpc_point_to_point3d(impact.point)
                         }
-                        for face_impact in data.faces_ray_fire_impacts
+                        for impact in face_impact.impacts
                     ]
                 }
-                for data in response.response_data
+                for face_impact in response.faces_ray_fire_impacts
             ]
         }
 
@@ -208,27 +193,22 @@ class GRPCRayfireServiceV0(GRPCRayfireService):
         )
 
         # Call the gRPC service
-        response = self.stub.RayFireOrderedUV(request)
+        response = self.stub.RayFireOrderedUV(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
-            "response_data": [
+            "ordered_impacts": [
                 {
-                    "ordered_impacts": [
+                    [
                         {
-                            [
-                                {
-                                    "body_id": impact.body,
-                                    "point": from_grpc_point_to_point3d(impact.point),
-                                    "u": impact.u,
-                                    "v": impact.v
-                                }
-                                for impact in ordered_impact.impacts
-                            ]
+                            "body_id": impact.body,
+                            "point": from_grpc_point_to_point3d(impact.point),
+                            "u": impact.u,
+                            "v": impact.v
                         }
-                        for ordered_impact in data.ordered_ray_fire_impacts
+                        for impact in ordered_impact.impacts
                     ]
                 }
-                for data in response.response_data
+                for ordered_impact in response.ordered_ray_fire_impacts
             ]
         }

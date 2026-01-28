@@ -148,21 +148,6 @@ class RayfireTools:
         dict
             Rayfire results.
         """
-        # Convert the distance options to appropriate types
-        options.radius = (
-            options.radius if isinstance(options.radius, Distance) else Distance(options.radius)
-        )
-        options.max_distance = (
-            options.max_distance
-            if isinstance(options.max_distance, Distance)
-            else Distance(options.max_distance)
-        )
-        options.min_distance = (
-            options.min_distance
-            if isinstance(options.min_distance, Distance)
-            else Distance(options.min_distance)
-        )
-
         response = self._grpc_client.services.rayfire.rayfire_faces(
             body_id=body.id,
             face_ids=[face.id for face in faces],

@@ -58,7 +58,6 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     NurbsCurve as GRPCNurbsCurve,
     NurbsSurface as GRPCNurbsSurface,
     PartEntity as GRPCPartEntity,
-    #RayFireAdditionalOptions as GRPCRayFireOptions,
     Surface as GRPCSurface,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
@@ -74,6 +73,9 @@ from ansys.api.discovery.v1.geometryenums_pb2 import (
 )
 from ansys.api.discovery.v1.operations.prepare_pb2 import (
     EnclosureOptions as GRPCEnclosureOptions,
+)
+from ansys.api.discovery.v1.operations.rayfire_pb2 import (
+    RayFireAddtionalOptions as GRPCRayFireOptions,
 )
 from ansys.api.discovery.v1.operations.repair_pb2 import (
     RepairToolMessage as GRPCRepairToolResponse,
@@ -1676,20 +1678,19 @@ def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> N
     GRPCRayFireOptions
         Geometry service gRPC RayFireOptions message.
     """
-    return
-    # from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 
-    # return GRPCRayFireOptions(
-    #     radius=options.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-    #     direction=from_unit_vector_to_grpc_direction(options.direction),
-    #     max_distance=options.max_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-    #     min_distance=options.min_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-    #     tight_tolerance=options.tight_tolerance,
-    #     pick_back_faces=options.pick_back_faces,
-    #     max_hits=options.max_hits,
-    #     request_params=options.request_params,
-    #     request_secondary=options.request_secondary,
-    # )
+    return GRPCRayFireOptions(
+        radius=options.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        direction=from_unit_vector_to_grpc_direction(options.direction),
+        max_distance=options.max_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        min_distance=options.min_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        tight_tolerance=options.tight_tolerance,
+        pick_back_faces=options.pick_back_faces,
+        max_hits=options.max_hits,
+        request_params=options.request_params,
+        request_secondary=options.request_secondary,
+    )
 
 
 def serialize_body(body: GRPCBodyEntity) -> dict:

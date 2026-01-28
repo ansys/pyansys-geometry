@@ -28,7 +28,7 @@ from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
 
-# @pytest.mark.skip(reason="Currently failing due to backend issue with rayfire operation")
+@pytest.mark.skip(reason="Currently failing due to backend issue with rayfire operation")
 def test_rayfire_simple_case(modeler: Modeler):
     """Test the rayfire operation with a simple case."""
     design = modeler.create_design("rayfire_simple_case")
