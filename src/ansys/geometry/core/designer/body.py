@@ -297,12 +297,12 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def get_bounding_box(self, tight_tolerance: bool) -> BoundingBox:
+    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:
         """Get the bounding box of the body.
 
         Parameters
         ----------
-        tight_tolerance : bool
+        tight_tolerance : bool, default: False
             Whether to use a tight tolerance when calculating the bounding box.
 
         Returns
@@ -1193,7 +1193,7 @@ class MasterBody(IBody):
         )
 
     @min_backend_version(27, 1, 0)
-    def get_bounding_box(self, tight_tolerance: bool) -> BoundingBox:  # noqa: D102
+    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
         response = self._grpc_client.services.bodies.get_bounding_box(
             id=self.id, tight_tolerance=tight_tolerance
@@ -1931,7 +1931,7 @@ class Body(IBody):
         )
 
     @min_backend_version(27, 1, 0)
-    def get_bounding_box(self, tight_tolerance: bool) -> BoundingBox:  # noqa: D102
+    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
         response = self._grpc_client.services.bodies.get_bounding_box(
             id=self.id, tight_tolerance=tight_tolerance
