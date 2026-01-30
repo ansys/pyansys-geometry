@@ -675,4 +675,3 @@ class GRPCFacesServiceV1(GRPCFacesService):
             "success": response.tracked_command_response.command_response.success,
             "tracked_response": tracked_response,
         }
-    
