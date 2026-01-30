@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -53,7 +53,10 @@ from ansys.geometry.core.tools.problem_areas import (
     StitchFaceProblemAreas,
     UnsimplifiedFaceProblemAreas,
 )
-from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
+from ansys.geometry.core.tools.repair_tool_message import (
+    RepairToolMessage,
+    create_repair_message_from_response,
+)
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -97,7 +100,10 @@ class RepairTools:
         self._grpc_client = grpc_client
 
     def find_split_edges(
-        self, bodies: list["Body"], angle: Real = 0.0, length: Real = 0.0
+        self,
+        bodies: list["Body"],
+        angle: Angle | pint.Quantity | Real = None,
+        length: Distance | pint.Quantity | Real = None,
     ) -> list[SplitEdgeProblemAreas]:
         """Find split edges in the given list of bodies.
 
@@ -108,10 +114,10 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that split edges are investigated on.
-        angle : Real
-            The maximum angle between edges.
-        length : Real
-            The maximum length of the edges.
+        angle : Angle | ~pint.Quantity | Real
+            The maximum angle between edges. By default, None.
+        length : Distance | ~pint.Quantity | Real
+            The maximum length of the edges. By default, None.
 
         Returns
         -------
@@ -122,6 +128,16 @@ class RepairTools:
             return []
 
         body_ids = [body.id for body in bodies]
+
+        # Convert the measurement objects
+        angle = angle if isinstance(angle, Angle) else Angle(angle) if angle is not None else None
+        length = (
+            length
+            if isinstance(length, Distance)
+            else Distance(length)
+            if length is not None
+            else None
+        )
 
         response = self._grpc_client.services.repair_tools.find_split_edges(
             bodies_or_faces=body_ids, angle=angle, distance=length
@@ -203,7 +219,7 @@ class RepairTools:
         ]
 
     def find_short_edges(
-        self, bodies: list["Body"], length: Real = 0.0
+        self, bodies: list["Body"], length: Distance | pint.Quantity | Real = 0.0
     ) -> list[ShortEdgeProblemAreas]:
         """Find the short edge problem areas.
 
@@ -214,6 +230,8 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that short edges are investigated on.
+        length : Distance | ~pint.Quantity | Real, optional
+            The maximum length of the edges. By default, 0.0.
 
         Returns
         -------
@@ -224,6 +242,9 @@ class RepairTools:
             return []
 
         body_ids = [body.id for body in bodies]
+
+        # Convert the measurement object
+        length = length if isinstance(length, Distance) else Distance(length)
 
         response = self._grpc_client.services.repair_tools.find_short_edges(
             selection=body_ids, length=length
@@ -514,7 +535,10 @@ class RepairTools:
 
     @min_backend_version(25, 2, 0)
     def find_and_fix_short_edges(
-        self, bodies: list["Body"], length: Real = 0.0, comprehensive_result: bool = False
+        self,
+        bodies: list["Body"],
+        length: Distance | pint.Quantity | Real = 0.0,
+        comprehensive_result: bool = False,
     ) -> RepairToolMessage:
         """Find and fix the short edge problem areas.
 
@@ -524,7 +548,7 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that short edges are investigated on.
-        length : Real, optional
+        length : Distance | ~pint.Quantity | Real, optional
             The maximum length of the edges. By default, 0.0.
         comprehensive_result : bool, optional
             Whether to fix all problem areas individually.
@@ -542,7 +566,7 @@ class RepairTools:
         from ansys.geometry.core.designer.body import Body
 
         check_type_all_elements_in_iterable(bodies, Body)
-        check_type(length, Real)
+        check_type(length, (Distance, pint.Quantity, Real))
         check_type(comprehensive_result, bool)
 
         if not bodies:
@@ -552,6 +576,7 @@ class RepairTools:
 
         body_ids = [body.id for body in bodies]
         parent_design = get_design_from_body(bodies[0])
+        length = length if isinstance(length, Distance) else Distance(length)
 
         response = self._grpc_client.services.repair_tools.find_and_fix_short_edges(
             selection=body_ids,
@@ -564,10 +589,10 @@ class RepairTools:
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
         # Build the response message
-        return self.__build_repair_tool_message(response)
+        return create_repair_message_from_response(response)
 
     @min_backend_version(25, 2, 0)
     def find_and_fix_extra_edges(
@@ -581,8 +606,6 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that short edges are investigated on.
-        length : Real
-            The maximum length of the edges.
         comprehensive_result : bool, optional
             Whether to fix all problem areas individually.
             By default, False.
@@ -618,17 +641,17 @@ class RepairTools:
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
         # Build the response message
-        return self.__build_repair_tool_message(response)
+        return create_repair_message_from_response(response)
 
     @min_backend_version(25, 2, 0)
     def find_and_fix_split_edges(
         self,
         bodies: list["Body"],
-        angle: Real = 0.0,
-        length: Real = 0.0,
+        angle: Angle | pint.Quantity | Real = 0.0,
+        length: Distance | pint.Quantity | Real = 0.0,
         comprehensive_result: bool = False,
     ) -> RepairToolMessage:
         """Find and fix the split edge problem areas.
@@ -639,9 +662,9 @@ class RepairTools:
         ----------
         bodies : list[Body]
             List of bodies that split edges are investigated on.
-        angle : Real, optional
+        angle : Angle | ~pint.Quantity | Real, optional
             The maximum angle between edges. By default, 0.0.
-        length : Real, optional
+        length : Distance | ~pint.Quantity | Real, optional
             The maximum length of the edges. By default, 0.0.
         comprehensive_result : bool, optional
             Whether to fix all problem areas individually.
@@ -659,8 +682,8 @@ class RepairTools:
         from ansys.geometry.core.designer.body import Body
 
         check_type_all_elements_in_iterable(bodies, Body)
-        check_type(angle, Real)
-        check_type(length, Real)
+        check_type(angle, (Angle, pint.Quantity, Real))
+        check_type(length, (Distance, pint.Quantity, Real))
         check_type(comprehensive_result, bool)
 
         if not bodies:
@@ -670,6 +693,10 @@ class RepairTools:
 
         body_ids = [body.id for body in bodies]
         parent_design = get_design_from_body(bodies[0])
+
+        # Convert the measurement objects
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+        length = length if isinstance(length, Distance) else Distance(length)
 
         response = self._grpc_client.services.repair_tools.find_and_fix_split_edges(
             bodies_or_faces=body_ids,
@@ -683,10 +710,10 @@ class RepairTools:
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
         # Build the response message
-        return self.__build_repair_tool_message(response)
+        return create_repair_message_from_response(response)
 
     @min_backend_version(25, 2, 0)
     def find_and_fix_simplify(
@@ -736,10 +763,10 @@ class RepairTools:
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
         # Build the response message
-        return self.__build_repair_tool_message(response)
+        return create_repair_message_from_response(response)
 
     @min_backend_version(25, 2, 0)
     def find_and_fix_stitch_faces(
@@ -810,10 +837,10 @@ class RepairTools:
         if not pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
         # Build the response message
-        return self.__build_repair_tool_message(response)
+        return create_repair_message_from_response(response)
 
     @min_backend_version(25, 2, 0)
     def inspect_geometry(self, bodies: list["Body"] = None) -> list[InspectResult]:
@@ -905,26 +932,4 @@ class RepairTools:
             body_ids=[] if bodies is None else [b.id for b in bodies],
         )
 
-        return self.__build_repair_tool_message(response)
-
-    def __build_repair_tool_message(self, response: dict) -> RepairToolMessage:
-        """Build a repair tool message from the service response.
-
-        Parameters
-        ----------
-        response : dict
-            The response from the service containing information about the repair operation.
-
-        Returns
-        -------
-        RepairToolMessage
-            A message containing the success status, created bodies, modified bodies,
-            number of found problem areas, and number of repaired problem areas.
-        """
-        return RepairToolMessage(
-            success=response.get("success"),
-            created_bodies=response.get("created_bodies_monikers", []),
-            modified_bodies=response.get("modified_bodies_monikers", []),
-            found=response.get("found", -1),
-            repaired=response.get("repaired", -1),
-        )
+        return create_repair_message_from_response(response)

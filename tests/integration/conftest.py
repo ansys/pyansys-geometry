@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -98,7 +98,7 @@ def skip_if_discovery(modeler: Modeler, test_name: str, element_not_available: s
 
 
 @pytest.fixture(scope="session")
-def docker_instance(use_existing_service):
+def docker_instance(use_existing_service, transport_mode):
     # This will only have a value in case that:
     #
     # 0) The "--use-existing-service=yes" option is not used
@@ -152,13 +152,14 @@ def docker_instance(use_existing_service):
                 connect_to_existing_service=True,
                 restart_if_existing_service=True,
                 image=is_image_available_cont,
+                transport_mode=transport_mode,
             )
 
     return docker_instance
 
 
 @pytest.fixture(scope="session")
-def session_modeler(docker_instance):
+def session_modeler(docker_instance, proto_version, transport_mode):
     # Log to file - accepts str or Path objects, Path is passed for testing/coverage purposes.
     log_file_path = Path(__file__).absolute().parent / "logs" / "integration_tests_logs.txt"
 
@@ -168,7 +169,11 @@ def session_modeler(docker_instance):
         pass
 
     modeler = Modeler(
-        docker_instance=docker_instance, logging_level=logging.DEBUG, logging_file=log_file_path
+        docker_instance=docker_instance,
+        logging_level=logging.DEBUG,
+        logging_file=log_file_path,
+        proto_version=proto_version,
+        transport_mode=transport_mode,
     )
 
     yield modeler
@@ -231,6 +236,17 @@ def use_grpc_client_old_backend(modeler: Modeler):
 def fake_modeler_old_backend_251(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
     modeler._grpc_client._backend_version = (25, 1, 0)
+
+    yield modeler
+
+    # Code here runs after the test, reverting the state
+    modeler._grpc_client._backend_version = currentbackend
+
+
+@pytest.fixture(scope="function")
+def fake_modeler_old_backend_252(modeler: Modeler):
+    currentbackend = modeler._grpc_client._backend_version
+    modeler._grpc_client._backend_version = (25, 2, 0)
 
     yield modeler
 

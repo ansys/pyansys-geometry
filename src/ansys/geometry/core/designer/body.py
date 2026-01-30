@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -51,6 +51,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
+    check_nurbs_compatibility,
     check_type,
     check_type_all_elements_in_iterable,
     ensure_design_is_active,
@@ -65,8 +66,10 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
+    from vtkmodules.vtkCommonDataModel import vtkMultiBlockDataSet, vtkPolyData
 
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.selection import NamedSelection
 
 # TODO: Temporary fix for boolean operations
 # This is a temporary fix for the boolean operations issue. The issue is that the
@@ -573,25 +576,45 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get the named selections associated with the body.
+
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections associated with the body.
+        """
+        return
+
+    @abstractmethod
     def get_raw_tessellation(
         self,
+        transform: Matrix44 = IDENTITY_MATRIX44,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> dict:
         """Tessellate the body and return the raw tessellation data.
 
         Parameters
         ----------
+        transform : Matrix44, default: IDENTITY_MATRIX44
+            A transformation matrix to apply to the tessellation.
         tess_options : TessellationOptions | None, default: None
             A set of options to determine the tessellation quality.
         reset_cache : bool, default: False
             Whether to reset the tessellation cache and re-request the tessellation
             from the server.
+        include_faces : bool, default: True
+            Whether to include face tessellation data in the output.
+        include_edges : bool, default: False
+            Whether to include edge tessellation data in the output.
 
         Returns
         -------
         dict
-            Dictionary with face IDs as keys and face tessellation data as values.
+            Dictionary with face and edge IDs as keys and face and edge tessellation data as values.
         """
 
     @abstractmethod
@@ -600,6 +623,8 @@ class IBody(ABC):
         merge: bool = False,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> Union["PolyData", "MultiBlock"]:
         """Tessellate the body and return the geometry as triangles.
 
@@ -614,6 +639,10 @@ class IBody(ABC):
         reset_cache : bool, default: False
             Whether to reset the tessellation cache and re-request the tessellation
             from the server.
+        include_faces : bool, default: True
+            Whether to include face tessellation data in the output.
+        include_edges : bool, default: False
+            Whether to include edge tessellation data in the output.
 
         Returns
         -------
@@ -656,6 +685,45 @@ class IBody(ABC):
           Y Bounds:	-1.000e+00, 0.000e+00
           Z Bounds:	-5.000e-01, 4.500e+00
           N Arrays:	0
+        """
+        return
+
+    @abstractmethod
+    def get_vtk_tessellation(
+        self,
+        merge: bool = False,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
+        _raw_tessellation: dict | None = None,
+    ) -> Union["vtkPolyData", "vtkMultiBlockDataSet"]:
+        """Build VTK objects from raw tessellation data.
+
+        Parameters
+        ----------
+        merge : bool, default: False
+            Whether to merge the body into a single mesh. When ``False`` (default), the
+            number of triangles are preserved and only the topology is merged.
+            When ``True``, the individual faces of the tessellation are merged.
+        tess_options : TessellationOptions | None, default: None
+            A set of options to determine the tessellation quality.
+        reset_cache : bool, default: False
+            Whether to reset the tessellation cache and re-request the tessellation
+            from the server.
+        include_faces : bool, default: True
+            Whether to include face tessellation data in the output.
+        include_edges : bool, default: False
+            Whether to include edge tessellation data in the output.
+        _raw_tessellation : dict | None, default: None
+            Raw tessellation data with face and edge IDs as keys and tessellation data as
+            values.. If ``None``, the method requests the raw tessellation data from the server.
+            This parameter is intended for internal use only.
+
+        Returns
+        -------
+        vtkPolyData, vtkMultiBlockDataSet
+            Merged `vtkPolyData` if ``merge=True`` or a `vtkMultiBlockDataSet`.
         """
         return
 
@@ -838,6 +906,35 @@ class IBody(ABC):
         Notes
         -----
         The ``self`` parameter is directly modified, and the ``other`` bodies are consumed.
+        """
+        return
+
+    def _combine_subtract(
+        self,
+        other: Union["Body", Iterable["Body"]],
+        keep_other: bool = False,
+        transfer_named_selections=True,
+    ) -> None:
+        """Subtract bodies from this body.
+
+        Parameters
+        ----------
+        other : Union[Body, list[Body]]
+            The body or list of bodies to combine with this body.
+        keep_other : bool, default: False
+            Whether to retain the other bodies or not.
+
+        Warnings
+        --------
+        This is a specialized boolean operation that has the ability to transfer named
+        selections. It may behave differently than the encouraged ``subtract()``.
+
+        Notes
+        -----
+        The ``self`` parameter is directly modified with the result, and
+        the ``other`` parameter is consumed. Thus, it is important to make
+        copies if needed. If the ``keep_other`` parameter is set to ``True``,
+        the united body is retained.
         """
         return
 
@@ -1037,6 +1134,7 @@ class MasterBody(IBody):
             Vertex(
                 vertex_resp.get("id"),
                 vertex_resp.get("position"),
+                body,
             )
             for vertex_resp in response.get("vertices")
         ]
@@ -1260,55 +1358,40 @@ class MasterBody(IBody):
         return CollisionType(response.get("collision_type"))
 
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
-        from ansys.geometry.core.designer.component import Component
-
-        # Check input types
-        check_type(parent, Component)
-        copy_name = self.name if name is None else name
-        check_type(copy_name, str)
-
-        self._grpc_client.log.debug(f"Copying body {self.id}.")
-        response = self._grpc_client.services.bodies.copy(
-            id=self.id, parent_id=parent.id, name=copy_name
+        raise NotImplementedError(
+            "Copy method is not implemented on the MasterBody. Call this method on a body instead."
         )
 
-        # Assign the new body to its specified parent (and return the new body)
-        tb = MasterBody(
-            response.get("master_id"), copy_name, self._grpc_client, is_surface=self.is_surface
+    def get_named_selections(self) -> list["NamedSelection"]:  # noqa: D102
+        raise NotImplementedError(
+            """
+            get_named_selections is not implemented at the MasterBody level.
+            Instead, call this method on a body.
+            """
         )
-        parent._master_component.part.bodies.append(tb)
-        parent._clear_cached_bodies()
-        body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
-        return Body(body_id, response.get("name"), parent, tb)
 
+    @min_backend_version(26, 1, 0)
     def get_raw_tessellation(  # noqa: D102
         self,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> dict:
         if not self.is_alive:
             return {}
-
-        # If the server does not support tessellation options, ignore them
-        if tess_options is not None and self._grpc_client.backend_version < (25, 2, 0):
-            self._grpc_client.log.warning(
-                "Tessellation options are not supported by server"
-                f" version {self._grpc_client.backend_version}. Ignoring options."
-            )
-            tess_options = None
 
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
         # cache tessellation
         if not self._raw_tessellation or reset_cache:
-            if tess_options is not None:
-                response = self._grpc_client.services.bodies.get_tesellation_with_options(
-                    id=self.id, options=tess_options, raw_data=True
-                )
-            else:
-                response = self._grpc_client.services.bodies.get_tesellation(
-                    id=self.id, backend_version=self._grpc_client.backend_version, raw_data=True
-                )
+            response = self._grpc_client.services.bodies.get_full_tessellation(
+                id=self.id,
+                options=tess_options,
+                raw_data=True,
+                include_faces=include_faces,
+                include_edges=include_edges,
+            )
 
             self._raw_tessellation = response.get("tessellation")
 
@@ -1321,6 +1404,8 @@ class MasterBody(IBody):
         transform: Matrix44 = IDENTITY_MATRIX44,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> Union["PolyData", "MultiBlock"]:
         # lazy import here to improve initial module load time
         import pyvista as pv
@@ -1335,12 +1420,26 @@ class MasterBody(IBody):
                 f" version {self._grpc_client.backend_version}. Ignoring options."
             )
             tess_options = None
+        if include_edges and self._grpc_client.backend_version < (26, 1, 0):
+            self._grpc_client.log.warning(
+                "Edge tessellation is not supported by server"
+                f" version {self._grpc_client.backend_version}. Ignoring request."
+            )
+            include_edges = False
 
         self._grpc_client.log.debug(f"Requesting tessellation for body {self.id}.")
 
         # cache tessellation
         if not self._tessellation or reset_cache:
-            if tess_options is not None:
+            if self._grpc_client.backend_version > (25, 2, 0):
+                response = self._grpc_client.services.bodies.get_full_tessellation(
+                    id=self.id,
+                    options=tess_options,
+                    raw_data=False,
+                    include_faces=include_faces,
+                    include_edges=include_edges,
+                )
+            elif tess_options is not None:
                 response = self._grpc_client.services.bodies.get_tesellation_with_options(
                     id=self.id, options=tess_options, raw_data=False
                 )
@@ -1351,7 +1450,12 @@ class MasterBody(IBody):
 
             self._tessellation = response.get("tessellation")
 
-        pdata = [tess.transform(transform, inplace=False) for tess in self._tessellation.values()]
+        if transform == IDENTITY_MATRIX44:
+            pdata = list(self._tessellation.values())
+        else:
+            pdata = [
+                tess.transform(transform, inplace=False) for tess in self._tessellation.values()
+            ]
         comp = pv.MultiBlock(pdata)
 
         if merge:
@@ -1359,6 +1463,141 @@ class MasterBody(IBody):
             return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
         else:
             return comp
+
+    @graphics_required
+    def get_vtk_tessellation(  # noqa: D102
+        self,
+        merge: bool = False,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
+        _raw_tessellation: dict | None = None,
+    ) -> Union["vtkPolyData", "vtkMultiBlockDataSet"]:
+        # lazy import here to improve initial module load time
+        import numpy as np
+        import vtk
+        from vtkmodules.vtkCommonCore import vtkPoints
+        from vtkmodules.vtkCommonDataModel import vtkCellArray, vtkMultiBlockDataSet, vtkPolyData
+
+        def _process_vertices(vertex_data: list[float]):
+            """Process vertex data and create VTK points."""
+            points = vtkPoints()
+            # Each vertex has 3 coordinates (x, y, z) and vertex_data
+            # is a flat list, so we reshape it accordingly
+            point_data = np.array(vertex_data).reshape(-1, 3)
+            for point in point_data:
+                points.InsertNextPoint(point[0], point[1], point[2])
+            return points
+
+        def _process_faces(face_data: list[int]):
+            """Process face data and create VTK cells."""
+            cells = vtkCellArray()
+            cell_array = np.array(face_data)
+
+            # Algorithm to read the cell array:
+            # The first integer indicates the number of points that define the face.
+            # The next 'count' integers are the point indices.
+            # This pattern repeats for all faces.
+            if len(cell_array) > 0:
+                i = 0
+                while i < len(cell_array):
+                    if i < len(cell_array):
+                        count = int(cell_array[i])
+                        if i + count < len(cell_array):
+                            cells.InsertNextCell(count)
+                            for j in range(count):
+                                cells.InsertCellPoint(int(cell_array[i + 1 + j]))
+                            i += count + 1
+                        else:
+                            break
+                    else:
+                        break
+            return cells
+
+        def _process_edges(vertex_data: list[float]):
+            """Process edge data and create VTK line cells."""
+            line_cells = vtkCellArray()
+
+            # Each line is defined by two consecutive vertices, and
+            # each vertex has 3 coordinates (x, y, z)... so the number of lines
+            # is total number of vertices divided by 3, minus 1
+            n_lines = len(vertex_data) // 3 - 1
+            if n_lines > 0:
+                for i in range(n_lines):
+                    line_cells.InsertNextCell(2)
+                    line_cells.InsertCellPoint(i)
+                    line_cells.InsertCellPoint(i + 1)
+            return line_cells
+
+        def _create_polydata_from_tess_data(tess_data: dict):
+            """Create a VTK PolyData object from tessellation data."""
+            if not tess_data or len(tess_data.get("vertices", [])) == 0:
+                return None
+
+            polydata = vtkPolyData()
+            vertex_data = tess_data["vertices"]
+
+            # Set points
+            points = _process_vertices(vertex_data)
+            polydata.SetPoints(points)
+
+            # Set face cells
+            if "faces" in tess_data:
+                cells = _process_faces(tess_data["faces"])
+                polydata.SetPolys(cells)
+
+            # Set edge lines
+            if include_edges and tess_data.get("is_edge", False):
+                line_cells = _process_edges(vertex_data)
+                polydata.SetLines(line_cells)
+
+            return polydata if polydata.GetNumberOfPoints() > 0 else None
+
+        def _merge_vtk_objects(
+            vtk_objects: list[vtkPolyData], merge: bool
+        ) -> Union[vtkPolyData, vtkMultiBlockDataSet]:
+            """Merge VTK objects into a single PolyData or MultiBlock."""
+            if not vtk_objects:  # pragma: no cover
+                self._grpc_client.log.warning("No valid tessellation data to convert.")
+                return vtkPolyData() if merge else vtkMultiBlockDataSet()
+
+            if merge:
+                append_filter = vtk.vtkAppendPolyData()
+                for vtk_obj in vtk_objects:
+                    append_filter.AddInputData(vtk_obj)
+                append_filter.Update()
+                return append_filter.GetOutput()
+            else:
+                multiblock = vtkMultiBlockDataSet()
+                multiblock.SetNumberOfBlocks(len(vtk_objects))
+                for i, vtk_obj in enumerate(vtk_objects):
+                    multiblock.SetBlock(i, vtk_obj)
+                return multiblock
+
+        ###### Main method logic #######
+        # Use provided raw tessellation data or fetch it
+        _raw_tessellation = _raw_tessellation or self.get_raw_tessellation(
+            tess_options=tess_options,
+            reset_cache=reset_cache,
+            include_faces=include_faces,
+            include_edges=include_edges,
+        )
+
+        # Check if tessellation data is available
+        if not _raw_tessellation:
+            self._grpc_client.log.warning("No tessellation data available.")
+            return vtkPolyData() if merge else vtkMultiBlockDataSet()
+
+        # Convert raw tessellation data to VTK PolyData objects
+        vtk_objects = []
+        for _, tess_data in _raw_tessellation.items():
+            polydata = _create_polydata_from_tess_data(tess_data)
+            if polydata:
+                vtk_objects.append(polydata)
+
+        # Merge VTK objects if required
+        return _merge_vtk_objects(vtk_objects, merge)
 
     @reset_tessellation_cache
     @check_input_types
@@ -1413,6 +1652,16 @@ class MasterBody(IBody):
         self._grpc_client.log.debug(f"Combining and merging to body {self.id}.")
         self._grpc_client.services.bodies.combine_merge(
             body_ids=[self.id] + [body.id for body in other]
+        )
+
+    def _combine_subtract(  # noqa: D102
+        self,
+        other: Union["Body", Iterable["Body"]],
+        keep_other: bool = False,
+        transfer_named_selections=True,
+    ) -> None:
+        raise NotImplementedError(
+            "MasterBody does not implement combine_subtract. Call this method on a body instead."
         )
 
     def plot(  # noqa: D102
@@ -1478,6 +1727,7 @@ class Body(IBody):
         self._name = name
         self._parent_component = parent_component
         self._template = template
+        self._grpc_client = template._grpc_client
 
     def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``Body`` methods that require a tessellation cache update.
@@ -1673,22 +1923,6 @@ class Body(IBody):
     def imprint_curves(  # noqa: D102
         self, faces: list[Face], sketch: Sketch = None, trimmed_curves: list[TrimmedCurve] = None
     ) -> tuple[list[Edge], list[Face]]:
-        """Imprint curves onto the specified faces using a sketch or edges.
-
-        Parameters
-        ----------
-        faces : list[Face]
-            The list of faces to imprint the curves onto.
-        sketch : Sketch, optional
-            The sketch containing curves to imprint.
-        trimmed_curves : list[TrimmedCurve], optional
-            The list of curves to be imprinted. If sketch is provided, this parameter is ignored.
-
-        Returns
-        -------
-        tuple[list[Edge], list[Face]]
-            A tuple containing the list of new edges and faces created by the imprint operation.
-        """
         if sketch is None and self._template._grpc_client.backend_version < (25, 2, 0):
             raise ValueError(
                 "A sketch must be provided for imprinting when using API versions below 25.2.0."
@@ -1696,6 +1930,10 @@ class Body(IBody):
 
         if sketch is None and trimmed_curves is None:
             raise ValueError("Either a sketch or edges must be provided for imprinting.")
+
+        check_nurbs_compatibility(
+            self._grpc_client.backend_version, sketch=sketch, curves=trimmed_curves
+        )
 
         # Verify that each of the faces provided are part of this body
         body_faces = self.faces
@@ -1744,6 +1982,8 @@ class Body(IBody):
         closest_face: bool,
         only_one_curve: bool = False,
     ) -> list[Face]:
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
+
         self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         project_response = self._template._grpc_client.services.bodies.project_curves(
@@ -1775,6 +2015,8 @@ class Body(IBody):
         closest_face: bool,
         only_one_curve: bool = False,
     ) -> list[Face]:
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
+
         self._template._grpc_client.log.debug(f"Projecting provided curves on {self.id}.")
 
         response = self._template._grpc_client.services.bodies.imprint_projected_curves(
@@ -1848,15 +2090,68 @@ class Body(IBody):
 
     @ensure_design_is_active
     def copy(self, parent: "Component", name: str = None) -> "Body":  # noqa: D102
-        return self._template.copy(parent, name)
+        from ansys.geometry.core.designer.component import Component
+
+        # Check input types
+        check_type(parent, Component)
+        copy_name = self.name if name is None else name
+        check_type(copy_name, str)
+
+        self._template._grpc_client.log.debug(f"Copying body {self.id}.")
+        response = self._template._grpc_client.services.bodies.copy(
+            id=self.id, parent_id=parent.id, name=copy_name
+        )
+
+        # Assign the new body to its specified parent (and return the new body)
+        tb = MasterBody(
+            response.get("master_id"),
+            copy_name,
+            self._template._grpc_client,
+            is_surface=self.is_surface,
+        )
+        parent._master_component.part.bodies.append(tb)
+        parent._clear_cached_bodies()
+        body_id = f"{parent.id}/{tb.id}" if parent.parent_component else tb.id
+        return Body(body_id, response.get("name"), parent, tb)
+
+    @ensure_design_is_active
+    def get_named_selections(self) -> list["NamedSelection"]:  # noqa: D102
+        included_ns = []
+        for ns in get_design_from_body(self).named_selections:
+            if any(body.id == self.id for body in ns.bodies):
+                included_ns.append(ns)
+
+        return included_ns
 
     @ensure_design_is_active
     def get_raw_tessellation(  # noqa: D102
         self,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> dict:
-        return self._template.get_raw_tessellation(tess_options, reset_cache)
+        raw_tess = self._template.get_raw_tessellation(
+            tess_options,
+            reset_cache,
+            include_faces,
+            include_edges,
+        )
+
+        # Transform the raw tessellation points for both faces/edges
+        from copy import deepcopy
+
+        import numpy as np
+
+        transform = self.parent_component.get_world_transform()
+        transformed_map = deepcopy(raw_tess)
+        for id, tess in raw_tess.items():
+            vertices = np.reshape(np.array(tess.get("vertices")), (-1, 3))
+            homogenous_points = np.hstack([vertices, np.ones((vertices.shape[0], 1))])
+            transformed_points = (transform @ homogenous_points.T).T[:, :3]
+            transformed_map[id]["vertices"] = transformed_points.flatten().tolist()
+
+        return transformed_map
 
     @ensure_design_is_active
     def tessellate(  # noqa: D102
@@ -1864,17 +2159,53 @@ class Body(IBody):
         merge: bool = False,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> Union["PolyData", "MultiBlock"]:
         return self._template.tessellate(
-            merge, self.parent_component.get_world_transform(), tess_options, reset_cache
+            merge,
+            self.parent_component.get_world_transform(),
+            tess_options,
+            reset_cache,
+            include_faces,
+            include_edges,
+        )
+
+    @graphics_required
+    def get_vtk_tessellation(  # noqa: D102
+        self,
+        merge: bool = False,
+        tess_options: TessellationOptions | None = None,
+        reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
+        _raw_tessellation: dict | None = None,
+    ) -> Union["vtkPolyData", "vtkMultiBlockDataSet"]:
+        return self._template.get_vtk_tessellation(
+            merge=merge,
+            tess_options=tess_options,
+            reset_cache=reset_cache,
+            include_faces=include_faces,
+            include_edges=include_edges,
+            _raw_tessellation=_raw_tessellation
+            or self.get_raw_tessellation(
+                tess_options=tess_options,
+                reset_cache=reset_cache,
+                include_faces=include_faces,
+                include_edges=include_edges,
+            ),
         )
 
     @ensure_design_is_active
-    def shell_body(self, offset: Real) -> bool:  # noqa: D102
+    def shell_body(self, offset: Distance | Quantity | Real) -> bool:  # noqa: D102
         return self._template.shell_body(offset)
 
     @ensure_design_is_active
-    def remove_faces(self, selection: Face | Iterable[Face], offset: Real) -> bool:  # noqa: D102
+    def remove_faces(  # noqa: D102
+        self,
+        selection: Face | Iterable[Face],
+        offset: Distance | Quantity | Real,
+    ) -> bool:
         return self._template.remove_faces(selection, offset)
 
     @graphics_required
@@ -1943,6 +2274,29 @@ class Body(IBody):
     def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
         self._template.combine_merge(other)
 
+    @min_backend_version(26, 1, 0)
+    def _combine_subtract(  # noqa: D102
+        self,
+        other: Union["Body", Iterable["Body"]],
+        keep_other: bool = False,
+        transfer_named_selections=True,
+    ) -> None:
+        parent_design = get_design_from_body(self)
+        other = other if isinstance(other, Iterable) else [other]
+
+        response = self._template._grpc_client.services.bodies.combine(
+            target=self.id,
+            other=[body.id for body in other],
+            type_bool_op="subtract",
+            keep_other=keep_other,
+            transfer_named_selections=transfer_named_selections,
+        )
+
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response["tracker_response"])
+
     @reset_tessellation_cache
     @ensure_design_is_active
     @check_input_types
@@ -1957,13 +2311,18 @@ class Body(IBody):
         other = other if isinstance(other, Iterable) else [other]
 
         response = self._template._grpc_client.services.bodies.combine(
-            target=self, other=other, type_bool_op=method, err_msg=err_msg, keep_other=keep_other
+            target=self.id,
+            other=[body.id for body in other],
+            type_bool_op=method,
+            err_msg=err_msg,
+            keep_other=keep_other,
+            transfer_named_selections=False,
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             parent_design._update_design_inplace()
         else:
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
     @reset_tessellation_cache
     @ensure_design_is_active
@@ -1985,7 +2344,11 @@ class Body(IBody):
                 ]
 
         response = self._template._grpc_client.services.bodies.boolean(
-            target=self, other=grpc_other, method=method, err_msg=err_msg, keep_other=keep_other
+            target=self.id,
+            other=[other.id for other in grpc_other],
+            method=method,
+            err_msg=err_msg,
+            keep_other=keep_other,
         )
 
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
@@ -1995,7 +2358,7 @@ class Body(IBody):
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
             parent_design = get_design_from_body(self)
-            parent_design._update_from_tracker(response["complete_command_response"])
+            parent_design._update_from_tracker(response["tracker_response"])
 
     def __repr__(self) -> str:
         """Represent the ``Body`` as a string."""

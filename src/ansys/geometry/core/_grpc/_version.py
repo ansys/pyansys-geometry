@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,28 +23,34 @@
 
 from enum import Enum, unique
 
-from google.protobuf.empty_pb2 import Empty
 import grpc
 
 # ATTEMPT v0 IMPORT
 try:
-    import ansys.api.dbu.v0.admin_pb2_grpc as dbu_v0_admin_pb2_grpc
+    from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub as V0HealthStub
+    from google.protobuf.empty_pb2 import Empty as V0HealthRequest
 except ImportError:
-    dbu_v0_admin_pb2_grpc = None
+    V0HealthStub = None
+    V0HealthRequest = None
+
 
 # ATTEMPT v1 IMPORT
 try:
-    import ansys.api.dbu.v1.admin_pb2_grpc as dbu_v1_admin_pb2_grpc
+    from ansys.api.discovery.v1.commands.communication_pb2 import HealthRequest as V1HealthRequest
+    from ansys.api.discovery.v1.commands.communication_pb2_grpc import (
+        CommunicationStub as V1HealthStub,
+    )
 except ImportError:
-    dbu_v1_admin_pb2_grpc = None
+    V1HealthStub = None
+    V1HealthRequest = None
 
 
 @unique
 class GeometryApiProtos(Enum):
     """Enumeration of the supported versions of the gRPC API protocol."""
 
-    V0 = 0, dbu_v0_admin_pb2_grpc
-    V1 = 1, dbu_v1_admin_pb2_grpc
+    V0 = 0, V0HealthStub, V0HealthRequest
+    V1 = 1, V1HealthStub, V1HealthRequest
 
     @staticmethod
     def get_latest_version() -> "GeometryApiProtos":
@@ -85,13 +91,14 @@ class GeometryApiProtos(Enum):
         -----
         This method checks if the server supports the gRPC API protocol version.
         """
-        pb2_grpc = self.value[1]
-        if pb2_grpc is None:
+        StubClass = self.value[1]  # noqa: N806
+        RequestClass = self.value[2]  # noqa: N806
+        if StubClass is None:
             return False
 
         try:
-            admin_stub = pb2_grpc.AdminStub(channel)
-            admin_stub.Health(Empty())
+            admin_stub = StubClass(channel)
+            admin_stub.Health(RequestClass())
             return True
         except grpc.RpcError:
             return False

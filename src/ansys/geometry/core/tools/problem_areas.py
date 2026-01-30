@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -32,7 +32,10 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_face,
 )
 from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable
-from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
+from ansys.geometry.core.tools.repair_tool_message import (
+    RepairToolMessage,
+    create_repair_message_from_response,
+)
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
@@ -141,7 +144,7 @@ class DuplicateFaceProblemAreas(ProblemArea):
         else:
             parent_design._update_from_tracker(response.get("tracker_response"))
 
-        message = self.build_repair_tool_message(response.get("repair_tracker_response"))
+        message = create_repair_message_from_response(response)
         return message
 
 
@@ -195,7 +198,7 @@ class MissingFaceProblemAreas(ProblemArea):
         else:
             parent_design._update_from_tracker(response.get("tracker_response"))
 
-        message = self.build_repair_tool_message(response.get("repair_tracker_response"))
+        message = create_repair_message_from_response(response)
         return message
 
 
@@ -250,7 +253,7 @@ class InexactEdgeProblemAreas(ProblemArea):
         else:
             parent_design._update_from_tracker(response.get("tracker_response"))
 
-        message = self.build_repair_tool_message(response.get("repair_tracker_response"))
+        message = create_repair_message_from_response(response)
         return message
 
 
@@ -304,7 +307,7 @@ class ExtraEdgeProblemAreas(ProblemArea):
         else:
             parent_design._update_from_tracker(response.get("tracker_response"))
 
-        message = self.build_repair_tool_message(response.get("repair_tracker_response"))
+        message = create_repair_message_from_response(response)
         return message
 
 
@@ -358,7 +361,7 @@ class ShortEdgeProblemAreas(ProblemArea):
         else:
             parent_design._update_from_tracker(response.get("tracker_response"))
 
-        message = self.build_repair_tool_message(response.get("repair_tracker_response"))
+        message = create_repair_message_from_response(response)
         return message
 
 
@@ -412,7 +415,7 @@ class SmallFaceProblemAreas(ProblemArea):
         else:
             parent_design._update_from_tracker(response.get("tracker_response"))
 
-        message = self.build_repair_tool_message(response.get("repair_tracker_response"))
+        message = create_repair_message_from_response(response)
         return message
 
 
@@ -466,7 +469,7 @@ class SplitEdgeProblemAreas(ProblemArea):
         else:
             parent_design._update_from_tracker(response.get("tracker_response"))
 
-        message = self.build_repair_tool_message(response.get("repair_tracker_response"))
+        message = create_repair_message_from_response(response)
         return message
 
 
@@ -520,7 +523,7 @@ class StitchFaceProblemAreas(ProblemArea):
         else:
             parent_design._update_from_tracker(response.get("tracker_response"))
 
-        message = self.build_repair_tool_message(response.get("repair_tracker_response"))
+        message = create_repair_message_from_response(response)
         return message
 
 
@@ -569,7 +572,7 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
         else:
             parent_design._update_from_tracker(response.get("tracker_response"))
 
-        message = self.build_repair_tool_message(response.get("repair_tracker_response"))
+        message = create_repair_message_from_response(response)
         return message
 
 
@@ -625,7 +628,7 @@ class InterferenceProblemAreas(ProblemArea):
 
         ## The tool does not return the created or modified objects.
         ## https://github.com/ansys/pyansys-geometry/issues/1319
-        message = RepairToolMessage(response.get("repair_tracker_response").get("success"), [], [])
+        message = RepairToolMessage(response.get("success"), [], [])
         return message
 
 

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -52,4 +52,9 @@ class GRPCNamedSelectionService(ABC):  # pragma: no cover
     @abstractmethod
     def delete_named_selection(self, **kwargs) -> dict:
         """Delete a named selection by id."""
+        pass
+
+    @abstractmethod
+    def rename_named_selection(self, **kwargs) -> dict:
+        """Rename a named selection by id."""
         pass

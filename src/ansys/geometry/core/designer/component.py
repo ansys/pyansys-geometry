@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -50,6 +50,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import get_design_from_component
 from ansys.geometry.core.misc.checks import (
+    check_nurbs_compatibility,
     ensure_design_is_active,
     graphics_required,
     min_backend_version,
@@ -60,12 +61,13 @@ from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
-from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
+
+    from ansys.geometry.core.designer.selection import NamedSelection
 
 
 @unique
@@ -165,7 +167,7 @@ class Component:
         created on the server.
     master_component : MasterComponent, default: None
         Master component to use to create a nested component instance instead
-        of creating a new conponent.
+        of creating a new component.
     read_existing_comp : bool, default: False
         Whether an existing component on the service should be read. This
         parameter is only valid when connecting to an existing service session.
@@ -579,7 +581,10 @@ class Component:
         Notes
         -----
         The newly created body is placed under this component within the design assembly.
+        Extruding a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
+
         # Sanity checks on inputs
         distance = distance if isinstance(distance, Distance) else Distance(distance)
         if isinstance(direction, str):
@@ -646,7 +651,10 @@ class Component:
         Warnings
         --------
         This method is only available starting on Ansys release 24R2.
+        Sweeping a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch, curves=path)
+
         self._grpc_client.log.debug(f"Creating a sweeping profile on {self.id}. Creating body...")
         response = self._grpc_client.services.bodies.create_sweeping_profile_body(
             name=name,
@@ -687,7 +695,10 @@ class Component:
         Warnings
         --------
         This method is only available starting on Ansys release 24R2.
+        Sweeping NURBS curves requires a minimum Ansys release version of 26R1.
         """
+        check_nurbs_compatibility(self._grpc_client.backend_version, curves=path + chain)
+
         self._grpc_client.log.debug(f"Creating a sweeping chain on {self.id}. Creating body...")
         response = self._grpc_client.services.bodies.create_sweeping_chain(
             name=name,
@@ -756,7 +767,10 @@ class Component:
         Warnings
         --------
         This method is only available starting on Ansys release 24R2.
+        Revolving a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
+
         # Based on the reference axis and the sketch plane's normal, retrieve the orthogonal
         # vector (i.e. this is the reference vector for the Circle object). Assuming a distance of 1
         # we revolve around the axis the angle given.
@@ -915,7 +929,13 @@ class Component:
         Warnings
         --------
         This method is only available starting on Ansys release 24R2.
+        Creating bodies from NURBS profiles requires a minimum Ansys release version of 26R1.
         """
+        check_nurbs_compatibility(
+            self._grpc_client.backend_version,
+            curves=[curve for prof in profiles for curve in prof],
+        )
+
         self._grpc_client.log.debug(f"Creating a loft profile body on {self.id}.")
         response = self._grpc_client.services.bodies.create_extruded_body_from_loft_profiles(
             name=name,
@@ -950,6 +970,10 @@ class Component:
         -------
         Body
             Created lofted body object.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
         """
         self._grpc_client.log.debug(f"Creating a loft profile body with guides on {self.id}.")
         response = self._grpc_client._services.bodies.create_body_from_loft_profiles_with_guides(
@@ -979,7 +1003,13 @@ class Component:
         -------
         Body
             Body (as a planar surface) from the given sketch.
+
+        Warnings
+        --------
+        Creating a surface from a NURBS sketch requires a minimum Ansys release version of 26R1.
         """
+        check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
+
         self._grpc_client.log.debug(
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
         )
@@ -1047,14 +1077,9 @@ class Component:
         Warnings
         --------
         This method is only available starting on Ansys release 25R1.
-        NURBS surface bodies are only supported starting on Ansys release 26R1.
+        Creating a body from NURBS surfaces requires a minimum Ansys release version of 26R1.
         """
-        if (self._grpc_client.backend_version < (26, 1, 0)) and (
-            isinstance(trimmed_surface.geometry, NURBSSurface)
-        ):
-            raise ValueError(
-                "NURBS surface bodies are only supported starting on Ansys release 26R1."
-            )
+        check_nurbs_compatibility(self._grpc_client.backend_version, surfaces=[trimmed_surface])
 
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed surface provided on {self.id}. Creating body..."
@@ -1087,7 +1112,10 @@ class Component:
         Warnings
         --------
         This method is only available starting on Ansys release 24R2.
+        Creating a surface from NURBS curves requires a minimum Ansys release version of 26R1.
         """
+        check_nurbs_compatibility(self._grpc_client.backend_version, curves=trimmed_curves)
+
         self._grpc_client.log.debug(
             f"Creating surface body from trimmed curves provided on {self.id}. Creating body..."
         )
@@ -1602,11 +1630,12 @@ class Component:
             elem._is_alive = False
 
         # Now, go to the nested components and kill them as well
-        for component in self.components:
+        for component in list(self.components):
             component._kill_component_on_client()
 
         # Kill itself
         self._is_alive = False
+        self.parent_component.components.remove(self)
 
     @graphics_required
     def tessellate(
@@ -1980,3 +2009,18 @@ class Component:
         """
         ids = [self.id, *[o.id for o in others or []]]
         self._grpc_client._services.components.make_independent(ids=ids)
+
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get the named selections of the component.
+
+        Returns
+        -------
+        list[NamedSelection]
+            List of named selections belonging to the component.
+        """
+        included_ns = []
+        for ns in get_design_from_component(self).named_selections:
+            if any(comp.id == self.id for comp in ns.components):
+                included_ns.append(ns)
+
+        return included_ns

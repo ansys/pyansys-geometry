@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -26,9 +26,17 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.curves import GRPCCurvesService
+from .conversions import (
+    from_angle_to_grpc_quantity,
+    from_curve_to_grpc_curve,
+    from_grpc_point_to_point3d,
+    from_line_to_grpc_line,
+    from_surface_to_grpc_surface,
+    from_trimmed_curve_to_grpc_trimmed_curve,
+)
 
 
-class GRPCCurvesServiceV1(GRPCCurvesService):  # pragma: no cover
+class GRPCCurvesServiceV1(GRPCCurvesService):
     """Curves service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
@@ -43,14 +51,89 @@ class GRPCCurvesServiceV1(GRPCCurvesService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.curves_pb2_grpc import CurvesStub
+        from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
 
-        self.stub = CurvesStub(channel)
+        self.stub = EditStub(channel)
 
     @protect_grpc
     def revolve_edges(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            RevolveCurvesRequest,
+            RevolveCurvesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RevolveCurvesRequest(
+            request_data=[
+                RevolveCurvesRequestData(
+                    curves=[
+                        from_trimmed_curve_to_grpc_trimmed_curve(curve)
+                        for curve in kwargs["curves"]
+                    ],
+                    axis=from_line_to_grpc_line(kwargs["axis"]),
+                    angle=from_angle_to_grpc_quantity(kwargs["angle"]),
+                    symmetric=kwargs["symmetric"],
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        _ = self.stub.RevolveCurves(request)
+
+        # Return the result - formatted as a dictionary
+        return {}
 
     @protect_grpc
     def intersect_curves(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            IntersectCurvesRequest,
+            IntersectCurvesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = IntersectCurvesRequest(
+            request_data=[
+                IntersectCurvesRequestData(
+                    first=from_trimmed_curve_to_grpc_trimmed_curve(kwargs["first"]),
+                    second=from_trimmed_curve_to_grpc_trimmed_curve(kwargs["second"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.stub.IntersectCurves(request).response_data[0]
+
+        # Return the result - formatted as a dictionary
+        return {
+            "intersect": response.intersect,
+            "points": [from_grpc_point_to_point3d(point) for point in response.points],
+        }
+
+    @protect_grpc
+    def intersect_curve_and_surface(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            IntersectCurveAndSurfaceRequest,
+            IntersectCurveAndSurfaceRequestData,
+        )
+
+        surface, surface_type = from_surface_to_grpc_surface(kwargs["surface"])
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = IntersectCurveAndSurfaceRequest(
+            request_data=[
+                IntersectCurveAndSurfaceRequestData(
+                    curve=from_curve_to_grpc_curve(kwargs["curve"]),
+                    surface=surface,
+                    surface_type=surface_type,
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.stub.IntersectCurveAndSurface(request).response_data[0]
+
+        # Return the result - formatted as a dictionary
+        return {
+            "intersect": response.intersect,
+            "points": [from_grpc_point_to_point3d(point) for point in response.points],
+        }

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -26,9 +26,10 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.points import GRPCPointsService
+from .conversions import build_grpc_id, from_point3d_to_grpc_design_point
 
 
-class GRPCPointsServiceV1(GRPCPointsService):  # pragma: no cover
+class GRPCPointsServiceV1(GRPCPointsService):
     """Points service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
@@ -43,10 +44,29 @@ class GRPCPointsServiceV1(GRPCPointsService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v1.geometricentities.points_pb2_grpc import PointsStub
+        from ansys.api.discovery.v1.design.constructs.datumpoint_pb2_grpc import DatumPointStub
 
-        self.stub = PointsStub(channel)
+        self.stub = DatumPointStub(channel)
 
     @protect_grpc
     def create_design_points(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        from ansys.api.discovery.v1.design.constructs.datumpoint_pb2 import (
+            DatumPointCreationRequest,
+            DatumPointCreationRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DatumPointCreationRequest(
+            request_data=[
+                DatumPointCreationRequestData(
+                    points=[from_point3d_to_grpc_design_point(point) for point in kwargs["points"]],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.stub.Create(request)
+
+        # Return the response - formatted as a dictionary
+        return {"point_ids": [p.id for p in response.ids]}

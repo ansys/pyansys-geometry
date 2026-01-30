@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,6 +21,7 @@
 # SOFTWARE.
 """Module containing the designs service implementation for v0."""
 
+from google.protobuf.empty_pb2 import Empty
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
@@ -31,6 +32,7 @@ from .conversions import (
     build_grpc_id,
     from_design_file_format_to_grpc_part_export_format,
     from_grpc_curve_to_curve,
+    from_grpc_edge_tess_to_raw_data,
     from_grpc_frame_to_frame,
     from_grpc_material_to_material,
     from_grpc_matrix_to_matrix,
@@ -40,7 +42,7 @@ from .conversions import (
 )
 
 
-class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
+class GRPCDesignsServiceV0(GRPCDesignsService):
     """Designs service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
@@ -427,6 +429,14 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 "cross_section": serialize_beam_cross_section(beam.cross_section),
             }
 
+        def serialize_design_point(design_point):
+            return {
+                "id": design_point.id,
+                "name": design_point.owner_name,
+                "point": from_grpc_point_to_point3d(design_point.points[0]),
+                "parent_id": design_point.parent_id.id,
+            }
+
         parts = getattr(response, "parts", [])
         transformed_parts = getattr(response, "transformed_parts", [])
         bodies = getattr(response, "bodies", [])
@@ -436,6 +446,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         component_coordinate_systems = getattr(response, "component_coord_systems", [])
         component_shared_topologies = getattr(response, "component_shared_topologies", [])
         beams = getattr(response, "beams", [])
+        design_points = getattr(response, "design_points", [])
         return {
             "parts": [serialize_part(part) for part in parts] if len(parts) > 0 else [],
             "transformed_parts": [serialize_transformed_part(tp) for tp in transformed_parts],
@@ -450,6 +461,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 component_shared_topologies
             ),
             "beams": [serialize_beam(beam) for beam in beams],
+            "design_points": [serialize_design_point(dp) for dp in design_points],
         }
 
     @protect_grpc
@@ -464,7 +476,11 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = DesignTessellationRequest(options=options)
+        request = DesignTessellationRequest(
+            options=options,
+            include_faces=kwargs["include_faces"],
+            include_edges=kwargs["include_edges"],
+        )
 
         # Call the gRPC service
         response = self.designs_stub.StreamDesignTessellation(request)
@@ -476,8 +492,18 @@ class GRPCDesignsServiceV0(GRPCDesignsService):  # pragma: no cover
                 tess = {}
                 for face_id, face_tess in body_tess.face_tessellation.items():
                     tess[face_id] = from_grpc_tess_to_raw_data(face_tess)
+                for edge_id, edge_tess in body_tess.edge_tessellation.items():
+                    tess[edge_id] = from_grpc_edge_tess_to_raw_data(edge_tess)
                 tess_map[body_id] = tess
 
         return {
             "tessellation": tess_map,
         }
+
+    @protect_grpc
+    def download_file(self, **kwargs) -> dict:  # noqa: D102
+        # Call the gRPC service
+        response = self.commands_stub.DownloadFile(Empty())
+
+        # Return the response - formatted as a dictionary
+        return {"data": response.data}

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -82,4 +82,24 @@ class GRPCPrepareToolsService(ABC):  # pragma: no cover
     @abstractmethod
     def detect_helixes(self, **kwargs) -> dict:
         """Detect helixes in geometry."""
+        pass
+
+    @abstractmethod
+    def create_box_enclosure(self, **kwargs) -> dict:
+        """Create a box enclosure around bodies."""
+        pass
+
+    @abstractmethod
+    def create_cylinder_enclosure(self, **kwargs) -> dict:
+        """Create a cylinder enclosure around bodies."""
+        pass
+
+    @abstractmethod
+    def create_sphere_enclosure(self, **kwargs) -> dict:
+        """Create a sphere enclosure around bodies."""
+        pass
+
+    @abstractmethod
+    def detect_sweepable_bodies(self, **kwargs) -> dict:
+        """Check if body is sweepable."""
         pass

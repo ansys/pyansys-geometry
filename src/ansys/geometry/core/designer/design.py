@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -25,23 +25,12 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
-from ansys.api.dbu.v0.dbumodels_pb2 import EntityIdentifier
-from ansys.api.geometry.v0.commands_pb2 import (
-    AssignMidSurfaceOffsetTypeRequest,
-    AssignMidSurfaceThicknessRequest,
-    CreateBeamCircularProfileRequest,
-)
-from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 from beartype import beartype as check_input_types
-from google.protobuf.empty_pb2 import Empty
 import numpy as np
 from pint import Quantity, UndefinedUnitError
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
-from ansys.geometry.core.connection.conversions import (
-    plane_to_grpc_plane,
-    point3d_to_grpc_point,
-)
 from ansys.geometry.core.designer.beam import (
     Beam,
     BeamCircularProfile,
@@ -59,24 +48,29 @@ from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.designer.vertex import Vertex
-from ansys.geometry.core.errors import protect_grpc
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, ZERO_POINT3D
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import (
     ensure_design_is_active,
     min_backend_version,
 )
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
-from ansys.geometry.core.misc.options import ImportOptions, TessellationOptions
+from ansys.geometry.core.misc.measurements import Distance
+from ansys.geometry.core.misc.options import (
+    ImportOptions,
+    ImportOptionsDefinitions,
+    TessellationOptions,
+)
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
-from ansys.geometry.core.typing import RealSequence
+from ansys.geometry.core.typing import Real, RealSequence
 
 
 @unique
@@ -97,6 +91,21 @@ class DesignFileFormat(Enum):
     def __str__(self):
         """Represent object in string format."""
         return self.value
+
+
+# Mapping of DesignFileFormat to list of valid file extensions
+DESIGN_FILE_FORMAT_EXTENSIONS = {
+    DesignFileFormat.SCDOCX: ["scdocx"],
+    DesignFileFormat.PARASOLID_TEXT: ["x_t", "xmt_txt"],
+    DesignFileFormat.PARASOLID_BIN: ["x_b", "xmt_bin"],
+    DesignFileFormat.FMD: ["fmd"],
+    DesignFileFormat.STEP: ["stp", "step"],
+    DesignFileFormat.IGES: ["igs"],
+    DesignFileFormat.PMDB: ["pmdb"],
+    DesignFileFormat.STRIDE: ["stride"],
+    DesignFileFormat.DISCO: ["dsco"],
+    DesignFileFormat.INVALID: ["INVALID"],
+}
 
 
 class Design(Component):
@@ -121,14 +130,10 @@ class Design(Component):
     _named_selections: dict[str, NamedSelection]
     _beam_profiles: dict[str, BeamProfile]
 
-    @protect_grpc
     @check_input_types
     def __init__(self, name: str, modeler: Modeler, read_existing_design: bool = False):
         """Initialize the ``Design`` class."""
         super().__init__(name, None, modeler.client)
-
-        # Initialize the stubs needed
-        self._commands_stub = CommandsStub(self._grpc_client.channel)
 
         # Initialize needed instance variables
         self._materials = []
@@ -264,10 +269,10 @@ class Design(Component):
             filepath=file_location,
             write_body_facets=write_body_facets,
             backend_version=self._grpc_client.backend_version,
+            format=DesignFileFormat.SCDOCX,
         )
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def download(
@@ -296,6 +301,15 @@ class Design(Component):
             # Create the parent directory
             file_location.parent.mkdir(parents=True, exist_ok=True)
 
+        # Check if the file format matches path extension
+        valid_extensions = DESIGN_FILE_FORMAT_EXTENSIONS.get(format, [])
+        file_ext = file_location.suffix.lower().lstrip(".")
+        if file_ext not in valid_extensions:
+            raise GeometryRuntimeError(
+                f"File extension '{file_location.suffix}' does not match the requested format"
+                f" {format}. Valid extensions: {', '.join('.' + ext for ext in valid_extensions)}"
+            )
+
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format} format.")
         if self._modeler.client.backend_version < (25, 2, 0):
@@ -308,6 +322,26 @@ class Design(Component):
         # Write to file
         file_location.write_bytes(received_bytes)
         self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
+
+    @min_backend_version(24, 1, 0)
+    @check_input_types
+    def _create_sketch_line(self, start: Point3D, end: Point3D) -> None:
+        """Create a sketch line in the design.
+
+        Parameters
+        ----------
+        start : Point3D
+            Start point of the line.
+        end : Point3D
+            End point of the line.
+
+        Warnings
+        --------
+        This method is for internal testing use only and may change without warning.
+        Please use the Sketch class to create sketch lines.
+        """
+        # Process request
+        self._grpc_client.services.model_tools.create_sketch_line(start=start, end=end)
 
     def __export_and_download_legacy(self, format: DesignFileFormat) -> bytes:
         """Export and download the design from the server.
@@ -330,9 +364,9 @@ class Design(Component):
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format} format.")
         if format is DesignFileFormat.SCDOCX:
-            response = self._commands_stub.DownloadFile(Empty())
+            response = self._grpc_client.services.designs.download_file()
             received_bytes = bytes()
-            received_bytes += response.data
+            received_bytes += response.get("data")
         elif format in [
             DesignFileFormat.PARASOLID_TEXT,
             DesignFileFormat.PARASOLID_BIN,
@@ -425,7 +459,9 @@ class Design(Component):
         """
         return (Path(location) if location else Path.cwd()) / f"{self.name}.{ext}"
 
-    def export_to_scdocx(self, location: Path | str | None = None) -> Path:
+    def export_to_scdocx(
+        self, location: Path | str | None = None, write_body_facets: bool = False
+    ) -> Path:
         """Export the design to an scdocx file.
 
         Parameters
@@ -433,6 +469,8 @@ class Design(Component):
         location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
+        write_body_facets : bool, default: False
+            Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
 
         Returns
         -------
@@ -443,19 +481,23 @@ class Design(Component):
         file_location = self.__build_export_file_location(location, "scdocx")
 
         # Export the design to an scdocx file
-        self.download(file_location, DesignFileFormat.SCDOCX)
+        self.download(file_location, DesignFileFormat.SCDOCX, write_body_facets)
 
         # Return the file location
         return file_location
 
-    def export_to_disco(self, location: Path | str | None = None) -> Path:
-        """Export the design to an dsco file.
+    def export_to_disco(
+        self, location: Path | str | None = None, write_body_facets: bool = False
+    ) -> Path:
+        """Export the design to a DISCO file.
 
         Parameters
         ----------
         location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
+        write_body_facets : bool, default: False
+            Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
 
         Returns
         -------
@@ -465,14 +507,14 @@ class Design(Component):
         # Define the file location
         file_location = self.__build_export_file_location(location, "dsco")
 
-        # Export the design to an dsco file
-        self.download(file_location, DesignFileFormat.DISCO)
+        # Export the design to a DISCO file
+        self.download(file_location, DesignFileFormat.DISCO, write_body_facets)
 
         # Return the file location
         return file_location
 
     def export_to_stride(self, location: Path | str | None = None) -> Path:
-        """Export the design to an stride file.
+        """Export the design to a stride file.
 
         Parameters
         ----------
@@ -488,7 +530,7 @@ class Design(Component):
         # Define the file location
         file_location = self.__build_export_file_location(location, "stride")
 
-        # Export the design to an stride file
+        # Export the design to a stride file
         self.download(file_location, DesignFileFormat.STRIDE)
 
         # Return the file location
@@ -782,7 +824,6 @@ class Design(Component):
         """
         raise ValueError("The design itself cannot have a shared topology.")
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def add_beam_circular_profile(
@@ -818,17 +859,16 @@ class Design(Component):
         if not dir_x.is_perpendicular_to(dir_y):
             raise ValueError("Direction X and direction Y must be perpendicular.")
 
-        request = CreateBeamCircularProfileRequest(
-            origin=point3d_to_grpc_point(center),
-            radius=radius.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-            plane=plane_to_grpc_plane(Plane(center, dir_x, dir_y)),
+        self._grpc_client.log.debug(f"Creating a beam circular profile on {self.id}...")
+
+        response = self._grpc_client._services.beams.create_beam_circular_profile(
+            center=center,
+            radius=radius,
+            plane=Plane(center, dir_x, dir_y),
             name=name,
         )
 
-        self._grpc_client.log.debug(f"Creating a beam circular profile on {self.id}...")
-
-        response = self._commands_stub.CreateBeamCircularProfile(request)
-        profile = BeamCircularProfile(response.id, name, radius, center, dir_x, dir_y)
+        profile = BeamCircularProfile(response.get("id"), name, radius, center, dir_x, dir_y)
         self._beam_profiles[profile.name] = profile
 
         self._grpc_client.log.debug(
@@ -882,10 +922,11 @@ class Design(Component):
 
         return response.get("status")
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
-    def add_midsurface_thickness(self, thickness: Quantity, bodies: list[Body]) -> None:
+    def add_midsurface_thickness(
+        self, thickness: Distance | Quantity | Real, bodies: list[Body]
+    ) -> None:
         """Add a mid-surface thickness to a list of bodies.
 
         Parameters
@@ -899,6 +940,7 @@ class Design(Component):
         -----
         Only surface bodies will be eligible for mid-surface thickness assignment.
         """
+        thickness = thickness if isinstance(thickness, Distance) else Distance(thickness)
         # Store only assignable ids
         ids: list[str] = []
         ids_bodies: list[Body] = []
@@ -912,17 +954,12 @@ class Design(Component):
                 )
 
         # Assign mid-surface thickness
-        self._commands_stub.AssignMidSurfaceThickness(
-            AssignMidSurfaceThicknessRequest(
-                bodies_or_faces=ids, thickness=thickness.m_as(DEFAULT_UNITS.SERVER_LENGTH)
-            )
-        )
+        self._grpc_client._services.bodies.assign_midsurface_thickness(ids=ids, thickness=thickness)
 
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
-            body._surface_thickness = thickness
+            body._surface_thickness = thickness.value
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def add_midsurface_offset(self, offset_type: MidSurfaceOffsetType, bodies: list[Body]) -> None:
@@ -952,15 +989,14 @@ class Design(Component):
                 )
 
         # Assign mid-surface offset type
-        self._commands_stub.AssignMidSurfaceOffsetType(
-            AssignMidSurfaceOffsetTypeRequest(bodies_or_faces=ids, offset_type=offset_type.value)
+        self._grpc_client._services.bodies.assign_midsurface_offset(
+            ids=ids, offset_type=offset_type
         )
 
         # Once the assignment has gone fine, store the values
         for body in ids_bodies:
             body._surface_offset = offset_type
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     def delete_beam_profile(self, beam_profile: BeamProfile | str) -> None:
@@ -976,7 +1012,7 @@ class Design(Component):
         removal_obj = self._beam_profiles.get(removal_name, None)
 
         if removal_obj:
-            self._commands_stub.DeleteBeamProfile(EntityIdentifier(id=removal_obj.id))
+            self._grpc_client._services.beams.delete_beam_profile(id=removal_obj.id)
             self._beam_profiles.pop(removal_name)
             self._grpc_client.log.debug(f"Beam profile {removal_name} successfully deleted.")
         else:
@@ -985,7 +1021,6 @@ class Design(Component):
                 + " Ignoring request."
             )
 
-    @protect_grpc
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(24, 2, 0)
@@ -993,6 +1028,7 @@ class Design(Component):
         self,
         file_location: Path | str,
         import_options: ImportOptions = ImportOptions(),
+        import_options_definitions: ImportOptionsDefinitions = ImportOptionsDefinitions(),
     ) -> Component:
         """Insert a file into the design.
 
@@ -1000,8 +1036,11 @@ class Design(Component):
         ----------
         file_location : ~pathlib.Path | str
             Location on disk where the file is located.
-        import_options : ImportOptions
-            The options to pass into upload file
+        import_options : ImportOptions, optional
+            The options to pass into upload file. If none are provided, default options are used.
+        import_options_definitions : ImportOptionsDefinitions, optional
+            Additional options to pass into insert file. If none are provided, default options
+            are used.
 
         Returns
         -------
@@ -1012,13 +1051,37 @@ class Design(Component):
         --------
         This method is only available starting on Ansys release 24R2.
         """
-        # Upload the file to the server
-        filepath_server = self._modeler._upload_file(file_location, import_options=import_options)
+        # Upload the file to the server if using v0 protos
+        if self._grpc_client.services.version == GeometryApiProtos.V0:
+            filepath_server = self._modeler._upload_file(
+                file_location, import_options=import_options
+            )
 
-        # Insert the file into the design
-        self._grpc_client.services.designs.insert(
-            filepath=filepath_server, import_named_selections=import_options.import_named_selections
-        )
+            # Insert the file into the design
+            self._grpc_client.services.designs.insert(
+                filepath=filepath_server,
+                import_named_selections=import_options.import_named_selections,
+            )
+        else:
+            # Zip file and pass filepath to service to open
+            fp_path = Path(file_location).resolve()
+
+            try:
+                temp_zip_path = prepare_file_for_server_upload(fp_path)
+
+                # Pass the zip file path to the service
+                self._grpc_client.services.designs.insert(
+                    filepath=temp_zip_path,
+                    original_file_name=fp_path.name,
+                    import_options=import_options,
+                    import_options_definitions=import_options_definitions,
+                )
+
+            finally:
+                # Clean up the temporary zip file
+                if temp_zip_path.exists():
+                    temp_zip_path.unlink()
+
         self._grpc_client.log.debug(f"File {file_location} successfully inserted into design.")
 
         self._update_design_inplace()
@@ -1034,6 +1097,8 @@ class Design(Component):
         self,
         tess_options: TessellationOptions | None = None,
         reset_cache: bool = False,
+        include_faces: bool = True,
+        include_edges: bool = False,
     ) -> dict:
         """Tessellate the entire design and return the geometry as triangles.
 
@@ -1043,13 +1108,17 @@ class Design(Component):
             Options for the tessellation. If None, default options are used.
         reset_cache : bool, default: False
             Whether to reset the cache before performing the tessellation.
+        include_faces : bool, default: True
+            Whether to include faces in the tessellation.
+        include_edges : bool, default: False
+            Whether to include edges in the tessellation.
 
         Returns
         -------
         dict
             A dictionary with body IDs as keys and another dictionary as values.
-            The inner dictionary has face IDs as keys and the corresponding face/vertice arrays
-            as values.
+            The inner dictionary has face and edge IDs as keys and the corresponding face/vertice
+            arrays as values.
         """
         if not self.is_alive:
             return {}  # Return an empty dictionary if the design is not alive
@@ -1059,7 +1128,7 @@ class Design(Component):
         # cache tessellation
         if not self._design_tess or reset_cache:
             response = self._grpc_client.services.designs.stream_design_tessellation(
-                options=tess_options,
+                options=tess_options, include_faces=include_faces, include_edges=include_edges
             )
 
             self._design_tess = response.get("tessellation")
@@ -1307,6 +1376,18 @@ class Design(Component):
                 component.coordinate_systems.append(new_cs)
                 num_created_coord_systems += 1
 
+        # Create DesignPoints
+        for dp in response.get("design_points"):
+            created_dp = DesignPoint(
+                dp.get("id"),
+                dp.get("name"),
+                dp.get("point"),
+                created_components.get(dp.get("parent_id"), self),
+            )
+
+            # Append the design point to the component to which it belongs
+            created_dp.parent_component._design_points.append(created_dp)
+
         end = time.time()
 
         # Set SharedTopology
@@ -1357,17 +1438,176 @@ class Design(Component):
         # Read the existing design
         self.__read_existing_design()
 
-    def _update_from_tracker(self, tracker_response: list[dict]):
-        """Update the design with the changed bodies while preserving unchanged ones."""
+    def _update_from_tracker(self, tracker_response: dict):
+        """Update the design with the changed entities while preserving unchanged ones.
+
+        This method is alternative to update_design_inplace method.
+
+        Parameters
+        ----------
+        tracker_response : dict
+            Dictionary containing lists of created, modified, and deleted entities
+            including parts, components, bodies, faces, edges, and other geometry entities.
+            Processing order: parts → components → bodies → deletions (reverse dependency order).
+        """
         self._grpc_client.log.debug(
             f"Starting _update_from_tracker with response: {tracker_response}"
         )
-        self._handle_modified_bodies(tracker_response.get("modified_bodies", []))
-        self._handle_deleted_bodies(tracker_response.get("deleted_bodies", []))
-        self._handle_created_bodies(tracker_response.get("created_bodies", []))
 
-    def _handle_modified_bodies(self, modified_bodies):
-        for body_info in modified_bodies:
+        # Track created entities for use in subsequent steps
+        created_parts_dict = {}
+        created_master_components_dict = {}
+        created_components_dict = {}
+        created_bodies_dict = {}
+
+        # ================== HANDLE PARTS ==================
+
+        # Handle created parts
+        for part_info in tracker_response.get("created_parts", []):
+            part_id = part_info["id"]
+            # fall back to string if id is not an object with id attribute.
+            part_name = part_info.get("name", f"Part_{part_id}")
+            self._grpc_client.log.debug(
+                f"Processing created part: ID={part_id}, Name='{part_name}'"
+            )
+
+            # Check if part already exists
+            existing_part = self._find_existing_part(part_id)
+            if existing_part:
+                self._grpc_client.log.debug(
+                    f"Created part '{part_name}' (ID: {part_id}) already exists."
+                )
+                continue
+
+            # Create new part
+            new_part = Part(part_id, part_name, [], [])
+            created_parts_dict[part_id] = new_part
+            self._grpc_client.log.debug(f"Created new part '{part_name}' (ID: {part_id})")
+
+        # Handle modified parts
+        # Do nothing for now, because this will almost always have the root part.
+
+        # Handle deleted parts
+        for part_info in tracker_response.get("deleted_parts", []):
+            part_id = part_info["id"]
+            self._grpc_client.log.debug(f"Processing deleted part: ID={part_id}")
+
+            existing_part = self._find_existing_part(part_id)
+            if existing_part:
+                # Mark as not alive (if applicable)
+                if hasattr(existing_part, "_is_alive"):
+                    existing_part._is_alive = False
+                self._grpc_client.log.debug(f"Removed part (ID: {part_id})")
+            else:
+                self._grpc_client.log.warning(f"Could not find part to delete: ID={part_id}")
+
+        # ================== HANDLE COMPONENTS ==================
+
+        # Handle created master components
+        for component_info in tracker_response.get("created_components", []):
+            # Check and create master components.
+            if component_info.get("id") == component_info.get("master_id"):
+                # This is a MasterComponent
+                master_part_id = component_info.get("part_master").get("id")
+                master_part = created_parts_dict.get(master_part_id) or self._find_existing_part(
+                    master_part_id
+                )
+                if not master_part:
+                    self._grpc_client.log.warning(
+                        f"Could not find part for MasterComponent ID={component_info.get('id')}"
+                    )
+                    continue
+
+                new_master = MasterComponent(
+                    component_info["id"],
+                    component_info.get("name", f"MasterComponent_{component_info['id']}"),
+                    master_part,
+                    component_info.get("placement"),
+                )
+                created_master_components_dict[component_info["id"]] = new_master
+                self._grpc_client.log.debug(
+                    f"Created new MasterComponent: ID={new_master.id}, Name='{new_master.name}'"
+                )
+                continue
+
+        # Handle created occurrence components
+        for component_info in tracker_response.get("created_components", []):
+            # This is an OccurrenceComponent
+            master_part_id = component_info.get("part_master").get("id")
+            master_part = created_parts_dict.get(master_part_id) or self._find_existing_part(
+                master_part_id
+            )
+            if not master_part:
+                self._grpc_client.log.warning(
+                    f"Could not find part for Component ID={component_info.get('id')}"
+                )
+                continue
+
+            # Find and assign parent component
+            self._find_and_add_component_to_design(
+                component_info, self.components, created_parts_dict, created_master_components_dict
+            )
+
+        # Handle modified components
+        for component_info in tracker_response.get("modified_components", []):
+            component_id = component_info["id"]
+            component_name = component_info.get("name", f"Component_{component_id}")
+            self._grpc_client.log.debug(
+                f"Processing modified component: ID={component_id}, Name='{component_name}'"
+            )
+
+            # Try to find and update the component
+            updated = self._find_and_update_component(component_info, self.components)
+            if not updated:
+                self._grpc_client.log.warning(
+                    f"Could not find component to update: '{component_name}' (ID: {component_id})"
+                )
+
+        # Handle deleted components
+        for component_info in tracker_response.get("deleted_components", []):
+            component_id = component_info["id"]
+            self._grpc_client.log.debug(f"Processing deleted component: ID={component_id}")
+
+            # Try to find and remove the component
+            removed = self._find_and_remove_component(component_info, self.components)
+            if not removed:
+                self._grpc_client.log.warning(
+                    f"Could not find component to delete: ID={component_id}"
+                )
+
+        # ================== HANDLE BODIES ==================
+
+        # Handle created bodies
+        for created_body_info in tracker_response.get("created_bodies", []):
+            body_id = created_body_info["id"]
+            body_name = created_body_info["name"]
+            is_surface = created_body_info.get("is_surface", False)
+            self._grpc_client.log.debug(
+                f"Processing created body: ID={body_id}, Name='{body_name}'"
+            )
+
+            if any(body.id == body_id for body in self.bodies):
+                self._grpc_client.log.debug(
+                    f"Created body '{body_name}' (ID: {body_id}) already exists at root level."
+                )
+                continue
+
+            new_body = self._find_and_add_body(
+                created_body_info, self.components, created_parts_dict, created_components_dict
+            )
+            if not new_body:
+                new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
+                self._master_component.part.bodies.append(new_body)
+                self._clear_cached_bodies()
+                self._grpc_client.log.debug(
+                    f"Added new body '{body_name}' (ID: {body_id}) to root level."
+                )
+
+            if new_body:
+                created_bodies_dict[body_id] = new_body
+
+        # Handle modified bodies
+        for body_info in tracker_response.get("modified_bodies", []):
             body_id = body_info["id"]
             body_name = body_info["name"]
             self._grpc_client.log.debug(
@@ -1389,8 +1629,8 @@ class Design(Component):
                     if self._find_and_update_body(body_info, component):
                         break
 
-    def _handle_deleted_bodies(self, deleted_bodies):
-        for body_info in deleted_bodies:
+        # Handle deleted bodies
+        for body_info in tracker_response.get("deleted_bodies", []):
             body_id = body_info["id"]
             self._grpc_client.log.debug(f"Processing deleted body: ID={body_id}")
             removed = False
@@ -1414,31 +1654,189 @@ class Design(Component):
                     if self._find_and_remove_body(body_info, component):
                         break
 
-    def _handle_created_bodies(self, created_bodies):
-        for body_info in created_bodies:
-            body_id = body_info["id"]
-            body_name = body_info["name"]
-            is_surface = body_info.get("is_surface", False)
-            self._grpc_client.log.debug(
-                f"Processing created body: ID={body_id}, Name='{body_name}'"
+    # ================== HELPER METHODS ==================
+    #
+    # Processing order for tracker updates:
+    # 1. Parts (foundational - no dependencies)
+    # 2. Components (depend on parts via master_component.part)
+    # 3. Bodies (depend on parts/components as containers)
+    # 4. Deletions (reverse order to avoid dependency issues)
+
+    def _find_existing_part(self, part_id):
+        """Find if a part with the given ID already exists."""
+        # Search through master component parts
+        if hasattr(self, "_master_component") and self._master_component:
+            if self._master_component.part.id == part_id:
+                return self._master_component.part
+
+        # Search through all component master parts
+        for component in self._get_all_components():
+            if (
+                hasattr(component, "_master_component")
+                and component._master_component
+                and component._master_component.part.id == part_id
+            ):
+                return component._master_component.part
+
+        return None
+
+    def _get_all_components(self):
+        """Get all components in the hierarchy recursively."""
+        all_components = []
+
+        def _collect_components(components):
+            for comp in components:
+                all_components.append(comp)
+                _collect_components(comp.components)
+
+        _collect_components(self.components)
+        return all_components
+
+    def _find_and_update_part(self, part_info):
+        """Find and update an existing part."""
+        part_id = part_info["id"]
+        existing_part = self._find_existing_part(part_id)
+
+        if existing_part:
+            # Update part properties
+            if "name" in part_info:
+                existing_part._name = part_info["name"]
+            self._grpc_client.log.debug(f"Updated part '{existing_part.name}' (ID: {part_id})")
+            return True
+
+        return False
+
+    def _find_and_remove_part(self, part_info):
+        """Find and remove a part from the design."""
+        part_id = part_info["id"]
+        existing_part = self._find_existing_part(part_id)
+
+        if existing_part:
+            # Mark as not alive (if applicable)
+            if hasattr(existing_part, "_is_alive"):
+                existing_part._is_alive = False
+            self._grpc_client.log.debug(f"Removed part (ID: {part_id})")
+            return True
+
+        return False
+
+    def _find_and_add_component_to_design(
+        self,
+        component_info: dict,
+        parent_components: list["Component"],
+        created_parts: dict[str, Part] | None = None,
+        created_master_components: dict[str, MasterComponent] | None = None,
+    ) -> "Component | None":
+        """Recursively find the appropriate parent and add a new component to it.
+
+        Parameters
+        ----------
+        component_info : dict
+            Information about the component to create.
+        parent_components : list
+            List of potential parent components to search.
+        created_parts : dict, optional
+            Dictionary of created parts from previous step.
+        created_master_components : dict, optional
+            Dictionary of created master components from current step.
+
+        Returns
+        -------
+        Component or None
+            The newly created component if successful, None otherwise.
+        """
+        new_component_parent_id = component_info.get("parent_id")
+        master_id = component_info.get("master_id")
+
+        # Find the master component for this component
+        master_component = None
+        if created_master_components and master_id:
+            master_component = created_master_components.get(master_id)
+
+        # Check if this should be added to the root design
+        if new_component_parent_id == self.id:
+            # Create the Component object with master_component
+            new_component = Component(
+                parent_component=self,
+                name=component_info["name"],
+                template=self,
+                grpc_client=self._grpc_client,
+                master_component=master_component,
+                preexisting_id=component_info["id"],
+                read_existing_comp=True,
             )
+            self.components.append(new_component)
+            self._grpc_client.log.debug(f"Added component '{component_info['id']}' to root design")
+            return new_component
 
-            if any(body.id == body_id for body in self.bodies):
-                self._grpc_client.log.debug(
-                    f"Created body '{body_name}' (ID: {body_id}) already exists at root level."
+        # Search through existing components for the parent
+        for component in parent_components:
+            if component.id == new_component_parent_id:
+                new_component = Component(
+                    name=component_info["name"],
+                    parent_component=component,
+                    template=component,
+                    grpc_client=self._grpc_client,
+                    master_component=master_component,
+                    preexisting_id=component_info["id"],
+                    read_existing_comp=True,
                 )
-                continue
+                component.components.append(new_component)
+                self._grpc_client.log.debug(
+                    f"Added component '{component_info['id']}' to component '{component.name}'"
+                )
+                return new_component
 
-            added = self._find_and_add_body(body_info, self.components)
-            if not added:
-                new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
-                self._master_component.part.bodies.append(new_body)
-                self._clear_cached_bodies()
+            # Recursively search in child components
+            result = self._find_and_add_component_to_design(
+                component_info, component.components, created_parts, created_master_components
+            )
+            if result:
+                return result
+
+        return None
+
+    # This method is subject to change based on how component updates are defined.
+    def _find_and_update_component(self, component_info, components):
+        """Recursively find and update an existing component in the hierarchy."""
+        component_id = component_info["id"]
+
+        for component in components:
+            if component.id == component_id:
+                # Update component properties
+                if "name" in component_info:
+                    component._name = component_info["name"]
                 self._grpc_client.log.debug(
-                    f"Added new body '{body_name}' (ID: {body_id}) to root level."
+                    f"Updated component '{component.name}' (ID: {component.id})"
                 )
+                return True
+
+            if self._find_and_update_component(component_info, component.components):
+                return True
+
+        return False
+
+    def _find_and_remove_component(self, component_info, components, parent_component=None):
+        """Recursively find and remove a component from the hierarchy."""
+        component_id = component_info["id"]
+
+        for i, component in enumerate(components):
+            if component.id == component_id:
+                component._is_alive = False
+                components.pop(i)
+                self._grpc_client.log.debug(
+                    f"Removed component '{component.name}' (ID: {component_id}) "
+                    f"from {'root design' if parent_component is None else parent_component.name}"
+                )
+                return True
+
+            if self._find_and_remove_component(component_info, component.components, component):
+                return True
+
+        return False
 
     def _update_body(self, existing_body, body_info):
+        """Update an existing body with new information from tracker response."""
         self._grpc_client.log.debug(
             f"Updating body '{existing_body.name}' "
             f"(ID: {existing_body.id}) with new info: {body_info}"
@@ -1446,33 +1844,71 @@ class Design(Component):
         existing_body.name = body_info["name"]
         existing_body._template._is_surface = body_info.get("is_surface", False)
 
-    def _find_and_add_body(self, body_info, components):
+    def _find_and_add_body(
+        self,
+        tracked_body_info: dict,
+        components: list["Component"],
+        created_parts: dict[str, Part] | None = None,
+        created_components: dict[str, "Component"] | None = None,
+    ) -> MasterBody | None:
+        """Recursively find the appropriate component and add a new body to it.
+
+        Parameters
+        ----------
+        body_info : dict
+            Information about the body to create.
+        components : list[Component]
+            List of components to search.
+        created_parts : dict[str, Part], optional
+            Dictionary of created parts from previous step.
+        created_components : dict[str, Component], optional
+            Dictionary of created components from previous step.
+
+        Returns
+        -------
+        MasterBody | None
+            The newly created body if successful, None otherwise.
+        """
+        if not components:
+            return None
+
         for component in components:
             parent_id_for_body = component._master_component.part.id
-            if parent_id_for_body == body_info["parent_id"]:
-                new_body = MasterBody(
-                    body_info["id"],
-                    body_info["name"],
+            if parent_id_for_body == tracked_body_info.get("parent_id"):
+                new_master_body = MasterBody(
+                    tracked_body_info["id"],
+                    tracked_body_info["name"],
                     self._grpc_client,
-                    is_surface=body_info.get("is_surface", False),
+                    is_surface=tracked_body_info.get("is_surface", False),
                 )
-                # component.bodies.append(new_body)
-                component._master_component.part.bodies.append(new_body)
+
+                component._master_component.part.bodies.append(new_master_body)
+
                 component._clear_cached_bodies()
                 self._grpc_client.log.debug(
-                    f"Added new body '{new_body.name}' (ID: {new_body.id}) "
+                    f"Added new body '{new_master_body.name}' (ID: {new_master_body.id}) "
                     f"to component '{component.name}' (ID: {component.id})"
                 )
-                return True
+                return new_master_body
 
-            if self._find_and_add_body(body_info, component.components):
-                return True
+            result = self._find_and_add_body(
+                tracked_body_info, component.components, created_parts, created_components
+            )
+            if result:
+                return result
 
-        return False
+        return None
 
     def _find_and_update_body(self, body_info, component):
+        """Recursively find and update an existing body in the component hierarchy."""
         for body in component.bodies:
-            if body.id == body_info["id"]:
+            # Use master_id if available,
+            body_master_id = (
+                getattr(body, "master_id", None)
+                or (body._template.id if hasattr(body, "_template") and body._template else None)
+                or body.id
+            )
+            if body_master_id == body_info["id"]:
                 self._update_body(body, body_info)
                 self._grpc_client.log.debug(
                     f"Updated body '{body.name}' (ID: {body.id}) in component "
@@ -1487,11 +1923,11 @@ class Design(Component):
         return False
 
     def _find_and_remove_body(self, body_info, component):
+        """Recursively find and remove a body from the component hierarchy."""
         for body in component.bodies:
             body_info_id = body_info["id"]
             if body.id == f"{component.id}/{body_info_id}":
                 body._is_alive = False
-                # component.bodies.remove(body)
                 for bd in component._master_component.part.bodies:
                     if bd.id == body_info_id:
                         component._master_component.part.bodies.remove(bd)

@@ -7,7 +7,7 @@ exclude: "tests/integration/files"
 repos:
 
   - repo: https://github.com/google/yamlfmt
-    rev: v0.17.2
+    rev: v0.21.0
     hooks:
       - id: yamlfmt
         args:
@@ -15,13 +15,13 @@ repos:
           - "max_line_length=120,retain_line_breaks=true,retain_line_breaks_single=true"
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: v2.10.0
+    rev: v2.11.1
     hooks:
       - id: pyproject-fmt
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.0
+    rev: v0.14.14
     hooks:
       - id: ruff-check
       - id: ruff-format
@@ -49,7 +49,7 @@ repos:
 
   # this validates our github workflow files
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.34.1
+    rev: 0.36.1
     hooks:
       - id: check-github-workflows
 

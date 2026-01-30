@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -102,4 +102,9 @@ class GRPCDesignsService(ABC):  # pragma: no cover
     @abstractmethod
     def stream_design_tessellation(self, **kwargs) -> dict:
         """Stream the tessellation of a design."""
+        pass
+
+    @abstractmethod
+    def download_file(self, **kwargs) -> dict:
+        """Download the design from the server."""
         pass

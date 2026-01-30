@@ -4,7 +4,7 @@ requires = [ "flit-core>=3.2,<4" ]
 
 [project]
 name = "ansys-geometry-core"
-version = "0.12.dev0"
+version = "0.15.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
 license = "MIT"
@@ -26,9 +26,9 @@ classifiers = [
 ]
 
 dependencies = [
-  "ansys-api-geometry==0.4.81",
-  "ansys-tools-path>=0.3,<1",
-  "beartype>=0.11.0,<0.22",
+  "ansys-api-discovery==1.0.22",
+  "ansys-tools-common>=0.3,<1",
+  "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
   "grpcio>=1.35.0,<2",
   "grpcio-health-checking>=1.45.0,<2",
@@ -69,20 +69,20 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # only available when a developer clones the repository and installs the package
 # for local development.
 dev = [
-  "pre-commit==4.3.0",
+  "pre-commit==4.5.1",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
 doc = [
-  "ansys-sphinx-theme[autoapi]==1.6.3",
+  "ansys-sphinx-theme[autoapi]==1.6.4",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
-  "jupytext==1.17.3",
+  "jupytext==1.19.1",
   "myst-parser==4.0.1",
   "nbconvert==7.16.6",
-  "nbsphinx==0.9.6",
-  "notebook==7.4.7",
-  "numpydoc==1.9.0",
+  "nbsphinx==0.9.8",
+  "notebook==7.5.3",
+  "numpydoc==1.10.0",
   "pdf2image==1.17.0",
   "quarto-cli==1.8.25",
   "sphinx==8.2.3",
@@ -97,31 +97,31 @@ tests = [
 ]
 general-all = [
   "ansys-platform-instancemanagement==1.1.2",
-  "ansys-tools-path==0.7.3",
+  "ansys-tools-common==0.4.2",
   "ansys-tools-visualization-interface==0.12.1",
-  "beartype==0.21.0",
+  "beartype==0.22.9",
   "docker==7.1.0",
   "geomdl==5.4.0",
-  "grpcio==1.75.0",
-  "grpcio-health-checking==1.75.0",
-  "matplotlib==3.10.7",
+  "grpcio==1.76.0",
+  "grpcio-health-checking==1.76.0",
+  "matplotlib==3.10.8",
   "numpy==2.2.6; python_version<'3.11'",
-  "numpy==2.3.3; python_version>='3.11'",
+  "numpy==2.4.0; python_version>='3.11'",
   "pint==0.24.4",
-  "protobuf==6.32.1",
+  "protobuf==6.33.4",
   "pygltflib==1.16.5",
-  "pyvista[jupyter]==0.46.3",
+  "pyvista[jupyter]==0.46.5",
   "requests==2.32.5",
   "scipy==1.15.3; python_version<'3.11'",
-  "scipy==1.16.2; python_version>='3.11'",
+  "scipy==1.16.3; python_version>='3.11'",
   "semver==3.0.4",
   "six==1.17.0",
   "vtk==9.5.2",
 ]
 tests-minimal = [
-  "pytest==8.4.2",
+  "pytest==9.0.2",
   "pytest-cov==7.0.0",
-  "pytest-pyvista==0.2.0",
+  "pytest-pyvista==0.3.2",
   "pyyaml==6.0.3",
 ]
 

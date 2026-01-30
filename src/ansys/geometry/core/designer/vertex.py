@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -21,10 +21,17 @@
 # SOFTWARE.
 """Module for managing a vertex."""
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 
 from ansys.geometry.core.math.point import Point3D
+from ansys.geometry.core.misc.auxiliary import get_design_from_body
 from ansys.geometry.core.typing import RealSequence
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.selection import NamedSelection
 
 
 class Vertex(Point3D):
@@ -44,6 +51,7 @@ class Vertex(Point3D):
         cls,
         id: str,
         position: np.ndarray | RealSequence,
+        body: "Body",
     ):
         """Initialize ``Vertex`` class."""
         # Only pass position and unit to Point3D.__new__
@@ -54,9 +62,11 @@ class Vertex(Point3D):
         self,
         id: str,
         position: np.ndarray | RealSequence,
+        body: "Body",
     ):
         """Initialize the Vertex with a unique identifier."""
         self._id = id
+        self._body = body
         super().__init__(position)
 
         # Make immutable
@@ -67,9 +77,30 @@ class Vertex(Point3D):
         """Get the unique identifier of the vertex."""
         return self._id
 
+    @property
+    def body(self) -> "Body":
+        """Get the body this vertex belongs to."""
+        return self._body
+
+    def get_named_selections(self) -> list["NamedSelection"]:
+        """Get all named selections that include this vertex.
+
+        Returns
+        -------
+        list["NamedSelection"]
+            List of named selections that include this vertex.
+        """
+        included_ns = []
+        for ns in get_design_from_body(self.body).named_selections:
+            if any(vertex.id == self.id for vertex in ns.vertices):
+                included_ns.append(ns)
+
+        return included_ns
+
     def __repr__(self) -> str:
         """Return a string representation of the vertex."""
         lines = [f"ansys.geometry.core.designer.Vertex {hex(id(self))}"]
         lines.append(f"  Id                   : {self.id}")
-        lines.append(f"  Position                 : {self.position}")
+        lines.append(f"  Position             : {self.position}")
+        lines.append(f"  Body Id              : {self.body.id}")
         return "\n".join(lines)

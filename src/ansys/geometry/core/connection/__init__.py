@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,20 +23,6 @@
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
-from ansys.geometry.core.connection.conversions import (
-    curve_to_grpc_curve,
-    frame_to_grpc_frame,
-    grpc_curve_to_curve,
-    grpc_frame_to_frame,
-    grpc_matrix_to_matrix,
-    grpc_surface_to_surface,
-    line_to_grpc_line,
-    plane_to_grpc_plane,
-    point3d_to_grpc_point,
-    sketch_shapes_to_grpc_geometries,
-    trimmed_curve_to_grpc_trimmed_curve,
-    unit_vector_to_grpc_direction,
-)
 import ansys.geometry.core.connection.defaults as defaults
 from ansys.geometry.core.connection.docker_instance import (
     GeometryContainers,

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -32,10 +32,10 @@ import ansys.geometry.core.connection.defaults as pygeom_defaults
 
 
 @pytest.fixture(scope="function")
-def client(modeler: Modeler):
+def client(modeler: Modeler, transport_mode: str) -> GrpcClient:
     # this uses DEFAULT_HOST and DEFAULT_PORT which are set by environment
     # variables in the workflow
-    return GrpcClient()
+    return GrpcClient(transport_mode=transport_mode)
 
 
 def test_client_init(client: GrpcClient):
@@ -57,6 +57,11 @@ def test_client_backend_info(client: GrpcClient):
     assert "Backend type" in backend_info
     assert "Backend number" in backend_info
     assert "API server number" in backend_info
+
+    # Additional info may or may not be present depending on the backend version
+    if client._backend_additional_info:
+        for key in client._backend_additional_info.keys():
+            assert key in backend_info
 
 
 def test_client_through_channel(modeler: Modeler):
@@ -81,7 +86,6 @@ def test_client_close(client: GrpcClient):
     assert client.target() == ""
 
 
-@pytest.mark.skip(reason="Flaky test, needs investigation")
 def test_client_get_service_logs(client: GrpcClient):
     """Test the retrieval of the service logs."""
     # Low level call

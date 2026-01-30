@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -25,8 +25,13 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import from_measurement_to_server_length
 from ..base.prepare_tools import GRPCPrepareToolsService
-from .conversions import build_grpc_id
+from .conversions import (
+    build_grpc_id,
+    from_enclosure_options_to_grpc_enclosure_options,
+    serialize_tracker_command_response,
+)
 
 
 class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
@@ -54,8 +59,8 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtractVolumeFromFacesRequest(
-            sealing_faces=[build_grpc_id(face.id) for face in kwargs["sealing_faces"]],
-            inside_faces=[build_grpc_id(face.id) for face in kwargs["inside_faces"]],
+            sealing_faces=[build_grpc_id(face) for face in kwargs["sealing_faces"]],
+            inside_faces=[build_grpc_id(face) for face in kwargs["inside_faces"]],
         )
 
         # Call the gRPC service
@@ -73,8 +78,8 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtractVolumeFromEdgeLoopsRequest(
-            sealing_edges=[build_grpc_id(edge.id) for edge in kwargs["sealing_edges"]],
-            inside_faces=[build_grpc_id(face.id) for face in kwargs["inside_faces"]],
+            sealing_edges=[build_grpc_id(edge) for edge in kwargs["sealing_edges"]],
+            inside_faces=[build_grpc_id(face) for face in kwargs["inside_faces"]],
         )
 
         # Call the gRPC service
@@ -94,7 +99,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = RemoveRoundsRequest(
-            selection=[Face(id=round.id) for round in kwargs["rounds"]],
+            selection=[Face(id=round) for round in kwargs["rounds"]],
             auto_shrink=BoolValue(value=kwargs["auto_shrink"]),
         )
 
@@ -114,8 +119,8 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
-            selection=[Body(id=body.id) for body in kwargs["bodies"]],
-            tolerance=DoubleValue(value=kwargs["tolerance"]),
+            selection=[Body(id=body) for body in kwargs["bodies"]],
+            tolerance=DoubleValue(value=from_measurement_to_server_length(kwargs["tolerance"])),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
 
@@ -135,8 +140,8 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ShareTopologyRequest(
-            selection=[Body(id=body.id) for body in kwargs["bodies"]],
-            tolerance=DoubleValue(value=kwargs["tolerance"]),
+            selection=[Body(id=body) for body in kwargs["bodies"]],
+            tolerance=DoubleValue(value=from_measurement_to_server_length(kwargs["tolerance"])),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
 
@@ -158,12 +163,24 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         from ansys.api.geometry.v0.models_pb2 import FindLogoOptions
         from ansys.api.geometry.v0.preparetools_pb2 import FindLogosRequest
 
+        # Check height objects
+        min_height = (
+            from_measurement_to_server_length(kwargs["min_height"])
+            if kwargs["min_height"] is not None
+            else None
+        )
+        max_height = (
+            from_measurement_to_server_length(kwargs["max_height"])
+            if kwargs["max_height"] is not None
+            else None
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindLogosRequest(
-            bodies=[build_grpc_id(body.id) for body in kwargs["bodies"]],
+            bodies=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=FindLogoOptions(
-                min_height=kwargs["min_height"],
-                max_height=kwargs["max_height"],
+                min_height=min_height,
+                max_height=max_height,
             ),
         )
 
@@ -181,12 +198,24 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         from ansys.api.geometry.v0.models_pb2 import FindLogoOptions
         from ansys.api.geometry.v0.preparetools_pb2 import FindLogosRequest
 
+        # Check height objects
+        min_height = (
+            from_measurement_to_server_length(kwargs["min_height"])
+            if kwargs["min_height"] is not None
+            else None
+        )
+        max_height = (
+            from_measurement_to_server_length(kwargs["max_height"])
+            if kwargs["max_height"] is not None
+            else None
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindLogosRequest(
-            bodies=[build_grpc_id(body.id) for body in kwargs["bodies"]],
+            bodies=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=FindLogoOptions(
-                min_height=kwargs["min_height"],
-                max_height=kwargs["max_height"],
+                min_height=min_height,
+                max_height=max_height,
             ),
         )
 
@@ -229,7 +258,7 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DetectHelixesRequest(
-            body_ids=[build_grpc_id(body.id) for body in kwargs["bodies"]],
+            body_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
             options=DetectHelixesOptions(
                 min_radius=from_measurement_to_server_length(kwargs["min_radius"]),
                 max_radius=from_measurement_to_server_length(kwargs["max_radius"]),
@@ -268,5 +297,120 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
                     ],
                 }
                 for helix in response.helixes
+            ]
+        }
+
+    @protect_grpc
+    def create_box_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
+        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureBoxRequest
+
+        grpc_enclosure_options = from_enclosure_options_to_grpc_enclosure_options(
+            kwargs["enclosure_options"]
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateEnclosureBoxRequest(
+            bodies=[GRPCBody(id=id) for id in kwargs["body_ids"]],
+            x_low=from_measurement_to_server_length(kwargs["x_low"]),
+            x_high=from_measurement_to_server_length(kwargs["x_high"]),
+            y_low=from_measurement_to_server_length(kwargs["y_low"]),
+            y_high=from_measurement_to_server_length(kwargs["y_high"]),
+            z_low=from_measurement_to_server_length(kwargs["z_low"]),
+            z_high=from_measurement_to_server_length(kwargs["z_high"]),
+            enclosure_options=grpc_enclosure_options,
+        )
+
+        # Call the gRPC service
+        response = self.stub.CreateEnclosureBox(request)
+
+        # Return the response - formatted as a dictionary
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.command_response
+        )
+        return {
+            "success": response.success,
+            "created_bodies": [body.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
+        }
+
+    @protect_grpc
+    def create_cylinder_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
+        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureCylinderRequest
+
+        grpc_enclosure_options = from_enclosure_options_to_grpc_enclosure_options(
+            kwargs["enclosure_options"]
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateEnclosureCylinderRequest(
+            bodies=[GRPCBody(id=id) for id in kwargs["body_ids"]],
+            axial_distance_low=from_measurement_to_server_length(kwargs["axial_distance_low"]),
+            axial_distance_high=from_measurement_to_server_length(kwargs["axial_distance_high"]),
+            radial_distance=from_measurement_to_server_length(kwargs["radial_distance"]),
+            enclosure_options=grpc_enclosure_options,
+        )
+
+        # Call the gRPC service
+        response = self.stub.CreateEnclosureCylinder(request)
+
+        # Return the response - formatted as a dictionary
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.command_response
+        )
+        return {
+            "success": response.success,
+            "created_bodies": [body.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
+        }
+
+    @protect_grpc
+    def create_sphere_enclosure(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.models_pb2 import Body as GRPCBody
+        from ansys.api.geometry.v0.preparetools_pb2 import CreateEnclosureSphereRequest
+
+        grpc_enclosure_options = from_enclosure_options_to_grpc_enclosure_options(
+            kwargs["enclosure_options"]
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateEnclosureSphereRequest(
+            bodies=[GRPCBody(id=id) for id in kwargs["body_ids"]],
+            radial_distance=from_measurement_to_server_length(kwargs["radial_distance"]),
+            enclosure_options=grpc_enclosure_options,
+        )
+
+        # Call the gRPC service
+        response = self.stub.CreateEnclosureSphere(request)
+
+        # Return the response - formatted as a dictionary
+        serialized_tracker_response = serialize_tracker_command_response(
+            response=response.command_response
+        )
+        return {
+            "success": response.success,
+            "created_bodies": [body.id for body in response.created_bodies],
+            "tracker_response": serialized_tracker_response,
+        }
+
+    @protect_grpc
+    def detect_sweepable_bodies(self, **kwargs):  # noqa: D102
+        from ansys.api.geometry.v0.preparetools_pb2 import DetectSweepableBodiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DetectSweepableBodiesRequest(
+            bodies=[build_grpc_id(id=id) for id in kwargs["body_ids"]],
+            get_source_target_faces=kwargs["get_source_target_faces"],
+        )
+
+        # Call the gRPC service
+        response = self.stub.DetectSweepableBodies(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "results": [
+                {"sweepable": result.result, "face_ids": [face.id for face in result.face_ids]}
+                for result in response.response_data
             ]
         }

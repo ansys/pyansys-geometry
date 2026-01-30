@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -62,4 +62,9 @@ class GRPCModelToolsService(ABC):  # pragma: no cover
     @abstractmethod
     def move_translate(self, **kwargs) -> dict:
         """Translate the specified entities."""
+        pass
+
+    @abstractmethod
+    def create_sketch_line(self, **kwargs) -> dict:
+        """Create a sketch line in the design."""
         pass

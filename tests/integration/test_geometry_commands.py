@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -38,6 +38,7 @@ from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes.curves.line import Line
+from ansys.geometry.core.shapes.surfaces.sphere import Sphere
 from ansys.geometry.core.sketch.sketch import Sketch
 
 from .conftest import FILES_DIR
@@ -448,6 +449,26 @@ def test_circular_pattern(modeler: Modeler):
         modeler.geometry_commands.create_circular_pattern(
             base.faces[-1], axis, 12, np.pi * 2, False, 3, 0.05
         )
+
+
+def test_circular_pattern_about_line(modeler: Modeler):
+    """Test circular pattern about line."""
+    design = modeler.create_design("d1")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 20, 20), 20)
+
+    cutout = design.extrude_sketch("cylinder", Sketch().circle(Point2D([-5, -5]), 1), 20)
+    base.subtract(cutout)
+
+    assert base.volume.m == pytest.approx(Quantity(7937.1681, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 7
+
+    # full two-dimensional test - creates 3 rings around the center
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+    success = modeler.geometry_commands.create_circular_pattern(base.faces[-1], axis, 8, np.pi * 2)
+
+    assert success
+    assert base.volume.m == pytest.approx(Quantity(7497.3452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 14
 
 
 def test_fill_pattern(modeler: Modeler):
@@ -1548,3 +1569,15 @@ def test_revolve_edges(modeler: Modeler):
     assert design.bodies[1].faces[0].area.m == pytest.approx(
         Quantity(8.88576587632, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_intersect_curve_and_surface(modeler: Modeler):
+    """Test intersection of curves and surfaces."""
+    curve = Line(Point3D([0, 0, 0]), [1, 0, 0])
+    surface = Sphere([0, 0, 0], 1)
+
+    points = modeler.geometry_commands.intersect_curve_and_surface(curve, surface)
+
+    assert len(points) == 2
+    assert np.allclose(points[0], Point3D([-1, 0, 0]))
+    assert np.allclose(points[1], Point3D([1, 0, 0]))
