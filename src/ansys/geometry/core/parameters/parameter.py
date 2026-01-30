@@ -92,9 +92,7 @@ class Parameter:
         self._dimension_type = dimension_type
         self._dimension_value = self._convert_to_quantity(dimension_value, dimension_type)
 
-    def _convert_to_quantity(
-        self, value: Quantity | Real, dim_type: ParameterType
-    ) -> Quantity:
+    def _convert_to_quantity(self, value: Quantity | Real, dim_type: ParameterType) -> Quantity:
         """Convert a value to default units based on dimension type.
 
         Parameters
