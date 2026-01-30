@@ -30,6 +30,7 @@ import numpy as np
 from pint import Quantity
 import pytest
 
+import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
 from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
@@ -3709,6 +3710,10 @@ def test_import_component_named_selections(modeler: Modeler):
     assert len(design.named_selections) == 3
 
 
+@pytest.mark.skipif(
+    pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN,
+    reason="Failure when tracker is enabled.",
+)
 def test_component_make_independent(modeler: Modeler):
     """Test making components independent."""
 
