@@ -223,6 +223,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):
         return {
             "success": tracked_response.get("success"),
             "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -253,6 +254,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):
         return {
             "success": tracked_response.get("success"),
             "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc

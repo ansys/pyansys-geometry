@@ -1076,10 +1076,12 @@ class GRPCBodyServiceV1(GRPCBodyService):
 
         # Call the gRPC service
         resp = self.edit_stub.SplitBodies(request=request)
+        tracked_response = serialize_tracked_command_response(resp.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
             "success": resp.tracked_command_response.command_response.success,
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
