@@ -48,6 +48,7 @@ from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.designer.vertex import Vertex
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, ZERO_POINT3D
@@ -90,6 +91,21 @@ class DesignFileFormat(Enum):
     def __str__(self):
         """Represent object in string format."""
         return self.value
+
+
+# Mapping of DesignFileFormat to list of valid file extensions
+DESIGN_FILE_FORMAT_EXTENSIONS = {
+    DesignFileFormat.SCDOCX: ["scdocx"],
+    DesignFileFormat.PARASOLID_TEXT: ["x_t", "xmt_txt"],
+    DesignFileFormat.PARASOLID_BIN: ["x_b", "xmt_bin"],
+    DesignFileFormat.FMD: ["fmd"],
+    DesignFileFormat.STEP: ["stp", "step"],
+    DesignFileFormat.IGES: ["igs"],
+    DesignFileFormat.PMDB: ["pmdb"],
+    DesignFileFormat.STRIDE: ["stride"],
+    DesignFileFormat.DISCO: ["dsco"],
+    DesignFileFormat.INVALID: ["INVALID"],
+}
 
 
 class Design(Component):
@@ -284,6 +300,15 @@ class Design(Component):
         if not file_location.parent.exists():
             # Create the parent directory
             file_location.parent.mkdir(parents=True, exist_ok=True)
+
+        # Check if the file format matches path extension
+        valid_extensions = DESIGN_FILE_FORMAT_EXTENSIONS.get(format, [])
+        file_ext = file_location.suffix.lower().lstrip(".")
+        if file_ext not in valid_extensions:
+            raise GeometryRuntimeError(
+                f"File extension '{file_location.suffix}' does not match the requested format"
+                f" {format}. Valid extensions: {', '.join('.' + ext for ext in valid_extensions)}"
+            )
 
         # Process response
         self._grpc_client.log.debug(f"Requesting design download in {format} format.")
