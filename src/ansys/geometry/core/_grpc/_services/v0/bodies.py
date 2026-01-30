@@ -1157,3 +1157,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 )
 
         return {"tessellation": tess_map}
+
+    @protect_grpc
+    def copy_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
