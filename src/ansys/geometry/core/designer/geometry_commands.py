@@ -1528,10 +1528,7 @@ class GeometryCommands:
         )
 
         design = get_design_from_component(parent_component)
-        if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-            design._update_from_tracker(result.get('tracked_response'))
-        else:
-            design._update_design_inplace()
+        design._update_design_inplace()
 
         return AlignCondition(
             result.get("id"),
@@ -1588,10 +1585,7 @@ class GeometryCommands:
         )
 
         design = get_design_from_component(parent_component)
-        if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-            design._update_from_tracker(result.get('tracked_response'))
-        else:
-            design._update_design_inplace()
+        design._update_design_inplace()
 
         return TangentCondition(
             result.get("id"),
@@ -1648,10 +1642,7 @@ class GeometryCommands:
         )
 
         design = get_design_from_component(parent_component)
-        if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-            design._update_from_tracker(result.get('tracked_response'))
-        else:
-            design._update_design_inplace()
+        design._update_design_inplace()
 
         return OrientCondition(
             result.get("id"),
