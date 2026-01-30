@@ -1241,8 +1241,6 @@ def from_driving_dimension_to_grpc_driving_dimension(
     else:
         value = dim_value
 
-    print('dimension:', value)
-
     return GRPCDrivingDimension(
         id=driving_dimension.id,
         name=driving_dimension.name,

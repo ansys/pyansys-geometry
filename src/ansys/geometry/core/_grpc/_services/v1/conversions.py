@@ -1287,13 +1287,11 @@ def from_driving_dimension_to_grpc_driving_dimension(
     else:
         value = dim_value
 
-    print('dimension:', dim_value)
-
     return GRPCDrivingDimension(
         id=driving_dimension.id,
         name=driving_dimension.name,
         dimension_type=driving_dimension.dimension_type.value,
-        dimension_value=value,
+        dimension_value=GRPCQuantity(value_in_geometry_units=value),
     )
 
 
