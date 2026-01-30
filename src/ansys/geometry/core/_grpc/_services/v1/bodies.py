@@ -639,18 +639,27 @@ class GRPCBodyServiceV1(GRPCBodyService):
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import (
-            MultipleEntitiesRequest,
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            GetBoundingBoxRequest,
+            GetBoundingBoxRequestData,
         )
 
-        # Create the request with MultipleEntitiesRequest
-        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+        # Create the request to the proper method depending on tight tolerenace
+        if kwargs.get("tight_tolerance"):
+            request = GetBoundingBoxRequest(
+                request_data=[
+                    GetBoundingBoxRequestData(
+                        body_id=build_grpc_id(kwargs["id"]),
+                        tight_tolerance=kwargs.get("tight_tolerance", False),
+                    )
+                ]
+            )
 
-        # Call the gRPC service
-        resp = self.stub.GetBoundingBox(request=request)
-
-        # Get the first bounding box from the response array
-        resp = resp.response_data[0]
+            resp = self.stub.GetTightBoundingBox(request).response_data[0]
+        else:
+            request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+            resp = self.stub.GetBoundingBox(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
