@@ -1,0 +1,297 @@
+
+
+
+
+
+
+:class:`GRPCEdgesServiceV1`
+===========================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.edges.GRPCEdgesServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.edges.GRPCEdgesService`
+
+
+   
+   Edges service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   edges service. It is specifically designed for the v1 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCEdgesServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_edge`
+            - Get edge.
+          * - :py:attr:`~get_curve`
+            - Get curve information for the edge.
+          * - :py:attr:`~get_start_and_end_points`
+            - Get start and end points for the edge.
+          * - :py:attr:`~get_length`
+            - Get the length of the edge.
+          * - :py:attr:`~get_interval`
+            - Get the interval of the edge.
+          * - :py:attr:`~get_faces`
+            - Get the faces that are connected to the edge.
+          * - :py:attr:`~get_vertices`
+            - Get the vertices that are connected to the edge.
+          * - :py:attr:`~get_bounding_box`
+            - Get the bounding box of the edge.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.edges import GRPCEdgesServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_edge(**kwargs) -> dict
+
+   
+   Get edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_curve(**kwargs) -> dict
+
+   
+   Get curve information for the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_start_and_end_points(**kwargs) -> dict
+
+   
+   Get start and end points for the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_length(**kwargs) -> dict
+
+   
+   Get the length of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_interval(**kwargs) -> dict
+
+   
+   Get the interval of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces(**kwargs) -> dict
+
+   
+   Get the faces that are connected to the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_vertices(**kwargs) -> dict
+
+   
+   Get the vertices that are connected to the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bounding_box(**kwargs) -> dict
+
+   
+   Get the bounding box of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

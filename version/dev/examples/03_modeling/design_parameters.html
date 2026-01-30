@@ -1,0 +1,1030 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Modeling: Using design parameters &#8212; PyAnsys Geometry</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=99899407" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8bee615f"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/03_modeling/design_parameters';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Modeling: Chamfer edges and faces" href="chamfer.html" />
+    <link rel="prev" title="Modeling: Surface bodies and trimmed surfaces" href="surface_bodies.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.15.dev0" />
+  <meta property="og:site_name" content="PyAnsys" />
+  <meta name="physics" content="CAD" />
+  <link rel="canonical" href="https://geometry.docs.pyansys.com/version/stable/examples/03_modeling/design_parameters.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Geometry - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Geometry - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">101 examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/01_math.html">PyAnsys Geometry 101: Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/02_units.html">PyAnsys Geometry 101: Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/03_sketching.html">PyAnsys Geometry 101: Sketching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/04_modeling.html">PyAnsys Geometry 101: Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/05_plotter_picker.html">PyAnsys Geometry 101: Plotter</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Sketching examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/basic_usage.html">Sketching: Basic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/dynamic_sketch_plane.html">Sketching: Dynamic sketch plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/advanced_sketching_gears.html">Sketching: Parametric sketching for gears</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modeling examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="add_design_material.html">Modeling: Single body with material assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plate_with_hole.html">Modeling: Rectangular plate with multiple bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cut_operation_on_extrude.html">Modeling: Extruded plate with cut operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tessellation_usage.html">Modeling: Tessellation of two bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_organization.html">Modeling: Design organization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_operations.html">Modeling: Boolean operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scale_map_mirror_bodies.html">Modeling: Scale, map and mirror bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweep_chain_profile.html">Modeling: Sweep chain and sweep sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="revolving.html">Modeling: Revolving a sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="export_design.html">Modeling: Exporting designs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_tree.html">Modeling: Visualization of the design tree on terminal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service_colors.html">Modeling: Body color assignment and usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surface_bodies.html">Modeling: Surface bodies and trimmed surfaces</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Modeling: Using design parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chamfer.html">Modeling: Chamfer edges and faces</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Applied examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/01_naca_airfoils.html">Applied: Create a NACA 4-digit airfoil</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/02_naca_fluent.html">Applied: Prepare a NACA airfoil for a Fluent simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/03_ahmed_body_fluent.html">Applied: Develop an external aerodynamic simulation model for Fluent analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../99_misc/template.html">Miscellaneous: Example template</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../examples.html" class="nav-link">Examples</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Modeling: Using design parameters</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/design_parameters.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/design_parameters.py">Python script</a>.</p>
+</div>
+<hr class="docutils" />
+<section id="Modeling:-Using-design-parameters">
+<h1>Modeling: Using design parameters<a class="headerlink" href="#Modeling:-Using-design-parameters" title="Link to this heading">#</a></h1>
+<p>You can read and update parameters that are part of the design. The simple design in this example has two associated parameters.</p>
+<section id="Perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#Perform-required-imports" title="Link to this heading">#</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">launch_modeler</span>
+</pre></div>
+</div>
+</div>
+<p>The file for this example is in the integration tests folder and can be downloaded.</p>
+</section>
+<section id="Download-the-example-file">
+<h2>Download the example file<a class="headerlink" href="#Download-the-example-file" title="Link to this heading">#</a></h2>
+<p>Download the file for this example from the integration tests folder in the PyAnsys Geometry repository.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Download a file from a URL and save it to a local file.&quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>  <span class="c1"># Check if the request was successful</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+<span class="c1"># URL of the file to download</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/ansys/pyansys-geometry/main/tests/integration/files/blockswithparameters.dsco&quot;</span>
+
+<span class="c1"># Local path to save the file to</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;blockswithparameters.dsco&quot;</span>
+
+<span class="c1"># Download the file</span>
+<span class="n">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File is downloaded to </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+File is downloaded to /home/runner/work/pyansys-geometry/pyansys-geometry/doc/source/examples/03_modeling/blockswithparameters.dsco
+</pre></div></div>
+</div>
+</section>
+<section id="Import-a-design-with-parameters">
+<h2>Import a design with parameters<a class="headerlink" href="#Import-a-design-with-parameters" title="Link to this heading">#</a></h2>
+<p>Import the model using the <code class="docutils literal notranslate"><span class="pre">open_file()</span></code> method of the modeler.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a modeler object</span>
+<span class="n">modeler</span> <span class="o">=</span> <span class="n">launch_modeler</span><span class="p">()</span>
+<span class="n">design</span> <span class="o">=</span> <span class="n">modeler</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="n">design</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/pyansys-geometry/pyansys-geometry/.venv/lib/python3.13/site-packages/ansys/tools/common/cyberchannel.py:187: UserWarning: Starting gRPC client without TLS on localhost:700. This is INSECURE. Consider using a secure connection.
+  warn(f&#34;Starting gRPC client without TLS on {target}. This is INSECURE. Consider using a secure connection.&#34;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "19ba99ed369645b0b735320edd568af6"}</script></div>
+</div>
+</section>
+<section id="Read-existing-parameters-of-the-design">
+<h2>Read existing parameters of the design<a class="headerlink" href="#Read-existing-parameters-of-the-design" title="Link to this heading">#</a></h2>
+<p>You can get all the parameters of the design as a list of parameters. Because this example has two parameters, you see two items in the list.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_parameters</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">parameters</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2
+</pre></div></div>
+</div>
+<p>A parameter object has a name, value, and unit.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dimension_value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dimension_type</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dimension_value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dimension_type</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+p1
+0.00010872999999999982
+ParameterType.DIMENSIONTYPE_AREA
+p2
+0.0002552758322160814
+ParameterType.DIMENSIONTYPE_AREA
+</pre></div></div>
+</div>
+<p>Parameter values are returned in the default unit for each dimension type. Since default length unit is meter and default area unit is meter square, the value is returned in square meters.</p>
+</section>
+<section id="Edit-a-parameter-value">
+<h2>Edit a parameter value<a class="headerlink" href="#Edit-a-parameter-value" title="Link to this heading">#</a></h2>
+<p>You can edit the parameter’s name or value by simply setting these fields. Set the second parameter (p2 value to 350 mm).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">parameter1</span> <span class="o">=</span> <span class="n">my_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">parameter1</span><span class="o">.</span><span class="n">dimension_value</span> <span class="o">=</span> <span class="mf">0.000440</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">parameter1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dimension_value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dimension_value</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+ParameterUpdateStatus.SUCCESS
+0.00010872999999999982
+0.00044
+</pre></div></div>
+</div>
+<p>After a successful parameter update, the design is updated. If we request the design plot again, we see the updated design.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">design</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "ac6e2708a650447fb14edcf17bd2d604"}</script></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">set_parameter()</span></code> method returns a <code class="docutils literal notranslate"><span class="pre">Success</span></code> status message if the parameter is updated or a “FAILURE” status message if the update fails. If the <code class="docutils literal notranslate"><span class="pre">p2</span></code> parameter depends on the <code class="docutils literal notranslate"><span class="pre">p1</span></code> parameter, updating the <code class="docutils literal notranslate"><span class="pre">p1</span></code> parameter might also change the <code class="docutils literal notranslate"><span class="pre">p2</span></code> parameter. In such cases, the method returns <code class="docutils literal notranslate"><span class="pre">CONSTRAINED_PARAMETERS</span></code>, which indicates other parameters were also updated.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">parameter1</span> <span class="o">=</span> <span class="n">my_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">parameter1</span><span class="o">.</span><span class="n">dimension_value</span> <span class="o">=</span> <span class="mf">0.000250</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span><span class="n">parameter1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+</pre></div></div>
+</div>
+<p>To get the updated list, query the parameters once again.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">my_parameters</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">parameters</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dimension_value</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">my_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dimension_value</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.00024999999999997263
+0.0005812699999999444
+</pre></div></div>
+</div>
+</section>
+<section id="Close-the-modeler">
+<h2>Close the modeler<a class="headerlink" href="#Close-the-modeler" title="Link to this heading">#</a></h2>
+<p>Close the modeler to free up resources and release the connection.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"bd4158a4a99949ffbd14b3bbb43f25e6": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "376e3e5519e64c3fbced37ef868e52e2": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "19ba99ed369645b0b735320edd568af6": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_bd4158a4a99949ffbd14b3bbb43f25e6", "placeholder": "\u200b", "style": "IPY_MODEL_376e3e5519e64c3fbced37ef868e52e2", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mME2UYbodtt+2222u35QheoCCYGBQligIJgkZJNPzgigoaTEj8AdFEMfADfyABkgWiiWcieK4S+QOiHAYUj2hMNKgYlEujpNttu9vttbvdw+chU1K6M535pt3ubHCSyezR+b73eb73+t7vrfXsufOW4bz6+vom9/b23ovnNNw34b5xYGAgODg46Mbt4mesVmsWd1qSpHhdXd2fuP/Afcput5/A88xwymcdBgLqenp6FuRyuWV4zu/v759QyWBjxoz5t76+/gun09mK5xFyakoCAPSaTCazNpvNPoYVbh6O1YKGRF0u13sNDQ27QMzfpiAAKj0lnU6/gBVfAZW2WWpwwVzy0IgP3G73FpjI6REhAGA9qVRqA1b9mVoBVyIC2tDi8Xg24+dUzQiAbS/s7Ox8G2o/3mKCC+Zw0efzPQEfcVjYrARX3dbV1bUtHo8fMgt42f+Mp0yUTVQbdWsAHVsikdiHkHaPxcQXQufXgUBgMRxme9U0AAxfH4vFvjM7eF6UkbJS5qoQwEQGA57Ac5JllFyUVZZ5ckUEgMVxsK2jlSYzI+QXJsiyjzNEAJyJAzb/KQa41jJKL8pODMQiTEAymXw5n8/P0IjD3bh7Rgog59aanxiIRTVvV/oj0tnHca/WMrVwODwB3raTGxzkBg/gnZVapFV62Wy2n5AO70HM/5wbJ0QnXyQSaVPDIuNZzY0V3ntHMwxiwHA0Gj2Np7ecIBDgaDAYXKCQJM1DhrgJ3nhulcPbl8j4NmHe46X/g60fwbz3aewjkqFQaAqebWU1AOqyQwt8Id6qEHMc97zu7u7FGGsn7HAiVuosVw7P35C1nccdgSCxop1dHeZswmfHMnxBo6ZTk+jN8dl/vF7vWofDsa+MLN9oEUBMxOb3+1eoEsBVw6Zmua49r8YmhAKDiEPcMwBsxMiqQ+ixzPFxZyqRpXARG/YOr1ObFJ0gUskXBbamcR1OKmMUvDxHRAu8/LmY3jFLMUpFqz9HxG65smYJdyKyECOxDiEAe/p1gjF2oonivZAsxVgl2daa4EQWCW6J55qFAFFZiJWYLxNQy2qOSUzGRsyXCUDIeliwAHEO4WSlWQBRFoZakXcKmCXmyXAKs0Ve9vl8q42WoIYpJU4hV3hKcNs8m9gl7p/xQ73eF5kB4j5mNrWmTJRNwAzqiV1CxjVTZCIkEq+Z1bZFZSN2CenmVAFVy4Plz8xKAGWjjAKFk6lCBMDR/MJjLLMSQNm43xAiQKTaA+9/wewhDjL+JVI1kkTSSOTcKbMTwPqESAot6dn6Fr1gHwVJju6IRuyiByPuUUBAg5DGkAgBmxlvdgIEK9gDkohdY/BJo4CAG0R8miRSsGABkgVQs4KXu098IgUXSSRsFAoKZiVAVDY2WUiiPTjYRi41KwGisrGsLtlsth8Fiwnz2fBkQvWfRtlE3iF2yW63/yCacXZ1dW02GwGyTFaRd4idJnCKHRaCxYRHoG5LTKT6SyiToP1fJHbmAYPYRR0UnZQtMnA6s0zg+GZBlt0Gdo7EPHgpE3Q6nZ8YyLhc8Xj8MJh/aKTAY+5FPAKHLE7RdwuYJZmNwzyCMkBCYyKROJBMJl9B/PXXCjjmCmDOVzH3fiPpObEWGqoKe4EBl8v1hlqsdLvd23mkxHM9pc9kMpmno9HoeTii7ewbHEZPPx1ztLS1tV3AnGuMjiNjvbQFuHw6zDo5By7dTPAQNBgMLrRarTkSls1mnwT7uwp9virx9QzbW/HuV/j5d/b+6jniKlllP8lkeONJDk+dq9GsQTnC4fB1heO0K47Hwe7WdDr9nAKgXwOBwHI+C45Htj1d6sd429TUNEcmUdc+PRaLHcvn87dXW4ugzdsaGxufL94NFv9zi1J7GVbhlvb2dnaJ3SVrxfc+n2+NTsZ7/H7/Mr3g5XdSIHyJSH1PZ+7fToyl2+ErqilgZ4NaLYB9goVGaHjR93Hv1ZrU4XDsFT20kH3PObzbWk0CgG1jacVIUnAQb9F+VexyLMzkpcLv0IJV7AHQIOCAUYHx7v5qgScmYHtTqSAyZLEJTK22Bie4iq3xsqpm4SAf9Hq9a2DnJ4uLK3SEULcdRvp3i3zHySqpficxEdsQc1NrlYXXvR+O7qASSezXB+h1SuUomgg9LL8BUoV4749EIolKh+EiqWmqVEZlDgHks2pxHw7xTqUQw9J5NcAXOK10AGIoZ6Zli6JY6Z1Q461KoZ4NiKLHarW+KDsxlDUPHZ5zPQZqUVDPJsTqb5n9malbpAh8C2XXDLl62+WZIDFRUlNVOiwencnNU3aQEkL+cDMSoLvZo2fQB7AJssNAuFuvorlDVVkkg2I87+jo2K2QAVphDrfyViK5VqtO34OkaxXCp+7drdDBCAdubm6eidX+2WwqT5komwh4YQLk+H4aE93h8Xg2gvHekQZOGSgLZTLyDTLJ4Lx9/KZWKBSainT4Iy3FqQBfnUZR42PKQFksBr9QKVXCPusD3OiA/RkQ5kP8qV/Jl1WywAp/6+dcmPM2zL1UrUahe4JqfnWWKXIul3uUbfP8njAFLW1OFr3gdFtZ72cNH+PtQT7/brW+NXqJAHh0y9V8/U/A1U7AfwIMAD7mS3pCbuWJAAAAAElFTkSuQmCC&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}, "6e06e71fa3b34f8fafd493cff885a1b5": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "ff304e594043444abf4635118b246244": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "ac6e2708a650447fb14edcf17bd2d604": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_6e06e71fa3b34f8fafd493cff885a1b5", "placeholder": "\u200b", "style": "IPY_MODEL_ff304e594043444abf4635118b246244", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}}, "version_major": 2, "version_minor": 0}
+</script></section>
+</section>
+<hr class="docutils" />
+<div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/design_parameters.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/design_parameters.py">Python script</a>.</p>
+</div>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Perform-required-imports">Perform required imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Download-the-example-file">Download the example file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Import-a-design-with-parameters">Import a design with parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Read-existing-parameters-of-the-design">Read existing parameters of the design</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Edit-a-parameter-value">Edit a parameter value</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Close-the-modeler">Close the modeler</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pyansys-geometry/edit/main/doc/source/examples/03_modeling/design_parameters.mystnb">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/03_modeling/design_parameters.mystnb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text", "objectID"], "limit": 10, "minMatchCharLength": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.6.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

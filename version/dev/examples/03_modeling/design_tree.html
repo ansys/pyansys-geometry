@@ -1,0 +1,1188 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Modeling: Visualization of the design tree on terminal &#8212; PyAnsys Geometry</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=99899407" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=8bee615f"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/thebelab-helper.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/03_modeling/design_tree';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Modeling: Body color assignment and usage" href="service_colors.html" />
+    <link rel="prev" title="Modeling: Exporting designs" href="export_design.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.15.dev0" />
+  <meta property="og:site_name" content="PyAnsys" />
+  <meta name="physics" content="CAD" />
+  <link rel="canonical" href="https://geometry.docs.pyansys.com/version/stable/examples/03_modeling/design_tree.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Geometry - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Geometry - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">101 examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/01_math.html">PyAnsys Geometry 101: Math</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/02_units.html">PyAnsys Geometry 101: Units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/03_sketching.html">PyAnsys Geometry 101: Sketching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/04_modeling.html">PyAnsys Geometry 101: Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01_getting_started/05_plotter_picker.html">PyAnsys Geometry 101: Plotter</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Sketching examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/basic_usage.html">Sketching: Basic usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/dynamic_sketch_plane.html">Sketching: Dynamic sketch plane</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_sketching/advanced_sketching_gears.html">Sketching: Parametric sketching for gears</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modeling examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="add_design_material.html">Modeling: Single body with material assignment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plate_with_hole.html">Modeling: Rectangular plate with multiple bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cut_operation_on_extrude.html">Modeling: Extruded plate with cut operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tessellation_usage.html">Modeling: Tessellation of two bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_organization.html">Modeling: Design organization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_operations.html">Modeling: Boolean operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scale_map_mirror_bodies.html">Modeling: Scale, map and mirror bodies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sweep_chain_profile.html">Modeling: Sweep chain and sweep sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="revolving.html">Modeling: Revolving a sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="export_design.html">Modeling: Exporting designs</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Modeling: Visualization of the design tree on terminal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="service_colors.html">Modeling: Body color assignment and usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surface_bodies.html">Modeling: Surface bodies and trimmed surfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_parameters.html">Modeling: Using design parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chamfer.html">Modeling: Chamfer edges and faces</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Applied examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/01_naca_airfoils.html">Applied: Create a NACA 4-digit airfoil</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/02_naca_fluent.html">Applied: Prepare a NACA airfoil for a Fluent simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../04_applied/03_ahmed_body_fluent.html">Applied: Develop an external aerodynamic simulation model for Fluent analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Miscellaneous examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../99_misc/template.html">Miscellaneous: Example template</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../examples.html" class="nav-link">Examples</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Modeling: Visualization of the design tree on terminal</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/design_tree.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/design_tree.py">Python script</a>.</p>
+</div>
+<hr class="docutils" />
+<section id="Modeling:-Visualization-of-the-design-tree-on-terminal">
+<h1>Modeling: Visualization of the design tree on terminal<a class="headerlink" href="#Modeling:-Visualization-of-the-design-tree-on-terminal" title="Link to this heading">#</a></h1>
+<p>A user can visualize its model object tree easily by using the <code class="docutils literal notranslate"><span class="pre">tree_print()</span></code> method available on the <code class="docutils literal notranslate"><span class="pre">Design</span></code> and <code class="docutils literal notranslate"><span class="pre">Component</span></code> objects. This method prints the tree structure of the model in the terminal.</p>
+<section id="Perform-required-imports">
+<h2>Perform required imports<a class="headerlink" href="#Perform-required-imports" title="Link to this heading">#</a></h2>
+<p>For the following example, you need to import these modules:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pint</span><span class="w"> </span><span class="kn">import</span> <span class="n">Quantity</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">launch_modeler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.math.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNITVECTOR3D_X</span><span class="p">,</span> <span class="n">UNITVECTOR3D_Y</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.math.point</span><span class="w"> </span><span class="kn">import</span> <span class="n">Point2D</span><span class="p">,</span> <span class="n">Point3D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.misc.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNITS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.sketch.sketch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sketch</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Create-a-design">
+<h2>Create a design<a class="headerlink" href="#Create-a-design" title="Link to this heading">#</a></h2>
+<p>The following code creates a simple design for demonstration purposes. The design consists of several cylinders extruded. The interesting part is visualizing the corresponding design tree.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a modeler object</span>
+<span class="n">modeler</span> <span class="o">=</span> <span class="n">launch_modeler</span><span class="p">()</span>
+
+<span class="c1"># Create your design on the server side</span>
+<span class="n">design</span> <span class="o">=</span> <span class="n">modeler</span><span class="o">.</span><span class="n">create_design</span><span class="p">(</span><span class="s2">&quot;TreePrintComponent&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create a Sketch object and draw a circle (all client side)</span>
+<span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">()</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="o">-</span><span class="mi">30</span><span class="p">]),</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="n">distance</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span>
+
+<span class="c1">#  The following component hierarchy is made</span>
+<span class="c1">#</span>
+<span class="c1">#           |---&gt; comp_1 ---|---&gt; nested_1_comp_1 ---&gt; nested_1_nested_1_comp_1</span>
+<span class="c1">#           |               |</span>
+<span class="c1">#           |               |---&gt; nested_2_comp_1</span>
+<span class="c1">#           |</span>
+<span class="c1"># DESIGN ---|---&gt; comp_2 -------&gt; nested_1_comp_2</span>
+<span class="c1">#           |</span>
+<span class="c1">#           |</span>
+<span class="c1">#           |---&gt; comp_3</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># Now, only &quot;comp_3&quot;, &quot;nested_2_comp_1&quot; and &quot;nested_1_nested_1_comp_1&quot;</span>
+<span class="c1"># has a body associated.</span>
+<span class="c1">#</span>
+
+<span class="c1"># Create the components</span>
+<span class="n">comp_1</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;Component_1&quot;</span><span class="p">)</span>
+<span class="n">comp_2</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;Component_2&quot;</span><span class="p">)</span>
+<span class="n">comp_3</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;Component_3&quot;</span><span class="p">)</span>
+<span class="n">nested_1_comp_1</span> <span class="o">=</span> <span class="n">comp_1</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;Nested_1_Component_1&quot;</span><span class="p">)</span>
+<span class="n">nested_1_nested_1_comp_1</span> <span class="o">=</span> <span class="n">nested_1_comp_1</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;Nested_1_Nested_1_Component_1&quot;</span><span class="p">)</span>
+<span class="n">nested_2_comp_1</span> <span class="o">=</span> <span class="n">comp_1</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;Nested_2_Component_1&quot;</span><span class="p">)</span>
+<span class="n">nested_1_comp_2</span> <span class="o">=</span> <span class="n">comp_2</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;Nested_1_Component_2&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create the bodies</span>
+<span class="n">b1</span> <span class="o">=</span> <span class="n">comp_3</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;comp_3_circle&quot;</span><span class="p">,</span> <span class="n">sketch</span><span class="o">=</span><span class="n">sketch</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">)</span>
+<span class="n">b2</span> <span class="o">=</span> <span class="n">nested_2_comp_1</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;nested_2_comp_1_circle&quot;</span><span class="p">,</span> <span class="n">sketch</span><span class="o">=</span><span class="n">sketch</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">distance</span>
+<span class="p">)</span>
+<span class="n">b2</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">UNITVECTOR3D_X</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">b3</span> <span class="o">=</span> <span class="n">nested_1_nested_1_comp_1</span><span class="o">.</span><span class="n">extrude_sketch</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;nested_1_nested_1_comp_1_circle&quot;</span><span class="p">,</span> <span class="n">sketch</span><span class="o">=</span><span class="n">sketch</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">distance</span>
+<span class="p">)</span>
+<span class="n">b3</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">UNITVECTOR3D_Y</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/pyansys-geometry/pyansys-geometry/.venv/lib/python3.13/site-packages/ansys/tools/common/cyberchannel.py:187: UserWarning: Starting gRPC client without TLS on localhost:700. This is INSECURE. Consider using a secure connection.
+  warn(f&#34;Starting gRPC client without TLS on {target}. This is INSECURE. Consider using a secure connection.&#34;)
+</pre></div></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create beams (in design)</span>
+<span class="n">circle_profile_1</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">add_beam_circular_profile</span><span class="p">(</span>
+    <span class="s2">&quot;CircleProfile1&quot;</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">Point3D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">UNITVECTOR3D_X</span><span class="p">,</span> <span class="n">UNITVECTOR3D_Y</span>
+<span class="p">)</span>
+<span class="n">beam_1</span> <span class="o">=</span> <span class="n">nested_1_comp_2</span><span class="o">.</span><span class="n">create_beam</span><span class="p">(</span>
+    <span class="n">Point3D</span><span class="p">([</span><span class="mi">9</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="mi">999</span><span class="p">],</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">Point3D</span><span class="p">([</span><span class="mi">8</span><span class="p">,</span> <span class="mi">88</span><span class="p">,</span> <span class="mi">888</span><span class="p">],</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">mm</span><span class="p">),</span> <span class="n">circle_profile_1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Visualize the design (optional)</span>
+<span class="n">design</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "2748fabc94f34c629a8bf2ed9469048a"}</script></div>
+</div>
+</section>
+<section id="Visualize-the-design-tree">
+<h2>Visualize the design tree<a class="headerlink" href="#Visualize-the-design-tree" title="Link to this heading">#</a></h2>
+<p>Now, let’s visualize the design tree using the <code class="docutils literal notranslate"><span class="pre">tree_print()</span></code> method. Let’s start by printing the tree structure of the design object with no extra arguments.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">design</span><span class="o">.</span><span class="n">tree_print</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&gt;&gt;&gt; Tree print view of component &#39;TreePrintComponent&#39;
+
+Location
+--------
+Root component (Design)
+
+Subtree
+-------
+(comp) TreePrintComponent
+|---(comp) Component_1
+:   |---(comp) Nested_1_Component_1
+:   :   |---(comp) Nested_1_Nested_1_Component_1
+:   :       |---(body) nested_1_nested_1_comp_1_circle
+:   |---(comp) Nested_2_Component_1
+:       |---(body) nested_2_comp_1_circle
+|---(comp) Component_2
+:   |---(comp) Nested_1_Component_2
+|---(comp) Component_3
+    |---(body) comp_3_circle
+</pre></div></div>
+</div>
+<section id="Controlling-the-depth-of-the-tree">
+<h3>Controlling the depth of the tree<a class="headerlink" href="#Controlling-the-depth-of-the-tree" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">tree_print()</span></code> method accepts an optional argument <code class="docutils literal notranslate"><span class="pre">depth</span></code> to control the depth of the tree to be printed. The default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>, which means the entire tree is printed.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">design</span><span class="o">.</span><span class="n">tree_print</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&gt;&gt;&gt; Tree print view of component &#39;TreePrintComponent&#39;
+
+Location
+--------
+Root component (Design)
+
+Subtree
+-------
+(comp) TreePrintComponent
+|---(comp) Component_1
+|---(comp) Component_2
+|---(comp) Component_3
+</pre></div></div>
+</div>
+<p>In this case, only the first level of the tree is printed - that is, the three main components.</p>
+</section>
+<section id="Excluding-bodies,-components,-or-beams">
+<h3>Excluding bodies, components, or beams<a class="headerlink" href="#Excluding-bodies,-components,-or-beams" title="Link to this heading">#</a></h3>
+<p>By default, the <code class="docutils literal notranslate"><span class="pre">tree_print()</span></code> method prints all the bodies, components, and beams in the design tree. However, you can exclude any of these by setting the corresponding argument to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">design</span><span class="o">.</span><span class="n">tree_print</span><span class="p">(</span><span class="n">consider_bodies</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">consider_beams</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&gt;&gt;&gt; Tree print view of component &#39;TreePrintComponent&#39;
+
+Location
+--------
+Root component (Design)
+
+Subtree
+-------
+(comp) TreePrintComponent
+|---(comp) Component_1
+:   |---(comp) Nested_1_Component_1
+:   :   |---(comp) Nested_1_Nested_1_Component_1
+:   |---(comp) Nested_2_Component_1
+|---(comp) Component_2
+:   |---(comp) Nested_1_Component_2
+|---(comp) Component_3
+</pre></div></div>
+</div>
+<p>In this case, the bodies and beams are not be printed in the tree structure.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">design</span><span class="o">.</span><span class="n">tree_print</span><span class="p">(</span><span class="n">consider_comps</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&gt;&gt;&gt; Tree print view of component &#39;TreePrintComponent&#39;
+
+Location
+--------
+Root component (Design)
+
+Subtree
+-------
+(comp) TreePrintComponent
+</pre></div></div>
+</div>
+<p>In this case, the components are not be printed in the tree structure - leaving only the design object represented.</p>
+</section>
+<section id="Sorting-the-tree">
+<h3>Sorting the tree<a class="headerlink" href="#Sorting-the-tree" title="Link to this heading">#</a></h3>
+<p>By default, the tree structure is sorted by the way the components, bodies, and beams were created. However, you can sort the tree structure by setting the <code class="docutils literal notranslate"><span class="pre">sort_keys</span></code> argument to <code class="docutils literal notranslate"><span class="pre">True</span></code>. In that case, the tree is sorted alphabetically.</p>
+<p>Let’s add a new component to the design and print the tree structure by default.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">comp_4</span> <span class="o">=</span> <span class="n">design</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="s2">&quot;A_Component&quot;</span><span class="p">)</span>
+<span class="n">design</span><span class="o">.</span><span class="n">tree_print</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&gt;&gt;&gt; Tree print view of component &#39;TreePrintComponent&#39;
+
+Location
+--------
+Root component (Design)
+
+Subtree
+-------
+(comp) TreePrintComponent
+|---(comp) Component_1
+|---(comp) Component_2
+|---(comp) Component_3
+|---(comp) A_Component
+</pre></div></div>
+</div>
+<p>Now, let’s print the tree structure with the components sorted alphabetically.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">design</span><span class="o">.</span><span class="n">tree_print</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&gt;&gt;&gt; Tree print view of component &#39;TreePrintComponent&#39;
+
+Location
+--------
+Root component (Design)
+
+Subtree
+-------
+(comp) TreePrintComponent
+|---(comp) A_Component
+|---(comp) Component_1
+|---(comp) Component_2
+|---(comp) Component_3
+</pre></div></div>
+</div>
+</section>
+<section id="Indenting-the-tree">
+<h3>Indenting the tree<a class="headerlink" href="#Indenting-the-tree" title="Link to this heading">#</a></h3>
+<p>By default, the tree structure is printed with an indentation level of 4. However, you can indent the tree structure by setting the <code class="docutils literal notranslate"><span class="pre">indent</span></code> argument to the desired value.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">design</span><span class="o">.</span><span class="n">tree_print</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&gt;&gt;&gt; Tree print view of component &#39;TreePrintComponent&#39;
+
+Location
+--------
+Root component (Design)
+
+Subtree
+-------
+(comp) TreePrintComponent
+|-------(comp) Component_1
+|-------(comp) Component_2
+|-------(comp) Component_3
+|-------(comp) A_Component
+</pre></div></div>
+</div>
+<p>In this case, the tree structure is printed with an indentation level of 8.</p>
+</section>
+<section id="Printing-the-tree-from-a-specific-component">
+<h3>Printing the tree from a specific component<a class="headerlink" href="#Printing-the-tree-from-a-specific-component" title="Link to this heading">#</a></h3>
+<p>You can print the tree structure from a specific component by calling the <code class="docutils literal notranslate"><span class="pre">tree_print()</span></code> method on the component object.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nested_1_comp_1</span><span class="o">.</span><span class="n">tree_print</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&gt;&gt;&gt; Tree print view of component &#39;Nested_1_Component_1&#39;
+
+Location
+--------
+TreePrintComponent &gt; Component_1 &gt; Nested_1_Component_1
+
+Subtree
+-------
+(comp) Nested_1_Component_1
+|---(comp) Nested_1_Nested_1_Component_1
+    |---(body) nested_1_nested_1_comp_1_circle
+</pre></div></div>
+</div>
+</section>
+<section id="Closing-the-modeler">
+<h3>Closing the modeler<a class="headerlink" href="#Closing-the-modeler" title="Link to this heading">#</a></h3>
+<p>Finally, close the modeler.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">modeler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"80c752e651d74a1e9a6f2687048a502f": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "d7b2aa341cd144f99f80310d10fe9d1f": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "2748fabc94f34c629a8bf2ed9469048a": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_80c752e651d74a1e9a6f2687048a502f", "placeholder": "\u200b", "style": "IPY_MODEL_d7b2aa341cd144f99f80310d10fe9d1f", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html>\n  <head>\n    <meta http-equiv=&quot;Content-type&quot; content=&quot;text/html; charset=utf-8&quot;>\n    <meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src 'none'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'&quot;>\n    <title>Page not found &middot; GitHub Pages</title>\n    <style type=&quot;text/css&quot; media=&quot;screen&quot;>\n      body {\n        background-color: #f1f1f1;\n        margin: 0;\n        font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif;\n      }\n\n      .container { margin: 50px auto 40px auto; width: 600px; text-align: center; }\n\n      a { color: #4183c4; text-decoration: none; }\n      a:hover { text-decoration: underline; }\n\n      h1 { width: 800px; position:relative; left: -100px; letter-spacing: -1px; line-height: 60px; font-size: 60px; font-weight: 100; margin: 0px 0 50px 0; text-shadow: 0 1px 0 #fff; }\n      p { color: rgba(0, 0, 0, 0.5); margin: 20px 0; line-height: 1.6; }\n\n      ul { list-style: none; margin: 25px 0; padding: 0; }\n      li { display: table-cell; font-weight: bold; width: 1%; }\n\n      .logo { display: inline-block; margin-top: 35px; }\n      .logo-img-2x { display: none; }\n      @media\n      only screen and (-webkit-min-device-pixel-ratio: 2),\n      only screen and (   min--moz-device-pixel-ratio: 2),\n      only screen and (     -o-min-device-pixel-ratio: 2/1),\n      only screen and (        min-device-pixel-ratio: 2),\n      only screen and (                min-resolution: 192dpi),\n      only screen and (                min-resolution: 2dppx) {\n        .logo-img-1x { display: none; }\n        .logo-img-2x { display: inline-block; }\n      }\n\n      #suggestions {\n        margin-top: 35px;\n        color: #ccc;\n      }\n      #suggestions a {\n        color: #666666;\n        font-weight: 200;\n        font-size: 14px;\n        margin: 0 10px;\n      }\n\n    </style>\n  </head>\n  <body>\n\n    <div class=&quot;container&quot;>\n\n      <h1>404</h1>\n      <p><strong>File not found</strong></p>\n\n      <p>\n        The site configured at this address does not\n        contain the requested file.\n      </p>\n\n      <p>\n        If this is your site, make sure that the filename case matches the URL\n        as well as any file permissions.<br>\n        For root URLs (like <code>http://example.com/</code>) you must provide an\n        <code>index.html</code> file.\n      </p>\n\n      <p>\n        <a href=&quot;https://help.github.com/pages/&quot;>Read the full documentation</a>\n        for more information about using <strong>GitHub Pages</strong>.\n      </p>\n\n      <div id=&quot;suggestions&quot;>\n        <a href=&quot;https://githubstatus.com&quot;>GitHub Status</a> &mdash;\n        <a href=&quot;https://twitter.com/githubstatus&quot;>@githubstatus</a>\n      </div>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-1x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMTZCRDY3REIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMTZCRDY3RUIzRjAxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdCQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjdDQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+SM9MCAAAA+5JREFUeNrEV11Ik1EY3s4+ddOp29Q5b0opCgKFsoKoi5Kg6CIhuwi6zLJLoYLopq4qsKKgi4i6CYIoU/q5iDAKs6syoS76IRWtyJ+p7cdt7sf1PGOD+e0c3dygAx/67ZzzPM95/877GYdHRg3ZjMXFxepQKNS6sLCwJxqNNuFpiMfjVs4ZjUa/pmmjeD6VlJS8NpvNT4QQ7mxwjSsJiEQim/1+/9lgMHgIr5ohuxG1WCw9Vqv1clFR0dCqBODElV6v90ogEDjGdYbVjXhpaendioqK07CIR7ZAqE49PT09BPL2PMgTByQGsYiZlQD4uMXtdr+JxWINhgINYhGT2MsKgMrm2dnZXgRXhaHAg5jEJodUAHxux4LudHJE9RdEdA+i3Juz7bGHe4mhE9FNrgwBCLirMFV9Okh5eflFh8PR5nK5nDabrR2BNJlKO0T35+Li4n4+/J+/JQCxhmu5h3uJoXNHPbmWZAHMshWB8l5/ipqammaAf0zPDDx1ONV3vurdidqwAQL+pEc8sLcAe1CCvQ3YHxIW8Pl85xSWNC1hADDIv0rIE/o4J0k3kww4xSlwIhcq3EFFOm7KN/hUGOQkt0CFa5WpNJlMvxBEz/IVQAxg/ZRZl9wiHA63yDYieM7DnLP5CiAGsC7I5sgtYKJGWe2A8seFqgFJrJjEPY1Cn3pJ8/9W1e5VWsFDTEmFrBcoDhZJEQkXuhICMyKpjhahqN21hRYATKfUOlDmkygrR4o4C0VOLGJKrOITKB4jijzdXygBKixyC5TDQdnk/Pz8qRw6oOWGlsTKGOQW6OH6FBWsyePxdOXLTgxiyebILZCjz+GLgMIKnXNzc49YMlcRdHXcSwxFVgTInQhC9G33UhNoJLuqq6t345p9y3eUy8OTk5PjAHuI9uo4b07FBaOhsu0A4Unc+T1TU1Nj3KsSSE5yJ65jqF2DDd8QqWYmAZrIM2VlZTdnZmb6AbpdV9V6ec9znf5Q7HjYumdRE0JOp3MjitO4SFa+cZz8Umqe3TCbSLvdfkR/kWDdNQl5InuTcysOcpFT35ZrbBxx4p3JAHlZVVW1D/634VRt+FvLBgK/v5LV9WS+10xMTEwtRw7XvqOL+e2Q8V3AYIOIAXQ26/heWVnZCVfcyKHg2CBgTpmPmjYM8l24GyaUHyaIh7XwfR9ErE8qHoDfn2LTNAVC0HX6MFcBIP8Bi+6F6cdW/DICkANRfx99fEYFQ7Nph5i/uQiA214gno7K+guhaiKg9gC62+M8eR7XsBsYJ4ilam60Fb7r7uAj8wFyuwM1oIOWgfmDy6RXEEQzJMPe23DXrVS7rtyD3Df8z/FPgAEAzWU5Ku59ZAUAAAAASUVORK5CYII=&quot;>\n      </a>\n\n      <a href=&quot;/&quot; class=&quot;logo logo-img-2x&quot;>\n        <img width=&quot;32&quot; height=&quot;32&quot; title=&quot;&quot; alt=&quot;&quot; src=&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEQUM1QkUxRUI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEQUM1QkUxRkI0MUMxMUUyQUQzREIxQzRENUFFNUM5NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkUxNkJENjdGQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkUxNkJENjgwQjNGMDExRTJBRDNEQjFDNEQ1QUU1Qzk2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+hfPRaQAAB6lJREFUeNrsW2mM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&quot;>\n      </a>\n    </div>\n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;UEsDBBQAAAAIAOR7PlxyDggtHlIAAKK6AQAKAAAAaW5kZXguanNvbu29a3PqSpI1/Fc6Trzf6D4IIUBMxPtBF+43YYNt3HGig7tBGDBXm47+749qFVQKqbZqnzPdMz0zVpze7aWsVcpKZaWqKkvi77+8Dfdv0/0v//Gnv/+SKY7yRn6sT8fTiZkbZcejkT4zM7OZqeWzs2n2b9lc3pigKGMFf/ws5c9/+uXwtZ0yRnm1GR7yhrXbDb/Y+dPBZ6eD//M2i/Vhz86NN+vDdH1g563r0W7d/rK0rkVH8z29mvdr5XbLfnveZ8+p1f4Slt8Ob6/iO8Ntr+bZw+6d3Kw/GZvCqtduuZODbj48G74eljfK4+6r2z8F/GLb+jBepn4mLG/758ns3H0K9Pde85XeS398J69WvbOzeSkG9T+f3/zWaTUwwnJv8pbPPEwLQfu+vPSlsNtb2bC8//Y00fQPJ5Bnqpni4+5xcCd37OeR/1w122Nn+ZbLZxuzfS4s3/e2s1U1P22P7VZ3d7L8l+6dvOktM/77Z709tuq94XDtdeZ3+nU3RcNIvVXapj3LbivP1cq4cGef0ujd744e2nvXfO05JfPUzYflqXLv5XNXXwTyjT7P6pP1/k5eW+yfvdSu22k5qVb1adzYaGZY7rb8zaZSrnZa1viy85+3butOvvP72nGSdQP9jMxrqT+blO7001q7/vKgNzt7q9vXGh/T91oxLNcv589Wq3rpjO03+/ik5R67d/LDR1bPpV5nnbFjPTZSxn5yr9+hnZ2tK59rr2VPj3ZGaxbNO75/qLu71bLSMd3Pr8bJ1pr38pc3X7fq53XHdKatit5t1Qd38vQm896fZx69vXvSK+X6Lm3cya1143U3axy8sVy++2jUnh+Nhje2GoP917qRjrTvczT9aLfG3ZZcv8ev2nyQ6ww8U96+/iqT3R6qmaD/Sev336vr10+z0v2Bfd/rH08du5LvtuT3pz/z/PSlvO+25PaZbk+7ppYed8dy/xiltppR+3jpjuX+VW/4paX12e3+4P4W2ufWIfv10v2Bf78U3tzl5jDu7n/QP9qZVe2zNA3kUv/c6s3uYWydu6a8f86q/a+2adpd0/Fl/fut/NxfN0ad7g/6l/Hadsovj4ugfk0WX8b7YXW61IP65fEpP++UD/5q1DWthiw+jNq9bO/5ZRPol5LFR6f55DYX3nNQ/1QWX5+yTw+r/Ucq0C8ri2+346FlOdc/7+L3sD9vnzKFYnD9kSy+555Wn+dqNhPoL43PpL9d+ko/VTdvgy853728l3P7zW7+Jb++vZY9n4ztzf6Od7ZapX7PPIflz9Vb+5220XAO/YN/ltvPWj3W3eO2OvgMyz8qwn92U2OVytqDg/z+uV+vo875bWEe5ffffp7uL+t5pnaS+79Va9fT2crb4OPO/55u/mdpj8durzT3dz/wX9NsNbo7y9/L+6/bGBiXx0Nuvr7rP5Nb/7EenyaXZ/tJ24Tlg6bof6Vu8fL4uSxtw/JVRcQf27z0n9ujwequ/3/c+r/ljvKVzrrUfb+zT0fEj/L67an6kerfyY8Pt/hpzUcfb+bLxvLv4tfpFr/c8nrxMlsfWnfy9+0t/rnL55fjzlnu7/SzBrlr/LcWveXnYdOt3fGfyrf46x46+vT8YY/v5L1HEb9LS7P7sumX7uSHonh+uTL5Xjw/3J2sfvvl9vyR66ftb89fdyZr38vn7fnnOjL7rCa356c1kdm3LsYPdlp6f8Tz202NPuL3N7u8Pf8tU+YfD7Xb+McyZf6179/GH1ZH5p/u/jZ+cSsy/3bexPhNk/WP1Oo2frI+ZP2rSeOvdCsX75/V9W38aXdk/bs5u43/3K0sPhxcMX58k8UX8/U2frbmsvj0ZN/Gr05FFt+84m386zRk8ZHG1+5BFn9pfG6lZfFb1KOcX8jnB4lyN5dcfyBXzV+aupAvY/KAr2p/WxPyY0we8FX2aTzd5LYVkwd81f01twnygK+6/yF5LSYP+Cr/CMlbMXnAV/l/SN6Nydn9U/SP5knINzF5wFf1n5Dcj8kDvio+hORGTB7wVfEjJN/H5Kz9ivjS0G5yqxQbHwR8VfwkuW3F5AFfFV9D8m5MHvBV8Tckr8XkAV/1fKk7Yv5qxeQBX/X8OQ5v8mAsGh1/BHzV84nkthWTB3zV8zckn8fkAV/1fB7YQl6KyQO+6vm9agt5fPzE+o9ifHI4CHl8fMP8RzF+2TeEfB+TB3zV+MauCvk8JmfPB8X4zaoJuZSvGt+F5FL9VeO/RDnzX8X49mgnyAO+avwbkkv9RzU+fn8Vcqn/qsb/vi7k0v6jmh+E5NL+q5o/hOQlWfxQzY9Ccmn8Us2fQvK+LH6q5leJ8oCvmj8mygO+an4Zkp9lzy/V/DNRHvBV8+uQfCN7fqvm3yH5WTZ+UM3PQ/KBbPyiWn8IyTuy8ZNqfYLWb5yWbPymWr8IyX3Z+FG1PpMoD/iq9ZuQ/Es2flat7yTKQ/ODH61fheR2TH53ffn6VqL8rv3y9a+QvBuT39lfvr6XKL+7//L1v0Q5e/4p1gef1kKux+TM/xXrnyH5JSa/63/y9dHxOEF+1//l66eJ8oCvWh9OlN/HP+n6caKcxV/F+nKi/C7+y9fPQ/JiTM7Gn4r19UQ5e/4p1t8T5XfPX3l+IVHO+o8i/5AoZ+MPRX4iUR7wVfmXkHwek7PxlyI/kyhn4z9F/iZRzsb/ivxUSH6OyQO+Kn+VKGf6K/JbifKAr8rfJcrZ80OR30uUB3xV/i9RzuyvyG8mypn/KfKfIbn0/qnyo4lyNv9V5H8T5QFflR9OlDP7qfLHSfKAr8qPJ8rZ+ocif54oZ/6jyK8nygO+av9AopzFb8X+gpBc+vxQ7T9IlLPxi2J/RaKcrT8o9l8kytn6m2J/RqKcrX8q9p8kytn6q2J/SqKcxU/F/pVEOVt/VuzPSZTfrX/L9+8kyu/W3+Xj50T53fr/vzq/kMyX7o9ifEX+QbW+r8ofqPITqvV31fq+Kn+gWh9Xrb+r1vdV69eq9XHV+rtqfVm1fq1aH1et/6rWl1Xr16r1WdX6r2p9WbV+qlqfVa3/qtY3VeunqvVZ1fqjan1TtX6qWh9UrT+q1jdV63eq9UHV+qNqfU21fqdaH1Stf6nW11Trd6r1KdX6l2p97Xao14/k61Oq9S/V+o5q/Ui1PqVaf1Gt76jWj1TrI6r1F9X6jmr9QrU+olp/Ua0vqNYvVOsjqvm/an1BtX6hmp+r5v+q9QXV/Fk1P1fN/1XzW9X8WTU/V80/VfNb1fxZNT9UzT9V81vV/E01P1TNP1XzK9X8TTU/VM1/VPMr1fxNNT9RzX9U8yvV/EM1v7kdni/+TJ1Dcm1rDWe7bN7r2+/X50fxLOG3Sz/gv974zuQa/+/k7vtH9aU03Ht996wXprVd/8EKyzP55end3HUDuXXVPx2Wf428xdw7fXh96/Ha/ju5sTl7xZeNE+i/N7rnysvXwQ7Lz4/TcuP4Vgr0y1fTueJTyr67/q7zsWjWn4qB3Fx+pbZP2/advHjc+qOt4Xol97FrpkcrL3NXf6/1PB8a5TevZK03T9n5Y3N7J9fm48botaN7JadSP7R71fXDnfxUdapVe5rr+Na5oL01l7u2c2efkf86OvnHjuamW29vzvRleye3P/abTl+fdDQ7U+i+Fo6XzJ082+5tz3b/1Onb83d3c1z1X92w3FyOXl5yeaPTtzq5zLmpva3u5L3CrvmwqJkd3zHz/qJxOr7d1d9c9nfjx7rW1pxa47H85I3Kd/za3utcLkarU7LO82wjP97W7+QPmVq9Yr/POyXb2pZnY72Su5M/Lnj8bvetU9bK51ep4p185OhmfzjOtX3byLWf5vn2vXzTGdXTujcI5N67+1qrtA53cus6f2hptlFoOv5T+p6frvHnT7skl/ev4/+gf5Rb01GvPNveyf3r/KfVl+u3v+5/afny9u2u85eWJq//UF0tBrXmuqnJ7Xu5zv9aJfn9ebnOvwL9pPap1OsP3Van0yzJ/aNbHuxnh8e3Zt+eyfxrWD4dLqaebvry+9uvXVq1s75o9N2UzL/nduHz81BpNwL7yPrHS+2wGe+O1YbmFGT+Oag+pxqeZtY1613WP0vORq+ZnlHX3AdZ/y403o/L55dyo2Rrsv41bbqZj0VRr/ednCy+dDqjebm7K9T79ocsPj177q4+eX+s+05JFh/6DWP+VdlO6yXHlMVHwzl9Pqw763rJPcri69b5yG8P/VKgX14W325HwE/zw7yL/y/tQsMy+o3g+q+y+D6qz/Pp+fyjHviHLD6T/rZznR+Zcr57vs5PTPn17ZXs+TQj+7ev87t8WP5B7W9c51d5uf2sxXV+VgjLX4X/ONqp302PNntDfv9cfb9aDc6f41xY7on7b31409GlO/Rzcv8PHpX7YsHtBo0MyU3hf9agPqvVF4NuVu6/9nhaKdcy864h77+u3+qPts/mOXPXP6j/1Brvhd18Yehh+Zvof85b7Tm3NXLzO/lRxB9nnnr4aFYOey0sH4v+71iHjF3tLWp313+k+OFcjI9l5uVefhv/tvpWt53ppoI4d1f/bfwcxK/FJVc/XXT/Tn4bf7cC/9o1M09vr9qd/DZ+D+LrQz2X1/tW6U5+G/+3NFdf99qDjHXfvsPkFr+dxUOqEZjhXr+ec3t+yeW3+Uu7JK//Nv8Jni9S/Vru7fkrb9/mKJ5/UvuMFrfnp9y+2YMYP0jvz+Pq9vyW39/6+Pb8d2Yy/zitb+MfuX/1d2L8IfXPonsbv8j9O9W5jd/siax/OI3b+Enev/Tmbfwl75+52m38Ke/fGes2/nOzsvjQM2/jR3l8KVVu42drKYtPu6MYvzZl8e38Jca/HVl8/Nrdxtfupyz+6o3b+Nx2ZfH7dkjnF8GROL9QyX/X/MWZxZ5PrH7F/ITab/Viz6/gUM0/yD6uHXs+B4dqfuPqCfMjVkQxfwrNX4qx53twqOY350XC/Cg4VPOnxPlXcKjmZ6H5UTU2/mH3TzF/Cs2/NrHxXXCo5meh+V0vNv4LDtX8L3H+FRyq+VlmlzC/Cw7V/C80f/yMjY+DQzW/DM3virHxM7OfYv6XOH8MDtX8Uj8kzE+DQzV/fVglzB+DQzW/DM1PP2Pzp+BQzV8T57/BoZofb6bi+dyNzb+CQzV/HX6J+W8uNr8MDtX8+PExYX4dHKr5d2+VMP8NDtX8OGUkzK+DQzX/TmcrP56/s0Mxv0+cXweHav6dOH8PDtX8fllMWB8IDtX6QeL8PThU8/vE9YHgUK0f7JPWH4JDtT5B6wNWWtZ/VesH3aeE9YfgUK1PlLcJ6xvBoVr/eE5af2D2V6xPJK5vBIdq/aM3SFg/CQ7V+kri+kZwqNY/3IVYP+nKnp+q9ZXBOmF9JjhU6zdPp4T1k+BQra+0UwnrM8GhWr+Z7hLWf4JDtT60WYj1iZxs/KZav8l+Jaz/BIdqfaj3kbC+FByq9afQ+k9bNn5WrQ8lri8Fh2r96XYE7UvF1q9Ch3p9S7K+dHd9+fpTaP0qPn+6a798fauXT1gfu7O/fP3MeExYv7Is5frWNml9LDhU62eh9bdWbH4ZHKr1uc4xYX0sOFTrZ8+zhPU3y1Kuzw2yCet7waFa/ys9Jqy/WZZyfa6QT1jfCw7V+l9/k7B+aFnK9cX5W8L6XnCo1v9eNgnrh8GhWl+svCasT1qWcv3yIWn9MDhU64ujVcL6ZHCo1i9D65/x9a3gUK2PJq5PWpZy/TJx/dOylOujofVVL7b+Z1nK9dfE9c/gUK2PJq6vWpZy/TVx/ZYdivXdxPVVy1Kuvyau31qWcn03cX04OFTrx6H1W+n9U63vJq4PB4dq/Thx/Tk4VOvTievDwaFaP05cfw4O1fp04vp2cKjWvxPXn4NDtT6duL4dHKr178T18+BQra+H1rdLsueHav07cf08OFTr64nr88GhWr9PXD8PDtX6euL6fHCo1u8T1/+DQ5UfSFyfDw7V+n3i+n9wqPIDifmF4FDlHxLzA8Ghyh8k5h+CQ5Wf+JfmF+748vzC7ZDuj1JdX2Vflf1U9rEU/mcp/MtS+I+l6J+Wov9Ziv5lKeKXZSnjlyo+qeK/Kr6r4rfq+ah6/qmeb6rxg2p8oHr+q8ZXqvGTanykGn+qxpeq8aNqfK4af6vG16r5i2p+opp/qOZ3qvmbcn6mmP+q5req+atqfUA1/1fN71XrJ6r1EdX6x+340fqSav1ItT6kWn9Tra+p1s9U65Oq9UfV+qJq/Va1Pqtaf1Wtb6vWr1Xr06r1f9X6vmr9XpUfUeU/VPkNVf5IlR9S5X9U+TVV/kyVH1PlH1X5RVX+UJWfVeVfVflVVf5alZ9W5Z9V+X1V/l6Vn1ftf1Dtb1DtX1DtD1Ht/1Dt71Dtn1Htj1Htf1HtD1Lt/7kdofe77/IXoe/HJs9P9j/gi/e75fub6P1u+f4her9bvj+J3u+W738Kvd8t3d8Ter9bun8o9H63dH8Svd8t339D73fL9/fQ+93y/UOh75dK98fQ+93y/Tf0frd8fw+93y3fv0Lvd8vzy/R+t3z/Db3fLc/Ph74vKs2/0/vd8vw6vd8t379A73fL9yfQ+90/eP9CvN8t359B73fL5fR+t3x/Br3fLdeP3u+Wt4/e7/7B+x3i/W65fen9bvn9ofe75fYJvR8q9Q96v1u+v4He75bf39D7rdL9AfR+t3z/Ab3fLd/fQO93y/P39H6sfH8Avd8t338Qer9bml8Pvd8tzd/T+8Hy/QGh96Ol+e/Q+8nS/Hro/e7E9y8eWvL8dOj9amn+O/R+tjS/Hno/XZo/Dr0fLs1Ph94vl+a/6f1ueX6X3u+W549D78fL89Pi/W75+m3o/Xxpfpfe75avv4a+byBd36b3u+Xr1+S/8vxu6PsM0vV/er9bvr5P73fL1+/p/W55fjH8frcs/0Hvd8vzG/R+tzx/RO93y/ND9H63PP9D73cn59e8vTx/Ru93y/Nj9H53cv7RGyfnF4Pni1Q/er87OT8bPP8S868dU25fer/7B/cn9H637P7S+93y/Bm93y33L3q/W+6f9H633L/p/W55/obe75b3L3q/W94/6f1uef+m97vl+Rt6v1seX+j9bnn+g97vludX6P1uef4m9PsP0vwGvd+d/P6FdH5h3X1/KjF/IZ1f3PHl+YtE+1hWsv6Wldx+y0q+v5aVbF/LSr4/lpXsn5aV7B+WlexflpXcv6zw9+3k+YvE/mFZyfEhOBL7p2Ul92/LSo5vlpUcXywrOT5ZVnJ8tsLfj5TnBxLjq2UlP1/YkRTfLSv5+WCFv08q1y/x+WRZyc83K/z9Vrl9E5+vlpX8fLas5PGJZSWPDywreXxh3X3/XerfieMby0oeH1lW8vjQspLHZ5aVPL6zwt+PlucvaH4hj0+J41PLSh6fW1by+Ni6+z57PSl/EcwvpPmLxPG9dff9dPn+1qT50R1fnr9InN9Yd9+vN2Trc6Hv10vzF4nzMyv8fX9rJVtfTJwfWlby/NKykufXlpU8v7Ws5PmxZSWvD1jh33+QrB9ZVvL83gr/vp48fxH6fpw0f5G4PmGFf19Pnr9IXB+xrOT1FTQwYX3JspLXdywreX3ICv++3g/e//lIWJ+ywr+vJ9cvcX3PCv++njx/Qb/PI89fhH7/SJq/oN83kucvQuuL0vxFaH1Vmr8IrW9K8xeJ66NW+Pex5PmLxPXZ4Gj4Ceu7lpW8vm2Ffx9Mnr8IrU9L8xf0+2vy/EVofVyav/AOCevr1t33a6X5Cxqf/4H8haWeH/xsfkOdH5HPX1T5D1X7VfkNlX1U+RPV/VXlZ1T3X5U/UfmHKj+j8n9V/kfVP1T5GVX/UeV/VPFBlV9SxQ9V/kcVX1T5JVX8VOWvVPFVlV9SxV9V/kr1fFHlx1TPH1X+SvV8UuXHVM9fVf5N9XxW5cdUz29V/k01PlHl91TjF1X+TTW+UeX3VOM3Vf5QNb5T5fdU4z9V/lA1vlXlJ1XjX1X+UDU+VuUnVeN/Vf5TNT9Q5SdV8wdV/lM1P1LlV1XzJ1X+UzW/UuVXVfNHVf5WNb9U5VdV809V/lY1v1blh1Xzb1X+VjU/V+WHVesPqvyzan1ClR9WrV+o8s+q9RlVflu1fqPKP6vWd1T57dvxo/WrkFyRP5evb6ny26r1L1X+XLW+p8rPq9b/VPlz1fqgKj+vWv9U5f9V66Oq/Lxq/VSV/1etD6v2F6jWj1X5f9X6smp/gWr9XLV/QbW+rtpfoFp/V+1fUOUXVPsjVPkH1f4FVX5CtT9ClX9R7b9Q5WdU+yNU+RvV/gtVfkq1v0OVv1Ltv1Dlt1T7O1T5O9X+EVV+T7W/Q5X/U+0fUeU3VftTVPlP1f4RVX5UtT9Flf9V7X9R5YdV+1OU+WPF/hdVfly1v0aVP1ftf1Hl11X7a1T7B1T7d1T7C1T7a1T7D1T7d1T7K1T7g1T7L1T7d1T7M1T7g1T7T1T7j1T7U1T7g1T7V1T7j1T7c1T7m1T7d1T7k1T7e1T7n/6z+YVf/vHnP/0y06a5qakZRqYwG+ZmxcyoOJuOTG2UNwrmeFL4m1HQjOYv//Gnv//yNty/BX/8LCWo/PC1nTJGf7E+ZHVrtxt+sdOng8/OBv/nTFcrcXq8WR+m6wMTheZx/Ked5uwfyoOEsEuF+uwf/lPjZ4ErkfKQ21H+WRQK8YHrMr6D3xHpCr4D+T7C35PSET5I1lj86aIqI8IH9qR8yDeCjzfs7dI9n+NHGb8ErBEf5bsRPvCTjF9mIm508MtMbo8jfOCBjI+bYpP9K6hvE+EDj6R8yAeCX0V9WoQPPJXxq9DXJ/5ZMInP/3qT8WvQ9yz4NSZ3WhE+sC/jw6lsU/DrrD5nEOEDr6V8yGuC34DEj/CBP2T8BvTtEx/lzxE+8EHGb0LfueA3UZ8Z4Zu3v2J8/tde8FusPrd2z+f4IuWjfkPw2/gr0v851mX8NsNuifgoH+n/HOdk/A70pf7fQX2R/s+xKeOjU7vU/z3UF+n/HKelfMip/0OTUqT/A9uOjN+FvtT/uygf6f/AdlnGf2Ai/lkP8B+YvBTp/8B2TcZHUCpR/39EfZH+D2w3pXzIqf/3UF+k/wPbHRm/B32p//dYed5S4gPbDzJ+H/pS/+8zeTnS/4HtvoyPoFqi/v/E6itH+j+w/SLlQ079/5n9U470f2B7KOM/Q1/q/88oH+n/wPZExn+BvtT/X1BfpP8D8ydtlI+Wlqn/w4ErEf8FthdSPq5H/f+V/VNh7bGXxAd+R/nzjc/lr4xfof7HMR4Ka+LDf+GUw67gc4zy5D+QV+CvO+IDo5FDuj7keKhVqP9xzNpjH4gP/z1CTnxgaF4h/4GcPwQ/BZ/jL5Qn/SEfM/2r1P84Rn+/EB/loeSE+ByjPPkP5FX4a5b4wLhJE9IfcjyUq2Q/jmGvHPHhv3nIiQ88Q3nyH8jxELeLxAdOoTzpD/kM+pP9gNGd7DTxmfwaPgX/ilGenh+Q11gFjiv4HKPQXOjP5RhU1Mh+HDN7OWXiM7mDodIb8YHRKWrkv5DzQUid+MAYGixIf8gX0J/sxzEeqk3iMzkfxCyJzzHKk/9CXmO32vGIDwzmkvSHHHe+TvbjGPZ6EHzIHTwqfOIDr1Ce/BdyPoh6Ij4wQuOK9Id8xfSvk/04hr1eiM/kfBD2TnyOUZ78F/I6819nRHxgXOSd9IccQaZO9uMY9poQn8kddI018YERhOrkv5DzQeCb4HMMV9mQ/pBvmP4Nsh/HsBfFT8j5IHJLfI5RnvwX8gb8l+Inx1B1S/pDjkFpg+zHMey1JT6TOxB9EB8YQbRB/gs5H8RS/OQY8XJH+kO+g/5kP2B4vnMiPvo/n8kRn2OUJ/+FvAn/pfjJMW7ynvSHHEo0yX4cw14Z4qP/Y/x6ID4wGtUk/4WcD8IpfnKMeHkk/SE/Qn+yH8ewV4H46P8w0on4HKM8+S/kTfgvxU9gHg5PpH/6JrZaZD+Omb1cW/AhdxFwz4LPMR5iLfJfyPkkguInx4iXn0J/Lv9k+rfIfhxjUFwlPpPzScgX8TlGefJfyFvMf12KnxxDyS/SH3I4QYvsxzHs1SY+k7sYv16IDwxmi/wXcj4JovjJMeKlRvpDrjH922Q/jmGvHvFRHk6aIT7HKE/+C3mb+a9L8ZNjxMsM6Q85nLhN9uMY9nolPpO7Q8iJD4xBRJv8F3I+iaP4yTHiZZb0hzwL/cl+wLCsOyM+k/NJoEF8jlGe/BfyDvyX4ifHaKRB+kOOTtgh+3EMe62Iz+Quxq854gOjU3fIfyHnk1CKnxwjXuZJf8jz0J/sxzHsReNXyPkktkB8jlGe/BfyDvyX4ifH0LxA+kMOy3tkP45hLxq/Qu5i/GoSHxiDOI/8F3I+iab4yTFcq0j6Q15k+ntkP45hLxq/Qs4n4Snic4zy5L+Qe/Bfip8co2kp0h9yBEGP7Mcx7EXjV8hdjF/TxAfG5Nsj/73uK7Hxv651W3Vh2AHulq78q3wObN/4HHc5FnzISwzbxOcY5fuCz+UDhqvEB66h/FnwIXeweOALPscbhuvEh7yB8sQHdlF+T3zIzwy3iQ/cQXnSH3IX+puCD2zDXh7xIe8yXCI+xyhfEnzI7RrDPcHnuI/ypD/kZaa/TfbjGPZ6Ij7kzyhPfOAKyo+Jz+T2nOFX4gMPUZ70h7wC/cl+HMNeI+JDPma4SnyOUV4TfMhtg+EZ8YHnKE/6Q15j+jtkP45hrzfB5/IFyhMfuI7y5L+QO/DfFfGB31Ge9Ie8zvR3yH4cw15r4sP/Phhu0PW3AjtnwW+y+h20d0d84FOED3kzwm+x9rilez7HXzJ+C/qS/VtM7nYjfOCMjN9m+rqW4LdZfe44wgc2ZPwO9CX7d1DfJsIHLkj50Hcg+B7q0yJ84JSM70Ffih8ek5esez6wbcv4XehL9u+y+kqtCJ9huyTjP0Bfih8PrL7SIMJn2K5K+dC3JviPrL6SH+EzbDdk/EfoS/HjEfWdI3yG7baM34O+c8HvoT4zwmfY7sr4fehL8aPP6ivX7vnAdk/Kh76G4D+x+sr9CJ9h+1nGf2L6lil+PDF5eR7hM2y/yvjP0Lcr+M+obx/hM2yPZfwX6Evx4wX1Rfo/sD2T8qHvRvAHrL5KpP8D2wsZfwB9qf8PmLwS6f/A9krGf2X6Vqj/v7L6KpH+D2xvZPwh9KX+P0R9kf4PbO+kfOhL/X+E+iL9H9g+yvgj6Ev9f8Tk1Uj/B7Y/Zfwx9KX+P2b1VSP9H9jWZPwJ9KX+P2H1VSP9H9jOSvnQl/r/lNVXjfR/YDsv40+hL/X/KeqL9H9guyjjz6Av9f8Z6ov0f2DHkvHn0Jf6/5zVV4v0f2DHlfKhL/X/N1ZfLdL/gZ2KjP/G9K1R/39j8lqk/wM7dRl/AX2p/zdQX8R/gZ2mlI/rUf9fQn/mr06H+GeBl4LvIJ76uD61H7hei/CZ3HmM8BFPV9Y9H7jel/ExnvQtwUc8XZ0jfIbrcxl/AD5dH/H0fX7PB67vZXyMJ1dzwUc8XUfaD1w3ZPwprifGbw7i6SbSfuBGScbHeHJN7Uc83UTaD9zoyvg++NR+xNNtpP3AjbGMj/HkhtqPePoRaT9wYyPjY/y5pfbD/3aR9gM3ov4H/gHXo/Yjnu4i7QduWjL+GXxqP+LpPtJ+4GZLxr/getR+xNNDpP3AzYGMr+N61H7E02Ok/cDsdzDj/ByuR+1HPD1G2g/cPMv4JvjUfsTTU6T9wE1Txk/jeqL9LuLpOdJ+4Jas/7uYv59E+13E089I+4Fbsv7vlnE90X4X8fQz0n7glqz/u5i/n0X7XcTTr0j7gVuy/u8ifn5S+1sMXyLtB27J+r8L/EXtx/xci7QfuC3r/+4DrkftRzzVIu0Hbsv6v4v5+4Xaj3iaibQfuC3r/+4LrkftRzzVI+0Hbsv6v4v5e4baj3iajbQfuC3r/+4E16P2I55mI+0H7sj6v4v5u07tRzw1Iu0H7sj6v7vE9aj9iKe5SPuBO7L+72L+blD7EU/zkfYDd2T938V8PUftRzzNR9oP3JH1f3cPPvV/zKcKEf2BO1L/RbzNU/sRT02Up/EjsMf6v3sSfMhdzP9Nsj9wEet/NP6G3GP+62YEn2PEzyLZD/Ii08ej8QvHrP+7WeIzuYv5f4r4HKM8jb8h95j/ugXiAyN+pkh/yNPQn+YvHMNeReIzuYv5f5r4wEjWe2Q/Lkdy3sZeEb7+6eB/DHdrllj/ZHgO7Nz4HHc5FnzISwzbxOcY5fuCz+UDhqvEB66h/FnwIXew2cAXfI43DNeJD3kD5YkP7KL8nviQnxluEx+4g/KkP+Qu9DcFH9iGvTziQ95luER8jlG+JPiQ2zWGe4LPcR/lSX/Iy0x/m+zHMez1RHzIn1Ge+MAVlB8Tn8ntOcOvxAceojzpD3kF+pP9OIa9RsSHfMxwlfgco7wm+JDbBsMz4gPPUZ70h7zG9HfIfhzDXm+Cz+ULlCc+cB3lyX8hd+C/K+IDv6M86Q95nenvkP04hr3WxId8w3CD+ByjPPkv5A78d0d84D3Kk/6QN6E/2Y9j2OtAfMiPKE984BbKk/9C7sJ/PwWf4y+UJ/0hbzH9XbIfx7DXhfiQawy3ic8xypP/Qu7Cf7PEBzZQnvSHvMP0d8l+HMNeOeJDnkd54gN7KE/+C7kL/y0SHziF8qQ/5B70J/sBl2CvNPGZ3Mbeu67gXzHKk/9CXmL+a1P85Bjxsiv05/IHpn+J7Mcxs5ddJj6T2xWUJz7wI8qT/0JeYv5rU/zkGPHykfSH/BH6k/04Zvaym8RncrvFcI/4HKM8+S/kJea/NsVPjhEve6Q/5H2mf5nsxzHs9SD4kNuPKE984CeUJ/+FvMz816b4yTHi5RPpD/kT079M9uMY9nohPpPbA4afic8xypP/Ql5m/mtT/OQY8fKZ9If8BfqT/TiGvSbEZ3J7ivLEBx6gPPkv5BXmvzbFT44RLwekP+QDpn+F7Mcx7LUkPpPbPsOvxOcY5cl/Ia/Afyl+cox4+Ur6Qz5k+lfIfhzDXlviM7n9gfLEBx6hPPkv5BX4L8VPjhEvR6Q/5CPoT/YDrsJeJ+Kj/58ZHhOfY5Qn/4W8Cv+l+Mkx4uWY9Id8wvSvkv04hr0yxEf/11Ge+MBTlCf/hbwK/6X4yTHi5ZT0h3wK/cl+HMNeBeKj/5sMz4jPMcqT/0Jehf9S/AR2EC9npD/kc6Z/jezHMbOXQ+NXyB2MX+eCz/EbypP/Ql5j/utQ/OQY8fJN6M/lb0z/GtmPY2Yvh8avkDsYvy6IzzHKk/9CXmP+61D85BjxckH6Q76E/mQ/jmEvGr9C7mD8uiQ+sI/y5L+Q15mxHYqfHCNe+qQ/5D7Tv0724xj2ovEr5A7Gryvic4zy5L+Q15n/OhQ/OUa8XJH+kL8z/etkP45hLxq/Qu5g/PpOfOA1ypP/Ql5n/utQ/OQY8XJN+kO+hv5kP+AG7EXjV8gdjF83xOcY5cl/IW/Afyl+cox4uSH9Id8y/RtkP45hLxq/Qu5g/LolPvAHypP/Qt6A/1L85Bjx8oP0h/wD+pP9OIa9aPwKuYPx6474HKM8+S/kDfgvxU+OES93pD/ke6Z/k+zHMexF41fIHYxf98QHPqA8+e+BXb8J+9H4s9kX+GgJPuLfkenfJPtxvI/w0f8LET7i36l7z+fYkPEx/jyS/RD/ztY9H7hVkvBdxMOTuL6L+Hc+R/gMt7oyPsafJ2E/F/HvM9J+4NZYxkc8PM8FH/HvK9J+4NZGxsf481O030X8u0TaD9zSZHzEwy9qP+LfJdJ+4LYl42P8+UXtR/zTIu0HbrdkfMTDC7Uf8S8TaT9wO+p/4GP8qVH7Ef/0SPuB276Mj3iYofYj/umR9gO3zzI+xp8Zaj/iXzbSfuC2KeMjHurUfsQ/I9J+4E5Nxsf4M0vtR/zLRdoP3OnL+IiHBrUf8S8XaT9wZy7jY/xpUPsR//KR9gN3ZP3fRTzMUfsR/wqR9gN3ZP3fxfgzT+1H/DMj7Qf2pP0f8bBA7Uf8MyPtB/ak/R/jzwK1H+PLYqT9wJ60/wOb1H7M51OR9gN70v6P8WeR2o94mo60H9iT9n/M11PUfsTTdKT9wPg7yud/p2j9gH+Dbd664wNbLRnfZX+nRfutEsN2954PbA1k/Ar+hvy6/nlmo+J7PrDly/h1XM8S/Ab45wifYess47fAPws+viHnRtoPbJkyvofrzQW/y3Ap0n5guybjP+J61P4ew+VI+4Htvoz/hOuJ9juY/5Qj+gPbYxn/BXxq/4DhCvTduDd+xRJ4BC7WL5k9g6kZK0/tB67OI3xgI8Jn9gy0uecD16LXZ3KnxP4eC77D7BlMDe75wHVLxu+yv2fEZ/YMhtb3fOD6WcZn9rMWxJ8zvI3wgRuy9jvAK+LvGd5H+MBNafs19veG+LDnKcIHbsna7+LvneC7sOdXhA/ckrXfZf0/GOoJPuyZifCB27L2u6z/W5/Ehz2NCB+4I2u/y/q/pREf8kKED+xJ2w9/zRIf9kxF+MCetP3w17zgl5jMtu/5HHdl7S/BX4vEZ/a0SxE+8IOs/SXmr7ZFfGZPuxrhAz/K2l9i/mq7xGf2tBsRPvCjrP0l5q92hfjMnnY7wgfuSdvP/NWuE5/Z0+5G+MB9WfvLzF/tluCXmT3tXoQP/CRrf5n5q+0RH/Z8jvCBn2TtLzN/tR+JD3u+RvjAz7L2lxm2n4gPe44jfOAXafuZv9oD4sOeswgfeCBrfwX+SvG3AnsuInzggaz9FfjrlPiw5yrCB36Vtb8Cf30jPuy5ifCBh7L2V+CvPvFhz12EDzySth/+uiY+7HmM8IFH0vbDXz8Evwp7fkb4wGNZ+6vw1wPxYU8twgeeyNpfhb+eiQ97ZiN84Kms/VX464Wev7BnLsIHnkr1h711uj7812R/z8T4xS4IXDUEf8bsWYO9KP4BO3aED/k8wp+z69daET7GoyUZ/439XTUF/43Ja4MIH+PRqpQPfWuCv2Cymh/hYzzakPEX0LdPfNR3jvAxHm3L+EvoOxf8JeozI3yMR7syvg9994LvM3m9ds8HdnpSPvQl+6+YrN6P8DEefZbxV0zfeon4rL76PMJn2HmV8d+hb1fw31HfPsJn2BnL+GvoOxb8NeozInyGnZmUD33J/zdM1ijd84GdhYy/gb4a8Vl9jW6Ez7CzkvG3DDcswd+y+hrjCB/j+Y2M/wF9W4L/gfo2ET7Dzk7Kh74Dwd+hPi3CZ9g5yvg76OsTH/OxSP8Hdj5l/D30PQv+HvOZSP8HdjQZ/wB9qf8fMB+L9P/mdT4q40Nf6v9HzMci/R/Yycv4R+hL/f+I+iL9H9gpyvgn6Ev9/4T6Iv0f2LVk/DP0pf5/ZvJWpP8Du66UD32p/38yWSvS/4Hdioz/yfRtUf//ZPW1Iv0f2K3L+F/Ql/r/F+qL9H9gtyXjX6Av9f8L6ov0f2DXk/KhL/V/jcnakf4P7D7K+Br0pf6vsfrakf4P7D7J+BmG29T/M6y+dqT/A7sDGV+HvtT/ddQX6f/A7kjKh77U/2eoL+K/wO5Exs/ietT/s6y+DvvbpfEjxxgPZsX4g8sNxu9Q/+OYtcel+TfkLub7ObH+ccUoT/4DeQf++k58YIwHc3R9yHPQl/ofx6w9Ls2/IXcx388Tn2OUJ/+BvAN/3RMfGOPBAukPeQH6U//jGP2d5t+Qu5jvm8TnmJX3yH8g9+CvX4LPMcaDJukPucn098h+HMNeNP+G3MV8v0h8jlGe/AdyD/5qEB8Y480U6Q95CvqT/TiGvWj+DbmL8Waa+ByjPD0/IPdYf3RTxAdOozzpD3ka62HYFMz5wPwDemxTKfhcbgPjA0/gcHxmuCb4VznDJeIDl23UKfiQ212GB4LP8ZjhCvEhrzLsEJ9jlJ8LPpf7DDeID9xEedIfcgf6n4kPrGGTLfEhb2OTLfE5RnlD8LncZLhLfOAH27p+NOC6fgrM9LfJfhzDXo+Cz+U9hsvE5xjlu4IPud1n+Jn4wC8oT/pDXmb622Q/jmGvAfEhf2W4QnyOUX4j+JDbe4bHxAeeMFwl/SGvQn+yH8ew15T4kM8YrhGfY1beIf+F3IH/LgSf4yXKk/6Q15j+DtmPY9jLJz7kK4brxOcY5cl/IXfgvxviA28ZbpD+kDegP9mPY9jrg/iQ7xhuEp9jlCf/hdyB/x6JD3xCedIf8ibT3yX7cQx7nQWfyz8ZbhGfY5Qn/4Xchf9qxAfOMNwm/SFvM/1dsh/HsJdOfMizDHeIzzHKk//yj1zAf/PEBy6gPOkPeQf6k/04hr1M4kNeZNgjPscoT/4Lucv816b4yTHiZVfoz+Vdpn+J7Mcxs5ftCD7kNj4I9UB8jlGe/BfyEvNfm+Inx4iXD0J/Ln9g+pfIfhwze/GPdnA+PnJRZ/iR+ByjPPkv5CXmvzbFT44RL3ukP+Q96E/24xj26hCfyW2P4T7xOWbly+S/kJeZ/9oUPzlGvOyT/pD3mf5lsh/HsFef+PioxxPDT8TnGOXJfyEvM/+1KX5yjHj5TPpD/gz9yX4cw15D4jO5PWL4hfgcozz5L+Rl5r82xU+OES9fSH/IX5j+FbIfx7DXXPD5R1beGB4Qn2OUJ/+FvAL/pfjJMeLlK+kP+SvTv0L24xj2eic+k9trhofE5xjlyX/5R17gvxQ/OUa8HJL+kA+hP9mPY9hrT3x8VObA8Ij4HKM8+S/kFfgvxU+OES/HpD/kY6Z/lezHMez1JfiQ2xeGJ8TnGOXJfyGvwn8pfnKMeDkh/SGfMP2rZD+OYS+D+Oj/OYanxOcY5cl/Ia/Cfyl+cox4OSP9IZ9Bf7Ifx7BXivjo/2mG58TnmJWvkf9CXmP+61D85Bjxci705/I5079G9uOY2cuh8SvkDsavb8TnGOXJfyGvMf91KH5yjHi5EPpz+QL6k/04ZvZyaPwKuYPx65L4HKM8+S/kNea/DsVPjhEvl6Q/5Eumf53sxzHsReNX/pEhjF994nOM8uS/kNeZ/zoUPzlGvFyR/pCvmP51sh/HsBeNXyF3MH59Jz7HKE/+yz9yxPzXofjJMeLlO+kP+Tv0J/txDHvR+BVyB+PXNfE5RnnyX8jrzH8dip8cI15uSH/IN0z/BtmPY9gL41P8NMVoMjNy+dE4P9UnQ3NkGsPpNDPMzWZDM2sWDe1v2VzemN39NMVPUkI/TVFebYby36Zwh4eh9Lcpwkft+r3Lb/yNv/E3/sbfOIK7p8+0V+zOmvwjvtbTIZf2jKeaddGkWJQvfPY+/JI/+6invcJH7nmXfSjuz/5Re0t75r79PtJn9Yf5SusdUl7e/zCb2tR8268+Nm9FT8s23VGh5LxtVvvxquCl1sVO0zByb8bKGGXynvGZ7+0KrdLneLX3c4aXKi2no7zhW8bqaXrQPW2/eSvkq/tpy5+3chcvVXtbN/PmZe/7jv305X1Vyttd/vmzWfI1P3P0cv32sWB0jf040NjeB/p9fY5ys/e85k8m9bVn1DR9lH+a5Ob+al1feefug1EoTPya73f09txL1/XirnBov+7906g98b5My2qmatXd3DfPk4F3zo2cUXE/3u/9D+vw5F1Gn+6oOHz1zv5wv+p4Xy8f5V1Rmzy0VtNau+mlPluVQtHfneer50K55GVPw1ohPRx0xn7r8cn2tFq50Ux7D+beH4w3OS9bm7aa6VV2NvCP6X3GK25a7WZx0nswVsUH8+h9PW87hbSe781XmYfah3d+e/EKqdnnl7962Rlvnp47PuzMj6/5eWWvxxMvVXh5HKVf65O5v2nW+l56teg3i+1l2/D9Xr/rGZVSv2C+u8uSP5lvqp6WMZ9Hqc+d8b4cPp0dL1d/fGma2s5e+NOP5ad3WJwHI/OYf/KXntdbe4ez8dpMfbVmgf2X2b53WmeHzdTi0tuvtr1Tw3trnYaF4mF92a9yXifjzSeNUSFttNKG32/kd96xdBiP0s/d1txfHj+evdVxPmmmW5vuYDV4/mp5p/1xsiv2h07gPIOHo7faZabN9KW3mK8mTubVe9scprvUwzp99jMX/+itH0qzZsp5KZT8/as28OZnfzYyS95X3y+8F4beo96Y7czU66Xmn4sfR2/U6s4KqZo9fFx+necn77FZmhXMcvr13f86L06etfsM8HbYPa4YPgGnUqvu84qVP6F8evde1FHfCfWZ3qGR8guVwvCE6xVT/eUz9DlBn/RiM3pcMn1PXN9DZrNfsvac0J6i3ndqPmvvCe1NlR+2/SWzxwn2SD0Oh50ls9cJ9kpVWvUU7HmCPc3p+kP3mb1P3N7HRT/ls/tx4vejfvH3C83N9k+4X+ZHJ7i57H6ecD/Trfb4C/f7hPud3pUtfcX84ZQrB/6QbtXGz/CXE/zFnO9fP+BPJ/hT2j4UjvC3E/wt1c+8ffjMH0/wx9RH+jz3mb+e4K+pzXQT9N7An0/wZ3O3m2985u+nr07g7/yni1h/OBX9oD9wzPrLifeX0eBliP504v3pfDp++ay/nXh/A2b98YT+aJaqlY4/aq06J/TXVOPd1tGfT+jPqdN77hn9/YT+nup1Wo/+sdCenBAPzPUil0K8OCFe5Gxv9LFk8eSEeGIMPuqtJYs3J8QbY7Rt+MuSZu9PPB49Hl7elyxenXi8ens7m4hnJ8SzQmrRtVazfe5yQrzL2Z1uC/HwxOOhti+dfRYvA3kQLwvzQfN9yeLpicfTSeWrsWTx9sTjbU7vDBcsHp8Qj3PVgRtcP4jXJ8TrDDCL5yfE88xzvnZcsHh/QrzXu+PCxxt7HpzwPDhvKsvaROALx6L8Up9emps3UV8vu3E3+YW4nqvPeu5xKfTp5YGFvm7uZXFcLER7lvjUtcXbGzwfehwLe1yMSt+c4/kAe7lG/bnvr4Q9l/kPYxU8n272vuTm9fN4xZ4PuB894zCcbnxxv3r57etlsBL385I7px4DZ7nd72VuPR2W8HyAP/BPa1vCX3ocC3+6YvZ8gL8tORb+eOFY+OsVC392U/PG7HEp/N1NjfMvXz7vD8Hz4Yp5fwmeD5d0O2M1qD9d6xP97Xp90R+v+on+em2P6M9Xvujvt/YgHgTPh2t5ES+uchFPXLPYfezi+YB445r6YjigeHThWMSri3nWHucUz671iXh3vZ6Ih8tUabK0KF66qc/1KHie3eLpkmMRb930/NOtUTy+1s+eD4jXV/uIeH5tv4j3Al+fByHs3eHr8+RC9Xmh+tjzwQtdTzyvrvqI55mbtnbLmi+ed8tiZRS0RzwPXY7F83KZ7jQuFj1Pr/YSz9tr/eJ5fNVHPK+vmD0fPH6/xP30+P0U99sL3W8+XigLfxDjiR75kxfyJzEecckfvZA/ivHM1T5ivHPl8/FQ8Hy4pFLFbuM6XvJZf+i8ZnUaT12xGG+5qYmRflyK8diF+qMX6o/s+eCF+qsY7/Wov3uh/s6eD14oHojx5DV+ifHmhWMxHr3GM/Z88Hg84va/jWev5cV491ofez54PN4Bi/HyheKlx54P1/rEePsWT2/j8StfjNdv17+N5/nv81nNdjkVjP/Xnz/Ad0fNSn/jb/yNv/E3/sbf+Bt/42/8jb/xH8X/e/MXhX1xPw7lL/Kvm044f2F4x495KH9hnBeLQSh/kdf2j/NQ/iJvnne1UP6i+LC05qtQ/qI0faitKH+RSmU/ByvKX6Sb0y8rlL9IDz7bc5/yF2z9tBXKX5j663wcyl+YL+6gFc5ffFjdVjh/cZktBqH8hVlsaudw/uK8y7RC+Qtz+BzYk/IXqVXxtRTKX6Szn6VpKH9hVrs73af8Req8Pb6H8xfth7zuU/6iaOy/rFD+It34/KyF8hemvngchPIX5lkbzkP5C9MP/gvlL8zxsz8P5S/M3sTYhPIXwd3eWKH8RXE6eOiuQvmLZjGwH+UvUk/HSWUZyl/4L4X3JeUvzHll2AjlL9IfxflxSfmLVHd8+VhQ/sJsHdzNgvIXHIfyF8CUv6D1KZ6/oPUpnr8ofq7nfjh/8dJulJaUv+CY8hdm+ms5D+UvaH3qmr8ApvwF6g/lL9LbTL3lU/4itRjMO6H8RTFd8Dqh/EXR8RdfofyFOT/u9XD+4sNubt4of1FM1z7NUP7CnD+2B6H8hbltnbUV5S/S2cKxFcpfpGfV93M4f1HLuYZP+Yvi0W91fcpfcBzKX/S90iaUv0hp++FiGcpfDF7mqVD+Ij10to1Q/iLdPo3C+QuzXX57DuUv0pnKohTKXxi72XjsU/4i743yLT+Uv5gZg/c55S+Mba2a9yl/kWvO641Q/sIoPKzyy1D+4mBrez+Uv5gM1+Nw/uLFKpT8UP7CKR1Mn/IXuW532PUpf1HIjOd9/98nf2FMHx/PofxFofj+2af2LAuHz0JrSfmLfHndyC8pf5HvzxdaKH9RmDj2OJy/+HztncP5i6KeMnzKX+Q+m/VxKH9RWAQG8kP5i6KzntP9Xhqd4fP5LZS/0Jt5Z0n5i/SD9dpfUv4ildfq/jKUv9CLtRT54yXVfXidLil/UUzNBoNlKH/xevBrb6H8xeO+1AjlL9LrlTUN5S+K5nm6X1L+IlWtNvt+KH+R7g/P1B97Rb33qFF/dVMvo5FJ/fmSXrd22jKUv+j2Av+m/EWqtzjO/VD+Ing+aH4ofzFzGoNw/qLjtozv/MV3/uI7f/G/Nn/x379f6xt/42/8jb/x/wT8378+9o2/8Tf+xt/4fwL+735efeNv/I2/8Tf+d8Xf+e7vfPd3vvvfMd+tel+P47t89+6/Mt9tDqaPlfD7epd9PR/Od+N6lO+OvP/TLDqDXCn8vp7uBP4Yel8P+O59vc3veV8v8n5TM/L+UyHyflSB8hnXfPdq++SE8939U2sYyndzHMp3l7TLVzjfjfpC7+sBU747N599NvxQvtuobxbhfPeiqHeWlO/OPS0aY5/y3YXp6DgI5buNZdDVQvluymfwfDflM77f1/t+X+/7fb3vfPft+fCd7/7Od/+r8t34tpWhFTTd1MfTaS4Y5+WMXH6oZY1Rbpqd5afFrPa3bD57/2mrn2P81JetvM1ifdjHP2uln+eW1d7jp+Ss963/EMav+ghfCST5+8M99u/w7QjLuxF+GLP6u5H6uvO7+vQoPm8/Xkvj0PVDGPq+huWBvq+R8iGMo34v70b4YQx9I/V1t3f16VF8fp+86/jK7fX6IQx9n8PyQN/nSPkQxlG5l3cj/DCGvpH6uu939elRzOzpj0PXD+GbfUnO7XtXPoRv9g3LuxF+GN/se1d+e1efHsX8/t/rW4roW4roW4roW4roW4roW4roW4roW4roW4roG8asf92OW3+7Hbf+RnLe3+7Kh3D0uPW3MD+Mb/3trnzo+ta1v4Ux7NmP2LcfsW8/Yt9+xL79iH37Efv2I/btR+zbj9i3H7Fv/94f/Ii+fkRfP6KvH9HXj+jrR/T1I/r6EX39iL5+RN8wRjzwI/HBj8QHP6Tvc6R8COOo3Mu7EX4Yi/gQLv9+V58exfz+R+JvPxJ/+5H424/E334k/vYj8bcfib/9SPztR+JvPxJ/QxjPMz/yfPMjzzc/pG83Uj6Eb0dY3o3ww1g838Ll53f16WGMYYKWn5oZTctksmbGmIzM4TAXPP5HxmxUnA4zxfzfcprWvBsm/BwjNEzoB2MB6SjBma5Wsu9f2tR2/Ml/AGHP/uGegaCCRrRJjpPi92jZz0De5Lw+8XsMlkvyEsn7ohIux59lyFmQskviJC8/YP9UUQnJeX3gI7L1hDyktMP+tLtCzuvz2T8NXJTkqM85i0a9QE71oVFu96Ykl/P6MBbssH8qJOftx58YGw+FnNfnUSP2Qm5TpQ+i0TbdjxLqR9MmQs7re4Sc/9aAkPP6oDqMXiU56uNG7wsjVul+PEOOb+/jem9U35j9i5tSIznqq0AO+/pCzut7hZxdxekLOa9vw/4dsX/qJOf1QV9UshZyXh+UqLI/nbmQ8/pwP6bsnwbJUV8V/oP78SHkvL4Z9GX/OHshR30OqAv2TxP1nUV9NejLf4tAyHl9S+gLvinkvD7IV+yfFslRXx31w7SfQs7re4cc3+KvCTmvD6aAEVskR31wcgem1oSc17eFnOnv9oWc14eqduyfNslRXxNyFOWdnuo7QI7yvpDz+vDnif3TITmvj/82AzsKQs7r47+6wv7kQaIg6nNB/WL/eCTHyRbqh9VSQs7ru0Bf8E0h5/VBnhElXbofbdTP7gf/qRg+xsK/WeiLkviWt0P1oRE59s+DkPP6OqiP2dcuCzmvLw85fitgIOS8PvgjlHoQcl4fggjmojwoPND9KELOVCn5Qs7rw/1AruxRyK/1nW9/2U0hR308KGGQyYNMU9RXYlXb/LcPUJ8m6uuiPvA9Ief1Qf7A/uQt9ag+5m82QklfyHl9D6if+bv9KOS8PoRCnCy3hJzXh06Prvgk5Ly+R7QH9+NJyHl96DqP+O2BgZDz+tj94EH1Sch5fT3Ux+xrI949U31wlR7/LQQh5/WxW8sfQs9CzutDzyuzP3nQfRb314br9FnTypqQo74y7geedy9Cfq2P/xYEk8+EnNeHSz2xP3kQn1F9uB9oykDIeX1PqB/3YyHkvD4Y5RnlgZdUH/xxyP58FXJe3zPqg33fhZzXh+cDHrqVsZDz+uCPeN4NhZzX9wL/wf3YCjmvD8+HF/y2wUbIeX24H7DMUMh5fWhUBfdjL+S8PjwfB4xV0YQc9VX4b0WwP0eoj56//KEI+56FnNeH58Mrq69aEnJeH/wRz7uxkF/rQ/3w94uQ8/rQiCH7Ew9NLuf14X7geTcRcl7fEO3B/dCFnNeH5wNuSnUs5Lw+3A88D6ZCbv3/GAQXZ7NCfjwbG7PhbDbJFofFXHYyzOa13GSqa4VpfK3s5xj/xK/A/3fvavvG3/gbf+Nv/I3/b2KMFKbGTJtN8tPCODsamvooo42NiZEr5majTMacTP6mG/r9SOHnGP+kkYLbvrTOmGNZrWyrd80nvm/fXzHn4vIUFTevcv/V41sRL61LK018Ln99f32/yiOW4de7jC8tb5xtXdxs+1I6p4BfP17fewWS75kcY/70TV7ppSEPrnnxTMHn8ufgqsv0tT2OxeU8v3kZf17ru12P456bH76/+imSFyBnHMaH/MFPQ75kV00TH/Jc0NIBlwf2mrtpwWcLx7f2wJ6h6wFvhTwl7O2mrvLAvjkmN2Bf4nM57MvlsG/0fpF9C2Tf0PXIvgbZdyvsmyL7Fsi+78K+KbKvIe5syN7CHrf2kJzm7PAPJg/sC8xayvP3nA95Efa9lZ9z/0rf7HvzB9grdL9u9r21R/jr9Xo3+1Z65tW+Nz6X3+xbYfsDYN97f4c9euQPsFfofkG+pPbc5LfrAV8En2Od2de89icnbA/r5m/k7zf/TZH/hu4X+W+K/Dd0PfLfIvnvWfgvt2+F+hPsEfJ32DfkD6K/X+uDvULtIT6XA3M57BuNF7BfN9yfAnuE/B3yedgfuPx2v2DPu/YE8tD1gLk/BfM5Fqb34+l6ijC8He6uUVL71FjcXEwCkAnF2yCwvnS203Wl+TBdT6a758V6sjmzotvdZjvdHRbTPapaH99H011n1hx+TXfslM4uNZluGW095sX+enfJ4MjlxsF/WsYoTun6JBlmitP8SPvlXqGwPtOdRJfRcOzPd5vjmtX218yv2p//dPvnN/bDZkKsM7n2q/7nP93+YfLTYnrebnYHLtTY+UgNh/PmcTGZTpqL+dthsZ5fjbZisLxZrTZnZ/g+3Q1v55lNgr81qDrdT3enqbNZbXb2cTaLSdzp9vB2J1lPhztntdhug0t5q+F62tusgtrXY2aRQDmNXWR8LfAwXM+npc/tcL1fbNYokAvEx/308W0Y3Lv9tdLgBK7kTacr3gR2djMer46M+DA8LDa8+uD0+/Bz8X58b19vMuOwegx2y4In7W44PixOTJvMT9/10L2N3fXZ1DDkd/1q1/g9n23GwxV21kRuW47fsu1mvzhwg/w1YxR+zZqFrJ7L5YL/14xsUE52Lq9Hzt3co7+NOcdv0XuAK2W1X4tGVjcKGS2X1818YDEjo/9qZIIKTb2g500jn/uNdcvfaaTRzAjGTHIjWePDRtYvTov9YrRYLQ5fV8fcLsb+cLSaXuFkN5yHYOAhNusljHzYHafMPXaL+WJ933YtbuCYcB/cnKm0MwY1Bo0e3jH/EqbONrvxtLMdfhxZBbPhaj+9ne0FfWC/Oo651W6iQO1da3jYLT7FBTXJP39I8Btz76At8P6//vWX/fTQGm63iEJ/DbrC/sB65X/8f38X96k4MQrDmfaPX377jRUJCB6/KV8/pAyzo9FYA+W3n+1NIXeIOMpVgYijCK2jPhIEoc2KhadFcMHgqofeZhuEqvnXNUDsEHZ7i/epCA5DNuq2xuPpft/aTKbXguyWD3eiJ4S7SXCHmpuNf9z2mLc93hUk6lPYWzUM6lnI/MIgvz2EAn/J3M7Hrhw6gRAVtGJ4uF5sb08DB5oyI1yjd/y+1tbb44FNKlS39i+ToFBACN3iUOsS2LlcRv99dzl0L+V3+aZL5G57m9XXtSnR+73lmxHDk7JMcZQ38mN9Op5OzNwoOx6N9JmZmc1MLZ+dTbP4Fc/JdfblrIb7fWxj45rfnl/oDFOsF57E5Q0xW7uNHZzN+3aznnJ9suxOLi6MwK7HXI+5yNU474hCfzHE44kV42B8qyU4tT6uVoit1/LZ4q/FomHm9SC0a1reNAVZl0gSavp919XzvwbhP2vkM2Y+qxW0TEGQ89qvhqZnjFwmb2h5g7c0VhXiTuDBX/d3aqZNc1NTM4xMYTbMzYqZUXE2HZlacP8K5nhS+JsRPLSakjt1t7nkerPYhSI3KrI5RXqfMnSf2NWk9ylsrWBeX5DbC42cLaaryZX8+39WNtLMuzWBm0+2N7v34FEhdUpVY3/KKYNHfnAYulk0Czktq+V00XipKMlhQSgUMoWMoQdDiIyWva8rKkqqKxO+CyqX5ZoGR1YvZHJFM58Lc3FkMsFldS2TzUjvJhv4BoOy65OdB5pbENpN54v9YSeEQci63ZZ//Hg0lBT+EEwjYe8+DP9oxoKROGYsuTxzoeHqOJU+tt7uzgf24EOb4eHIG0KjvhBpPVzjAkSKDhpH02C+AG6oYGzgwZ6zo81pel/wbjgVfr5asbKh4ZEdu+JNOFxt34bCPU5TNpB85P6ORy0/44TuNZW7PnAzeOBOpp/B9Aj2vxY6XEeWf/1rMJz+MzsV/Bf8yZ6ZP30mEzujx85kY2dysTOF2Jli/FrxqjPxmjJmXCWJlnGiHr9iNq56Nq6pEdfLyMfbHFciF68rH68rHy9ViOtViGtvxttYjCtRjFePyBU7J7khMvPrkrukx+9JJmvEzxkSBzMk+uUk+uUk+uUl+hXiJsgUJNcwJe0wJe0oSnQpxnXRtXh7dYlN9Uy8Pl3m0xI763rc7fRs3Ka6xPa6xLF1yf3QDYl+hqQ3GRKdDUl7Jf1Cz0naJrnnek7Sjug5A3//sXNZyTldck6Ln2PNj53LS85Jrmtk4ueyRcm5nOScRD9doosuua4uaUdGonNGop8mKafFy2WK8XKZoqScGW9bxozrlynE25HJx9ubycftkslJdJHcy4wR94MM6y6xc5J26JJ2ZCT6ZST6SWya0eL6FeMmMONXMOMXKMTrL8Srz8dbkIs7o6T/GPFSEm+XOLbEryWm1eN3QJfcqHj1EpfOSIjxK8aNGq9J0sB41bEzcav/689kYmeysTNG7Ew+dsaM1xyvOhOvOxOv6nqzwqf0OPF64+80lzQmFz8Vr96It9CIl8rFS+XipfLxKxbiZi9ILKjHT8WtWowrcYsG9+ckds3Er3CLQnfn9HgTMhLb3qLf3TlDcotzEv1yEv3yEv3yEv0KEhuYkmuYknYUJe0oxnW5PbXuz0nKSbxcl/j07al6fy7ejttT+t7543bRJY6tSzz7Noq4Pye5riHRWdIHdMm9vI2G7s9JeqykA/3UOUMIks9lJed0yblM/Jx4SoXPmZJzOck5yXUNLX5ODBbC5yTtyEq4el5yTtK2jETnjEQ/TdJeLa4L5jCxc/H6Mmb8uhkzrh/mWLFz8fuRycftnMlJdJHcc8wVY+fiNs1IbJ/RJe3QJfplJPpJbIo5dORcMa5eMX4FM36BQrz+Qrz6fLz6fPxG5OKlJN3CiHudEa9L4tdZictJPE7SmSS2ltwSifXjeknMFW90XPW4TvGLxc7E3Sv5zG//wLr670waXlOQ0uxyKH8ZTx5iEwPlc9ny9mQxmx334cVNM1vUg+eymdcLRk4rspn7r0WCWiDGbgwzeGBqBdPIBgOAIBAXf7sl+/7z1QzfRyzv/E9Sar+djo+r4e6fVN108qO14JDqIq1yta9Ytb0pIwrcTnibM7aUBMM4nN9sh+PrXgBgSpPSzWOqxBKxbAPNbDieOsdVaOvIbLdZH+Knse5/XUPO4TqBcPq8mBzexJVXoX00Cf6asGVEzw+H0+/dEP/2uyGM2Wz8u3dDFIIg9bvy5CF3iCaKuALfuyH++bshuGX/6G6I/MwwC79zNwTdS/ld/qfshvjpDz/9ZzZD/J68cz77g70QOWz04znaK0hKB//O8uEcvnLDQ7hw3vg1a+QLmYJmFoqFnClNef9gg8NPf07jv2R/Q07T1Nsb9B8Y54e7G376bcn/ys0NP3CyP+wEysK/a3PCTxT+7Y9uP/jzH3k95WduTW/6eTjugmfJZjdZrIPo+8fukk53SWdzJJU//p679DsLG2znSTaX17OFrFbM/VO2gfRgn+RtID+O+/wp8r0N5HsbyPc2EN7m720gd+e+t4F8bwNBR/zeBhI7970N5HsbyPc2kLtT39tA/tlnvreB5L63gUTOfW8D+d4GgnPf20Bi53KSc9/bQL63gXxvA7k79b0NJPlM0jaQH2dLr7nXf8k2kNhy5fiHkuhmjViB2P6LWIn/8i0V2q8ZyZYKTbalIvNvuaWiOM7NsrFXKvm9x3dPJDd+f14cxm9i9fcwXe9v1mB9L+EWy/dLZG6bHuTf9ojstRiubhb+FOvSt4zGemqt51h4vr6tPTwE2h1xX57YUv/+l+j2iN9uVrylZ6rT4US0fI+PqVhUC7/YH/iSh1kYGpnYloQ/bOhC3NDar0XsLdLEXiOc0+62HuXityGTyeSDJ22xoBlm0Sjm2Trfr4V8XjOCIxsM5YsF7GvKZ7NaMDrQMyw3YxYz/0b3jH8v5l9w14pTfWTm/kXdg90cvkfstoUMNyx7f0g7D9stZBhFI2vkcjm9kDMKBTYGYi+S53NFPWfqed0sanmTLWwGlzVMs6AFd499Q8As5P8v3LphxswWfvBU+yO3LmPoZq4g/i38jkBXzBbzxeCOBN0wV9RM42qO4G5lDV0LJoVGNqvn8nmz8H/hxhRnhbz2g12n/6U35i//y+8Mhlt3+7ssfMBLfF3rB1vx+Ie5blu7hpPJ02J6ZgPBH1KuW4x/D+U6HA1Rbg36wdYxPlD56fLX5+3P188j/U+Xv4aXn6+fez22vv2ozyR8Ik83Zz96Dv30J/JiDvvHPpEXLvEHP5GHfbjST+SFJb//E3l//nf5QJ72jz//9CZWcWdj9zwYZf1gxPi7P5CXuGH5Ghsjn7zLhHixT94F5zNYI2Z/JHzZ7setywzz+jjaOutzuv+ftJM7su8as3HxnwIirg9H3IWCR9zb5nxVnVX2ywszAWvqLwP214X99YoPMAdPkdli/gufg7ON4KJ/HBbbB7aX+Xh7DOSvJ4eTxXHP3djU7g6dl2hO13PMK9G72TNldohXxU+HKuOP49MUMQJO/2l9LvZiDo6VCbbaV0Bzv+6EBlb7A6GJAenlTihWNn774w8y3oF+11OJeyWP0pHLBvxQqP0RH6Oe0CXVFN5Fbnui3w98m3nG1Ap8DHFA+Pw76x4P01ntvhuFHhncEzqzh03k1QLem69fyBzf4nH8S5zs9o2mb8PTgm+R+3v4HaJgglLQuKPuxqJRPxjxTfYHeREKB0PWy0UH/etfqGvJ/vwtFCb4XX/8Wo9ZPdM16/O3D9pGo3Bw/D9QSwECFAMUAAAACADkez5ccg4ILR5SAACiugEACgAAAAAAAAAAAAAAgAEAAAAAaW5kZXguanNvblBLBQYAAAAAAQABADgAAABGUgAAAAA=&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\n\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}}, "version_major": 2, "version_minor": 0}
+</script></section>
+</section>
+</section>
+<hr class="docutils" />
+<div class="admonition-download-this-example admonition">
+<p class="admonition-title">Download this example</p>
+<p>Download this example as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/design_tree.ipynb">Jupyter Notebook</a>
+or as a <a class="reference external" href="https://geometry.docs.pyansys.com/version/dev/examples/03_modeling/design_tree.py">Python script</a>.</p>
+</div>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Perform-required-imports">Perform required imports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Create-a-design">Create a design</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Visualize-the-design-tree">Visualize the design tree</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Controlling-the-depth-of-the-tree">Controlling the depth of the tree</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Excluding-bodies,-components,-or-beams">Excluding bodies, components, or beams</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Sorting-the-tree">Sorting the tree</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Indenting-the-tree">Indenting the tree</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Printing-the-tree-from-a-specific-component">Printing the tree from a specific component</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Closing-the-modeler">Closing the modeler</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item"> 
+<div class="tocsection editthispage">
+  <a href="https://github.com/ansys/pyansys-geometry/edit/main/doc/source/examples/03_modeling/design_tree.mystnb">
+    <i class="fa-solid fa-pencil"></i>
+       Edit
+    on GitHub  
+  </a>
+</div>
+
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/03_modeling/design_tree.mystnb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text", "objectID"], "limit": 10, "minMatchCharLength": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.6.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

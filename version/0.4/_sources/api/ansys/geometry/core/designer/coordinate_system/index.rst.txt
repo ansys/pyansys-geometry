@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``coordinate_system.py`` module
+===================================
+
+.. py:module:: ansys.geometry.core.designer.coordinate_system
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: coordinate_system
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~CoordinateSystem`
+            - Represents a user-defined coordinate system within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 CoordinateSystem<CoordinateSystem>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for managing a user-defined coordinate system.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
