@@ -326,7 +326,7 @@ class GeometryCommands:
 
         if result.get("success"):
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-                design._update_from_tracker(result.get('tracked_response'))
+                design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
@@ -403,7 +403,7 @@ class GeometryCommands:
 
         if result.get("success"):
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-                design._update_from_tracker(result.get('tracked_response'))
+                design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
@@ -488,7 +488,7 @@ class GeometryCommands:
 
         if result.get("success"):
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-                design._update_from_tracker(result.get('tracked_response'))
+                design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
@@ -549,7 +549,7 @@ class GeometryCommands:
 
         if result.get("success"):
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-                design._update_from_tracker(result.get('tracked_response'))
+                design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
@@ -1065,7 +1065,7 @@ class GeometryCommands:
 
         if result.get("success"):
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-                design._update_from_tracker(result.get('tracked_response'))
+                design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
@@ -1126,7 +1126,7 @@ class GeometryCommands:
 
         if result.get("success"):
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-                design._update_from_tracker(result.get('tracked_response'))
+                design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
@@ -1207,7 +1207,7 @@ class GeometryCommands:
 
         if result.get("success"):
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-                design._update_from_tracker(result.get('tracked_response'))
+                design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
@@ -1323,7 +1323,7 @@ class GeometryCommands:
         if result.get("success"):
             design = get_design_from_body(bodies[0])
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-                design._update_from_tracker(result.get('tracked_response'))
+                design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
 
@@ -1799,7 +1799,7 @@ class GeometryCommands:
         design = get_design_from_face(faces[0])
         if result.get("success"):
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-                design._update_from_tracker(result.get('tracked_response'))
+                design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
 
@@ -1881,7 +1881,7 @@ class GeometryCommands:
 
         design = get_design_from_edge(edges[0])
         if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-            design._update_from_tracker(result.get('tracked_response'))
+            design._update_from_tracker(result.get("tracked_response"))
         else:
             design._update_design_inplace()
 
