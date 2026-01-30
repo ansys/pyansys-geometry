@@ -10,6 +10,7 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.14'
+  UV_PRERELEASE: 'allow'
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
