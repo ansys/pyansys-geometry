@@ -3337,7 +3337,7 @@ def test_design_parameters(modeler: Modeler):
     assert test_parameters[2].dimension_type == ParameterType.DIMENSIONTYPE_COUNT
     assert test_parameters[2].dimension_value == Quantity(3, "")
 
-    # Change the pattern count
+    # Change the pattern separation and count
     test_parameters[3].dimension_value = Quantity(50, UNITS.mm)
     status = design.set_parameter(test_parameters[3])
     assert status == ParameterUpdateStatus.SUCCESS

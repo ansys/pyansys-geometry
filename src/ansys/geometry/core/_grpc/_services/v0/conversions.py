@@ -1227,19 +1227,12 @@ def from_driving_dimension_to_grpc_driving_dimension(
     GRPCDrivingDimension
         Converted driving dimension.
     """
-    from ansys.geometry.core.parameters.parameter import UNIT_MAP
+    from ansys.geometry.core.parameters.parameter import Parameter
 
-    dim_value = driving_dimension.dimension_value
-
-    # Convert Quantity to Real using appropriate units
-    if isinstance(dim_value, pint.Quantity):
-        default_unit = UNIT_MAP.get(driving_dimension.dimension_type)
-        if default_unit is None:
-            value = dim_value.magnitude
-        else:
-            value = dim_value.m_as(default_unit)
-    else:
-        value = dim_value
+    value = Parameter.convert_quantity_to_real(
+        driving_dimension.dimension_value,
+        driving_dimension.dimension_type
+    )
 
     return GRPCDrivingDimension(
         id=driving_dimension.id,

@@ -152,3 +152,28 @@ class Parameter:
     def dimension_type(self, value: ParameterType):
         """Set the type of the parameter."""
         self._dimension_type = value
+
+    @staticmethod
+    def convert_quantity_to_real(value: Quantity | Real, dimension_type: ParameterType) -> Real:
+        """Convert a Quantity to a Real value using appropriate units.
+
+        Parameters
+        ----------
+        value : Quantity | Real
+            The value to convert.
+        dimension_type : ParameterType
+            The dimension type to determine the appropriate unit.
+
+        Returns
+        -------
+        Real
+            The value in default units (or the original value if already a Real).
+        """
+        if isinstance(value, Quantity):
+            default_unit = UNIT_MAP.get(dimension_type)
+            if default_unit is None:
+                return value.magnitude
+            else:
+                return value.m_as(default_unit)
+        else:
+            return value
