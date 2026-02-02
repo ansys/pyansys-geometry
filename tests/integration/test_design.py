@@ -3714,7 +3714,7 @@ def test_component_make_independent(modeler: Modeler):
     """Test making components independent."""
     if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
         pytest.skip("Failure when tracker is enabled.")
-        
+
     design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
     face = next((ns for ns in design.named_selections if ns.name == "to_pull"), None).faces[0]
     comp = next(
