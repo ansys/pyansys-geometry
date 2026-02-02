@@ -147,7 +147,6 @@ def test_body_tessellate(modeler: Modeler):
 @pytest.mark.skipif(
     not are_graphics_available(), reason="Skipping due to graphics requirements missing"
 )
-# @pytest.mark.skip(reason="Skipping due to known issue with tessellation options.")
 def test_body_tessellate_with_options(modeler: Modeler):
     """Test the body tessellation with custom tessellation options."""
     # Create a simple body
