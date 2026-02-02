@@ -1276,8 +1276,7 @@ def from_driving_dimension_to_grpc_driving_dimension(
     from ansys.geometry.core.parameters.parameter import Parameter
 
     value = Parameter.convert_quantity_to_server_units(
-        driving_dimension.dimension_value,
-        driving_dimension.dimension_type
+        driving_dimension.dimension_value, driving_dimension.dimension_type
     )
 
     return GRPCDrivingDimension(
