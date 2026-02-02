@@ -26,7 +26,7 @@ classifiers = [
 ]
 
 dependencies = [
-  "ansys-api-discovery==1.0.22",
+  "ansys-api-discovery==1.0.23",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -77,11 +77,11 @@ doc = [
   "ansys-sphinx-theme[autoapi]==1.6.4",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
-  "jupytext==1.18.1",
+  "jupytext==1.19.1",
   "myst-parser==4.0.1",
   "nbconvert==7.16.6",
   "nbsphinx==0.9.8",
-  "notebook==7.5.2",
+  "notebook==7.5.3",
   "numpydoc==1.10.0",
   "pdf2image==1.17.0",
   "quarto-cli==1.8.25",
@@ -97,7 +97,7 @@ tests = [
 ]
 general-all = [
   "ansys-platform-instancemanagement==1.1.2",
-  "ansys-tools-common==0.4.1",
+  "ansys-tools-common==0.4.2",
   "ansys-tools-visualization-interface==0.12.1",
   "beartype==0.22.9",
   "docker==7.1.0",
@@ -107,7 +107,7 @@ general-all = [
   "matplotlib==3.10.8",
   "numpy==2.2.6; python_version<'3.11'",
   "numpy==2.4.0; python_version>='3.11'",
-  "pint==0.25.2",
+  "pint==0.24.4",
   "protobuf==6.33.4",
   "pygltflib==1.16.5",
   "pyvista[jupyter]==0.46.5",

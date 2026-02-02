@@ -26,14 +26,6 @@
   description: Anything related to an incoming release
   color: ffffff
 
-- name: PRIORITY
-  description: Issue/PR assigned with this tag must be given priority over the rest of the backlog
-  color: 7A1FCC
-
-- name: SERVER-IMPLEMENTATION
-  description: Issue/PR assigned with this tag must be solved server-side
-  color: 086C8E
-
 - name: testing
   description: Anything related to tests
   color: BFE4D6
@@ -41,3 +33,19 @@
 - name: security
   description: Anything related to security advisories
   color: FF0000
+
+- name: p1
+  description: Priority 1 - High priority issues
+  color: 4300FF
+
+- name: p2
+  description: Priority 2 - Medium priority issues
+  color: 008000
+
+- name: p3
+  description: Priority 3 - Low priority issues
+  color: FFA500
+
+- name: needs-service-implementation
+  description: Issue requires service implementation
+  color: c27ba0

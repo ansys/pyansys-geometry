@@ -210,7 +210,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
         # Return the response - formatted as a dictionary
         return {
             "id": getattr(response, "id", None),
-            "face_ids": [face.id for face in response.logo_faces],
+            "face_ids": [face.id.id for face in response.logo_faces],
         }
 
     @protect_grpc
