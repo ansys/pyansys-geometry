@@ -414,6 +414,10 @@ def test_face_to_body_creation(modeler: Modeler):
 
 def test_create_surface_from_copy_faces(modeler: Modeler):
     """Test creating a surface body from copied faces."""
+    # Skip test if running v0 protos
+    if modeler.client.services.version == GeometryApiProtos.V0:
+        pytest.skip("Skipping test for V0 protos")
+
     # Create a design
     design = modeler.create_design("CopyFacesTest")
     
