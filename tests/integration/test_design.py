@@ -420,16 +420,16 @@ def test_create_surface_from_copy_faces(modeler: Modeler):
 
     # Create a design
     design = modeler.create_design("CopyFacesTest")
-    
+
     # Create a cylinder
     cylinder = design.extrude_sketch("Cylinder", Sketch().circle(Point2D([0, 0]), 5), 20)
-    
+
     # Get one of the ends and create a surface from it
     face = cylinder.faces[1]
     square_surface = design.create_surface_from_face("square", face)
     assert square_surface.is_surface
     assert square_surface.faces[0].area.m == pytest.approx(102.41439999, rel=1e-6, abs=1e-8)
-    
+
     # Create a surface with copy_faces
     circular_surface = design.copy_faces("circular", [face])
     assert circular_surface.is_surface
