@@ -353,6 +353,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
         return {
             "success": tracked_response.get("success"),
             "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -389,6 +390,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
             "created_bodies": [
                 body.get("id").id for body in tracked_response.get("created_bodies")
             ],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -413,10 +415,12 @@ class GRPCFacesServiceV1(GRPCFacesService):
 
         # Call the gRPC service
         response = self.edit_stub.OffsetFacesSetRadius(request=request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -448,6 +452,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
             "created_bodies": [
                 body.get("id").id for body in tracked_response.get("created_bodies")
             ],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -480,6 +485,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
             "created_bodies": [
                 body.get("id").id for body in tracked_response.get("created_bodies")
             ],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -514,6 +520,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
         return {
             "success": tracked_response.get("success"),
             "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -528,10 +535,12 @@ class GRPCFacesServiceV1(GRPCFacesService):
 
         # Call the gRPC service
         response = self.stub.Replace(request=request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -557,10 +566,12 @@ class GRPCFacesServiceV1(GRPCFacesService):
 
         # Call the gRPC service
         response = self.edit_stub.ThickenFaces(request=request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -585,10 +596,12 @@ class GRPCFacesServiceV1(GRPCFacesService):
 
         # Call the gRPC server
         response = self.edit_stub.DraftFaces(request=request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the drafted faces
         return {
             "created_faces": [face.id for face in response.created_faces],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -631,6 +644,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
         # Return the response - formatted as a dictionary
         return {
             "results": [face.get("id").id for face in tracked_response.get("created_faces")],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -654,8 +668,10 @@ class GRPCFacesServiceV1(GRPCFacesService):
 
         # Call the gRPC service
         response = self.edit_stub.FaceOffset(request=request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
+            "tracked_response": tracked_response,
         }
