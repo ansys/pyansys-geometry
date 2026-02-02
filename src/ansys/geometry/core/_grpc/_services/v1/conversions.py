@@ -75,7 +75,7 @@ from ansys.api.discovery.v1.operations.prepare_pb2 import (
     EnclosureOptions as GRPCEnclosureOptions,
 )
 from ansys.api.discovery.v1.operations.rayfire_pb2 import (
-    RayFireAddtionalOptions as GRPCRayFireOptions,
+    FireAdditionalOptions as GRPCRayFireOptions,
 )
 from ansys.api.discovery.v1.operations.repair_pb2 import (
     RepairToolMessage as GRPCRepairToolResponse,

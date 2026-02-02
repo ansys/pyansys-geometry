@@ -25,11 +25,11 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.conversions import from_measurement_to_server_length
 from ..base.rayfire import GRPCRayfireService
 from .conversions import (
     build_grpc_id,
     from_grpc_point_to_point3d,
+    from_length_to_grpc_quantity,
     from_point3d_to_grpc_point,
     from_unit_vector_to_grpc_direction,
 )
@@ -50,35 +50,35 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.discovery.v1.operations.rayfire_pb2_grpc import RayfireStub
+        from ansys.api.discovery.v1.operations.rayfire_pb2_grpc import RayFireStub
 
-        self.stub = RayfireStub(channel)
+        self.stub = RayFireStub(channel)
 
     @protect_grpc
     def rayfire(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.rayfire_pb2 import RayFireRequest, RayFireRequestData
+        from ansys.api.discovery.v1.operations.rayfire_pb2 import FireRequest, FireRequestData
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RayFireRequest(
+        request = FireRequest(
             request_data=[
-                RayFireRequestData(
-                    body=build_grpc_id(kwargs["body_id"]),
-                    faces=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
+                FireRequestData(
+                    body_id=build_grpc_id(kwargs["body_id"]),
+                    faces_ids=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
-                    max_distance=from_measurement_to_server_length(kwargs["max_distance"]),
+                    max_distance=from_length_to_grpc_quantity(kwargs["max_distance"]),
                 )
             ]
         )
 
         # Call the gRPC service
-        response = self.stub.RayFire(request).response_data[0]
+        response = self.stub.Fire(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
             "impacts": [
                 {
-                    "body_id": impact.body,
+                    "body_id": impact.body.id,
                     "point": from_grpc_point_to_point3d(impact.point)
                 }
                 for impact in response.single_ray_fire_impacts.impacts
@@ -88,27 +88,27 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
     @protect_grpc
     def rayfire_ordered(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.rayfire_pb2 import (
-            RayFireOrderedRequest,
-            RayFireOrderedRequestData,
+            FireOrderedRequest,
+            FireOrderedRequestData,
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RayFireOrderedRequest(
+        request = FireOrderedRequest(
             request_data=[
-                RayFireOrderedRequestData(
-                    body=build_grpc_id(kwargs["body_id"]),
-                    faces=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
+                FireOrderedRequestData(
+                    body_id=build_grpc_id(kwargs["body_id"]),
+                    faces_ids=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                    ray_radius=from_measurement_to_server_length(kwargs["ray_radius"]),
+                    ray_radius=from_length_to_grpc_quantity(kwargs["ray_radius"]),
                     points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
-                    max_distance=from_measurement_to_server_length(kwargs["max_distance"]),
+                    max_distance=from_length_to_grpc_quantity(kwargs["max_distance"]),
                     tight_tolerance=kwargs["tight_tolerance"],
                 )
             ]
         )
 
         # Call the gRPC service
-        response = self.stub.RayFireOrdered(request).response_data[0]
+        response = self.stub.FireOrdered(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
@@ -116,21 +116,21 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
                 {
                     [
                         {
-                            "body_id": impact.body,
+                            "body_id": impact.body.id,
                             "point": from_grpc_point_to_point3d(impact.point)
                         }
                         for impact in ordered_impacts.impacts
                     ]
                 }
-                for ordered_impacts in response.ordered_ray_fire_impacts
+                for ordered_impacts in response.ordered_fire_impacts
             ]
         }
 
     @protect_grpc
     def rayfire_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.rayfire_pb2 import (
-            RayFireFacesRequest,
-            RayFireFacesRequestData,
+            FireFacesRequest,
+            FireFacesRequestData,
         )
 
         from .conversions import from_rayfire_options_to_grpc_rayfire_options
@@ -143,11 +143,11 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RayFireFacesRequest(
+        request = FireFacesRequest(
             request_data=[
-                RayFireFacesRequestData(
-                    body=build_grpc_id(kwargs["body_id"]),
-                    faces=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
+                FireFacesRequestData(
+                    body_id=build_grpc_id(kwargs["body_id"]),
+                    faces_ids=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
                     points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
                     options=options,
                 )
@@ -155,7 +155,7 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
         )
 
         # Call the gRPC service
-        response = self.stub.RayFireFaces(request).response_data[0]
+        response = self.stub.FireFaces(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
@@ -163,40 +163,40 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
                 {
                     [
                         {
-                            "face_id": impact.face,
+                            "face_id": impact.face.id,
                             "point": from_grpc_point_to_point3d(impact.point)
                         }
                         for impact in face_impact.impacts
                     ]
                 }
-                for face_impact in response.faces_ray_fire_impacts
+                for face_impact in response.faces_fire_impacts
             ]
         }
 
     @protect_grpc
     def rayfire_ordered_uv(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.rayfire_pb2 import (
-            RayFireOrderedUVRequest,
-            RayFireOrderedUVRequestData,
+            FireOrderedUVRequest,
+            FireOrderedUVRequestData,
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = RayFireOrderedUVRequest(
+        request = FireOrderedUVRequest(
             request_data=[
-                RayFireOrderedUVRequestData(
-                    body=build_grpc_id(kwargs["body_id"]),
-                    faces=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
+                FireOrderedUVRequestData(
+                    body_id=build_grpc_id(kwargs["body_id"]),
+                    faces_ids=[build_grpc_id(face_id) for face_id in kwargs["face_ids"]],
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
-                    ray_radius=from_measurement_to_server_length(kwargs["ray_radius"]),
+                    ray_radius=from_length_to_grpc_quantity(kwargs["ray_radius"]),
                     points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
-                    max_distance=from_measurement_to_server_length(kwargs["max_distance"]),
+                    max_distance=from_length_to_grpc_quantity(kwargs["max_distance"]),
                     tight_tolerance=kwargs["tight_tolerance"],
                 )
             ]
         )
 
         # Call the gRPC service
-        response = self.stub.RayFireOrderedUV(request).response_data[0]
+        response = self.stub.FireOrderedUV(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
@@ -204,7 +204,7 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
                 {
                     [
                         {
-                            "body_id": impact.body,
+                            "body_id": impact.body.id,
                             "point": from_grpc_point_to_point3d(impact.point),
                             "u": impact.u,
                             "v": impact.v
@@ -212,6 +212,6 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
                         for impact in ordered_impact.impacts
                     ]
                 }
-                for ordered_impact in response.ordered_ray_fire_impacts
+                for ordered_impact in response.ordered_fire_impacts
             ]
         }

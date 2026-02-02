@@ -28,7 +28,7 @@ from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
 
-@pytest.mark.skip(reason="Currently failing due to backend issue with rayfire operation")
+# @pytest.mark.skip(reason="Extract impacts returned by rayfire")
 def test_rayfire_simple_case(modeler: Modeler):
     """Test the rayfire operation with a simple case."""
     design = modeler.create_design("rayfire_simple_case")
@@ -42,7 +42,6 @@ def test_rayfire_simple_case(modeler: Modeler):
         body=box, faces=[face], direction=direction, points=points, max_distance=10.0
     )
 
-    assert result is not None
     assert len(result) == 2
     
     # TODO: Issue #2037 

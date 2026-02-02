@@ -40,6 +40,64 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
+class RayFireImpact:
+    """Class representing rayfire impacts."""
+
+    def __init__(
+        self,
+        point: "Point3D",
+        body_id: str = None,
+        face_id: str = None,
+        u: float = None,
+        v: float = None,
+    ):
+        """Initialize a new instance of the RayFireImpact class.
+        
+        Parameters
+        ----------
+        point : Point3D
+            The point of impact.
+        body_id : str, default: None
+            The ID of the body impacted.
+        face_id : str, default: None
+            The ID of the face impacted.
+        u : float, default: None
+            The U coordinate of the impact on the face.
+        v : float, default: None
+            The V coordinate of the impact on the face.
+        """
+        self._point = point
+        self._body_id = body_id
+        self._face_id = face_id
+        self._u = u
+        self._v = v
+
+    @property
+    def point(self) -> "Point3D":
+        """The point of impact."""
+        return self._point
+
+    @property
+    def body_id(self) -> str:
+        """The ID of the body impacted."""
+        return self._body_id
+    
+    @property
+    def face_id(self) -> str:
+        """The ID of the face impacted."""
+        return self._face_id
+    
+    @property
+    def u(self) -> float:
+        """The U coordinate of the impact on the face."""
+        return self._u
+
+    @property
+    def v(self) -> float:
+        """The V coordinate of the impact on the face."""
+        return self._v
+    
+
 class RayfireTools:
     """Rayfire tools for PyAnsys Geometry.
     
@@ -85,7 +143,7 @@ class RayfireTools:
         direction: "UnitVector3D",
         points: list["Point3D"],
         max_distance: Distance | Quantity | Real,
-    ) -> dict:
+    ) -> list[RayFireImpact]:
         """Perform rayfire operation.
 
         Parameters
@@ -103,7 +161,7 @@ class RayfireTools:
 
         Returns
         -------
-        dict
+        list[RayFireImpact]
             Rayfire results.
         """
         max_distance = (
@@ -120,7 +178,7 @@ class RayfireTools:
             max_distance=max_distance,
         )
 
-        return response
+        return [create_impact_from_response(impact) for impact in response.get("impacts")]
     
     @min_backend_version(26, 1, 0)
     def rayfire_faces(
@@ -264,3 +322,25 @@ class RayfireTools:
         )
 
         return response
+
+
+def create_impact_from_response(response: dict) -> "RayFireImpact":
+    """Create a RayFireImpact from a serialized response.
+
+    Parameters
+    ----------
+    response : dict
+        Dictionary containing rayfire impact information.
+
+    Returns
+    -------
+    RayFireImpact
+        An instance of RayFireImpact populated with data from the response.
+    """
+    return RayFireImpact(
+        response.get("point"),
+        response.get("body_id"),
+        response.get("face_id"),
+        response.get("u"),
+        response.get("v"),
+    )
