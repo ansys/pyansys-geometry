@@ -3351,7 +3351,6 @@ def test_design_parameters(modeler: Modeler):
     test_parameters[2].dimension_value = Quantity(2, "")
     status = design.set_parameter(test_parameters[2])
     assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
-    design.plot(screenshot="C:\\Users\\jkerstet\\Downloads\\screenshot.png")
     assert test_parameters[2].dimension_value == Quantity(2, "")
 
 
