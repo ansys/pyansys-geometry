@@ -57,13 +57,13 @@ class ParameterUpdateStatus(Enum):
 
 
 UNIT_MAP = {
-    ParameterType.DIMENSIONTYPE_LINEAR: DEFAULT_UNITS.LENGTH,
-    ParameterType.DIMENSIONTYPE_DIAMETRIC: DEFAULT_UNITS.LENGTH,
-    ParameterType.DIMENSIONTYPE_RADIAL: DEFAULT_UNITS.LENGTH,
-    ParameterType.DIMENSIONTYPE_ARC: DEFAULT_UNITS.LENGTH,
-    ParameterType.DIMENSIONTYPE_AREA: DEFAULT_UNITS.AREA,
-    ParameterType.DIMENSIONTYPE_VOLUME: DEFAULT_UNITS.VOLUME,
-    ParameterType.DIMENSIONTYPE_ANGULAR: DEFAULT_UNITS.ANGLE,
+    ParameterType.DIMENSIONTYPE_LINEAR: DEFAULT_UNITS.SERVER_LENGTH,
+    ParameterType.DIMENSIONTYPE_DIAMETRIC: DEFAULT_UNITS.SERVER_LENGTH,
+    ParameterType.DIMENSIONTYPE_RADIAL: DEFAULT_UNITS.SERVER_LENGTH,
+    ParameterType.DIMENSIONTYPE_ARC: DEFAULT_UNITS.SERVER_LENGTH,
+    ParameterType.DIMENSIONTYPE_AREA: DEFAULT_UNITS.SERVER_AREA,
+    ParameterType.DIMENSIONTYPE_VOLUME: DEFAULT_UNITS.SERVER_VOLUME,
+    ParameterType.DIMENSIONTYPE_ANGULAR: DEFAULT_UNITS.SERVER_ANGLE,
 }
 
 
@@ -105,7 +105,7 @@ class Parameter:
         Returns
         -------
         Real
-            The value in default units (or the original value if not a Quantity).
+            The value in default server units (or the original value if not a Quantity).
         """
         if not isinstance(value, Real):
             return value
@@ -154,12 +154,12 @@ class Parameter:
         self._dimension_type = value
 
     @staticmethod
-    def convert_quantity_to_real(value: Quantity | Real, dimension_type: ParameterType) -> Real:
+    def convert_quantity_to_server_units(value: Quantity, dimension_type: ParameterType) -> Real:
         """Convert a Quantity to a Real value using appropriate units.
 
         Parameters
         ----------
-        value : Quantity | Real
+        value : Quantity
             The value to convert.
         dimension_type : ParameterType
             The dimension type to determine the appropriate unit.
@@ -167,13 +167,10 @@ class Parameter:
         Returns
         -------
         Real
-            The value in default units (or the original value if already a Real).
+            The value in default server units.
         """
-        if isinstance(value, Quantity):
-            default_unit = UNIT_MAP.get(dimension_type)
-            if default_unit is None:
-                return value.magnitude
-            else:
-                return value.m_as(default_unit)
+        default_unit = UNIT_MAP.get(dimension_type)
+        if default_unit is None:
+            return value.magnitude
         else:
-            return value
+            return value.m_as(default_unit)

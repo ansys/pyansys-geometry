@@ -3343,10 +3343,11 @@ def test_design_parameters(modeler: Modeler):
     assert status == ParameterUpdateStatus.SUCCESS
     assert test_parameters[3].dimension_value == Quantity(50, UNITS.mm)
 
-    test_parameters[2].dimension_value = Quantity(5, "")
+    test_parameters[2].dimension_value = Quantity(2, "")
     status = design.set_parameter(test_parameters[2])
-    assert status == ParameterUpdateStatus.SUCCESS
-    assert test_parameters[2].dimension_value == Quantity(5, "")
+    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+    design.plot(screenshot="C:\\Users\\jkerstet\\Downloads\\screenshot.png")
+    assert test_parameters[2].dimension_value == Quantity(2, "")
 
 
 def test_cached_bodies(modeler: Modeler):
