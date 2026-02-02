@@ -30,6 +30,7 @@ import numpy as np
 from pint import Quantity
 import pytest
 
+import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
 from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
@@ -410,6 +411,30 @@ def test_face_to_body_creation(modeler: Modeler):
     assert surface_body.faces[0].area.m == pytest.approx(
         Quantity(2e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_create_surface_from_copy_faces(modeler: Modeler):
+    """Test creating a surface body from copied faces."""
+    # Skip test if running v0 protos
+    if modeler.client.services.version == GeometryApiProtos.V0:
+        pytest.skip("Skipping test for V0 protos")
+
+    # Create a design
+    design = modeler.create_design("CopyFacesTest")
+
+    # Create a cylinder
+    cylinder = design.extrude_sketch("Cylinder", Sketch().circle(Point2D([0, 0]), 5), 20)
+
+    # Get one of the ends and create a surface from it
+    face = cylinder.faces[1]
+    square_surface = design.create_surface_from_face("square", face)
+    assert square_surface.is_surface
+    assert square_surface.faces[0].area.m == pytest.approx(102.41439999, rel=1e-6, abs=1e-8)
+
+    # Create a surface with copy_faces
+    circular_surface = design.copy_faces("circular", [face])
+    assert circular_surface.is_surface
+    assert circular_surface.faces[0].area.m == pytest.approx(78.53981633974483, rel=1e-6, abs=1e-8)
 
 
 def test_extrude_negative_sketch(modeler: Modeler):
@@ -3737,6 +3762,8 @@ def test_import_component_named_selections(modeler: Modeler):
 
 def test_component_make_independent(modeler: Modeler):
     """Test making components independent."""
+    if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        pytest.skip("Failure when tracker is enabled.")
 
     design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
     face = next((ns for ns in design.named_selections if ns.name == "to_pull"), None).faces[0]

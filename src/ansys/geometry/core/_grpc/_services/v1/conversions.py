@@ -987,6 +987,50 @@ def from_grpc_nurbs_curve_to_nurbs_curve(curve: GRPCNurbsCurve) -> "NURBSCurve":
     )
 
 
+def from_grpc_nurbs_surface_to_nurbs_surface(surface: GRPCNurbsSurface) -> "NURBSSurface":
+    """Convert a v1 NURBS surface gRPC message to a ``NURBSSurface``.
+
+    Parameters
+    ----------
+    surface : GRPCNurbsSurface
+        Geometry service gRPC NURBS surface message.
+
+    Returns
+    -------
+    NURBSSurface
+        Resulting converted NURBS surface.
+    """
+    from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
+
+    # Extract control points
+    control_points = [from_grpc_point_to_point3d(cp.position) for cp in surface.control_points]
+
+    # Extract weights
+    weights = [cp.weight for cp in surface.control_points]
+
+    # Extract degree
+    degree_u = surface.nurbs_data_u.degree
+    degree_v = surface.nurbs_data_v.degree
+
+    # Convert gRPC knots to full knot vector
+    knots_u = []
+    for grpc_knot in surface.nurbs_data_u.knots:
+        knots_u.extend([grpc_knot.parameter] * grpc_knot.multiplicity)
+    knots_v = []
+    for grpc_knot in surface.nurbs_data_v.knots:
+        knots_v.extend([grpc_knot.parameter] * grpc_knot.multiplicity)
+
+    # Create and return the NURBS surface
+    return NURBSSurface.from_control_points(
+        control_points=control_points,
+        degree_u=degree_u,
+        degree_v=degree_v,
+        knots_u=knots_u,
+        knots_v=knots_v,
+        weights=weights,
+    )
+
+
 def from_knots_to_grpc_knots(knots: list[float]) -> list[GRPCKnot]:
     """Convert a v1 list of knots to a list of gRPC knot messages.
 
@@ -1228,6 +1272,8 @@ def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceTyp
         result = Torus(origin, major_radius, minor_radius, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_PLANE:
         result = PlaneSurface(origin, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_NURBS:
+        result = from_grpc_nurbs_surface_to_nurbs_surface(surface.nurbs_surface)
     else:
         result = None
     return result
