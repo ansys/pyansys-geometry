@@ -3303,13 +3303,13 @@ def test_design_parameters(modeler: Modeler):
     test_parameters = design.parameters
 
     # Verify the initial parameters
-    assert len(test_parameters) == 2
+    assert len(test_parameters) == 4
     assert test_parameters[0].name == "p1"
-    assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
+    assert abs(test_parameters[0].dimension_value.m - 0.00010872999999999981) < 1e-8
     assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
     assert test_parameters[1].name == "p2"
-    assert abs(test_parameters[1].dimension_value - 0.0002552758322160813) < 1e-8
+    assert abs(test_parameters[1].dimension_value.m - 0.0002552758322160813) < 1e-8
     assert test_parameters[1].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
     # Update the second parameter and verify the status
@@ -3327,6 +3327,38 @@ def test_design_parameters(modeler: Modeler):
 
     test_parameters[0].dimension_type = ParameterType.DIMENSIONTYPE_AREA
     assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    # Update a parameter with a unit value
+    test_parameters[1].dimension_value = Quantity(800, UNITS.mm**2)
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.SUCCESS
+    assert test_parameters[1].dimension_value.m == pytest.approx(800, rel=1e-8)
+    assert test_parameters[1].dimension_value.m_as(DEFAULT_UNITS.AREA) == pytest.approx(
+        0.0008, rel=1e-8
+    )
+
+
+def test_unitless_design_parameters(modeler: Modeler):
+    """Test the design parameter's functionality for unitless parameters."""
+    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
+    test_parameters = design.parameters
+    assert len(test_parameters) == 4
+
+    # Test the unitless parameter (pattern count)
+    assert test_parameters[2].name == "PatternCount"
+    assert test_parameters[2].dimension_type == ParameterType.DIMENSIONTYPE_COUNT
+    assert test_parameters[2].dimension_value == Quantity(3, "")
+
+    # Change the pattern separation and count
+    test_parameters[3].dimension_value = Quantity(50, UNITS.mm)
+    status = design.set_parameter(test_parameters[3])
+    assert status == ParameterUpdateStatus.SUCCESS
+    assert test_parameters[3].dimension_value == Quantity(50, UNITS.mm)
+
+    test_parameters[2].dimension_value = Quantity(2, "")
+    status = design.set_parameter(test_parameters[2])
+    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+    assert test_parameters[2].dimension_value == Quantity(2, "")
 
 
 def test_cached_bodies(modeler: Modeler):
