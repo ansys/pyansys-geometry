@@ -127,10 +127,7 @@ def pytest_collection_modifyitems(config, items):
 def pytest_pyfunc_call(pyfuncitem):
     config = pyfuncitem.config
     config_value = config.getoption("--backwards-compatibility")
-    skip_on_error = True if config_value.lower() == "yes" else False
-
-    if not skip_on_error:
-        return None  # Let normal test execution proceed
+    skip_backwards = True if config_value.lower() == "yes" else False
 
     testfunction = pyfuncitem.obj
 
@@ -139,7 +136,7 @@ def pytest_pyfunc_call(pyfuncitem):
             testfunction(*args, **kwargs)
         except (GeometryRuntimeError, NotImplementedError) as e:
             # Verify if the error is due to server incompatibility
-            if "requires a minimum Ansys release version" in str(e):
+            if skip_backwards and "requires a minimum Ansys release version" in str(e):
                 # If so, skip the test
                 pytest.skip("Skipped due to backwards incompatible backend version.")
             elif "is not implemented in this protofile version." in str(e):
@@ -150,6 +147,7 @@ def pytest_pyfunc_call(pyfuncitem):
                 raise e
 
     pyfuncitem.obj = wrapped
+
     return None  # Continue with normal execution
 
 
