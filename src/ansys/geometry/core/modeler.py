@@ -647,12 +647,12 @@ class Modeler:
     def unsupported(self) -> "UnsupportedCommands":
         """Access to unsupported commands."""
         return self._unsupported
-    
+
     @property
     @min_backend_version(26, 1, 0)
     def rayfire_tools(self) -> "RayfireTools":
         """Access to rayfire tools.
-        
+
         Notes
         -----
         This property is only available starting on Ansys release 26R1.

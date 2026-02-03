@@ -21,8 +21,6 @@
 # SOFTWARE.
 """Testing of rayfire tools."""
 
-import pytest
-
 from ansys.geometry.core.math import Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
@@ -43,8 +41,8 @@ def test_rayfire_simple_case(modeler: Modeler):
     )
 
     assert len(result) == 2
-    
-    # TODO: Issue #2037 
+
+    # TODO: Issue #2037
     # test the actual intersection points returned by the rayfire operation
 
 
@@ -57,7 +55,9 @@ def test_rayfire_faces(modeler: Modeler):
     points = [Point3D([-2, 0, 1])]
 
     result = modeler.rayfire_tools.rayfire_faces(
-        body=box, faces=[face], points=points,
+        body=box,
+        faces=[face],
+        points=points,
     )
 
     assert result is not None

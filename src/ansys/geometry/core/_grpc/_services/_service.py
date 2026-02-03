@@ -637,7 +637,7 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._prepare_tools
-    
+
     @property
     def rayfire(self) -> GRPCRayfireService:
         """

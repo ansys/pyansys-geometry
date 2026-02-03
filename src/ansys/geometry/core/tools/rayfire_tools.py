@@ -52,7 +52,7 @@ class RayFireImpact:
         v: float = None,
     ):
         """Initialize a new instance of the RayFireImpact class.
-        
+
         Parameters
         ----------
         point : Point3D
@@ -81,12 +81,12 @@ class RayFireImpact:
     def body_id(self) -> str:
         """The ID of the body impacted."""
         return self._body_id
-    
+
     @property
     def face_id(self) -> str:
         """The ID of the face impacted."""
         return self._face_id
-    
+
     @property
     def u(self) -> float:
         """The U coordinate of the impact on the face."""
@@ -96,11 +96,11 @@ class RayFireImpact:
     def v(self) -> float:
         """The V coordinate of the impact on the face."""
         return self._v
-    
+
 
 class RayfireTools:
     """Rayfire tools for PyAnsys Geometry.
-    
+
     Parameters
     ----------
     grpc_client : GrpcClient
@@ -110,7 +110,7 @@ class RayfireTools:
     _internal_use : bool, optional
         Internal flag to prevent direct instantiation by users.
         This parameter is for internal use only.
-    
+
     Raises
     ------
     GeometryRuntimeError
@@ -120,12 +120,10 @@ class RayfireTools:
     Notes
     -----
     This class should not be instantiated directly. Use
-    ``modeler.rayfire_tools`` instead.   
+    ``modeler.rayfire_tools`` instead.
     """
 
-    def __init__(
-        self, grpc_client: GrpcClient, modeler: "Modeler", _internal_use: bool = False
-    ):
+    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler", _internal_use: bool = False):
         """Initialize a new instance of the ``RepairTools`` class."""
         if not _internal_use:
             raise GeometryRuntimeError(
@@ -134,7 +132,7 @@ class RayfireTools:
             )
         self._modeler = modeler
         self._grpc_client = grpc_client
-    
+
     @min_backend_version(26, 1, 0)
     def rayfire(
         self,
@@ -165,9 +163,7 @@ class RayfireTools:
             Rayfire results.
         """
         max_distance = (
-            max_distance
-            if isinstance(max_distance, Distance)
-            else Distance(max_distance)
+            max_distance if isinstance(max_distance, Distance) else Distance(max_distance)
         )
 
         response = self._grpc_client.services.rayfire.rayfire(
@@ -179,7 +175,7 @@ class RayfireTools:
         )
 
         return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
-    
+
     @min_backend_version(26, 1, 0)
     def rayfire_faces(
         self,
@@ -189,7 +185,7 @@ class RayfireTools:
         options: RayfireOptions | None = None,
     ) -> list[RayFireImpact]:
         """Perform the rayfire operation on faces.
-        
+
         Parameters
         ----------
         body : Body
@@ -214,7 +210,7 @@ class RayfireTools:
         )
 
         return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
-    
+
     @min_backend_version(26, 1, 0)
     def rayfire_ordered(
         self,
@@ -227,7 +223,7 @@ class RayfireTools:
         tight_tolerance: bool = False,
     ) -> list[RayFireImpact]:
         """Perform a rayfire ordered operation.
-        
+
         Parameters
         ----------
         body : Body
@@ -252,9 +248,7 @@ class RayfireTools:
         """
         ray_radius = ray_radius if isinstance(ray_radius, Distance) else Distance(ray_radius)
         max_distance = (
-            max_distance
-            if isinstance(max_distance, Distance)
-            else Distance(max_distance)
+            max_distance if isinstance(max_distance, Distance) else Distance(max_distance)
         )
 
         response = self._grpc_client.services.rayfire.rayfire_ordered(
@@ -268,7 +262,7 @@ class RayfireTools:
         )
 
         return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
-    
+
     @min_backend_version(26, 1, 0)
     def rayfire_ordered_uv(
         self,
@@ -281,7 +275,7 @@ class RayfireTools:
         tight_tolerance: bool = False,
     ) -> list[RayFireImpact]:
         """Perform a rayfire ordered operation.
-        
+
         Parameters
         ----------
         body : Body
@@ -306,9 +300,7 @@ class RayfireTools:
         """
         ray_radius = ray_radius if isinstance(ray_radius, Distance) else Distance(ray_radius)
         max_distance = (
-            max_distance
-            if isinstance(max_distance, Distance)
-            else Distance(max_distance)
+            max_distance if isinstance(max_distance, Distance) else Distance(max_distance)
         )
 
         response = self._grpc_client.services.rayfire.rayfire_ordered_uv(

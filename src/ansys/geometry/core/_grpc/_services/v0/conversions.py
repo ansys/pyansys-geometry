@@ -1432,6 +1432,7 @@ def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> G
         request_secondary=options.request_secondary,
     )
 
+
 def _nurbs_curves_compatibility(backend_version: "semver.Version", grpc_geometries: GRPCGeometries):
     """Check if the backend version is compatible with NURBS curves in sketches.
 
