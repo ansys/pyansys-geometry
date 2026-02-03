@@ -111,7 +111,7 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
         return {
             "ordered_impacts": [
                 {
-                    [
+                    "impacts": [
                         {
                             "body_id": impact.body.id,
                             "point": from_grpc_point_to_point3d(impact.point),
@@ -158,7 +158,7 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
         return {
             "face_impacts": [
                 {
-                    [
+                    "impacts": [
                         {
                             "face_id": impact.face.id,
                             "point": from_grpc_point_to_point3d(impact.point),
@@ -199,7 +199,7 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
         return {
             "ordered_impacts": [
                 {
-                    [
+                    "impacts": [
                         {
                             "body_id": impact.body.id,
                             "point": from_grpc_point_to_point3d(impact.point),
