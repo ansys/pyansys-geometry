@@ -639,18 +639,27 @@ class GRPCBodyServiceV1(GRPCBodyService):
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import (
-            MultipleEntitiesRequest,
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            GetBoundingBoxRequest,
+            GetBoundingBoxRequestData,
         )
 
-        # Create the request with MultipleEntitiesRequest
-        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+        # Create the request to the proper method depending on tight tolerenace
+        if kwargs.get("tight_tolerance"):
+            request = GetBoundingBoxRequest(
+                request_data=[
+                    GetBoundingBoxRequestData(
+                        body_id=build_grpc_id(kwargs["id"]),
+                        tight_tolerance=kwargs.get("tight_tolerance", False),
+                    )
+                ]
+            )
 
-        # Call the gRPC service
-        resp = self.stub.GetBoundingBox(request=request)
-
-        # Get the first bounding box from the response array
-        resp = resp.response_data[0]
+            resp = self.stub.GetTightBoundingBox(request).response_data[0]
+        else:
+            request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+            resp = self.stub.GetBoundingBox(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
@@ -1067,10 +1076,12 @@ class GRPCBodyServiceV1(GRPCBodyService):
 
         # Call the gRPC service
         resp = self.edit_stub.SplitBodies(request=request)
+        tracked_response = serialize_tracked_command_response(resp.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
             "success": resp.tracked_command_response.command_response.success,
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -1406,3 +1417,33 @@ class GRPCBodyServiceV1(GRPCBodyService):
                 )
 
         return {"tessellation": tess_map}
+
+    @protect_grpc
+    def copy_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            CopyFacesRequest,
+            CopyFacesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CopyFacesRequest(
+            request_data=[
+                CopyFacesRequestData(
+                    face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    name=kwargs["name"],
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CopyFaces(request=request)
+
+        # Return the response - formatted as a dictionary
+        body = resp.bodies[0]
+        return {
+            "id": body.id.id,
+            "name": body.name,
+            "master_id": body.master_id.id,
+            "is_surface": body.is_surface,
+        }

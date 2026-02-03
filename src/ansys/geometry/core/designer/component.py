@@ -1617,6 +1617,35 @@ class Component:
         # If you reached this point... this means that no beam was found!
         return None
 
+    @check_input_types
+    @min_backend_version(27, 1, 0)
+    def copy_faces(self, name: str, faces: list[Face]) -> Body:
+        """Create a surface body from the faces provided.
+
+        Parameters
+        ----------
+        name : str
+            Name of the new surface body.
+        faces : list[Face]
+            List of faces to copy.
+        body : Body
+            Body to which the faces belong.
+
+        Returns
+        -------
+        Body
+            New surface body created from the copied faces.
+        """
+        self._grpc_client.log.debug(
+            f"Creating surface from faces provided on {self.id}. Creating body..."
+        )
+        response = self._grpc_client.services.bodies.copy_faces(
+            name=name,
+            parent_id=self.id,
+            face_ids=[face.id for face in faces],
+        )
+        return self.__build_body_from_response(response)
+
     def _kill_component_on_client(self) -> None:
         """Set the ``is_alive`` property of nested objects to ``False``.
 
