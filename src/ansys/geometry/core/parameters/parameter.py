@@ -113,10 +113,10 @@ class Parameter:
         unit_type = UNIT_MAP.get(dim_type)
         if unit_type is None:
             return Quantity(value, "")
-        
+
         # Get the default unit from DEFAULT_UNITS using the unit_type
         default_unit = getattr(DEFAULT_UNITS, unit_type)
-        
+
         return Quantity(value, default_unit)
 
     @property
@@ -177,4 +177,4 @@ class Parameter:
         if unit_type is None:
             return value.magnitude
         else:
-            return value.m_as(getattr(DEFAULT_UNITS, "SERVER_" + unit_type))
+            return value.m_as(getattr(DEFAULT_UNITS, f"SERVER_{unit_type}"))
