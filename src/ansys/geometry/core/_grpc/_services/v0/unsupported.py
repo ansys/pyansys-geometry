@@ -28,9 +28,6 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.unsupported import GRPCUnsupportedService
 from .conversions import (
     build_grpc_id,
-    from_grpc_point_to_point3d,
-    from_point3d_to_grpc_point,
-    from_unit_vector_to_grpc_direction,
 )
 
 
