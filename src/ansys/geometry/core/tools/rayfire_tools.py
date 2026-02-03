@@ -40,7 +40,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.modeler import Modeler
 
 
-class RayFireImpact:
+class RayfireImpact:
     """Class representing rayfire impacts."""
 
     def __init__(
@@ -51,7 +51,7 @@ class RayFireImpact:
         u: float = None,
         v: float = None,
     ):
-        """Initialize a new instance of the RayFireImpact class.
+        """Initialize a new instance of the RayfireImpact class.
 
         Parameters
         ----------
@@ -124,7 +124,7 @@ class RayfireTools:
     """
 
     def __init__(self, grpc_client: GrpcClient, modeler: "Modeler", _internal_use: bool = False):
-        """Initialize a new instance of the ``RepairTools`` class."""
+        """Initialize a new instance of the ``RayfireTools`` class."""
         if not _internal_use:
             raise GeometryRuntimeError(
                 "RayfireTools should not be instantiated directly. "
@@ -141,7 +141,7 @@ class RayfireTools:
         direction: "UnitVector3D",
         points: list["Point3D"],
         max_distance: Distance | Quantity | Real,
-    ) -> list[RayFireImpact]:
+    ) -> list[RayfireImpact]:
         """Perform rayfire operation.
 
         Parameters
@@ -183,7 +183,7 @@ class RayfireTools:
         faces: list["Face"],
         points: list["Point3D"],
         options: RayfireOptions | None = None,
-    ) -> list[RayFireImpact]:
+    ) -> list[RayfireImpact]:
         """Perform the rayfire operation on faces.
 
         Parameters
@@ -199,7 +199,7 @@ class RayfireTools:
 
         Returns
         -------
-        list[RayFireImpact]
+        list[RayfireImpact]
             Rayfire results.
         """
         response = self._grpc_client.services.rayfire.rayfire_faces(
@@ -221,7 +221,7 @@ class RayfireTools:
         points: list["Point3D"],
         max_distance: Distance | Quantity | Real,
         tight_tolerance: bool = False,
-    ) -> list[RayFireImpact]:
+    ) -> list[RayfireImpact]:
         """Perform a rayfire ordered operation.
 
         Parameters
@@ -243,7 +243,7 @@ class RayfireTools:
 
         Returns
         -------
-        list[RayFireImpact]
+        list[RayfireImpact]
             Rayfire results.
         """
         ray_radius = ray_radius if isinstance(ray_radius, Distance) else Distance(ray_radius)
@@ -273,7 +273,7 @@ class RayfireTools:
         points: list["Point3D"],
         max_distance: Distance | Quantity | Real,
         tight_tolerance: bool = False,
-    ) -> list[RayFireImpact]:
+    ) -> list[RayfireImpact]:
         """Perform a rayfire ordered operation.
 
         Parameters
@@ -295,7 +295,7 @@ class RayfireTools:
 
         Returns
         -------
-        list[RayFireImpact]
+        list[RayfireImpact]
             Rayfire results.
         """
         ray_radius = ray_radius if isinstance(ray_radius, Distance) else Distance(ray_radius)
@@ -316,8 +316,8 @@ class RayfireTools:
         return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
 
 
-def create_impact_from_response(response: dict) -> "RayFireImpact":
-    """Create a RayFireImpact from a serialized response.
+def create_impact_from_response(response: dict) -> "RayfireImpact":
+    """Create a RayfireImpact from a serialized response.
 
     Parameters
     ----------
@@ -326,10 +326,10 @@ def create_impact_from_response(response: dict) -> "RayFireImpact":
 
     Returns
     -------
-    RayFireImpact
-        An instance of RayFireImpact populated with data from the response.
+    RayfireImpact
+        An instance of RayfireImpact populated with data from the response.
     """
-    return RayFireImpact(
+    return RayfireImpact(
         response.get("point"),
         response.get("body_id"),
         response.get("face_id"),

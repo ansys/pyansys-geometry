@@ -50,5 +50,5 @@ from ansys.geometry.core.misc.checks import (
     run_if_graphics_required,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
-from ansys.geometry.core.misc.options import ImportOptions, TessellationOptions
+from ansys.geometry.core.misc.options import ImportOptions, RayfireOptions, TessellationOptions
 from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity

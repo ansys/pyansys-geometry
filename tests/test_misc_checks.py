@@ -26,9 +26,10 @@ import numpy as np
 import pytest
 
 from ansys.geometry.core.errors import GeometryRuntimeError
-from ansys.geometry.core.math import Point3D
+from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc import (
     UNITS,
+    RayfireOptions,
     TessellationOptions,
     auxiliary,
     check_is_float_int,
@@ -492,3 +493,28 @@ def test_kwargs_passed_not_accepted_decorator_order():
         "method 'my_method_diff_order': arg3.",
     ):
         my_method_diff_order(arg1=1, arg2=2, arg3=3)
+
+
+def test_rayfire_options():
+    """Test the RayfireOptions dataclass."""
+    rayfire_options = RayfireOptions(
+        radius=1.0,
+        direction=UnitVector3D([1, 3, 5]),
+        max_distance=15,
+        min_distance=2,
+        tight_tolerance=True,
+        pick_back_faces=False,
+        max_hits=15,
+        request_params=True,
+        request_secondary=False,
+    )
+
+    assert rayfire_options.radius == 1.0
+    assert rayfire_options.direction == UnitVector3D([1, 3, 5])
+    assert rayfire_options.max_distance == 15
+    assert rayfire_options.min_distance == 2
+    assert rayfire_options.tight_tolerance is True
+    assert rayfire_options.pick_back_faces is False
+    assert rayfire_options.max_hits == 15
+    assert rayfire_options.request_params is True
+    assert rayfire_options.request_secondary is False
