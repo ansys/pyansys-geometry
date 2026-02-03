@@ -41,7 +41,7 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
     ----------
     channel : grpc.Channel
         The gRPC channel to the server.
-"""
+    """
 
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
@@ -130,10 +130,7 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
             "response_data": [
                 {
                     "impacts": [
-                        {
-                            "body_id": impact.body,
-                            "point": from_grpc_point_to_point3d(impact.point)
-                        }
+                        {"body_id": impact.body, "point": from_grpc_point_to_point3d(impact.point)}
                         for impact in data.single_ray_fire_impacts.impacts
                     ]
                 }
@@ -175,7 +172,7 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
                             [
                                 {
                                     "body_id": impact.body,
-                                    "point": from_grpc_point_to_point3d(impact.point)
+                                    "point": from_grpc_point_to_point3d(impact.point),
                                 }
                                 for impact in ordered_impacts.impacts
                             ]
@@ -217,7 +214,7 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
                             [
                                 {
                                     "face_id": impact.face,
-                                    "point": from_grpc_point_to_point3d(impact.point)
+                                    "point": from_grpc_point_to_point3d(impact.point),
                                 }
                                 for impact in face_impact.impacts
                             ]
@@ -265,7 +262,7 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
                                     "body_id": impact.body,
                                     "point": from_grpc_point_to_point3d(impact.point),
                                     "u": impact.u,
-                                    "v": impact.v
+                                    "v": impact.v,
                                 }
                                 for impact in ordered_impact.impacts
                             ]

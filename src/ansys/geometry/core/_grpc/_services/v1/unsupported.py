@@ -98,7 +98,7 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):
 
         # Return the response - formatted as a dictionary
         return {}
-    
+
     @protect_grpc
     def rayfire(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError
