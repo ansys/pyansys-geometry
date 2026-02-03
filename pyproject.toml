@@ -126,7 +126,7 @@ tests-minimal = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/ansys"]
+packages = [ "src/ansys" ]
 
 [tool.ruff]
 line-length = 100
