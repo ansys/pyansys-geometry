@@ -165,11 +165,11 @@ minversion = "7.1"
 addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv --image_cache_dir tests/integration/image_cache --add_missing_images"
 testpaths = [ "tests" ]
 
-[tool.coverage.run]
-source = [ "ansys.geometry" ]
-
 [tool.coverage.report]
 show_missing = true
+
+[tool.coverage.run]
+source = [ "ansys.geometry" ]
 
 [tool.towncrier]
 directory = "doc/changelog.d"
