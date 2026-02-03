@@ -57,13 +57,13 @@ class ParameterUpdateStatus(Enum):
 
 
 UNIT_MAP = {
-    ParameterType.DIMENSIONTYPE_LINEAR: DEFAULT_UNITS.SERVER_LENGTH,
-    ParameterType.DIMENSIONTYPE_DIAMETRIC: DEFAULT_UNITS.SERVER_LENGTH,
-    ParameterType.DIMENSIONTYPE_RADIAL: DEFAULT_UNITS.SERVER_LENGTH,
-    ParameterType.DIMENSIONTYPE_ARC: DEFAULT_UNITS.SERVER_LENGTH,
-    ParameterType.DIMENSIONTYPE_AREA: DEFAULT_UNITS.SERVER_AREA,
-    ParameterType.DIMENSIONTYPE_VOLUME: DEFAULT_UNITS.SERVER_VOLUME,
-    ParameterType.DIMENSIONTYPE_ANGULAR: DEFAULT_UNITS.SERVER_ANGLE,
+    ParameterType.DIMENSIONTYPE_LINEAR: "LENGTH",
+    ParameterType.DIMENSIONTYPE_DIAMETRIC: "LENGTH",
+    ParameterType.DIMENSIONTYPE_RADIAL: "LENGTH",
+    ParameterType.DIMENSIONTYPE_ARC: "LENGTH",
+    ParameterType.DIMENSIONTYPE_AREA: "AREA",
+    ParameterType.DIMENSIONTYPE_VOLUME: "VOLUME",
+    ParameterType.DIMENSIONTYPE_ANGULAR: "ANGLE",
 }
 
 
@@ -93,7 +93,7 @@ class Parameter:
         self._dimension_value = self._convert_to_quantity(dimension_value, dimension_type)
 
     def _convert_to_quantity(self, value: Quantity | Real, dim_type: ParameterType) -> Quantity:
-        """Convert a value to default units based on dimension type.
+        """Convert a value to a Quantity with default client units based on dimension type.
 
         Parameters
         ----------
@@ -104,16 +104,19 @@ class Parameter:
 
         Returns
         -------
-        Real
-            The value in default server units (or the original value if not a Quantity).
+        Quantity
+            The value as a Quantity with appropriate client units.
         """
-        if not isinstance(value, Real):
+        if isinstance(value, Quantity):
             return value
 
-        default_unit = UNIT_MAP.get(dim_type)
-        if default_unit is None:
+        unit_type = UNIT_MAP.get(dim_type)
+        if unit_type is None:
             return Quantity(value, "")
-
+        
+        # Get the default unit from DEFAULT_UNITS using the unit_type
+        default_unit = getattr(DEFAULT_UNITS, unit_type)
+        
         return Quantity(value, default_unit)
 
     @property
@@ -169,8 +172,9 @@ class Parameter:
         Real
             The value in default server units.
         """
-        default_unit = UNIT_MAP.get(dimension_type)
-        if default_unit is None:
+        unit_type = UNIT_MAP.get(dimension_type)
+
+        if unit_type is None:
             return value.magnitude
         else:
-            return value.m_as(default_unit)
+            return value.m_as(getattr(DEFAULT_UNITS, "SERVER_" + unit_type))
