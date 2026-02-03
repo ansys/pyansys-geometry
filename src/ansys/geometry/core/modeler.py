@@ -294,36 +294,34 @@ class Modeler:
         -----
         This method creates a file on the server that has the same name and extension
         as the file on the client.
+
+        Warnings
+        --------
+        This method is not supported in protos v1 and beyond. Use 'modeler.open_file()' to open
+        files or 'design.insert_file()' to insert files into an existing design.
         """
-        if self.client.services.version == GeometryApiProtos.V0:
-            from pathlib import Path
+        from pathlib import Path
 
-            fp_path = Path(file_path).resolve()
+        fp_path = Path(file_path).resolve()
 
-            if not fp_path.exists():
-                raise ValueError(f"Could not find file: {file_path}")
-            if fp_path.is_dir():
-                raise ValueError("File path must lead to a file, not a directory.")
+        if not fp_path.exists():
+            raise ValueError(f"Could not find file: {file_path}")
+        if fp_path.is_dir():
+            raise ValueError("File path must lead to a file, not a directory.")
 
-            file_name = fp_path.name
+        file_name = fp_path.name
 
-            with fp_path.open(mode="rb") as file:
-                data = file.read()
+        with fp_path.open(mode="rb") as file:
+            data = file.read()
 
-            response = self.client.services.designs.upload_file(
-                data=data,
-                file_name=file_name,
-                open_file=open_file,
-                import_options=import_options,
-            )
+        response = self.client.services.designs.upload_file(
+            data=data,
+            file_name=file_name,
+            open_file=open_file,
+            import_options=import_options,
+        )
 
-            return response.get("file_path")
-        else:
-            raise GeometryRuntimeError(
-                "The '_upload_file' method is not supported in protos v1 and beyond. "
-                "Use 'modeler.open_file()' to open files or 'design.insert_file()' "
-                "to insert files into an existing design."
-            )
+        return response.get("file_path")
 
     def _upload_file_stream(
         self,
@@ -351,28 +349,26 @@ class Modeler:
         -----
         This method creates a file on the server that has the same name and extension
         as the file on the client.
+
+        Warnings
+        --------
+        This method is not supported with protos v1 and beyond. Use 'modeler.open_file()' to open
+        files or 'design.insert_file()' to insert files into an existing design.
         """
-        if self.client.services.version == GeometryApiProtos.V0:
-            from pathlib import Path
+        from pathlib import Path
 
-            fp_path = Path(file_path).resolve()
+        fp_path = Path(file_path).resolve()
 
-            if not fp_path.exists():
-                raise ValueError(f"Could not find file: {file_path}")
-            if fp_path.is_dir():
-                raise ValueError("File path must lead to a file, not a directory.")
+        if not fp_path.exists():
+            raise ValueError(f"Could not find file: {file_path}")
+        if fp_path.is_dir():
+            raise ValueError("File path must lead to a file, not a directory.")
 
-            response = self.client.services.designs.upload_file_stream(
-                file_path=fp_path, open_file=open_file, import_options=import_options
-            )
+        response = self.client.services.designs.upload_file_stream(
+            file_path=fp_path, open_file=open_file, import_options=import_options
+        )
 
-            return response.get("file_path")
-        else:
-            raise GeometryRuntimeError(
-                "The '_upload_file_stream' method is not supported with protos v1 and beyond. "
-                "Use 'modeler.open_file()' to open files or 'design.insert_file()' "
-                "to insert files into an existing design."
-            )
+        return response.get("file_path")
 
     def open_file(
         self,
