@@ -981,6 +981,7 @@ def launch_modeler_with_core_service(
 
         * ``252`` : Ansys 25R2
         * ``261`` : Ansys 26R1
+        * ``271`` : Ansys 27R1
     host: str, optional
         IP address at which the service will be deployed. By default,
         its value will be ``localhost``.

@@ -297,6 +297,26 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:
+        """Get the bounding box of the body.
+
+        Parameters
+        ----------
+        tight_tolerance : bool, default: False
+            Whether to use a tight tolerance when calculating the bounding box.
+
+        Returns
+        -------
+        BoundingBox
+            Bounding box of the body.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        return
+
+    @abstractmethod
     def assign_material(self, material: Material) -> None:
         """Assign a material against the active design.
 
@@ -1172,6 +1192,19 @@ class MasterBody(IBody):
             center=response.get("center"),
         )
 
+    @min_backend_version(27, 1, 0)
+    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:  # noqa: D102
+        self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
+        response = self._grpc_client.services.bodies.get_bounding_box(
+            id=self.id, tight_tolerance=tight_tolerance
+        )
+
+        return BoundingBox(
+            min_corner=response.get("min"),
+            max_corner=response.get("max"),
+            center=response.get("center"),
+        )
+
     @check_input_types
     def assign_material(self, material: Material) -> None:  # noqa: D102
         self._grpc_client.log.debug(f"Assigning body {self.id} material {material.name}.")
@@ -1891,6 +1924,19 @@ class Body(IBody):
             f"Retrieving bounding box for body {self.id} from server."
         )
         response = self._template._grpc_client.services.bodies.get_bounding_box(id=self.id)
+        return BoundingBox(
+            min_corner=response.get("min"),
+            max_corner=response.get("max"),
+            center=response.get("center"),
+        )
+
+    @min_backend_version(27, 1, 0)
+    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:  # noqa: D102
+        self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
+        response = self._grpc_client.services.bodies.get_bounding_box(
+            id=self.id, tight_tolerance=tight_tolerance
+        )
+
         return BoundingBox(
             min_corner=response.get("min"),
             max_corner=response.get("max"),

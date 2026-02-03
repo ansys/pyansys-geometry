@@ -1578,3 +1578,12 @@ def test_intersect_curve_and_surface(modeler: Modeler):
     assert len(points) == 2
     assert np.allclose(points[0], Point3D([-1, 0, 0]))
     assert np.allclose(points[1], Point3D([1, 0, 0]))
+
+    # try nurbs surface
+    design = modeler.open_file(FILES_DIR / "nurbs_surface.scdocx")
+    surface = design.bodies[0].faces[0].shape.geometry
+    points = modeler.geometry_commands.intersect_curve_and_surface(
+        Line([0.04, 0.07, 0], [0, 0, 1]), surface
+    )
+    assert len(points) == 1
+    assert np.allclose(points[0], Point3D([0.04, 0.07, 0.00029651]))

@@ -33,6 +33,7 @@ from .conversions import (
     from_line_to_grpc_line,
     from_surface_to_grpc_surface,
     from_trimmed_curve_to_grpc_trimmed_curve,
+    serialize_tracked_command_response,
 )
 
 
@@ -78,10 +79,13 @@ class GRPCCurvesServiceV1(GRPCCurvesService):
         )
 
         # Call the gRPC service
-        _ = self.stub.RevolveCurves(request)
+        response = self.stub.RevolveCurves(request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the result - formatted as a dictionary
-        return {}
+        return {
+            "tracked_response": tracked_response,
+        }
 
     @protect_grpc
     def intersect_curves(self, **kwargs) -> dict:  # noqa: D102
