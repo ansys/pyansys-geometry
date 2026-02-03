@@ -277,3 +277,8 @@ class GRPCBodyService(ABC):  # pragma: no cover
     def get_full_tessellation(self, **kwargs) -> dict:
         """Get the full tessellation of a body."""
         pass
+
+    @abstractmethod
+    def copy_faces(self, **kwargs) -> dict:
+        """Create a surface body from the faces provided."""
+        pass
