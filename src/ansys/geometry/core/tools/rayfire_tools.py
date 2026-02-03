@@ -178,7 +178,7 @@ class RayfireTools:
             max_distance=max_distance,
         )
 
-        return [create_impact_from_response(impact) for impact in response.get("impacts")]
+        return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
     
     @min_backend_version(26, 1, 0)
     def rayfire_faces(
@@ -187,7 +187,7 @@ class RayfireTools:
         faces: list["Face"],
         points: list["Point3D"],
         options: RayfireOptions | None = None,
-    ) -> dict:
+    ) -> list[RayFireImpact]:
         """Perform the rayfire operation on faces.
         
         Parameters
@@ -203,7 +203,7 @@ class RayfireTools:
 
         Returns
         -------
-        dict
+        list[RayFireImpact]
             Rayfire results.
         """
         response = self._grpc_client.services.rayfire.rayfire_faces(
@@ -213,7 +213,7 @@ class RayfireTools:
             options=options,
         )
 
-        return response
+        return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
     
     @min_backend_version(26, 1, 0)
     def rayfire_ordered(
@@ -225,7 +225,7 @@ class RayfireTools:
         points: list["Point3D"],
         max_distance: Distance | Quantity | Real,
         tight_tolerance: bool = False,
-    ) -> dict:
+    ) -> list[RayFireImpact]:
         """Perform a rayfire ordered operation.
         
         Parameters
@@ -247,7 +247,7 @@ class RayfireTools:
 
         Returns
         -------
-        dict
+        list[RayFireImpact]
             Rayfire results.
         """
         ray_radius = ray_radius if isinstance(ray_radius, Distance) else Distance(ray_radius)
@@ -267,7 +267,7 @@ class RayfireTools:
             tight_tolerance=tight_tolerance,
         )
 
-        return response
+        return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
     
     @min_backend_version(26, 1, 0)
     def rayfire_ordered_uv(
@@ -279,7 +279,7 @@ class RayfireTools:
         points: list["Point3D"],
         max_distance: Distance | Quantity | Real,
         tight_tolerance: bool = False,
-    ) -> dict:
+    ) -> list[RayFireImpact]:
         """Perform a rayfire ordered operation.
         
         Parameters
@@ -301,7 +301,7 @@ class RayfireTools:
 
         Returns
         -------
-        dict
+        list[RayFireImpact]
             Rayfire results.
         """
         ray_radius = ray_radius if isinstance(ray_radius, Distance) else Distance(ray_radius)
@@ -321,7 +321,7 @@ class RayfireTools:
             tight_tolerance=tight_tolerance,
         )
 
-        return response
+        return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
 
 
 def create_impact_from_response(response: dict) -> "RayFireImpact":
