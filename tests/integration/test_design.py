@@ -3337,6 +3337,13 @@ def test_design_parameters(modeler: Modeler):
         0.0008, rel=1e-8
     )
 
+
+def test_unitless_design_parameters(modeler: Modeler):
+    """Test the design parameter's functionality for unitless parameters."""
+    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
+    test_parameters = design.parameters
+    assert len(test_parameters) == 4
+
     # Test the unitless parameter (pattern count)
     assert test_parameters[2].name == "PatternCount"
     assert test_parameters[2].dimension_type == ParameterType.DIMENSIONTYPE_COUNT
