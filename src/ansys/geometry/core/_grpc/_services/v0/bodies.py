@@ -1160,4 +1160,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def copy_faces(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.copy_faces' is not "
+            "implemented in this protofile version."
+        )

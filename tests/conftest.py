@@ -137,11 +137,14 @@ def pytest_pyfunc_call(pyfuncitem):
     def wrapped(*args, **kwargs):
         try:
             testfunction(*args, **kwargs)
-        except GeometryRuntimeError as e:
+        except (GeometryRuntimeError, NotImplementedError) as e:
             # Verify if the error is due to server incompatibility
             if "requires a minimum Ansys release version" in str(e):
                 # If so, skip the test
                 pytest.skip("Skipped due to backwards incompatible backend version.")
+            elif "is not implemented in this protofile version." in str(e):
+                # If the error is due to unimplemented protofile version, skip the test
+                pytest.skip("Skipped due to unimplemented protofile version definition.")
             else:
                 # If the error is not related to server incompatibility, re-raise it
                 raise e

@@ -163,7 +163,10 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
 
     @protect_grpc
     def put_active(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.put_active' is not "
+            "implemented in this protofile version."
+        )
 
     @protect_grpc
     def save_as(self, **kwargs) -> dict:  # noqa: D102
@@ -224,11 +227,17 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
 
     @protect_grpc
     def upload_file(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.upload_file' is not "
+            "implemented in this protofile version."
+        )
 
     @protect_grpc
     def upload_file_stream(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.upload_file_stream' is not "
+            "implemented in this protofile version."
+        )
 
     @protect_grpc
     def stream_design_tessellation(self, **kwargs) -> dict:  # noqa: D102
