@@ -177,4 +177,4 @@ class Parameter:
         if unit_type is None:
             return value.magnitude
         else:
-            return value.m_as(getattr(DEFAULT_UNITS, "SERVER_" + unit_type))
+            return value.m_as(getattr(DEFAULT_UNITS, f"SERVER_{unit_type}"))
