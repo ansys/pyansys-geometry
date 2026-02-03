@@ -166,7 +166,7 @@ class RayfireTools:
             max_distance if isinstance(max_distance, Distance) else Distance(max_distance)
         )
 
-        response = self._grpc_client.services.rayfire.rayfire(
+        response = self._grpc_client.services.rayfire.fire(
             body_id=body.id,
             face_ids=[face.id for face in faces],
             direction=direction,
@@ -202,7 +202,7 @@ class RayfireTools:
         list[RayfireImpact]
             Rayfire results.
         """
-        response = self._grpc_client.services.rayfire.rayfire_faces(
+        response = self._grpc_client.services.rayfire.fire_faces(
             body_id=body.id,
             face_ids=[face.id for face in faces],
             points=points,
@@ -251,7 +251,7 @@ class RayfireTools:
             max_distance if isinstance(max_distance, Distance) else Distance(max_distance)
         )
 
-        response = self._grpc_client.services.rayfire.rayfire_ordered(
+        response = self._grpc_client.services.rayfire.fire_ordered(
             body_id=body.id,
             face_ids=[face.id for face in faces],
             direction=direction,
@@ -303,7 +303,7 @@ class RayfireTools:
             max_distance if isinstance(max_distance, Distance) else Distance(max_distance)
         )
 
-        response = self._grpc_client.services.rayfire.rayfire_ordered_uv(
+        response = self._grpc_client.services.rayfire.fire_ordered_uv(
             body_id=body.id,
             face_ids=[face.id for face in faces],
             direction=direction,

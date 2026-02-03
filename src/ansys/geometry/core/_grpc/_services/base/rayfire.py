@@ -40,21 +40,21 @@ class GRPCRayfireService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
-    def rayfire(self, **kwargs) -> dict:
+    def fire(self, **kwargs) -> dict:
         """Perform a rayfire operation to find impacted bodies."""
         pass
 
     @abstractmethod
-    def rayfire_ordered(self, **kwargs) -> dict:
+    def fire_ordered(self, **kwargs) -> dict:
         """Perform a rayfire ordered operation."""
         pass
 
     @abstractmethod
-    def rayfire_faces(self, **kwargs) -> dict:
+    def fire_faces(self, **kwargs) -> dict:
         """Perform a rayfire operation to find impacted faces."""
         pass
 
     @abstractmethod
-    def rayfire_ordered_uv(self, **kwargs) -> dict:
+    def fire_ordered_uv(self, **kwargs) -> dict:
         """Perform a rayfire ordered UV operation."""
         pass

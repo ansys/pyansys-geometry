@@ -55,7 +55,7 @@ class GRPCRayfireServiceV0(GRPCRayfireService):
         self.stub = CommandsStub(channel)
 
     @protect_grpc
-    def rayfire(self, **kwargs) -> dict:  # noqa: D102
+    def fire(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import RayFireRequest, RayFireRequestData
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -83,7 +83,7 @@ class GRPCRayfireServiceV0(GRPCRayfireService):
         }
 
     @protect_grpc
-    def rayfire_ordered(self, **kwargs) -> dict:  # noqa: D102
+    def fire_ordered(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import (
             RayFireOrderedRequest,
             RayFireOrderedRequestData,
@@ -121,7 +121,7 @@ class GRPCRayfireServiceV0(GRPCRayfireService):
         }
 
     @protect_grpc
-    def rayfire_faces(self, **kwargs) -> dict:  # noqa: D102
+    def fire_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import RayFireFacesRequest, RayFireFacesRequestData
 
         from .conversions import from_rayfire_options_to_grpc_rayfire_options
@@ -162,7 +162,7 @@ class GRPCRayfireServiceV0(GRPCRayfireService):
         }
 
     @protect_grpc
-    def rayfire_ordered_uv(self, **kwargs) -> dict:  # noqa: D102
+    def fire_ordered_uv(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import (
             RayFireOrderedUVRequest,
             RayFireOrderedUVRequestData,

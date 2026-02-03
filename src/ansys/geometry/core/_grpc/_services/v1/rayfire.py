@@ -55,7 +55,7 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
         self.stub = RayFireStub(channel)
 
     @protect_grpc
-    def rayfire(self, **kwargs) -> dict:  # noqa: D102
+    def fire(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.rayfire_pb2 import FireRequest, FireRequestData
 
         # Create the request - assumes all inputs are valid and of the proper type
@@ -83,7 +83,7 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
         }
 
     @protect_grpc
-    def rayfire_ordered(self, **kwargs) -> dict:  # noqa: D102
+    def fire_ordered(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.rayfire_pb2 import (
             FireOrderedRequest,
             FireOrderedRequestData,
@@ -124,7 +124,7 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
         }
 
     @protect_grpc
-    def rayfire_faces(self, **kwargs) -> dict:  # noqa: D102
+    def fire_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.rayfire_pb2 import (
             FireFacesRequest,
             FireFacesRequestData,
@@ -171,7 +171,7 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
         }
 
     @protect_grpc
-    def rayfire_ordered_uv(self, **kwargs) -> dict:  # noqa: D102
+    def fire_ordered_uv(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.rayfire_pb2 import (
             FireOrderedUVRequest,
             FireOrderedUVRequestData,
