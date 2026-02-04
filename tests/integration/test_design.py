@@ -3633,6 +3633,45 @@ def test_get_face_bounding_box(modeler: Modeler):
     assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
 
 
+def test_get_face_tight_bounding_box(modeler: Modeler):
+    """Test getting the tight bounding box of a face."""
+    if modeler.client.services.version == GeometryApiProtos.V0:
+        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
+
+    design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
+    yarn_body = design.bodies[0]
+
+    # Test the regular bounding box
+    bounding_box = yarn_body.faces[0].bounding_box
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.750637531716012)
+    assert bounding_box.min_corner.y.m == pytest.approx(-0.340634843063073)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.104203649881978)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.75484840496883)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.663576030656712)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.196642153592138)
+
+    assert bounding_box.center.x.m == pytest.approx(1.25274296834242)
+    assert bounding_box.center.y.m == pytest.approx(0.161470593796819)
+    assert bounding_box.center.z.m == pytest.approx(0.150422901737058)
+
+    # Test the tight bounding box
+    bounding_box = yarn_body.faces[0].get_bounding_box(tight=True)
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
+    assert bounding_box.min_corner.y.m == pytest.approx(5.2771026530260073e-17)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.105040051163695)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.41421356238489)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.196642053388603)
+
+    assert bounding_box.center.x.m == pytest.approx(1.08440444008654)
+    assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
+ 
+
 def test_get_edge_bounding_box(modeler: Modeler):
     """Test getting the bounding box of an edge."""
     design = modeler.create_design("edge_bounding_box")
@@ -3651,6 +3690,45 @@ def test_get_edge_bounding_box(modeler: Modeler):
     assert center.x.m == 0
     assert center.y.m == -0.5
     assert center.z.m == 1
+
+
+def test_get_edge_tight_bounding_box(modeler: Modeler):
+    """Test getting the tight bounding box of a face."""
+    if modeler.client.services.version == GeometryApiProtos.V0:
+        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
+
+    design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
+    yarn_body_edge = design.bodies[0].faces[0].edges[2]
+
+    # Test the regular bounding box
+    bounding_box = yarn_body_edge.bounding_box
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.754594817788194)
+    assert bounding_box.min_corner.y.m == pytest.approx(-5.00000000813239E-07)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.105039551163695)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.41421406237309)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.659618744585186)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.150000500138633)
+
+    assert bounding_box.center.x.m == pytest.approx(1.08440444008064)
+    assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert bounding_box.center.z.m == pytest.approx(0.127520025651164)
+
+    # Test the tight bounding box
+    bounding_box = yarn_body_edge.get_bounding_box(tight=True)
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
+    assert bounding_box.min_corner.y.m == pytest.approx(3.05311331771918E-16)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.105040051163695)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.41421356237309)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.15)
+
+    assert bounding_box.center.x.m == pytest.approx(1.08440444008064)
+    assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert bounding_box.center.z.m == pytest.approx(0.127520025581848)
 
 
 def test_get_body_bounding_box(modeler: Modeler):
