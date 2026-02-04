@@ -232,7 +232,7 @@ class Edge:
         return BoundingBox(
             response.get("min_corner"), response.get("max_corner"), response.get("center")
         )
-    
+
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:
         """Get the tight bounding box for the face.
