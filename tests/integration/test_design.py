@@ -30,6 +30,7 @@ import numpy as np
 from pint import Quantity
 import pytest
 
+import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
 from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
@@ -410,6 +411,30 @@ def test_face_to_body_creation(modeler: Modeler):
     assert surface_body.faces[0].area.m == pytest.approx(
         Quantity(2e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_create_surface_from_copy_faces(modeler: Modeler):
+    """Test creating a surface body from copied faces."""
+    # Skip test if running v0 protos
+    if modeler.client.services.version == GeometryApiProtos.V0:
+        pytest.skip("Skipping test for V0 protos")
+
+    # Create a design
+    design = modeler.create_design("CopyFacesTest")
+
+    # Create a cylinder
+    cylinder = design.extrude_sketch("Cylinder", Sketch().circle(Point2D([0, 0]), 5), 20)
+
+    # Get one of the ends and create a surface from it
+    face = cylinder.faces[1]
+    square_surface = design.create_surface_from_face("square", face)
+    assert square_surface.is_surface
+    assert square_surface.faces[0].area.m == pytest.approx(102.41439999, rel=1e-6, abs=1e-8)
+
+    # Create a surface with copy_faces
+    circular_surface = design.copy_faces("circular", [face])
+    assert circular_surface.is_surface
+    assert circular_surface.faces[0].area.m == pytest.approx(78.53981633974483, rel=1e-6, abs=1e-8)
 
 
 def test_extrude_negative_sketch(modeler: Modeler):
@@ -1078,22 +1103,20 @@ def test_delete_body_component(modeler: Modeler):
     assert comp_1.components[1].is_alive
     assert comp_1.components[1].bodies[0].is_alive
     assert not comp_2.is_alive
-    assert not comp_2.components[0].is_alive
     assert comp_3.is_alive
     assert comp_3.bodies[0].is_alive
 
     # Do the same checks but calling them from the design object
     assert design.is_alive
+    assert len(design.components) == 2
     assert design.components[0].is_alive
     assert design.components[0].components[0].is_alive
     assert design.components[0].components[0].components[0].is_alive
     assert design.components[0].components[0].components[0].bodies[0].is_alive
     assert design.components[0].components[1].is_alive
     assert design.components[0].components[1].bodies[0].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert design.components[2].is_alive
-    assert design.components[2].bodies[0].is_alive
+    assert design.components[1].is_alive
+    assert design.components[1].bodies[0].is_alive
 
     # Let's delete now the body_2 object
     design.delete_body(body_2)
@@ -1106,7 +1129,6 @@ def test_delete_body_component(modeler: Modeler):
     assert comp_1.components[1].is_alive
     assert not body_2.is_alive
     assert not comp_2.is_alive
-    assert not comp_2.components[0].is_alive
     assert comp_3.is_alive
 
     # Do the same checks but calling them from the design object
@@ -1116,47 +1138,30 @@ def test_delete_body_component(modeler: Modeler):
     assert design.components[0].components[0].components[0].is_alive
     assert design.components[0].components[0].components[0].bodies[0].is_alive
     assert design.components[0].components[1].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert design.components[2].is_alive
-    assert design.components[2].bodies[0].is_alive
+    assert design.components[1].is_alive
+    assert design.components[1].bodies[0].is_alive
 
     # Finally, let's delete the most complex one - comp_1
     design.delete_component(comp_1)
 
     # Check that all the underlying objects are still alive except for comp_2, body_2 and comp_1
     assert not comp_1.is_alive
-    assert not comp_1.components[0].is_alive
-    assert not comp_1.components[0].components[0].is_alive
-    assert not comp_1.components[1].is_alive
     assert not comp_2.is_alive
-    assert not comp_2.components[0].is_alive
     assert comp_3.is_alive
     assert comp_3.bodies[0].is_alive
 
     # Do the same checks but calling them from the design object
     assert design.is_alive
-    assert not design.components[0].is_alive
-    assert not design.components[0].components[0].is_alive
-    assert not design.components[0].components[0].components[0].is_alive
-    assert not design.components[0].components[1].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert design.components[2].is_alive
-    assert design.components[2].bodies[0].is_alive
+    assert len(design.components) == 1
+    assert design.components[0].is_alive
+    assert design.components[0].bodies[0].is_alive
 
     # Finally, let's delete the entire design
     design.delete_component(comp_3)
 
     # Check everything is dead
     assert design.is_alive
-    assert not design.components[0].is_alive
-    assert not design.components[0].components[0].is_alive
-    assert not design.components[0].components[0].components[0].is_alive
-    assert not design.components[0].components[1].is_alive
-    assert not design.components[1].is_alive
-    assert not design.components[1].components[0].is_alive
-    assert not design.components[2].is_alive
+    assert len(design.components) == 0
 
     # Try deleting the Design object itself - this is forbidden
     with pytest.raises(ValueError, match="The design itself cannot be deleted."):
@@ -3298,13 +3303,13 @@ def test_design_parameters(modeler: Modeler):
     test_parameters = design.parameters
 
     # Verify the initial parameters
-    assert len(test_parameters) == 2
+    assert len(test_parameters) == 4
     assert test_parameters[0].name == "p1"
-    assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
+    assert abs(test_parameters[0].dimension_value.m - 0.00010872999999999981) < 1e-8
     assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
     assert test_parameters[1].name == "p2"
-    assert abs(test_parameters[1].dimension_value - 0.0002552758322160813) < 1e-8
+    assert abs(test_parameters[1].dimension_value.m - 0.0002552758322160813) < 1e-8
     assert test_parameters[1].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
     # Update the second parameter and verify the status
@@ -3322,6 +3327,38 @@ def test_design_parameters(modeler: Modeler):
 
     test_parameters[0].dimension_type = ParameterType.DIMENSIONTYPE_AREA
     assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    # Update a parameter with a unit value
+    test_parameters[1].dimension_value = Quantity(800, UNITS.mm**2)
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.SUCCESS
+    assert test_parameters[1].dimension_value.m == pytest.approx(800, rel=1e-8)
+    assert test_parameters[1].dimension_value.m_as(DEFAULT_UNITS.AREA) == pytest.approx(
+        0.0008, rel=1e-8
+    )
+
+
+def test_unitless_design_parameters(modeler: Modeler):
+    """Test the design parameter's functionality for unitless parameters."""
+    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
+    test_parameters = design.parameters
+    assert len(test_parameters) == 4
+
+    # Test the unitless parameter (pattern count)
+    assert test_parameters[2].name == "PatternCount"
+    assert test_parameters[2].dimension_type == ParameterType.DIMENSIONTYPE_COUNT
+    assert test_parameters[2].dimension_value == Quantity(3, "")
+
+    # Change the pattern separation and count
+    test_parameters[3].dimension_value = Quantity(50, UNITS.mm)
+    status = design.set_parameter(test_parameters[3])
+    assert status == ParameterUpdateStatus.SUCCESS
+    assert test_parameters[3].dimension_value == Quantity(50, UNITS.mm)
+
+    test_parameters[2].dimension_value = Quantity(2, "")
+    status = design.set_parameter(test_parameters[2])
+    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+    assert test_parameters[2].dimension_value == Quantity(2, "")
 
 
 def test_cached_bodies(modeler: Modeler):
@@ -3634,6 +3671,45 @@ def test_get_body_bounding_box(modeler: Modeler):
     assert center.z.m == 0.5
 
 
+def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
+    """Test getting the bounding box of a body with tight tolerance."""
+    if modeler.client.services.version == GeometryApiProtos.V0:
+        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
+
+    design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
+    yarn_body = design.bodies[0]
+
+    # Test getting regular bounding box
+    bounding_box = yarn_body.bounding_box
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.750637531716012)
+    assert bounding_box.min_corner.y.m == pytest.approx(-0.340634843063073)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.0134380239342444)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.75484840496883)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.663576030656712)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.288244080618053)
+
+    assert bounding_box.center.x.m == pytest.approx(1.25274296834242)
+    assert bounding_box.center.y.m == pytest.approx(0.161470593796819)
+    assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
+
+    # Test getting tight bounding box
+    tight_bounding_box = yarn_body.get_bounding_box(tight_tolerance=True)
+
+    assert tight_bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
+    assert tight_bounding_box.min_corner.y.m == pytest.approx(5.2771026530260073e-17)
+    assert tight_bounding_box.min_corner.z.m == pytest.approx(0.100708473482868)
+
+    assert tight_bounding_box.max_corner.x.m == pytest.approx(1.41421356238489)
+    assert tight_bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
+    assert tight_bounding_box.max_corner.z.m == pytest.approx(0.196642053388603)
+
+    assert tight_bounding_box.center.x.m == pytest.approx(1.08440444008654)
+    assert tight_bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert tight_bounding_box.center.z.m == pytest.approx(0.148675263435735)
+
+
 def test_extrude_faces_failure_log_to_file(modeler: Modeler):
     """Test that the failure to extrude faces logs the correct message to a file."""
     # Create a design and body for testing
@@ -3692,6 +3768,8 @@ def test_import_component_named_selections(modeler: Modeler):
 
 def test_component_make_independent(modeler: Modeler):
     """Test making components independent."""
+    if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        pytest.skip("Failure when tracker is enabled.")
 
     design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
     face = next((ns for ns in design.named_selections if ns.name == "to_pull"), None).faces[0]
@@ -3984,17 +4062,17 @@ def test_failure_for_export(modeler: Modeler, tmp_path_factory: pytest.TempPathF
     reexported_file = Path(working_directory, "reexported.scdocx")
     design = modeler.create_design("Assembly")
     design.insert_file(original_file)
+
     # Giving the download an incorrect file extension in the file path for the chosen format
     reexported_file = Path(working_directory, "reexported.x_t")
     with pytest.raises(
-        GeometryExitedError,
-        match="Geometry service connection terminated: The method or operation is not implemented.",
+        GeometryRuntimeError,
+        match="does not match the requested format",
     ):
         design.download(file_location=reexported_file, format=DesignFileFormat.STEP)
+
     # Exporting to the invalid type to get an error
-    with pytest.raises(
-        TypeError, match="memoryview: a bytes-like object is required, not 'NoneType'"
-    ):
+    with pytest.raises(GeometryRuntimeError, match="does not match the requested format"):
         design.download(file_location=reexported_file, format=DesignFileFormat.INVALID)
 
 

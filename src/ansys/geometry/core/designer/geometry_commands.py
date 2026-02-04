@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING, Union
 from beartype import beartype as check_input_types
 from pint import Quantity
 
+import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
@@ -324,7 +325,10 @@ class GeometryCommands:
         design = get_design_from_face(faces[0])
 
         if result.get("success"):
-            design._update_design_inplace()
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude faces.")
@@ -398,7 +402,10 @@ class GeometryCommands:
         design = get_design_from_face(faces[0])
 
         if result.get("success"):
-            design._update_design_inplace()
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude faces.")
@@ -480,7 +487,10 @@ class GeometryCommands:
         design = get_design_from_edge(edges[0])
 
         if result.get("success"):
-            design._update_design_inplace()
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude edges.")
@@ -538,7 +548,10 @@ class GeometryCommands:
         design = get_design_from_edge(edges[0])
 
         if result.get("success"):
-            design._update_design_inplace()
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude edges.")
@@ -1055,7 +1068,10 @@ class GeometryCommands:
         design = get_design_from_face(selection[0])
 
         if result.get("success"):
-            design._update_design_inplace()
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to revolve faces.")
@@ -1113,7 +1129,10 @@ class GeometryCommands:
         design = get_design_from_face(selection[0])
 
         if result.get("success"):
-            design._update_design_inplace()
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to revolve faces.")
@@ -1191,7 +1210,10 @@ class GeometryCommands:
         design = get_design_from_face(selection[0])
 
         if result.get("success"):
-            design._update_design_inplace()
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
             return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to revolve faces.")
@@ -1304,7 +1326,10 @@ class GeometryCommands:
 
         if result.get("success"):
             design = get_design_from_body(bodies[0])
-            design._update_design_inplace()
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
 
         return result.get("success")
 
@@ -1506,7 +1531,8 @@ class GeometryCommands:
             geometric_b_id=geometry_b.id,
         )
 
-        get_design_from_component(parent_component)._update_design_inplace()
+        design = get_design_from_component(parent_component)
+        design._update_design_inplace()
 
         return AlignCondition(
             result.get("id"),
@@ -1562,7 +1588,8 @@ class GeometryCommands:
             geometric_b_id=geometry_b.id,
         )
 
-        get_design_from_component(parent_component)._update_design_inplace()
+        design = get_design_from_component(parent_component)
+        design._update_design_inplace()
 
         return TangentCondition(
             result.get("id"),
@@ -1618,7 +1645,8 @@ class GeometryCommands:
             geometric_b_id=geometry_b.id,
         )
 
-        get_design_from_component(parent_component)._update_design_inplace()
+        design = get_design_from_component(parent_component)
+        design._update_design_inplace()
 
         return OrientCondition(
             result.get("id"),
@@ -1774,7 +1802,10 @@ class GeometryCommands:
         # Update design
         design = get_design_from_face(faces[0])
         if result.get("success"):
-            design._update_design_inplace()
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
 
         # Return success flag
         return result.get("success")
@@ -1845,7 +1876,7 @@ class GeometryCommands:
 
         angle = angle if isinstance(angle, Angle) else Angle(angle)
 
-        _ = self._grpc_client._services.curves.revolve_edges(
+        result = self._grpc_client._services.curves.revolve_edges(
             curves=[edge.shape for edge in edges],
             axis=axis,
             angle=angle,
@@ -1853,7 +1884,10 @@ class GeometryCommands:
         )
 
         design = get_design_from_edge(edges[0])
-        design._update_design_inplace()
+        if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+            design._update_from_tracker(result.get("tracked_response"))
+        else:
+            design._update_design_inplace()
 
     @min_backend_version(26, 1, 0)
     def intersect_curve_and_surface(
