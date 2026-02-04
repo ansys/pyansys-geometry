@@ -3670,7 +3670,7 @@ def test_get_face_tight_bounding_box(modeler: Modeler):
     assert bounding_box.center.x.m == pytest.approx(1.08440444008654)
     assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
     assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
- 
+
 
 def test_get_edge_bounding_box(modeler: Modeler):
     """Test getting the bounding box of an edge."""
@@ -3704,7 +3704,7 @@ def test_get_edge_tight_bounding_box(modeler: Modeler):
     bounding_box = yarn_body_edge.bounding_box
 
     assert bounding_box.min_corner.x.m == pytest.approx(0.754594817788194)
-    assert bounding_box.min_corner.y.m == pytest.approx(-5.00000000813239E-07)
+    assert bounding_box.min_corner.y.m == pytest.approx(-5.00000000813239e-07)
     assert bounding_box.min_corner.z.m == pytest.approx(0.105039551163695)
 
     assert bounding_box.max_corner.x.m == pytest.approx(1.41421406237309)
@@ -3719,7 +3719,7 @@ def test_get_edge_tight_bounding_box(modeler: Modeler):
     bounding_box = yarn_body_edge.get_bounding_box(tight=True)
 
     assert bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
-    assert bounding_box.min_corner.y.m == pytest.approx(3.05311331771918E-16)
+    assert bounding_box.min_corner.y.m == pytest.approx(3.05311331771918e-16)
     assert bounding_box.min_corner.z.m == pytest.approx(0.105040051163695)
 
     assert bounding_box.max_corner.x.m == pytest.approx(1.41421356237309)
