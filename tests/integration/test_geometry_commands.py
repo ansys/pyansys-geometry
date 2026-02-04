@@ -597,7 +597,7 @@ def test_revolve_faces_about_edge(modeler: Modeler):
     design = modeler.create_design("revolve_faces_edge")
     base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     bodies = modeler.geometry_commands.revolve_faces(base.faces[2], base.edges[5], np.pi * 3 / 2)
-    
+
     assert len(bodies) == 0
     assert base.volume.m == pytest.approx(Quantity(3.35619449019, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 5
