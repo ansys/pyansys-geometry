@@ -426,23 +426,12 @@ class GRPCFacesServiceV1(GRPCFacesService):
             RevolveFacesRequestData,
         )
 
-        from ansys.geometry.core.shapes.curves.line import Line
-
-        axis, edge_axis, alternate_dir = None, None, None
-        if isinstance(kwargs["axis"], Line):
-            axis = from_line_to_grpc_line(kwargs["axis"])
-        else:
-            edge_axis = build_grpc_id(kwargs["axis"])
-            alternate_dir = from_unit_vector_to_grpc_direction(kwargs["alternate_dir"])
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = RevolveFacesRequest(
             request_data=[
                 RevolveFacesRequestData(
                     selection_id=[build_grpc_id(id) for id in kwargs["selection_ids"]],
-                    axis=from_line_to_grpc_line(axis),
-                    alternate_axis_ids=[edge_axis],
-                    alternate_dir=alternate_dir,
+                    axis=from_line_to_grpc_line(kwargs["axis"]),
                     angle=from_angle_to_grpc_quantity(kwargs["angle"]),
                     extrude_type=kwargs["extrude_type"].value,
                 )

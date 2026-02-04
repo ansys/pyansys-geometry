@@ -1031,6 +1031,7 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
+        from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
 
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
@@ -1042,13 +1043,7 @@ class GeometryCommands:
             object.body._reset_tessellation_cache()
 
         if isinstance(axis, Edge):
-            if self._grpc_client.backend_version < (27, 1, 0):
-                raise ValueError(
-                    "Using an Edge as the axis of revolution is only supported starting from Ansys "
-                    "release 27R1."
-                )
-            else:
-                axis = axis.id
+            axis = Line(axis.start, UnitVector3D.from_points(axis.start, axis.end))
 
         result = self._grpc_client._services.faces.revolve_faces(
             selection_ids=[object.id for object in selection],
