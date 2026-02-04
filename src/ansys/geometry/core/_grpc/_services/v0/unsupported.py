@@ -26,6 +26,9 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.unsupported import GRPCUnsupportedService
+from .conversions import (
+    build_grpc_id,
+)
 
 
 class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
@@ -38,9 +41,11 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
     """
 
     def __init__(self, channel: grpc.Channel):  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
         from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
 
         self.stub = UnsupportedStub(channel)
+        self.commands_stub = CommandsStub(channel)
 
     @protect_grpc
     def get_import_id_map(self, **kwargs) -> dict:  # noqa: D102
@@ -61,8 +66,6 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
     @protect_grpc
     def set_export_ids(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest, SetExportIdsRequest
-
-        from .conversions import build_grpc_id
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetExportIdsRequest(
@@ -85,8 +88,6 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
     @protect_grpc
     def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest
-
-        from .conversions import build_grpc_id
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExportIdRequest(

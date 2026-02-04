@@ -74,6 +74,9 @@ from ansys.api.discovery.v1.geometryenums_pb2 import (
 from ansys.api.discovery.v1.operations.prepare_pb2 import (
     EnclosureOptions as GRPCEnclosureOptions,
 )
+from ansys.api.discovery.v1.operations.rayfire_pb2 import (
+    FireAdditionalOptions as GRPCRayFireOptions,
+)
 from ansys.api.discovery.v1.operations.repair_pb2 import (
     RepairToolMessage as GRPCRepairToolResponse,
 )
@@ -99,7 +102,11 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.misc.measurements import Measurement
-    from ansys.geometry.core.misc.options import ImportOptionsDefinitions, TessellationOptions
+    from ansys.geometry.core.misc.options import (
+        ImportOptionsDefinitions,
+        RayfireOptions,
+        TessellationOptions,
+    )
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
         ParameterUpdateStatus,
@@ -1709,6 +1716,34 @@ def from_enclosure_options_to_grpc_enclosure_options(
         subtract_bodies=enclosure_options.subtract_bodies,
         frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
         cushion_proportion=enclosure_options.cushion_proportion,
+    )
+
+
+def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> None:
+    """Convert a ``RayFireOptions`` class to a gRPC RayFireOptions message.
+
+    Parameters
+    ----------
+    options : RayFireOptions
+        Source ray fire options.
+
+    Returns
+    -------
+    GRPCRayFireOptions
+        Geometry service gRPC RayFireOptions message.
+    """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
+    return GRPCRayFireOptions(
+        radius=options.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        direction=from_unit_vector_to_grpc_direction(options.direction),
+        max_distance=options.max_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        min_distance=options.min_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        tight_tolerance=options.tight_tolerance,
+        pick_back_faces=options.pick_back_faces,
+        max_hits=options.max_hits,
+        request_params=options.request_params,
+        request_secondary=options.request_secondary,
     )
 
 

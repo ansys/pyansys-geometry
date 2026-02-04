@@ -19,36 +19,42 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-"""Provides the PyAnsys Geometry miscellaneous subpackage."""
+"""Module containing the rayfire service implementation (abstraction layer)."""
 
-from ansys.geometry.core.misc.accuracy import ANGLE_ACCURACY, LENGTH_ACCURACY, Accuracy
-from ansys.geometry.core.misc.auxiliary import (
-    DEFAULT_COLOR,
-    get_bodies_from_ids,
-    get_design_from_body,
-    get_design_from_component,
-    get_design_from_edge,
-    get_design_from_face,
-    get_edges_from_ids,
-    get_faces_from_ids,
-)
-from ansys.geometry.core.misc.checks import (
-    check_is_float_int,
-    check_ndarray_is_all_nan,
-    check_ndarray_is_float_int,
-    check_ndarray_is_non_zero,
-    check_ndarray_is_not_none,
-    check_pint_unit_compatibility,
-    check_type,
-    check_type_all_elements_in_iterable,
-    check_type_equivalence,
-    deprecated_argument,
-    deprecated_method,
-    graphics_required,
-    kwargs_passed_not_accepted,
-    min_backend_version,
-    run_if_graphics_required,
-)
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
-from ansys.geometry.core.misc.options import ImportOptions, RayfireOptions, TessellationOptions
-from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity
+from abc import ABC, abstractmethod
+
+import grpc
+
+
+class GRPCRayfireService(ABC):  # pragma: no cover
+    """Rayfire service for gRPC communication with the Geometry server.
+
+    Parameters
+    ----------
+    channel : grpc.Channel
+        The gRPC channel to the server.
+    """
+
+    def __init__(self, channel: grpc.Channel):
+        """Initialize the GRPCRayfireService class."""
+        pass
+
+    @abstractmethod
+    def fire(self, **kwargs) -> dict:
+        """Perform a rayfire operation to find impacted bodies."""
+        pass
+
+    @abstractmethod
+    def fire_ordered(self, **kwargs) -> dict:
+        """Perform a rayfire ordered operation."""
+        pass
+
+    @abstractmethod
+    def fire_faces(self, **kwargs) -> dict:
+        """Perform a rayfire operation to find impacted faces."""
+        pass
+
+    @abstractmethod
+    def fire_ordered_uv(self, **kwargs) -> dict:
+        """Perform a rayfire ordered UV operation."""
+        pass

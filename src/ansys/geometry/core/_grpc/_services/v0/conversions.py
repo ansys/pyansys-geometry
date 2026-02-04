@@ -30,6 +30,7 @@ from ansys.api.dbu.v0.dbumodels_pb2 import (
     PartExportFormat as GRPCPartExportFormat,
 )
 from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus as GRPCUpdateStatus
+from ansys.api.geometry.v0.commands_pb2 import RayFireAddtionalOptions as GRPCRayFireOptions
 from ansys.api.geometry.v0.models_pb2 import (
     Arc as GRPCArc,
     Circle as GRPCCircle,
@@ -77,7 +78,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.plane import Plane
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
-    from ansys.geometry.core.misc.options import TessellationOptions
+    from ansys.geometry.core.misc.options import RayfireOptions, TessellationOptions
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
         ParameterUpdateStatus,
@@ -1407,6 +1408,34 @@ def from_grpc_matrix_to_matrix(matrix: GRPCMatrix) -> "Matrix44":
             ],
             8,
         )
+    )
+
+
+def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> GRPCRayFireOptions:
+    """Convert a ``RayFireOptions`` class to a gRPC RayFireOptions message.
+
+    Parameters
+    ----------
+    options : RayFireOptions
+        Source ray fire options.
+
+    Returns
+    -------
+    GRPCRayFireOptions
+        Geometry service gRPC RayFireOptions message.
+    """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
+    return GRPCRayFireOptions(
+        radius=options.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        direction=from_unit_vector_to_grpc_direction(options.direction),
+        max_distance=options.max_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        min_distance=options.min_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        tight_tolerance=options.tight_tolerance,
+        pick_back_faces=options.pick_back_faces,
+        max_hits=options.max_hits,
+        request_params=options.request_params,
+        request_secondary=options.request_secondary,
     )
 
 

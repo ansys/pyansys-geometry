@@ -37,6 +37,7 @@ from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
+from ansys.geometry.core.tools.rayfire_tools import RayfireTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.tools.unsupported import UnsupportedCommands
 from ansys.geometry.core.typing import Real
@@ -151,6 +152,7 @@ class Modeler:
         self._prepare_tools = PrepareTools(self._grpc_client, _internal_use=True)
         self._geometry_commands = GeometryCommands(self._grpc_client, _internal_use=True)
         self._unsupported = UnsupportedCommands(self._grpc_client, self, _internal_use=True)
+        self._rayfire_tools = RayfireTools(self._grpc_client, self, _internal_use=True)
 
     @property
     def client(self) -> GrpcClient:
@@ -645,6 +647,17 @@ class Modeler:
     def unsupported(self) -> "UnsupportedCommands":
         """Access to unsupported commands."""
         return self._unsupported
+
+    @property
+    @min_backend_version(26, 1, 0)
+    def rayfire_tools(self) -> "RayfireTools":
+        """Access to rayfire tools.
+
+        Notes
+        -----
+        This property is only available starting on Ansys release 26R1.
+        """
+        return self._rayfire_tools
 
     @min_backend_version(25, 1, 0)
     def get_service_logs(
