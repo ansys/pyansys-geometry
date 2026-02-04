@@ -28,6 +28,7 @@ from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
 
+import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.vertex import Vertex
@@ -39,7 +40,9 @@ from ansys.geometry.core.misc.auxiliary import (
     DEFAULT_COLOR,
     convert_color_to_hex,
     convert_opacity_to_hex,
+    get_bodies_from_ids,
     get_design_from_body,
+    get_design_from_face,
 )
 from ansys.geometry.core.misc.checks import (
     ensure_design_is_active,
@@ -627,3 +630,35 @@ class Face:
         pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
         pl.plot(mesh_object, **plotting_options)
         pl.show(screenshot=screenshot, **plotting_options)
+
+    @min_backend_version(27, 1, 0)
+    def detach(self) -> "Body":
+        """Detach the face from its body.
+
+        This method will result in the face being turned into a
+        surface body, and the original body will have the face removed.
+
+        Returns
+        -------
+        Body
+            Body created by the detach if any.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        response = self._grpc_client.services.model_tools.detach_faces(selections=[[self.id]])
+
+        parent_design = get_design_from_face(self)
+
+        if response.get("success"):
+            if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                parent_design._update_design_inplace()
+            else:
+                parent_design._update_from_tracker(response["tracker_response"])
+
+            result_bodies = response.get("created_bodies")
+            return get_bodies_from_ids(parent_design, result_bodies)
+        else:
+            self._grpc_client.log.info("Failed to detach faces.")
+            return []
