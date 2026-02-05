@@ -7,6 +7,7 @@ backends:
     incompatible_tests:
       # Model used is too new for this version
       - tests/integration/test_design.py::test_design_parameters
+      - tests/integration/test_design.py::test_unitless_design_parameters
       - tests/integration/test_design.py::test_old_backend_version
       - tests/integration/test_design_import.py::test_design_import_with_named_selections
       - tests/integration/test_design_import.py::test_design_import_stride_with_named_selections
@@ -138,6 +139,7 @@ backends:
     incompatible_tests:
       # Model used is too new for this version
       - tests/integration/test_design.py::test_design_parameters
+      - tests/integration/test_design.py::test_unitless_design_parameters
       - tests/integration/test_design.py::test_old_backend_version
       - tests/integration/test_design_import.py::test_design_import_with_named_selections
       - tests/integration/test_design_import.py::test_design_import_stride_with_named_selections
@@ -294,6 +296,7 @@ backends:
       - tests/integration/test_design.py::test_vertices_get_named_selections
       # Potential problem in model/reading design for importing parameters
       - tests/integration/test_design.py::test_design_parameters
+      - tests/integration/test_design.py::test_unitless_design_parameters
       # Bounding box center is only available from 25R2 onwards
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
@@ -398,4 +401,6 @@ backends:
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
+      # Fix for pattern introduced in 26.1
+      - tests/integration/test_design.py::test_unitless_design_parameters
 
