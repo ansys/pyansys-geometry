@@ -235,9 +235,6 @@ def test_robot_example(modeler: Modeler):
 
 def test_combine_example(modeler: Modeler):
     """Test creating combine example from Sp1ceClaim trainings"""
-    # if modeler.client.services.version == GeometryApiProtos.V0:
-    #     pytest.skip("Combine example requires v1 or higher proto version.")
-
     scfile = Path(FILES_DIR, "Basic_Combine_2014.0.dsco")
     design = modeler.open_file(file_path=scfile)
 

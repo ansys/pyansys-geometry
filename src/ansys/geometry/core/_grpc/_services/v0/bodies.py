@@ -737,14 +737,10 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 method=kwargs["method"],
                 keep_other=kwargs["keep_other"]
             )
-            if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
-                request.keep_other = kwargs["keep_other"]
+            
             resp = self.stub.Boolean(request=request)
             response_success = resp.empty_result
-            if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
-                serialized_tracker_response = serialize_tracker_command_response(
-                    response=resp.response
-                )
+            serialized_tracker_response = serialize_tracker_command_response(response=resp.response)
         except grpc.RpcError as err:  # pragma: no cover
             # TODO: to be deleted - old versions did not have "tool_bodies" in the request
             # This is a temporary fix to support old versions of the server - should be deleted
@@ -758,6 +754,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                             body1=kwargs["target"],
                             body2=body2,
                             method=kwargs["method"],
+                            keep_other=kwargs["keep_other"],
                         )
                     ).empty_result
                     all_resp.append(tmp_resp)
@@ -770,6 +767,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                         body1=kwargs["target"],
                         body2=kwargs["other"][0],
                         method=kwargs["method"],
+                        keep_other=kwargs["keep_other"],
                     )
                 )
                 response_success = resp.empty_result
