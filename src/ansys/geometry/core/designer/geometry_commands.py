@@ -1044,7 +1044,7 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
-        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.edge import CurveType, Edge
         from ansys.geometry.core.designer.face import Face
 
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
@@ -1056,6 +1056,8 @@ class GeometryCommands:
             object.body._reset_tessellation_cache()
 
         if isinstance(axis, Edge):
+            if axis.curve_type != CurveType.LINE:
+                raise ValueError("Only edges that are lines can be used as the revolve axis.")
             axis = Line(axis.start, UnitVector3D.from_points(axis.start, axis.end))
 
         result = self._grpc_client._services.faces.revolve_faces(
