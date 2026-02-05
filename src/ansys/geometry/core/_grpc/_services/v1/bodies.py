@@ -1017,7 +1017,7 @@ class GRPCBodyServiceV1(GRPCBodyService):
             raise ValueError(f"Boolean operation failed: {kwargs['err_msg']}")
 
         serialized_response = serialize_tracked_command_response(response.tracked_command_response)
-        
+
         # Return the response - formatted as a dictionary
         return {"tracker_response": serialized_response}
 

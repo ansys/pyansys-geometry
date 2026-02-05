@@ -29,7 +29,6 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.math import Plane, Point2D, Point3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
 from ansys.geometry.core.misc import UNITS
@@ -251,7 +250,7 @@ def test_combine_example(modeler: Modeler):
 
     for screw in screws:
         bottom_plate.unite(screw)
-    
+
     design._update_design_inplace()
 
     assert len(bottom_plate.faces) == 220

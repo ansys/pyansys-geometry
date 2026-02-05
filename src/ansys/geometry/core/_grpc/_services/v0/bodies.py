@@ -23,7 +23,6 @@
 
 import grpc
 
-import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.bodies import GRPCBodyService
@@ -735,9 +734,9 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 body1=kwargs["target"],
                 tool_bodies=[other for other in kwargs["other"]],
                 method=kwargs["method"],
-                keep_other=kwargs["keep_other"]
+                keep_other=kwargs["keep_other"],
             )
-            
+
             resp = self.stub.Boolean(request=request)
             response_success = resp.empty_result
             serialized_tracker_response = serialize_tracker_command_response(response=resp.response)
