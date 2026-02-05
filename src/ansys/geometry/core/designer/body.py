@@ -2381,13 +2381,10 @@ class Body(IBody):
         err_msg: str,
     ) -> None:
         grpc_other = other if isinstance(other, Iterable) else [other]
-        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
-            if keep_other:
-                # Make a copy of the other body to keep it...
-                # stored temporarily in the parent component - since it will be deleted
-                grpc_other = [
-                    b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other
-                ]
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN and keep_other:
+            # Make a copy of the other body to keep it...
+            # stored temporarily in the parent component - since it will be deleted
+            grpc_other = [b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other]
 
         response = self._template._grpc_client.services.bodies.boolean(
             target=self.id,
