@@ -1056,7 +1056,7 @@ class GeometryCommands:
             object.body._reset_tessellation_cache()
 
         if isinstance(axis, Edge):
-            if axis.curve_type != CurveType.LINE:
+            if axis.curve_type != CurveType.CURVETYPE_LINE:
                 raise ValueError("Only edges that are lines can be used as the revolve axis.")
             axis = Line(axis.start, UnitVector3D.from_points(axis.start, axis.end))
 
