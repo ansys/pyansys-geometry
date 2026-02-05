@@ -189,17 +189,32 @@ class GRPCFacesServiceV1(GRPCFacesService):
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            GetBoundingBoxRequest,
+            GetBoundingBoxRequestData,
+        )
 
-        # Call the gRPC service
-        response = self.stub.GetBoundingBox(request=request).response_data[0]
+        # Create the request to the proper method depending on tight tolerenace
+        if kwargs.get("tight"):
+            request = GetBoundingBoxRequest(
+                request_data=[
+                    GetBoundingBoxRequestData(
+                        id=build_grpc_id(kwargs["id"]),
+                        tight_tolerance=kwargs.get("tight", False),
+                    )
+                ]
+            )
+
+            resp = self.stub.GetTightBoundingBox(request).response_data[0]
+        else:
+            request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+            resp = self.stub.GetBoundingBox(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
-            "min_corner": from_grpc_point_to_point3d(response.box.min),
-            "max_corner": from_grpc_point_to_point3d(response.box.max),
-            "center": from_grpc_point_to_point3d(response.box.center),
+            "min_corner": from_grpc_point_to_point3d(resp.box.min),
+            "max_corner": from_grpc_point_to_point3d(resp.box.max),
+            "center": from_grpc_point_to_point3d(resp.box.center),
         }
 
     @protect_grpc
