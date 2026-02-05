@@ -747,8 +747,8 @@ class GeometryCommands:
         ----------
         selection : Face | list[Face]
             Faces to create the pattern out of.
-        circular_axis : Edge
-            The axis of the circular pattern, determined by the direction of an edge.
+        circular_axis : Edge | Line
+            The axis of the circular pattern.
         circular_count : int
             How many members are in the circular pattern.
         circular_angle : Angle | Quantity | Real
@@ -1018,7 +1018,7 @@ class GeometryCommands:
     def revolve_faces(
         self,
         selection: Union["Face", list["Face"]],
-        axis: Line,
+        axis: Union["Edge", Line],
         angle: Angle | Quantity | Real,
         extrude_type: ExtrudeType = ExtrudeType.ADD,
     ) -> list["Body"]:
@@ -1028,7 +1028,7 @@ class GeometryCommands:
         ----------
         selection : Face | list[Face]
             Face(s) to revolve.
-        axis : Line
+        axis : Edge | Line
             Axis of revolution.
         angle : Angle | Quantity | Real
             Angular distance to revolve.
@@ -1044,6 +1044,7 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
+        from ansys.geometry.core.designer.edge import CurveType, Edge
         from ansys.geometry.core.designer.face import Face
 
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
@@ -1053,6 +1054,11 @@ class GeometryCommands:
 
         for object in selection:
             object.body._reset_tessellation_cache()
+
+        if isinstance(axis, Edge):
+            if axis.curve_type != CurveType.CURVETYPE_LINE:
+                raise ValueError("Only edges that are lines can be used as the revolve axis.")
+            axis = Line(axis.start, UnitVector3D.from_points(axis.start, axis.end))
 
         result = self._grpc_client._services.faces.revolve_faces(
             selection_ids=[object.id for object in selection],
