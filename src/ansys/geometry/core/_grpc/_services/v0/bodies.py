@@ -735,6 +735,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 body1=kwargs["target"],
                 tool_bodies=[other for other in kwargs["other"]],
                 method=kwargs["method"],
+                keep_other=kwargs["keep_other"]
             )
             if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
                 request.keep_other = kwargs["keep_other"]

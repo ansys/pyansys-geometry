@@ -29,6 +29,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.math import Plane, Point2D, Point3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
 from ansys.geometry.core.misc import UNITS
@@ -232,57 +233,28 @@ def test_robot_example(modeler: Modeler):
     assert len(design.bodies[0].edges) == 219
 
 
-@pytest.mark.skip(reason="Unite is not working correctly")
 def test_combine_example(modeler: Modeler):
     """Test creating combine example from Sp1ceClaim trainings"""
+    # if modeler.client.services.version == GeometryApiProtos.V0:
+    #     pytest.skip("Combine example requires v1 or higher proto version.")
 
     scfile = Path(FILES_DIR, "Basic_Combine_2014.0.dsco")
     design = modeler.open_file(file_path=scfile)
 
     part_one = design.components[0].bodies[0]
-
     bottom_plate = design.components[1].bodies[0]
-
     cut_cylin = design.components[2].bodies[0]
-
     ring = design.components[2].bodies[1]
-
     stand_plate = design.components[3].bodies[0]
-
     sleep_plate = design.components[3].bodies[1]
 
-    screws_1 = design.components[4].components[0].bodies[0]
+    screws = []
+    for i in range(9):
+        screws.append(design.components[4].components[i].bodies[0])
 
-    screws_2 = design.components[4].components[1].bodies[0]
-
-    screws_3 = design.components[4].components[2].bodies[0]
-
-    screws_4 = design.components[4].components[3].bodies[0]
-
-    screws_5 = design.components[4].components[4].bodies[0]
-
-    screws_6 = design.components[4].components[5].bodies[0]
-
-    screws_7 = design.components[4].components[6].bodies[0]
-
-    screws_8 = design.components[4].components[7].bodies[0]
-
-    screws_9 = design.components[4].components[8].bodies[0]
-
-    screws = [
-        screws_1,
-        screws_2,
-        screws_3,
-        screws_4,
-        screws_5,
-        screws_6,
-        screws_7,
-        screws_8,
-        screws_9,
-    ]
     for screw in screws:
         bottom_plate.unite(screw)
-
+    
     design._update_design_inplace()
 
     assert len(bottom_plate.faces) == 220
