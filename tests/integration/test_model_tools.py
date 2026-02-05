@@ -398,3 +398,148 @@ def test_detach_faces_empty_result_scenario(modeler: Modeler):
 
     # Check that the total body count is consistent
     assert len(design.bodies) >= initial_body_count
+
+
+def test_body_detach_faces_with_tracker_disabled(modeler: Modeler):
+    """Test body.detach_faces() when USE_TRACKER_TO_UPDATE_DESIGN is disabled."""
+    import ansys.geometry.core as pyansys_geo
+
+    design = modeler.create_design("body_detach_tracker_disabled")
+
+    # Create a box
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    initial_body_count = len(design.bodies)
+
+    # Save the current tracker setting
+    original_tracker_setting = pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN
+
+    try:
+        # Disable the tracker to test the alternative code path
+        pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN = False
+
+        # Detach faces from the body - this should use _update_design_inplace()
+        created_bodies = body.detach_faces()
+
+        # Verify that bodies were created
+        assert len(created_bodies) == 5
+        assert len(design.bodies) == initial_body_count + 5
+
+        # All created bodies should be surface bodies
+        for created_body in created_bodies:
+            assert created_body.is_surface
+
+    finally:
+        # Restore the original tracker setting
+        pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN = original_tracker_setting
+
+
+def test_body_detach_faces_empty_result_scenario(modeler: Modeler):
+    """Test body.detach_faces() behavior with edge cases that might return no bodies."""
+    design = modeler.create_design("body_detach_empty_result")
+
+    # Create a cylinder
+    sketch = Sketch()
+    sketch.circle(Point2D([0, 0]), 0.5)
+    body = design.extrude_sketch("cylinder", sketch, 2)
+
+    initial_body_count = len(design.bodies)
+    initial_face_count = len(body.faces)
+
+    # A cylinder should have 3 faces: top, bottom, and cylindrical surface
+    assert initial_face_count == 3
+
+    # Detach all faces
+    created_bodies = body.detach_faces()
+
+    initial_body_count = len(design.bodies)
+
+    assert len(created_bodies) == 2
+    created_body = created_bodies[0]
+    assert created_body.is_surface
+
+    # Try to detach faces from a surface body using body method
+    # Surface bodies may behave differently
+    result = created_body.detach_faces()
+
+    # The result might be empty or contain bodies depending on the service implementation
+    # This test ensures the method handles various scenarios gracefully
+    assert isinstance(result, list)
+
+    # Check that the total body count is consistent
+    assert len(design.bodies) >= initial_body_count
+
+
+def test_face_detach_with_tracker_disabled(modeler: Modeler):
+    """Test face.detach() when USE_TRACKER_TO_UPDATE_DESIGN is disabled."""
+    import ansys.geometry.core as pyansys_geo
+
+    design = modeler.create_design("face_detach_tracker_disabled")
+
+    # Create a box
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    initial_body_count = len(design.bodies)
+
+    # Select a face to detach
+    face_to_detach = body.faces[0]
+
+    # Save the current tracker setting
+    original_tracker_setting = pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN
+
+    try:
+        # Disable the tracker to test the alternative code path
+        pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN = False
+
+        # Detach the face - this should use _update_design_inplace()
+        result = face_to_detach.detach()
+
+        # Verify that a body was created
+        assert isinstance(result, list)
+        assert len(result) == 1
+        assert result[0].is_surface
+
+        # Total number of bodies should increase by 1
+        assert len(design.bodies) == initial_body_count + 1
+
+    finally:
+        # Restore the original tracker setting
+        pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN = original_tracker_setting
+
+
+def test_face_detach_empty_result_scenario(modeler: Modeler):
+    """Test face.detach() behavior with edge cases that might return no bodies."""
+    design = modeler.create_design("face_detach_empty_result")
+
+    # Create a cylinder
+    sketch = Sketch()
+    sketch.circle(Point2D([0, 0]), 0.5)
+    body = design.extrude_sketch("cylinder", sketch, 2)
+
+    initial_body_count = len(design.bodies)
+    initial_face_count = len(body.faces)
+
+    # A cylinder should have 3 faces: top, bottom, and cylindrical surface
+    assert initial_face_count == 3
+
+    # Detach one face first
+    face_to_detach = body.faces[0]
+    created_bodies = face_to_detach.detach()
+
+    initial_body_count = len(design.bodies)
+
+    assert len(created_bodies) == 1
+    created_body = created_bodies[0]
+    assert created_body.is_surface
+
+    # Try to detach a face from the surface body
+    # Surface bodies may behave differently
+    surface_face = created_body.faces[0]
+    result = surface_face.detach()
+
+    # The result might be empty or contain bodies depending on the service implementation
+    # This test ensures the method handles various scenarios gracefully
+    assert isinstance(result, list)
+
+    # Check that the total body count is consistent
+    assert len(design.bodies) >= initial_body_count
