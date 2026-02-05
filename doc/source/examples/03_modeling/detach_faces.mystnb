@@ -265,7 +265,7 @@ top_faces = [face for face in base.faces if face.is_plane]
 if top_faces:
     top_face = top_faces[-1]  # Usually the last one
     extracted_surface = top_face.detach()
-    
+
     print(f"Extracted surface body: {extracted_surface[0].name}")
     print(f"Is surface: {extracted_surface[0].is_surface}")
     print(f"Total bodies in design: {len(design.bodies)}")
