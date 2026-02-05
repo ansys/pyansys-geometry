@@ -650,7 +650,7 @@ class GRPCBodyServiceV1(GRPCBodyService):
             request = GetBoundingBoxRequest(
                 request_data=[
                     GetBoundingBoxRequestData(
-                        body_id=build_grpc_id(kwargs["id"]),
+                        id=build_grpc_id(kwargs["id"]),
                         tight_tolerance=kwargs.get("tight_tolerance", False),
                     )
                 ]
