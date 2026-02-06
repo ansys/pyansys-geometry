@@ -646,7 +646,7 @@ class Face:
         pl.show(screenshot=screenshot, **plotting_options)
 
     @min_backend_version(27, 1, 0)
-    def detach(self) -> "Body" | None:
+    def detach(self) -> "Body":
         """Detach the face from its body.
 
         This method will result in the face being turned into a
