@@ -72,7 +72,7 @@ def test_detach_faces_geometry_commands_list_of_bodies(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("detach_list_of_bodies")
 
     # Create two boxes
@@ -102,7 +102,7 @@ def test_detach_faces_geometry_commands_single_face(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("detach_single_face")
 
     # Create a box
@@ -132,7 +132,7 @@ def test_detach_faces_geometry_commands_list_of_faces(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("detach_list_of_faces")
 
     # Create a box
@@ -163,7 +163,7 @@ def test_body_detach_faces(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("body_detach_faces")
 
     # Create a box
@@ -200,7 +200,7 @@ def test_body_detach_faces_multiple_bodies(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("body_detach_multiple")
 
     # Create two boxes with different sizes
@@ -236,7 +236,7 @@ def test_face_detach(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("face_detach")
 
     # Create a box
@@ -274,7 +274,7 @@ def test_face_detach_multiple_faces(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("face_detach_multiple")
 
     # Create a box
@@ -308,7 +308,7 @@ def test_detach_faces_with_complex_geometry(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("detach_complex")
 
     # Create a cylinder
@@ -344,7 +344,7 @@ def test_detach_mixed_selection(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("detach_mixed")
 
     # Create two boxes
@@ -375,7 +375,7 @@ def test_detach_faces_with_tracker_disabled(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     import ansys.geometry.core as pyansys_geo
 
     design = modeler.create_design("detach_tracker_disabled")
@@ -413,7 +413,7 @@ def test_detach_faces_empty_result_scenario(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("detach_empty_result")
 
     # Create a cylinder
@@ -453,7 +453,7 @@ def test_body_detach_faces_empty_result_scenario(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("body_detach_empty_result")
 
     # Create a cylinder
@@ -493,7 +493,7 @@ def test_face_detach_empty_result_scenario(modeler: Modeler):
     # Skip test if running v0 protos
     if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip("Skipping test for V0 protos")
-        
+
     design = modeler.create_design("face_detach_empty_result")
 
     # Create a cylinder
