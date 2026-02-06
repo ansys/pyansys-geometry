@@ -249,7 +249,7 @@ def check_type_equivalence(input: object, expected: object) -> None:
         )
 
 
-def check_type(input: object, expected_type: type | tuple[type, ...]) -> None:
+def check_type(input: object, expected_type: "type | tuple[type, ...]") -> None:
     """Check if an input object is of the same type as expected types.
 
     Parameters
@@ -271,7 +271,7 @@ def check_type(input: object, expected_type: type | tuple[type, ...]) -> None:
 
 
 def check_type_all_elements_in_iterable(
-    input: Iterable, expected_type: type | tuple[type, ...]
+    input: Iterable, expected_type: "type | tuple[type, ...]"
 ) -> None:
     """Check if all elements in an iterable are of the same type as expected.
 
