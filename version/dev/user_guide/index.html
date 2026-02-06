@@ -1,0 +1,873 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>User guide &#8212; PyAnsys Geometry</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=99899407" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../_static/documentation_options.js?v=8bee615f"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/thebelab-helper.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/index';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Launching and connecting to a Modeler instance" href="connection.html" />
+    <link rel="prev" title="Frequently asked questions" href="../getting_started/faq.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.15.dev0" />
+  <meta property="og:site_name" content="PyAnsys" />
+  <meta name="physics" content="CAD" />
+  <link rel="canonical" href="https://geometry.docs.pyansys.com/version/stable/user_guide/index.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Geometry - Home"/>
+    <img src="../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Geometry - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="connection.html">Launching and connecting to a Modeler instance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="primitives.html">Primitives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shapes.html">Sketch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="designer.html">Designer</a></li>
+</ul>
+</div>
+</nav></div>
+        <div class="sidebar-primary-item">
+
+
+  
+  
+  
+  
+  
+  <div class="sidebar-cheatsheets" aria-label="Cheatsheet">
+    <h4>PyAnsys Geometry cheat sheet</h4>
+    <a href="../_static/cheat_sheet.pdf" target="_blank" rel="noopener noreferrer">
+      
+      <img src="../_static/cheat_sheet.png" alt="PyAnsys Geometry cheat sheet thumbnail" loading="lazy" />
+      
+    </a>
+  </div>
+</div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">User guide</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="user-guide">
+<span id="ref-user-guide"></span><h1>User guide<a class="headerlink" href="#user-guide" title="Link to this heading">#</a></h1>
+<p>This section provides an overview of the PyAnsys Geometry library,
+explaining key concepts and approaches for connection, primitives,
+sketches (2D basic shape elements), and model designs.</p>
+<div class="toctree-wrapper compound">
+</div>
+<section id="pyansys-geometry-overview">
+<h2>PyAnsys Geometry overview<a class="headerlink" href="#pyansys-geometry-overview" title="Link to this heading">#</a></h2>
+<p>PyAnsys Geometry is a Python wrapper for the Ansys Geometry service.
+Here are some of the key features of PyAnsys Geometry:</p>
+<ul class="simple">
+<li><p>Ability to use the library alongside other Python libraries</p></li>
+<li><p>A <em>functional-style</em> API for a clean and easy coding experience</p></li>
+<li><p>Built-in examples</p></li>
+</ul>
+</section>
+<section id="simple-interactive-example">
+<h2>Simple interactive example<a class="headerlink" href="#simple-interactive-example" title="Link to this heading">#</a></h2>
+<p>This simple interactive example shows how to start an instance of
+the Geometry server and create a geometry model.</p>
+<section id="start-geometry-server-instance">
+<h3>Start Geometry server instance<a class="headerlink" href="#start-geometry-server-instance" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="../api/ansys/geometry/core/modeler/index.html#module-ansys.geometry.core.modeler" title="ansys.geometry.core.modeler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Modeler()</span></code></a> class
+within the <code class="docutils literal notranslate"><span class="pre">ansys-geometry-core</span></code> library creates an instance of
+the Geometry service. By default, the <code class="docutils literal notranslate"><span class="pre">Modeler</span></code> instance connects to
+<code class="docutils literal notranslate"><span class="pre">127.0.0.1</span></code> (<code class="docutils literal notranslate"><span class="pre">&quot;localhost&quot;</span></code>) on port <code class="docutils literal notranslate"><span class="pre">50051</span></code>. You can change this
+by modifying the <code class="docutils literal notranslate"><span class="pre">host</span></code> and <code class="docutils literal notranslate"><span class="pre">port</span></code> parameters of the <code class="docutils literal notranslate"><span class="pre">Modeler</span></code> object,
+but note that you must also modify your <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code> command by changing
+the <code class="docutils literal notranslate"><span class="pre">&lt;HOST-PORT&gt;:50051</span></code> argument.</p>
+<p>This code starts an instance of the Geometry service:</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Modeler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">modeler</span> <span class="o">=</span> <span class="n">Modeler</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="create-geometry-model">
+<h3>Create geometry model<a class="headerlink" href="#create-geometry-model" title="Link to this heading">#</a></h3>
+<p>Once an instance has started, you can create a
+geometry model by initializing the <a class="reference internal" href="shapes.html#ref-sketch"><span class="std std-ref">sketch</span></a> subpackage and using the
+<a class="reference internal" href="primitives.html#ref-primitives"><span class="std std-ref">shapes</span></a> subpackage.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.math</span><span class="w"> </span><span class="kn">import</span> <span class="n">Plane</span><span class="p">,</span> <span class="n">Point3D</span><span class="p">,</span> <span class="n">Point2D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNITS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.sketch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sketch</span>
+
+<span class="c1"># Define our sketch</span>
+<span class="n">origin</span> <span class="o">=</span> <span class="n">Point3D</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span class="n">plane</span> <span class="o">=</span> <span class="n">Plane</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">direction_x</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">direction_y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Create the sketch</span>
+<span class="n">sketch</span> <span class="o">=</span> <span class="n">Sketch</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">Point2D</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">UNITS</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="jupyter_cell docutils container">
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">
+{"version_major": 2, "version_minor": 0, "model_id": "b179abf8901843a19e6d762b48ded244"}
+</script></div>
+</div>
+</section>
+</section>
+</section>
+
+
+<script type="application/vnd.jupyter.widget-state+json">
+{"state": {"591410e310124c028605403b59d83501": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "864bd1654e284c7c8a64133136b32754": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "b179abf8901843a19e6d762b48ded244": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_591410e310124c028605403b59d83501", "placeholder": "\u200b", "style": "IPY_MODEL_864bd1654e284c7c8a64133136b32754", "value": "<iframe srcdoc=\"<!DOCTYPE html>\n<html lang=&quot;en-US&quot; dir=&quot;ltr&quot;>\n  <head>\n    <meta charset=&quot;utf-8&quot;>\n    <meta name=&quot;viewport&quot; content=&quot;width=device-width,initial-scale=1&quot;>\n    <title>404 | VTK.js </title>\n    <meta name=&quot;description&quot; content=&quot;Not Found&quot;>\n    <meta name=&quot;generator&quot; content=&quot;VitePress v1.6.4&quot;>\n    <link rel=&quot;preload stylesheet&quot; href=&quot;/vtk-js/assets/style.BfuHIIC4.css&quot; as=&quot;style&quot;>\n    <link rel=&quot;preload stylesheet&quot; href=&quot;/vtk-js/vp-icons.css&quot; as=&quot;style&quot;>\n    \n    <script type=&quot;module&quot; src=&quot;/vtk-js/assets/app.DfjizcSH.js&quot;><\/script>\n    <link rel=&quot;preload&quot; href=&quot;/vtk-js/assets/inter-roman-latin.Di8DUHzh.woff2&quot; as=&quot;font&quot; type=&quot;font/woff2&quot; crossorigin=&quot;&quot;>\n    <script id=&quot;check-dark-mode&quot;>(()=>{const e=localStorage.getItem(&quot;vitepress-theme-appearance&quot;)||&quot;auto&quot;,a=window.matchMedia(&quot;(prefers-color-scheme: dark)&quot;).matches;(!e||e===&quot;auto&quot;?a:e===&quot;dark&quot;)&&document.documentElement.classList.add(&quot;dark&quot;)})();<\/script>\n    <script id=&quot;check-mac-os&quot;>document.documentElement.classList.toggle(&quot;mac&quot;,/Mac|iPhone|iPod|iPad/i.test(navigator.platform));<\/script>\n  </head>\n  <body>\n    <div id=&quot;app&quot;></div>\n    <script>window.__VP_HASH_MAP__=JSON.parse(&quot;{\\&quot;api_common_core_base64.md\\&quot;:\\&quot;DdzQd5cm\\&quot;,\\&quot;api_common_core_cellarray.md\\&quot;:\\&quot;Bol3FrQj\\&quot;,\\&quot;api_common_core_dataarray.md\\&quot;:\\&quot;CE0w5aq9\\&quot;,\\&quot;api_common_core_endian.md\\&quot;:\\&quot;CiyBcDyT\\&quot;,\\&quot;api_common_core_halffloat.md\\&quot;:\\&quot;BtMeKCgy\\&quot;,\\&quot;api_common_core_imagehelper.md\\&quot;:\\&quot;Bn1oq0Mb\\&quot;,\\&quot;api_common_core_lookuptable.md\\&quot;:\\&quot;ByDXJshg\\&quot;,\\&quot;api_common_core_math.md\\&quot;:\\&quot;DdnVufOV\\&quot;,\\&quot;api_common_core_matrixbuilder.md\\&quot;:\\&quot;DtnAVDJf\\&quot;,\\&quot;api_common_core_points.md\\&quot;:\\&quot;DfNzzAJ-\\&quot;,\\&quot;api_common_core_priorityqueue.md\\&quot;:\\&quot;DUNdXGx0\\&quot;,\\&quot;api_common_core_progresshandler.md\\&quot;:\\&quot;C3AIwmQi\\&quot;,\\&quot;api_common_core_scalarstocolors.md\\&quot;:\\&quot;B6dSJBjD\\&quot;,\\&quot;api_common_core_stringarray.md\\&quot;:\\&quot;CtzIu7_C\\&quot;,\\&quot;api_common_core_urlextract.md\\&quot;:\\&quot;BW04Xinu\\&quot;,\\&quot;api_common_core_variantarray.md\\&quot;:\\&quot;C0BiKWJg\\&quot;,\\&quot;api_common_datamodel_abstractpointlocator.md\\&quot;:\\&quot;DGX2ef_9\\&quot;,\\&quot;api_common_datamodel_boundingbox.md\\&quot;:\\&quot;CLmc6rWQ\\&quot;,\\&quot;api_common_datamodel_box.md\\&quot;:\\&quot;D_h1VVn8\\&quot;,\\&quot;api_common_datamodel_cardinalspline1d.md\\&quot;:\\&quot;DinplnDG\\&quot;,\\&quot;api_common_datamodel_cell.md\\&quot;:\\&quot;DyTXzJa2\\&quot;,\\&quot;api_common_datamodel_collection.md\\&quot;:\\&quot;BVqmNHuN\\&quot;,\\&quot;api_common_datamodel_cone.md\\&quot;:\\&quot;xvaTYeq8\\&quot;,\\&quot;api_common_datamodel_cylinder.md\\&quot;:\\&quot;BCvRfyy9\\&quot;,\\&quot;api_common_datamodel_dataset.md\\&quot;:\\&quot;D9wQIHNc\\&quot;,\\&quot;api_common_datamodel_datasetattributes.md\\&quot;:\\&quot;CYhekXwf\\&quot;,\\&quot;api_common_datamodel_edgelocator.md\\&quot;:\\&quot;Br1lgIoF\\&quot;,\\&quot;api_common_datamodel_imagedata.md\\&quot;:\\&quot;qmID88K0\\&quot;,\\&quot;api_common_datamodel_implicitfunction.md\\&quot;:\\&quot;x3BokgCS\\&quot;,\\&quot;api_common_datamodel_incrementaloctreenode.md\\&quot;:\\&quot;lJEcM-3s\\&quot;,\\&quot;api_common_datamodel_incrementaloctreepointlocator.md\\&quot;:\\&quot;DbxeZqkk\\&quot;,\\&quot;api_common_datamodel_itkhelper.md\\&quot;:\\&quot;BPHxwfV0\\&quot;,\\&quot;api_common_datamodel_kochanekspline1d.md\\&quot;:\\&quot;C7s2URVM\\&quot;,\\&quot;api_common_datamodel_line.md\\&quot;:\\&quot;CzWwGmK7\\&quot;,\\&quot;api_common_datamodel_locator.md\\&quot;:\\&quot;CeASSBbQ\\&quot;,\\&quot;api_common_datamodel_mergepoints.md\\&quot;:\\&quot;DNo2bVJ5\\&quot;,\\&quot;api_common_datamodel_piecewisefunction.md\\&quot;:\\&quot;DzminddT\\&quot;,\\&quot;api_common_datamodel_plane.md\\&quot;:\\&quot;BroodFPx\\&quot;,\\&quot;api_common_datamodel_planes.md\\&quot;:\\&quot;B66uR19u\\&quot;,\\&quot;api_common_datamodel_pointlocator.md\\&quot;:\\&quot;B49_1JQZ\\&quot;,\\&quot;api_common_datamodel_pointset.md\\&quot;:\\&quot;DZ3If-I-\\&quot;,\\&quot;api_common_datamodel_polydata.md\\&quot;:\\&quot;MPOlWRP2\\&quot;,\\&quot;api_common_datamodel_polygon.md\\&quot;:\\&quot;DhQUN4FC\\&quot;,\\&quot;api_common_datamodel_polyline.md\\&quot;:\\&quot;BLf6vmpZ\\&quot;,\\&quot;api_common_datamodel_quad.md\\&quot;:\\&quot;CQ8XxNGQ\\&quot;,\\&quot;api_common_datamodel_selectionnode.md\\&quot;:\\&quot;BMT2bS14\\&quot;,\\&quot;api_common_datamodel_sphere.md\\&quot;:\\&quot;DWMJWhkO\\&quot;,\\&quot;api_common_datamodel_spline1d.md\\&quot;:\\&quot;DXPmUIyw\\&quot;,\\&quot;api_common_datamodel_spline3d.md\\&quot;:\\&quot;D4dHrnf4\\&quot;,\\&quot;api_common_datamodel_triangle.md\\&quot;:\\&quot;7jCddbvw\\&quot;,\\&quot;api_common_datamodel_trianglestrip.md\\&quot;:\\&quot;DkpZkTY8\\&quot;,\\&quot;api_common_transform_landmarktransform.md\\&quot;:\\&quot;DljyrjRP\\&quot;,\\&quot;api_common_transform_transform.md\\&quot;:\\&quot;lj-rbnii\\&quot;,\\&quot;api_filters_core_cleanpolydata.md\\&quot;:\\&quot;bXhbSisE\\&quot;,\\&quot;api_filters_core_thresholdpoints.md\\&quot;:\\&quot;9clanFiC\\&quot;,\\&quot;api_filters_general_appendpolydata.md\\&quot;:\\&quot;BTFFsBEs\\&quot;,\\&quot;api_filters_general_clipclosedsurface.md\\&quot;:\\&quot;uX8pJXNC\\&quot;,\\&quot;api_filters_general_contourloopextraction.md\\&quot;:\\&quot;D_MAdsFy\\&quot;,\\&quot;api_filters_general_contourtriangulator.md\\&quot;:\\&quot;DxpXGylX\\&quot;,\\&quot;api_filters_general_imagecropfilter.md\\&quot;:\\&quot;D4Qe_61U\\&quot;,\\&quot;api_filters_general_imagedataoutlinefilter.md\\&quot;:\\&quot;B2MnG1Wf\\&quot;,\\&quot;api_filters_general_imageoutlinefilter.md\\&quot;:\\&quot;jNp72hcJ\\&quot;,\\&quot;api_filters_general_imageslicefilter.md\\&quot;:\\&quot;DXDhly2e\\&quot;,\\&quot;api_filters_general_imagestreamline.md\\&quot;:\\&quot;CPX7Gvpk\\&quot;,\\&quot;api_filters_general_linefilter.md\\&quot;:\\&quot;jJMc1HaW\\&quot;,\\&quot;api_filters_general_outlinefilter.md\\&quot;:\\&quot;6gjPBDUo\\&quot;,\\&quot;api_filters_general_shrinkpolydata.md\\&quot;:\\&quot;DVRKj8bQ\\&quot;,\\&quot;api_filters_general_transformpolydatafilter.md\\&quot;:\\&quot;4RQEwWFJ\\&quot;,\\&quot;api_filters_general_trianglefilter.md\\&quot;:\\&quot;DTl5Ulcp\\&quot;,\\&quot;api_filters_general_tubefilter.md\\&quot;:\\&quot;BpO0yaXs\\&quot;,\\&quot;api_filters_sources_arcsource.md\\&quot;:\\&quot;DuzRTNvb\\&quot;,\\&quot;api_filters_sources_arrow2dsource.md\\&quot;:\\&quot;DKZZ6IjH\\&quot;,\\&quot;api_filters_sources_arrowsource.md\\&quot;:\\&quot;A4d7PkDG\\&quot;,\\&quot;api_filters_sources_circlesource.md\\&quot;:\\&quot;CH_jC4-m\\&quot;,\\&quot;api_filters_sources_conesource.md\\&quot;:\\&quot;DwOuQeTy\\&quot;,\\&quot;api_filters_sources_cubesource.md\\&quot;:\\&quot;zIuiz86-\\&quot;,\\&quot;api_filters_sources_cursor3d.md\\&quot;:\\&quot;-VoBYwoS\\&quot;,\\&quot;api_filters_sources_cylindersource.md\\&quot;:\\&quot;BBpqJlan\\&quot;,\\&quot;api_filters_sources_disksource.md\\&quot;:\\&quot;DsN6XxuB\\&quot;,\\&quot;api_filters_sources_ellipsearcsource.md\\&quot;:\\&quot;CsICSCpm\\&quot;,\\&quot;api_filters_sources_frustumsource.md\\&quot;:\\&quot;DIWITu8z\\&quot;,\\&quot;api_filters_sources_linesource.md\\&quot;:\\&quot;BGdixqN1\\&quot;,\\&quot;api_filters_sources_planesource.md\\&quot;:\\&quot;CX6RM45W\\&quot;,\\&quot;api_filters_sources_platonicsolidsource.md\\&quot;:\\&quot;CQ-umK2B\\&quot;,\\&quot;api_filters_sources_pointsource.md\\&quot;:\\&quot;H6ReJsz9\\&quot;,\\&quot;api_filters_sources_spheresource.md\\&quot;:\\&quot;BGKfQssB\\&quot;,\\&quot;api_filters_texture_texturemaptoplane.md\\&quot;:\\&quot;BBTrTqXJ\\&quot;,\\&quot;api_filters_texture_texturemaptosphere.md\\&quot;:\\&quot;DpTd6uAO\\&quot;,\\&quot;api_imaging_core_imagereslice.md\\&quot;:\\&quot;NzjZ-ldO\\&quot;,\\&quot;api_index.md\\&quot;:\\&quot;BvWmymfg\\&quot;,\\&quot;api_interaction_manipulators_3dcontrollermodelselectormanipulator.md\\&quot;:\\&quot;BVsXfp_U\\&quot;,\\&quot;api_interaction_manipulators_compositecameramanipulator.md\\&quot;:\\&quot;CHeh9gjQ\\&quot;,\\&quot;api_interaction_manipulators_compositegesturemanipulator.md\\&quot;:\\&quot;UNeyESLd\\&quot;,\\&quot;api_interaction_manipulators_compositekeyboardmanipulator.md\\&quot;:\\&quot;D5qnZ_RN\\&quot;,\\&quot;api_interaction_manipulators_compositemousemanipulator.md\\&quot;:\\&quot;Dnpx-D0i\\&quot;,\\&quot;api_interaction_manipulators_compositevrmanipulator.md\\&quot;:\\&quot;ChHZ0RuC\\&quot;,\\&quot;api_interaction_manipulators_gesturecameramanipulator.md\\&quot;:\\&quot;aJAF5uzg\\&quot;,\\&quot;api_interaction_manipulators_keyboardcameramanipulator.md\\&quot;:\\&quot;B7oaNZhj\\&quot;,\\&quot;api_interaction_manipulators_mouseboxselectormanipulator.md\\&quot;:\\&quot;eID9Rz1J\\&quot;,\\&quot;api_interaction_manipulators_mousecameratrackballmultirotatemanipulator.md\\&quot;:\\&quot;B-Pbz8nr\\&quot;,\\&quot;api_interaction_manipulators_mousecameratrackballpanmanipulator.md\\&quot;:\\&quot;D3F-EbI6\\&quot;,\\&quot;api_interaction_manipulators_mousecameratrackballrollmanipulator.md\\&quot;:\\&quot;CZ4FOmzs\\&quot;,\\&quot;api_interaction_manipulators_mousecameratrackballrotatemanipulator.md\\&quot;:\\&quot;C6RIS8MW\\&quot;,\\&quot;api_interaction_manipulators_mousecameratrackballzoommanipulator.md\\&quot;:\\&quot;Dov5QoXI\\&quot;,\\&quot;api_interaction_manipulators_mousecameratrackballzoomtomousemanipulator.md\\&quot;:\\&quot;B8El1QNm\\&quot;,\\&quot;api_interaction_manipulators_mouserangemanipulator.md\\&quot;:\\&quot;8u64FeQN\\&quot;,\\&quot;api_interaction_style_interactorstylehmdxr.md\\&quot;:\\&quot;BH-MttJB\\&quot;,\\&quot;api_interaction_style_interactorstyleimage.md\\&quot;:\\&quot;D89P0-BL\\&quot;,\\&quot;api_interaction_style_interactorstylemanipulator.md\\&quot;:\\&quot;DGgGMmu0\\&quot;,\\&quot;api_interaction_style_interactorstyletrackballcamera.md\\&quot;:\\&quot;2uzxEzhG\\&quot;,\\&quot;api_interaction_widgets_orientationmarkerwidget.md\\&quot;:\\&quot;Cs9nrRav\\&quot;,\\&quot;api_io_core_dataaccesshelper.md\\&quot;:\\&quot;DnH9K2fL\\&quot;,\\&quot;api_io_core_httpdatasetreader.md\\&quot;:\\&quot;BPV-H-qu\\&quot;,\\&quot;api_io_core_httpsceneloader.md\\&quot;:\\&quot;DyiQWYzG\\&quot;,\\&quot;api_io_core_imagestream.md\\&quot;:\\&quot;CQPtM5uW\\&quot;,\\&quot;api_io_core_wslinkclient.md\\&quot;:\\&quot;DMO9d8Qx\\&quot;,\\&quot;api_io_geometry_dracoreader.md\\&quot;:\\&quot;sLXVsq6V\\&quot;,\\&quot;api_io_geometry_gltfimporter.md\\&quot;:\\&quot;BZQuYv7E\\&quot;,\\&quot;api_io_geometry_ifcimporter.md\\&quot;:\\&quot;BQronL5_\\&quot;,\\&quot;api_io_geometry_plyreader.md\\&quot;:\\&quot;DUqF92jw\\&quot;,\\&quot;api_io_geometry_plywriter.md\\&quot;:\\&quot;ObA-pQfq\\&quot;,\\&quot;api_io_geometry_stlreader.md\\&quot;:\\&quot;D_B_T0a6\\&quot;,\\&quot;api_io_geometry_stlwriter.md\\&quot;:\\&quot;C4mNISct\\&quot;,\\&quot;api_io_image_hdrreader.md\\&quot;:\\&quot;DL0wIqDT\\&quot;,\\&quot;api_io_image_tgareader.md\\&quot;:\\&quot;POpLRW3i\\&quot;,\\&quot;api_io_image_tiffreader.md\\&quot;:\\&quot;D8liXYie\\&quot;,\\&quot;api_io_misc_elevationreader.md\\&quot;:\\&quot;BNO1mYKK\\&quot;,\\&quot;api_io_misc_gcodereader.md\\&quot;:\\&quot;CYAPxa5r\\&quot;,\\&quot;api_io_misc_itkimagereader.md\\&quot;:\\&quot;DTKdvS2N\\&quot;,\\&quot;api_io_misc_itkpolydatareader.md\\&quot;:\\&quot;BWhw0b9E\\&quot;,\\&quot;api_io_misc_jsonnucleoreader.md\\&quot;:\\&quot;BR1w3c6s\\&quot;,\\&quot;api_io_misc_jsonreader.md\\&quot;:\\&quot;D2c3-6ML\\&quot;,\\&quot;api_io_misc_mtlreader.md\\&quot;:\\&quot;C8LpZyRg\\&quot;,\\&quot;api_io_misc_objreader.md\\&quot;:\\&quot;CixaQ7aC\\&quot;,\\&quot;api_io_misc_objwriter.md\\&quot;:\\&quot;6-pL_Sor\\&quot;,\\&quot;api_io_misc_pdbreader.md\\&quot;:\\&quot;D3_Ng8UW\\&quot;,\\&quot;api_io_xml_xmlimagedatareader.md\\&quot;:\\&quot;CLLdtNrE\\&quot;,\\&quot;api_io_xml_xmlpolydatareader.md\\&quot;:\\&quot;CmzJ_SQ4\\&quot;,\\&quot;api_io_xml_xmlreader.md\\&quot;:\\&quot;C411kBoj\\&quot;,\\&quot;api_proxy_core_abstractrepresentationproxy.md\\&quot;:\\&quot;tHkrZNXe\\&quot;,\\&quot;api_proxy_core_lookuptableproxy.md\\&quot;:\\&quot;cHts6dJN\\&quot;,\\&quot;api_proxy_core_piecewisefunctionproxy.md\\&quot;:\\&quot;CW5StQ0T\\&quot;,\\&quot;api_proxy_core_proxymanager.md\\&quot;:\\&quot;BwZ3MBdM\\&quot;,\\&quot;api_proxy_core_sourceproxy.md\\&quot;:\\&quot;CWjq-KnX\\&quot;,\\&quot;api_proxy_core_view2dproxy.md\\&quot;:\\&quot;ChNGNgwq\\&quot;,\\&quot;api_proxy_core_viewproxy.md\\&quot;:\\&quot;ikyWLAVb\\&quot;,\\&quot;api_proxy_representations_geometryrepresentationproxy.md\\&quot;:\\&quot;Ddvc1RBS\\&quot;,\\&quot;api_proxy_representations_reslicerepresentationproxy.md\\&quot;:\\&quot;DZoo9ifw\\&quot;,\\&quot;api_proxy_representations_slicerepresentationproxy.md\\&quot;:\\&quot;BiQE08Qe\\&quot;,\\&quot;api_proxy_representations_volumerepresentationproxy.md\\&quot;:\\&quot;DijKtNBO\\&quot;,\\&quot;api_rendering_core_abstractimagemapper.md\\&quot;:\\&quot;DdcXI3CY\\&quot;,\\&quot;api_rendering_core_abstractmapper.md\\&quot;:\\&quot;B9NWte5x\\&quot;,\\&quot;api_rendering_core_abstractmapper3d.md\\&quot;:\\&quot;Ci02rWWJ\\&quot;,\\&quot;api_rendering_core_abstractpicker.md\\&quot;:\\&quot;SfHKiXOU\\&quot;,\\&quot;api_rendering_core_actor.md\\&quot;:\\&quot;BBDbhDyt\\&quot;,\\&quot;api_rendering_core_actor2d.md\\&quot;:\\&quot;C2zwlYCl\\&quot;,\\&quot;api_rendering_core_annotatedcubeactor.md\\&quot;:\\&quot;CrOa9T-7\\&quot;,\\&quot;api_rendering_core_axesactor.md\\&quot;:\\&quot;BJkK0R23\\&quot;,\\&quot;api_rendering_core_camera.md\\&quot;:\\&quot;B_cNBzGS\\&quot;,\\&quot;api_rendering_core_cellpicker.md\\&quot;:\\&quot;DWvfxHfc\\&quot;,\\&quot;api_rendering_core_colortransferfunction.md\\&quot;:\\&quot;DjD1VkJD\\&quot;,\\&quot;api_rendering_core_coordinate.md\\&quot;:\\&quot;Bh3Xqsbd\\&quot;,\\&quot;api_rendering_core_follower.md\\&quot;:\\&quot;Dv1u-SdP\\&quot;,\\&quot;api_rendering_core_glyph3dmapper.md\\&quot;:\\&quot;Ej0Cunej\\&quot;,\\&quot;api_rendering_core_hardwareselector.md\\&quot;:\\&quot;D_jvQwdq\\&quot;,\\&quot;api_rendering_core_imagearraymapper.md\\&quot;:\\&quot;CACw5UFW\\&quot;,\\&quot;api_rendering_core_imagecprmapper.md\\&quot;:\\&quot;CZtZ2tt-\\&quot;,\\&quot;api_rendering_core_imagemapper.md\\&quot;:\\&quot;rAudLGEi\\&quot;,\\&quot;api_rendering_core_imageproperty.md\\&quot;:\\&quot;ctXxRxAf\\&quot;,\\&quot;api_rendering_core_imagereslicemapper.md\\&quot;:\\&quot;aM1IVV0z\\&quot;,\\&quot;api_rendering_core_imageslice.md\\&quot;:\\&quot;B_W1dSBa\\&quot;,\\&quot;api_rendering_core_interactorobserver.md\\&quot;:\\&quot;DxSDdhsS\\&quot;,\\&quot;api_rendering_core_interactorstyle.md\\&quot;:\\&quot;i6YkkX1g\\&quot;,\\&quot;api_rendering_core_light.md\\&quot;:\\&quot;DYKVbOuG\\&quot;,\\&quot;api_rendering_core_mapper.md\\&quot;:\\&quot;GOcxswou\\&quot;,\\&quot;api_rendering_core_mapper2d.md\\&quot;:\\&quot;B7-yJUVD\\&quot;,\\&quot;api_rendering_core_picker.md\\&quot;:\\&quot;D1uM7wji\\&quot;,\\&quot;api_rendering_core_pixelspacecallbackmapper.md\\&quot;:\\&quot;D1eohrNC\\&quot;,\\&quot;api_rendering_core_pointpicker.md\\&quot;:\\&quot;xdAGdgH0\\&quot;,\\&quot;api_rendering_core_prop.md\\&quot;:\\&quot;ogpBlRSI\\&quot;,\\&quot;api_rendering_core_prop3d.md\\&quot;:\\&quot;Dn-hzWM5\\&quot;,\\&quot;api_rendering_core_property.md\\&quot;:\\&quot;BbWUEsF9\\&quot;,\\&quot;api_rendering_core_property2d.md\\&quot;:\\&quot;CJv1G3nP\\&quot;,\\&quot;api_rendering_core_renderer.md\\&quot;:\\&quot;BnVGbdX2\\&quot;,\\&quot;api_rendering_core_renderwindow.md\\&quot;:\\&quot;DEXg1nlX\\&quot;,\\&quot;api_rendering_core_renderwindowinteractor.md\\&quot;:\\&quot;B12_1ctK\\&quot;,\\&quot;api_rendering_core_scalarbaractor.md\\&quot;:\\&quot;1lC8AZHm\\&quot;,\\&quot;api_rendering_core_skybox.md\\&quot;:\\&quot;Bl6sTjNN\\&quot;,\\&quot;api_rendering_core_spheremapper.md\\&quot;:\\&quot;DzCQtJ0o\\&quot;,\\&quot;api_rendering_core_stickmapper.md\\&quot;:\\&quot;p2hQLRkF\\&quot;,\\&quot;api_rendering_core_textactor.md\\&quot;:\\&quot;Cc0oaGSx\\&quot;,\\&quot;api_rendering_core_textproperty.md\\&quot;:\\&quot;DTv3xIiW\\&quot;,\\&quot;api_rendering_core_texture.md\\&quot;:\\&quot;B3vc3-T8\\&quot;,\\&quot;api_rendering_core_vectortext.md\\&quot;:\\&quot;D9Uir7da\\&quot;,\\&quot;api_rendering_core_viewport.md\\&quot;:\\&quot;CaoXFn7f\\&quot;,\\&quot;api_rendering_core_volume.md\\&quot;:\\&quot;D86S26P4\\&quot;,\\&quot;api_rendering_core_volumemapper.md\\&quot;:\\&quot;B97n_j1E\\&quot;,\\&quot;api_rendering_core_volumeproperty.md\\&quot;:\\&quot;BCq4swnR\\&quot;,\\&quot;api_rendering_misc_canvasview.md\\&quot;:\\&quot;tq3vaI3n\\&quot;,\\&quot;api_rendering_misc_fullscreenrenderwindow.md\\&quot;:\\&quot;Br3XDvRM\\&quot;,\\&quot;api_rendering_misc_genericrenderwindow.md\\&quot;:\\&quot;BDqVhLNM\\&quot;,\\&quot;api_rendering_misc_remoteview.md\\&quot;:\\&quot;CqaWB0n7\\&quot;,\\&quot;api_rendering_misc_renderwindowwithcontrolbar.md\\&quot;:\\&quot;Bbl5BOTD\\&quot;,\\&quot;api_rendering_misc_synchronizablerenderwindow.md\\&quot;:\\&quot;BNdAvmT0\\&quot;,\\&quot;api_rendering_misc_synchronizablerenderwindow_objectmanager.md\\&quot;:\\&quot;CIZ4GhkB\\&quot;,\\&quot;api_rendering_misc_texturelodsdownloader.md\\&quot;:\\&quot;D-EOIbmW\\&quot;,\\&quot;api_rendering_opengl_bufferobject.md\\&quot;:\\&quot;CJrRkK2S\\&quot;,\\&quot;api_rendering_opengl_hardwareselector.md\\&quot;:\\&quot;Ba-Ya7mx\\&quot;,\\&quot;api_rendering_opengl_renderwindow.md\\&quot;:\\&quot;DmcFmGMg\\&quot;,\\&quot;api_rendering_opengl_texture.md\\&quot;:\\&quot;KG0bhhc0\\&quot;,\\&quot;api_rendering_scenegraph_renderpass.md\\&quot;:\\&quot;BUazvKu2\\&quot;,\\&quot;api_rendering_scenegraph_viewnode.md\\&quot;:\\&quot;DiFYGIeZ\\&quot;,\\&quot;api_rendering_scenegraph_viewnodefactory.md\\&quot;:\\&quot;BzXGxqcQ\\&quot;,\\&quot;api_rendering_webxr_renderwindowhelper.md\\&quot;:\\&quot;BWMrR_Kg\\&quot;,\\&quot;api_widgets_core_abstractwidget.md\\&quot;:\\&quot;CIJ3Gv2c\\&quot;,\\&quot;api_widgets_core_abstractwidgetfactory.md\\&quot;:\\&quot;Bp_yz5bG\\&quot;,\\&quot;api_widgets_core_statebuilder.md\\&quot;:\\&quot;uHVHaQ4J\\&quot;,\\&quot;api_widgets_core_widgetmanager.md\\&quot;:\\&quot;DZPfL6fI\\&quot;,\\&quot;api_widgets_core_widgetstate.md\\&quot;:\\&quot;NbxYHZk_\\&quot;,\\&quot;api_widgets_manipulators_abstractmanipulator.md\\&quot;:\\&quot;BKh1s_LH\\&quot;,\\&quot;api_widgets_manipulators_linemanipulator.md\\&quot;:\\&quot;rbYMiXvy\\&quot;,\\&quot;api_widgets_manipulators_pickermanipulator.md\\&quot;:\\&quot;BHIcHjW0\\&quot;,\\&quot;api_widgets_manipulators_planemanipulator.md\\&quot;:\\&quot;ClxYSb2X\\&quot;,\\&quot;api_widgets_manipulators_trackballmanipulator.md\\&quot;:\\&quot;CNrQtTO1\\&quot;,\\&quot;api_widgets_representations_widgetrepresentation.md\\&quot;:\\&quot;jjHjWVwU\\&quot;,\\&quot;api_widgets_widgets3d_interactiveorientationwidget.md\\&quot;:\\&quot;VEGfqghF\\&quot;,\\&quot;api_widgets_widgets3d_reslicecursorwidget.md\\&quot;:\\&quot;BO_sMaTa\\&quot;,\\&quot;api_widgets_widgets3d_seedwidget.md\\&quot;:\\&quot;BXqP67ZS\\&quot;,\\&quot;api_widgets_widgets3d_spherewidget.md\\&quot;:\\&quot;CAdXPGfL\\&quot;,\\&quot;docs_concepts_widgets.md\\&quot;:\\&quot;DM0qN-sF\\&quot;,\\&quot;docs_develop_build.md\\&quot;:\\&quot;BGZusmjC\\&quot;,\\&quot;docs_develop_class.md\\&quot;:\\&quot;CCRSevgu\\&quot;,\\&quot;docs_develop_example.md\\&quot;:\\&quot;BNrQwmsu\\&quot;,\\&quot;docs_develop_requirement.md\\&quot;:\\&quot;BQM_0izm\\&quot;,\\&quot;docs_develop_test.md\\&quot;:\\&quot;C-A3D7GN\\&quot;,\\&quot;docs_develop_webgpu.md\\&quot;:\\&quot;4pBYfo0T\\&quot;,\\&quot;docs_develop_webxr.md\\&quot;:\\&quot;aCl4vlrs\\&quot;,\\&quot;docs_develop_widget.md\\&quot;:\\&quot;CXGGzr2B\\&quot;,\\&quot;docs_index.md\\&quot;:\\&quot;BYD85lr1\\&quot;,\\&quot;docs_intro_vtk_as_es6_dependency.md\\&quot;:\\&quot;CYLUYOsW\\&quot;,\\&quot;docs_intro_vtk_as_external_script.md\\&quot;:\\&quot;B4i7tvx7\\&quot;,\\&quot;docs_misc_contributing.md\\&quot;:\\&quot;BohlyumU\\&quot;,\\&quot;docs_misc_tools.md\\&quot;:\\&quot;BgzCM0c9\\&quot;,\\&quot;docs_misc_troubleshooting.md\\&quot;:\\&quot;Cyqf78S9\\&quot;,\\&quot;docs_old_intro_vtk_es6.md\\&quot;:\\&quot;DuwG4_uf\\&quot;,\\&quot;docs_structures.md\\&quot;:\\&quot;BA1rMO3O\\&quot;,\\&quot;docs_structures_dataarray.md\\&quot;:\\&quot;CVBj0aOX\\&quot;,\\&quot;docs_structures_multiblock.md\\&quot;:\\&quot;aP4QQmAD\\&quot;,\\&quot;docs_structures_parametricdataset.md\\&quot;:\\&quot;BL-1sEMd\\&quot;,\\&quot;docs_structures_polydata.md\\&quot;:\\&quot;CIMVMcsx\\&quot;,\\&quot;docs_structures_stringarray.md\\&quot;:\\&quot;C643QvV3\\&quot;,\\&quot;docs_structures_table.md\\&quot;:\\&quot;DeHI7_gc\\&quot;,\\&quot;docs_structures_unstructuredgrid.md\\&quot;:\\&quot;Bh12LZGp\\&quot;,\\&quot;docs_tutorial.md\\&quot;:\\&quot;ClzCAgkz\\&quot;,\\&quot;docs_vtk_react.md\\&quot;:\\&quot;pkMN9i1v\\&quot;,\\&quot;docs_vtk_vanilla.md\\&quot;:\\&quot;CwlrkD7c\\&quot;,\\&quot;docs_vtk_vue.md\\&quot;:\\&quot;B3Q_Vimn\\&quot;,\\&quot;examples_actor2d.md\\&quot;:\\&quot;C2ShRu6T\\&quot;,\\&quot;examples_anglewidget.md\\&quot;:\\&quot;Ct05nTGN\\&quot;,\\&quot;examples_animationproxymanager.md\\&quot;:\\&quot;CgisqtKy\\&quot;,\\&quot;examples_ar.md\\&quot;:\\&quot;LBMT2ibo\\&quot;,\\&quot;examples_arcsource.md\\&quot;:\\&quot;Bti2AiHq\\&quot;,\\&quot;examples_arrowsource.md\\&quot;:\\&quot;DCCoH8IM\\&quot;,\\&quot;examples_axesactor.md\\&quot;:\\&quot;Gzkg8Cve\\&quot;,\\&quot;examples_box.md\\&quot;:\\&quot;C5n6U9eB\\&quot;,\\&quot;examples_calculator.md\\&quot;:\\&quot;CG05gTCy\\&quot;,\\&quot;examples_cellpicker.md\\&quot;:\\&quot;7LGBt50b\\&quot;,\\&quot;examples_circlesource.md\\&quot;:\\&quot;6talWc61\\&quot;,\\&quot;examples_cleanpolydata.md\\&quot;:\\&quot;BbgjuDIQ\\&quot;,\\&quot;examples_clipclosedsurface.md\\&quot;:\\&quot;brEcaV7F\\&quot;,\\&quot;examples_concentriccylindersource.md\\&quot;:\\&quot;DkJeVN1X\\&quot;,\\&quot;examples_cone.md\\&quot;:\\&quot;EFXBgICo\\&quot;,\\&quot;examples_conesource.md\\&quot;:\\&quot;BGR-b703\\&quot;,\\&quot;examples_contourloopextraction.md\\&quot;:\\&quot;CorNFIfd\\&quot;,\\&quot;examples_contourtriangulator.md\\&quot;:\\&quot;CvmVGVXm\\&quot;,\\&quot;examples_convolution2dpass.md\\&quot;:\\&quot;DrD6V2u6\\&quot;,\\&quot;examples_cubeaxes.md\\&quot;:\\&quot;XPfAsJZN\\&quot;,\\&quot;examples_cubesource.md\\&quot;:\\&quot;vHjiSgLl\\&quot;,\\&quot;examples_cursor3d.md\\&quot;:\\&quot;BSdksjiy\\&quot;,\\&quot;examples_customwebgpucone.md\\&quot;:\\&quot;B96vz9UQ\\&quot;,\\&quot;examples_cutter.md\\&quot;:\\&quot;Bz-eVhtw\\&quot;,\\&quot;examples_cylindersource.md\\&quot;:\\&quot;DQ7xgco5\\&quot;,\\&quot;examples_depthtest.md\\&quot;:\\&quot;6ZETzADK\\&quot;,\\&quot;examples_deviceorientationtocamera.md\\&quot;:\\&quot;CoC3DxwE\\&quot;,\\&quot;examples_disksource.md\\&quot;:\\&quot;DJsgTug_\\&quot;,\\&quot;examples_dracoreader.md\\&quot;:\\&quot;kGoowrPZ\\&quot;,\\&quot;examples_elevationreader.md\\&quot;:\\&quot;Dax9eXq3\\&quot;,\\&quot;examples_ellipsearcsource.md\\&quot;:\\&quot;CAl1EVJD\\&quot;,\\&quot;examples_frustumsource.md\\&quot;:\\&quot;DEs4kHw5\\&quot;,\\&quot;examples_gcodereader.md\\&quot;:\\&quot;BqI5fp50\\&quot;,\\&quot;examples_geometryviewer.md\\&quot;:\\&quot;BusdNYIe\\&quot;,\\&quot;examples_gltfimporter.md\\&quot;:\\&quot;D1Gj9p9i\\&quot;,\\&quot;examples_glyph3dmapper.md\\&quot;:\\&quot;DQ2X4btV\\&quot;,\\&quot;examples_glyphrotation.md\\&quot;:\\&quot;Lk_mDqix\\&quot;,\\&quot;examples_hardwareselector.md\\&quot;:\\&quot;CmIgThQC\\&quot;,\\&quot;examples_hdrreader.md\\&quot;:\\&quot;BbywDVOA\\&quot;,\\&quot;examples_httpdatasetreader.md\\&quot;:\\&quot;CqzoILkY\\&quot;,\\&quot;examples_httpdatasetseriesreader.md\\&quot;:\\&quot;DpFAyc1a\\&quot;,\\&quot;examples_httpsceneloader.md\\&quot;:\\&quot;DKSXz8IZ\\&quot;,\\&quot;examples_ifcimporter.md\\&quot;:\\&quot;Dmwhi5_2\\&quot;,\\&quot;examples_imagecprmapper.md\\&quot;:\\&quot;E6eEEFki\\&quot;,\\&quot;examples_imagecropfilter.md\\&quot;:\\&quot;iYf7uxfs\\&quot;,\\&quot;examples_imagecroppingwidget.md\\&quot;:\\&quot;EeC9LTo4\\&quot;,\\&quot;examples_imagelabeloutline.md\\&quot;:\\&quot;iiGFzcad\\&quot;,\\&quot;examples_imagemapper.md\\&quot;:\\&quot;CjWJ1K4Y\\&quot;,\\&quot;examples_imagemarchingcubes.md\\&quot;:\\&quot;CXC77n8b\\&quot;,\\&quot;examples_imagemarchingsquares.md\\&quot;:\\&quot;CnaMvHUe\\&quot;,\\&quot;examples_imageoutlinefilter.md\\&quot;:\\&quot;DmyWG8wt\\&quot;,\\&quot;examples_imagereslicemapper.md\\&quot;:\\&quot;fY-HSlDh\\&quot;,\\&quot;examples_imagestream.md\\&quot;:\\&quot;MyL0TWYI\\&quot;,\\&quot;examples_imagestreamline.md\\&quot;:\\&quot;KCBhok0Q\\&quot;,\\&quot;examples_imageviewer.md\\&quot;:\\&quot;DwUTsuqM\\&quot;,\\&quot;examples_implicitboolean.md\\&quot;:\\&quot;zEcmZF5Z\\&quot;,\\&quot;examples_implicitplanerepresentation.md\\&quot;:\\&quot;CkgZ3zHO\\&quot;,\\&quot;examples_implicitplanewidget.md\\&quot;:\\&quot;B1P7esIK\\&quot;,\\&quot;examples_index.md\\&quot;:\\&quot;BrZyzytg\\&quot;,\\&quot;examples_interactiveorientationwidget.md\\&quot;:\\&quot;BRAXfY_D\\&quot;,\\&quot;examples_interactorstylehmdxr.md\\&quot;:\\&quot;CZTloXGm\\&quot;,\\&quot;examples_interactorstylemanipulator.md\\&quot;:\\&quot;CrTgaV7Y\\&quot;,\\&quot;examples_interactorstylemanipulatorrotatecameracenter.md\\&quot;:\\&quot;D4gGh0YB\\&quot;,\\&quot;examples_interactorstylemprslice.md\\&quot;:\\&quot;DFHFfIGR\\&quot;,\\&quot;examples_interactorstyletrackballcamera.md\\&quot;:\\&quot;H1rLdZB9\\&quot;,\\&quot;examples_interactorstyleunicam.md\\&quot;:\\&quot;COpovsfS\\&quot;,\\&quot;examples_itkwasmgeometry.md\\&quot;:\\&quot;C9sHIszK\\&quot;,\\&quot;examples_itkwasmvolume.md\\&quot;:\\&quot;cdQ2z1A2\\&quot;,\\&quot;examples_jsonnucleoreader.md\\&quot;:\\&quot;C1tvb5fi\\&quot;,\\&quot;examples_keyboardcameramanipulator.md\\&quot;:\\&quot;UocDnTX9\\&quot;,\\&quot;examples_keypressevents.md\\&quot;:\\&quot;CCKt63oo\\&quot;,\\&quot;examples_labelmapedgeprojection.md\\&quot;:\\&quot;C26y5E7y\\&quot;,\\&quot;examples_labelwidget.md\\&quot;:\\&quot;CMYXfszB\\&quot;,\\&quot;examples_linesource.md\\&quot;:\\&quot;CxPbtuvU\\&quot;,\\&quot;examples_linewidget.md\\&quot;:\\&quot;DkmVZbLP\\&quot;,\\&quot;examples_lookingglass.md\\&quot;:\\&quot;CcCY3eYY\\&quot;,\\&quot;examples_manyrenderers.md\\&quot;:\\&quot;C3tZg_tx\\&quot;,\\&quot;examples_manyrenderwindows.md\\&quot;:\\&quot;Bzbw_v-u\\&quot;,\\&quot;examples_mouseboxselectormanipulator.md\\&quot;:\\&quot;BqbGRKbF\\&quot;,\\&quot;examples_mousecameratrackballfirstpersonmanipulator.md\\&quot;:\\&quot;DEm03kGg\\&quot;,\\&quot;examples_mouserangemanipulator.md\\&quot;:\\&quot;C-sLGtPU\\&quot;,\\&quot;examples_multisliceimagemapper.md\\&quot;:\\&quot;DeJ3FPUS\\&quot;,\\&quot;examples_obbtree.md\\&quot;:\\&quot;OzT95F3u\\&quot;,\\&quot;examples_objreader.md\\&quot;:\\&quot;DXsD_gnj\\&quot;,\\&quot;examples_objviewer.md\\&quot;:\\&quot;jxX73jO4\\&quot;,\\&quot;examples_objwriter.md\\&quot;:\\&quot;Bk0kh8Wz\\&quot;,\\&quot;examples_octreeviewer.md\\&quot;:\\&quot;DGpbfHIG\\&quot;,\\&quot;examples_offlinelocalview.md\\&quot;:\\&quot;ChtZpQH9\\&quot;,\\&quot;examples_orientationmarkerwidget.md\\&quot;:\\&quot;DsZHx7sg\\&quot;,\\&quot;examples_outlinefilter.md\\&quot;:\\&quot;CzCDj0Ip\\&quot;,\\&quot;examples_paintwidget.md\\&quot;:\\&quot;CyTSfqJD\\&quot;,\\&quot;examples_pbr.md\\&quot;:\\&quot;B30cqXOE\\&quot;,\\&quot;examples_pdbreader.md\\&quot;:\\&quot;CCCPH_mG\\&quot;,\\&quot;examples_picking.md\\&quot;:\\&quot;CKJJ-bnF\\&quot;,\\&quot;examples_piecewisegaussianwidget.md\\&quot;:\\&quot;BX9V4vqv\\&quot;,\\&quot;examples_planesource.md\\&quot;:\\&quot;CLrIc6Ro\\&quot;,\\&quot;examples_platonicsolidsource.md\\&quot;:\\&quot;DB33xkkr\\&quot;,\\&quot;examples_plyreader.md\\&quot;:\\&quot;DXjnqarl\\&quot;,\\&quot;examples_plywriter.md\\&quot;:\\&quot;CElEl_ZZ\\&quot;,\\&quot;examples_pointlocator.md\\&quot;:\\&quot;DOglasc0\\&quot;,\\&quot;examples_pointpicker.md\\&quot;:\\&quot;BChGUPSD\\&quot;,\\&quot;examples_pointsource.md\\&quot;:\\&quot;JABvUmSK\\&quot;,\\&quot;examples_polydatanormals.md\\&quot;:\\&quot;THkHMJuQ\\&quot;,\\&quot;examples_polydatareader.md\\&quot;:\\&quot;D9A3gVHe\\&quot;,\\&quot;examples_polylinewidget.md\\&quot;:\\&quot;DtKinh03\\&quot;,\\&quot;examples_proxymanager.md\\&quot;:\\&quot;CmXBoLcQ\\&quot;,\\&quot;examples_quadview.md\\&quot;:\\&quot;DEfM7gPm\\&quot;,\\&quot;examples_remoteview.md\\&quot;:\\&quot;CEgoPJE6\\&quot;,\\&quot;examples_renderwindowwithcontrolbar.md\\&quot;:\\&quot;BKQ-Ozg4\\&quot;,\\&quot;examples_reslicecursorwidget.md\\&quot;:\\&quot;Di-34Mha\\&quot;,\\&quot;examples_reslicerepresentationproxy.md\\&quot;:\\&quot;CMa_Hp9N\\&quot;,\\&quot;examples_scalarbaractor.md\\&quot;:\\&quot;DkCc7yVS\\&quot;,\\&quot;examples_scalartorgba.md\\&quot;:\\&quot;CYC7ssdL\\&quot;,\\&quot;examples_sceneexplorer.md\\&quot;:\\&quot;DI96TqDm\\&quot;,\\&quot;examples_scrolling2dmixedimages.md\\&quot;:\\&quot;VP8eVjTQ\\&quot;,\\&quot;examples_seedwidget.md\\&quot;:\\&quot;DqNMcvn0\\&quot;,\\&quot;examples_shapewidget.md\\&quot;:\\&quot;CblvN6HX\\&quot;,\\&quot;examples_shrinkpolydata.md\\&quot;:\\&quot;7MbGa656\\&quot;,\\&quot;examples_simplecone.md\\&quot;:\\&quot;95Z3bOxN\\&quot;,\\&quot;examples_skyboxviewer.md\\&quot;:\\&quot;DbuuTJyo\\&quot;,\\&quot;examples_slicsource.md\\&quot;:\\&quot;D_Y-dZPJ\\&quot;,\\&quot;examples_spherearray.md\\&quot;:\\&quot;CBq0nP3X\\&quot;,\\&quot;examples_spheremapper.md\\&quot;:\\&quot;BAsTE9X1\\&quot;,\\&quot;examples_spheresandlabels.md\\&quot;:\\&quot;DAZtSYpa\\&quot;,\\&quot;examples_spheresource.md\\&quot;:\\&quot;CqCEa8Pb\\&quot;,\\&quot;examples_spherewidget.md\\&quot;:\\&quot;DUAV3o5Y\\&quot;,\\&quot;examples_splinewidget.md\\&quot;:\\&quot;B7_AH2pn\\&quot;,\\&quot;examples_stickmapper.md\\&quot;:\\&quot;BzyZu6XV\\&quot;,\\&quot;examples_stlreader.md\\&quot;:\\&quot;Cch5vwER\\&quot;,\\&quot;examples_stlwriter.md\\&quot;:\\&quot;C6tjKKC-\\&quot;,\\&quot;examples_surfacelicmapper.md\\&quot;:\\&quot;BbrVMSxC\\&quot;,\\&quot;examples_synchronizablerenderwindow.md\\&quot;:\\&quot;4OwG2e8E\\&quot;,\\&quot;examples_testvolumetypes.md\\&quot;:\\&quot;CXcTffjr\\&quot;,\\&quot;examples_textactor.md\\&quot;:\\&quot;C3TJpfyJ\\&quot;,\\&quot;examples_texture.md\\&quot;:\\&quot;kRi8uq-w\\&quot;,\\&quot;examples_tgareader.md\\&quot;:\\&quot;Cz5LgI-S\\&quot;,\\&quot;examples_thresholdpoints.md\\&quot;:\\&quot;_lYxDmt-\\&quot;,\\&quot;examples_tiffreader.md\\&quot;:\\&quot;CU2h6TYP\\&quot;,\\&quot;examples_timeseries.md\\&quot;:\\&quot;DUGOpkW8\\&quot;,\\&quot;examples_timestepbasedanimationhandler.md\\&quot;:\\&quot;M4-KGXXq\\&quot;,\\&quot;examples_transformcontrolswidget.md\\&quot;:\\&quot;LmElGFOa\\&quot;,\\&quot;examples_trianglefilter.md\\&quot;:\\&quot;93UCfLHo\\&quot;,\\&quot;examples_trianglestrip.md\\&quot;:\\&quot;CtjAM8UF\\&quot;,\\&quot;examples_tubefilter.md\\&quot;:\\&quot;CtfV2Nqz\\&quot;,\\&quot;examples_tubesviewer.md\\&quot;:\\&quot;Bfs6v8gM\\&quot;,\\&quot;examples_vectortext.md\\&quot;:\\&quot;BJ3sQbbV\\&quot;,\\&quot;examples_view2dproxy.md\\&quot;:\\&quot;DGUdNY19\\&quot;,\\&quot;examples_volumeclipplane.md\\&quot;:\\&quot;BzRt2TIf\\&quot;,\\&quot;examples_volumecontour.md\\&quot;:\\&quot;DCFTgJW6\\&quot;,\\&quot;examples_volumemapper.md\\&quot;:\\&quot;Il8p1dUf\\&quot;,\\&quot;examples_volumemapperblendmodes.md\\&quot;:\\&quot;BBqPD4PO\\&quot;,\\&quot;examples_volumemapperlightandshadow.md\\&quot;:\\&quot;C6M8GzD5\\&quot;,\\&quot;examples_volumemapperparallelprojection.md\\&quot;:\\&quot;vEcKg52b\\&quot;,\\&quot;examples_volumeoutline.md\\&quot;:\\&quot;61ooppEL\\&quot;,\\&quot;examples_volumepicker.md\\&quot;:\\&quot;CxvK4BW9\\&quot;,\\&quot;examples_volumerenderingwithpolydata.md\\&quot;:\\&quot;DRNrQHab\\&quot;,\\&quot;examples_volumeviewer.md\\&quot;:\\&quot;Bq9gJgrg\\&quot;,\\&quot;examples_vr.md\\&quot;:\\&quot;CdBH2ihd\\&quot;,\\&quot;examples_warpscalar.md\\&quot;:\\&quot;W1Kbc3UM\\&quot;,\\&quot;examples_webxrchestctblendedcvr.md\\&quot;:\\&quot;DLMA1rZO\\&quot;,\\&quot;examples_webxrheadfullvolumecvr.md\\&quot;:\\&quot;B1z5Rwbj\\&quot;,\\&quot;examples_webxrheadgradientcvr.md\\&quot;:\\&quot;DDJ9V_AQ\\&quot;,\\&quot;examples_webxrvolume.md\\&quot;:\\&quot;DI-0vFQA\\&quot;,\\&quot;examples_widgetmanager.md\\&quot;:\\&quot;BFkLB0JJ\\&quot;,\\&quot;examples_widgetrepresentation.md\\&quot;:\\&quot;DXDe73Ls\\&quot;,\\&quot;examples_windowedsincpolydatafilter.md\\&quot;:\\&quot;BobyC7S7\\&quot;,\\&quot;examples_xmlimagedatawriter.md\\&quot;:\\&quot;B6H-Kcef\\&quot;,\\&quot;examples_xmlpolydatawriter.md\\&quot;:\\&quot;DrlXFTdh\\&quot;,\\&quot;examples_ziphttpreader.md\\&quot;:\\&quot;LHbxk43p\\&quot;,\\&quot;index.md\\&quot;:\\&quot;B1FHKd-q\\&quot;}&quot;);window.__VP_SITE_DATA__=JSON.parse(&quot;{\\&quot;lang\\&quot;:\\&quot;en-US\\&quot;,\\&quot;dir\\&quot;:\\&quot;ltr\\&quot;,\\&quot;title\\&quot;:\\&quot;VTK.js \\&quot;,\\&quot;description\\&quot;:\\&quot;VTK.js a Visualization Toolkit for the Web\\&quot;,\\&quot;base\\&quot;:\\&quot;/vtk-js/\\&quot;,\\&quot;head\\&quot;:[],\\&quot;router\\&quot;:{\\&quot;prefetchLinks\\&quot;:true},\\&quot;appearance\\&quot;:true,\\&quot;themeConfig\\&quot;:{\\&quot;logo\\&quot;:\\&quot;/logo-wide.svg\\&quot;,\\&quot;siteTitle\\&quot;:\\&quot;\\&quot;,\\&quot;nav\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Docs\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/\\&quot;},{\\&quot;text\\&quot;:\\&quot;API\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/\\&quot;},{\\&quot;text\\&quot;:\\&quot;Examples\\&quot;,\\&quot;link\\&quot;:\\&quot;/examples/\\&quot;},{\\&quot;text\\&quot;:\\&quot;Datasets\\&quot;,\\&quot;link\\&quot;:\\&quot;https://kitware.github.io/vtk-js-datasets/\\&quot;}],\\&quot;sidebar\\&quot;:{\\&quot;/docs/\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Getting Started\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Overview\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/index.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Import from a CDN\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/intro_vtk_as_external_script.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ES6 Dependency\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/intro_vtk_as_es6_dependency.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;React Usage\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/vtk_react.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Vue Usage\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/vtk_vue.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Vanilla Usage\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/vtk_vanilla.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Tutorial\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/tutorial.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Old ES6 Docs\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/old_intro_vtk_es6.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Develop\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Requirement\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/develop_requirement.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Class\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/develop_class.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Example\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/develop_example.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Test\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/develop_test.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Build\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/develop_build.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Widget\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/develop_widget.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;WebGPU\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/develop_webgpu.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;WebXR\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/develop_webxr.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Concepts\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Widgets\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/concepts_widgets.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Miscellaneous\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Tools\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/misc_tools.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Troubleshooting\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/misc_troubleshooting.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Contributing\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/misc_contributing.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Data Format\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Structures\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/structures.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Data Array\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/structures_DataArray.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;String Array\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/structures_StringArray.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Poly Data\\&quot;,\\&quot;link\\&quot;:\\&quot;/docs/structures_PolyData.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Testing\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Tests\\&quot;,\\&quot;link\\&quot;:\\&quot;/vtk-js/coverage/tests.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Coverage\\&quot;,\\&quot;link\\&quot;:\\&quot;/vtk-js/coverage/home.html\\&quot;}]}],\\&quot;/api/\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Common\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Core\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Base64\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_Base64.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;CellArray\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_CellArray.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;DataArray\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_DataArray.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Endian\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_Endian.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;HalfFloat\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_HalfFloat.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageHelper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_ImageHelper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;LookupTable\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_LookupTable.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Math\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_Math.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;MatrixBuilder\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_MatrixBuilder.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Points\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_Points.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PriorityQueue\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_PriorityQueue.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ProgressHandler\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_ProgressHandler.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ScalarsToColors\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_ScalarsToColors.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;StringArray\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_StringArray.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;URLExtract\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_URLExtract.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;VariantArray\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Core_VariantArray.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;DataModel\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;AbstractPointLocator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_AbstractPointLocator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;BoundingBox\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_BoundingBox.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Box\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Box.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;CardinalSpline1D\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_CardinalSpline1D.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Cell\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Cell.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Collection\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Collection.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Cone\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Cone.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Cylinder\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Cylinder.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;DataSet\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_DataSet.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;DataSetAttributes\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_DataSetAttributes.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;EdgeLocator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_EdgeLocator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ITKHelper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_ITKHelper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageData\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_ImageData.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImplicitFunction\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_ImplicitFunction.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;IncrementalOctreeNode\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_IncrementalOctreeNode.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;IncrementalOctreePointLocator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_IncrementalOctreePointLocator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;KochanekSpline1D\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_KochanekSpline1D.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Line\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Line.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Locator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Locator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;MergePoints\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_MergePoints.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PiecewiseFunction\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_PiecewiseFunction.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Plane\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Plane.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Planes\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Planes.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PointLocator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_PointLocator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PointSet\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_PointSet.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PolyData\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_PolyData.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PolyLine\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_PolyLine.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Polygon\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Polygon.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Quad\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Quad.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;SelectionNode\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_SelectionNode.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Sphere\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Sphere.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Spline1D\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Spline1D.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Spline3D\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Spline3D.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Triangle\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_Triangle.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;TriangleStrip\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_DataModel_TriangleStrip.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Transform\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;LandmarkTransform\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Transform_LandmarkTransform.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Transform\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Common_Transform_Transform.html\\&quot;}]}]},{\\&quot;text\\&quot;:\\&quot;Filters\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Core\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;CleanPolyData\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Core_CleanPolyData.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ThresholdPoints\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Core_ThresholdPoints.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;General\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;AppendPolyData\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_AppendPolyData.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ClipClosedSurface\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_ClipClosedSurface.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ContourLoopExtraction\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_ContourLoopExtraction.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ContourTriangulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_ContourTriangulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageCropFilter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_ImageCropFilter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageDataOutlineFilter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_ImageDataOutlineFilter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageOutlineFilter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_ImageOutlineFilter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageSliceFilter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_ImageSliceFilter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageStreamline\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_ImageStreamline.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;LineFilter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_LineFilter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;OutlineFilter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_OutlineFilter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ShrinkPolyData\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_ShrinkPolyData.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;TransformPolyDataFilter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_TransformPolyDataFilter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;TriangleFilter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_TriangleFilter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;TubeFilter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_General_TubeFilter.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Sources\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;ArcSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_ArcSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Arrow2DSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_Arrow2DSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ArrowSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_ArrowSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;CircleSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_CircleSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ConeSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_ConeSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;CubeSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_CubeSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Cursor3D\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_Cursor3D.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;CylinderSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_CylinderSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;DiskSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_DiskSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;EllipseArcSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_EllipseArcSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;FrustumSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_FrustumSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;LineSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_LineSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PlaneSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_PlaneSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PlatonicSolidSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_PlatonicSolidSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PointSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_PointSource.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;SphereSource\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Sources_SphereSource.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Texture\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;TextureMapToPlane\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Texture_TextureMapToPlane.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;TextureMapToSphere\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Filters_Texture_TextureMapToSphere.html\\&quot;}]}]},{\\&quot;text\\&quot;:\\&quot;IO\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Core\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;DataAccessHelper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Core_DataAccessHelper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;HttpDataSetReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Core_HttpDataSetReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;HttpSceneLoader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Core_HttpSceneLoader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageStream\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Core_ImageStream.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;WSLinkClient\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Core_WSLinkClient.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Geometry\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;DracoReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Geometry_DracoReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;GLTFImporter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Geometry_GLTFImporter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;IFCImporter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Geometry_IFCImporter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PLYReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Geometry_PLYReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PLYWriter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Geometry_PLYWriter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;STLReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Geometry_STLReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;STLWriter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Geometry_STLWriter.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Image\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;HDRReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Image_HDRReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;TGAReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Image_TGAReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;TIFFReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Image_TIFFReader.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Misc\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;ElevationReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Misc_ElevationReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;GCodeReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Misc_GCodeReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ITKImageReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Misc_ITKImageReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ITKPolyDataReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Misc_ITKPolyDataReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;JSONNucleoReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Misc_JSONNucleoReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;JSONReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Misc_JSONReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;MTLReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Misc_MTLReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;OBJReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Misc_OBJReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;OBJWriter\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Misc_OBJWriter.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PDBReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_Misc_PDBReader.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;XML\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;XMLImageDataReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_XML_XMLImageDataReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;XMLPolyDataReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_XML_XMLPolyDataReader.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;XMLReader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/IO_XML_XMLReader.html\\&quot;}]}]},{\\&quot;text\\&quot;:\\&quot;Imaging\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Core\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;ImageReslice\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Imaging_Core_ImageReslice.html\\&quot;}]}]},{\\&quot;text\\&quot;:\\&quot;Interaction\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Manipulators\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;3DControllerModelSelectorManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_3DControllerModelSelectorManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;CompositeCameraManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_CompositeCameraManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;CompositeGestureManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_CompositeGestureManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;CompositeKeyboardManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_CompositeKeyboardManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;CompositeMouseManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_CompositeMouseManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;CompositeVRManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_CompositeVRManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;GestureCameraManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_GestureCameraManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;KeyboardCameraManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_KeyboardCameraManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;MouseBoxSelectorManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_MouseBoxSelectorManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;MouseCameraTrackballMultiRotateManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_MouseCameraTrackballMultiRotateManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;MouseCameraTrackballPanManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_MouseCameraTrackballPanManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;MouseCameraTrackballRollManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_MouseCameraTrackballRollManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;MouseCameraTrackballRotateManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_MouseCameraTrackballRotateManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;MouseCameraTrackballZoomManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_MouseCameraTrackballZoomManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;MouseCameraTrackballZoomToMouseManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_MouseCameraTrackballZoomToMouseManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;MouseRangeManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Manipulators_MouseRangeManipulator.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Style\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;InteractorStyleHMDXR\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Style_InteractorStyleHMDXR.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;InteractorStyleImage\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Style_InteractorStyleImage.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;InteractorStyleManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Style_InteractorStyleManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;InteractorStyleTrackballCamera\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Style_InteractorStyleTrackballCamera.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Widgets\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;OrientationMarkerWidget\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Interaction_Widgets_OrientationMarkerWidget.html\\&quot;}]}]},{\\&quot;text\\&quot;:\\&quot;Proxy\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Core\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;AbstractRepresentationProxy\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Proxy_Core_AbstractRepresentationProxy.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;LookupTableProxy\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Proxy_Core_LookupTableProxy.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PiecewiseFunctionProxy\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Proxy_Core_PiecewiseFunctionProxy.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ProxyManager\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Proxy_Core_ProxyManager.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;SourceProxy\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Proxy_Core_SourceProxy.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;View2DProxy\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Proxy_Core_View2DProxy.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ViewProxy\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Proxy_Core_ViewProxy.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Representations\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;GeometryRepresentationProxy\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Proxy_Representations_GeometryRepresentationProxy.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ResliceRepresentationProxy\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Proxy_Representations_ResliceRepresentationProxy.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;SliceRepresentationProxy\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Proxy_Representations_SliceRepresentationProxy.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;VolumeRepresentationProxy\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Proxy_Representations_VolumeRepresentationProxy.html\\&quot;}]}]},{\\&quot;text\\&quot;:\\&quot;Rendering\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Core\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;AbstractImageMapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_AbstractImageMapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;AbstractMapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_AbstractMapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;AbstractMapper3D\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_AbstractMapper3D.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;AbstractPicker\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_AbstractPicker.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Actor\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Actor.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Actor2D\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Actor2D.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;AnnotatedCubeActor\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_AnnotatedCubeActor.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;AxesActor\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_AxesActor.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Camera\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Camera.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;CellPicker\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_CellPicker.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ColorTransferFunction\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_ColorTransferFunction.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Coordinate\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Coordinate.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Follower\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Follower.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Glyph3DMapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Glyph3DMapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;HardwareSelector\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_HardwareSelector.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageArrayMapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_ImageArrayMapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageCPRMapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_ImageCPRMapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageMapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_ImageMapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageProperty\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_ImageProperty.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageResliceMapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_ImageResliceMapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ImageSlice\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_ImageSlice.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;InteractorObserver\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_InteractorObserver.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;InteractorStyle\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_InteractorStyle.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Light\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Light.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Mapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Mapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Mapper2D\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Mapper2D.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Picker\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Picker.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PixelSpaceCallbackMapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_PixelSpaceCallbackMapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PointPicker\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_PointPicker.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Prop\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Prop.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Prop3D\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Prop3D.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Property\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Property.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Property2D\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Property2D.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;RenderWindow\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_RenderWindow.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;RenderWindowInteractor\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_RenderWindowInteractor.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Renderer\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Renderer.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ScalarBarActor\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_ScalarBarActor.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Skybox\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Skybox.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;SphereMapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_SphereMapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;StickMapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_StickMapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;TextActor\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_TextActor.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;TextProperty\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_TextProperty.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Texture\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Texture.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;VectorText\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_VectorText.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Viewport\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Viewport.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Volume\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_Volume.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;VolumeMapper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_VolumeMapper.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;VolumeProperty\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Core_VolumeProperty.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Misc\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;CanvasView\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Misc_CanvasView.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;FullScreenRenderWindow\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Misc_FullScreenRenderWindow.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;GenericRenderWindow\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Misc_GenericRenderWindow.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;RemoteView\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Misc_RemoteView.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;RenderWindowWithControlBar\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Misc_RenderWindowWithControlBar.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;SynchronizableRenderWindow\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;SynchronizableRenderWindow\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Misc_SynchronizableRenderWindow.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ObjectManager\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Misc_SynchronizableRenderWindow_ObjectManager.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;TextureLODsDownloader\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_Misc_TextureLODsDownloader.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;OpenGL\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;BufferObject\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_OpenGL_BufferObject.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;HardwareSelector\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_OpenGL_HardwareSelector.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;RenderWindow\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_OpenGL_RenderWindow.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;Texture\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_OpenGL_Texture.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;SceneGraph\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;RenderPass\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_SceneGraph_RenderPass.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ViewNode\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_SceneGraph_ViewNode.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ViewNodeFactory\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_SceneGraph_ViewNodeFactory.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;WebXR\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;RenderWindowHelper\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Rendering_WebXR_RenderWindowHelper.html\\&quot;}]}]},{\\&quot;text\\&quot;:\\&quot;Widgets\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;Core\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;AbstractWidget\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Core_AbstractWidget.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;AbstractWidgetFactory\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Core_AbstractWidgetFactory.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;StateBuilder\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Core_StateBuilder.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;WidgetManager\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Core_WidgetManager.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;WidgetState\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Core_WidgetState.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Manipulators\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;AbstractManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Manipulators_AbstractManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;LineManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Manipulators_LineManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PickerManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Manipulators_PickerManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;PlaneManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Manipulators_PlaneManipulator.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;TrackballManipulator\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Manipulators_TrackballManipulator.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Representations\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;WidgetRepresentation\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Representations_WidgetRepresentation.html\\&quot;}]},{\\&quot;text\\&quot;:\\&quot;Widgets3D\\&quot;,\\&quot;collapsed\\&quot;:true,\\&quot;items\\&quot;:[{\\&quot;text\\&quot;:\\&quot;InteractiveOrientationWidget\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Widgets3D_InteractiveOrientationWidget.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;ResliceCursorWidget\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Widgets3D_ResliceCursorWidget.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;SeedWidget\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Widgets3D_SeedWidget.html\\&quot;},{\\&quot;text\\&quot;:\\&quot;SphereWidget\\&quot;,\\&quot;link\\&quot;:\\&quot;/api/Widgets_Widgets3D_SphereWidget.html\\&quot;}]}]}]},\\&quot;socialLinks\\&quot;:[{\\&quot;icon\\&quot;:\\&quot;github\\&quot;,\\&quot;link\\&quot;:\\&quot;https://github.com/Kitware/vtk-js\\&quot;}],\\&quot;outline\\&quot;:\\&quot;deep\\&quot;,\\&quot;search\\&quot;:{\\&quot;provider\\&quot;:\\&quot;local\\&quot;},\\&quot;footer\\&quot;:{\\&quot;copyright\\&quot;:\\&quot;\u00a9 2026 Kitware Inc.\\&quot;}},\\&quot;locales\\&quot;:{},\\&quot;scrollOffset\\&quot;:134,\\&quot;cleanUrls\\&quot;:false}&quot;);<\/script>\n    \n<script>\nvar container = document.querySelector('.content');\nvar base64Str = &quot;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&quot;;\n\nOfflineLocalView.load(container, { base64Str });\n<\/script>\n  </body>\n</html>\" class=\"pyvista\" style=\"width: 99%; height: 600px; border: 1px solid rgb(221,221,221);\"></iframe>"}}}, "version_major": 2, "version_minor": 0}
+</script>
+
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pyansys-geometry-overview">PyAnsys Geometry overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-interactive-example">Simple interactive example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#start-geometry-server-instance">Start Geometry server instance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#create-geometry-model">Create geometry model</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="https://github.com/ansys/pyansys-geometry/edit/main/doc/source/user_guide/index.rst" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../_sources/user_guide/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text", "objectID"], "limit": 10, "minMatchCharLength": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.0.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
