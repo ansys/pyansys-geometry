@@ -317,7 +317,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             "id": resp.id,
             "name": resp.name,
             "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "is_surface": True,
         }
 
     @protect_grpc
@@ -469,6 +469,14 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
+        # If "tight" bounding box is requested, raise NotImplementedError as this is
+        # not supported in v0
+        if kwargs.get("tight", False):
+            raise NotImplementedError(
+                f"Method '{self.__class__.__name__}.get_bounding_box(..., tight=True)' is not "
+                "implemented in this protofile version."
+            )
+
         # Call the gRPC service
         resp = self.stub.GetBoundingBox(request=build_grpc_id(kwargs["id"]))
 
@@ -1158,4 +1166,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def copy_faces(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.copy_faces' is not "
+            "implemented in this protofile version."
+        )
