@@ -212,10 +212,9 @@ if result is not None:
 print(f"Total number of bodies: {len(design.bodies)}")
 
 # The result is a list containing the created surface body
-if result:
-    created_body = result[0]
-    print(f"Created body is surface: {created_body.is_surface}")
-    print(f"Created body face area: {created_body.faces[0].area}")
+if result is not None:
+    print(f"Created body is surface: {result.is_surface}")
+    print(f"Created body face area: {result.faces[0].area}")
 
 # Plot the design
 design.plot()
