@@ -3606,9 +3606,6 @@ def test_get_face_bounding_box(modeler: Modeler):
 
 def test_get_face_tight_bounding_box(modeler: Modeler):
     """Test getting the tight bounding box of a face."""
-    if modeler.client.services.version == GeometryApiProtos.V0:
-        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
-
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
     yarn_body = design.bodies[0]
 
@@ -3665,9 +3662,6 @@ def test_get_edge_bounding_box(modeler: Modeler):
 
 def test_get_edge_tight_bounding_box(modeler: Modeler):
     """Test getting the tight bounding box of a face."""
-    if modeler.client.services.version == GeometryApiProtos.V0:
-        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
-
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
     yarn_body_edge = design.bodies[0].faces[0].edges[2]
 
