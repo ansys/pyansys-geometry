@@ -256,7 +256,7 @@ def check_type(input: object, expected_type: type | tuple[type, ...]) -> None:
     ----------
     input : object
         Input object.
-    expected_type : type | tuple[type, ...]
+    expected_type : ``type`` | tuple[``type``, ...]
         One or more types to compare the input object against.
 
     Raises
@@ -279,7 +279,7 @@ def check_type_all_elements_in_iterable(
     ----------
     input : Iterable
         Input iterable.
-    expected_type : type | tuple[type, ...]
+    expected_type : ``type`` | tuple[``type``, ...]
         One or more types to compare the input object against.
 
     Raises
