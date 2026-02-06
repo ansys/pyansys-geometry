@@ -130,6 +130,7 @@ def pytest_pyfunc_call(pyfuncitem):
     skip_backwards = True if config_value.lower() == "yes" else False
 
     testfunction = pyfuncitem.obj
+    test_name = pyfuncitem.nodeid
 
     def wrapped(*args, **kwargs):
         try:
@@ -138,10 +139,10 @@ def pytest_pyfunc_call(pyfuncitem):
             # Verify if the error is due to server incompatibility
             if skip_backwards and "requires a minimum Ansys release version" in str(e):
                 # If so, skip the test
-                pytest.skip("Skipped due to backwards incompatible backend version.")
+                pytest.skip(f"Skipped due to backwards incompatible backend version: {test_name}")
             elif "is not implemented in this protofile version." in str(e):
                 # If the error is due to unimplemented protofile version, skip the test
-                pytest.skip("Skipped due to unimplemented protofile version definition.")
+                pytest.skip(f"Skipped due to unimplemented protofile version definition: {test_name}")
             else:
                 # If the error is not related to server incompatibility, re-raise it
                 raise e
