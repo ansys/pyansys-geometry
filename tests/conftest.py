@@ -54,8 +54,9 @@ def pytest_addoption(parser):
     parser.addoption(
         "--proto-version",
         action="store",
-        default="v0",
-        help=("Specify the proto version to use for the tests. By default, 'v0'."),
+        default="v1",
+        choices=("v0", "v1"),
+        help=("Specify the proto version to use. Options: 'v0' or 'v1'. By default, 'v1'."),
     )
 
     parser.addoption(

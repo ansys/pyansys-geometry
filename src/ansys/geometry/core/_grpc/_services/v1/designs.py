@@ -283,7 +283,16 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
 
     @protect_grpc
     def download_file(self, **kwargs) -> dict:  # noqa: D102
-        return self.save_as(**kwargs)
+        # This method is only accessed by __export_and_download_legacy,
+        # which is only used for older versions of the server. Since this class
+        # is only used for v1 of the protofiles, this method will not be implemented
+        # here. If this method is called, it means there is a mismatch between the server
+        # version and the protofiles version being used, and an error should be raised to
+        # alert the user of this mismatch.
+        raise NotImplementedError(  # pragma: no cover
+            f"Method '{self.__class__.__name__}.download_file' is not "
+            "implemented in this protofile version."
+        )
 
     def _serialize_assembly_response(self, response):
         def serialize_body(body):

@@ -716,7 +716,7 @@ def test_remove_member_from_named_selection(modeler: Modeler):
         ns.remove_members(members=[ns.bodies[0]])
 
 
-def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
+def test_old_backend_version(modeler: Modeler, fake_modeler_old_backend_242: Modeler):
     # Try to vefify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
     hello = design.named_selections
@@ -4071,7 +4071,9 @@ def test_updating_design_from_tracker(modeler: Modeler):
 
 
 def test_legacy_export_download(
-    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, use_grpc_client_old_backend: Modeler
+    modeler: Modeler,
+    tmp_path_factory: pytest.TempPathFactory,
+    fake_modeler_old_backend_242: Modeler,
 ):
     # Creating the directory and file to export
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
