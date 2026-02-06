@@ -1913,7 +1913,8 @@ class GeometryCommands:
 
         Warnings
         --------
-        This method is only available starting on Ansys release 26R1.
+        This method is only available starting on Ansys release 26R1. Nurbs curves
+        and surfaces are not supported until Ansys release 27R1.
         """
         response = self._grpc_client._services.curves.intersect_curve_and_surface(
             curve=curve, surface=surface

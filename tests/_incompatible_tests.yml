@@ -407,10 +407,12 @@ backends:
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
-      # Fix for pattern introduced in 26.1
+      # Fix for pattern introduced in 27.1
       - tests/integration/test_design.py::test_unitless_design_parameters
 
   - version: "26.1"
-    # None identified at this time
-    incompatible_tests: []
-
+    incompatible_tests:
+      # Fix for pattern introduced in 27.1
+      - tests/integration/test_design.py::test_unitless_design_parameters
+      # NURBS Curves and surfaces for intersection was introduced in 27.1
+      - tests/integration/test_geometry_commands.py::test_intersect_curve_and_surface
