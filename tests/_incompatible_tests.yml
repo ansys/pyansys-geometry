@@ -401,3 +401,7 @@ backends:
       # Fix for pattern introduced in 26.1
       - tests/integration/test_design.py::test_unitless_design_parameters
 
+  - version: "26.1"
+    # None identified at this time
+    incompatible_tests:
+
