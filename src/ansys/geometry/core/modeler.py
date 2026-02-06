@@ -290,15 +290,15 @@ class Modeler:
         file_path : str
             Full path of the file uploaded to the server.
 
+        Warnings
+        --------
+        This method is not supported with protos v1 and beyond. Use 'modeler.open_file()' to open
+        files or 'design.insert_file()' to insert files into an existing design.
+
         Notes
         -----
         This method creates a file on the server that has the same name and extension
         as the file on the client.
-
-        Warnings
-        --------
-        This method is not supported in protos v1 and beyond. Use 'modeler.open_file()' to open
-        files or 'design.insert_file()' to insert files into an existing design.
         """
         from pathlib import Path
 
@@ -345,15 +345,15 @@ class Modeler:
         file_path : str
             Full path of the file uploaded to the server.
 
-        Notes
-        -----
-        This method creates a file on the server that has the same name and extension
-        as the file on the client.
-
         Warnings
         --------
         This method is not supported with protos v1 and beyond. Use 'modeler.open_file()' to open
         files or 'design.insert_file()' to insert files into an existing design.
+
+        Notes
+        -----
+        This method creates a file on the server that has the same name and extension
+        as the file on the client.
         """
         from pathlib import Path
 
