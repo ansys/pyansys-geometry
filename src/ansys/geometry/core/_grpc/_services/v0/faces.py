@@ -183,7 +183,7 @@ class GRPCFacesServiceV0(GRPCFacesService):
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = build_grpc_id(kwargs["id"])
-        
+
         # If "tight" bounding box is requested, raise NotImplementedError as this is
         # not supported in v0
         if kwargs.get("tight", False):

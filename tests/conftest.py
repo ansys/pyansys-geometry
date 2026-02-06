@@ -142,7 +142,9 @@ def pytest_pyfunc_call(pyfuncitem):
                 pytest.skip(f"Skipped due to backwards incompatible backend version: {test_name}")
             elif "is not implemented in this protofile version." in str(e):
                 # If the error is due to unimplemented protofile version, skip the test
-                pytest.skip(f"Skipped due to unimplemented protofile version definition: {test_name}")
+                pytest.skip(
+                    f"Skipped due to unimplemented protofile version definition: {test_name}"
+                )
             else:
                 # If the error is not related to server incompatibility, re-raise it
                 raise e

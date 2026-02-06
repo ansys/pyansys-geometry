@@ -1195,9 +1195,7 @@ class MasterBody(IBody):
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
-        response = self._grpc_client.services.bodies.get_bounding_box(
-            id=self.id, tight=tight
-        )
+        response = self._grpc_client.services.bodies.get_bounding_box(id=self.id, tight=tight)
 
         return BoundingBox(
             min_corner=response.get("min"),
@@ -1933,9 +1931,7 @@ class Body(IBody):
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
-        response = self._grpc_client.services.bodies.get_bounding_box(
-            id=self.id, tight=tight
-        )
+        response = self._grpc_client.services.bodies.get_bounding_box(id=self.id, tight=tight)
 
         return BoundingBox(
             min_corner=response.get("min"),
