@@ -3714,7 +3714,7 @@ def test_get_body_bounding_box(modeler: Modeler):
     assert center.z.m == 0.5
 
 
-def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
+def test_get_body_tight_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a body with tight tolerance."""
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
     yarn_body = design.bodies[0]
@@ -3735,7 +3735,7 @@ def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
     assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
 
     # Test getting tight bounding box
-    tight_bounding_box = yarn_body.get_bounding_box(tight_tolerance=True)
+    tight_bounding_box = yarn_body.get_bounding_box(tight=True)
 
     assert tight_bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
     assert tight_bounding_box.min_corner.y.m == pytest.approx(5.2771026530260073e-17)

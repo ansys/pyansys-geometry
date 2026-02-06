@@ -645,13 +645,13 @@ class GRPCBodyServiceV1(GRPCBodyService):
             GetBoundingBoxRequestData,
         )
 
-        # Create the request to the proper method depending on tight tolerenace
-        if kwargs.get("tight_tolerance"):
+        # Create the request to the proper method depending on tight tolerance
+        if kwargs.get("tight"):
             request = GetBoundingBoxRequest(
                 request_data=[
                     GetBoundingBoxRequestData(
                         id=build_grpc_id(kwargs["id"]),
-                        tight_tolerance=kwargs.get("tight_tolerance", False),
+                        tight_tolerance=kwargs.get("tight", False),
                     )
                 ]
             )
