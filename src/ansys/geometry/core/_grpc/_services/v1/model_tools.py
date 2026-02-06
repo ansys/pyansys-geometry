@@ -223,6 +223,7 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
         # Call the gRPC service
         result = self.stub.DetachFaces(request)
         tracked_response = serialize_tracked_command_response(result.tracked_command_response)
+        
         # Return the result - formatted as a dictionary
         return {
             "success": len(result.successfully_set_ids) == items_to_detach,
