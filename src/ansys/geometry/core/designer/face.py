@@ -22,7 +22,7 @@
 """Module for managing a face."""
 
 from enum import Enum, unique
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
@@ -646,7 +646,7 @@ class Face:
         pl.show(screenshot=screenshot, **plotting_options)
 
     @min_backend_version(27, 1, 0)
-    def detach(self) -> "Body" | None:
+    def detach(self) -> Union["Body", None]:
         """Detach the face from its body.
 
         This method will result in the face being turned into a
