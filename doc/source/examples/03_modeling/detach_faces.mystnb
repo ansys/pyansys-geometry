@@ -207,7 +207,8 @@ print(f"Top face area: {top_face.area}")
 # Detach the face
 result = top_face.detach()
 
-print(f"Number of bodies created: {len(result)}")
+if result is not None:
+    print(f"face detached successfully.")
 print(f"Total number of bodies: {len(design.bodies)}")
 
 # The result is a list containing the created surface body
