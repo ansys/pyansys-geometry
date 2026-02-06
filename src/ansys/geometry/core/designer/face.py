@@ -646,7 +646,7 @@ class Face:
         pl.show(screenshot=screenshot, **plotting_options)
 
     @min_backend_version(27, 1, 0)
-    def detach(self) -> "Body":
+    def detach(self) -> "Body" | None:
         """Detach the face from its body.
 
         This method will result in the face being turned into a
@@ -654,8 +654,8 @@ class Face:
 
         Returns
         -------
-        Body
-            Body created by the detach if any.
+        Body | None
+            Body created by the detach. Returns ``None`` if the operation failed.
 
         Warnings
         --------
