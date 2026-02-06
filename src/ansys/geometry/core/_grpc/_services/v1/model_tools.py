@@ -211,6 +211,7 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
 
         selections = kwargs["selections"]
         items_to_detach = sum(len(selection) for selection in selections)
+        
         # Create the request - assumes all inputs are valid and of the proper type
         request = DetachFacesRequest(
             request_data=[
