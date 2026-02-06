@@ -167,3 +167,7 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
 
         # Return the response - formatted as a dictionary
         return {}
+
+    @protect_grpc
+    def detach_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError
