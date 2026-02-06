@@ -49,6 +49,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.plotting import GeometryPlotter
+from ansys.geometry.core.shapes.surfaces.sphere import Sphere
 from ansys.geometry.core.sketch import (
     Arc,
     Box,
@@ -614,6 +615,22 @@ def test_plot_sketch_scene(verify_image_cache):
     pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch_scene.png"))
 
 
+@skip_no_xserver
+def test_plot_shapes_scene(verify_image_cache):
+    """Test plotting shapes in the scene."""
+    # Create shapes
+    sphere = Sphere(origin=Point3D([0, 0, 0], UNITS.m), radius=Quantity(1, UNITS.m))
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting all the shapes together in the scene.
+    pl.plot(
+        [sphere],
+        screenshot=Path(IMAGE_RESULTS_DIR, "plot_shapes_scene.png"),
+    )
+
+
 def test_visualization_polydata():
     """Test the VTK polydata representation for PyVista visualization."""
     # Test for polygon visualization polydata
@@ -724,6 +741,16 @@ def test_visualization_polydata():
     assert box.visualization_polydata.n_cells == 1
     assert box.visualization_polydata.n_points == 4
     assert box.visualization_polydata.n_open_edges == 4
+
+    # Test for sphere visualization polydata
+    sphere = Sphere(Point3D([1, 2, 3], UNITS.m), Quantity(4, UNITS.m))
+    assert sphere.visualization_polydata.center == pytest.approx([1.0, 2.0, 3.0])
+    assert sphere.visualization_polydata.bounds == pytest.approx(
+        [-3.0, 5.0, -2.0, 6.0, -1.0, 7.0], rel=0.1
+    )
+    assert sphere.visualization_polydata.n_cells == 1680
+    assert sphere.visualization_polydata.n_points == 842
+    assert sphere.visualization_polydata.n_open_edges == 0
 
 
 @skip_no_xserver
