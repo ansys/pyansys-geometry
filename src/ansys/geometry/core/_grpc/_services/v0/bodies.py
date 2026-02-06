@@ -317,7 +317,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             "id": resp.id,
             "name": resp.name,
             "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "is_surface": True,
         }
 
     @protect_grpc
