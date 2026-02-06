@@ -1,6 +1,7 @@
 [build-system]
 build-backend = "hatchling.build"
-requires = [ "hatchling" ]
+build-backend = "flit_core.buildapi"
+requires = [ "flit-core>=3.2,<4" ]
 
 [project]
 name = "ansys-geometry-core"
