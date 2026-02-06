@@ -646,7 +646,7 @@ class Face:
         pl.show(screenshot=screenshot, **plotting_options)
 
     @min_backend_version(27, 1, 0)
-    def detach(self) -> "Body":
+    def detach(self) -> "Body" | None:
         """Detach the face from its body.
 
         This method will result in the face being turned into a
@@ -672,7 +672,7 @@ class Face:
                 parent_design._update_from_tracker(response["tracker_response"])
 
             result_bodies = response.get("created_bodies")
-            return get_bodies_from_ids(parent_design, result_bodies)
+            return get_bodies_from_ids(parent_design, result_bodies)[0] if result_bodies else None
         else:
             self._grpc_client.log.info("Failed to detach faces.")
-            return []
+            return None
