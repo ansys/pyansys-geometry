@@ -32,7 +32,6 @@ import pytest
 
 import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
-from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
@@ -83,31 +82,17 @@ from .conftest import FILES_DIR, IMPORT_FILES_DIR
 
 def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Validating error messages when opening up files"""
-    # If the protos version is v1 or higher, uploading files is not supported
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-        with pytest.raises(
-            GeometryRuntimeError,
-            match="The '_upload_file' method is not supported in protos v1 and beyond",
-        ):
-            modeler._upload_file(fake_path)
-        with pytest.raises(
-            GeometryRuntimeError,
-            match="The '_upload_file_stream' method is not supported with protos v1 and beyond",
-        ):
-            modeler._upload_file_stream(fake_path)
-    else:
-        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-        temp_dir = tmp_path_factory.mktemp("test_design")
+    fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+    temp_dir = tmp_path_factory.mktemp("test_design")
 
-        with pytest.raises(ValueError, match="Could not find file:"):
-            modeler._upload_file(fake_path)
-        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-            modeler._upload_file(temp_dir)
-        with pytest.raises(ValueError, match="Could not find file:"):
-            modeler._upload_file_stream(fake_path)
-        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-            modeler._upload_file_stream(temp_dir)
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file(fake_path)
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file(temp_dir)
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file_stream(fake_path)
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file_stream(temp_dir)
 
 
 def test_modeler_open_files(modeler: Modeler):
@@ -415,10 +400,6 @@ def test_face_to_body_creation(modeler: Modeler):
 
 def test_create_surface_from_copy_faces(modeler: Modeler):
     """Test creating a surface body from copied faces."""
-    # Skip test if running v0 protos
-    if modeler.client.services.version == GeometryApiProtos.V0:
-        pytest.skip("Skipping test for V0 protos")
-
     # Create a design
     design = modeler.create_design("CopyFacesTest")
 
@@ -735,7 +716,7 @@ def test_remove_member_from_named_selection(modeler: Modeler):
         ns.remove_members(members=[ns.bodies[0]])
 
 
-def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
+def test_old_backend_version(modeler: Modeler, fake_modeler_old_backend_242: Modeler):
     # Try to vefify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
     hello = design.named_selections
@@ -1394,12 +1375,8 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     assert file.exists()
 
     # Upload file
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        with pytest.raises(match="The '_upload_file' method is not supported in protos v1"):
-            modeler._upload_file(file)
-    else:
-        path_on_server = modeler._upload_file(file)
-        assert path_on_server is not None
+    path_on_server = modeler._upload_file(file)
+    assert path_on_server is not None
 
 
 def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_mode: str):
@@ -1424,15 +1401,9 @@ def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_
         from ansys.geometry.core import Modeler
 
         modeler = Modeler(transport_mode=transport_mode)
-        if modeler.client.services.version == GeometryApiProtos.V0:
-            path_on_server = modeler._upload_file_stream(file)
-            assert path_on_server is not None
-        else:
-            with pytest.raises(
-                GeometryRuntimeError,
-                match="The '_upload_file_stream' method is not supported with protos v1 and beyond.",  # noqa: E501
-            ):
-                modeler._upload_file_stream(file)
+        path_on_server = modeler._upload_file_stream(file)
+        assert path_on_server is not None
+
     finally:
         pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
 
@@ -3635,9 +3606,6 @@ def test_get_face_bounding_box(modeler: Modeler):
 
 def test_get_face_tight_bounding_box(modeler: Modeler):
     """Test getting the tight bounding box of a face."""
-    if modeler.client.services.version == GeometryApiProtos.V0:
-        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
-
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
     yarn_body = design.bodies[0]
 
@@ -3694,9 +3662,6 @@ def test_get_edge_bounding_box(modeler: Modeler):
 
 def test_get_edge_tight_bounding_box(modeler: Modeler):
     """Test getting the tight bounding box of a face."""
-    if modeler.client.services.version == GeometryApiProtos.V0:
-        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
-
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
     yarn_body_edge = design.bodies[0].faces[0].edges[2]
 
@@ -3749,11 +3714,8 @@ def test_get_body_bounding_box(modeler: Modeler):
     assert center.z.m == 0.5
 
 
-def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
+def test_get_body_tight_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a body with tight tolerance."""
-    if modeler.client.services.version == GeometryApiProtos.V0:
-        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
-
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
     yarn_body = design.bodies[0]
 
@@ -3773,7 +3735,7 @@ def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
     assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
 
     # Test getting tight bounding box
-    tight_bounding_box = yarn_body.get_bounding_box(tight_tolerance=True)
+    tight_bounding_box = yarn_body.get_bounding_box(tight=True)
 
     assert tight_bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
     assert tight_bounding_box.min_corner.y.m == pytest.approx(5.2771026530260073e-17)
@@ -4109,12 +4071,10 @@ def test_updating_design_from_tracker(modeler: Modeler):
 
 
 def test_legacy_export_download(
-    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, use_grpc_client_old_backend: Modeler
+    modeler: Modeler,
+    tmp_path_factory: pytest.TempPathFactory,
+    fake_modeler_old_backend_242: Modeler,
 ):
-    # Test is meant to add test coverage for using an old backend to export and download
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        pytest.skip("Test only applies to v0 backend")
-
     # Creating the directory and file to export
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")

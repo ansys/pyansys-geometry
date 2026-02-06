@@ -67,6 +67,9 @@ backends:
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_get_face_tight_bounding_box
+      - tests/integration/test_design.py::test_get_edge_tight_bounding_box
+      - tests/integration/test_design.py::test_get_body_tight_bounding_box
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -94,7 +97,6 @@ backends:
       - tests/integration/test_design_import.py::test_design_import_solid_edge2025
       - tests/integration/test_design_import.py::test_design_import_nx2412
       - tests/integration/test_design_import.py::test_design_import_inventor2026
-      - tests/integration/test_design.py::test_legacy_export_download
       - tests/integration/test_design.py::test_failure_for_export
       # Bug fix included from 25.2 onwards
       - tests/integration/test_issues.py::test_issue_1192_temp_body_on_empty_intersect
@@ -195,10 +197,12 @@ backends:
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
-      - tests/integration/test_design.py::test_legacy_export_download
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_get_face_tight_bounding_box
+      - tests/integration/test_design.py::test_get_edge_tight_bounding_box
+      - tests/integration/test_design.py::test_get_body_tight_bounding_box
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -273,10 +277,12 @@ backends:
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
-      - tests/integration/test_design.py::test_legacy_export_download
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_get_face_tight_bounding_box
+      - tests/integration/test_design.py::test_get_edge_tight_bounding_box
+      - tests/integration/test_design.py::test_get_body_tight_bounding_box
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -401,6 +407,12 @@ backends:
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
-      # Fix for pattern introduced in 26.1
+      # Fix for pattern introduced in 27.1
       - tests/integration/test_design.py::test_unitless_design_parameters
 
+  - version: "26.1"
+    incompatible_tests:
+      # Fix for pattern introduced in 27.1
+      - tests/integration/test_design.py::test_unitless_design_parameters
+      # NURBS Curves and surfaces for intersection was introduced in 27.1
+      - tests/integration/test_geometry_commands.py::test_intersect_curve_and_surface
