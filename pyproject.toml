@@ -24,7 +24,6 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
-
 dependencies = [
   "ansys-api-discovery==1.0.26",
   "ansys-tools-common>=0.3,<1",
@@ -55,7 +54,6 @@ optional-dependencies.graphics = [
   "pyvista[jupyter]>=0.38.1,<1",
   "vtk>=9,<10",
 ]
-
 urls.Changelog = "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
 urls.Discussions = "https://github.com/ansys/pyansys-geometry/discussions"
 urls.Documentation = "https://geometry.docs.pyansys.com"
@@ -64,7 +62,6 @@ urls.Releases = "https://github.com/ansys/pyansys-geometry/releases"
 urls.Source = "https://github.com/ansys/pyansys-geometry"
 
 [dependency-groups]
-
 # NOTE: The `dependency-groups` section is used to define groups of dependencies
 # only available when a developer clones the repository and installs the package
 # for local development.
@@ -91,10 +88,6 @@ doc = [
   "sphinx-jinja==2.0.2",
   { include-group = "general-all" },
 ]
-tests = [
-  { include-group = "general-all" },
-  { include-group = "tests-minimal" },
-]
 general-all = [
   "ansys-platform-instancemanagement==1.1.2",
   "ansys-tools-common==0.4.3",
@@ -118,6 +111,10 @@ general-all = [
   "six==1.17.0",
   "vtk==9.5.2",
 ]
+tests = [
+  { include-group = "general-all" },
+  { include-group = "tests-minimal" },
+]
 tests-minimal = [
   "pytest==9.0.2",
   "pytest-cov==7.0.0",
@@ -125,13 +122,12 @@ tests-minimal = [
   "pyyaml==6.0.3",
 ]
 
-[tool.flit.module]
-name = "ansys.geometry.core"
+[tool.flit]
+module.name = "ansys.geometry.core"
 
 [tool.ruff]
 line-length = 100
 extend-exclude = [ "tests/integration/files" ]
-
 fix = true
 format.indent-style = "space"
 format.quote-style = "double"
@@ -160,16 +156,17 @@ lint.isort.force-sort-within-sections = true
 lint.isort.known-first-party = [ "ansys.geometry.core" ]
 lint.pydocstyle.convention = "numpy"
 
-[tool.pytest.ini_options]
-minversion = "7.1"
-addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv --image_cache_dir tests/integration/image_cache --add_missing_images"
-testpaths = [ "tests" ]
+[tool.pytest]
+ini_options.minversion = "7.1"
+ini_options.addopts = """\
+  -ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv \
+  --image_cache_dir tests/integration/image_cache --add_missing_images\
+  """
+ini_options.testpaths = [ "tests" ]
 
-[tool.coverage.report]
-show_missing = true
-
-[tool.coverage.run]
-source = [ "ansys.geometry" ]
+[tool.coverage]
+run.source = [ "ansys.geometry" ]
+report.show_missing = true
 
 [tool.towncrier]
 directory = "doc/changelog.d"
@@ -178,38 +175,12 @@ template = "doc/changelog.d/changelog_template.jinja"
 start_string = ".. towncrier release notes start\n"
 title_format = "`{version} <https://github.com/ansys/pyansys-geometry/releases/tag/v{version}>`_ - {project_date}"
 issue_format = "`#{issue} <https://github.com/ansys/pyansys-geometry/pull/{issue}>`_"
-
-[[tool.towncrier.type]]
-directory = "added"
-name = "Added"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "dependencies"
-name = "Dependencies"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "documentation"
-name = "Documentation"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "fixed"
-name = "Fixed"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "maintenance"
-name = "Maintenance"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "miscellaneous"
-name = "Miscellaneous"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "test"
-name = "Test"
-showcontent = true
+type = [
+  { directory = "added", name = "Added", showcontent = true },
+  { directory = "dependencies", name = "Dependencies", showcontent = true },
+  { directory = "documentation", name = "Documentation", showcontent = true },
+  { directory = "fixed", name = "Fixed", showcontent = true },
+  { directory = "maintenance", name = "Maintenance", showcontent = true },
+  { directory = "miscellaneous", name = "Miscellaneous", showcontent = true },
+  { directory = "test", name = "Test", showcontent = true },
+]
