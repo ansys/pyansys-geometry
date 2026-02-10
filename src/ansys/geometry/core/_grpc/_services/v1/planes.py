@@ -73,5 +73,3 @@ class GRPCPlanesServiceV1(GRPCPlanesService):
         return {
             "id": response.id.id,
         }
-
-

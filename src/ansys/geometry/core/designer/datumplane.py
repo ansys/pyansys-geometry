@@ -25,12 +25,10 @@ from typing import TYPE_CHECKING
 
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.misc.checks import graphics_required
 
 if TYPE_CHECKING:  # pragma: no cover
-    import pyvista as pv
-
     from ansys.geometry.core.designer.component import Component
+
 
 class DatumPlane:
     """Provides for creating datum planes in components.
@@ -63,17 +61,17 @@ class DatumPlane:
     def name(self) -> str:
         """Name of the datum plane."""
         return self._name
-    
+
     @property
     def value(self) -> Plane:
         """Plane constituting the datum plane."""
         return self._value
-    
+
     @property
     def parent_component(self) -> "Component":
         """Parent component of the datum plane."""
         return self._parent_component
-    
+
     def evaluate(self, u: float, v: float) -> Point3D:
         """Evaluate the plane at UV parametric coordinates.
 
@@ -94,7 +92,7 @@ class DatumPlane:
             3D Cartesian point on the plane at the given UV coordinates.
         """
         return self.value.origin + u * self.value.direction_x + v * self.value.direction_y
-    
+
     def __repr__(self):
         """Represent the datum plane as a string."""
         lines = [f"ansys.geometry.core.design.DatumPlane {hex(id(self))}"]

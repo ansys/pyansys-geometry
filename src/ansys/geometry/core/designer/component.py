@@ -344,7 +344,7 @@ class Component:
     def design_points(self) -> list[DesignPoint]:
         """List of ``DesignPoint`` objects inside of the component."""
         return self._design_points
-    
+
     @property
     def datum_planes(self) -> list[DatumPlane]:
         """List of ``DatumPlane`` objects inside of the component."""
@@ -1490,7 +1490,7 @@ class Component:
 
         # Finally return the list of created DesignPoint objects
         return self._design_points[-n_design_points:]
-    
+
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(27, 1, 0)

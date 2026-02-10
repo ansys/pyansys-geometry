@@ -449,7 +449,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
                 "point": from_grpc_point_to_point3d(design_point.points[0]),
                 "parent_id": design_point.parent_id.id,
             }
-        
+
         def serialize_datum_plane(datum_plane):
             return {
                 "id": datum_plane.id.id,

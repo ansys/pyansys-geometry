@@ -1231,7 +1231,7 @@ def test_plot_datum_plane(modeler: Modeler, verify_image_cache):
         direction_y=UnitVector3D([-0.8, 0.6, 1]),
     )
     datum_plane = design.create_datum_plane("OffsetPlane", plane)
- 
+
     # Plot the datum plane
     pl = GeometryPlotter()
     pl.plot(datum_plane)

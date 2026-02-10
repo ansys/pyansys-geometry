@@ -26,7 +26,6 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.planes import GRPCPlanesService
-from .conversions import build_grpc_id
 
 
 class GRPCPlanesServiceV0(GRPCPlanesService):
