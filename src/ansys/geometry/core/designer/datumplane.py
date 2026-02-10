@@ -101,10 +101,3 @@ class DatumPlane:
         lines.append(f"  Name                 : {self.name}")
         lines.append(f"  Datum Plane          : {self.value}")
         return "\n".join(lines)
-
-    @graphics_required
-    def _to_polydata(self) -> "pv.PolyData":
-        """Get polydata from the DatumPlane object for plotting."""
-        import pyvista as pv
-
-        return pv.Plane(center=self.value.origin.flat, direction=self.value.direction_z.flat)
