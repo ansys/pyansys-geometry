@@ -4430,3 +4430,182 @@ def test_check_design_update_2(modeler: Modeler):
     # Verify new component was created with the extracted body
     assert len(design.components[1].bodies) > 0, "Component 1 should have bodies"
     assert design.components[1].bodies[0].name, "Body in component 1 should have a name"
+
+
+def test_datum_planes(modeler: Modeler):
+    """Test datum planes imported from a file."""
+    design = modeler.open_file(Path(FILES_DIR, "planes.dsco"))
+    
+    assert len(design.bodies) == 1
+    assert len(design.datum_planes) == 2
+
+    # Test properties of the planes
+    assert design.datum_planes[0].name == "Plane_1"
+    assert design.datum_planes[0].value.origin == Point3D([0.01, 0.01, 0])
+    assert list(design.datum_planes[0].value.normal) == pytest.approx([0.89442719, -0.4472136, 0], abs=1e-6)
+    assert design.datum_planes[0].id == "0:2075"
+    assert design.datum_planes[0].parent_component == design
+
+    assert design.datum_planes[1].name == "Plane_2"
+    assert design.datum_planes[1].value.origin == Point3D([-0.01, 0.01, 0])
+    assert list(design.datum_planes[1].value.normal) == pytest.approx([0.89442719, 0.4472136, 0], abs=1e-6)
+    assert design.datum_planes[1].id == "0:2080"
+    assert design.datum_planes[1].parent_component == design
+
+    # Test evaluating at (u, v) coordinates on the first datum plane
+    plane1 = design.datum_planes[0]
+    point1 = plane1.evaluate(0, 0)
+    point2 = plane1.evaluate(0, 0.01)
+    point3 = plane1.evaluate(0.01, 0)
+
+    assert point1 == Point3D([0.010000, 0.010000, 0])
+    assert point2 == Point3D([0.010000, 0.010000, 0.010000])
+    assert [point3.x.m, point3.y.m, point3.z.m] == pytest.approx(
+        [0.01447214, 0.01894427, 0], abs=1e-6
+    )
+
+    # Test evaluating at (u, v) coordinates on the second datum plane
+    plane2 = design.datum_planes[1]
+    point1 = plane2.evaluate(0, 0)
+    point2 = plane2.evaluate(0, 0.01)
+    point3 = plane2.evaluate(0.01, 0)
+
+    assert point1 == Point3D([-0.010000, 0.010000, 0])
+    assert point2 == Point3D([-0.010000, 0.010000, 0.010000])
+    assert [point3.x.m, point3.y.m, point3.z.m] == pytest.approx(
+        [-0.01447214, 0.01894427, 0], abs=1e-6
+    )
+
+
+def test_create_datum_plane(modeler: Modeler):
+    """Test for verifying the ``create_datum_plane`` functionality."""
+    # Create a design
+    design = modeler.create_design("DatumPlaneTest")
+    
+    # Test 1: Create a datum plane with the default XY plane
+    plane1 = Plane(
+        origin=Point3D([0, 0, 0]),
+        direction_x=UNITVECTOR3D_X,
+        direction_y=UNITVECTOR3D_Y
+    )
+    datum_plane1 = design.create_datum_plane("XY_Plane", plane1)
+    
+    # Verify basic properties
+    assert datum_plane1.id is not None
+    assert datum_plane1.name == "XY_Plane"
+    assert datum_plane1.value == plane1
+    assert datum_plane1.parent_component == design
+    assert len(design.datum_planes) == 1
+    assert design.datum_planes[0] == datum_plane1
+    
+    # Test 2: Create a datum plane with an offset origin
+    plane2 = Plane(
+        origin=Point3D([10, 20, 30], UNITS.mm),
+        direction_x=UNITVECTOR3D_X,
+        direction_y=UNITVECTOR3D_Y
+    )
+    datum_plane2 = design.create_datum_plane("Offset_Plane", plane2)
+    
+    assert datum_plane2.id is not None
+    assert datum_plane2.name == "Offset_Plane"
+    assert datum_plane2.value.origin == Point3D([10, 20, 30], UNITS.mm)
+    assert len(design.datum_planes) == 2
+    
+    # Test 3: Create a datum plane with custom orientation (YZ plane)
+    plane3 = Plane(
+        origin=Point3D([5, 0, 0], UNITS.m),
+        direction_x=UNITVECTOR3D_Y,
+        direction_y=UNITVECTOR3D_Z
+    )
+    datum_plane3 = design.create_datum_plane("YZ_Plane", plane3)
+    
+    assert datum_plane3.id is not None
+    assert datum_plane3.name == "YZ_Plane"
+    assert datum_plane3.value.direction_x == UNITVECTOR3D_Y
+    assert datum_plane3.value.direction_y == UNITVECTOR3D_Z
+    assert len(design.datum_planes) == 3
+    
+    # Test 4: Create a datum plane with arbitrary orientation
+    custom_x = UnitVector3D([1, 1, 0])
+    custom_y = UnitVector3D([0, 0, 1])
+    plane4 = Plane(
+        origin=Point3D([1, 2, 3]),
+        direction_x=custom_x,
+        direction_y=custom_y
+    )
+    datum_plane4 = design.create_datum_plane("Custom_Plane", plane4)
+    
+    assert datum_plane4.id is not None
+    assert datum_plane4.name == "Custom_Plane"
+    assert len(design.datum_planes) == 4
+    
+    # Test 5: Create datum plane in a nested component
+    nested_component = design.add_component("NestedComponent")
+    plane5 = Plane(
+        origin=Point3D([100, 200, 300], UNITS.mm),
+        direction_x=UNITVECTOR3D_X,
+        direction_y=UNITVECTOR3D_Y
+    )
+    datum_plane5 = nested_component.create_datum_plane("Nested_Plane", plane5)
+    
+    assert datum_plane5.id is not None
+    assert datum_plane5.name == "Nested_Plane"
+    assert datum_plane5.parent_component == nested_component
+    assert len(nested_component.datum_planes) == 1
+    assert nested_component.datum_planes[0] == datum_plane5
+    # Design should still have 4 datum planes (not including nested)
+    assert len(design.datum_planes) == 4
+    
+    # Test 6: Evaluate points on datum planes
+    # For datum_plane1 (XY plane at origin)
+    eval_point1 = datum_plane1.evaluate(1.0, 0.0)
+    assert eval_point1 == Point3D([1.0, 0.0, 0.0])
+    
+    eval_point2 = datum_plane1.evaluate(0.0, 1.0)
+    assert eval_point2 == Point3D([0.0, 1.0, 0.0])
+    
+    eval_point3 = datum_plane1.evaluate(2.0, 3.0)
+    assert eval_point3 == Point3D([2.0, 3.0, 0.0])
+    
+    # For datum_plane2 (offset plane at [10, 20, 30] mm = [0.01, 0.02, 0.03] m)
+    eval_point4 = datum_plane2.evaluate(1.0, 0.0)
+    assert eval_point4.x.m == pytest.approx(1010, abs=1e-6)
+    assert eval_point4.y.m == pytest.approx(20, abs=1e-6)
+    assert eval_point4.z.m == pytest.approx(30, abs=1e-6)
+    
+    # For datum_plane3 (YZ plane)
+    eval_point5 = datum_plane3.evaluate(1.0, 0.0)
+    assert eval_point5 == Point3D([5.0, 1.0, 0.0])
+    
+    eval_point6 = datum_plane3.evaluate(0.0, 1.0)
+    assert eval_point6 == Point3D([5.0, 0.0, 1.0])
+    
+    # Test 7: String representation
+    datum_plane_str = str(datum_plane1)
+    assert "ansys.geometry.core.design.DatumPlane" in datum_plane_str
+    
+    # Test 8: Verify plane properties are properly stored
+    assert datum_plane1.value.origin == Point3D([0, 0, 0])
+    assert datum_plane2.value.origin == Point3D([0.010, 0.020, 0.030])
+    assert datum_plane3.value.origin == Point3D([5.0, 0.0, 0.0])
+    
+    # Test 9: Create multiple datum planes with the same name (should be allowed)
+    plane6 = Plane(
+        origin=Point3D([1, 1, 1]),
+        direction_x=UNITVECTOR3D_X,
+        direction_y=UNITVECTOR3D_Y
+    )
+    datum_plane6 = design.create_datum_plane("XY_Plane", plane6)
+    
+    assert datum_plane6.id is not None
+    assert datum_plane6.name == "XY_Plane"
+    assert datum_plane6.id != datum_plane1.id  # Different IDs
+    assert len(design.datum_planes) == 5
+    
+    # Test 10: Verify datum plane remains accessible through component
+    all_datum_planes = design.datum_planes
+    assert datum_plane1 in all_datum_planes
+    assert datum_plane2 in all_datum_planes
+    assert datum_plane3 in all_datum_planes
+    assert datum_plane4 in all_datum_planes
+    assert datum_plane6 in all_datum_planes

@@ -40,6 +40,7 @@ from ansys.geometry.core.designer.beam import (
 )
 from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
@@ -68,6 +69,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
     from ansys.geometry.core.designer.selection import NamedSelection
+    from ansys.geometry.core.math.plane import Plane
 
 
 @unique
@@ -179,6 +181,7 @@ class Component:
     _beams: list[Beam]
     _coordinate_systems: list[CoordinateSystem]
     _design_points: list[DesignPoint]
+    _datum_planes: list[DatumPlane]
 
     @check_input_types
     def __init__(
@@ -234,6 +237,7 @@ class Component:
         self._beams = []
         self._coordinate_systems = []
         self._design_points = []
+        self._datum_planes = []
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
@@ -340,6 +344,11 @@ class Component:
     def design_points(self) -> list[DesignPoint]:
         """List of ``DesignPoint`` objects inside of the component."""
         return self._design_points
+    
+    @property
+    def datum_planes(self) -> list[DatumPlane]:
+        """List of ``DatumPlane`` objects inside of the component."""
+        return self._datum_planes
 
     @property
     def coordinate_systems(self) -> list[CoordinateSystem]:
@@ -1481,6 +1490,39 @@ class Component:
 
         # Finally return the list of created DesignPoint objects
         return self._design_points[-n_design_points:]
+    
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def create_datum_plane(self, name: str, plane: "Plane") -> DatumPlane:
+        """Create a datum plane on this component.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the datum plane.
+        plane : Plane
+            Plane object defining the datum plane's geometry.
+
+        Returns
+        -------
+        DatumPlane
+            Created datum plane object.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Creating datum plane on {self.id}...")
+        response = self._grpc_client.services.planes.create(
+            name=name,
+            parent_id=self.id,
+            plane=plane,
+        )
+        self._grpc_client.log.debug("Datum plane successfully created.")
+        datum_plane = DatumPlane(response.get("id"), name, plane, self)
+        self._datum_planes.append(datum_plane)
+        return datum_plane
 
     @check_input_types
     @ensure_design_is_active
@@ -1850,6 +1892,7 @@ class Component:
         lines.append(f"  N Beams              : {sum(alive_beams)}")
         lines.append(f"  N Coordinate Systems : {sum(alive_coords)}")
         lines.append(f"  N Design Points      : {len(self.design_points)}")
+        lines.append(f"  N Datum Planes       : {len(self.datum_planes)}")
         lines.append(f"  N Components         : {sum(alive_comps)}")
         return "\n".join(lines)
 

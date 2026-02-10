@@ -32,6 +32,7 @@ from .conversions import (
     from_grpc_frame_to_frame,
     from_grpc_material_to_material,
     from_grpc_matrix_to_matrix,
+    from_grpc_plane_to_plane,
     from_grpc_point_to_point3d,
 )
 
@@ -448,6 +449,14 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
                 "point": from_grpc_point_to_point3d(design_point.points[0]),
                 "parent_id": design_point.parent_id.id,
             }
+        
+        def serialize_datum_plane(datum_plane):
+            return {
+                "id": datum_plane.id.id,
+                "name": datum_plane.name,
+                "plane": from_grpc_plane_to_plane(datum_plane.plane),
+                "parent_id": datum_plane.parent_id.id,
+            }
 
         parts = getattr(response, "parts", [])
         transformed_parts = getattr(response, "transformed_parts", [])
@@ -459,6 +468,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         component_shared_topologies = getattr(response, "component_shared_topologies", [])
         beams = getattr(response, "beams", [])
         design_points = getattr(response, "design_points", [])
+        datum_planes = getattr(response, "datum_planes", [])
         return {
             "parts": [serialize_part(part) for part in parts] if len(parts) > 0 else [],
             "transformed_parts": [serialize_transformed_part(tp) for tp in transformed_parts],
@@ -474,4 +484,5 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             ),
             "beams": [serialize_beam(beam) for beam in beams],
             "design_points": [serialize_design_point(dp) for dp in design_points],
+            "datum_planes": [serialize_datum_plane(dp) for dp in datum_planes],
         }
