@@ -505,6 +505,15 @@ def test_design_import_inventor2026(modeler: Modeler):
     assert len(design.bodies[0].faces) == 9
 
 
+def test_design_import_pmdb(modeler: Modeler):
+    """Test importing a PMDB file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "PMDB/twoCars.pmdb"))
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 1
+    assert len(design.components[0].bodies[0].faces) == 6
+
+
 def test_design_import_stride_with_named_selections(modeler: Modeler):
     """Test importing a .stride file with named selections."""
     # Open stride file
