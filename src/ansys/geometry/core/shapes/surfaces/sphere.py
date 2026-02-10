@@ -244,13 +244,13 @@ class Sphere(Surface):
         """
         import pyvista as pv
 
-        sphere = pv.Sphere(radius=self.radius.m_as(DEFAULT_UNITS.LENGTH))
+        sphere = pv.Sphere(radius=self.radius.m)
 
         return sphere.translate(
             [
-                self.origin.x.m_as(DEFAULT_UNITS.LENGTH),
-                self.origin.y.m_as(DEFAULT_UNITS.LENGTH),
-                self.origin.z.m_as(DEFAULT_UNITS.LENGTH),
+                self.origin.x.m,
+                self.origin.y.m,
+                self.origin.z.m,
             ],
             inplace=True,
         )
