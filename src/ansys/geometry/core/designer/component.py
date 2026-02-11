@@ -346,6 +346,7 @@ class Component:
         return self._design_points
 
     @property
+    @min_backend_version(27, 1, 0)
     def datum_planes(self) -> list[DatumPlane]:
         """List of ``DatumPlane`` objects inside of the component."""
         return self._datum_planes
