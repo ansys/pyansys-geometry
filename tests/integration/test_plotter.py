@@ -734,6 +734,7 @@ def test_plot_nurbs_surface(verify_image_cache):
         knots_u=knots_u,
         knots_v=knots_v,
         control_points=control_points,
+        origin=Point3D([10, 20, 30]),
     )
 
     # Initialize the ``Plotter`` class
