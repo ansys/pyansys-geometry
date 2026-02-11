@@ -1930,7 +1930,7 @@ class GeometryCommands:
         """Detach faces on all the bodies/faces from a list.
 
         This method will result in a list of new surface bodies:
-        
+
         - If the input is a body, all faces on the body will be detached and the original body
           will be modified to have only the non-detached faces. The detached faces will be
           returned as new bodies.
