@@ -25,6 +25,7 @@ import os
 from pathlib import Path
 import zipfile
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 import matplotlib.colors as mcolors
 import numpy as np
 from pint import Quantity
@@ -4437,7 +4438,10 @@ def test_datum_planes(modeler: Modeler):
     design = modeler.open_file(Path(FILES_DIR, "planes.dsco"))
 
     assert len(design.bodies) == 1
-    assert len(design.datum_planes) == 2
+    if modeler.client.services.version == GeometryApiProtos.V0:
+        assert len(design.datum_planes) == 0
+    else:
+        assert len(design.datum_planes) == 2
 
     # Test properties of the planes
     assert design.datum_planes[0].name == "Plane_1"
