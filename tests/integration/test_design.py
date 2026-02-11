@@ -25,7 +25,6 @@ import os
 from pathlib import Path
 import zipfile
 
-from ansys.geometry.core._grpc._version import GeometryApiProtos
 import matplotlib.colors as mcolors
 import numpy as np
 from pint import Quantity
