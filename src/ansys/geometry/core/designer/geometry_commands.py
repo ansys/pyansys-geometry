@@ -1929,18 +1929,18 @@ class GeometryCommands:
     ) -> list["Body"]:
         """Detach faces on all the bodies/faces from a list.
 
-        This method will result in a list of
-        new surface bodies:
-            - If the input is a body, all faces on the body will be detached and the original body
-                will be modified to have only the non-detached faces. The detached faces will be
-                returned as new bodies.
-            - If the input is a list of faces:
-                - All the connected faces from the same body will be detached together to form a
-                    body.
-                - If some of the faces in the list are not connected or are not from the same body
-                    , they will be detached separately to form separate bodies.
-                - The original body will be modified to have only the non-detached faces.
-                    The detached faces will be returned as new bodies.
+        This method will result in a list of new surface bodies:
+        
+        - If the input is a body, all faces on the body will be detached and the original body
+          will be modified to have only the non-detached faces. The detached faces will be
+          returned as new bodies.
+        - If the input is a list of faces:
+            - All the connected faces from the same body will be detached together to form a
+              body.
+            - If some of the faces in the list are not connected or are not from the same body,
+              they will be detached separately to form separate bodies.
+            - The original body will be modified to have only the non-detached faces.
+              The detached faces will be returned as new bodies.
 
         Parameters
         ----------
