@@ -25,6 +25,7 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core._grpc._version import GeometryApiProtos
+from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
@@ -251,14 +252,12 @@ def test_face_detach(modeler: Modeler):
     face_area = face_to_detach.area
 
     # Call detach directly on the face
-    result = face_to_detach.detach()
+    created_body = face_to_detach.detach()
 
     # The result should be a list containing the created body
     # (Note: based on the implementation, it returns a list from get_bodies_from_ids)
-    assert isinstance(result, list)
-    assert len(result) == 1
+    assert isinstance(created_body, Body)
 
-    created_body = result[0]
     assert created_body.is_surface
     assert len(created_body.faces) == 1
 
@@ -288,8 +287,8 @@ def test_face_detach_multiple_faces(modeler: Modeler):
     # Detach each face individually
     for face in faces_to_detach:
         result = face.detach()
-        assert isinstance(result, list)
-        created_bodies.extend(result)
+        assert isinstance(result, Body)
+        created_bodies.append(result)
 
     # Should have created 3 new surface bodies
     assert len(created_bodies) == 3
@@ -509,22 +508,21 @@ def test_face_detach_empty_result_scenario(modeler: Modeler):
 
     # Detach one face first
     face_to_detach = body.faces[0]
-    created_bodies = face_to_detach.detach()
+    created_body = face_to_detach.detach()
 
     initial_body_count = len(design.bodies)
 
-    assert len(created_bodies) == 1
-    created_body = created_bodies[0]
+    assert isinstance(created_body, Body)
     assert created_body.is_surface
 
     # Try to detach a face from the surface body
     # Surface bodies may behave differently
     surface_face = created_body.faces[0]
-    result = surface_face.detach()
+    created_body_2 = surface_face.detach()
 
     # The result might be empty or contain bodies depending on the service implementation
     # This test ensures the method handles various scenarios gracefully
-    assert isinstance(result, list)
+    assert created_body_2 == None
 
     # Check that the total body count is consistent
     assert len(design.bodies) >= initial_body_count
