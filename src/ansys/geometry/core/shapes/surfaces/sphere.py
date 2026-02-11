@@ -244,17 +244,7 @@ class Sphere(Surface):
         """
         import pyvista as pv
 
-        sphere = pv.Sphere(radius=self.radius.m)
-
-        return sphere.translate(
-            [
-                self.origin.x.m,
-                self.origin.y.m,
-                self.origin.z.m,
-            ],
-            inplace=True,
-        )
-
+        return pv.Sphere(radius=self.radius.m, center=self.origin.flat)
 
 class SphereEvaluation(SurfaceEvaluation):
     """Evaluate a sphere at given parameters.
