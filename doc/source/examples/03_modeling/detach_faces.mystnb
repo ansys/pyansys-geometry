@@ -29,7 +29,7 @@ Perform the required imports.
 
 ```{code-cell} ipython3
 from ansys.geometry.core import launch_modeler
-from ansys.geometry.core.math import Point2D, Point3D
+from ansys.geometry.core.math import Plane, Point2D, Point3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 ```
@@ -259,15 +259,15 @@ base.plot()
 ```{code-cell} ipython3
 # Extract the top face for analysis
 # In this case, we'll look for the face with the highest z-coordinate
-top_faces = [face for face in base.faces if face.is_plane]
+top_faces = [face for face in base.faces]
 
 # Detach the top planar face
 if top_faces:
     top_face = top_faces[-1]  # Usually the last one
     extracted_surface = top_face.detach()
 
-    print(f"Extracted surface body: {extracted_surface[0].name}")
-    print(f"Is surface: {extracted_surface[0].is_surface}")
+    print(f"Extracted surface body: {extracted_surface.name}")
+    print(f"Is surface: {extracted_surface.is_surface}")
     print(f"Total bodies in design: {len(design.bodies)}")
 
 # Plot the final design with the extracted surface

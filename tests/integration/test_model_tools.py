@@ -522,7 +522,7 @@ def test_face_detach_empty_result_scenario(modeler: Modeler):
 
     # The result might be empty or contain bodies depending on the service implementation
     # This test ensures the method handles various scenarios gracefully
-    assert created_body_2 == None
+    assert created_body_2 is None
 
     # Check that the total body count is consistent
     assert len(design.bodies) >= initial_body_count
