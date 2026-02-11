@@ -22,6 +22,7 @@
 """Provides for creating and managing a plane."""
 
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
 import numpy as np
@@ -30,6 +31,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
@@ -40,6 +42,9 @@ from ansys.geometry.core.shapes.parameterization import (
 from ansys.geometry.core.shapes.surfaces.surface import Surface
 from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
+
+if TYPE_CHECKING:
+    import pyvista as pv
 
 
 class PlaneSurface(Surface):
@@ -52,7 +57,7 @@ class PlaneSurface(Surface):
     reference : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         X-axis direction.
     axis : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
-        X-axis direction.
+        Z-axis direction.
     """
 
     def __init__(
@@ -136,6 +141,20 @@ class PlaneSurface(Surface):
     def evaluate(self, parameter: ParamUV) -> "PlaneEvaluation":
         """Evaluate the plane at a given u and v parameter."""
         return PlaneEvaluation(self, parameter)
+    
+    @property
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
+        """Get the visualization polydata for the plane.
+        
+        Returns
+        -------
+        pv.PolyData
+            Polydata representation of the plane for visualization.
+        """
+        import pyvista as pv
+
+        return pv.Plane(center=self.origin.flat, direction=self.dir_z.flat)
 
 
 class PlaneEvaluation(SurfaceEvaluation):

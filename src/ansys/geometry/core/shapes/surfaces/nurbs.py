@@ -30,6 +30,7 @@ from ansys.geometry.core.math import ZERO_POINT3D, Point3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
@@ -43,6 +44,7 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     import geomdl.NURBS as geomdl_nurbs  # noqa: N811
+    import pyvista as pv
 
 
 class NURBSSurface(Surface):
@@ -329,6 +331,24 @@ class NURBSSurface(Surface):
             Evaluation of the surface at the given parameter.
         """
         return NURBSSurfaceEvaluation(self, parameter)
+    
+    @property
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
+        """Get the visualization polydata for the surface.
+        
+        Returns
+        -------
+        pv.PolyData
+            Visualization polydata for the surface.
+        """
+        from geomdl.visualization import VisVTK
+
+        vis_comp = VisVTK.VisSurface()
+        self._nurbs_surface.vis = vis_comp
+        self._nurbs_surface.render()
+
+        return pv.wrap(self._nurbs_surface.vis.)
 
     def contains_param(self, param: ParamUV) -> bool:  # noqa: D102
         raise NotImplementedError("contains_param() is not implemented.")
