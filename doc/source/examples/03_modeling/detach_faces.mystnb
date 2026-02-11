@@ -1,0 +1,286 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.16.4
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
+# Modeling: Detach faces
+
+This example shows how to use the detach faces operations to separate
+faces from bodies and convert them into independent surface bodies.
+
+The detach operation is useful when you need to:
+- Extract specific faces from a solid body for further manipulation
+- Create surface bodies from existing geometry
+- Break down complex geometries into simpler components
+
++++
+
+## Perform required imports
+
+Perform the required imports.
+
+```{code-cell} ipython3
+from ansys.geometry.core import launch_modeler
+from ansys.geometry.core.math import Plane, Point2D, Point3D
+from ansys.geometry.core.misc import UNITS
+from ansys.geometry.core.sketch import Sketch
+```
+
++++
+
+## Launch modeler
+
+Launch the modeler.
+
+```{code-cell} ipython3
+modeler = launch_modeler()
+print(modeler)
+```
+
++++
+
+## Detach faces using geometry commands
+
+The ``modeler.geometry_commands.detach_faces()`` method allows you to detach
+faces from one or more bodies or faces. This creates new surface bodies for
+each detached face.
+
+### Detach a single face
+
+Create a box and detach a single face from it.
+
+```{code-cell} ipython3
+# Create a design and a box
+design = modeler.create_design("detach_single_face")
+box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+print(f"Initial number of bodies: {len(design.bodies)}")
+print(f"Number of faces on box: {len(box.faces)}")
+
+# Plot the original box
+box.plot()
+```
+
+```{code-cell} ipython3
+# Select the top face (typically the last face)
+top_face = box.faces[-1]
+
+# Detach the single face
+created_bodies = modeler.geometry_commands.detach_faces(top_face)
+
+print(f"Number of bodies created: {len(created_bodies)}")
+print(f"Total number of bodies: {len(design.bodies)}")
+
+# Plot the design to see the detached face
+design.plot()
+```
+
+The detached face is now a separate surface body that can be manipulated independently.
+
++++
+
+### Detach multiple selected faces
+
+You can also detach multiple faces at once by passing a list of faces.
+
+```{code-cell} ipython3
+# Create a new box
+design = modeler.create_design("detach_multiple_faces")
+box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+print(f"Initial number of bodies: {len(design.bodies)}")
+
+# Select three faces to detach
+faces_to_detach = [box.faces[0], box.faces[1], box.faces[2]]
+
+# Detach the selected faces
+created_bodies = modeler.geometry_commands.detach_faces(faces_to_detach)
+
+print(f"Number of surface bodies created: {len(created_bodies)}")
+print(f"Total number of bodies: {len(design.bodies)}")
+
+# Verify that all created bodies are surface bodies
+for i, body in enumerate(created_bodies):
+    print(f"Body {i}: is_surface = {body.is_surface}, faces = {len(body.faces)}")
+
+# Plot the design
+design.plot()
+```
+
++++
+
+### Detach from multiple bodies
+
+The ``detach_faces`` method can also accept a list of bodies, detaching all
+faces from each body.
+
+```{code-cell} ipython3
+# Create a design with two boxes
+design = modeler.create_design("detach_from_multiple_bodies")
+box1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+box2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 0]), 1, 1), 1)
+
+print(f"Initial number of bodies: {len(design.bodies)}")
+
+# Detach all faces from both boxes
+created_bodies = modeler.geometry_commands.detach_faces([box1, box2])
+
+print(f"Number of surface bodies created: {len(created_bodies)}")
+print(f"Total number of bodies: {len(design.bodies)}")
+
+# Plot the design
+design.plot()
+```
+
+Each box has 6 faces, so detaching from two boxes creates 12 new surface bodies.
+
++++
+
+## Detach faces using the Body method
+
+You can call the ``detach_faces()`` method directly on a ``Body`` object.
+This is equivalent to calling ``modeler.geometry_commands.detach_faces(body)``.
+
+```{code-cell} ipython3
+# Create a new design with a box
+design = modeler.create_design("body_detach_faces")
+box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1.5, 1.5), 1.5)
+
+print(f"Initial number of bodies: {len(design.bodies)}")
+print(f"Box volume: {box.volume}")
+
+# Plot the original box
+box.plot()
+```
+
+```{code-cell} ipython3
+# Call detach_faces directly on the body
+created_bodies = box.detach_faces()
+
+print(f"Number of surface bodies created: {len(created_bodies)}")
+print(f"Total number of bodies: {len(design.bodies)}")
+
+# Check that all created bodies are surface bodies
+for body in created_bodies:
+    print(f"Body '{body.name}': is_surface = {body.is_surface}")
+
+# Plot the design with all detached faces
+design.plot()
+```
+
++++
+
+## Detach a single face using the Face method
+
+Individual faces can also be detached using the ``detach()`` method
+directly on a ``Face`` object.
+
+```{code-cell} ipython3
+# Create a cylinder for variety
+design = modeler.create_design("face_detach")
+sketch = Sketch()
+sketch.circle(Point2D([0, 0]), 0.5)
+cylinder = design.extrude_sketch("cylinder", sketch, 2)
+
+print(f"Initial number of bodies: {len(design.bodies)}")
+print(f"Number of faces on cylinder: {len(cylinder.faces)}")
+
+# Plot the original cylinder
+cylinder.plot()
+```
+
+A cylinder has 3 faces: top, bottom, and the cylindrical surface.
+
+```{code-cell} ipython3
+# Select the top face (circular face)
+top_face = cylinder.faces[0]
+print(f"Top face area: {top_face.area}")
+
+# Detach the face
+result = top_face.detach()
+
+if result is not None:
+    print(f"face detached successfully.")
+print(f"Total number of bodies: {len(design.bodies)}")
+
+# The result is a list containing the created surface body
+if result is not None:
+    print(f"Created body is surface: {result.is_surface}")
+    print(f"Created body face area: {result.faces[0].area}")
+
+# Plot the design
+design.plot()
+```
+
++++
+
+## Practical use case: Extract specific faces for analysis
+
+This example demonstrates a practical use case where you extract specific
+faces from a complex geometry for further analysis or manipulation.
+
+```{code-cell} ipython3
+# Create a more complex geometry
+design = modeler.create_design("practical_example")
+
+# Create a base box
+base = design.extrude_sketch("base", Sketch().box(Point2D([0, 0]), 3, 3), 0.5)
+
+# Create a smaller box on top
+top_sketch = Sketch(Plane(origin=Point3D([0, 0, 0.5])))
+top_sketch.box(Point2D([0.5, 0.5]), 2, 2)
+top = design.extrude_sketch("top", top_sketch, 1)
+
+print(f"Initial number of bodies: {len(design.bodies)}")
+
+# Plot the original geometry
+design.plot()
+```
+
+```{code-cell} ipython3
+# Unite the two boxes
+base.unite(top)
+
+print(f"After union - number of bodies: {len(design.bodies)}")
+print(f"Number of faces on combined body: {len(base.faces)}")
+
+# Plot the combined geometry
+base.plot()
+```
+
+```{code-cell} ipython3
+# Extract the top face for analysis
+# In this case, we'll look for the face with the highest z-coordinate
+top_faces = [face for face in base.faces]
+
+# Detach the top planar face
+if top_faces:
+    top_face = top_faces[-1]  # Usually the last one
+    extracted_surface = top_face.detach()
+
+    print(f"Extracted surface body: {extracted_surface.name}")
+    print(f"Is surface: {extracted_surface.is_surface}")
+    print(f"Total bodies in design: {len(design.bodies)}")
+
+# Plot the final design with the extracted surface
+design.plot()
+```
+
++++
+
+## Close session
+
+When you finish interacting with your modeling service, you should close the active
+server session. This frees resources wherever the service is running.
+
+```{code-cell} ipython3
+modeler.close()
+```
