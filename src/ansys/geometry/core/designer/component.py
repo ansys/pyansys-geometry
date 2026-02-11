@@ -27,10 +27,10 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
-from ansys.geometry.core._grpc._version import GeometryApiProtos
 from beartype import beartype as check_input_types
 from pint import Quantity
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import (
     Beam,
@@ -355,7 +355,7 @@ class Component:
                 f"Property '{self.__class__.__name__}.datum_planes' is not "
                 "implemented in this protofile version."
             )
-        
+
         return self._datum_planes
 
     @property
