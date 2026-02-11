@@ -79,7 +79,7 @@ class Surface(ABC):
         This method returns the evaluation at the closest point.
         """
         return
-    
+
     @abstractmethod
     def visualization_polydata(self) -> "pv.PolyData":
         """Get the visualization polydata for the surface."""

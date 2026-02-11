@@ -33,7 +33,7 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import graphics_required
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
+from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
@@ -228,7 +228,7 @@ class Sphere(Surface):
 
     def contains_point(self, point: Point3D) -> bool:  # noqa: D102
         raise NotImplementedError("contains_point() is not implemented.")
-    
+
     @property
     @graphics_required
     def visualization_polydata(self) -> "pv.PolyData":
@@ -245,6 +245,7 @@ class Sphere(Surface):
         import pyvista as pv
 
         return pv.Sphere(radius=self.radius.m, center=self.origin.flat)
+
 
 class SphereEvaluation(SurfaceEvaluation):
     """Evaluate a sphere at given parameters.

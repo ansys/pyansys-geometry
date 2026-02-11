@@ -257,7 +257,7 @@ class Cone(Surface):
         v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(start, end))
 
         return (u, v)
-    
+
     @property
     @graphics_required
     def visualization_polydata(self) -> "pv.PolyData":
@@ -269,7 +269,7 @@ class Cone(Surface):
             Visualization mesh for the cone.
         """
         import pyvista as pv
-        
+
         return pv.Cone(
             center=self.origin.flat,
             direction=self.dir_z.flat,

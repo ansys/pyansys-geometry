@@ -141,12 +141,12 @@ class PlaneSurface(Surface):
     def evaluate(self, parameter: ParamUV) -> "PlaneEvaluation":
         """Evaluate the plane at a given u and v parameter."""
         return PlaneEvaluation(self, parameter)
-    
+
     @property
     @graphics_required
     def visualization_polydata(self) -> "pv.PolyData":
         """Get the visualization polydata for the plane.
-        
+
         Returns
         -------
         pv.PolyData
