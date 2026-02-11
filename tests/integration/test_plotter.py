@@ -621,19 +621,127 @@ def test_plot_sketch_scene(verify_image_cache):
 
 
 @skip_no_xserver
-def test_plot_shapes_scene(verify_image_cache):
-    """Test plotting shapes in the scene."""
-    # Create shapes
+def test_plot_sphere(verify_image_cache):
+    """Test plotting of a sphere."""
+    # Create a sphere
     sphere = Sphere(origin=Point3D([0, 0, 0], UNITS.m), radius=Quantity(1, UNITS.m))
 
     # Initialize the ``Plotter`` class
     pl = GeometryPlotter()
 
-    # Plotting all the shapes together in the scene.
-    pl.plot(
-        [sphere],
-        screenshot=Path(IMAGE_RESULTS_DIR, "plot_shapes_scene.png"),
+    # Plotting the sphere in the scene.
+    pl.plot(sphere)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sphere.png"))
+
+
+@skip_no_xserver
+def test_plot_cylinder(verify_image_cache):
+    """Test plotting of a cylinder."""
+    # Create a cylinder
+    cylinder = Cylinder(
+        origin=Point3D([0, 0, 0], UNITS.m),
+        radius=Quantity(1, UNITS.m),
+        reference=UNITVECTOR3D_X,
+        axis=UNITVECTOR3D_Z,
     )
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the cylinder in the scene.
+    pl.plot(cylinder)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_cylinder.png"))
+
+
+@skip_no_xserver
+def test_plot_cone(verify_image_cache):
+    """Test plotting of a cone."""
+    # Create a cone
+    cone = Cone(
+        origin=Point3D([0, 0, 0], UNITS.m),
+        radius=Quantity(1, UNITS.m),
+        half_angle=np.pi / 8,
+        reference=UNITVECTOR3D_X,
+        axis=UNITVECTOR3D_Z,
+    )
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the cone in the scene.
+    pl.plot(cone)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_cone.png"))
+
+
+@skip_no_xserver
+def test_plot_torus(verify_image_cache):
+    """Test plotting of a torus."""
+    # Create a torus
+    torus = Torus(
+        origin=Point3D([0, 0, 0], UNITS.m),
+        major_radius=Quantity(2, UNITS.m),
+        minor_radius=Quantity(0.5, UNITS.m),
+        reference=UNITVECTOR3D_X,
+        axis=UNITVECTOR3D_Z,
+    )
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the torus in the scene.
+    pl.plot(torus)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_torus.png"))
+
+
+@skip_no_xserver
+def test_plot_plane_surface(verify_image_cache):
+    """Test plotting of a plane surface."""
+    # Create a plane surface
+    plane_surface = PlaneSurface(
+        origin=Point3D([0, 0, 0], UNITS.m), reference=UNITVECTOR3D_X, axis=UNITVECTOR3D_Z
+    )
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the plane surface in the scene.
+    pl.plot(plane_surface)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_plane_surface.png"))
+
+
+@skip_no_xserver
+def test_plot_nurbs_surface(verify_image_cache):
+    """Test plotting of a NURBS surface."""
+    # Create a NURBS surface
+    degree_u = 2
+    degree_v = 2
+    knots_u = [0, 0, 0, 1, 1, 1]
+    knots_v = [0, 0, 0, 1, 1, 1]
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+    nurbs = NURBSSurface.from_control_points(
+        degree_u=degree_u,
+        degree_v=degree_v,
+        knots_u=knots_u,
+        knots_v=knots_v,
+        control_points=control_points,
+    )
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the NURBS surface in the scene.
+    pl.plot(nurbs)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_nurbs_surface.png"))
 
 
 def test_visualization_polydata():
