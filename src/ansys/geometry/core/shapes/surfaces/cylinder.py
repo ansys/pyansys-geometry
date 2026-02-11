@@ -262,12 +262,12 @@ class Cylinder(Surface):
         v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(-np.inf, np.inf))
 
         return (u, v)
-    
+
     @property
     @graphics_required
     def visualization_polydata(self) -> "pv.PolyData":
         """Get the visualization polydata for the cylinder.
-        
+
         Returns
         -------
         pyvista.PolyData

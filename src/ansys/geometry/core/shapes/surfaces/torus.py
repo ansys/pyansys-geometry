@@ -251,12 +251,12 @@ class Torus(Surface):
             return TorusEvaluation(self, ParamUV(u, v1))
         else:
             return TorusEvaluation(self, ParamUV(u + np.pi, v2))
-    
+
     @property
     @graphics_required
     def visualization_polydata(self) -> "pv.PolyData":
         """Get the visualization polydata for the torus.
-        
+
         Returns
         -------
         pv.PolyData
@@ -265,19 +265,19 @@ class Torus(Surface):
         import pyvista as pv
 
         # Create a parametric torus in pyvista (default orientation: Z-axis up)
-        torus = pv.ParametricTorus(
-            self.major_radius.m, self.minor_radius.m, u_res=100, v_res=50
-        )
+        torus = pv.ParametricTorus(self.major_radius.m, self.minor_radius.m, u_res=100, v_res=50)
 
         # Build transformation matrix with rotation and translation combined
         # The matrix maps from the default orientation to the torus's local coordinate system
-        transform_matrix = np.array([
-            [self.dir_x.x, self.dir_y.x, self.dir_z.x, self.origin.x.m],
-            [self.dir_x.y, self.dir_y.y, self.dir_z.y, self.origin.y.m],
-            [self.dir_x.z, self.dir_y.z, self.dir_z.z, self.origin.z.m],
-            [0, 0, 0, 1]
-        ])
-        
+        transform_matrix = np.array(
+            [
+                [self.dir_x.x, self.dir_y.x, self.dir_z.x, self.origin.x.m],
+                [self.dir_x.y, self.dir_y.y, self.dir_z.y, self.origin.y.m],
+                [self.dir_x.z, self.dir_y.z, self.dir_z.z, self.origin.z.m],
+                [0, 0, 0, 1],
+            ]
+        )
+
         return torus.transform(transform_matrix, inplace=True)
 
     def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
