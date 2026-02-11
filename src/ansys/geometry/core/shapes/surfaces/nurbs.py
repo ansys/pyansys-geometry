@@ -25,6 +25,7 @@ from functools import cached_property
 from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
+import numpy as np
 
 from ansys.geometry.core.math import ZERO_POINT3D, Point3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
@@ -335,20 +336,91 @@ class NURBSSurface(Surface):
     @property
     @graphics_required
     def visualization_polydata(self) -> "pv.PolyData":
-        """Get the visualization polydata for the surface.
+        """Get the visualization polydata for the NURBS surface.
+        
+        This method generates a triangulated mesh representation of the NURBS surface
+        by sampling it at a grid of UV parameters and creating a structured mesh.
+        The resolution is automatically determined based on the surface complexity,
+        with a minimum of 20 points per direction and additional sampling for
+        higher-degree surfaces.
         
         Returns
         -------
         pv.PolyData
-            Visualization polydata for the surface.
+            Triangulated mesh representation of the NURBS surface.
+            
+        Notes
+        -----
+        The surface is sampled in the parametric domain [u_min, u_max] x [v_min, v_max]
+        and evaluated at a grid of points. The resulting mesh respects the surface's
+        local coordinate system defined by origin, reference (dir_x), and axis (dir_z).
         """
-        from geomdl.visualization import VisVTK
-
-        vis_comp = VisVTK.VisSurface()
-        self._nurbs_surface.vis = vis_comp
-        self._nurbs_surface.render()
-
-        return pv.wrap(self._nurbs_surface.vis.)
+        import pyvista as pv
+        
+        # Get the parametric domain from the NURBS surface
+        u_domain = self._nurbs_surface.domain[0]  # [u_min, u_max]
+        v_domain = self._nurbs_surface.domain[1]  # [v_min, v_max]
+        
+        # Determine sampling resolution based on surface complexity
+        # Higher degree surfaces need more samples for accurate representation
+        base_resolution = 20
+        u_samples = max(base_resolution, self.degree_u * 5 + 10)
+        v_samples = max(base_resolution, self.degree_v * 5 + 10)
+        
+        # Create parametric grid
+        u_params = np.linspace(u_domain[0], u_domain[1], u_samples)
+        v_params = np.linspace(v_domain[0], v_domain[1], v_samples)
+        
+        # Evaluate surface at all UV parameter combinations
+        points = []
+        for v in v_params:
+            for u in u_params:
+                # Evaluate the NURBS surface at (u, v)
+                point = self._nurbs_surface.evaluate_single((u, v))
+                points.append(point)
+        
+        # Create structured grid connectivity (quadrilateral faces)
+        # Each quad is defined by indices of its 4 corners
+        faces = []
+        for j in range(v_samples - 1):
+            for i in range(u_samples - 1):
+                # Calculate vertex indices for the current quad
+                # Grid is organized row-by-row (v varies slower than u)
+                idx0 = j * u_samples + i
+                idx1 = j * u_samples + (i + 1)
+                idx2 = (j + 1) * u_samples + (i + 1)
+                idx3 = (j + 1) * u_samples + i
+                
+                # PyVista face format: [n_points, idx0, idx1, idx2, ...]
+                # Create two triangles from each quad for better rendering
+                faces.extend([3, idx0, idx1, idx2])  # First triangle
+                faces.extend([3, idx0, idx2, idx3])  # Second triangle
+        
+        # Create PyVista PolyData from points and faces
+        mesh = pv.PolyData(np.array(points), np.array(faces))
+        
+        # Apply transformation to align with the surface's local coordinate system
+        # Only apply transformation if the surface has non-default orientation/position
+        if (self._origin != ZERO_POINT3D or 
+            self._reference != UNITVECTOR3D_X or 
+            self._axis != UNITVECTOR3D_Z):
+            
+            # Build transformation matrix combining rotation and translation
+            dir_y = self._axis.cross(self._reference)  # Complete the orthonormal basis
+            
+            transform_matrix = np.array([
+                [self._reference.x, dir_y.x, self._axis.x, self._origin.x.m],
+                [self._reference.y, dir_y.y, self._axis.y, self._origin.y.m],
+                [self._reference.z, dir_y.z, self._axis.z, self._origin.z.m],
+                [0, 0, 0, 1]
+            ])
+            
+            mesh.transform(transform_matrix, inplace=True)
+        
+        # Compute normals for better visualization (smooth shading)
+        mesh.compute_normals(inplace=True)
+        
+        return mesh
 
     def contains_param(self, param: ParamUV) -> bool:  # noqa: D102
         raise NotImplementedError("contains_param() is not implemented.")
