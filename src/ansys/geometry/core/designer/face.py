@@ -669,7 +669,7 @@ class Face:
             if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
                 parent_design._update_design_inplace()
             else:
-                parent_design._update_from_tracker(response["tracker_response"])
+                parent_design._update_from_tracker(response.get("tracked_response"))
 
             result_bodies = response.get("created_bodies")
             return get_bodies_from_ids(parent_design, result_bodies)[0] if result_bodies else None
