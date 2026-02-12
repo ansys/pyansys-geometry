@@ -103,7 +103,7 @@ class GRPCPlanesServiceV1(GRPCPlanesService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MultipleEntitiesRequest(
-            plane_id=[build_grpc_id(id=kwargs["id"])],
+            ids=[build_grpc_id(id=kwargs["plane_id"])],
         )
 
         # Call the gRPC service
