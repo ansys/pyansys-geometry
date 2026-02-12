@@ -22,6 +22,10 @@ updates:
       - "pyansys-ci-bot"
     commit-message:
       prefix: "build"
+    ignore:
+      - dependency-name: "trame-vtk" # DO NOT UPDATE - issues observed with 2.11.X versions
+        versions:
+          - ">=2.11.0"
     groups:
       grpc-deps:
         patterns:
