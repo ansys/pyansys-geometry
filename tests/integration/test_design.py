@@ -4480,6 +4480,10 @@ def test_datum_planes(modeler: Modeler):
         [-0.01447214, 0.01894427, 0], abs=1e-6
     )
 
+    # Test deleting a datum plane
+    design.delete_datum_plane(design.datum_planes[0])
+    assert not design.datum_planes[0].is_alive
+
 
 def test_create_datum_plane(modeler: Modeler):
     """Test for verifying the ``create_datum_plane`` functionality."""

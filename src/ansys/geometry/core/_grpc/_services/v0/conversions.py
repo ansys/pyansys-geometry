@@ -401,6 +401,25 @@ def from_plane_to_grpc_plane(plane: "Plane") -> GRPCPlane:
     )
 
 
+def from_grpc_plane_to_plane(plane: GRPCPlane) -> "Plane":
+    """Convert a plane gRPC message to a ``Plane`` class.
+
+    Parameters
+    ----------
+    plane : GRPCPlane
+        Source plane data.
+
+    Returns
+    -------
+    Plane
+        Converted plane.
+    """
+    from ansys.geometry.core.math.plane import Plane
+
+    frame = from_grpc_frame_to_frame(plane.frame)
+    return Plane(frame.origin, frame.direction_x, frame.direction_y)
+
+
 @graphics_required
 def from_grpc_tess_to_pd(tess: GRPCTessellation) -> "pv.PolyData":
     """Convert a ``Tessellation`` to ``pyvista.PolyData``."""

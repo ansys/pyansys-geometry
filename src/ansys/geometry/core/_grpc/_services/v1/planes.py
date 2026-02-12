@@ -26,7 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.planes import GRPCPlanesService
-from .conversions import build_grpc_id, from_plane_to_grpc_plane
+from .conversions import build_grpc_id, from_grpc_plane_to_plane, from_plane_to_grpc_plane
 
 
 class GRPCPlanesServiceV1(GRPCPlanesService):
@@ -72,4 +72,45 @@ class GRPCPlanesServiceV1(GRPCPlanesService):
         # Return the response - formatted as a dictionary
         return {
             "id": response.id.id,
+        }
+
+    @protect_grpc
+    def get_all(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import ParentEntityRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ParentEntityRequest(parent_id=build_grpc_id(kwargs["parent_id"]))
+
+        # Call the gRPC service
+        response = self.stub.GetAll(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "planes": [
+                {
+                    "id": plane.id.id,
+                    "name": plane.name,
+                    "plane": from_grpc_plane_to_plane(plane.plane),
+                    "parent_id": plane.parent_id.id,
+                }
+                for plane in response.planes
+            ]
+        }
+    
+    @protect_grpc
+    def delete(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(
+            plane_id=[build_grpc_id(id=kwargs["id"])],
+        )
+
+        # Call the gRPC service
+        response = self.stub.Delete(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "deleted_ids": [plane.id for plane in response.deleted_object_ids],
+            "failed_ids": [plane.id for plane in response.failed_deletion_ids],
         }

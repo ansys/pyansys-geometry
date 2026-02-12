@@ -1391,7 +1391,11 @@ class Design(Component):
             created_dp.parent_component._design_points.append(created_dp)
 
         # Create DatumPlanes
-        for dp in response.get("datum_planes"):
+        if self._grpc_client.services.version == GeometryApiProtos.V0:
+            planes = self._grpc_client.services.planes.get_all().get("planes", [])
+        else:
+            planes = response.get("datum_planes", [])
+        for dp in planes:
             created_dp = DatumPlane(
                 dp.get("id"),
                 dp.get("name"),

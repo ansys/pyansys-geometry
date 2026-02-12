@@ -26,6 +26,7 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.planes import GRPCPlanesService
+from .conversions import build_grpc_id, from_grpc_plane_to_plane
 
 
 class GRPCPlanesServiceV0(GRPCPlanesService):
@@ -53,3 +54,40 @@ class GRPCPlanesServiceV0(GRPCPlanesService):
             f"Method '{self.__class__.__name__}.create' is not "
             "implemented in this protofile version."
         )
+    
+    @protect_grpc
+    def get_all(self, **kwargs) -> dict:  # noqa: D102
+        from google.protobuf.empty_pb2 import Empty
+
+        # Call the gRPC service
+        response = self.stub.GetAll(Empty())
+
+        # Return the response - formatted as a dictionary
+        return {
+            "planes": [
+                {
+                    "id": plane.id.id,
+                    "name": plane.name,
+                    "plane": from_grpc_plane_to_plane(plane.plane),
+                    "parent_id": plane.parent_id.id,
+                }
+                for plane in response.planes
+            ]
+        }
+
+    @protect_grpc
+    def delete(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.datumplanes_pb2 import DeleteRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DeleteRequest(
+            selection=[build_grpc_id(kwargs["plane_id"])],
+        )
+
+        # Call the gRPC service
+        response = self.stub.Delete(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "deleted_ids": response.deleted_planes
+        }

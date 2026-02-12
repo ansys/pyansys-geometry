@@ -43,3 +43,13 @@ class GRPCPlanesService(ABC):  # pragma: no cover
     def create(self, **kwargs) -> dict:
         """Create a datum plane."""
         pass
+
+    @abstractmethod
+    def get_all(self, **kwargs) -> dict:
+        """Get all datum planes."""
+        pass
+
+    @abstractmethod
+    def delete(self, **kwargs) -> dict:
+        """Delete a datum plane."""
+        pass

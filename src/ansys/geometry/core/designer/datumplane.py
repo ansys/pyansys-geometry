@@ -51,6 +51,7 @@ class DatumPlane:
         self._name = name
         self._value = plane
         self._parent_component = parent_component
+        self._is_alive = True
 
     @property
     def id(self) -> str:
@@ -71,6 +72,11 @@ class DatumPlane:
     def parent_component(self) -> "Component":
         """Parent component of the datum plane."""
         return self._parent_component
+    
+    @property
+    def is_alive(self) -> bool:
+        """Check if the datum plane is still present on the server."""
+        return self._is_alive
 
     def evaluate(self, u: float, v: float) -> Point3D:
         """Evaluate the plane at UV parametric coordinates.
