@@ -1,0 +1,154 @@
+
+
+
+
+MaterialPropertyType
+====================
+
+.. py:class:: MaterialPropertyType
+   :canonical: ansys.geometry.core.materials.property.MaterialPropertyType
+
+
+
+Bases: :py:obj:`enum.Enum`
+
+Provides an enum holding the possible values for ``MaterialProperty`` objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: MaterialPropertyType
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~from_id`
+            - Return the ``MaterialPropertyType`` value from the service representation.
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~DENSITY`
+            - 
+          * - :py:attr:`~ELASTIC_MODULUS`
+            - 
+          * - :py:attr:`~POISSON_RATIO`
+            - 
+          * - :py:attr:`~SHEAR_MODULUS`
+            - 
+          * - :py:attr:`~SPECIFIC_HEAT`
+            - 
+          * - :py:attr:`~TENSILE_STRENGTH`
+            - 
+          * - :py:attr:`~THERMAL_CONDUCTIVITY`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.materials.property import MaterialPropertyType
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: DENSITY
+   :value: 'Density'
+
+   
+
+.. py:attribute:: ELASTIC_MODULUS
+   :value: 'ElasticModulus'
+
+   
+
+.. py:attribute:: POISSON_RATIO
+   :value: 'PoissonsRatio'
+
+   
+
+.. py:attribute:: SHEAR_MODULUS
+   :value: 'ShearModulus'
+
+   
+
+.. py:attribute:: SPECIFIC_HEAT
+   :value: 'SpecificHeat'
+
+   
+
+.. py:attribute:: TENSILE_STRENGTH
+   :value: 'TensileStrength'
+
+   
+
+.. py:attribute:: THERMAL_CONDUCTIVITY
+   :value: 'ThermalConductivity'
+
+   
+
+
+Method detail
+-------------
+
+
+.. py:method:: from_id() -> MaterialPropertyType
+
+   
+   Return the ``MaterialPropertyType`` value from the service representation.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Geometry Service string representation of a property type.
+
+   :Returns:
+
+       :obj:`MaterialPropertyType`
+           Common name for property type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

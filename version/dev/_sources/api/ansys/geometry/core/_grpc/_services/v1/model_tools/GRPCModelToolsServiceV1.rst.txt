@@ -1,0 +1,276 @@
+
+
+
+
+
+
+:class:`GRPCModelToolsServiceV1`
+================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.model_tools.GRPCModelToolsServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.model_tools.GRPCModelToolsService`
+
+
+   
+   Model tools service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   model tools service. It is specifically designed for the v1 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCModelToolsServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~chamfer`
+            - Create a chamfer on the specified edges of a body.
+          * - :py:attr:`~fillet`
+            - Create a fillet on the specified edges of a body.
+          * - :py:attr:`~full_fillet`
+            - Create a full fillet on the specified edges of a body.
+          * - :py:attr:`~move_rotate`
+            - Rotate the specified entities.
+          * - :py:attr:`~move_translate`
+            - Translate the specified entities.
+          * - :py:attr:`~create_sketch_line`
+            - Create a sketch line in the design.
+          * - :py:attr:`~detach_faces`
+            - Detach faces from several bodies selection.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+          * - :py:attr:`~sketch_stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.model_tools import GRPCModelToolsServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+.. py:attribute:: sketch_stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: chamfer(**kwargs) -> dict
+
+   
+   Create a chamfer on the specified edges of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: fillet(**kwargs) -> dict
+
+   
+   Create a fillet on the specified edges of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: full_fillet(**kwargs) -> dict
+
+   
+   Create a full fillet on the specified edges of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: move_rotate(**kwargs) -> dict
+
+   
+   Rotate the specified entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: move_translate(**kwargs) -> dict
+
+   
+   Translate the specified entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_sketch_line(**kwargs) -> dict
+
+   
+   Create a sketch line in the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: detach_faces(**kwargs) -> dict
+
+   
+   Detach faces from several bodies selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
