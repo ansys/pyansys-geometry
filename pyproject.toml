@@ -109,8 +109,8 @@ general-all = [
   "scipy==1.16.3; python_version>='3.11'",
   "semver==3.0.4",
   "six==1.17.0",
-  "vtk==9.5.2",
   "trame-vtk==2.10.3",
+  "vtk==9.5.2",
 ]
 tests = [
   { include-group = "general-all" },
