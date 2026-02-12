@@ -28,7 +28,7 @@ from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z, ZERO_POINT3D
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
@@ -267,18 +267,26 @@ class Torus(Surface):
         # Create a parametric torus in pyvista (default orientation: Z-axis up)
         torus = pv.ParametricTorus(self.major_radius.m, self.minor_radius.m, u_res=100, v_res=50)
 
-        # Build transformation matrix with rotation and translation combined
-        # The matrix maps from the default orientation to the torus's local coordinate system
-        transform_matrix = np.array(
-            [
-                [self.dir_x.x, self.dir_y.x, self.dir_z.x, self.origin.x.m],
-                [self.dir_x.y, self.dir_y.y, self.dir_z.y, self.origin.y.m],
-                [self.dir_x.z, self.dir_y.z, self.dir_z.z, self.origin.z.m],
-                [0, 0, 0, 1],
-            ]
-        )
+        # Only apply transformation if the surface has non-default orientation/position
+        if (
+            self._origin != ZERO_POINT3D
+            or self._reference != UNITVECTOR3D_X
+            or self._axis != UNITVECTOR3D_Z
+        ):
+            # Build transformation matrix with rotation and translation combined
+            # The matrix maps from the default orientation to the torus's local coordinate system
+            transform_matrix = np.array(
+                [
+                    [self.dir_x.x, self.dir_y.x, self.dir_z.x, self.origin.x.m],
+                    [self.dir_x.y, self.dir_y.y, self.dir_z.y, self.origin.y.m],
+                    [self.dir_x.z, self.dir_y.z, self.dir_z.z, self.origin.z.m],
+                    [0, 0, 0, 1],
+                ]
+            )
 
-        return torus.transform(transform_matrix, inplace=True)
+            torus.transform(transform_matrix, inplace=True)
+
+        return torus
 
     def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
         raise NotImplementedError("contains_param() is not implemented.")

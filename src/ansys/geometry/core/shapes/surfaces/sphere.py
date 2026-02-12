@@ -28,7 +28,7 @@ from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
 
-from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
+from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z, ZERO_POINT3D
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
@@ -244,7 +244,7 @@ class Sphere(Surface):
         """
         import pyvista as pv
 
-        return pv.Sphere(radius=self.radius.m, center=self.origin.flat)
+        return pv.Sphere(radius=self.radius.m, center=self.origin.flat, direction=self.dir_z.flat)
 
 
 class SphereEvaluation(SurfaceEvaluation):
