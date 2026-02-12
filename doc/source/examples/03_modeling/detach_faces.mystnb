@@ -76,6 +76,10 @@ top_face = box.faces[-1]
 # Detach the single face
 created_bodies = modeler.geometry_commands.detach_faces(top_face)
 
+# Update the color of detached bodies for better visibility in the plot.
+for body in created_bodies:
+    body.color = "red"
+
 print(f"Number of bodies created: {len(created_bodies)}")
 print(f"Total number of bodies: {len(design.bodies)}")
 
@@ -103,6 +107,10 @@ faces_to_detach = [box.faces[0], box.faces[1], box.faces[2]]
 
 # Detach the selected faces
 created_bodies = modeler.geometry_commands.detach_faces(faces_to_detach)
+
+# Update the color of detached bodies for better visibility in the plot.
+for body in created_bodies:
+    body.color = "red"
 
 print(f"Number of surface bodies created: {len(created_bodies)}")
 print(f"Total number of bodies: {len(design.bodies)}")
@@ -132,6 +140,10 @@ print(f"Initial number of bodies: {len(design.bodies)}")
 
 # Detach all faces from both boxes
 created_bodies = modeler.geometry_commands.detach_faces([box1, box2])
+
+# Update the color of detached bodies for better visibility in the plot.
+for body in created_bodies:
+    body.color = "red"
 
 print(f"Number of surface bodies created: {len(created_bodies)}")
 print(f"Total number of bodies: {len(design.bodies)}")
@@ -164,6 +176,10 @@ box.plot()
 ```{code-cell} ipython3
 # Call detach_faces directly on the body
 created_bodies = box.detach_faces()
+
+# Update the color of detached bodies for better visibility in the plot.
+for body in created_bodies:
+    body.color = "red"
 
 print(f"Number of surface bodies created: {len(created_bodies)}")
 print(f"Total number of bodies: {len(design.bodies)}")
@@ -210,6 +226,9 @@ result = top_face.detach()
 if result is not None:
     print(f"face detached successfully.")
 print(f"Total number of bodies: {len(design.bodies)}")
+
+# Update the color of detached body for better visibility in the plot.
+result.color = "red"
 
 # The result is a list containing the created surface body
 if result is not None:
@@ -265,7 +284,7 @@ top_faces = [face for face in base.faces]
 if top_faces:
     top_face = top_faces[-1]  # Usually the last one
     extracted_surface = top_face.detach()
-
+    extracted_surface.color = "red"
     print(f"Extracted surface body: {extracted_surface.name}")
     print(f"Is surface: {extracted_surface.is_surface}")
     print(f"Total bodies in design: {len(design.bodies)}")
