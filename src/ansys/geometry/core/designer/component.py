@@ -30,7 +30,6 @@ import uuid
 from beartype import beartype as check_input_types
 from pint import Quantity
 
-from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import (
     Beam,
@@ -1525,7 +1524,7 @@ class Component:
         datum_plane = DatumPlane(response.get("id"), name, plane, self)
         self._datum_planes.append(datum_plane)
         return datum_plane
-    
+
     @check_input_types
     @ensure_design_is_active
     def delete_datum_plane(self, plane: DatumPlane | str) -> None:
@@ -1698,7 +1697,7 @@ class Component:
 
         # If you reached this point... this means that no beam was found!
         return None
-    
+
     @check_input_types
     def search_plane(self, id: str) -> DatumPlane | None:
         """Search planes in the component's scope.
