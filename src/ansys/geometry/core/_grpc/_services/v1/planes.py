@@ -96,7 +96,7 @@ class GRPCPlanesServiceV1(GRPCPlanesService):
                 for plane in response.planes
             ]
         }
-    
+
     @protect_grpc
     def delete(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest

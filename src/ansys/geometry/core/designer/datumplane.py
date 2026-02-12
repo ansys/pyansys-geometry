@@ -72,7 +72,7 @@ class DatumPlane:
     def parent_component(self) -> "Component":
         """Parent component of the datum plane."""
         return self._parent_component
-    
+
     @property
     def is_alive(self) -> bool:
         """Check if the datum plane is still present on the server."""

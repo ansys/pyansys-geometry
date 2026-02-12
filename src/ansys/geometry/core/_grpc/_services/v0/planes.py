@@ -54,7 +54,7 @@ class GRPCPlanesServiceV0(GRPCPlanesService):
             f"Method '{self.__class__.__name__}.create' is not "
             "implemented in this protofile version."
         )
-    
+
     @protect_grpc
     def get_all(self, **kwargs) -> dict:  # noqa: D102
         from google.protobuf.empty_pb2 import Empty
@@ -88,6 +88,4 @@ class GRPCPlanesServiceV0(GRPCPlanesService):
         response = self.stub.Delete(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "deleted_ids": response.deleted_planes
-        }
+        return {"deleted_ids": response.deleted_planes}
