@@ -25,7 +25,7 @@ updates:
     ignore:
       - dependency-name: "trame-vtk" # DO NOT UPDATE - issues observed with 2.11.X versions
         versions:
-          - ">=2.11.0"
+          - ">=2.10.3"
     groups:
       grpc-deps:
         patterns:
