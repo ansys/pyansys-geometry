@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -144,15 +144,9 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
         # Return the response as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "modified_bodies": [
-                body.get("id").id for body in tracked_response.get("modified_bodies")
-            ],
-            "modified_faces": [
-                face.get("id").id for face in tracked_response.get("modified_faces")
-            ],
-            "modified_edges": [
-                edge.get("id").id for edge in tracked_response.get("modified_edges")
-            ],
+            "modified_bodies": [body.get("id") for body in tracked_response.get("modified_bodies")],
+            "modified_faces": [face.get("id") for face in tracked_response.get("modified_faces")],
+            "modified_edges": [edge.get("id") for edge in tracked_response.get("modified_edges")],
         }
 
     @protect_grpc
@@ -207,3 +201,34 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
 
         # Return the response - formatted as a dictionary
         return {}
+
+    @protect_grpc
+    def detach_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            DetachFacesRequest,
+            DetachFacesRequestData,
+        )
+
+        selections = kwargs["selections"]
+        items_to_detach = sum(len(selection) for selection in selections)
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DetachFacesRequest(
+            request_data=[
+                DetachFacesRequestData(ids=[build_grpc_id(id) for id in selection])
+                for selection in selections
+            ]
+        )
+
+        # Call the gRPC service
+        result = self.stub.DetachFaces(request)
+        tracked_response = serialize_tracked_command_response(result.tracked_command_response)
+
+        # Return the result - formatted as a dictionary
+        return {
+            "success": len(result.successfully_set_ids) == items_to_detach,
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "modified_bodies": [body.get("id") for body in tracked_response.get("modified_bodies")],
+            "modified_faces": [face.get("id") for face in tracked_response.get("modified_faces")],
+            "tracked_response": tracked_response,
+        }

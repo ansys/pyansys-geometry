@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -49,6 +49,12 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.plotting import GeometryPlotter
+from ansys.geometry.core.shapes.surfaces.cone import Cone
+from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder
+from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
+from ansys.geometry.core.shapes.surfaces.plane import PlaneSurface
+from ansys.geometry.core.shapes.surfaces.sphere import Sphere
+from ansys.geometry.core.shapes.surfaces.torus import Torus
 from ansys.geometry.core.sketch import (
     Arc,
     Box,
@@ -614,6 +620,131 @@ def test_plot_sketch_scene(verify_image_cache):
     pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sketch_scene.png"))
 
 
+@skip_no_xserver
+def test_plot_sphere(verify_image_cache):
+    """Test plotting of a sphere."""
+    # Create a sphere
+    sphere = Sphere(origin=Point3D([0, 0, 0], UNITS.m), radius=Quantity(1, UNITS.m))
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the sphere in the scene.
+    pl.plot(sphere)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_sphere.png"))
+
+
+@skip_no_xserver
+def test_plot_cylinder(verify_image_cache):
+    """Test plotting of a cylinder."""
+    # Create a cylinder
+    cylinder = Cylinder(
+        origin=Point3D([0, 0, 0], UNITS.m),
+        radius=Quantity(1, UNITS.m),
+        reference=UNITVECTOR3D_X,
+        axis=UNITVECTOR3D_Z,
+    )
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the cylinder in the scene.
+    pl.plot(cylinder)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_cylinder.png"))
+
+
+@skip_no_xserver
+def test_plot_cone(verify_image_cache):
+    """Test plotting of a cone."""
+    # Create a cone
+    cone = Cone(
+        origin=Point3D([0, 0, 0], UNITS.m),
+        radius=Quantity(1, UNITS.m),
+        half_angle=np.pi / 8,
+        reference=UNITVECTOR3D_X,
+        axis=UNITVECTOR3D_Z,
+    )
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the cone in the scene.
+    pl.plot(cone)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_cone.png"))
+
+
+@skip_no_xserver
+def test_plot_torus(verify_image_cache):
+    """Test plotting of a torus."""
+    # Create a torus
+    torus = Torus(
+        origin=Point3D([0, 0, 0], UNITS.m),
+        major_radius=Quantity(2, UNITS.m),
+        minor_radius=Quantity(0.5, UNITS.m),
+        reference=UNITVECTOR3D_X,
+        axis=UNITVECTOR3D_Z,
+    )
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the torus in the scene.
+    pl.plot(torus)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_torus.png"))
+
+
+@skip_no_xserver
+def test_plot_plane_surface(verify_image_cache):
+    """Test plotting of a plane surface."""
+    # Create a plane surface
+    plane_surface = PlaneSurface(
+        origin=Point3D([0, 0, 0], UNITS.m), reference=UNITVECTOR3D_X, axis=UNITVECTOR3D_Z
+    )
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the plane surface in the scene.
+    pl.plot(plane_surface)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_plane_surface.png"))
+
+
+@skip_no_xserver
+def test_plot_nurbs_surface(verify_image_cache):
+    """Test plotting of a NURBS surface."""
+    # Create a NURBS surface
+    degree_u = 2
+    degree_v = 2
+    knots_u = [0, 0, 0, 1, 1, 1]
+    knots_v = [0, 0, 0, 1, 1, 1]
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+    nurbs = NURBSSurface.from_control_points(
+        degree_u=degree_u,
+        degree_v=degree_v,
+        knots_u=knots_u,
+        knots_v=knots_v,
+        control_points=control_points,
+        origin=Point3D([10, 20, 30]),
+    )
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the NURBS surface in the scene.
+    pl.plot(nurbs)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_nurbs_surface.png"))
+
+
 def test_visualization_polydata():
     """Test the VTK polydata representation for PyVista visualization."""
     # Test for polygon visualization polydata
@@ -724,6 +855,103 @@ def test_visualization_polydata():
     assert box.visualization_polydata.n_cells == 1
     assert box.visualization_polydata.n_points == 4
     assert box.visualization_polydata.n_open_edges == 4
+
+    # Test for sphere visualization polydata
+    sphere = Sphere(Point3D([1, 2, 3], UNITS.m), Quantity(4, UNITS.m))
+    assert sphere.visualization_polydata.center == pytest.approx([1.0, 2.0, 3.0])
+    assert sphere.visualization_polydata.bounds == pytest.approx(
+        [-3.0, 5.0, -2.0, 6.0, -1.0, 7.0], rel=0.1
+    )
+    assert sphere.visualization_polydata.n_cells == 1680
+    assert sphere.visualization_polydata.n_points == 842
+    assert sphere.visualization_polydata.n_open_edges == 0
+
+    # Test for Cylinder surface visualization polydata (infinite cylinder)
+    cylinder = Cylinder(
+        origin=Point3D([0, 0, 0]),
+        radius=Quantity(1.0, UNITS.m),
+        reference=UNITVECTOR3D_X,
+        axis=UNITVECTOR3D_Z,
+    )
+    cylinder_polydata = cylinder.visualization_polydata
+    assert cylinder_polydata is not None
+    assert cylinder_polydata.n_points == 400
+    assert cylinder_polydata.n_cells == 102
+    # Cylinder is infinite but visualization should show reasonable bounds
+    # Check radius is approximately 1 (compare first 4 bounds: x_min, x_max, y_min, y_max)
+    assert cylinder_polydata.bounds[:4] == pytest.approx([-1.0, 1.0, -1.0, 1.0], abs=1e-1)
+
+    # Test for Cone surface visualization polydata
+    cone = Cone(
+        origin=Point3D([0, 0, 0]),
+        radius=Quantity(1.0, UNITS.m),
+        half_angle=np.pi / 8,
+        reference=UNITVECTOR3D_X,
+        axis=UNITVECTOR3D_Z,
+    )
+    cone_polydata = cone.visualization_polydata
+    assert cone_polydata is not None
+    assert cone_polydata.n_points == 101
+    assert cone_polydata.n_cells == 101
+
+    # Test for Torus surface visualization polydata
+    torus = Torus(
+        origin=Point3D([0, 0, 0]),
+        major_radius=Quantity(2.0, UNITS.m),
+        minor_radius=Quantity(0.5, UNITS.m),
+        reference=UNITVECTOR3D_X,
+        axis=UNITVECTOR3D_Z,
+    )
+    torus_polydata = torus.visualization_polydata
+    assert torus_polydata is not None
+    assert torus_polydata.n_points == 4851
+    assert torus_polydata.n_cells == 9702
+    # Torus should be centered at origin
+    assert torus_polydata.center == pytest.approx([0.0, 0.0, 0.0], abs=1e-2)
+    # Major radius 2, minor radius 0.5, so bounds should be approximately [-2.5, 2.5] in XY
+    assert torus_polydata.bounds[0] == pytest.approx(-2.5, abs=1e-1)
+    assert torus_polydata.bounds[1] == pytest.approx(2.5, abs=1e-1)
+
+    # Test for PlaneSurface visualization polydata
+    plane_surface = PlaneSurface(
+        origin=Point3D([0, 0, 0]), reference=UNITVECTOR3D_X, axis=UNITVECTOR3D_Z
+    )
+    plane_polydata = plane_surface.visualization_polydata
+    assert plane_polydata is not None
+    assert plane_polydata.n_points == 121
+    assert plane_polydata.n_cells == 100
+    # Plane should be a flat mesh
+    assert plane_polydata.center[2] == pytest.approx(0.0, abs=1e-2)
+
+    # Test for NURBSSurface visualization polydata
+    degree_u = 2
+    degree_v = 2
+    knots_u = [0, 0, 0, 1, 1, 1]
+    knots_v = [0, 0, 0, 1, 1, 1]
+    control_points = [
+        Point3D([0, 0, 0]),
+        Point3D([0, 1, 1]),
+        Point3D([0, 2, 0]),
+        Point3D([1, 0, 1]),
+        Point3D([1, 1, 2]),
+        Point3D([1, 2, 1]),
+        Point3D([2, 0, 0]),
+        Point3D([2, 1, 1]),
+        Point3D([2, 2, 0]),
+    ]
+    nurbs = NURBSSurface.from_control_points(
+        degree_u=degree_u,
+        degree_v=degree_v,
+        knots_u=knots_u,
+        knots_v=knots_v,
+        control_points=control_points,
+    )
+    nurbs_polydata = nurbs.visualization_polydata
+    assert nurbs_polydata is not None
+    assert nurbs_polydata.n_points == 400
+    assert nurbs_polydata.n_cells == 722
+    # NURBS surface should span approximately [0, 2] in X and Y
+    assert nurbs_polydata.bounds[:4] == pytest.approx([0.0, 2.0, 0.0, 2.0], abs=1e-1)
 
 
 @skip_no_xserver

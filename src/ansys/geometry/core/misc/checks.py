@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,7 +23,7 @@
 
 from collections.abc import Iterable
 import functools
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Type
 import warnings
 
 import numpy as np
@@ -32,6 +32,9 @@ import semver
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.design import Design
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+    from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
+    from ansys.geometry.core.sketch.sketch import Sketch
 
 
 def ensure_design_is_active(method):
@@ -246,14 +249,14 @@ def check_type_equivalence(input: object, expected: object) -> None:
         )
 
 
-def check_type(input: object, expected_type: type | tuple[type, ...]) -> None:
+def check_type(input: object, expected_type: Type | tuple[Type, ...]) -> None:
     """Check if an input object is of the same type as expected types.
 
     Parameters
     ----------
     input : object
         Input object.
-    expected_type : type | tuple[type, ...]
+    expected_type : Type | tuple[Type, ...]
         One or more types to compare the input object against.
 
     Raises
@@ -268,7 +271,7 @@ def check_type(input: object, expected_type: type | tuple[type, ...]) -> None:
 
 
 def check_type_all_elements_in_iterable(
-    input: Iterable, expected_type: type | tuple[type, ...]
+    input: Iterable, expected_type: Type | tuple[Type, ...]
 ) -> None:
     """Check if all elements in an iterable are of the same type as expected.
 
@@ -276,7 +279,7 @@ def check_type_all_elements_in_iterable(
     ----------
     input : Iterable
         Input iterable.
-    expected_type : type | tuple[type, ...]
+    expected_type : Type | tuple[Type, ...]
         One or more types to compare the input object against.
 
     Raises
@@ -286,6 +289,59 @@ def check_type_all_elements_in_iterable(
     """
     for elem in input:
         check_type(elem, expected_type)
+
+
+def check_nurbs_compatibility(
+    backend_version: semver.Version,
+    sketch: "Sketch" = None,
+    curves: list["TrimmedCurve"] = None,
+    surfaces: list["TrimmedSurface"] = None,
+) -> None:
+    """Check if the inputs require NURBS functionality and it is available.
+
+    Parameters
+    ----------
+    backend_version : semver.Version
+        Backend version to check against.
+    sketch : Sketch, default: None
+        Sketch to check for NURBS geometry.
+    curves : list[TrimmedCurve], default: None
+        List of TrimmedCurve to check for NURBS geometry.
+    surfaces : list[TrimmedSurface], default: None
+        List of TrimmedSurface to check for NURBS geometry.
+
+    Raises
+    ------
+    GeometryRuntimeError
+        If inputs contain NURBS functionality but the backend is older than 26R1.
+    """
+    from ansys.geometry.core.errors import GeometryRuntimeError
+    from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
+    from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
+    from ansys.geometry.core.sketch.nurbs import SketchNurbs
+
+    requires_nurbs = False
+
+    if sketch is not None:
+        if any(isinstance(edge, SketchNurbs) for edge in sketch.edges):
+            requires_nurbs = True
+
+    if curves is not None:
+        if any(isinstance(curve.geometry, NURBSCurve) for curve in curves):
+            requires_nurbs = True
+
+    if surfaces is not None:
+        if any(isinstance(surface.geometry, NURBSSurface) for surface in surfaces):
+            requires_nurbs = True
+
+    if requires_nurbs:
+        min_version = semver.Version(26, 1, 0)
+        comp = min_version.compare(backend_version)
+        if comp == 1:
+            raise GeometryRuntimeError(
+                "NURBS functionality requires a minimum Ansys release version of 26R1, "
+                + f"but the current version used is {backend_version}."
+            )
 
 
 def min_backend_version(major: int, minor: int, service_pack: int):

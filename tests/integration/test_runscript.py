@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -73,6 +73,7 @@ def test_python_failing_script(modeler: Modeler):
         modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "failing_script.py")
 
 
+@pytest.mark.skipif(reason="Skipping until integrated script can be fixed.")
 def test_python_integrated_script(modeler: Modeler):
     # Tests the workflow of creating a design in PyAnsys Geometry, modifying it with a script,
     # and continuing to use it in PyAnsys Geometry

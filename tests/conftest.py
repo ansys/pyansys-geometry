@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -54,8 +54,9 @@ def pytest_addoption(parser):
     parser.addoption(
         "--proto-version",
         action="store",
-        default="v0",
-        help=("Specify the proto version to use for the tests. By default, 'v0'."),
+        default="v1",
+        choices=("v0", "v1"),
+        help=("Specify the proto version to use. Options: 'v0' or 'v1'. By default, 'v1'."),
     )
 
     parser.addoption(
@@ -127,26 +128,30 @@ def pytest_collection_modifyitems(config, items):
 def pytest_pyfunc_call(pyfuncitem):
     config = pyfuncitem.config
     config_value = config.getoption("--backwards-compatibility")
-    skip_on_error = True if config_value.lower() == "yes" else False
-
-    if not skip_on_error:
-        return None  # Let normal test execution proceed
+    skip_backwards = True if config_value.lower() == "yes" else False
 
     testfunction = pyfuncitem.obj
+    test_name = pyfuncitem.nodeid
 
     def wrapped(*args, **kwargs):
         try:
             testfunction(*args, **kwargs)
-        except GeometryRuntimeError as e:
+        except (GeometryRuntimeError, NotImplementedError) as e:
             # Verify if the error is due to server incompatibility
-            if "requires a minimum Ansys release version" in str(e):
+            if skip_backwards and "requires a minimum Ansys release version" in str(e):
                 # If so, skip the test
-                pytest.skip("Skipped due to backwards incompatible backend version.")
+                pytest.skip(f"Skipped due to backwards incompatible backend version: {test_name}")
+            elif "is not implemented in this protofile version." in str(e):
+                # If the error is due to unimplemented protofile version, skip the test
+                pytest.skip(
+                    f"Skipped due to unimplemented protofile version definition: {test_name}"
+                )
             else:
                 # If the error is not related to server incompatibility, re-raise it
                 raise e
 
     pyfuncitem.obj = wrapped
+
     return None  # Continue with normal execution
 
 

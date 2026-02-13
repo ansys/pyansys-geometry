@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -31,6 +31,8 @@ from ansys.geometry.core.shapes.parameterization import Parameterization, ParamU
 from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 
 if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
+
     from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
 
 
@@ -76,6 +78,11 @@ class Surface(ABC):
 
         This method returns the evaluation at the closest point.
         """
+        return
+
+    @abstractmethod
+    def visualization_polydata(self) -> "pv.PolyData":
+        """Get the visualization polydata for the surface."""
         return
 
     def trim(self, box_uv: BoxUV) -> "TrimmedSurface":

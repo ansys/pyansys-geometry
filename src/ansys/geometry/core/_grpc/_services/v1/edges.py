@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -39,7 +39,7 @@ from .conversions import (
 )
 
 
-class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
+class GRPCEdgesServiceV1(GRPCEdgesService):
     """Edges service for gRPC communication with the Geometry server.
 
     This class provides methods to interact with the Geometry server's
@@ -172,17 +172,32 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            GetBoundingBoxRequest,
+            GetBoundingBoxRequestData,
+        )
 
-        # Call the gRPC service
-        response = self.stub.GetBoundingBox(request=request).response_data[0]
+        # Create the request to the proper method depending on tight tolerenace
+        if kwargs.get("tight"):
+            request = GetBoundingBoxRequest(
+                request_data=[
+                    GetBoundingBoxRequestData(
+                        id=build_grpc_id(kwargs["id"]),
+                        tight_tolerance=kwargs.get("tight", False),
+                    )
+                ]
+            )
+
+            resp = self.stub.GetTightBoundingBox(request).response_data[0]
+        else:
+            request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+            resp = self.stub.GetBoundingBox(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
-            "min_corner": from_grpc_point_to_point3d(response.box.min),
-            "max_corner": from_grpc_point_to_point3d(response.box.max),
-            "center": from_grpc_point_to_point3d(response.box.center),
+            "min_corner": from_grpc_point_to_point3d(resp.box.min),
+            "max_corner": from_grpc_point_to_point3d(resp.box.max),
+            "center": from_grpc_point_to_point3d(resp.box.center),
         }
 
     @protect_grpc
@@ -222,9 +237,8 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "created_bodies": [
-                body.get("id").id for body in tracked_response.get("created_bodies")
-            ],
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -254,9 +268,8 @@ class GRPCEdgesServiceV1(GRPCEdgesService):  # pragma: no cover
         # Return the response - formatted as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "created_bodies": [
-                body.get("id").id for body in tracked_response.get("created_bodies")
-            ],
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc

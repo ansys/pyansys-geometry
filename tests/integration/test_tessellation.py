@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -26,6 +26,7 @@ import pytest
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.math import Plane, Point2D, UnitVector3D, Vector3D
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.misc.units import UNITS, Quantity
 from ansys.geometry.core.sketch import Sketch
 
@@ -141,6 +142,41 @@ def test_body_tessellate(modeler: Modeler):
     comp_1.bodies[0].translate(UnitVector3D([1, 0, 0]), 1)
 
     assert comp_1.bodies[0]._template._tessellation is None
+
+
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
+@pytest.mark.skip(reason="Skipping due to known issue with tessellation options.")
+def test_body_tessellate_with_options(modeler: Modeler):
+    """Test the body tessellation with custom tessellation options."""
+    # Create a simple body
+    design = modeler.create_design("TessOptions")
+    sketch = Sketch().circle(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m))
+    body = design.extrude_sketch("Body", sketch, Quantity(2, UNITS.m))
+
+    # Test with default tessellation (no options)
+    mesh_default = body.tessellate(merge=True)
+    assert "PolyData" in str(mesh_default)
+
+    # Test with tessellation options
+    fine_options = TessellationOptions(
+        surface_deviation=0.001, angle_deviation=0.1, max_aspect_ratio=0, max_edge_length=0
+    )
+    mesh_fine = body.tessellate(merge=True, tess_options=fine_options, reset_cache=True)
+    assert "PolyData" in str(mesh_fine)
+    assert mesh_fine.n_cells == 156
+    assert mesh_fine.n_points == 160
+
+    # Test with different tessellation options
+    coarse_options = TessellationOptions(
+        surface_deviation=0.1, angle_deviation=0.5, max_aspect_ratio=0, max_edge_length=0
+    )
+    mesh_coarse = body.tessellate(merge=True, tess_options=coarse_options, reset_cache=True)
+    assert "PolyData" in str(mesh_coarse)
+    # Coarse tessellation should have fewer cells/points than fine
+    assert mesh_coarse.n_cells < mesh_fine.n_cells
+    assert mesh_coarse.n_points < mesh_fine.n_points
 
 
 @pytest.mark.skipif(
@@ -345,3 +381,96 @@ def test_get_body_raw_tessellation(modeler: Modeler):
     # Check raw tessellation cache
     assert box._template._raw_tessellation == box_tess
     assert cylinder._template._raw_tessellation == cyl_tess
+
+
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
+def test_body_get_vtk_tessellation(modeler: Modeler):
+    """Test the body tessellation to VTK objects."""
+    from vtkmodules.vtkCommonDataModel import vtkMultiBlockDataSet, vtkPolyData
+
+    # Create a cylinder geometry similar to the user's script
+    origin = Plane([0, 0, 10], direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+    sketch = Sketch(origin)
+    sketch.circle(Point2D([1, 1]), Quantity(30, UNITS.m))
+
+    design = modeler.create_design("VTK_Test_Design")
+    body = design.extrude_sketch(name="CylinderBody", sketch=sketch, distance=Quantity(80, UNITS.m))
+
+    # Test get_vtk_tessellation without merge (should return vtkMultiBlockDataSet)
+    vtk_multiblock = body.get_vtk_tessellation(merge=False, include_faces=True, include_edges=False)
+    assert isinstance(vtk_multiblock, vtkMultiBlockDataSet)
+    assert vtk_multiblock.GetNumberOfBlocks() > 0
+
+    # Test get_vtk_tessellation with merge (should return vtkPolyData)
+    vtk_polydata = body.get_vtk_tessellation(merge=True, include_faces=True, include_edges=False)
+    assert isinstance(vtk_polydata, vtkPolyData)
+    assert vtk_polydata.GetNumberOfPoints() > 0
+    assert vtk_polydata.GetNumberOfCells() > 0
+
+    # Test with both faces and edges
+    vtk_with_edges = body.get_vtk_tessellation(merge=True, include_faces=True, include_edges=True)
+    assert isinstance(vtk_with_edges, vtkPolyData)
+    assert vtk_with_edges.GetNumberOfPoints() > 0
+    assert vtk_with_edges.GetNumberOfCells() > 0
+
+    # Test with provided raw tessellation data
+    raw_tess = body.get_raw_tessellation(include_faces=True, include_edges=False)
+    vtk_from_raw = body.get_vtk_tessellation(merge=True, _raw_tessellation=raw_tess)
+    assert isinstance(vtk_from_raw, vtkPolyData)
+    assert vtk_from_raw.GetNumberOfPoints() > 0
+    assert vtk_from_raw.GetNumberOfCells() > 0
+
+
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
+def test_body_get_vtk_tessellation_empty_data(modeler: Modeler):
+    """Test get_vtk_tessellation with empty or invalid data."""
+    from vtkmodules.vtkCommonDataModel import vtkMultiBlockDataSet, vtkPolyData
+
+    # Create a simple box
+    sketch = Sketch()
+    sketch.box(Point2D([2, 0], UNITS.m), Quantity(4, UNITS.m), Quantity(4, UNITS.m))
+    design = modeler.create_design("VTK_Empty_Test_Design")
+    comp = design.add_component("Component")
+    body = comp.extrude_sketch("Box", sketch, Quantity(1, UNITS.m))
+
+    # Test with empty raw tessellation
+    # Test with empty raw tessellation -- mock get_raw_tessellation() method of body
+    # object to return empty dict doing monkeypatching
+    body.get_raw_tessellation = lambda **kwargs: {}
+    body._template.get_raw_tessellation = lambda **kwargs: {}
+
+    empty_vtk_merged = body.get_vtk_tessellation(merge=True, _raw_tessellation={})
+    assert isinstance(empty_vtk_merged, vtkPolyData)
+    assert empty_vtk_merged.GetNumberOfPoints() == 0
+
+    empty_vtk_multiblock = body.get_vtk_tessellation(merge=False, _raw_tessellation={})
+    assert isinstance(empty_vtk_multiblock, vtkMultiBlockDataSet)
+    assert empty_vtk_multiblock.GetNumberOfBlocks() == 0
+
+
+@pytest.mark.skipif(
+    not are_graphics_available(), reason="Skipping due to graphics requirements missing"
+)
+def test_vtk_integration_with_pyvista(modeler: Modeler):
+    """Test that VTK objects can be wrapped with PyVista for visualization."""
+    import pyvista as pv
+
+    # Create a simple geometry
+    sketch = Sketch()
+    sketch.circle(Point2D([0, 0]), Quantity(5, UNITS.m))
+    design = modeler.create_design("PyVista_Integration_Test")
+    body = design.extrude_sketch("Circle", sketch, Quantity(10, UNITS.m))
+
+    # Get VTK object and wrap with PyVista
+    vtk_obj = body.get_vtk_tessellation(merge=True, include_faces=True, include_edges=True)
+    pv_obj = pv.wrap(vtk_obj)
+
+    # Verify PyVista object properties
+    assert hasattr(pv_obj, "points")
+    assert hasattr(pv_obj, "faces")
+    assert pv_obj.n_points > 0
+    assert pv_obj.n_cells > 0

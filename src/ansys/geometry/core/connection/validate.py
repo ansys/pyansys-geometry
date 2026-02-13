@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -31,24 +31,43 @@ This command shows how this method is typically used:
    python -c "from ansys.geometry.core.connection import validate; validate()"
 """
 
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import wait_until_healthy
+import ansys.geometry.core.connection.defaults as default_settings
 
 
 def validate(*args, **kwargs):  # pragma: no cover
     """Create a client using the default settings and validate it."""
     # Assume local transport mode for validation if not provided
+    channel = None
     if "transport_mode" not in kwargs:
         import platform
 
-        kwargs["transport_mode"] = "wnua" if platform.system() == "Windows" else "uds"
         try:
-            GrpcClient(*args, **kwargs)
+            channel = wait_until_healthy(
+                channel=f"{kwargs.get('host', default_settings.DEFAULT_HOST)}:{kwargs.get('port', default_settings.DEFAULT_PORT)}",  # noqa: E501
+                timeout=kwargs.get("timeout", 120),
+                transport_mode="wnua" if platform.system() == "Windows" else "uds",
+            )
         except Exception:
             # Let's give it a try to insecure mode... just in case
-            kwargs["transport_mode"] = "insecure"
-            GrpcClient(*args, **kwargs)
+            channel = wait_until_healthy(
+                channel=f"{kwargs.get('host', default_settings.DEFAULT_HOST)}:{kwargs.get('port', default_settings.DEFAULT_PORT)}",  # noqa: E501
+                timeout=kwargs.get("timeout", 120),
+                transport_mode="insecure",
+            )
     else:
-        GrpcClient(*args, **kwargs)
+        channel = wait_until_healthy(
+            channel=f"{kwargs.get('host', default_settings.DEFAULT_HOST)}:{kwargs.get('port', default_settings.DEFAULT_PORT)}",  # noqa: E501
+            timeout=kwargs.get("timeout", 120),
+            transport_mode=kwargs["transport_mode"],
+            uds_dir=kwargs.get("uds_dir", None),
+            uds_id=kwargs.get("uds_id", None),
+            certs_dir=kwargs.get("certs_dir", None),
+        )
+
+    # If we reach this point, the connection is valid
+    print("Connection to Geometry server is valid.")
+    print(f"Using gRPC channel connected to {channel._channel.target().decode()}")
 
     # TODO: consider adding additional server stat reporting
     # https://github.com/ansys/pyansys-geometry/issues/1319

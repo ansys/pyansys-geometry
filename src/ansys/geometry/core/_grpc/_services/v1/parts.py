@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -43,26 +43,13 @@ class GRPCPartsServiceV1(GRPCPartsService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.discovery.v1.commands.file_pb2_grpc import FileStub
-
-        self.stub = FileStub(channel)
+        raise NotImplementedError(
+            f"Class '{self.__class__.__name__}' is not implemented in this protofile version."
+        )
 
     @protect_grpc
     def export(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commands.file_pb2 import SaveRequest
-
-        from .conversions import from_design_file_format_to_grpc_file_format
-
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = SaveRequest(format=from_design_file_format_to_grpc_file_format(kwargs["format"]))
-
-        # Call the gRPC service
-        response_stream = self.stub.Save(request)
-
-        # Return the response - formatted as a dictionary
-        data = bytes()
-        for response in response_stream:
-            data += response.data
-        return {
-            "data": data,
-        }
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.export' is not "
+            "implemented in this protofile version."
+        )

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -43,10 +43,11 @@ from .conversions import (
     from_tess_options_to_grpc_tess_options,
     from_trimmed_curve_to_grpc_trimmed_curve,
     from_unit_vector_to_grpc_direction,
+    serialize_tracked_command_response,
 )
 
 
-class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
+class GRPCBodyServiceV1(GRPCBodyService):
     """Body service for gRPC communication with the Geometry server.
 
     This class provides methods to create and manipulate bodies in the
@@ -638,18 +639,27 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import (
-            MultipleEntitiesRequest,
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            GetBoundingBoxRequest,
+            GetBoundingBoxRequestData,
         )
 
-        # Create the request with MultipleEntitiesRequest
-        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+        # Create the request to the proper method depending on tight tolerance
+        if kwargs.get("tight"):
+            request = GetBoundingBoxRequest(
+                request_data=[
+                    GetBoundingBoxRequestData(
+                        id=build_grpc_id(kwargs["id"]),
+                        tight_tolerance=kwargs.get("tight", False),
+                    )
+                ]
+            )
 
-        # Call the gRPC service
-        resp = self.stub.GetBoundingBox(request=request)
-
-        # Get the first bounding box from the response array
-        resp = resp.response_data[0]
+            resp = self.stub.GetTightBoundingBox(request).response_data[0]
+        else:
+            request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+            resp = self.stub.GetBoundingBox(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
@@ -856,12 +866,12 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
     @protect_grpc
     def map(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.edit_pb2 import MapRequest, MapRequestData
+        from ansys.api.discovery.v1.operations.edit_pb2 import MapBodyRequest, MapBodyRequestData
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = MapRequest(
+        request = MapBodyRequest(
             request_data=[
-                MapRequestData(
+                MapBodyRequestData(
                     id=build_grpc_id(kwargs["id"]),
                     frame=from_frame_to_grpc_frame(kwargs["frame"]),
                 )
@@ -1006,8 +1016,10 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         if not response.tracked_command_response.command_response.success:
             raise ValueError(f"Boolean operation failed: {kwargs['err_msg']}")
 
+        serialized_response = serialize_tracked_command_response(response.tracked_command_response)
+
         # Return the response - formatted as a dictionary
-        return {"complete_command_response": response}
+        return {"tracker_response": serialized_response}
 
     @protect_grpc
     def combine(self, **kwargs) -> dict:  # noqa: D102
@@ -1032,11 +1044,14 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         # Call the gRPC service
         response = self.edit_stub.CombineIntersectBodies(request=request)
 
+        serialized_response = serialize_tracked_command_response(
+            response.tracked_command_response
+        )  # Local alias  # noqa: E501
         if not response.tracked_command_response.command_response.success:
             raise ValueError(f"Boolean operation failed: {kwargs['err_msg']}")
 
         # Return the response - formatted as a dictionary
-        return {"complete_command_response": response}
+        return {"tracker_response": serialized_response}
 
     @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
@@ -1062,10 +1077,12 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
 
         # Call the gRPC service
         resp = self.edit_stub.SplitBodies(request=request)
+        tracked_response = serialize_tracked_command_response(resp.tracked_command_response)
 
         # Return the response - formatted as a dictionary
         return {
             "success": resp.tracked_command_response.command_response.success,
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
@@ -1249,7 +1266,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         request = ImprintCurvesRequest(
             request_data=[
                 ImprintCurvesRequestData(
-                    body_ids=build_grpc_id(kwargs["id"]),
+                    body_id=build_grpc_id(kwargs["id"]),
                     curves=curves,
                     face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
                     plane=from_plane_to_grpc_plane(sketch.plane) if sketch else None,
@@ -1265,7 +1282,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         return {
             "edges": [
                 {
-                    "id": edge.id,
+                    "id": edge.id.id,
                     "curve_type": edge.curve_type,
                     "is_reversed": edge.is_reversed,
                 }
@@ -1273,7 +1290,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
             ],
             "faces": [
                 {
-                    "id": face.id,
+                    "id": face.id.id,
                     "surface_type": face.surface_type,
                     "is_reversed": face.is_reversed,
                 }
@@ -1345,7 +1362,7 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
         )
 
         # Call the gRPC service
-        resp = self.edit_stub.ImprintProjectedCurves(request=request)
+        resp = self.edit_stub.ImprintProjectedCurves(request=request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
@@ -1355,8 +1372,8 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                     "surface_type": face.surface_type,
                     "is_reversed": face.is_reversed,
                 }
-                for face in resp.response_data[0].faces
-            ]
+                for face in resp.created_entities.faces
+            ],
         }
 
     @protect_grpc
@@ -1401,3 +1418,33 @@ class GRPCBodyServiceV1(GRPCBodyService):  # pragma: no cover
                 )
 
         return {"tessellation": tess_map}
+
+    @protect_grpc
+    def copy_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import (
+            CopyFacesRequest,
+            CopyFacesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CopyFacesRequest(
+            request_data=[
+                CopyFacesRequestData(
+                    face_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    name=kwargs["name"],
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CopyFaces(request=request)
+
+        # Return the response - formatted as a dictionary
+        body = resp.bodies[0]
+        return {
+            "id": body.id.id,
+            "name": body.name,
+            "master_id": body.master_id.id,
+            "is_surface": body.is_surface,
+        }

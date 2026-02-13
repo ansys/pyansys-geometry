@@ -24,9 +24,8 @@ classifiers = [
   "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
-
 dependencies = [
-  "ansys-api-discovery==1.0.17",
+  "ansys-api-discovery==1.0.27",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -55,7 +54,6 @@ optional-dependencies.graphics = [
   "pyvista[jupyter]>=0.38.1,<1",
   "vtk>=9,<10",
 ]
-
 urls.Changelog = "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
 urls.Discussions = "https://github.com/ansys/pyansys-geometry/discussions"
 urls.Documentation = "https://geometry.docs.pyansys.com"
@@ -64,59 +62,59 @@ urls.Releases = "https://github.com/ansys/pyansys-geometry/releases"
 urls.Source = "https://github.com/ansys/pyansys-geometry"
 
 [dependency-groups]
-
 # NOTE: The `dependency-groups` section is used to define groups of dependencies
 # only available when a developer clones the repository and installs the package
 # for local development.
 dev = [
-  "pre-commit==4.5.0",
+  "pre-commit==4.5.1",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
 doc = [
-  "ansys-sphinx-theme[autoapi]==1.6.3",
+  "ansys-sphinx-theme[autoapi]==1.7.0",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
-  "jupytext==1.18.1",
-  "myst-parser==4.0.1",
-  "nbconvert==7.16.6",
+  "jupytext==1.19.1",
+  "myst-parser==5.0.0",
+  "nbconvert==7.17.0",
   "nbsphinx==0.9.8",
-  "notebook==7.5.0",
+  "notebook==7.5.3",
   "numpydoc==1.10.0",
   "pdf2image==1.17.0",
   "quarto-cli==1.8.25",
-  "sphinx==8.2.3",
+  "sphinx==9.1.0",
   "sphinx-autodoc-typehints==3.1.0",
   "sphinx-copybutton==0.5.2",
   "sphinx-jinja==2.0.2",
   { include-group = "general-all" },
 ]
+general-all = [
+  "ansys-platform-instancemanagement==1.1.2",
+  "ansys-tools-common==0.4.3",
+  "ansys-tools-visualization-interface==0.12.1",
+  "beartype==0.22.9",
+  "docker==7.1.0",
+  "geomdl==5.4.0",
+  "grpcio==1.78.0",
+  "grpcio-health-checking==1.78.0",
+  "matplotlib==3.10.8",
+  "numpy==2.2.6; python_version<'3.11'",
+  "numpy==2.4.0; python_version>='3.11'",
+  "pint==0.24.4",
+  "protobuf==6.33.5",
+  "pygltflib==1.16.5",
+  "pyvista[jupyter]==0.46.5",
+  "requests==2.32.5",
+  "scipy==1.15.3; python_version<'3.11'",
+  "scipy==1.16.3; python_version>='3.11'",
+  "semver==3.0.4",
+  "six==1.17.0",
+  "trame-vtk==2.10.2",
+  "vtk==9.5.2",
+]
 tests = [
   { include-group = "general-all" },
   { include-group = "tests-minimal" },
-]
-general-all = [
-  "ansys-platform-instancemanagement==1.1.2",
-  "ansys-tools-common==0.4.0",
-  "ansys-tools-visualization-interface==0.12.1",
-  "beartype==0.22.8",
-  "docker==7.1.0",
-  "geomdl==5.4.0",
-  "grpcio==1.75.0",
-  "grpcio-health-checking==1.75.0",
-  "matplotlib==3.10.7",
-  "numpy==2.2.6; python_version<'3.11'",
-  "numpy==2.3.3; python_version>='3.11'",
-  "pint==0.24.4",
-  "protobuf==6.32.1",
-  "pygltflib==1.16.5",
-  "pyvista[jupyter]==0.46.4",
-  "requests==2.32.5",
-  "scipy==1.15.3; python_version<'3.11'",
-  "scipy==1.16.2; python_version>='3.11'",
-  "semver==3.0.4",
-  "six==1.17.0",
-  "vtk==9.5.2",
 ]
 tests-minimal = [
   "pytest==9.0.2",
@@ -125,13 +123,12 @@ tests-minimal = [
   "pyyaml==6.0.3",
 ]
 
-[tool.flit.module]
-name = "ansys.geometry.core"
+[tool.flit]
+module.name = "ansys.geometry.core"
 
 [tool.ruff]
 line-length = 100
 extend-exclude = [ "tests/integration/files" ]
-
 fix = true
 format.indent-style = "space"
 format.quote-style = "double"
@@ -160,16 +157,17 @@ lint.isort.force-sort-within-sections = true
 lint.isort.known-first-party = [ "ansys.geometry.core" ]
 lint.pydocstyle.convention = "numpy"
 
-[tool.pytest.ini_options]
-minversion = "7.1"
-addopts = "-ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv --image_cache_dir tests/integration/image_cache --add_missing_images"
-testpaths = [ "tests" ]
+[tool.pytest]
+ini_options.minversion = "7.1"
+ini_options.addopts = """\
+  -ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv \
+  --image_cache_dir tests/integration/image_cache --add_missing_images\
+  """
+ini_options.testpaths = [ "tests" ]
 
-[tool.coverage.run]
-source = [ "ansys.geometry" ]
-
-[tool.coverage.report]
-show_missing = true
+[tool.coverage]
+run.source = [ "ansys.geometry" ]
+report.show_missing = true
 
 [tool.towncrier]
 directory = "doc/changelog.d"
@@ -178,38 +176,12 @@ template = "doc/changelog.d/changelog_template.jinja"
 start_string = ".. towncrier release notes start\n"
 title_format = "`{version} <https://github.com/ansys/pyansys-geometry/releases/tag/v{version}>`_ - {project_date}"
 issue_format = "`#{issue} <https://github.com/ansys/pyansys-geometry/pull/{issue}>`_"
-
-[[tool.towncrier.type]]
-directory = "added"
-name = "Added"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "dependencies"
-name = "Dependencies"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "documentation"
-name = "Documentation"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "fixed"
-name = "Fixed"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "maintenance"
-name = "Maintenance"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "miscellaneous"
-name = "Miscellaneous"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "test"
-name = "Test"
-showcontent = true
+type = [
+  { directory = "added", name = "Added", showcontent = true },
+  { directory = "dependencies", name = "Dependencies", showcontent = true },
+  { directory = "documentation", name = "Documentation", showcontent = true },
+  { directory = "fixed", name = "Fixed", showcontent = true },
+  { directory = "maintenance", name = "Maintenance", showcontent = true },
+  { directory = "miscellaneous", name = "Miscellaneous", showcontent = true },
+  { directory = "test", name = "Test", showcontent = true },
+]

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,6 +23,9 @@
 
 from enum import Enum, unique
 
+from pint import Quantity
+
+from ansys.geometry.core.misc import DEFAULT_UNITS
 from ansys.geometry.core.typing import Real
 
 
@@ -53,6 +56,17 @@ class ParameterUpdateStatus(Enum):
     UNKNOWN = 3
 
 
+UNIT_MAP = {
+    ParameterType.DIMENSIONTYPE_LINEAR: "LENGTH",
+    ParameterType.DIMENSIONTYPE_DIAMETRIC: "LENGTH",
+    ParameterType.DIMENSIONTYPE_RADIAL: "LENGTH",
+    ParameterType.DIMENSIONTYPE_ARC: "LENGTH",
+    ParameterType.DIMENSIONTYPE_AREA: "AREA",
+    ParameterType.DIMENSIONTYPE_VOLUME: "VOLUME",
+    ParameterType.DIMENSIONTYPE_ANGULAR: "ANGLE",
+}
+
+
 class Parameter:
     """Represents a parameter.
 
@@ -64,16 +78,46 @@ class Parameter:
         Name of the parameter.
     dimension_type : ParameterType
         Type of the parameter.
-    dimension_value : float
-        Value of the parameter.
+    dimension_value : Quantity | Real
+        Value of the parameter. If a Real, it will be assigned default units
+        based on the dimension_type.
     """
 
-    def __init__(self, id: int, name: str, dimension_type: ParameterType, dimension_value: Real):
+    def __init__(
+        self, id: int, name: str, dimension_type: ParameterType, dimension_value: Quantity | Real
+    ):
         """Initialize an instance of the ``Parameter`` class."""
         self.id = id
         self._name = name
         self._dimension_type = dimension_type
-        self._dimension_value = dimension_value
+        self._dimension_value = self._convert_to_quantity(dimension_value, dimension_type)
+
+    def _convert_to_quantity(self, value: Quantity | Real, dim_type: ParameterType) -> Quantity:
+        """Convert a value to a Quantity with default client units based on dimension type.
+
+        Parameters
+        ----------
+        value : Quantity | Real
+            The value to convert.
+        dim_type : ParameterType
+            The dimension type to determine the appropriate unit.
+
+        Returns
+        -------
+        Quantity
+            The value as a Quantity with appropriate client units.
+        """
+        if isinstance(value, Quantity):
+            return value
+
+        unit_type = UNIT_MAP.get(dim_type)
+        if unit_type is None:
+            return Quantity(value, "")
+
+        # Get the default unit from DEFAULT_UNITS using the unit_type
+        default_unit = getattr(DEFAULT_UNITS, unit_type)
+
+        return Quantity(value, default_unit)
 
     @property
     def name(self) -> str:
@@ -86,14 +130,21 @@ class Parameter:
         self._name = value
 
     @property
-    def dimension_value(self) -> Real:
+    def dimension_value(self) -> Quantity:
         """Get the value of the parameter."""
         return self._dimension_value
 
     @dimension_value.setter
-    def dimension_value(self, value: Real):
-        """Set the value of the parameter."""
-        self._dimension_value = value
+    def dimension_value(self, value: Quantity | Real):
+        """Set the value of the parameter.
+
+        Parameters
+        ----------
+        value : Quantity | Real
+            The new value. If a Real, it will be assigned default units
+            based on the dimension_type.
+        """
+        self._dimension_value = self._convert_to_quantity(value, self._dimension_type)
 
     @property
     def dimension_type(self) -> ParameterType:
@@ -104,3 +155,26 @@ class Parameter:
     def dimension_type(self, value: ParameterType):
         """Set the type of the parameter."""
         self._dimension_type = value
+
+    @staticmethod
+    def convert_quantity_to_server_units(value: Quantity, dimension_type: ParameterType) -> Real:
+        """Convert a Quantity to a Real value using appropriate units.
+
+        Parameters
+        ----------
+        value : Quantity
+            The value to convert.
+        dimension_type : ParameterType
+            The dimension type to determine the appropriate unit.
+
+        Returns
+        -------
+        Real
+            The value in default server units.
+        """
+        unit_type = UNIT_MAP.get(dimension_type)
+
+        if unit_type is None:
+            return value.magnitude
+        else:
+            return value.m_as(getattr(DEFAULT_UNITS, f"SERVER_{unit_type}"))

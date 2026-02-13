@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -167,3 +167,7 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
 
         # Return the response - formatted as a dictionary
         return {}
+
+    @protect_grpc
+    def detach_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError

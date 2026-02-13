@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -30,7 +30,7 @@ from ..base.unsupported import GRPCUnsupportedService
 from .conversions import build_grpc_id
 
 
-class GRPCUnsupportedServiceV1(GRPCUnsupportedService):  # pragma: no cover
+class GRPCUnsupportedServiceV1(GRPCUnsupportedService):
     """Unsupported service for gRPC communication with the Geometry server.
 
     Parameters

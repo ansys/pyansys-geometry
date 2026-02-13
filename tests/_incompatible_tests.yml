@@ -7,6 +7,7 @@ backends:
     incompatible_tests:
       # Model used is too new for this version
       - tests/integration/test_design.py::test_design_parameters
+      - tests/integration/test_design.py::test_unitless_design_parameters
       - tests/integration/test_design.py::test_old_backend_version
       - tests/integration/test_design_import.py::test_design_import_with_named_selections
       - tests/integration/test_design_import.py::test_design_import_stride_with_named_selections
@@ -66,6 +67,9 @@ backends:
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_get_face_tight_bounding_box
+      - tests/integration/test_design.py::test_get_edge_tight_bounding_box
+      - tests/integration/test_design.py::test_get_body_tight_bounding_box
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -93,7 +97,6 @@ backends:
       - tests/integration/test_design_import.py::test_design_import_solid_edge2025
       - tests/integration/test_design_import.py::test_design_import_nx2412
       - tests/integration/test_design_import.py::test_design_import_inventor2026
-      - tests/integration/test_design.py::test_legacy_export_download
       - tests/integration/test_design.py::test_failure_for_export
       # Bug fix included from 25.2 onwards
       - tests/integration/test_issues.py::test_issue_1192_temp_body_on_empty_intersect
@@ -126,13 +129,19 @@ backends:
       # Export body facets added in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
+      # Tracker is introduced in 25.2
+      - tests/integration/test_design.py::test_design_update_with_booleans
+      - tests/integration/test_design.py::test_check_design_update
+      - tests/integration/test_design.py::test_check_design_update_2
 
   - version: "24.2"
     incompatible_tests:
       # Model used is too new for this version
       - tests/integration/test_design.py::test_design_parameters
+      - tests/integration/test_design.py::test_unitless_design_parameters
       - tests/integration/test_design.py::test_old_backend_version
       - tests/integration/test_design_import.py::test_design_import_with_named_selections
       - tests/integration/test_design_import.py::test_design_import_stride_with_named_selections
@@ -188,10 +197,12 @@ backends:
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
-      - tests/integration/test_design.py::test_legacy_export_download
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_get_face_tight_bounding_box
+      - tests/integration/test_design.py::test_get_edge_tight_bounding_box
+      - tests/integration/test_design.py::test_get_body_tight_bounding_box
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -248,8 +259,13 @@ backends:
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
+      # Tracker is introduced in 25.2
+      - tests/integration/test_design.py::test_design_update_with_booleans
+      - tests/integration/test_design.py::test_check_design_update
+      - tests/integration/test_design.py::test_check_design_update_2
 
   - version: "25.1"
     incompatible_tests:
@@ -261,10 +277,12 @@ backends:
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
-      - tests/integration/test_design.py::test_legacy_export_download
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_get_face_tight_bounding_box
+      - tests/integration/test_design.py::test_get_edge_tight_bounding_box
+      - tests/integration/test_design.py::test_get_body_tight_bounding_box
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -284,6 +302,7 @@ backends:
       - tests/integration/test_design.py::test_vertices_get_named_selections
       # Potential problem in model/reading design for importing parameters
       - tests/integration/test_design.py::test_design_parameters
+      - tests/integration/test_design.py::test_unitless_design_parameters
       # Bounding box center is only available from 25R2 onwards
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
@@ -336,11 +355,15 @@ backends:
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # NURBS surface creation only available from 26.1 onwards
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
-
+      # Tracker is introduced in 25.2
+      - tests/integration/test_design.py::test_design_update_with_booleans
+      - tests/integration/test_design.py::test_check_design_update
+      - tests/integration/test_design.py::test_check_design_update_2
   - version: "25.2"
     incompatible_tests:
       # Model used is too new for this version
@@ -379,7 +402,17 @@ backends:
       # Export body facets add in 26.1
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # NURBS surface creation only available from 26.1 onwards
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
+      # Fix for pattern introduced in 27.1
+      - tests/integration/test_design.py::test_unitless_design_parameters
+
+  - version: "26.1"
+    incompatible_tests:
+      # Fix for pattern introduced in 27.1
+      - tests/integration/test_design.py::test_unitless_design_parameters
+      # NURBS Curves and surfaces for intersection was introduced in 27.1
+      - tests/integration/test_geometry_commands.py::test_intersect_curve_and_surface

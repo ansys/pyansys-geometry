@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -171,6 +171,14 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = build_grpc_id(kwargs["id"])
+
+        # If "tight" bounding box is requested, raise NotImplementedError as this is
+        # not supported in v0
+        if kwargs.get("tight", False):
+            raise NotImplementedError(
+                f"Method '{self.__class__.__name__}.get_bounding_box(..., tight=True)' is not "
+                "implemented in this protofile version."
+            )
 
         # Call the gRPC service
         response = self.stub.GetBoundingBox(request=request)

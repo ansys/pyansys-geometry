@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -276,4 +276,9 @@ class GRPCBodyService(ABC):  # pragma: no cover
     @abstractmethod
     def get_full_tessellation(self, **kwargs) -> dict:
         """Get the full tessellation of a body."""
+        pass
+
+    @abstractmethod
+    def copy_faces(self, **kwargs) -> dict:
+        """Create a surface body from the faces provided."""
         pass

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -38,6 +38,7 @@ from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes.curves.line import Line
+from ansys.geometry.core.shapes.surfaces.sphere import Sphere
 from ansys.geometry.core.sketch.sketch import Sketch
 
 from .conftest import FILES_DIR
@@ -591,7 +592,19 @@ def test_revolve_faces(modeler: Modeler):
     assert len(base.faces) == 5
 
 
+def test_revolve_faces_about_edge(modeler: Modeler):
+    """Test revolve faces about edge."""
+    design = modeler.create_design("revolve_faces_edge")
+    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    bodies = modeler.geometry_commands.revolve_faces(base.faces[2], base.edges[5], np.pi * 3 / 2)
+
+    assert len(bodies) == 0
+    assert base.volume.m == pytest.approx(Quantity(3.35619449019, UNITS.m**3).m, rel=1e-6, abs=1e-8)
+    assert len(base.faces) == 5
+
+
 def test_revolve_faces_with_options(modeler: Modeler):
+    """Test revolve faces with options."""
     # Parameters
     pitch = 0.7
     inner_diameter = 4
@@ -1568,3 +1581,24 @@ def test_revolve_edges(modeler: Modeler):
     assert design.bodies[1].faces[0].area.m == pytest.approx(
         Quantity(8.88576587632, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_intersect_curve_and_surface(modeler: Modeler):
+    """Test intersection of curves and surfaces."""
+    curve = Line(Point3D([0, 0, 0]), [1, 0, 0])
+    surface = Sphere([0, 0, 0], 1)
+
+    points = modeler.geometry_commands.intersect_curve_and_surface(curve, surface)
+
+    assert len(points) == 2
+    assert np.allclose(points[0], Point3D([-1, 0, 0]))
+    assert np.allclose(points[1], Point3D([1, 0, 0]))
+
+    # try nurbs surface
+    design = modeler.open_file(FILES_DIR / "nurbs_surface.scdocx")
+    surface = design.bodies[0].faces[0].shape.geometry
+    points = modeler.geometry_commands.intersect_curve_and_surface(
+        Line([0.04, 0.07, 0], [0, 0, 1]), surface
+    )
+    assert len(points) == 1
+    assert np.allclose(points[0], Point3D([0.04, 0.07, 0.00029651]))

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,7 +23,6 @@
 
 import grpc
 
-import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.bodies import GRPCBodyService
@@ -318,7 +317,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             "id": resp.id,
             "name": resp.name,
             "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "is_surface": True,
         }
 
     @protect_grpc
@@ -470,6 +469,14 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
+        # If "tight" bounding box is requested, raise NotImplementedError as this is
+        # not supported in v0
+        if kwargs.get("tight", False):
+            raise NotImplementedError(
+                f"Method '{self.__class__.__name__}.get_bounding_box(..., tight=True)' is not "
+                "implemented in this protofile version."
+            )
+
         # Call the gRPC service
         resp = self.stub.GetBoundingBox(request=build_grpc_id(kwargs["id"]))
 
@@ -735,15 +742,12 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 body1=kwargs["target"],
                 tool_bodies=[other for other in kwargs["other"]],
                 method=kwargs["method"],
+                keep_other=kwargs["keep_other"],
             )
-            if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
-                request.keep_other = kwargs["keep_other"]
+
             resp = self.stub.Boolean(request=request)
             response_success = resp.empty_result
-            if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
-                serialized_tracker_response = serialize_tracker_command_response(
-                    response=resp.response
-                )
+            serialized_tracker_response = serialize_tracker_command_response(response=resp.response)
         except grpc.RpcError as err:  # pragma: no cover
             # TODO: to be deleted - old versions did not have "tool_bodies" in the request
             # This is a temporary fix to support old versions of the server - should be deleted
@@ -757,6 +761,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                             body1=kwargs["target"],
                             body2=body2,
                             method=kwargs["method"],
+                            keep_other=kwargs["keep_other"],
                         )
                     ).empty_result
                     all_resp.append(tmp_resp)
@@ -769,6 +774,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                         body1=kwargs["target"],
                         body2=kwargs["other"][0],
                         method=kwargs["method"],
+                        keep_other=kwargs["keep_other"],
                     )
                 )
                 response_success = resp.empty_result
@@ -782,7 +788,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             )
 
         # Return the response - formatted as a dictionary
-        return {"complete_command_response": serialized_tracker_response}
+        return {"tracker_response": serialized_tracker_response}
 
     @protect_grpc
     def combine(self, **kwargs) -> dict:  # noqa: D102
@@ -837,7 +843,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             )
 
         # Return the response - formatted as a dictionary
-        return {"complete_command_response": serialize_tracker_command_response(response=response)}
+        return {"tracker_response": serialize_tracker_command_response(response=response)}
 
     @protect_grpc
     def split_body(self, **kwargs) -> dict:  # noqa: D102
@@ -1157,3 +1163,10 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 )
 
         return {"tessellation": tess_map}
+
+    @protect_grpc
+    def copy_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.copy_faces' is not "
+            "implemented in this protofile version."
+        )

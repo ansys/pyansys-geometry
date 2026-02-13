@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -981,6 +981,7 @@ def launch_modeler_with_core_service(
 
         * ``252`` : Ansys 25R2
         * ``261`` : Ansys 26R1
+        * ``271`` : Ansys 27R1
     host: str, optional
         IP address at which the service will be deployed. By default,
         its value will be ``localhost``.

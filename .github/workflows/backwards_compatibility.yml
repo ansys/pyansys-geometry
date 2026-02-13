@@ -45,12 +45,12 @@ jobs:
             backend-version: "25.1"
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -70,7 +70,7 @@ jobs:
           pip install . --group tests
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -126,10 +126,11 @@ jobs:
           BACKEND_VERSION: ${{ matrix.backend-version }}
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION -rf
+          # These older images only support proto v0, so no need to loop over proto versions here
+          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION --proto-version=v0 -rf
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -165,13 +166,18 @@ jobs:
           - image-tag: "core-windows-25.2"
             backend-version: "25.2"
             windows-runner: "windows-2025"
+            proto-version: "v0"
+          - image-tag: "core-windows-26.1"
+            backend-version: "26.1"
+            windows-runner: "windows-2025"
+            proto-version: "v1"
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -179,7 +185,7 @@ jobs:
         uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -216,11 +222,12 @@ jobs:
         timeout-minutes: 20 # Sometimes hangs...
         env:
           BACKEND_VERSION: ${{ matrix.backend-version }}
+          PROTO_VERSION: ${{ matrix.proto-version }}
         run: |
-          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION -rf
+          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION --proto-version=$env:PROTO_VERSION -rf
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:

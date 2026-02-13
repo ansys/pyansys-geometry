@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -22,6 +22,7 @@
 """Provides for creating and managing a cone."""
 
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
 import numpy as np
@@ -31,6 +32,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.shapes.parameterization import (
@@ -43,6 +45,9 @@ from ansys.geometry.core.shapes.parameterization import (
 from ansys.geometry.core.shapes.surfaces.surface import Surface
 from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
+
+if TYPE_CHECKING:
+    import pyvista as pv
 
 
 class Cone(Surface):
@@ -252,6 +257,26 @@ class Cone(Surface):
         v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(start, end))
 
         return (u, v)
+
+    @property
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
+        """Generate a visualization mesh for the cone.
+
+        Returns
+        -------
+        pv.PolyData
+            Visualization mesh for the cone.
+        """
+        import pyvista as pv
+
+        return pv.Cone(
+            center=self.origin.flat,
+            direction=self.dir_z.flat,
+            height=self.height.m,
+            radius=self.radius.m,
+            resolution=100,
+        )
 
     def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
         raise NotImplementedError("contains_param() is not implemented.")

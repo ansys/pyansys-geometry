@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2025 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -67,4 +67,9 @@ class GRPCModelToolsService(ABC):  # pragma: no cover
     @abstractmethod
     def create_sketch_line(self, **kwargs) -> dict:
         """Create a sketch line in the design."""
+        pass
+
+    @abstractmethod
+    def detach_faces(self, **kwargs) -> dict:
+        """Detach faces from several bodies selection."""
         pass
