@@ -4145,11 +4145,37 @@ def test_combine_subtract_transfer_ns(modeler: Modeler):
     inside = design.bodies[0]
     outside = design.bodies[1]
 
-    assert len(design.named_selections) == 2
+    assert len(design.named_selections) == 4
     outside._combine_subtract(inside)
 
     assert len(design.bodies) == 1
-    assert len(design.named_selections) == 2
+    assert len(design.named_selections) == 4
+
+    assert design.named_selections[0].faces[0].area.m == pytest.approx(
+        Quantity(1.4884e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+    assert design.named_selections[1].faces[0].area.m == pytest.approx(
+        Quantity(1.4884e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+    assert len(design.named_selections[2].edges) == 4
+    assert design.named_selections[3].faces[0].area.m == pytest.approx(
+        Quantity(1.4884e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
+    )
+    assert len(design.named_selections[3].edges) == 2
+
+
+def test_combine_subtract_transfer_ns_default_options_changed(modeler: Modeler):
+    input_file = Path(FILES_DIR, "sub_valid.scdocx")
+    design = modeler.open_file(input_file)
+
+    inside = design.bodies[0]
+    outside = design.bodies[1]
+
+    assert len(design.named_selections) == 4
+    outside._combine_subtract(inside, keep_other=True, transfer_named_selections=False)
+
+    assert len(design.bodies) == 2
+    assert len(design.named_selections) == 4
 
 
 def test_faces_get_named_selections(modeler: Modeler):
