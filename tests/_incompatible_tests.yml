@@ -88,6 +88,9 @@ backends:
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
       - tests/integration/test_design_export.py::test_export_to_disco
+      # Export to STEP/IGES is only available from 27R1 onwards
+      - tests/integration/test_design_export.py::test_export_to_step
+      - tests/integration/test_design_export.py::test_export_to_iges
       # Insert/Import file operations caused problems prior to 26.1
       - tests/integration/test_design_import.py::test_design_import_acad_2024
       - tests/integration/test_design_import.py::test_design_import_cat5_2024
@@ -224,6 +227,9 @@ backends:
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
       - tests/integration/test_design_export.py::test_export_to_disco
+      # Export to STEP/IGES is only available from 27R1 onwards
+      - tests/integration/test_design_export.py::test_export_to_step
+      - tests/integration/test_design_export.py::test_export_to_iges
       # Insert/Import file operations caused problems prior to 26.1
       - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
       - tests/integration/test_design_export.py::test_import_export_reimport_design_x_t
@@ -307,6 +313,10 @@ backends:
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
       - tests/integration/test_design_export.py::test_export_to_disco
+      # Export to STEP/IGES is only available from 27R1 onwards
+      - tests/integration/test_design_export.py::test_export_to_step
+      - tests/integration/test_design_export.py::test_export_to_iges
+      # Stitch faces fixed in 25R2
       - tests/integration/test_repair_tools.py::test_find_and_fix_stitch_faces
       - tests/integration/test_repair_tools.py::test_find_and_fix_stitch_faces_comprehensive
       # Insert/Import file operations caused problems prior to 26.1
@@ -403,6 +413,9 @@ backends:
       - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
       - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
       - tests/integration/test_design_export.py::test_export_to_disco_with_facets
+      # Export to STEP/IGES is only available from 27R1 onwards
+      - tests/integration/test_design_export.py::test_export_to_step
+      - tests/integration/test_design_export.py::test_export_to_iges
       # NURBS surface creation only available from 26.1 onwards
       - tests/integration/test_design.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
@@ -416,3 +429,6 @@ backends:
       - tests/integration/test_design.py::test_unitless_design_parameters
       # NURBS Curves and surfaces for intersection was introduced in 27.1
       - tests/integration/test_geometry_commands.py::test_intersect_curve_and_surface
+      # Export to STEP/IGES is only available from 27R1 onwards
+      - tests/integration/test_design_export.py::test_export_to_step
+      - tests/integration/test_design_export.py::test_export_to_iges

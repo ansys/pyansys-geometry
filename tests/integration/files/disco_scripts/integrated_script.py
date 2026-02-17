@@ -1,5 +1,3 @@
-import math
-
 doc = GetActiveDocument()
 radius = MM(int(argsDict["radius"]))
 

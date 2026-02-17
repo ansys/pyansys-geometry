@@ -33,8 +33,6 @@ from ansys.geometry.core.sketch import Sketch
 from .conftest import DSCOSCRIPTS_FILES_DIR
 
 
-# Python (.py)
-@pytest.mark.skip(reason="New failure to be investigated.")
 def test_python_simple_script(modeler: Modeler):
     result, _ = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.py")
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
@@ -44,7 +42,6 @@ def test_python_simple_script(modeler: Modeler):
     assert pattern_doc.match(result["design"])
 
 
-@pytest.mark.skip(reason="New failure to be investigated.")
 def test_python_simple_script_ignore_api_version(
     modeler: Modeler, caplog: pytest.LogCaptureFixture
 ):
@@ -73,7 +70,6 @@ def test_python_failing_script(modeler: Modeler):
         modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "failing_script.py")
 
 
-@pytest.mark.skipif(reason="Skipping until integrated script can be fixed.")
 def test_python_integrated_script(modeler: Modeler):
     # Tests the workflow of creating a design in PyAnsys Geometry, modifying it with a script,
     # and continuing to use it in PyAnsys Geometry
