@@ -48,6 +48,7 @@ from ansys.geometry.core.misc.auxiliary import (
     DEFAULT_COLOR,
     convert_color_to_hex,
     convert_opacity_to_hex,
+    get_bodies_from_ids,
     get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
@@ -297,12 +298,12 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:
+    def get_bounding_box(self, tight: bool = False) -> BoundingBox:
         """Get the bounding box of the body.
 
         Parameters
         ----------
-        tight_tolerance : bool, default: False
+        tight : bool, default: False
             Whether to use a tight tolerance when calculating the bounding box.
 
         Returns
@@ -1193,11 +1194,9 @@ class MasterBody(IBody):
         )
 
     @min_backend_version(27, 1, 0)
-    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:  # noqa: D102
+    def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
-        response = self._grpc_client.services.bodies.get_bounding_box(
-            id=self.id, tight_tolerance=tight_tolerance
-        )
+        response = self._grpc_client.services.bodies.get_bounding_box(id=self.id, tight=tight)
 
         return BoundingBox(
             min_corner=response.get("min"),
@@ -1931,11 +1930,9 @@ class Body(IBody):
         )
 
     @min_backend_version(27, 1, 0)
-    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:  # noqa: D102
+    def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
-        response = self._grpc_client.services.bodies.get_bounding_box(
-            id=self.id, tight_tolerance=tight_tolerance
-        )
+        response = self._grpc_client.services.bodies.get_bounding_box(id=self.id, tight=tight)
 
         return BoundingBox(
             min_corner=response.get("min"),
@@ -2320,6 +2317,39 @@ class Body(IBody):
     def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
         self._template.combine_merge(other)
 
+    @min_backend_version(27, 1, 0)
+    def detach_faces(self) -> list["Body"]:
+        """Detach all the faces from the body.
+
+        This method will result in the original body
+        becoming a surface body and a list of new surface bodies being created for every
+        detached face.
+
+        Returns
+        -------
+        list[Body]
+            Bodies created by the detach if any.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        response = self._grpc_client.services.model_tools.detach_faces(selections=[[self.id]])
+
+        parent_design = get_design_from_body(self)
+
+        if response.get("success"):
+            if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                parent_design._update_design_inplace()
+            else:
+                parent_design._update_from_tracker(response.get("tracked_response"))
+
+            result_bodies = response.get("created_bodies")
+            return get_bodies_from_ids(parent_design, result_bodies)
+        else:
+            self._grpc_client.log.info("Failed to detach faces.")
+            return []
+
     @min_backend_version(26, 1, 0)
     def _combine_subtract(  # noqa: D102
         self,
@@ -2381,13 +2411,10 @@ class Body(IBody):
         err_msg: str,
     ) -> None:
         grpc_other = other if isinstance(other, Iterable) else [other]
-        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
-            if keep_other:
-                # Make a copy of the other body to keep it...
-                # stored temporarily in the parent component - since it will be deleted
-                grpc_other = [
-                    b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other
-                ]
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN and keep_other:
+            # Make a copy of the other body to keep it...
+            # stored temporarily in the parent component - since it will be deleted
+            grpc_other = [b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other]
 
         response = self._template._grpc_client.services.bodies.boolean(
             target=self.id,

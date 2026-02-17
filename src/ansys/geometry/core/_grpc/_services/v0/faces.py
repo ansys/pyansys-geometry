@@ -184,6 +184,14 @@ class GRPCFacesServiceV0(GRPCFacesService):
         # Create the request - assumes all inputs are valid and of the proper type
         request = build_grpc_id(kwargs["id"])
 
+        # If "tight" bounding box is requested, raise NotImplementedError as this is
+        # not supported in v0
+        if kwargs.get("tight", False):
+            raise NotImplementedError(
+                f"Method '{self.__class__.__name__}.get_bounding_box(..., tight=True)' is not "
+                "implemented in this protofile version."
+            )
+
         # Call the gRPC service
         response = self.stub.GetBoundingBox(request=request)
 
