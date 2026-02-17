@@ -747,8 +747,8 @@ class GeometryCommands:
         ----------
         selection : Face | list[Face]
             Faces to create the pattern out of.
-        circular_axis : Edge
-            The axis of the circular pattern, determined by the direction of an edge.
+        circular_axis : Edge | Line
+            The axis of the circular pattern.
         circular_count : int
             How many members are in the circular pattern.
         circular_angle : Angle | Quantity | Real
@@ -1018,7 +1018,7 @@ class GeometryCommands:
     def revolve_faces(
         self,
         selection: Union["Face", list["Face"]],
-        axis: Line,
+        axis: Union["Edge", Line],
         angle: Angle | Quantity | Real,
         extrude_type: ExtrudeType = ExtrudeType.ADD,
     ) -> list["Body"]:
@@ -1028,7 +1028,7 @@ class GeometryCommands:
         ----------
         selection : Face | list[Face]
             Face(s) to revolve.
-        axis : Line
+        axis : Edge | Line
             Axis of revolution.
         angle : Angle | Quantity | Real
             Angular distance to revolve.
@@ -1044,6 +1044,7 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
+        from ansys.geometry.core.designer.edge import CurveType, Edge
         from ansys.geometry.core.designer.face import Face
 
         selection: list[Face] = selection if isinstance(selection, list) else [selection]
@@ -1053,6 +1054,11 @@ class GeometryCommands:
 
         for object in selection:
             object.body._reset_tessellation_cache()
+
+        if isinstance(axis, Edge):
+            if axis.curve_type != CurveType.CURVETYPE_LINE:
+                raise ValueError("Only edges that are lines can be used as the revolve axis.")
+            axis = Line(axis.start, UnitVector3D.from_points(axis.start, axis.end))
 
         result = self._grpc_client._services.faces.revolve_faces(
             selection_ids=[object.id for object in selection],
@@ -1907,10 +1913,73 @@ class GeometryCommands:
 
         Warnings
         --------
-        This method is only available starting on Ansys release 26R1.
+        This method is only available starting on Ansys release 26R1. Nurbs curves
+        and surfaces are not supported until Ansys release 27R1.
         """
         response = self._grpc_client._services.curves.intersect_curve_and_surface(
             curve=curve, surface=surface
         )
 
         return [] if response.get("intersect") is False else response.get("points")
+
+    @min_backend_version(27, 1, 0)
+    def detach_faces(
+        self,
+        selection: Union["Body", list["Body"], "Face", list["Face"]],
+    ) -> list["Body"]:
+        """Detach faces on all the bodies/faces from a list.
+
+        This method will result in a list of new surface bodies:
+
+        - If the input is a body, all faces on the body will be detached and the original body
+          will be modified to have only the non-detached faces. The detached faces will be
+          returned as new bodies.
+        - If the input is a list of faces:
+            - All the connected faces from the same body will be detached together to form a
+              body.
+            - If some of the faces in the list are not connected or are not from the same body,
+              they will be detached separately to form separate bodies.
+            - The original body will be modified to have only the non-detached faces.
+              The detached faces will be returned as new bodies.
+
+        Parameters
+        ----------
+        selection : Body | list[Body] | Face | list[Face]
+            Bodies or faces from which we want to detach faces.
+
+        Returns
+        -------
+        list[Body]
+            Bodies created by the detach if any.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        selection_ids: list[str] = (
+            [entity.id for entity in selection] if isinstance(selection, list) else [selection.id]
+        )
+        check_type_all_elements_in_iterable(selection_ids, str)
+
+        response = self._grpc_client.services.model_tools.detach_faces(selections=[selection_ids])
+
+        first_item = selection[0] if isinstance(selection, list) else selection
+        parent_design = (
+            get_design_from_face(first_item)
+            if isinstance(first_item, Face)
+            else get_design_from_body(first_item)
+        )
+
+        if response.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                parent_design._update_from_tracker(response.get("tracked_response"))
+            else:
+                parent_design._update_design_inplace()
+
+            result_bodies = response.get("created_bodies")
+            return get_bodies_from_ids(parent_design, result_bodies)
+        else:
+            self._grpc_client.log.info("Failed to detach faces.")
+            return []

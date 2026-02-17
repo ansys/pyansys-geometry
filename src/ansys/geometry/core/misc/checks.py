@@ -23,7 +23,7 @@
 
 from collections.abc import Iterable
 import functools
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Type
 import warnings
 
 import numpy as np
@@ -249,14 +249,14 @@ def check_type_equivalence(input: object, expected: object) -> None:
         )
 
 
-def check_type(input: object, expected_type: type | tuple[type, ...]) -> None:
+def check_type(input: object, expected_type: Type | tuple[Type, ...]) -> None:
     """Check if an input object is of the same type as expected types.
 
     Parameters
     ----------
     input : object
         Input object.
-    expected_type : type | tuple[type, ...]
+    expected_type : Type | tuple[Type, ...]
         One or more types to compare the input object against.
 
     Raises
@@ -271,7 +271,7 @@ def check_type(input: object, expected_type: type | tuple[type, ...]) -> None:
 
 
 def check_type_all_elements_in_iterable(
-    input: Iterable, expected_type: type | tuple[type, ...]
+    input: Iterable, expected_type: Type | tuple[Type, ...]
 ) -> None:
     """Check if all elements in an iterable are of the same type as expected.
 
@@ -279,7 +279,7 @@ def check_type_all_elements_in_iterable(
     ----------
     input : Iterable
         Input iterable.
-    expected_type : type | tuple[type, ...]
+    expected_type : Type | tuple[Type, ...]
         One or more types to compare the input object against.
 
     Raises

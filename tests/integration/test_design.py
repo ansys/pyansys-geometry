@@ -32,7 +32,6 @@ import pytest
 
 import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
-from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
@@ -83,31 +82,17 @@ from .conftest import FILES_DIR, IMPORT_FILES_DIR
 
 def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Validating error messages when opening up files"""
-    # If the protos version is v1 or higher, uploading files is not supported
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-        with pytest.raises(
-            GeometryRuntimeError,
-            match="The '_upload_file' method is not supported in protos v1 and beyond",
-        ):
-            modeler._upload_file(fake_path)
-        with pytest.raises(
-            GeometryRuntimeError,
-            match="The '_upload_file_stream' method is not supported with protos v1 and beyond",
-        ):
-            modeler._upload_file_stream(fake_path)
-    else:
-        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-        temp_dir = tmp_path_factory.mktemp("test_design")
+    fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+    temp_dir = tmp_path_factory.mktemp("test_design")
 
-        with pytest.raises(ValueError, match="Could not find file:"):
-            modeler._upload_file(fake_path)
-        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-            modeler._upload_file(temp_dir)
-        with pytest.raises(ValueError, match="Could not find file:"):
-            modeler._upload_file_stream(fake_path)
-        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-            modeler._upload_file_stream(temp_dir)
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file(fake_path)
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file(temp_dir)
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file_stream(fake_path)
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file_stream(temp_dir)
 
 
 def test_modeler_open_files(modeler: Modeler):
@@ -415,10 +400,6 @@ def test_face_to_body_creation(modeler: Modeler):
 
 def test_create_surface_from_copy_faces(modeler: Modeler):
     """Test creating a surface body from copied faces."""
-    # Skip test if running v0 protos
-    if modeler.client.services.version == GeometryApiProtos.V0:
-        pytest.skip("Skipping test for V0 protos")
-
     # Create a design
     design = modeler.create_design("CopyFacesTest")
 
@@ -735,7 +716,7 @@ def test_remove_member_from_named_selection(modeler: Modeler):
         ns.remove_members(members=[ns.bodies[0]])
 
 
-def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
+def test_old_backend_version(modeler: Modeler, fake_modeler_old_backend_242: Modeler):
     # Try to vefify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
     hello = design.named_selections
@@ -1394,12 +1375,8 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     assert file.exists()
 
     # Upload file
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        with pytest.raises(match="The '_upload_file' method is not supported in protos v1"):
-            modeler._upload_file(file)
-    else:
-        path_on_server = modeler._upload_file(file)
-        assert path_on_server is not None
+    path_on_server = modeler._upload_file(file)
+    assert path_on_server is not None
 
 
 def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_mode: str):
@@ -1424,15 +1401,9 @@ def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_
         from ansys.geometry.core import Modeler
 
         modeler = Modeler(transport_mode=transport_mode)
-        if modeler.client.services.version == GeometryApiProtos.V0:
-            path_on_server = modeler._upload_file_stream(file)
-            assert path_on_server is not None
-        else:
-            with pytest.raises(
-                GeometryRuntimeError,
-                match="The '_upload_file_stream' method is not supported with protos v1 and beyond.",  # noqa: E501
-            ):
-                modeler._upload_file_stream(file)
+        path_on_server = modeler._upload_file_stream(file)
+        assert path_on_server is not None
+
     finally:
         pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
 
@@ -3303,13 +3274,13 @@ def test_design_parameters(modeler: Modeler):
     test_parameters = design.parameters
 
     # Verify the initial parameters
-    assert len(test_parameters) == 2
+    assert len(test_parameters) == 4
     assert test_parameters[0].name == "p1"
-    assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
+    assert abs(test_parameters[0].dimension_value.m - 0.00010872999999999981) < 1e-8
     assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
     assert test_parameters[1].name == "p2"
-    assert abs(test_parameters[1].dimension_value - 0.0002552758322160813) < 1e-8
+    assert abs(test_parameters[1].dimension_value.m - 0.0002552758322160813) < 1e-8
     assert test_parameters[1].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
     # Update the second parameter and verify the status
@@ -3327,6 +3298,38 @@ def test_design_parameters(modeler: Modeler):
 
     test_parameters[0].dimension_type = ParameterType.DIMENSIONTYPE_AREA
     assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    # Update a parameter with a unit value
+    test_parameters[1].dimension_value = Quantity(800, UNITS.mm**2)
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.SUCCESS
+    assert test_parameters[1].dimension_value.m == pytest.approx(800, rel=1e-8)
+    assert test_parameters[1].dimension_value.m_as(DEFAULT_UNITS.AREA) == pytest.approx(
+        0.0008, rel=1e-8
+    )
+
+
+def test_unitless_design_parameters(modeler: Modeler):
+    """Test the design parameter's functionality for unitless parameters."""
+    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
+    test_parameters = design.parameters
+    assert len(test_parameters) == 4
+
+    # Test the unitless parameter (pattern count)
+    assert test_parameters[2].name == "PatternCount"
+    assert test_parameters[2].dimension_type == ParameterType.DIMENSIONTYPE_COUNT
+    assert test_parameters[2].dimension_value == Quantity(3, "")
+
+    # Change the pattern separation and count
+    test_parameters[3].dimension_value = Quantity(50, UNITS.mm)
+    status = design.set_parameter(test_parameters[3])
+    assert status == ParameterUpdateStatus.SUCCESS
+    assert test_parameters[3].dimension_value == Quantity(50, UNITS.mm)
+
+    test_parameters[2].dimension_value = Quantity(2, "")
+    status = design.set_parameter(test_parameters[2])
+    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+    assert test_parameters[2].dimension_value == Quantity(2, "")
 
 
 def test_cached_bodies(modeler: Modeler):
@@ -3601,6 +3604,42 @@ def test_get_face_bounding_box(modeler: Modeler):
     assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
 
 
+def test_get_face_tight_bounding_box(modeler: Modeler):
+    """Test getting the tight bounding box of a face."""
+    design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
+    yarn_body = design.bodies[0]
+
+    # Test the regular bounding box
+    bounding_box = yarn_body.faces[0].bounding_box
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.750637531716012)
+    assert bounding_box.min_corner.y.m == pytest.approx(-0.340634843063073)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.104203649881978)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.75484840496883)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.663576030656712)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.196642153592138)
+
+    assert bounding_box.center.x.m == pytest.approx(1.25274296834242)
+    assert bounding_box.center.y.m == pytest.approx(0.161470593796819)
+    assert bounding_box.center.z.m == pytest.approx(0.150422901737058)
+
+    # Test the tight bounding box
+    bounding_box = yarn_body.faces[0].get_bounding_box(tight=True)
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
+    assert bounding_box.min_corner.y.m == pytest.approx(5.2771026530260073e-17)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.105040051163695)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.41421356238489)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.196642053388603)
+
+    assert bounding_box.center.x.m == pytest.approx(1.08440444008654)
+    assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
+
+
 def test_get_edge_bounding_box(modeler: Modeler):
     """Test getting the bounding box of an edge."""
     design = modeler.create_design("edge_bounding_box")
@@ -3621,6 +3660,42 @@ def test_get_edge_bounding_box(modeler: Modeler):
     assert center.z.m == 1
 
 
+def test_get_edge_tight_bounding_box(modeler: Modeler):
+    """Test getting the tight bounding box of a face."""
+    design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
+    yarn_body_edge = design.bodies[0].faces[0].edges[2]
+
+    # Test the regular bounding box
+    bounding_box = yarn_body_edge.bounding_box
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.754594817788194)
+    assert bounding_box.min_corner.y.m == pytest.approx(-5.00000000813239e-07)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.105039551163695)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.41421406237309)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.659618744585186)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.150000500138633)
+
+    assert bounding_box.center.x.m == pytest.approx(1.08440444008064)
+    assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert bounding_box.center.z.m == pytest.approx(0.127520025651164)
+
+    # Test the tight bounding box
+    bounding_box = yarn_body_edge.get_bounding_box(tight=True)
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
+    assert bounding_box.min_corner.y.m == pytest.approx(3.05311331771918e-16)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.105040051163695)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.41421356237309)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.15)
+
+    assert bounding_box.center.x.m == pytest.approx(1.08440444008064)
+    assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert bounding_box.center.z.m == pytest.approx(0.127520025581848)
+
+
 def test_get_body_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a body."""
     design = modeler.create_design("body_bounding_box")
@@ -3639,11 +3714,8 @@ def test_get_body_bounding_box(modeler: Modeler):
     assert center.z.m == 0.5
 
 
-def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
+def test_get_body_tight_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a body with tight tolerance."""
-    if modeler.client.services.version == GeometryApiProtos.V0:
-        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
-
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
     yarn_body = design.bodies[0]
 
@@ -3663,7 +3735,7 @@ def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
     assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
 
     # Test getting tight bounding box
-    tight_bounding_box = yarn_body.get_bounding_box(tight_tolerance=True)
+    tight_bounding_box = yarn_body.get_bounding_box(tight=True)
 
     assert tight_bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
     assert tight_bounding_box.min_corner.y.m == pytest.approx(5.2771026530260073e-17)
@@ -3999,12 +4071,10 @@ def test_updating_design_from_tracker(modeler: Modeler):
 
 
 def test_legacy_export_download(
-    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, use_grpc_client_old_backend: Modeler
+    modeler: Modeler,
+    tmp_path_factory: pytest.TempPathFactory,
+    fake_modeler_old_backend_242: Modeler,
 ):
-    # Test is meant to add test coverage for using an old backend to export and download
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        pytest.skip("Test only applies to v0 backend")
-
     # Creating the directory and file to export
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")

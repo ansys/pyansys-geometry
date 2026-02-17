@@ -1319,11 +1319,19 @@ def from_driving_dimension_to_grpc_driving_dimension(
     GRPCDrivingDimension
         Converted driving dimension.
     """
+    from ansys.geometry.core.parameters.parameter import Parameter
+
+    # Convert Quantity to Real using appropriate units
+    value = Parameter.convert_quantity_to_server_units(
+        driving_dimension.dimension_value,
+        driving_dimension.dimension_type,
+    )
+
     return GRPCDrivingDimension(
         id=driving_dimension.id,
         name=driving_dimension.name,
         dimension_type=driving_dimension.dimension_type.value,
-        dimension_value=GRPCQuantity(value_in_geometry_units=driving_dimension.dimension_value),
+        dimension_value=GRPCQuantity(value_in_geometry_units=value),
     )
 
 
