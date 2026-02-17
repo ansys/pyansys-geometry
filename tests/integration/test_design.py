@@ -4151,16 +4151,10 @@ def test_combine_subtract_transfer_ns(modeler: Modeler):
     assert len(design.bodies) == 1
     assert len(design.named_selections) == 4
 
-    assert design.named_selections[0].faces[0].area.m == pytest.approx(
-        Quantity(1.4884e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
-    )
-    assert design.named_selections[1].faces[0].area.m == pytest.approx(
-        Quantity(1.4884e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
-    )
+    assert design.named_selections[0].faces[0].area.m == design.bodies[0].faces[3].area.m
+    assert design.named_selections[1].faces[0].area.m == design.bodies[0].faces[5].area.m
+    assert design.named_selections[3].faces[0].area.m == design.bodies[0].faces[0].area.m
     assert len(design.named_selections[2].edges) == 4
-    assert design.named_selections[3].faces[0].area.m == pytest.approx(
-        Quantity(1.4884e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
-    )
     assert len(design.named_selections[3].edges) == 2
 
 
