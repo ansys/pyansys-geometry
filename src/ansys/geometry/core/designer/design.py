@@ -1390,13 +1390,16 @@ class Design(Component):
             # Append the design point to the component to which it belongs
             created_dp.parent_component._design_points.append(created_dp)
 
-        # Create DatumPlanes
+        # Create DatumPlanes - different retrieval methods based on backends for best compatibility
         planes = []
         if self._grpc_client.backend_version < (25, 2, 0):
             self._grpc_client.log.debug(
                 "Backend version does not support datum planes. Skipping datum plane creation."
             )
-        elif self._grpc_client.backend_version < (27, 1, 0):
+        elif (
+            self._grpc_client.backend_version < (27, 1, 0)
+            or self._grpc_client.services.version == GeometryApiProtos.V0
+        ):
             planes = self._grpc_client.services.planes.get_all(parent_id=self.id).get("planes", [])
         else:
             planes = response.get("datum_planes", [])
