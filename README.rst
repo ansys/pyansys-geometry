@@ -149,3 +149,8 @@ To reach the project support team, email `pyansys.core@ansys.com <mailto:pyansys
 .. _Getting Started: https://geometry.docs.pyansys.com/version/stable/getting_started/index.html
 .. _Examples: https://geometry.docs.pyansys.com/version/stable/examples.html
 .. _PyAnsys Geometry documentation: https://geometry.docs.pyansys.com/version/stable/index.html
+
+
+.. image:: https://api.codacy.com/project/badge/Grade/d0c3ff02603e4dfb806fba3411ee9d8f
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/gh/ansys/pyansys-geometry?utm_source=github.com&utm_medium=referral&utm_content=ansys/pyansys-geometry&utm_campaign=Badge_Grade
