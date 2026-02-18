@@ -85,6 +85,8 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
             "instance_name": component.instance_name,
             "template": kwargs["template_id"],  # template_id from input
             "component": component,
+            "component_master_id": component.master_id.id,
+            "component_part_master_id": component.part_master.id.id
         }
 
     @protect_grpc
@@ -119,7 +121,7 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
 
         # Create the direction and point objects
         translation = (
-            from_unit_vector_to_grpc_direction(kwargs["translation"].normalize())
+            from_unit_vector_to_grpc_direction(kwargs["translation"])
             if kwargs["translation"] is not None
             else None
         )
