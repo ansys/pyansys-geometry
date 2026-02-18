@@ -84,7 +84,7 @@ print(f"Number of bodies created: {len(created_bodies)}")
 print(f"Total number of bodies: {len(design.bodies)}")
 
 # Plot the design to see the detached face
-design.plot()
+design.plot(use_service_colors=True)
 ```
 
 The detached face is now a separate surface body that can be manipulated independently.
@@ -120,7 +120,7 @@ for i, body in enumerate(created_bodies):
     print(f"Body {i}: is_surface = {body.is_surface}, faces = {len(body.faces)}")
 
 # Plot the design
-design.plot()
+design.plot(use_service_colors=True)
 ```
 
 +++
@@ -149,7 +149,7 @@ print(f"Number of surface bodies created: {len(created_bodies)}")
 print(f"Total number of bodies: {len(design.bodies)}")
 
 # Plot the design
-design.plot()
+design.plot(use_service_colors=True)
 ```
 
 Each box has 6 faces, so detaching from two boxes creates 12 new surface bodies.
@@ -189,7 +189,7 @@ for body in created_bodies:
     print(f"Body '{body.name}': is_surface = {body.is_surface}")
 
 # Plot the design with all detached faces
-design.plot()
+design.plot(use_service_colors=True)
 ```
 
 +++
@@ -236,7 +236,7 @@ if result is not None:
     print(f"Created body face area: {result.faces[0].area}")
 
 # Plot the design
-design.plot()
+design.plot(use_service_colors=True)
 ```
 
 +++
@@ -261,7 +261,7 @@ top = design.extrude_sketch("top", top_sketch, 1)
 print(f"Initial number of bodies: {len(design.bodies)}")
 
 # Plot the original geometry
-design.plot()
+design.plot(use_service_colors=True)
 ```
 
 ```{code-cell} ipython3
@@ -290,7 +290,7 @@ if top_faces:
     print(f"Total bodies in design: {len(design.bodies)}")
 
 # Plot the final design with the extracted surface
-design.plot()
+design.plot(use_service_colors=True)
 ```
 
 +++
