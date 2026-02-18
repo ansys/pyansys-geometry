@@ -495,10 +495,18 @@ def test_from_tess_options_to_grpc_tess_options():
     grpc_tess_options = from_tess_options_to_grpc_tess_options(tess_options)
 
     # Assert that the GRPCTessellationOptions object is correctly created
-    assert grpc_tess_options.surface_deviation == tess_options.surface_deviation
-    assert grpc_tess_options.angle_deviation == tess_options.angle_deviation
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
+    assert grpc_tess_options.surface_deviation == tess_options.surface_deviation.value.m_as(
+        DEFAULT_UNITS.SERVER_LENGTH
+    )
+    assert grpc_tess_options.angle_deviation == tess_options.angle_deviation.value.m_as(
+        DEFAULT_UNITS.SERVER_ANGLE
+    )
     assert grpc_tess_options.maximum_aspect_ratio == tess_options.max_aspect_ratio
-    assert grpc_tess_options.maximum_edge_length == tess_options.max_edge_length
+    assert grpc_tess_options.maximum_edge_length == tess_options.max_edge_length.value.m_as(
+        DEFAULT_UNITS.SERVER_LENGTH
+    )
     assert grpc_tess_options.watertight == tess_options.watertight
 
 
