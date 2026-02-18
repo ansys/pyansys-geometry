@@ -69,9 +69,7 @@ class GRPCPlanesServiceV0(GRPCPlanesService):
                     "id": plane.id.id,
                     "name": plane.name,
                     "plane": (
-                        from_grpc_plane_to_plane(plane.plane)
-                        if plane.HasField("plane")
-                        else None
+                        from_grpc_plane_to_plane(plane.plane) if plane.HasField("plane") else None
                     ),
                     "parent_id": plane.parent_id.id,
                 }
