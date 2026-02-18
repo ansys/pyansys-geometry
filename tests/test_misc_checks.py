@@ -23,6 +23,7 @@
 import warnings
 
 import numpy as np
+from pint import Quantity
 import pytest
 
 from ansys.geometry.core.errors import GeometryRuntimeError
@@ -43,10 +44,11 @@ from ansys.geometry.core.misc import (
     kwargs_passed_not_accepted,
     min_backend_version,
 )
+from ansys.geometry.core.misc.measurements import Angle, Distance
 
 
 def test_tessellation_options():
-    # Testing tessellation options
+    # Testing tessellation options with Real values
     tessellation_options = TessellationOptions(
         surface_deviation=0.01,
         angle_deviation=0.1,
@@ -54,11 +56,96 @@ def test_tessellation_options():
         max_edge_length=5.0,
         watertight=True,
     )
-    assert tessellation_options.surface_deviation == 0.01
-    assert tessellation_options.angle_deviation == 0.1
+    assert isinstance(tessellation_options.surface_deviation, Distance)
+    assert isinstance(tessellation_options.angle_deviation, Angle)
+    assert isinstance(tessellation_options.max_edge_length, Distance)
+    assert tessellation_options.surface_deviation.value.m_as("m") == 0.01
+    assert tessellation_options.angle_deviation.value.m_as("rad") == 0.1
     assert tessellation_options.max_aspect_ratio == 2.0
-    assert tessellation_options.max_edge_length == 5.0
+    assert tessellation_options.max_edge_length.value.m_as("m") == 5.0
     assert tessellation_options.watertight is True
+
+    # Testing tessellation options with Distance and Angle objects
+    tessellation_options_with_measurements = TessellationOptions(
+        surface_deviation=Distance(0.02, UNITS.meter),
+        angle_deviation=Angle(0.2, UNITS.radian),
+        max_aspect_ratio=3.0,
+        max_edge_length=Distance(10.0, UNITS.meter),
+        watertight=False,
+    )
+    assert isinstance(tessellation_options_with_measurements.surface_deviation, Distance)
+    assert isinstance(tessellation_options_with_measurements.angle_deviation, Angle)
+    assert isinstance(tessellation_options_with_measurements.max_edge_length, Distance)
+    assert tessellation_options_with_measurements.surface_deviation.value.m_as(UNITS.m) == 0.02
+    assert tessellation_options_with_measurements.angle_deviation.value.m_as(UNITS.rad) == 0.2
+    assert tessellation_options_with_measurements.max_aspect_ratio == 3.0
+    assert tessellation_options_with_measurements.max_edge_length.value.m_as(UNITS.m) == 10.0
+    assert tessellation_options_with_measurements.watertight is False
+
+    # Testing tessellation options with Quantity objects
+    tessellation_options_with_quantities = TessellationOptions(
+        surface_deviation=Quantity(0.03, UNITS.meter),
+        angle_deviation=Quantity(0.3, UNITS.radian),
+        max_aspect_ratio=4.0,
+        max_edge_length=Quantity(15.0, UNITS.meter),
+        watertight=True,
+    )
+    assert isinstance(tessellation_options_with_quantities.surface_deviation, Distance)
+    assert isinstance(tessellation_options_with_quantities.angle_deviation, Angle)
+    assert isinstance(tessellation_options_with_quantities.max_edge_length, Distance)
+    assert tessellation_options_with_quantities.surface_deviation.value.m_as(UNITS.m) == 0.03
+    assert tessellation_options_with_quantities.angle_deviation.value.m_as(UNITS.rad) == 0.3
+    assert tessellation_options_with_quantities.max_aspect_ratio == 4.0
+    assert tessellation_options_with_quantities.max_edge_length.value.m_as(UNITS.m) == 15.0
+    assert tessellation_options_with_quantities.watertight is True
+
+    # Testing tessellation options with unit conversions (Distance and Angle)
+    tessellation_options_with_conversions = TessellationOptions(
+        surface_deviation=Distance(10, UNITS.millimeter),  # 10mm = 0.01m
+        angle_deviation=Angle(180, UNITS.degree),  # 180 degrees = π radians
+        max_edge_length=Distance(5, UNITS.centimeter),  # 5cm = 0.05m
+    )
+    import math
+
+    assert isinstance(tessellation_options_with_conversions.surface_deviation, Distance)
+    assert isinstance(tessellation_options_with_conversions.angle_deviation, Angle)
+    assert isinstance(tessellation_options_with_conversions.max_edge_length, Distance)
+    assert (
+        abs(tessellation_options_with_conversions.surface_deviation.value.m_as(UNITS.m) - 0.01)
+        < 1e-9
+    )
+    assert (
+        abs(tessellation_options_with_conversions.angle_deviation.value.m_as(UNITS.rad) - math.pi)
+        < 1e-9
+    )
+    assert (
+        abs(tessellation_options_with_conversions.max_edge_length.value.m_as(UNITS.m) - 0.05) < 1e-9
+    )
+
+    # Testing tessellation options with unit conversions (Quantity)
+    tessellation_options_with_qty_conversions = TessellationOptions(
+        surface_deviation=Quantity(20, UNITS.millimeter),  # 20mm = 0.02m
+        angle_deviation=Quantity(90, UNITS.degree),  # 90 degrees = π/2 radians
+        max_edge_length=Quantity(10, UNITS.centimeter),  # 10cm = 0.1m
+    )
+    assert isinstance(tessellation_options_with_qty_conversions.surface_deviation, Distance)
+    assert isinstance(tessellation_options_with_qty_conversions.angle_deviation, Angle)
+    assert isinstance(tessellation_options_with_qty_conversions.max_edge_length, Distance)
+    assert (
+        abs(tessellation_options_with_qty_conversions.surface_deviation.value.m_as(UNITS.m) - 0.02)
+        < 1e-9
+    )
+    assert (
+        abs(
+            tessellation_options_with_qty_conversions.angle_deviation.value.m_as(UNITS.rad)
+            - math.pi / 2
+        )
+        < 1e-9
+    )
+    assert (
+        abs(tessellation_options_with_qty_conversions.max_edge_length.value.m_as(UNITS.m) - 0.1)
+        < 1e-9
+    )
 
 
 def test_misc_checks():
