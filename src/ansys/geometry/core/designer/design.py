@@ -1396,8 +1396,8 @@ class Design(Component):
             self._grpc_client.log.debug(
                 "Backend version does not support datum planes. Skipping datum plane creation."
             )
-        elif self._grpc_client.services.version == GeometryApiProtos.V0:
-            planes = self._grpc_client.services.planes.get_all().get("planes", [])
+        elif self._grpc_client.backend_version < (27, 1, 0):
+            planes = self._grpc_client.services.planes.get_all(parent_id=self.id).get("planes", [])
         else:
             planes = response.get("datum_planes", [])
 
