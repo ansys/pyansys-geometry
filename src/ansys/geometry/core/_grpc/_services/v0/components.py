@@ -77,7 +77,7 @@ class GRPCComponentsServiceV0(GRPCComponentsService):
             "template": response.template,
             "component": response.component,
             "component_master_id": response.component.master_id,
-            "component_part_master_id": response.component.part_master.id
+            "component_part_master_id": response.component.part_master.id,
         }
 
     @protect_grpc
