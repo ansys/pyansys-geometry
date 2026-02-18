@@ -110,7 +110,7 @@ general-all = [
   "semver==3.0.4",
   "six==1.17.0",
   "trame-vtk==2.10.2",
-  "vtk==9.5.2",
+  "vtk==9.6.0",
 ]
 tests = [
   { include-group = "general-all" },
