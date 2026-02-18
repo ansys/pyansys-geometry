@@ -416,7 +416,7 @@ def from_grpc_plane_to_plane(plane: GRPCPlane) -> "Plane":
     """
     from ansys.geometry.core.math.plane import Plane
 
-    frame = from_grpc_frame_to_frame(plane.frame) if plane.frame is not None else None
+    frame = from_grpc_frame_to_frame(plane.frame)
     return Plane(frame.origin, frame.direction_x, frame.direction_y)
 
 
