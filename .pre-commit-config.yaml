@@ -13,6 +13,8 @@ repos:
         args:
           - "-formatter"
           - "max_line_length=120,retain_line_breaks=true,retain_line_breaks_single=true"
+          - "-exclude"
+          - ".codacy.yml"
 
   - repo: https://github.com/tox-dev/pyproject-fmt
     rev: v2.16.0
