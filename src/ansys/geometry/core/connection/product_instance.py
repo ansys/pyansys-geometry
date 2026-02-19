@@ -196,6 +196,7 @@ def prepare_and_start_backend(
     certs_dir: Path | str | None = None,
     specific_minimum_version: int = None,
     server_working_dir: str | Path | None = None,
+    proto_version: str = None,
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
 
@@ -247,12 +248,6 @@ def prepare_and_start_backend(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
-    specific_minimum_version : int, optional
-        Sets a specific minimum version to be checked. If this is not defined,
-        the minimum version will be set to 24.1.0.
-    server_working_dir : str | Path, optional
-        Sets the working directory for the product instance. If nothing is defined,
-        the working directory will be inherited from the parent process.
     transport_mode : str | None
         Transport mode selected, by default `None` and thus it will be selected
         for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
@@ -268,6 +263,15 @@ def prepare_and_start_backend(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    specific_minimum_version : int, optional
+        Sets a specific minimum version to be checked. If this is not defined,
+        the minimum version will be set to 24.1.0.
+    server_working_dir : str | Path, optional
+        Sets the working directory for the product instance. If nothing is defined,
+        the working directory will be inherited from the parent process.
+    proto_version: str, optional
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
 
     Returns
     -------
@@ -560,6 +564,7 @@ def prepare_and_start_backend(
         product_instance=instance,
         logging_level=client_log_level,
         logging_file=client_log_file,
+        proto_version=_determine_proto_version(proto_version, version),
         transport_mode=transport_values["transport_mode"],
         uds_id=transport_values["uds_id"],
         uds_dir=transport_values["uds_dir"],
@@ -911,3 +916,44 @@ def _handle_transport_mode(
 
     # Return the args to be passed to the backend, and the transport values
     return exe_args, transport_values
+
+def _determine_proto_version(proto_version: str | None, product_version: int | str | None) -> str | None:
+    """Determine the gRPC API protocol version to use.
+    
+    Parameters
+    ----------
+    proto_version: str | None
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
+    product_version: int | str | None
+        The version of the product being used. Might be None if the 
+        product version is not determined at the moment of calling this function.
+    
+    Returns
+    -------
+    str | None
+        The gRPC API protocol version to use. Returns the input if it's valid,
+        otherwise returns None.
+    """
+    if proto_version is not None:
+        proto_version = proto_version.lower()
+        if proto_version not in ("v0", "v1"):
+            LOG.warning(
+                f"Proto version '{proto_version}' is not recognized. "
+                "Defaulting to the latest proto version supported by the server."
+            )
+            return None
+
+    # v1 is only supported in versions 261 and later, so if the user requests v1 but
+    # the version is older, we will throw a warning and default to None.
+    if proto_version == "v1":
+        if product_version and int(product_version) < 261:
+            LOG.warning(
+                "Proto version 'v1' is only supported in versions 261 and later. "
+                f"Version '{product_version}' was detected as input. "
+                "Defaulting to the latest proto version supported by the server."
+            )
+            return None
+
+    # If we get here, the proto_version is valid and can be returned as is.
+    return proto_version
