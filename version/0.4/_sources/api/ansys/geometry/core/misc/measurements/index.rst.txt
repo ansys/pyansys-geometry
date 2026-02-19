@@ -1,0 +1,145 @@
+
+
+
+
+
+The ``measurements.py`` module
+==============================
+
+.. py:module:: ansys.geometry.core.misc.measurements
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: measurements
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~SingletonMeta`
+            - Provides a thread-safe implementation of a singleton design pattern.
+
+
+          * - :py:attr:`~DefaultUnitsClass`
+            - Provides default units for the PyAnsys Geometry singleton design pattern.
+
+
+          * - :py:attr:`~Measurement`
+            - Provides the ``PhysicalQuantity`` subclass for holding a measurement.
+
+
+          * - :py:attr:`~Distance`
+            - Provides the ``Measurement`` subclass for holding a distance.
+
+
+          * - :py:attr:`~Angle`
+            - Provides the ``Measurement`` subclass for holding an angle.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~DEFAULT_UNITS`
+            - PyAnsys Geometry default units object.
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 SingletonMeta<SingletonMeta>
+    🝆 DefaultUnitsClass<DefaultUnitsClass>
+    🝆 Measurement<Measurement>
+    🝆 Distance<Distance>
+    🝆 Angle<Angle>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides various measurement-related classes.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: DEFAULT_UNITS
+
+   
+   PyAnsys Geometry default units object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

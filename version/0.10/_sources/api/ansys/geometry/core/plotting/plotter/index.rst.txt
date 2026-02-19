@@ -1,0 +1,97 @@
+
+
+
+
+
+
+The ``plotter.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.plotting.plotter
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: plotter
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.plotter.GeometryPlotter`
+            - Plotter for PyAnsys Geometry objects.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~POLYDATA_COLOR_CYCLER`
+            - 
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GeometryPlotter</api/ansys/geometry/core/plotting/plotter/GeometryPlotter>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides plotting for various PyAnsys Geometry objects.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: POLYDATA_COLOR_CYCLER
+
+
+

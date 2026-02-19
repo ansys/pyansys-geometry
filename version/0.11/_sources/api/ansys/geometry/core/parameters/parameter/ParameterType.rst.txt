@@ -1,0 +1,141 @@
+
+
+
+
+
+
+:class:`ParameterType`
+======================
+
+
+.. py:class:: ansys.geometry.core.parameters.parameter.ParameterType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the parameter types supported.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ParameterType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~DIMENSIONTYPE_UNKNOWN`
+            - 
+          * - :py:attr:`~DIMENSIONTYPE_LINEAR`
+            - 
+          * - :py:attr:`~DIMENSIONTYPE_DIAMETRIC`
+            - 
+          * - :py:attr:`~DIMENSIONTYPE_RADIAL`
+            - 
+          * - :py:attr:`~DIMENSIONTYPE_ARC`
+            - 
+          * - :py:attr:`~DIMENSIONTYPE_AREA`
+            - 
+          * - :py:attr:`~DIMENSIONTYPE_VOLUME`
+            - 
+          * - :py:attr:`~DIMENSIONTYPE_MASS`
+            - 
+          * - :py:attr:`~DIMENSIONTYPE_ANGULAR`
+            - 
+          * - :py:attr:`~DIMENSIONTYPE_COUNT`
+            - 
+          * - :py:attr:`~DIMENSIONTYPE_UNITLESS`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.parameters.parameter import ParameterType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: DIMENSIONTYPE_UNKNOWN
+   :value: 0
+
+
+.. py:attribute:: DIMENSIONTYPE_LINEAR
+   :value: 1
+
+
+.. py:attribute:: DIMENSIONTYPE_DIAMETRIC
+   :value: 2
+
+
+.. py:attribute:: DIMENSIONTYPE_RADIAL
+   :value: 3
+
+
+.. py:attribute:: DIMENSIONTYPE_ARC
+   :value: 4
+
+
+.. py:attribute:: DIMENSIONTYPE_AREA
+   :value: 5
+
+
+.. py:attribute:: DIMENSIONTYPE_VOLUME
+   :value: 6
+
+
+.. py:attribute:: DIMENSIONTYPE_MASS
+   :value: 7
+
+
+.. py:attribute:: DIMENSIONTYPE_ANGULAR
+   :value: 8
+
+
+.. py:attribute:: DIMENSIONTYPE_COUNT
+   :value: 9
+
+
+.. py:attribute:: DIMENSIONTYPE_UNITLESS
+   :value: 10
+
+
+
+
+
+

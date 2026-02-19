@@ -1,0 +1,114 @@
+
+
+
+
+
+
+The ``face.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.designer.face
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: face
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.face.FaceLoop`
+            - Provides an internal class holding the face loops defined.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.face.Face`
+            - Represents a single face of a body within the design assembly.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.face.SurfaceType`
+            - Provides values for the surface types supported.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.face.FaceLoopType`
+            - Provides values for the face loop types supported.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> FaceLoop</api/ansys/geometry/core/designer/face/FaceLoop>
+    <span class="nf nf-cod-symbol_class"></span> Face</api/ansys/geometry/core/designer/face/Face>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> SurfaceType</api/ansys/geometry/core/designer/face/SurfaceType>
+    <span class="nf nf-cod-symbol_enum"></span> FaceLoopType</api/ansys/geometry/core/designer/face/FaceLoopType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for managing a face.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

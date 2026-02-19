@@ -1,0 +1,293 @@
+
+
+
+
+
+
+:class:`GRPCComponentsServiceV1`
+================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.components.GRPCComponentsServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.components.GRPCComponentsService`
+
+
+   
+   Components service for gRPC communication with the Geometry server.
+
+   This class provides methods to call components in the
+   Geometry server using gRPC. It is specifically designed for the v1
+   version of the Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCComponentsServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create`
+            - Create a component.
+          * - :py:attr:`~set_name`
+            - Set the name of a component.
+          * - :py:attr:`~set_placement`
+            - Set the placement of a component.
+          * - :py:attr:`~set_shared_topology`
+            - Set the shared topology of a component.
+          * - :py:attr:`~delete`
+            - Delete a component.
+          * - :py:attr:`~import_groups`
+            - Import groups from a component.
+          * - :py:attr:`~make_independent`
+            - Make a component independent.
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.components import GRPCComponentsServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: create(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create a component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_name(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Set the name of a component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_placement(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Set the placement of a component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_shared_topology(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Set the shared topology of a component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Delete a component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: import_groups(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Import groups from a component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: make_independent(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Make a component independent.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

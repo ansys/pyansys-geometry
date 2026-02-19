@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``measurement_tools.py`` module
+===================================
+
+.. py:module:: ansys.geometry.core.tools.measurement_tools
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: measurement_tools
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.measurement_tools.Gap`
+            - Represents a gap between two bodies.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.measurement_tools.MeasurementTools`
+            - Measurement tools for PyAnsys Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Gap</api/ansys/geometry/core/tools/measurement_tools/Gap>
+    <span class="nf nf-cod-symbol_class"></span> MeasurementTools</api/ansys/geometry/core/tools/measurement_tools/MeasurementTools>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides tools for measurement.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

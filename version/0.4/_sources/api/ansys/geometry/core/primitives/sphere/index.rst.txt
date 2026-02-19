@@ -1,0 +1,86 @@
+
+
+
+
+
+The ``sphere.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.primitives.sphere
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: sphere
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Sphere`
+            - Provides 3D sphere representation.
+
+
+          * - :py:attr:`~SphereEvaluation`
+            - Evaluate a sphere at given parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Sphere<Sphere>
+    🝆 SphereEvaluation<SphereEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a sphere.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

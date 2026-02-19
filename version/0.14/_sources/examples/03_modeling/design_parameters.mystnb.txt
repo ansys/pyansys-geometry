@@ -1,0 +1,146 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.16.4
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
+# Modeling: Using design parameters
+
+You can read and update parameters that are part of the design.
+The simple design in this example has two associated parameters.
+
++++
+
+## Perform required imports
+
+```{code-cell} ipython3
+from pathlib import Path
+import requests
+
+from ansys.geometry.core import launch_modeler
+```
+
+The file for this example is in the integration tests folder and can be downloaded.
+
++++
+
+## Download the example file
+
++++
+
+Download the file for this example from the integration tests folder in the PyAnsys Geometry repository.
+
+```{code-cell} ipython3
+def download_file(url, filename):
+    """Download a file from a URL and save it to a local file."""
+    response = requests.get(url)
+    response.raise_for_status()  # Check if the request was successful
+    with open(filename, 'wb') as file:
+        file.write(response.content)
+
+# URL of the file to download
+url = "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/tests/integration/files/blockswithparameters.dsco"
+
+# Local path to save the file to
+file_path = Path.cwd() / "blockswithparameters.dsco"
+
+# Download the file
+download_file(url, file_path)
+print(f"File is downloaded to {file_path}")
+```
+
+## Import a design with parameters
+
++++
+
+Import the model using the ``open_file()`` method of the modeler.
+
+```{code-cell} ipython3
+# Create a modeler object
+modeler = launch_modeler()
+design = modeler.open_file(file_path)
+design.plot()
+```
+
+## Read existing parameters of the design
+
+You can get all the parameters of the design as a list of parameters. Because this
+example has two parameters, you see two items in the list.
+
+```{code-cell} ipython3
+my_parameters = design.parameters
+print(len(my_parameters))
+```
+
+A parameter object has a name, value, and unit.
+
+```{code-cell} ipython3
+print(my_parameters[0].name)
+print(my_parameters[0].dimension_value)
+print(my_parameters[0].dimension_type)
+
+print(my_parameters[1].name)
+print(my_parameters[1].dimension_value)
+print(my_parameters[1].dimension_type)
+```
+
+Parameter values are returned in the default unit for each dimension type. Since default length
+unit is meter and default area unit is meter square, the value is returned in square meters.
+
++++
+
+## Edit a parameter value
+
+You can edit the parameter's name or value by simply setting these fields.
+Set the second parameter (p2 value to 350 mm).
+
+```{code-cell} ipython3
+parameter1 = my_parameters[1]
+parameter1.dimension_value = 0.000440
+response = design.set_parameter(parameter1)
+print(response)
+print(my_parameters[0].dimension_value)
+print(my_parameters[1].dimension_value)
+```
+
+After a successful parameter update, the design is updated. If we request the design
+plot again, we see the updated design.
+
+```{code-cell} ipython3
+design.plot()
+```
+
+The ``set_parameter()`` method returns a ``Success`` status message if the parameter is updated or
+a "FAILURE" status message if the update fails. If the ``p2`` parameter depends on the ``p1``
+parameter, updating the ``p1`` parameter might also change the ``p2`` parameter. In such cases,
+the method returns ``CONSTRAINED_PARAMETERS``, which indicates other parameters were also updated.
+
+```{code-cell} ipython3
+parameter1 = my_parameters[0]
+parameter1.dimension_value = 0.000250
+response = design.set_parameter(parameter1)
+print(response)
+```
+
+To get the updated list, query the parameters once again.
+
+```{code-cell} ipython3
+my_parameters = design.parameters
+print(my_parameters[0].dimension_value)
+print(my_parameters[1].dimension_value)
+```
+
+## Close the modeler
+
+Close the modeler to free up resources and release the connection.
+
+```{code-cell} ipython3
+modeler.close()
+```

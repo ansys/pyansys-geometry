@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``frame.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.math.frame
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: frame
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Frame`
+            - Primitive representation of a frame (an origin and three fundamental directions).
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Frame<Frame>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for managing a frame.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

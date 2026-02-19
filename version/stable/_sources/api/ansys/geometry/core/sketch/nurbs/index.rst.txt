@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``nurbs.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.sketch.nurbs
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.sketch.nurbs
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.nurbs.SketchNurbs`
+            - Represents a NURBS sketch curve.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SketchNurbs</api/ansys/geometry/core/sketch/nurbs/SketchNurbs>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a nurbs sketch curve.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

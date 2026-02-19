@@ -1,0 +1,237 @@
+
+
+
+
+MasterComponent
+===============
+
+.. py:class:: MasterComponent(id: str, name: str, part: Part, transform: ansys.geometry.core.math.matrix.Matrix44 = IDENTITY_MATRIX44)
+   :canonical: ansys.geometry.core.designer.part.MasterComponent
+
+
+
+
+Represents a part occurrence.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: MasterComponent
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the transformed part.
+          * - :py:attr:`~name`
+            - Name of the transformed part.
+          * - :py:attr:`~occurrences`
+            - List of all occurrences of the component.
+          * - :py:attr:`~part`
+            - Master part of the transformed part.
+          * - :py:attr:`~transform`
+            - 4x4 transformation matrix from the master part.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the master component as a string.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.part import MasterComponent
+
+
+Property detail
+---------------
+.. py:property:: id
+   :canonical: ansys.geometry.core.designer.part.MasterComponent.id
+   :type: str
+
+
+   
+   ID of the transformed part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :canonical: ansys.geometry.core.designer.part.MasterComponent.name
+   :type: str
+
+
+   
+   Name of the transformed part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: occurrences
+   :canonical: ansys.geometry.core.designer.part.MasterComponent.occurrences
+   :type: beartype.typing.List[ansys.geometry.core.designer.component.Component]
+
+
+   
+   List of all occurrences of the component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: part
+   :canonical: ansys.geometry.core.designer.part.MasterComponent.part
+   :type: Part
+
+
+   
+   Master part of the transformed part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: transform
+   :canonical: ansys.geometry.core.designer.part.MasterComponent.transform
+   :type: Matrix44
+
+
+   
+   4x4 transformation matrix from the master part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the master component as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

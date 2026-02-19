@@ -1,0 +1,185 @@
+
+
+:class:`PrepareTools`
+=====================
+
+.. py:class:: ansys.geometry.core.tools.prepare_tools.PrepareTools(grpc_client: ansys.geometry.core.connection.GrpcClient)
+
+   
+   Prepare tools for PyAnsys Geometry.
+
+
+   :Parameters:
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting geometry service instance for design modeling.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PrepareTools
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~extract_volume_from_faces`
+            - Extract a volume from input faces.
+          * - :py:attr:`~extract_volume_from_edge_loops`
+            - Extract a volume from input edge loops.
+          * - :py:attr:`~share_topology`
+            - Share topology between the chosen bodies.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.prepare_tools import PrepareTools
+
+
+
+
+
+Method detail
+-------------
+.. py:method:: extract_volume_from_faces(sealing_faces: beartype.typing.List[ansys.geometry.core.designer.face.Face], inside_faces: beartype.typing.List[ansys.geometry.core.designer.face.Face]) -> beartype.typing.List[ansys.geometry.core.designer.body.Body]
+
+   
+   Extract a volume from input faces.
+
+   Creates a volume (typically a flow volume) from a list of faces that seal the volume
+   and one or more faces that define the wetted surface (inside faces of the solid).
+
+   :Parameters:
+
+       **sealing_faces** : :obj:`List`\[:obj:`Face`]
+           List of faces that seal the volume.
+
+       **inside_faces** : :obj:`List`\[:obj:`Face`]
+           List of faces that define the interior of the solid.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`Body`]
+           List of created bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extract_volume_from_edge_loops(sealing_edges: beartype.typing.List[ansys.geometry.core.designer.edge.Edge], inside_faces: beartype.typing.List[ansys.geometry.core.designer.face.Face]) -> beartype.typing.List[ansys.geometry.core.designer.body.Body]
+
+   
+   Extract a volume from input edge loops.
+
+   Creates a volume (typically a flow volume) from a list of edge loops that seal the volume.
+   and one or more faces that define the wetted surface (inside faces of the solid).
+
+   :Parameters:
+
+       **sealing_edges** : :obj:`List`\[:obj:`Edge`]
+           List of faces that seal the volume.
+
+       **inside_faces** : :obj:`List`\[:obj:`Face`]
+           List of faces that define the interior of the solid (Not always necessary).
+
+   :Returns:
+
+       :obj:`List`\[:obj:`Body`]
+           List of created bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: share_topology(bodies: beartype.typing.List[ansys.geometry.core.designer.body.Body], tol: ansys.geometry.core.typing.Real = 0.0, preserve_instances: bool = False) -> bool
+
+   
+   Share topology between the chosen bodies.
+
+
+   :Parameters:
+
+       **bodies** : :obj:`List`\[:obj:`Body`]
+           List of bodies to share topology between.
+
+       **tol** : :obj:`Real`
+           Maximum distance between bodies.
+
+       **preserve_instances** : :ref:`bool <python:bltin-boolean-values>`
+           Whether instances are preserved.
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if successful, ``False`` if failed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

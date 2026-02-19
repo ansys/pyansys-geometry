@@ -1,0 +1,320 @@
+
+
+
+
+EllipseEvaluation
+=================
+
+.. py:class:: EllipseEvaluation(ellipse: Ellipse, parameter: ansys.geometry.core.typing.Real)
+   :canonical: ansys.geometry.core.primitives.ellipse.EllipseEvaluation
+
+
+
+Bases: :py:obj:`ansys.geometry.core.primitives.curve_evaluation.CurveEvaluation`
+
+Evaluate an ellipse at a given parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: EllipseEvaluation
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~position`
+            - Position of the evaluation.
+          * - :py:attr:`~tangent`
+            - Tangent of the evaluation.
+          * - :py:attr:`~normal`
+            - Normal of the evaluation.
+          * - :py:attr:`~first_derivative`
+            - Girst derivative of the evaluation.
+          * - :py:attr:`~second_derivative`
+            - Second derivative of the evaluation.
+          * - :py:attr:`~curvature`
+            - Curvature of the ellipse.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~ellipse`
+            - Ellipse being evaluated.
+          * - :py:attr:`~parameter`
+            - Parameter that the evaluation is based upon.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.ellipse import EllipseEvaluation
+
+
+Property detail
+---------------
+.. py:property:: ellipse
+   :canonical: ansys.geometry.core.primitives.ellipse.EllipseEvaluation.ellipse
+   :type: Ellipse
+
+
+   
+   Ellipse being evaluated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parameter
+   :canonical: ansys.geometry.core.primitives.ellipse.EllipseEvaluation.parameter
+   :type: Real
+
+
+   
+   Parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: position() -> ansys.geometry.core.math.point.Point3D
+
+   
+   Position of the evaluation.
+
+
+
+   :Returns:
+
+       :obj:`Point3D`
+           Point that lies on the ellipse at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: tangent() -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Tangent of the evaluation.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Tangent unit vector to the ellipse at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: normal() -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Normal of the evaluation.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Normal unit vector to the ellipse at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: first_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   Girst derivative of the evaluation.
+
+   The first derivative is in the direction of the tangent and has a magnitude
+   equal to the velocity (rate of change of position) at that point.
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           First derivative of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: second_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   Second derivative of the evaluation.
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           Second derivative of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: curvature() -> ansys.geometry.core.typing.Real
+
+   
+   Curvature of the ellipse.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Curvature of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

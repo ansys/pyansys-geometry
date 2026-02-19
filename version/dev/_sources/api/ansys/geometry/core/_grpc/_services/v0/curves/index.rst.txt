@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``curves.py`` module
+========================
+
+.. py:module:: ansys.geometry.core._grpc._services.v0.curves
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core._grpc._services.v0.curves
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v0.curves.GRPCCurvesServiceV0`
+            - Curves service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCCurvesServiceV0</api/ansys/geometry/core/_grpc/_services/v0/curves/GRPCCurvesServiceV0>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the curves service implementation for v0.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

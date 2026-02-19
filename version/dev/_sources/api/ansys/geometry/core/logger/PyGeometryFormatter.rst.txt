@@ -1,0 +1,49 @@
+
+
+
+
+
+
+:class:`PyGeometryFormatter`
+============================
+
+
+.. py:class:: ansys.geometry.core.logger.PyGeometryFormatter(fmt=STDOUT_MSG_FORMAT, datefmt=None, style='%', validate=True, defaults=None)
+
+   Bases: :py:obj:`logging.Formatter`
+
+
+   
+   Provides a ``Formatter`` class for overwriting default format styles.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.logger import PyGeometryFormatter
+
+
+
+
+

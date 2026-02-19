@@ -1,0 +1,284 @@
+
+
+
+
+
+
+:class:`TrimmedSurface`
+=======================
+
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.trimmed_surface.TrimmedSurface(geometry: ansys.geometry.core.shapes.surfaces.surface.Surface, box_uv: ansys.geometry.core.shapes.box_uv.BoxUV)
+
+   
+   Represents a trimmed surface.
+
+   A trimmed surface is a surface that has a boundary. This boundary comes in the form of a
+   bounding BoxUV.
+
+   :Parameters:
+
+       **face** : :obj:`Face`
+           Face that the trimmed surface belongs to.
+
+       **geometry** : :obj:`Surface`
+           Underlying mathematical representation of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: TrimmedSurface
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_proportional_parameters`
+            - Convert non-proportional parameters into proportional parameters.
+          * - :py:attr:`~normal`
+            - Provide the normal to the surface.
+          * - :py:attr:`~project_point`
+            - Project a point onto the surface and evaluate it at that location.
+          * - :py:attr:`~evaluate_proportion`
+            - Evaluate the surface at proportional u and v parameters.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~geometry`
+            - Underlying mathematical surface.
+          * - :py:attr:`~box_uv`
+            - Bounding BoxUV of the surface.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
+
+Property detail
+---------------
+
+.. py:property:: geometry
+   :type: ansys.geometry.core.shapes.surfaces.surface.Surface
+
+
+   
+   Underlying mathematical surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: box_uv
+   :type: ansys.geometry.core.shapes.box_uv.BoxUV
+
+
+   
+   Bounding BoxUV of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_proportional_parameters(param_uv: ansys.geometry.core.shapes.parameterization.ParamUV) -> ansys.geometry.core.shapes.parameterization.ParamUV
+
+   
+   Convert non-proportional parameters into proportional parameters.
+
+
+   :Parameters:
+
+       **param_uv** : :obj:`ParamUV`
+           Non-proportional UV parameters.
+
+
+
+   :Returns:
+
+       :obj:`ParamUV`
+           Proportional (from 0-1) UV parameters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: normal(u: ansys.geometry.core.typing.Real, v: ansys.geometry.core.typing.Real) -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Provide the normal to the surface.
+
+
+   :Parameters:
+
+       **u** : :obj:`Real`
+           First coordinate of the 2D representation of a surface in UV space.
+
+       **v** : :obj:`Real`
+           Second coordinate of the 2D representation of a surface in UV space.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Unit vector is normal to the surface at the given UV coordinates.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation
+
+   
+   Project a point onto the surface and evaluate it at that location.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Point to project onto the surface.
+
+
+
+   :Returns:
+
+       :obj:`SurfaceEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate_proportion(u: ansys.geometry.core.typing.Real, v: ansys.geometry.core.typing.Real) -> ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation
+
+   
+   Evaluate the surface at proportional u and v parameters.
+
+
+   :Parameters:
+
+       **u** : :obj:`Real`
+           U parameter in the proportional range [0,1].
+
+       **v** : :obj:`Real`
+           V parameter in the proportional range [0,1].
+
+
+
+   :Returns:
+
+       :obj:`SurfaceEvaluation`
+           Resulting surface evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

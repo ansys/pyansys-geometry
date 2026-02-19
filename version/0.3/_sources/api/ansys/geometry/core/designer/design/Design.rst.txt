@@ -1,0 +1,599 @@
+
+
+
+
+Design
+======
+
+.. py:class:: Design(name: str, grpc_client: ansys.geometry.core.connection.client.GrpcClient, read_existing_design: bool = False)
+   :canonical: ansys.geometry.core.designer.design.Design
+
+
+
+Bases: :py:obj:`ansys.geometry.core.designer.component.Component`
+
+Provides for organizing geometry assemblies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Design
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~add_material`
+            - Add a material to the design.
+          * - :py:attr:`~save`
+            - Save a design to disk on the active Geometry server instance.
+          * - :py:attr:`~download`
+            - Export and download the design from the active Geometry server instance.
+          * - :py:attr:`~create_named_selection`
+            - Create a named selection on the active Geometry server instance.
+          * - :py:attr:`~delete_named_selection`
+            - Delete a named selection on the active Geometry server instance.
+          * - :py:attr:`~delete_component`
+            - Delete a component (itself or its children).
+          * - :py:attr:`~set_shared_topology`
+            - Set the shared topology to apply to the component.
+          * - :py:attr:`~add_beam_circular_profile`
+            - Add a new beam circular profile under the design for the creating beams.
+          * - :py:attr:`~add_midsurface_thickness`
+            - Add a mid-surface thickness to a list of bodies.
+          * - :py:attr:`~add_midsurface_offset`
+            - Add a mid-surface offset type to a list of bodies.
+          * - :py:attr:`~delete_beam_profile`
+            - Remove a beam profile on the active geometry server instance.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~materials`
+            - List of materials available for the design.
+          * - :py:attr:`~named_selections`
+            - List of named selections available for the design.
+          * - :py:attr:`~beam_profiles`
+            - List of beam profile available for the design.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the ``Design`` as a string.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.design import Design
+
+
+Property detail
+---------------
+.. py:property:: materials
+   :canonical: ansys.geometry.core.designer.design.Design.materials
+   :type: beartype.typing.List[ansys.geometry.core.materials.material.Material]
+
+
+   
+   List of materials available for the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: named_selections
+   :canonical: ansys.geometry.core.designer.design.Design.named_selections
+   :type: beartype.typing.List[ansys.geometry.core.designer.selection.NamedSelection]
+
+
+   
+   List of named selections available for the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: beam_profiles
+   :canonical: ansys.geometry.core.designer.design.Design.beam_profiles
+   :type: beartype.typing.List[ansys.geometry.core.designer.beam.BeamProfile]
+
+
+   
+   List of beam profile available for the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: add_material(material: ansys.geometry.core.materials.material.Material) -> None
+
+   
+   Add a material to the design.
+
+
+   :Parameters:
+
+       **material** : :obj:`Material`
+           Material to add.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: save(file_location: beartype.typing.Union[pathlib.Path, str]) -> None
+
+   
+   Save a design to disk on the active Geometry server instance.
+
+
+   :Parameters:
+
+       **file_location** : :obj:`Union`\[:obj:`~pathlib.Path`, :class:`python:str`]
+           Location on disk to save the file to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: download(file_location: beartype.typing.Union[pathlib.Path, str], format: beartype.typing.Optional[DesignFileFormat] = DesignFileFormat.SCDOCX) -> None
+
+   
+   Export and download the design from the active Geometry server instance.
+
+
+   :Parameters:
+
+       **file_location** : :obj:`Union`\[:obj:`~pathlib.Path`, :class:`python:str`]
+           Location on disk to save the file to.
+
+       **format :DesignFileFormat, default: DesignFileFormat.SCDOCX**
+           Format for the file to save to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: create_named_selection(name: str, bodies: beartype.typing.Optional[beartype.typing.List[ansys.geometry.core.designer.body.Body]] = None, faces: beartype.typing.Optional[beartype.typing.List[ansys.geometry.core.designer.face.Face]] = None, edges: beartype.typing.Optional[beartype.typing.List[ansys.geometry.core.designer.edge.Edge]] = None, beams: beartype.typing.Optional[beartype.typing.List[ansys.geometry.core.designer.beam.Beam]] = None, design_points: beartype.typing.Optional[beartype.typing.List[ansys.geometry.core.designer.designpoint.DesignPoint]] = None) -> ansys.geometry.core.designer.selection.NamedSelection
+
+   
+   Create a named selection on the active Geometry server instance.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined name for the named selection.
+
+       **bodies** : :obj:`List`\[:obj:`Body`], default: :data:`python:None`
+           All bodies to include in the named selection.
+
+       **faces** : :obj:`List`\[:obj:`Face`], default: :data:`python:None`
+           All faces to include in the named selection.
+
+       **edges** : :obj:`List`\[:obj:`Edge`], default: :data:`python:None`
+           All edges to include in the named selection.
+
+       **beams** : :obj:`List`\[:obj:`Beam`], default: :data:`python:None`
+           All beams to include in the named selection.
+
+       **design_points** : :obj:`List`\[:obj:`DesignPoint`], default: :data:`python:None`
+           All design points to include in the named selection.
+
+   :Returns:
+
+       :obj:`NamedSelection`
+           Newly created named selection that maintains references to all target entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: delete_named_selection(named_selection: beartype.typing.Union[ansys.geometry.core.designer.selection.NamedSelection, str]) -> None
+
+   
+   Delete a named selection on the active Geometry server instance.
+
+
+   :Parameters:
+
+       **named_selection** : :obj:`Union`\[:obj:`NamedSelection`, :class:`python:str`]
+           Name of the named selection or instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: delete_component(component: beartype.typing.Union[ansys.geometry.core.designer.component.Component, str]) -> None
+
+   
+   Delete a component (itself or its children).
+
+
+   :Parameters:
+
+       **id** : :obj:`Union`\[:obj:`Component`, :class:`python:str`]
+           Name of the component or instance to delete.
+
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           The design itself cannot be deleted.
+
+
+
+
+   .. rubric:: Notes
+
+   If the component is not this component (or its children), it
+   is not deleted.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: set_shared_topology(share_type: ansys.geometry.core.designer.component.SharedTopologyType) -> None
+
+   
+   Set the shared topology to apply to the component.
+
+
+   :Parameters:
+
+       **share_type** : :obj:`SharedTopologyType`
+           Shared topology type to assign.
+
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           Shared topology does not apply to a design.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: add_beam_circular_profile(name: str, radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance], center: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point3D] = ZERO_POINT3D, direction_x: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_X, direction_y: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_Y) -> ansys.geometry.core.designer.beam.BeamCircularProfile
+
+   
+   Add a new beam circular profile under the design for the creating beams.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the new beam circular profile.
+
+       **radius** : :obj:`Real`
+           Radius of the beam circular profile.
+
+       **center** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`Point3D`]
+           Center of the beam circular profile.
+
+       **direction_x** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`UnitVector3D`, :obj:`Vector3D`]
+           X-plane direction.
+
+       **direction_y** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`UnitVector3D`, :obj:`Vector3D`]
+           Y-plane direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: add_midsurface_thickness(thickness: pint.Quantity, bodies: beartype.typing.List[ansys.geometry.core.designer.body.Body]) -> None
+
+   
+   Add a mid-surface thickness to a list of bodies.
+
+
+   :Parameters:
+
+       **thickness** : :obj:`~pint.Quantity`
+           Thickness to be assigned.
+
+       **bodies** : :obj:`List`\[:obj:`Body`]
+           All bodies to include in the mid-surface thickness assignment.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Only surface bodies will be eligible for mid-surface thickness assignment.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: add_midsurface_offset(offset_type: ansys.geometry.core.designer.body.MidSurfaceOffsetType, bodies: beartype.typing.List[ansys.geometry.core.designer.body.Body]) -> None
+
+   
+   Add a mid-surface offset type to a list of bodies.
+
+
+   :Parameters:
+
+       **offset_type** : :obj:`MidSurfaceOffsetType`
+           Surface offset to be assigned.
+
+       **bodies** : :obj:`List`\[:obj:`Body`]
+           All bodies to include in the mid-surface offset assignment.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Only surface bodies will be eligible for mid-surface offset assignment.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: delete_beam_profile(beam_profile: beartype.typing.Union[ansys.geometry.core.designer.beam.BeamProfile, str]) -> None
+
+   
+   Remove a beam profile on the active geometry server instance.
+
+
+   :Parameters:
+
+       **beam_profile** : :obj:`Union`\[:obj:`BeamProfile`, :class:`python:str`]
+           A beam profile name or instance that should be deleted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the ``Design`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

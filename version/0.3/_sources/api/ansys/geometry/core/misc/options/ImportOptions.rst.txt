@@ -1,0 +1,152 @@
+
+
+
+
+ImportOptions
+=============
+
+.. py:class:: ImportOptions
+   :canonical: ansys.geometry.core.misc.options.ImportOptions
+
+
+
+
+Import options when opening a file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: ImportOptions
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~to_dict`
+            - Provide the dictionary representation of the ImportOptions class.
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~cleanup_bodies`
+            - 
+          * - :py:attr:`~import_coordinate_systems`
+            - 
+          * - :py:attr:`~import_curves`
+            - 
+          * - :py:attr:`~import_hidden_components_and_geometry`
+            - 
+          * - :py:attr:`~import_names`
+            - 
+          * - :py:attr:`~import_planes`
+            - 
+          * - :py:attr:`~import_points`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import ImportOptions
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: cleanup_bodies
+   :type: bool
+   :value: False
+
+   
+
+.. py:attribute:: import_coordinate_systems
+   :type: bool
+   :value: False
+
+   
+
+.. py:attribute:: import_curves
+   :type: bool
+   :value: False
+
+   
+
+.. py:attribute:: import_hidden_components_and_geometry
+   :type: bool
+   :value: False
+
+   
+
+.. py:attribute:: import_names
+   :type: bool
+   :value: False
+
+   
+
+.. py:attribute:: import_planes
+   :type: bool
+   :value: False
+
+   
+
+.. py:attribute:: import_points
+   :type: bool
+   :value: False
+
+   
+
+
+Method detail
+-------------
+
+
+.. py:method:: to_dict()
+
+   
+   Provide the dictionary representation of the ImportOptions class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

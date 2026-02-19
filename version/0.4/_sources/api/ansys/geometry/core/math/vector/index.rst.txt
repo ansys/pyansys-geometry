@@ -1,0 +1,100 @@
+
+
+
+
+
+The ``vector.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.math.vector
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: vector
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Vector3D`
+            - Provides for managing and creating a 3D vector.
+
+
+          * - :py:attr:`~Vector2D`
+            - Provides for creating and managing a 2D vector.
+
+
+          * - :py:attr:`~UnitVector3D`
+            - Provides for creating and managing a 3D unit vector.
+
+
+          * - :py:attr:`~UnitVector2D`
+            - Provides for creating and managing a 3D unit vector.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Vector3D<Vector3D>
+    🝆 Vector2D<Vector2D>
+    🝆 UnitVector3D<UnitVector3D>
+    🝆 UnitVector2D<UnitVector2D>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing 2D and 3D vectors.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,215 @@
+:py:mod:`ansys.geometry.core.sketch.slot`
+=========================================
+
+.. py:module:: ansys.geometry.core.sketch.slot
+
+.. autoapi-nested-parse::
+
+   Provides the ``Slot`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.sketch.slot.Slot
+
+
+
+
+.. py:class:: Slot(center: ansys.geometry.core.math.Point2D, width: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], height: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real]] = 0)
+
+
+   Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+   
+   Provides for modeling 2D slots.
+
+
+   :Parameters:
+
+       **center: :class:`Point2D <ansys.geometry.core.math.point.Point2D>`**
+           Point that represents the center of the slot.
+
+       **width** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+           Width of the slot main body.
+
+       **height** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+           Height of the slot.
+
+       **angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`], default: 0
+           Placement angle for orientation alignment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: center
+      :type: ansys.geometry.core.math.Point2D
+
+      
+      Center of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: width
+      :type: pint.Quantity
+
+      
+      Width of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: height
+      :type: pint.Quantity
+
+      
+      Height of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: perimeter
+      :type: pint.Quantity
+
+      
+      Perimeter of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: area
+      :type: pint.Quantity
+
+      
+      Area of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: visualization_polydata
+      :type: pyvista.PolyData
+
+      
+      VTK polydata representation for PyVista visualization.
+
+      The representation lies in the X/Y plane within
+      the standard global Cartesian coordinate system.
+
+
+      :Returns:
+
+          :obj:`pyvista.PolyData`
+              VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

@@ -1,0 +1,41 @@
+:py:mod:`ansys.geometry.core.misc`
+==================================
+
+.. py:module:: ansys.geometry.core.misc
+
+.. autoapi-nested-parse::
+
+   
+   Provides the PyGeometry ``misc`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   accuracy/index.rst
+   checks/index.rst
+   measurements/index.rst
+   units/index.rst
+
+

@@ -1,0 +1,11 @@
+API reference
+=============
+
+This section describes ansys-geometry-core endpoints, their capabilities, and how
+to interact with them programmatically.
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   🖿 ansys.geometry.core</api/ansys/geometry/core/index>

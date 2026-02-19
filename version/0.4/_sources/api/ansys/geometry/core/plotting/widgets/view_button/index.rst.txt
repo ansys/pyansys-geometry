@@ -1,0 +1,99 @@
+
+
+
+
+
+The ``view_button.py`` module
+=============================
+
+.. py:module:: ansys.geometry.core.plotting.widgets.view_button
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: view_button
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ViewButton`
+            - Provides for changing the view.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ViewDirection`
+            - Provides an enum with the available views.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 ViewButton<ViewButton>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    ≔ ViewDirection<ViewDirection>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the view button widget for changing the camera view.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

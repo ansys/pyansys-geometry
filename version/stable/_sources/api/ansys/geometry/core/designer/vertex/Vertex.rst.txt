@@ -1,0 +1,210 @@
+
+
+
+
+
+
+:class:`Vertex`
+===============
+
+
+.. py:class:: ansys.geometry.core.designer.vertex.Vertex(id: str, position: numpy.ndarray | ansys.geometry.core.typing.RealSequence, body: ansys.geometry.core.designer.body.Body)
+
+   Bases: :py:obj:`ansys.geometry.core.math.point.Point3D`
+
+
+   
+   Represents a single vertex of a body within the design assembly.
+
+   This class synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           The unique identifier for the vertex.
+
+       **position** : :obj:`np.ndarray <numpy.ndarray>` or :obj:`RealSequence`
+           The position of the vertex in 3D space.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: Vertex
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_named_selections`
+            - Get all named selections that include this vertex.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - Get the unique identifier of the vertex.
+          * - :py:attr:`~body`
+            - Get the body this vertex belongs to.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Return a string representation of the vertex.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.vertex import Vertex
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   Get the unique identifier of the vertex.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: body
+   :type: ansys.geometry.core.designer.body.Body
+
+
+   
+   Get the body this vertex belongs to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_named_selections() -> list[ansys.geometry.core.designer.selection.NamedSelection]
+
+   
+   Get all named selections that include this vertex.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\["NamedSelection"]
+           List of named selections that include this vertex.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __repr__() -> str
+
+   
+   Return a string representation of the vertex.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

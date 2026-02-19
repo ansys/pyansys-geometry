@@ -1,0 +1,231 @@
+
+
+
+
+
+
+:class:`DesignPoint`
+====================
+
+
+.. py:class:: ansys.geometry.core.designer.designpoint.DesignPoint(id: str, name: str, point: ansys.geometry.core.math.point.Point3D, parent_component: Union[ansys.geometry.core.designer.component.Component, None] = None)
+
+   
+   Provides for creating design points in components.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the design points.
+
+       **name** : :class:`python:str`
+           User-defined label for the design points.
+
+       **points** : :obj:`Point3D`
+           3D point constituting the design points.
+
+       **parent_component** : :obj:`Component` | :data:`python:None`
+           Parent component to place the new design point under within the design assembly.
+           Its default value is None.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: DesignPoint
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the design point.
+          * - :py:attr:`~name`
+            - Name of the design point.
+          * - :py:attr:`~value`
+            - Value of the design point.
+          * - :py:attr:`~parent_component`
+            - Component node that the design point is under.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the design points as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.designpoint import DesignPoint
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   ID of the design point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Name of the design point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: value
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Value of the design point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parent_component
+   :type: ansys.geometry.core.designer.component.Component
+
+
+   
+   Component node that the design point is under.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the design points as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

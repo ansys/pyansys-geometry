@@ -1,0 +1,152 @@
+
+
+
+
+
+
+The ``sketch`` package
+==========================
+
+.. py:module:: ansys.geometry.core.sketch
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: sketch
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.arc`
+            - Provides for creating and managing an arc.
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.box`
+            - Provides for creating and managing a box (quadrilateral).
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.circle`
+            - Provides for creating and managing a circle.
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.edge`
+            - Provides for creating and managing an edge.
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.ellipse`
+            - Provides for creating and managing an ellipse.
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.face`
+            - Provides for creating and managing a face (closed 2D sketch).
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.gears`
+            - Module for creating and managing gears.
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.polygon`
+            - Provides for creating and managing a polygon.
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.segment`
+            - Provides for creating and managing a segment.
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.sketch`
+            - Provides for creating and managing a sketch.
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.slot`
+            - Provides for creating and managing a slot.
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.trapezoid`
+            - Provides for creating and managing a trapezoid.
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.triangle`
+            - Provides for creating and managing a triangle.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> arc</api/ansys/geometry/core/sketch/arc/index>
+    <span class="nf nf-fa-file"></span> box</api/ansys/geometry/core/sketch/box/index>
+    <span class="nf nf-fa-file"></span> circle</api/ansys/geometry/core/sketch/circle/index>
+    <span class="nf nf-fa-file"></span> edge</api/ansys/geometry/core/sketch/edge/index>
+    <span class="nf nf-fa-file"></span> ellipse</api/ansys/geometry/core/sketch/ellipse/index>
+    <span class="nf nf-fa-file"></span> face</api/ansys/geometry/core/sketch/face/index>
+    <span class="nf nf-fa-file"></span> gears</api/ansys/geometry/core/sketch/gears/index>
+    <span class="nf nf-fa-file"></span> polygon</api/ansys/geometry/core/sketch/polygon/index>
+    <span class="nf nf-fa-file"></span> segment</api/ansys/geometry/core/sketch/segment/index>
+    <span class="nf nf-fa-file"></span> sketch</api/ansys/geometry/core/sketch/sketch/index>
+    <span class="nf nf-fa-file"></span> slot</api/ansys/geometry/core/sketch/slot/index>
+    <span class="nf nf-fa-file"></span> trapezoid</api/ansys/geometry/core/sketch/trapezoid/index>
+    <span class="nf nf-fa-file"></span> triangle</api/ansys/geometry/core/sketch/triangle/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry sketch subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

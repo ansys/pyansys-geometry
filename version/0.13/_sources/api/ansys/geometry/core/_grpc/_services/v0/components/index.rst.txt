@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``components.py`` module
+============================
+
+.. py:module:: ansys.geometry.core._grpc._services.v0.components
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: components
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v0.components.GRPCComponentsServiceV0`
+            - Components service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCComponentsServiceV0</api/ansys/geometry/core/_grpc/_services/v0/components/GRPCComponentsServiceV0>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the components service implementation for v0.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

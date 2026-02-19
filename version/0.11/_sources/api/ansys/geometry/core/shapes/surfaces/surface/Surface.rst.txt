@@ -1,0 +1,309 @@
+
+
+
+
+
+
+:class:`Surface`
+================
+
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.surface.Surface
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Provides the abstract base class for a 3D surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: Surface
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~parameterization`
+            - Parameterize the surface as a tuple (U and V respectively).
+          * - :py:attr:`~contains_param`
+            - Check a parameter is within the parametric range of the surface.
+          * - :py:attr:`~contains_point`
+            - Check a point is contained by the surface.
+          * - :py:attr:`~transformed_copy`
+            - Create a transformed copy of the surface.
+          * - :py:attr:`~__eq__`
+            - Determine if two surfaces are equal.
+          * - :py:attr:`~evaluate`
+            - Evaluate the surface at the given parameter.
+          * - :py:attr:`~project_point`
+            - Project a point to the surface.
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~trim`
+            - Trim this surface by bounding it with a BoxUV.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.surface import Surface
+
+
+
+Method detail
+-------------
+
+.. py:method:: parameterization() -> tuple[ansys.geometry.core.shapes.parameterization.Parameterization, ansys.geometry.core.shapes.parameterization.Parameterization]
+   :abstractmethod:
+
+
+   
+   Parameterize the surface as a tuple (U and V respectively).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_param(param_uv: ansys.geometry.core.shapes.parameterization.ParamUV) -> bool
+   :abstractmethod:
+
+
+   
+   Check a parameter is within the parametric range of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.point.Point3D) -> bool
+   :abstractmethod:
+
+
+   
+   Check a point is contained by the surface.
+
+   The point can either lie within the surface or on its boundary.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Surface
+   :abstractmethod:
+
+
+   
+   Create a transformed copy of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __eq__(other: Surface) -> bool
+   :abstractmethod:
+
+
+   
+   Determine if two surfaces are equal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate(parameter: ansys.geometry.core.shapes.parameterization.ParamUV) -> ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation
+   :abstractmethod:
+
+
+   
+   Evaluate the surface at the given parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation
+   :abstractmethod:
+
+
+   
+   Project a point to the surface.
+
+   This method returns the evaluation at the closest point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: trim(box_uv: ansys.geometry.core.shapes.box_uv.BoxUV) -> ansys.geometry.core.shapes.surfaces.trimmed_surface.TrimmedSurface
+
+   
+   Trim this surface by bounding it with a BoxUV.
+
+
+
+
+
+   :Returns:
+
+       :obj:`TrimmedSurface`
+           The resulting bounded surface.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

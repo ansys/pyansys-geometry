@@ -1,0 +1,381 @@
+
+
+
+
+Frame
+=====
+
+.. py:class:: Frame(origin: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point3D] = ZERO_POINT3D, direction_x: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_X, direction_y: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_Y)
+   :canonical: ansys.geometry.core.math.frame.Frame
+
+
+
+
+Primitive representation of a frame (an origin and three fundamental directions).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Frame
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~transform_point2d_local_to_global`
+            - Transform a 2D point to a global 3D point.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~origin`
+            - Origin of the frame.
+          * - :py:attr:`~direction_x`
+            - X-axis direction of the frame.
+          * - :py:attr:`~direction_y`
+            - Y-axis direction of the frame.
+          * - :py:attr:`~direction_z`
+            - Z-axis direction of the frame.
+          * - :py:attr:`~global_to_local_rotation`
+            - Global to local space transformation matrix.
+          * - :py:attr:`~local_to_global_rotation`
+            - Local to global space transformation matrix.
+          * - :py:attr:`~transformation_matrix`
+            - Full 4x4 transformation matrix.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Frame`` class.
+          * - :py:attr:`~__ne__`
+            - Not equals operator for the ``Frame`` class.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.frame import Frame
+
+
+Property detail
+---------------
+.. py:property:: origin
+   :canonical: ansys.geometry.core.math.frame.Frame.origin
+   :type: Point3D
+
+
+   
+   Origin of the frame.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: direction_x
+   :canonical: ansys.geometry.core.math.frame.Frame.direction_x
+   :type: UnitVector3D
+
+
+   
+   X-axis direction of the frame.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: direction_y
+   :canonical: ansys.geometry.core.math.frame.Frame.direction_y
+   :type: UnitVector3D
+
+
+   
+   Y-axis direction of the frame.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: direction_z
+   :canonical: ansys.geometry.core.math.frame.Frame.direction_z
+   :type: UnitVector3D
+
+
+   
+   Z-axis direction of the frame.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: global_to_local_rotation
+   :canonical: ansys.geometry.core.math.frame.Frame.global_to_local_rotation
+   :type: Matrix33
+
+
+   
+   Global to local space transformation matrix.
+
+
+
+   :Returns:
+
+       :obj:`Matrix33`
+           3x3 matrix representing the transformation from global to local
+           coordinate space, excluding origin translation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: local_to_global_rotation
+   :canonical: ansys.geometry.core.math.frame.Frame.local_to_global_rotation
+   :type: Matrix33
+
+
+   
+   Local to global space transformation matrix.
+
+
+
+   :Returns:
+
+       :obj:`Matrix33`
+           3x3 matrix representing the transformation from local to global
+           coordinate space.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: transformation_matrix
+   :canonical: ansys.geometry.core.math.frame.Frame.transformation_matrix
+   :type: Matrix44
+
+
+   
+   Full 4x4 transformation matrix.
+
+
+
+   :Returns:
+
+       :obj:`Matrix44`
+           4x4 matrix representing the transformation from global to local
+           coordinate space.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: transform_point2d_local_to_global(point: ansys.geometry.core.math.point.Point2D) -> ansys.geometry.core.math.point.Point3D
+
+   
+   Transform a 2D point to a global 3D point.
+
+   This method transforms a local, plane-contained ``Point2D`` object in the global
+   coordinate system, thus representing it as a ``Point3D`` object.
+
+   :Parameters:
+
+       **point** : :obj:`Point2D`
+           ``Point2D`` local object to express in global coordinates.
+
+   :Returns:
+
+       :obj:`Point3D`
+           Global coordinates for the 3D point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __eq__(other: Frame) -> bool
+
+   
+   Equals operator for the ``Frame`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __ne__(other: Frame) -> bool
+
+   
+   Not equals operator for the ``Frame`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

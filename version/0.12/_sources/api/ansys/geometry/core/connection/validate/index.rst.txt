@@ -1,0 +1,107 @@
+
+
+
+
+
+
+The ``validate.py`` module
+==========================
+
+.. py:module:: ansys.geometry.core.connection.validate
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: validate
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~validate`
+            - Create a client using the default settings and validate it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module to perform a connection validation check.
+
+The method in this module is only used for testing the default Docker service on
+GitHub and can safely be skipped within testing.
+
+This command shows how this method is typically used:
+
+.. code:: bash
+
+   python -c "from ansys.geometry.core.connection import validate; validate()"
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: validate(*args, **kwargs)
+
+   
+   Create a client using the default settings and validate it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

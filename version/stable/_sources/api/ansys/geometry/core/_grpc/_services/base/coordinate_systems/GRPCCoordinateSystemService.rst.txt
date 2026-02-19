@@ -1,0 +1,107 @@
+
+
+
+
+
+
+:class:`GRPCCoordinateSystemService`
+====================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.coordinate_systems.GRPCCoordinateSystemService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Coordinate systems service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: GRPCCoordinateSystemService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create`
+            - Create a coordinate system.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.coordinate_systems import GRPCCoordinateSystemService
+
+
+
+Method detail
+-------------
+
+.. py:method:: create(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create a coordinate system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

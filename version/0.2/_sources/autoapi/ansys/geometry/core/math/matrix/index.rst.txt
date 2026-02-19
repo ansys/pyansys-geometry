@@ -1,0 +1,288 @@
+:py:mod:`ansys.geometry.core.math.matrix`
+=========================================
+
+.. py:module:: ansys.geometry.core.math.matrix
+
+.. autoapi-nested-parse::
+
+   Provides the ``Matrix`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.math.matrix.Matrix
+   ansys.geometry.core.math.matrix.Matrix33
+   ansys.geometry.core.math.matrix.Matrix44
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.math.matrix.DEFAULT_MATRIX33
+   ansys.geometry.core.math.matrix.DEFAULT_MATRIX44
+
+
+.. py:data:: DEFAULT_MATRIX33
+
+   
+   Default value of the 3x3 identity matrix for the ``Matrix33`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DEFAULT_MATRIX44
+
+   
+   Default value of the 4x4 identity matrix for the ``Matrix44`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: Matrix(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+
+   Bases: :py:obj:`numpy.ndarray`
+
+   
+   Provides matrix primitive representation.
+
+
+   :Parameters:
+
+       **input** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`]
+           Matrix arguments as a :class:`np.ndarray <numpy.ndarray>` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: determinant() -> ansys.geometry.core.typing.Real
+
+      
+      Provide the determinant of the matrix.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: inverse() -> Matrix
+
+      
+      Provide the inverse of the matrix.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __mul__(other: beartype.typing.Union[Matrix, numpy.ndarray]) -> Matrix
+
+      
+      Provide the multiplication of the matrix.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: Matrix) -> bool
+
+      
+      Equals operator for the ``Matrix`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __ne__(other: Matrix) -> bool
+
+      
+      Not equals operator for the ``Matrix`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: Matrix33(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+
+   Bases: :py:obj:`Matrix`
+
+   
+   Provides 3x3 matrix primitive representation.
+
+
+   :Parameters:
+
+       **input** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`Matrix`], default: :obj:`DEFAULT_MATRIX33`
+           Matrix arguments as a :class:`np.ndarray <numpy.ndarray>` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: Matrix44(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+
+   Bases: :py:obj:`Matrix`
+
+   
+   Provides 4x4 matrix primitive representation.
+
+
+   :Parameters:
+
+       **input** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`Matrix`], default: :obj:`DEFAULT_MATRIX44`
+           Matrix arguments as a :class:`np.ndarray <numpy.ndarray>` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

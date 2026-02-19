@@ -1,0 +1,116 @@
+
+
+
+
+NamedSelection
+==============
+
+.. py:class:: NamedSelection(name: str, grpc_client: ansys.geometry.core.connection.client.GrpcClient, bodies: beartype.typing.Optional[beartype.typing.List[ansys.geometry.core.designer.body.Body]] = None, faces: beartype.typing.Optional[beartype.typing.List[ansys.geometry.core.designer.face.Face]] = None, edges: beartype.typing.Optional[beartype.typing.List[ansys.geometry.core.designer.edge.Edge]] = None, beams: beartype.typing.Optional[beartype.typing.List[ansys.geometry.core.designer.beam.Beam]] = None, design_points: beartype.typing.Optional[beartype.typing.List[ansys.geometry.core.designer.designpoint.DesignPoint]] = None, preexisting_id: beartype.typing.Optional[str] = None)
+   :canonical: ansys.geometry.core.designer.selection.NamedSelection
+
+
+
+
+Represents a single named selection within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: NamedSelection
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the named selection.
+          * - :py:attr:`~name`
+            - Name of the named selection.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.selection import NamedSelection
+
+
+Property detail
+---------------
+.. py:property:: id
+   :canonical: ansys.geometry.core.designer.selection.NamedSelection.id
+   :type: str
+
+
+   
+   ID of the named selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :canonical: ansys.geometry.core.designer.selection.NamedSelection.name
+   :type: str
+
+
+   
+   Name of the named selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+

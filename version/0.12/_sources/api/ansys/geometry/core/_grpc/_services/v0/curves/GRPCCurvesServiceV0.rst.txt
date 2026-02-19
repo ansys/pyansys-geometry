@@ -1,0 +1,147 @@
+
+
+
+
+
+
+:class:`GRPCCurvesServiceV0`
+============================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.curves.GRPCCurvesServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.curves.GRPCCurvesService`
+
+
+   
+   Curves service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   curves service. It is specifically designed for the v0 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCCurvesServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~revolve_edges`
+            - Revolve edges around an axis to create a surface of revolution.
+          * - :py:attr:`~intersect_curves`
+            - Get intersection points of curves.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.curves import GRPCCurvesServiceV0
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: revolve_edges(**kwargs) -> dict
+
+   
+   Revolve edges around an axis to create a surface of revolution.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: intersect_curves(**kwargs) -> dict
+
+   
+   Get intersection points of curves.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

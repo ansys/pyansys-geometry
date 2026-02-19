@@ -1,0 +1,210 @@
+
+
+
+
+BeamCircularProfile
+===================
+
+.. py:class:: BeamCircularProfile(id: str, name: str, radius: ansys.geometry.core.misc.measurements.Distance, center: ansys.geometry.core.math.point.Point3D, direction_x: ansys.geometry.core.math.vector.UnitVector3D, direction_y: ansys.geometry.core.math.vector.UnitVector3D)
+   :canonical: ansys.geometry.core.designer.beam.BeamCircularProfile
+
+
+
+Bases: :py:obj:`BeamProfile`
+
+Represents a single circular beam profile organized within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: BeamCircularProfile
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~radius`
+            - Radius of the circular beam profile.
+          * - :py:attr:`~center`
+            - Center of the circular beam profile.
+          * - :py:attr:`~direction_x`
+            - X-axis direction of the circular beam profile.
+          * - :py:attr:`~direction_y`
+            - Y-axis direction of the circular beam profile.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the ``BeamCircularProfile`` as a string.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.beam import BeamCircularProfile
+
+
+Property detail
+---------------
+.. py:property:: radius
+   :canonical: ansys.geometry.core.designer.beam.BeamCircularProfile.radius
+   :type: Distance
+
+
+   
+   Radius of the circular beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: center
+   :canonical: ansys.geometry.core.designer.beam.BeamCircularProfile.center
+   :type: Point3D
+
+
+   
+   Center of the circular beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: direction_x
+   :canonical: ansys.geometry.core.designer.beam.BeamCircularProfile.direction_x
+   :type: UnitVector3D
+
+
+   
+   X-axis direction of the circular beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: direction_y
+   :canonical: ansys.geometry.core.designer.beam.BeamCircularProfile.direction_y
+   :type: UnitVector3D
+
+
+   
+   Y-axis direction of the circular beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the ``BeamCircularProfile`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

@@ -1,0 +1,265 @@
+
+
+
+
+Beam
+====
+
+.. py:class:: Beam(id: str, start: ansys.geometry.core.math.point.Point3D, end: ansys.geometry.core.math.point.Point3D, profile: BeamProfile, parent_component: ansys.geometry.core.designer.component.Component)
+   :canonical: ansys.geometry.core.designer.beam.Beam
+
+
+
+
+Represents a simplified solid body with an assigned 2D cross-section.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Beam
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - Service-defined ID of the beam.
+          * - :py:attr:`~start`
+            - Start of the beam line segment.
+          * - :py:attr:`~end`
+            - End of the beam line segment.
+          * - :py:attr:`~profile`
+            - Beam profile of the beam line segment.
+          * - :py:attr:`~parent_component`
+            - Component node that the beam is under.
+          * - :py:attr:`~is_alive`
+            - Flag indicating whether the beam is still alive on the server side.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the beam as a string.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.beam import Beam
+
+
+Property detail
+---------------
+.. py:property:: id
+   :canonical: ansys.geometry.core.designer.beam.Beam.id
+   :type: str
+
+
+   
+   Service-defined ID of the beam.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: start
+   :canonical: ansys.geometry.core.designer.beam.Beam.start
+   :type: Point3D
+
+
+   
+   Start of the beam line segment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end
+   :canonical: ansys.geometry.core.designer.beam.Beam.end
+   :type: Point3D
+
+
+   
+   End of the beam line segment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: profile
+   :canonical: ansys.geometry.core.designer.beam.Beam.profile
+   :type: BeamProfile
+
+
+   
+   Beam profile of the beam line segment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parent_component
+   :canonical: ansys.geometry.core.designer.beam.Beam.parent_component
+   :type: beartype.typing.Union[ansys.geometry.core.designer.component.Component, None]
+
+
+   
+   Component node that the beam is under.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_alive
+   :canonical: ansys.geometry.core.designer.beam.Beam.is_alive
+   :type: bool
+
+
+   
+   Flag indicating whether the beam is still alive on the server side.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the beam as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

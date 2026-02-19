@@ -1,0 +1,266 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.14.1
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+# Applied: Create a NACA 4-digit airfoil
+
+NACA airfoils are a series of airfoil shapes for aircraft wings developed by
+the National Advisory Committee for Aeronautics (NACA). They are a standardized
+system of airfoil shapes that are defined by a series of digits. The digits,
+which indicate the shape of the airfoil, are used to create the airfoil shape.
+
+Each digit in the NACA airfoil number has a specific meaning:
+
+- The first digit defines the maximum camber as a percentage of the chord length.
+- The second digit defines the position of the maximum camber as a percentage of the chord length.
+- The last two digits define the maximum thickness of the airfoil as a percentage of the chord length.
+
+To fully understand the previous definitions, it is important to know that the chord length
+is the length of the airfoil from the leading edge to the trailing edge. The camber is the
+curvature of the airfoil, and the thickness is the distance between the upper and lower surfaces.
+
+Symmetric airfoils have a camber of 0% and consequently, the first two digits of the NACA number
+are 0. For example, the NACA 0012 airfoil is a symmetric airfoil with a maximum thickness of 12%.
+
+## Define the NACA 4-digit airfoil equation
+
+The following code uses the equation for a NACA 4-digit airfoil to create
+a set of points that define the airfoil shape. These points are ``Point2D`` objects
+in PyAnsys Geometry.
+
+```{code-cell} ipython3
+from typing import List, Union
+
+import numpy as np
+
+from ansys.geometry.core.math import Point2D
+
+def naca_airfoil_4digits(number: Union[int, str], n_points: int = 200) -> list[Point2D]:
+    """
+    Generate a NACA 4-digits airfoil.
+
+    Parameters
+    ----------
+    number : int or str
+        NACA 4-digit number.
+    n_points : int
+        Number of points to generate the airfoil. The default is ``200``.
+        Number of points in the upper side of the airfoil.
+        The total number of points is ``2 * n_points - 1``.
+
+    Returns
+    -------
+    list[Point2D]
+        List of points that define the airfoil.
+    """
+    # Check if the number is a string
+    if isinstance(number, str):
+        number = int(number)
+
+    # Calculate the NACA parameters
+    m = number // 1000 * 0.01
+    p = number // 100 % 10 * 0.1
+    t = number % 100 * 0.01
+
+    # Generate the airfoil
+    points = []
+    for i in range(n_points):
+
+        # Make it a exponential distribution so the points are more concentrated
+        # near the leading edge
+        x = (1 - np.cos(i / (n_points - 1) * np.pi)) / 2
+
+        # Check if it is a symmetric airfoil
+        if p == 0 and m == 0:
+            # Camber line is zero in this case
+            yc = 0
+            dyc_dx = 0
+        else:
+            # Compute the camber line
+            if x < p:
+                yc = m / p**2 * (2 * p * x - x**2)
+                dyc_dx = 2 * m / p**2 * (p - x)
+            else:
+                yc = m / (1 - p) ** 2 * ((1 - 2 * p) + 2 * p * x - x**2)
+                dyc_dx = 2 * m / (1 - p) ** 2 * (p - x)
+
+        # Compute the thickness
+        yt = 5 * t * (0.2969 * x**0.5
+                      - 0.1260 * x
+                      - 0.3516 * x**2
+                      + 0.2843 * x**3
+                      - 0.1015 * x**4)
+
+        # Compute the angle
+        theta = np.arctan(dyc_dx)
+
+        # Compute the points (upper and lower side of the airfoil)
+        xu = x - yt * np.sin(theta)
+        yu = yc + yt * np.cos(theta)
+        xl = x + yt * np.sin(theta)
+        yl = yc - yt * np.cos(theta)
+
+        # Append the points
+        points.append(Point2D([xu, yu]))
+        points.insert(0, Point2D([xl, yl]))
+
+        # Remove the first point since it is repeated
+        if i == 0:
+            points.pop(0)
+
+    return points
+
+```
+
+## Example of a symmetric airfoil: NACA 0012
+
+Now that the function for generating a NACA 4-digit airfoil is generated, this code creates a NACA 0012
+airfoil, which is symmetric. This airfoil has a maximum thickness of 12%. The NACA number is a constant.
+
+```{code-cell} ipython3
+NACA_AIRFOIL = "0012"
+```
+
+### Required imports
+
+Before you start creating the airfoil points, you must import the necessary modules to create the
+airfoil using PyAnsys Geometry.
+
+```{code-cell} ipython3
+from ansys.geometry.core import launch_modeler
+from ansys.geometry.core.sketch import Sketch
+```
+
+### Generate the airfoil points
+
+Using the function defined previously, you generate the points that define the NACA 0012 airfoil.
+Create a ``Sketch`` object and add the points to it. Then, approximate the airfoil using
+straight lines between the points.
+
+```{code-cell} ipython3
+# Create a sketch
+sketch = Sketch()
+
+# Generate the points of the airfoil
+points = naca_airfoil_4digits(NACA_AIRFOIL)
+
+# Create the segments of the airfoil
+for i in range(len(points) - 1):
+    sketch.segment(points[i], points[i + 1])
+
+# Close the airfoil
+sketch.segment(points[-1], points[0])
+
+# Plot the airfoil
+sketch.plot()
+```
+
+### Create the 3D airfoil
+
+Once the ``Sketch`` object is created, you create a 3D airfoil. For this operation, you must create
+a modeler object, create a design object, and extrude the sketch.
+
+```{code-cell} ipython3
+# Launch the modeler
+modeler = launch_modeler()
+
+# Create the design
+design = modeler.create_design(f"NACA_Airfoil_{NACA_AIRFOIL}")
+
+# Extrude the airfoil
+design.extrude_sketch("Airfoil", sketch, 1)
+
+# Plot the design
+design.plot()
+```
+
+### Save the design
+
+Finally, save the design to a file. This file can be used in other applications or imported
+into a simulation software. This code saves the design as an FMD file, which can then be imported
+into Ansys Fluent.
+
+```{code-cell} ipython3
+# Save the design
+file = design.export_to_fmd()
+print(f"Design saved to {file}")
+```
+
+### Close the modeler
+
+```{code-cell} ipython3
+modeler.close()
+```
+
+## Example of a cambered airfoil: NACA 6412
+
+This code creates a NACA 6412 airfoil, which is cambered. This airfoil has a maximum
+camber of 6% and a maximum thickness of 12%. After overriding the NACA number, the code generates the
+airfoil points.
+
+```{code-cell} ipython3
+NACA_AIRFOIL = "6412"
+```
+
+### Generate the airfoil points
+
+As before, you generate the points that define the NACA 6412 airfoil. Create a
+``Sketch`` object and add the points to it. Then, approximate the airfoil using straight lines.
+
+```{code-cell} ipython3
+# Create a sketch
+sketch = Sketch()
+
+# Generate the points of the airfoil
+points = naca_airfoil_4digits(NACA_AIRFOIL)
+
+# Create the segments of the airfoil
+for i in range(len(points) - 1):
+    sketch.segment(points[i], points[i + 1])
+
+# Close the airfoil
+sketch.segment(points[-1], points[0])
+
+# Plot the airfoil
+sketch.plot()
+```
+
+### Create the 3D airfoil
+
+```{code-cell} ipython3
+# Launch the modeler
+modeler = launch_modeler()
+
+# Create the design
+design = modeler.create_design(f"NACA_Airfoil_{NACA_AIRFOIL}")
+
+# Extrude the airfoil
+design.extrude_sketch("Airfoil", sketch, 1)
+
+# Plot the design
+design.plot()
+```
+
+### Save the design
+
+In this case, the design is saved as an SCDOCX file.
+
+```{code-cell} ipython3
+# Save the design
+file = design.export_to_scdocx()
+print(f"Design saved to {file}")
+```
+
+### Close the modeler
+
+```{code-cell} ipython3
+modeler.close()
+```

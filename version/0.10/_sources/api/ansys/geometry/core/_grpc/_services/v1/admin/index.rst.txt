@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``admin.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core._grpc._services.v1.admin
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: admin
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v1.admin.GRPCAdminServiceV1`
+            - Admin service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCAdminServiceV1</api/ansys/geometry/core/_grpc/_services/v1/admin/GRPCAdminServiceV1>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the admin service implementation for v1.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,220 @@
+
+
+
+
+
+
+:class:`Plane`
+==============
+
+
+.. py:class:: ansys.geometry.core.math.plane.Plane(origin: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.point.Point3D = ZERO_POINT3D, direction_x: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_X, direction_y: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_Y)
+
+   Bases: :py:obj:`ansys.geometry.core.math.frame.Frame`
+
+
+   
+   Provides primitive representation of a 2D plane in 3D space.
+
+
+   :Parameters:
+
+       **origin** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Point3D`, default: :obj:`ZERO_POINT3D`
+           Centered origin of the frame. The default is ``ZERO_POINT3D``, which is the
+           Cartesian origin.
+
+       **direction_x** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`, default: :obj:`UNITVECTOR3D_X`
+           X-axis direction.
+
+       **direction_y** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`, default: :obj:`UNITVECTOR3D_Y`
+           Y-axis direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+.. py:currentmodule:: Plane
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~is_point_contained`
+            - Check if a 3D point is contained in the plane.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~normal`
+            - Calculate the normal vector of the plane.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Plane`` class.
+          * - :py:attr:`~__ne__`
+            - Not equals operator for the ``Plane`` class.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.plane import Plane
+
+Property detail
+---------------
+
+.. py:property:: normal
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Calculate the normal vector of the plane.
+
+
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Normal vector of the plane.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: is_point_contained(point: ansys.geometry.core.math.point.Point3D) -> bool
+
+   
+   Check if a 3D point is contained in the plane.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           :class:`Point3D <ansys.geometry.core.math.point.Point3D>` class to check.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the 3D point is contained in the plane, ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __eq__(other: Plane) -> bool
+
+   
+   Equals operator for the ``Plane`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __ne__(other: Plane) -> bool
+
+   
+   Not equals operator for the ``Plane`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

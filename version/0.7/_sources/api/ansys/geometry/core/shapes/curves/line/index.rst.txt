@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``line.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.shapes.curves.line
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: line
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.line.Line`
+            - Provides 3D line representation.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.line.LineEvaluation`
+            - Provides for evaluating a line.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Line</api/ansys/geometry/core/shapes/curves/line/Line>
+    <span class="nf nf-cod-symbol_class"></span> LineEvaluation</api/ansys/geometry/core/shapes/curves/line/LineEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a line.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

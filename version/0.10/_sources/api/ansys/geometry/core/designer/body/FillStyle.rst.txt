@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`FillStyle`
+==================
+
+
+.. py:class:: ansys.geometry.core.designer.body.FillStyle(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for fill styles supported.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: FillStyle
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~DEFAULT`
+            - 
+          * - :py:attr:`~OPAQUE`
+            - 
+          * - :py:attr:`~TRANSPARENT`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.body import FillStyle
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: DEFAULT
+   :value: 0
+
+
+.. py:attribute:: OPAQUE
+   :value: 1
+
+
+.. py:attribute:: TRANSPARENT
+   :value: 2
+
+
+
+
+
+

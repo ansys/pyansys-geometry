@@ -1,0 +1,143 @@
+
+
+
+
+
+
+The ``client.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.connection.client
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: client
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.client.GrpcClient`
+            - Wraps the gRPC connection for the Geometry service.
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~wait_until_healthy`
+            - Wait until a channel is healthy before returning.
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GrpcClient</api/ansys/geometry/core/connection/client/GrpcClient>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module providing a wrapped abstraction of the gRPC stubs.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: wait_until_healthy(channel: grpc.Channel | str, timeout: float) -> grpc.Channel
+
+   
+   Wait until a channel is healthy before returning.
+
+
+   :Parameters:
+
+       **channel** : :obj:`~grpc.Channel` | :class:`python:str`
+           Channel that must be established and healthy. The target can also be
+           passed in. In that case, a channel is created using the default insecure channel.
+
+       **timeout** : :class:`python:float`
+           Timeout in seconds. Attempts are made with the following backoff strategy:
+           
+           * Starts with 0.1 seconds.
+           * If the attempt fails, double the timeout.
+           * This is repeated until the next timeoff exceeds the
+             value for the remaining time. In that case, a final attempt
+             is made with the remaining time.
+           * If the total elapsed time exceeds the value for the ``timeout`` parameter,
+             a ``TimeoutError`` is raised.
+
+
+
+   :Returns:
+
+       :obj:`grpc.Channel`
+           The channel that was passed in. This channel is guaranteed to be healthy.
+           If a string was passed in, a channel is created using the default insecure channel.
+
+
+
+
+   :Raises:
+
+       :obj:`TimeoutError`
+           Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

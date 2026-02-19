@@ -1,0 +1,38 @@
+
+
+
+
+GeometryExitedError
+===================
+
+.. py:exception:: GeometryExitedError(msg='Geometry service has exited.')
+   :canonical: ansys.geometry.core.errors.GeometryExitedError
+
+
+
+Bases: :py:obj:`RuntimeError`
+
+Provides error message to raise when Geometry service has exited.
+
+
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.errors import GeometryExitedError
+
+
+
+
+

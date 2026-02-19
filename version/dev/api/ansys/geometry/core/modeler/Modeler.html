@@ -1,0 +1,1286 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Modeler &#8212; PyAnsys Geometry</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=99899407" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../../../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../../../../_static/documentation_options.js?v=8bee615f"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../_static/thebelab-helper.js"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/ansys/geometry/core/modeler/Modeler';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://geometry.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../../../../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+    <link rel="next" title="The typing.py module" href="../typing/index.html" />
+    <link rel="prev" title="The modeler.py module" href="index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.15.dev0" />
+  <meta property="og:site_name" content="PyAnsys" />
+  <meta name="physics" content="CAD" />
+  <link rel="canonical" href="https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/modeler/Modeler.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Geometry - Home"/>
+    <img src="../../../../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Geometry - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    
+<!--
+  Announcement Version Loader
+  Dynamically loads the announcement.html content into the announcement_msg div.
+-->
+<div id="announcement_msg" aria-live="polite"></div>
+<script>
+  // Fetch and inject the announcement HTML content
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status} Announcement.html file not found, Please ignore this, if you are in dev/stable documentation`);
+      }
+      return response.text();
+    })
+    .then((text) => {
+      var msgDiv = document.getElementById("announcement_msg");
+      if (msgDiv) {
+        msgDiv.innerHTML = text;
+      }
+    })
+    .catch((error) => {
+      // Log only unexpected fetch errors
+      if (!(error.message && error.message.startsWith("HTTP error: 404"))) {
+        console.error(`Fetch problem: ${error.message} Announcement.html could not be loaded.`);
+      }
+    });
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../index.html" title="PyAnsys Geometry home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../../index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../assets.html">
+    Assets
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../../../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-geometry/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://geometry.docs.pyansys.com/version/dev/_static/assets/download/ansys-geometry-core.pdf" title="Download documentation in PDF" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-file-pdf fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Download documentation in PDF</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html"><span class="nf nf-md-package"></span> ansys.geometry.core</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../connection/index.html"> <span class="nf nf-md-package"></span> connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../designer/index.html"> <span class="nf nf-md-package"></span> designer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../materials/index.html"> <span class="nf nf-md-package"></span> materials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../math/index.html"> <span class="nf nf-md-package"></span> math</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../misc/index.html"> <span class="nf nf-md-package"></span> misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../parameters/index.html"> <span class="nf nf-md-package"></span> parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../plotting/index.html"> <span class="nf nf-md-package"></span> plotting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shapes/index.html"> <span class="nf nf-md-package"></span> shapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sketch/index.html"> <span class="nf nf-md-package"></span> sketch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools/index.html"> <span class="nf nf-md-package"></span> tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../errors/index.html"> <span class="nf nf-fa-file"></span> errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logger/index.html"> <span class="nf nf-fa-file"></span> logger</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html"> <span class="nf nf-fa-file"></span> modeler</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#"> <span class="nf nf-cod-symbol_class"></span> Modeler</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../typing/index.html"> <span class="nf nf-fa-file"></span> typing</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../../../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../../../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">ansys.geometry.core</span></code> library</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">The <code class="docutils literal notranslate"><span class="pre">modeler.py</span></code> module</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis"><code class="xref py py-class docutils literal notranslate"><span class="pre">Modeler</span></code></span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="modeler">
+<h1><code class="xref py py-class docutils literal notranslate"><span class="pre">Modeler</span></code><a class="headerlink" href="#modeler" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.geometry.core.modeler.Modeler">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ansys.geometry.core.modeler.</span></span><span class="sig-name descname"><span class="pre">Modeler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">pygeom_defaults.DEFAULT_HOST</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">pygeom_defaults.DEFAULT_PORT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://grpc.github.io/grpc/python/grpc.html#grpc.Channel" title="(in gRPC Python v1.76.0)"><span class="pre">grpc.Channel</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://pypim.docs.pyansys.com/version/stable/api/_autosummary/ansys.platform.instancemanagement.Instance.html#ansys.platform.instancemanagement.Instance" title="(in ansys-platform-instancemanagement v1.1.2)"><span class="pre">ansys.platform.instancemanagement.Instance</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">docker_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../connection/docker_instance/LocalDockerInstance.html#ansys.geometry.core.connection.docker_instance.LocalDockerInstance" title="ansys.geometry.core.connection.docker_instance.LocalDockerInstance"><span class="pre">ansys.geometry.core.connection.docker_instance.LocalDockerInstance</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product_instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../connection/product_instance/ProductInstance.html#ansys.geometry.core.connection.product_instance.ProductInstance" title="ansys.geometry.core.connection.product_instance.ProductInstance"><span class="pre">ansys.geometry.core.connection.product_instance.ProductInstance</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../typing/index.html#ansys.geometry.core.typing.Real" title="ansys.geometry.core.typing.Real"><span class="pre">ansys.geometry.core.typing.Real</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">logging.INFO</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logging_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">pathlib.Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proto_version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uds_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">pathlib.Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uds_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">certs_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">pathlib.Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.geometry.core.modeler.Modeler" title="Link to this definition">#</a></dt>
+<dd><p>Provides for interacting with an open session of the Geometry service.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>host</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>,  default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_HOST</span></code></span></dt><dd><p>Host where the server is running.</p>
+</dd>
+<dt><strong>port</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_PORT</span></code></span></dt><dd><p>Port number where the server is running.</p>
+</dd>
+<dt><strong>channel</strong><span class="classifier"><a class="reference external" href="https://grpc.github.io/grpc/python/grpc.html#grpc.Channel" title="(in gRPC Python v1.76.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Channel</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>gRPC channel for server communication.</p>
+</dd>
+<dt><strong>remote_instance</strong><span class="classifier"><a class="reference external" href="https://pypim.docs.pyansys.com/version/stable/api/_autosummary/ansys.platform.instancemanagement.Instance.html#ansys.platform.instancemanagement.Instance" title="(in ansys-platform-instancemanagement v1.1.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ansys.platform.instancemanagement.Instance</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Corresponding remote instance when the Geometry service
+is launched using <a class="reference external" href="https://github.com/ansys/pypim">PyPIM</a>. This instance
+is deleted when the <code class="xref py py-func docutils literal notranslate"><span class="pre">GrpcClient.close</span></code>
+method is called.</p>
+</dd>
+<dt><strong>docker_instance</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LocalDockerInstance</span></code>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Corresponding local Docker instance when the Geometry service is launched using the
+<a class="reference internal" href="../connection/launcher/index.html#ansys.geometry.core.connection.launcher.launch_docker_modeler" title="ansys.geometry.core.connection.launcher.launch_docker_modeler"><code class="xref py py-func docutils literal notranslate"><span class="pre">launch_docker_modeler</span></code></a>
+method. This instance is deleted when the
+<code class="xref py py-func docutils literal notranslate"><span class="pre">GrpcClient.close</span></code>
+method is called.</p>
+</dd>
+<dt><strong>product_instance</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductInstance</span></code>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Corresponding local product instance when the product (Discovery or SpaceClaim)
+is launched through the <code class="docutils literal notranslate"><span class="pre">launch_modeler_with_geometry_service()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">launch_modeler_with_discovery()</span></code> or the <code class="docutils literal notranslate"><span class="pre">launch_modeler_with_spaceclaim()</span></code>
+interface. This instance will be deleted
+when the <code class="xref py py-func docutils literal notranslate"><span class="pre">GrpcClient.close</span></code>
+method is called.</p>
+</dd>
+<dt><strong>timeout</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Real</span></code>, default: 120</span></dt><dd><p>Time in seconds for trying to achieve the connection.</p>
+</dd>
+<dt><strong>logging_level</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, default: <code class="xref py py-obj docutils literal notranslate"><span class="pre">INFO</span></code></span></dt><dd><p>Logging level to apply to the client.</p>
+</dd>
+<dt><strong>logging_file</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>File to output the log to, if requested.</p>
+</dd>
+<dt><strong>proto_version</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Protocol version to use for communication with the server. If None, v0 is used.
+Available versions are “v0”, “v1”, etc.</p>
+</dd>
+<dt><strong>transport_mode</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Transport mode selected. Needed if <code class="docutils literal notranslate"><span class="pre">channel</span></code> is not provided.
+Options are: “insecure”, “uds”, “wnua”, “mtls”.</p>
+</dd>
+<dt><strong>uds_dir</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code> | <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Directory to use for Unix Domain Sockets (UDS) transport mode.
+By default <cite>None</cite> and thus it will use the “~/.conn” folder.</p>
+</dd>
+<dt><strong>uds_id</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Optional ID to use for the UDS socket filename.
+By default <cite>None</cite> and thus it will use “aposdas_socket.sock”.
+Otherwise, the socket filename will be “aposdas_socket-<uds_id>.sock”.</p>
+</dd>
+<dt><strong>certs_dir</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code> | <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Directory to use for TLS certificates.
+By default <cite>None</cite> and thus search for the “ANSYS_GRPC_CERTIFICATES” environment variable.
+If not found, it will use the “certs” folder assuming it is in the current working
+directory.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Modeler.create_design" title="Modeler.create_design"><code class="xref py py-attr docutils literal notranslate"><span class="pre">create_design</span></code></a></p></td>
+<td><p>Initialize a new design with the connected client.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Modeler.get_active_design" title="Modeler.get_active_design"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_active_design</span></code></a></p></td>
+<td><p>Get the active design on the modeler object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Modeler.read_existing_design" title="Modeler.read_existing_design"><code class="xref py py-attr docutils literal notranslate"><span class="pre">read_existing_design</span></code></a></p></td>
+<td><p>Read the existing design on the service with the connected client.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Modeler.close" title="Modeler.close"><code class="xref py py-attr docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
+<td><p>Access the client’s close method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Modeler.exit" title="Modeler.exit"><code class="xref py py-attr docutils literal notranslate"><span class="pre">exit</span></code></a></p></td>
+<td><p>Access the client’s close method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Modeler.open_file" title="Modeler.open_file"><code class="xref py py-attr docutils literal notranslate"><span class="pre">open_file</span></code></a></p></td>
+<td><p>Open a file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Modeler.run_discovery_script_file" title="Modeler.run_discovery_script_file"><code class="xref py py-attr docutils literal notranslate"><span class="pre">run_discovery_script_file</span></code></a></p></td>
+<td><p>Run a Discovery script file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Modeler.get_service_logs" title="Modeler.get_service_logs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">get_service_logs</span></code></a></p></td>
+<td><p>Get the service logs.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Properties</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Modeler.client" title="Modeler.client"><code class="xref py py-attr docutils literal notranslate"><span class="pre">client</span></code></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Modeler</span></code> instance client.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Modeler.design" title="Modeler.design"><code class="xref py py-attr docutils literal notranslate"><span class="pre">design</span></code></a></p></td>
+<td><p>Retrieve the design within the modeler workspace.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Modeler.repair_tools" title="Modeler.repair_tools"><code class="xref py py-attr docutils literal notranslate"><span class="pre">repair_tools</span></code></a></p></td>
+<td><p>Access to repair tools.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Modeler.prepare_tools" title="Modeler.prepare_tools"><code class="xref py py-attr docutils literal notranslate"><span class="pre">prepare_tools</span></code></a></p></td>
+<td><p>Access to prepare tools.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Modeler.measurement_tools" title="Modeler.measurement_tools"><code class="xref py py-attr docutils literal notranslate"><span class="pre">measurement_tools</span></code></a></p></td>
+<td><p>Access to measurement tools.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#Modeler.geometry_commands" title="Modeler.geometry_commands"><code class="xref py py-attr docutils literal notranslate"><span class="pre">geometry_commands</span></code></a></p></td>
+<td><p>Access to geometry commands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Modeler.unsupported" title="Modeler.unsupported"><code class="xref py py-attr docutils literal notranslate"><span class="pre">unsupported</span></code></a></p></td>
+<td><p>Access to unsupported commands.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Special methods</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#Modeler.__repr__" title="Modeler.__repr__"><code class="xref py py-attr docutils literal notranslate"><span class="pre">__repr__</span></code></a></p></td>
+<td><p>Represent the modeler as a string.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="import-detail">
+<h2>Import detail<a class="headerlink" href="#import-detail" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.geometry.core.modeler</span><span class="w"> </span><span class="kn">import</span> <span class="n">Modeler</span>
+</pre></div>
+</div>
+</section>
+<section id="property-detail">
+<h2>Property detail<a class="headerlink" href="#property-detail" title="Link to this heading">#</a></h2>
+<dl class="py property">
+<dt class="sig sig-object py" id="Modeler.client">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">client</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../connection/client/GrpcClient.html#ansys.geometry.core.connection.client.GrpcClient" title="ansys.geometry.core.connection.client.GrpcClient"><span class="pre">ansys.geometry.core.connection.client.GrpcClient</span></a></span><a class="headerlink" href="#Modeler.client" title="Link to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">Modeler</span></code> instance client.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Modeler.design">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">design</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../designer/design/Design.html#ansys.geometry.core.designer.design.Design" title="ansys.geometry.core.designer.design.Design"><span class="pre">ansys.geometry.core.designer.design.Design</span></a></span><a class="headerlink" href="#Modeler.design" title="Link to this definition">#</a></dt>
+<dd><p>Retrieve the design within the modeler workspace.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Modeler.repair_tools">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">repair_tools</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../tools/repair_tools/RepairTools.html#ansys.geometry.core.tools.repair_tools.RepairTools" title="ansys.geometry.core.tools.repair_tools.RepairTools"><span class="pre">ansys.geometry.core.tools.repair_tools.RepairTools</span></a></span><a class="headerlink" href="#Modeler.repair_tools" title="Link to this definition">#</a></dt>
+<dd><p>Access to repair tools.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Modeler.prepare_tools">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">prepare_tools</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../tools/prepare_tools/PrepareTools.html#ansys.geometry.core.tools.prepare_tools.PrepareTools" title="ansys.geometry.core.tools.prepare_tools.PrepareTools"><span class="pre">ansys.geometry.core.tools.prepare_tools.PrepareTools</span></a></span><a class="headerlink" href="#Modeler.prepare_tools" title="Link to this definition">#</a></dt>
+<dd><p>Access to prepare tools.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Modeler.measurement_tools">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">measurement_tools</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../tools/measurement_tools/MeasurementTools.html#ansys.geometry.core.tools.measurement_tools.MeasurementTools" title="ansys.geometry.core.tools.measurement_tools.MeasurementTools"><span class="pre">ansys.geometry.core.tools.measurement_tools.MeasurementTools</span></a></span><a class="headerlink" href="#Modeler.measurement_tools" title="Link to this definition">#</a></dt>
+<dd><p>Access to measurement tools.</p>
+<p class="rubric">Notes</p>
+<p>This property is only available starting on Ansys release 24R2.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Modeler.geometry_commands">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">geometry_commands</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../designer/geometry_commands/GeometryCommands.html#ansys.geometry.core.designer.geometry_commands.GeometryCommands" title="ansys.geometry.core.designer.geometry_commands.GeometryCommands"><span class="pre">ansys.geometry.core.designer.geometry_commands.GeometryCommands</span></a></span><a class="headerlink" href="#Modeler.geometry_commands" title="Link to this definition">#</a></dt>
+<dd><p>Access to geometry commands.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="Modeler.unsupported">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">unsupported</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../tools/unsupported/UnsupportedCommands.html#ansys.geometry.core.tools.unsupported.UnsupportedCommands" title="ansys.geometry.core.tools.unsupported.UnsupportedCommands"><span class="pre">ansys.geometry.core.tools.unsupported.UnsupportedCommands</span></a></span><a class="headerlink" href="#Modeler.unsupported" title="Link to this definition">#</a></dt>
+<dd><p>Access to unsupported commands.</p>
+</dd></dl>
+
+</section>
+<section id="method-detail">
+<h2>Method detail<a class="headerlink" href="#method-detail" title="Link to this heading">#</a></h2>
+<dl class="py method">
+<dt class="sig sig-object py" id="Modeler.create_design">
+<span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">create_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../designer/design/Design.html#ansys.geometry.core.designer.design.Design" title="ansys.geometry.core.designer.design.Design"><span class="pre">ansys.geometry.core.designer.design.Design</span></a></span></span><a class="headerlink" href="#Modeler.create_design" title="Link to this definition">#</a></dt>
+<dd><p>Initialize a new design with the connected client.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Name for the new design.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Design</span></code></dt><dd><p>Design object created on the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Modeler.get_active_design">
+<span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">get_active_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sync_with_backend</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../designer/design/Design.html#ansys.geometry.core.designer.design.Design" title="ansys.geometry.core.designer.design.Design"><span class="pre">ansys.geometry.core.designer.design.Design</span></a></span></span><a class="headerlink" href="#Modeler.get_active_design" title="Link to this definition">#</a></dt>
+<dd><p>Get the active design on the modeler object.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>sync_with_backend</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#True" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">True</span></code></a></span></dt><dd><p>Whether to sync the active design with the remote service. If set to False,
+the active design may be out-of-sync with the remote service. This is useful
+when the active design is known to be up-to-date.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Design</span></code></dt><dd><p>Design object already existing on the modeler.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Modeler.read_existing_design">
+<span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">read_existing_design</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../designer/design/Design.html#ansys.geometry.core.designer.design.Design" title="ansys.geometry.core.designer.design.Design"><span class="pre">ansys.geometry.core.designer.design.Design</span></a></span></span><a class="headerlink" href="#Modeler.read_existing_design" title="Link to this definition">#</a></dt>
+<dd><p>Read the existing design on the service with the connected client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Design</span></code></dt><dd><p>Design object already existing on the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Modeler.close">
+<span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">close_design</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#Modeler.close" title="Link to this definition">#</a></dt>
+<dd><p>Access the client’s close method.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>close_design</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#True" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">True</span></code></a></span></dt><dd><p>Whether to close the design before closing the client.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Modeler.exit">
+<span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">exit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">close_design</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#Modeler.exit" title="Link to this definition">#</a></dt>
+<dd><p>Access the client’s close method.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>close_design</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#True" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">True</span></code></a></span></dt><dd><p>Whether to close the design before closing the client.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This method is calling the same method as
+<code class="xref py py-func docutils literal notranslate"><span class="pre">close()</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Modeler.open_file">
+<span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">open_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">pathlib.Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">upload_to_server</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">import_options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../misc/options/ImportOptions.html#ansys.geometry.core.misc.options.ImportOptions" title="ansys.geometry.core.misc.options.ImportOptions"><span class="pre">ansys.geometry.core.misc.options.ImportOptions</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ImportOptions()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">import_options_definitions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../misc/options/ImportOptionsDefinitions.html#ansys.geometry.core.misc.options.ImportOptionsDefinitions" title="ansys.geometry.core.misc.options.ImportOptionsDefinitions"><span class="pre">ansys.geometry.core.misc.options.ImportOptionsDefinitions</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ImportOptionsDefinitions()</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../designer/design/Design.html#ansys.geometry.core.designer.design.Design" title="ansys.geometry.core.designer.design.Design"><span class="pre">ansys.geometry.core.designer.design.Design</span></a></span></span><a class="headerlink" href="#Modeler.open_file" title="Link to this definition">#</a></dt>
+<dd><p>Open a file.</p>
+<p>This method imports a design into the service. On Windows and Linux, <code class="docutils literal notranslate"><span class="pre">.scdocx</span></code>, <code class="docutils literal notranslate"><span class="pre">.dsco</span></code>,
+and reader formats are supported. Please see notes for supported reader formats.</p>
+<p>If the file is a shattered assembly with external references, the whole containing folder
+will need to be uploaded. Ensure proper folder structure in order to prevent the uploading
+of unnecessary files.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></a></span></dt><dd><p>Path of the file to open. The extension of the file must be included.</p>
+</dd>
+<dt><strong>upload_to_server</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a></span></dt><dd><p>True if the service is running on a remote machine. If service is running on the local
+machine, set to False, as there is no reason to upload the file.</p>
+</dd>
+<dt><strong>import_options</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImportOptions</span></code></span></dt><dd><p>Import options that toggle certain features when opening a file.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Design</span></code></dt><dd><p>Newly imported design.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<dl class="simple">
+<dt>Format and latest supported version</dt><dd><ul class="simple">
+<li><p>AutoCAD 2024</p></li>
+<li><p>CATIA V5 2024</p></li>
+<li><p>CATIA V6 2024</p></li>
+<li><p>Creo Parametric 11</p></li>
+<li><p>IGES 5.3</p></li>
+<li><p>Inventor 2025</p></li>
+<li><p>JT 10.10</p></li>
+<li><p>NX 2412</p></li>
+<li><p>Rhino 8</p></li>
+<li><p>Solid Edge 2025</p></li>
+<li><p>SOLIDWORKS 2025</p></li>
+<li><p>STEP AP242</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Modeler.__repr__">
+<span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="headerlink" href="#Modeler.__repr__" title="Link to this definition">#</a></dt>
+<dd><p>Represent the modeler as a string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Modeler.run_discovery_script_file">
+<span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">run_discovery_script_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">pathlib.Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">script_args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">import_design</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../connection/backend/ApiVersions.html#ansys.geometry.core.connection.backend.ApiVersions" title="ansys.geometry.core.connection.backend.ApiVersions"><span class="pre">ansys.geometry.core.connection.backend.ApiVersions</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../designer/design/Design.html#ansys.geometry.core.designer.design.Design" title="ansys.geometry.core.designer.design.Design"><span class="pre">ansys.geometry.core.designer.design.Design</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#Modeler.run_discovery_script_file" title="Link to this definition">#</a></dt>
+<dd><p>Run a Discovery script file.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If arguments are passed to the script, they must be in the form of a dictionary.
+On the server side, the script will receive the arguments as a dictionary of strings,
+under the variable name <code class="docutils literal notranslate"><span class="pre">argsDict</span></code>. For example, if the script is called with the
+arguments <code class="docutils literal notranslate"><span class="pre">run_discovery_script_file(...,</span> <span class="pre">script_args</span> <span class="pre">=</span> <span class="pre">{&quot;length&quot;:</span> <span class="pre">&quot;20&quot;},</span> <span class="pre">...)</span></code>,
+the script will receive the dictionary <code class="docutils literal notranslate"><span class="pre">argsDict</span></code> with the key-value pair
+<code class="docutils literal notranslate"><span class="pre">{&quot;length&quot;:</span> <span class="pre">&quot;20&quot;}</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If an output is expected from the script, it will be returned as a dictionary of
+strings. The keys and values of the dictionary are the variables and their values
+that the script returns. However, it is necessary that the script creates a
+dictionary called <code class="docutils literal notranslate"><span class="pre">result</span></code> with the variables and their values that are expected
+to be returned. For example, if the script is expected to return the number of bodies
+in the design, the script should create a dictionary called <code class="docutils literal notranslate"><span class="pre">result</span></code> with the
+key-value pair <code class="docutils literal notranslate"><span class="pre">{&quot;numBodies&quot;:</span> <span class="pre">numBodies}</span></code>, where <code class="docutils literal notranslate"><span class="pre">numBodies</span></code> is the number of
+bodies in the design.</p>
+</div>
+<p>The implied API version of the script should match the API version of the running
+Geometry Service. DMS API versions 24.1 and later are supported. DMS is a
+Windows-based modeling service that has been containerized to ease distribution,
+execution, and remotability operations.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>file_path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></a></span></dt><dd><p>Path of the file. The extension of the file must be included.</p>
+</dd>
+<dt><strong>script_args</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>], optional.</span></dt><dd><p>Arguments to pass to the script. By default, <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+<dt><strong>import_design</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, optional.</span></dt><dd><p>Whether to refresh the current design from the service. When the script
+is expected to modify the existing design, set this to <code class="docutils literal notranslate"><span class="pre">True</span></code> to retrieve
+up-to-date design data. When this is set to <code class="docutils literal notranslate"><span class="pre">False</span></code> (default) and the
+script modifies the current design, the design may be out-of-sync. By default,
+<code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><strong>api_version</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#int" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a> | <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">ApiVersions</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>The scripting API version to use. For example, version 24.1 can be passed as
+an integer 241, a string “241” or using the
+<code class="docutils literal notranslate"><span class="pre">ansys.geometry.core.connection.backend.ApiVersions</span></code> enum class.
+By default, <code class="docutils literal notranslate"><span class="pre">None</span></code>. When specified, the service will attempt to run the script with
+the specified API version. If the API version is not supported, the service will raise
+an error. If you are using Discovery or SpaceClaim, the product will determine the API
+version to use, so there is no need to specify this parameter.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Values returned from the script.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Design</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></dt><dd><p>Up-to-date current design. This is only returned if <code class="docutils literal notranslate"><span class="pre">import_design=True</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeometryRuntimeError</span></code></dt><dd><p>If the Discovery script fails to run. Otherwise, assume that the script
+ran successfully.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Ansys Geometry Service only supports scripts that are of the
+same version as the running service. Any <code class="docutils literal notranslate"><span class="pre">api_version</span></code> input will
+be ignored.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="Modeler.get_service_logs">
+<span class="sig-prename descclassname"><span class="pre">Modeler.</span></span><span class="sig-name descname"><span class="pre">get_service_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">all_logs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump_to_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logs_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">pathlib.Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.13/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">pathlib.Path</span></a></span></span><a class="headerlink" href="#Modeler.get_service_logs" title="Link to this definition">#</a></dt>
+<dd><p>Get the service logs.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>all_logs</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#False" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">False</span></code></a></span></dt><dd><p>Flag indicating whether all logs should be retrieved. By default,
+only the current logs are retrieved.</p>
+</dd>
+<dt><strong>dump_to_file</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#bltin-boolean-values" title="(in Python v3.13)"><span class="xref std std-ref">bool</span></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#False" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">False</span></code></a></span></dt><dd><p>Flag indicating whether the logs should be dumped to a file.
+By default, the logs are not dumped to a file.</p>
+</dd>
+<dt><strong>logs_folder</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>,  <code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code> or <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3.13/library/constants.html#None" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Name of the folder where the logs should be dumped. This parameter
+is only used if the <code class="docutils literal notranslate"><span class="pre">dump_to_file</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Service logs as a string. This is returned if the <code class="docutils literal notranslate"><span class="pre">dump_to_file</span></code> parameter
+is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.13/library/stdtypes.html#str" title="(in Python v3.13)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</dt><dd><p>Dictionary containing the logs. The keys are the logs names,
+and the values are the logs as strings. This is returned if the <code class="docutils literal notranslate"><span class="pre">all_logs</span></code>
+parameter is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> and the <code class="docutils literal notranslate"><span class="pre">dump_to_file</span></code> parameter
+is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></dt><dd><p>Path to the folder containing the logs (if the <code class="docutils literal notranslate"><span class="pre">all_logs</span></code>
+parameter is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>) or the path to the log file (if only
+the current logs are retrieved). The <code class="docutils literal notranslate"><span class="pre">dump_to_file</span></code> parameter
+must be set to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This property is only available starting on Ansys release 25R1.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.geometry.core.modeler.Modeler"><code class="docutils literal notranslate"><span class="pre">ansys.geometry.core.modeler.Modeler</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-detail">Import detail</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#property-detail">Property detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.client"><code class="docutils literal notranslate"><span class="pre">client</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.design"><code class="docutils literal notranslate"><span class="pre">design</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.repair_tools"><code class="docutils literal notranslate"><span class="pre">repair_tools</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.prepare_tools"><code class="docutils literal notranslate"><span class="pre">prepare_tools</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.measurement_tools"><code class="docutils literal notranslate"><span class="pre">measurement_tools</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.geometry_commands"><code class="docutils literal notranslate"><span class="pre">geometry_commands</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.unsupported"><code class="docutils literal notranslate"><span class="pre">unsupported</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#method-detail">Method detail</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.create_design"><code class="docutils literal notranslate"><span class="pre">create_design()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.get_active_design"><code class="docutils literal notranslate"><span class="pre">get_active_design()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.read_existing_design"><code class="docutils literal notranslate"><span class="pre">read_existing_design()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.exit"><code class="docutils literal notranslate"><span class="pre">exit()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.open_file"><code class="docutils literal notranslate"><span class="pre">open_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.__repr__"><code class="docutils literal notranslate"><span class="pre">__repr__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.run_discovery_script_file"><code class="docutils literal notranslate"><span class="pre">run_discovery_script_file()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeler.get_service_logs"><code class="docutils literal notranslate"><span class="pre">get_service_logs()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+
+  
+  <nav class="tocsection editthispage" aria-label="Edit this page">
+    <a href="http://github.com/ansys/pyansys-geometry/edit/main/ansys/geometry/core/modeler/Modeler.py" rel="noopener noreferrer">
+      <i class="fa-solid fa-pencil" aria-hidden="true"></i>
+      
+      
+        
+          Edit on GitHub
+        
+      
+    </a>
+  </nav>
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../../../../_sources/api/ansys/geometry/core/modeler/Modeler.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"ignoreLocation": true, "keys": ["title", "text", "objectID"], "limit": 10, "minMatchCharLength": 2, "threshold": 0.5}');
+const SEARCH_FILE = "../../../../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../../../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../../../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.0.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

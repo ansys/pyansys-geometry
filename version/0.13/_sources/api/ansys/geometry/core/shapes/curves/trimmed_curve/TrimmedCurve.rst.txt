@@ -1,0 +1,440 @@
+
+
+
+
+
+
+:class:`TrimmedCurve`
+=====================
+
+
+.. py:class:: ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve(geometry: ansys.geometry.core.shapes.curves.curve.Curve, start: ansys.geometry.core.math.point.Point3D, end: ansys.geometry.core.math.point.Point3D, interval: ansys.geometry.core.shapes.parameterization.Interval, length: pint.Quantity, grpc_client: ansys.geometry.core.connection.client.GrpcClient = None)
+
+   
+   Represents a trimmed curve.
+
+   A trimmed curve is a curve that has a boundary. This boundary comes in the form of an interval.
+
+   :Parameters:
+
+       **geometry** : :obj:`Curve`
+           Underlying mathematical representation of the curve.
+
+       **start** : :obj:`Point3D`
+           Start point of the curve.
+
+       **end** : :obj:`Point3D`
+           End point of the curve.
+
+       **interval** : :obj:`Interval`
+           Parametric interval that bounds the curve.
+
+       **length** : :obj:`Quantity`
+           Length of the curve.
+
+       **grpc_client** : :obj:`GrpcClient`, default: :data:`python:None`
+           gRPC client that is required for advanced functions such as ``intersect_curve()``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: TrimmedCurve
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~evaluate_proportion`
+            - Evaluate the curve at a proportional value.
+          * - :py:attr:`~intersect_curve`
+            - Get the intersect points of this trimmed curve with another one.
+          * - :py:attr:`~transformed_copy`
+            - Return a copy of the trimmed curve transformed by the given matrix.
+          * - :py:attr:`~translate`
+            - Translate the trimmed curve by a given vector and distance.
+          * - :py:attr:`~rotate`
+            - Rotate the trimmed curve around a given axis centered at a given point.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~geometry`
+            - Underlying mathematical curve.
+          * - :py:attr:`~start`
+            - Start point of the curve.
+          * - :py:attr:`~end`
+            - End point of the curve.
+          * - :py:attr:`~length`
+            - Calculated length of the edge.
+          * - :py:attr:`~interval`
+            - Interval of the curve that provides its boundary.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the trimmed curve as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+
+Property detail
+---------------
+
+.. py:property:: geometry
+   :type: ansys.geometry.core.shapes.curves.curve.Curve
+
+
+   
+   Underlying mathematical curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: start
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Start point of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   End point of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: length
+   :type: pint.Quantity
+
+
+   
+   Calculated length of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: interval
+   :type: ansys.geometry.core.shapes.parameterization.Interval
+
+
+   
+   Interval of the curve that provides its boundary.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: evaluate_proportion(param: ansys.geometry.core.typing.Real) -> ansys.geometry.core.shapes.curves.curve_evaluation.CurveEvaluation
+
+   
+   Evaluate the curve at a proportional value.
+
+   A parameter of ``0`` corresponds to the start of the curve, while a parameter of ``1``
+   corresponds to the end of the curve.
+
+   :Parameters:
+
+       **param** : :obj:`Real`
+           Parameter in the proportional range [0,1].
+
+
+
+   :Returns:
+
+       :obj:`CurveEvaluation`
+           Resulting curve evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: intersect_curve(other: TrimmedCurve) -> list[ansys.geometry.core.math.point.Point3D]
+
+   
+   Get the intersect points of this trimmed curve with another one.
+
+   If the two trimmed curves do not intersect, an empty list is returned.
+
+   :Parameters:
+
+       **other** : :obj:`TrimmedCurve`
+           Trimmed curve to intersect with.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Point3D`]
+           All points of intersection between the curves.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> TrimmedCurve
+
+   
+   Return a copy of the trimmed curve transformed by the given matrix.
+
+
+   :Parameters:
+
+       **matrix** : :obj:`Matrix44`
+           Transformation matrix to apply to the curve.
+
+
+
+   :Returns:
+
+       :obj:`TrimmedCurve`
+           A new trimmed curve with the transformation applied.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: translate(direction: ansys.geometry.core.math.vector.UnitVector3D, distance: ansys.geometry.core.typing.Real | pint.Quantity | ansys.geometry.core.misc.measurements.Distance) -> None
+
+   
+   Translate the trimmed curve by a given vector and distance.
+
+
+   :Parameters:
+
+       **direction** : :obj:`UnitVector3D`
+           Direction of translation.
+
+       **distance** : :obj:`Real` | :obj:`Quantity` | :obj:`Distance`
+           Distance to translate.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: rotate(origin: ansys.geometry.core.math.point.Point3D, axis: ansys.geometry.core.math.vector.UnitVector3D, angle: ansys.geometry.core.typing.Real | pint.Quantity | ansys.geometry.core.misc.measurements.Angle) -> None
+
+   
+   Rotate the trimmed curve around a given axis centered at a given point.
+
+
+   :Parameters:
+
+       **origin** : :obj:`Point3D`
+           Origin point of the rotation.
+
+       **axis** : :obj:`UnitVector3D`
+           Axis of rotation.
+
+       **angle** : :obj:`Real` | :obj:`Quantity` | :obj:`Angle`
+           Angle to rotate in radians.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the trimmed curve as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
