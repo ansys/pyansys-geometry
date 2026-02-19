@@ -462,6 +462,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):
             ),
             "beams": [serialize_beam(beam) for beam in beams],
             "design_points": [serialize_design_point(dp) for dp in design_points],
+            "datum_planes": [],
         }
 
     @protect_grpc

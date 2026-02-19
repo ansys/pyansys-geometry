@@ -46,6 +46,7 @@ import pytest
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D, Point3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X
+from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.plotting import GeometryPlotter
@@ -1443,3 +1444,23 @@ def test_plot_with_face_opacity(modeler: Modeler, verify_image_cache):
     box_body.plot(
         screenshot=Path(IMAGE_RESULTS_DIR, "plot_face_with_opacity.png"), use_service_colors=True
     )
+
+
+@skip_no_xserver
+def test_plot_datum_plane(modeler: Modeler, verify_image_cache):
+    """Test plotting a datum plane."""
+    # Create your design on the server side
+    design = modeler.create_design("DatumPlane")
+
+    # Create a datum plane with custom orientation
+    plane = Plane(
+        origin=Point3D([0, 0, 10], UNITS.m),
+        direction_x=UnitVector3D([0.6, 0.8, 0]),
+        direction_y=UnitVector3D([-0.8, 0.6, 1]),
+    )
+    datum_plane = design.create_datum_plane("OffsetPlane", plane)
+
+    # Plot the datum plane
+    pl = GeometryPlotter()
+    pl.plot(datum_plane)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_datum_plane.png"))
