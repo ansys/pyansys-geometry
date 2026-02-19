@@ -214,7 +214,7 @@ class Modeler:
                 self._design._update_design_inplace()
             return self._design
         else:
-            self.client.log.warning("No active design available.")
+            self.client.log.info("No active design available.")
 
         return None
 
