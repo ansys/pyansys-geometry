@@ -917,18 +917,21 @@ def _handle_transport_mode(
     # Return the args to be passed to the backend, and the transport values
     return exe_args, transport_values
 
-def _determine_proto_version(proto_version: str | None, product_version: int | str | None) -> str | None:
+
+def _determine_proto_version(
+    proto_version: str | None, product_version: int | str | None
+) -> str | None:
     """Determine the gRPC API protocol version to use.
-    
+
     Parameters
     ----------
     proto_version: str | None
         The version of the gRPC API protocol to use. If None, the latest
         version supported by the server will be used. Options are "v0" and "v1".
     product_version: int | str | None
-        The version of the product being used. Might be None if the 
+        The version of the product being used. Might be None if the
         product version is not determined at the moment of calling this function.
-    
+
     Returns
     -------
     str | None
