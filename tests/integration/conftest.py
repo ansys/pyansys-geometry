@@ -224,8 +224,14 @@ def use_service_colors():
 
 @pytest.fixture(scope="function")
 def fake_modeler_old_backend_242(modeler: Modeler):
+    from ansys.geometry.core._grpc._version import GeometryApiProtos
+    
     currentbackend = modeler._grpc_client._backend_version
     currentservices = modeler._grpc_client._services
+
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
 
     modeler._grpc_client._backend_version = (24, 2, 0)
     modeler._grpc_client._services = _GRPCServices(
