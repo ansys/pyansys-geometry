@@ -42,6 +42,7 @@ from ansys.geometry.core.designer.beam import (
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
@@ -1149,6 +1150,7 @@ class Design(Component):
         lines.append(f"  N Materials          : {len(self.materials)}")
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
         lines.append(f"  N Design Points      : {len(self.design_points)}")
+        lines.append(f"  N Datum Planes       : {len(self.datum_planes)}")
         return "\n".join(lines)
 
     def __read_existing_design(self) -> None:
@@ -1387,6 +1389,31 @@ class Design(Component):
 
             # Append the design point to the component to which it belongs
             created_dp.parent_component._design_points.append(created_dp)
+
+        # Create DatumPlanes - different retrieval methods based on backends for best compatibility
+        planes = []
+        if self._grpc_client.backend_version < (25, 2, 0):
+            self._grpc_client.log.debug(
+                "Backend version does not support datum planes. Skipping datum plane creation."
+            )
+        elif (
+            self._grpc_client.backend_version < (27, 1, 0)
+            or self._grpc_client.services.version == GeometryApiProtos.V0
+        ):
+            planes = self._grpc_client.services.planes.get_all(parent_id=self.id).get("planes", [])
+        else:
+            planes = response.get("datum_planes", [])
+
+        for dp in planes:
+            created_dp = DatumPlane(
+                dp.get("id"),
+                dp.get("name"),
+                dp.get("plane"),
+                created_components.get(dp.get("parent_id"), self),
+            )
+
+            # Append the datum plane to the component to which it belongs
+            created_dp.parent_component._datum_planes.append(created_dp)
 
         end = time.time()
 
