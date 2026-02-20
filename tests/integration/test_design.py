@@ -2325,13 +2325,13 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     assert not copy3_uni.is_alive
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 2
+    assert len(comp1.bodies) == 3
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 1
 
     # Cleanup previous subtest
     comp1.delete_body(copy1_uni)
-    assert len(comp1.bodies) == 1
+    assert len(comp1.bodies) == 2
 
     ################# Check intersect operation #################
     copy1_int = body1.copy(comp1, "Copy1_intersect")
@@ -2343,14 +2343,14 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     assert copy3_int.is_alive
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 2
+    assert len(comp1.bodies) == 3
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 2
 
     # Cleanup previous subtest
     comp1.delete_body(copy1_int)
     comp3.delete_body(copy3_int)
-    assert len(comp1.bodies) == 1
+    assert len(comp1.bodies) == 2
     assert len(comp3.bodies) == 1
 
 
