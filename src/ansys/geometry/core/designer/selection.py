@@ -304,13 +304,13 @@ class NamedSelection:
             self._name,
             self._design,
             self._grpc_client,
-            bodies=bodies + self._bodies,
-            faces=faces + self._faces,
-            edges=edges + self._edges,
-            beams=beams + self._beams,
-            design_points=design_points + self._design_points,
-            components=components + self._components,
-            vertices=vertices + self._vertices,
+            bodies=bodies + self.bodies,
+            faces=faces + self.faces,
+            edges=edges + self.edges,
+            beams=beams + self.beams,
+            design_points=design_points + self.design_points,
+            components=components + self.components,
+            vertices=vertices + self.vertices,
         )
 
         # Delete the old NS server-side
@@ -341,22 +341,24 @@ class NamedSelection:
         self.__verify_ns()
 
         # Check to make sure NS will not be empty after removal
-        if len(members) >= len(self._bodies) + len(self._faces) + len(self._edges) + len(
-            self._beams
-        ) + len(self._design_points) + len(self._components) + len(self._vertices):
+        total_members = (
+            len(self.bodies) + len(self.faces) + len(self.edges) + len(self.beams)
+            + len(self.design_points) + len(self.components) + len(self.vertices)
+        )
+        if len(members) >= total_members:
             raise GeometryRuntimeError("NamedSelection cannot be empty after removal.")
 
         new_ns = NamedSelection(
             self._name,
             self._design,
             self._grpc_client,
-            bodies=[body for body in self._bodies if body not in members],
-            faces=[face for face in self._faces if face not in members],
-            edges=[edge for edge in self._edges if edge not in members],
-            beams=[beam for beam in self._beams if beam not in members],
-            design_points=[dp for dp in self._design_points if dp not in members],
-            components=[component for component in self._components if component not in members],
-            vertices=[vertex for vertex in self._vertices if vertex not in members],
+            bodies=[body for body in self.bodies if body not in members],
+            faces=[face for face in self.faces if face not in members],
+            edges=[edge for edge in self.edges if edge not in members],
+            beams=[beam for beam in self.beams if beam not in members],
+            design_points=[dp for dp in self.design_points if dp not in members],
+            components=[component for component in self.components if component not in members],
+            vertices=[vertex for vertex in self.vertices if vertex not in members],
         )
 
         # Delete the old NS server-side
