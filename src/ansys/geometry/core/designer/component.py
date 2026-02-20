@@ -2041,6 +2041,9 @@ class Component:
         ids = [self.id, *[o.id for o in others or []]]
         self._grpc_client._services.components.make_independent(ids=ids)
 
+        design = get_design_from_component(self)
+        design._update_design_inplace()
+
     def get_named_selections(self) -> list["NamedSelection"]:
         """Get the named selections of the component.
 
