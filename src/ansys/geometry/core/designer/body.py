@@ -2424,13 +2424,14 @@ class Body(IBody):
             keep_other=keep_other,
         )
 
+        parent_design = get_design_from_body(self)
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             for b in grpc_other:
                 b.parent_component.delete_body(b)
+            parent_design._update_design_inplace()
         else:
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
-            parent_design = get_design_from_body(self)
             parent_design._update_from_tracker(response["tracker_response"])
 
     def __repr__(self) -> str:

@@ -86,7 +86,7 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
             "template": kwargs["template_id"],  # template_id from input
             "component": component,
             "component_master_id": component.master_id.id,
-            "component_part_master_id": component.part_master.id.id
+            "component_part_master_id": component.part_master.id.id,
         }
 
     @protect_grpc
