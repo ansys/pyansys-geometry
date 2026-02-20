@@ -48,6 +48,7 @@ from pyvista.plotting.tools import create_axes_marker
 import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
@@ -492,6 +493,8 @@ class GeometryPlotter(PlotterInterface):
         # Add the custom object to the plotter
         if isinstance(plottable_object, DesignPoint):
             self.add_design_point(plottable_object, **plotting_options)
+        elif isinstance(plottable_object, DatumPlane):
+            self.add_plane(plottable_object.value, **plotting_options)
         elif isinstance(plottable_object, Sketch):
             self.add_sketch(plottable_object, **plotting_options)
         elif isinstance(plottable_object, Surface):
