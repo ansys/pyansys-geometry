@@ -342,8 +342,13 @@ class NamedSelection:
 
         # Check to make sure NS will not be empty after removal
         total_members = (
-            len(self.bodies) + len(self.faces) + len(self.edges) + len(self.beams)
-            + len(self.design_points) + len(self.components) + len(self.vertices)
+            len(self.bodies)
+            + len(self.faces)
+            + len(self.edges)
+            + len(self.beams)
+            + len(self.design_points)
+            + len(self.components)
+            + len(self.vertices)
         )
         if len(members) >= total_members:
             raise GeometryRuntimeError("NamedSelection cannot be empty after removal.")

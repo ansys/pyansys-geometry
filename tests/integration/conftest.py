@@ -225,7 +225,7 @@ def use_service_colors():
 @pytest.fixture(scope="function")
 def fake_modeler_old_backend_242(modeler: Modeler):
     from ansys.geometry.core._grpc._version import GeometryApiProtos
-    
+
     currentbackend = modeler._grpc_client._backend_version
     currentservices = modeler._grpc_client._services
 
