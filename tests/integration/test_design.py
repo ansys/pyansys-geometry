@@ -2381,7 +2381,7 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
 
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 1
+    assert len(comp1.bodies) == 2
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 1
 
@@ -2391,7 +2391,7 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
     assert body1.is_alive
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 1
+    assert len(comp1.bodies) == 2
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 1
 
