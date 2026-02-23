@@ -318,6 +318,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/surface_bodies": "_static/thumbnails/quarter_sphere.png",
     "examples/03_modeling/design_parameters": "_static/thumbnails/block_with_parameters.png",
     "examples/03_modeling/chamfer": "_static/thumbnails/chamfer.png",
+    "examples/03_modeling/detach_faces": "_static/thumbnails/detach_faces.png",
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
     "examples/04_applied/03_ahmed_body_fluent": "_static/thumbnails/ahmed_body.png",

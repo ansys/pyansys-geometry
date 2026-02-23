@@ -22,6 +22,7 @@
 """Provides for creating and managing a cylinder."""
 
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
 import numpy as np
@@ -31,6 +32,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.line import Line
@@ -44,6 +46,9 @@ from ansys.geometry.core.shapes.parameterization import (
 from ansys.geometry.core.shapes.surfaces.surface import Surface
 from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
+
+if TYPE_CHECKING:
+    import pyvista as pv
 
 
 class Cylinder(Surface):
@@ -257,6 +262,31 @@ class Cylinder(Surface):
         v = Parameterization(ParamForm.OPEN, ParamType.LINEAR, Interval(-np.inf, np.inf))
 
         return (u, v)
+
+    @property
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
+        """Get the visualization polydata for the cylinder.
+
+        Returns
+        -------
+        pyvista.PolyData
+            Polydata for visualizing the cylinder.
+
+        Notes
+        -----
+        The cylinder is infinite by nature, so this visualization is just a finite
+        representation of the cylinder for visualization purposes. The height of the
+        visualized cylinder is arbitrarily set to 2 times the radius.
+        """
+        import pyvista as pv
+
+        return pv.Cylinder(
+            center=self.origin.flat,
+            direction=self.dir_z.flat,
+            radius=self.radius.m,
+            height=self.radius.m * 2,
+        )
 
     def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
         raise NotImplementedError("contains_param() is not implemented.")

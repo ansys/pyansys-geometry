@@ -49,6 +49,7 @@ from pathlib import Path
 import pytest
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._services._service import _GRPCServices
 from ansys.geometry.core.connection.backend import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import GeometryContainers, LocalDockerInstance
@@ -222,36 +223,54 @@ def use_service_colors():
 
 
 @pytest.fixture(scope="function")
-def use_grpc_client_old_backend(modeler: Modeler):
+def fake_modeler_old_backend_242(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
+    currentservices = modeler._grpc_client._services
+
     modeler._grpc_client._backend_version = (24, 2, 0)
+    modeler._grpc_client._services = _GRPCServices(
+        channel=modeler._grpc_client.channel, version="v0"
+    )
 
     yield  # This allows the test to run
 
     # Code here runs after the test, reverting the state
     modeler._grpc_client._backend_version = currentbackend
+    modeler._grpc_client._services = currentservices
 
 
 @pytest.fixture(scope="function")
 def fake_modeler_old_backend_251(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
+    currentservices = modeler._grpc_client._services
+
     modeler._grpc_client._backend_version = (25, 1, 0)
+    modeler._grpc_client._services = _GRPCServices(
+        channel=modeler._grpc_client.channel, version="v0"
+    )
 
     yield modeler
 
     # Code here runs after the test, reverting the state
     modeler._grpc_client._backend_version = currentbackend
+    modeler._grpc_client._services = currentservices
 
 
 @pytest.fixture(scope="function")
 def fake_modeler_old_backend_252(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
+    currentservices = modeler._grpc_client._services
+
     modeler._grpc_client._backend_version = (25, 2, 0)
+    modeler._grpc_client._services = _GRPCServices(
+        channel=modeler._grpc_client.channel, version="v0"
+    )
 
     yield modeler
 
     # Code here runs after the test, reverting the state
     modeler._grpc_client._backend_version = currentbackend
+    modeler._grpc_client._services = currentservices
 
 
 @pytest.fixture(scope="function")

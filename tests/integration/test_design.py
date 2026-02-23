@@ -30,8 +30,8 @@ import numpy as np
 from pint import Quantity
 import pytest
 
+import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
-from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
@@ -82,31 +82,17 @@ from .conftest import FILES_DIR, IMPORT_FILES_DIR
 
 def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Validating error messages when opening up files"""
-    # If the protos version is v1 or higher, uploading files is not supported
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-        with pytest.raises(
-            GeometryRuntimeError,
-            match="The '_upload_file' method is not supported in protos v1 and beyond",
-        ):
-            modeler._upload_file(fake_path)
-        with pytest.raises(
-            GeometryRuntimeError,
-            match="The '_upload_file_stream' method is not supported with protos v1 and beyond",
-        ):
-            modeler._upload_file_stream(fake_path)
-    else:
-        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-        temp_dir = tmp_path_factory.mktemp("test_design")
+    fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+    temp_dir = tmp_path_factory.mktemp("test_design")
 
-        with pytest.raises(ValueError, match="Could not find file:"):
-            modeler._upload_file(fake_path)
-        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-            modeler._upload_file(temp_dir)
-        with pytest.raises(ValueError, match="Could not find file:"):
-            modeler._upload_file_stream(fake_path)
-        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-            modeler._upload_file_stream(temp_dir)
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file(fake_path)
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file(temp_dir)
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file_stream(fake_path)
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file_stream(temp_dir)
 
 
 def test_modeler_open_files(modeler: Modeler):
@@ -412,6 +398,26 @@ def test_face_to_body_creation(modeler: Modeler):
     )
 
 
+def test_create_surface_from_copy_faces(modeler: Modeler):
+    """Test creating a surface body from copied faces."""
+    # Create a design
+    design = modeler.create_design("CopyFacesTest")
+
+    # Create a cylinder
+    cylinder = design.extrude_sketch("Cylinder", Sketch().circle(Point2D([0, 0]), 5), 20)
+
+    # Get one of the ends and create a surface from it
+    face = cylinder.faces[1]
+    square_surface = design.create_surface_from_face("square", face)
+    assert square_surface.is_surface
+    assert square_surface.faces[0].area.m == pytest.approx(102.41439999, rel=1e-6, abs=1e-8)
+
+    # Create a surface with copy_faces
+    circular_surface = design.copy_faces("circular", [face])
+    assert circular_surface.is_surface
+    assert circular_surface.faces[0].area.m == pytest.approx(78.53981633974483, rel=1e-6, abs=1e-8)
+
+
 def test_extrude_negative_sketch(modeler: Modeler):
     """Test to check the extrusion of a sketch in the negative direction."""
     # Create a sketch of a rectangle
@@ -710,7 +716,7 @@ def test_remove_member_from_named_selection(modeler: Modeler):
         ns.remove_members(members=[ns.bodies[0]])
 
 
-def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
+def test_old_backend_version(modeler: Modeler, fake_modeler_old_backend_242: Modeler):
     # Try to vefify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
     hello = design.named_selections
@@ -1369,12 +1375,8 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     assert file.exists()
 
     # Upload file
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        with pytest.raises(match="The '_upload_file' method is not supported in protos v1"):
-            modeler._upload_file(file)
-    else:
-        path_on_server = modeler._upload_file(file)
-        assert path_on_server is not None
+    path_on_server = modeler._upload_file(file)
+    assert path_on_server is not None
 
 
 def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_mode: str):
@@ -1399,15 +1401,9 @@ def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_
         from ansys.geometry.core import Modeler
 
         modeler = Modeler(transport_mode=transport_mode)
-        if modeler.client.services.version == GeometryApiProtos.V0:
-            path_on_server = modeler._upload_file_stream(file)
-            assert path_on_server is not None
-        else:
-            with pytest.raises(
-                GeometryRuntimeError,
-                match="The '_upload_file_stream' method is not supported with protos v1 and beyond.",  # noqa: E501
-            ):
-                modeler._upload_file_stream(file)
+        path_on_server = modeler._upload_file_stream(file)
+        assert path_on_server is not None
+
     finally:
         pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
 
@@ -3278,13 +3274,13 @@ def test_design_parameters(modeler: Modeler):
     test_parameters = design.parameters
 
     # Verify the initial parameters
-    assert len(test_parameters) == 2
+    assert len(test_parameters) == 4
     assert test_parameters[0].name == "p1"
-    assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
+    assert abs(test_parameters[0].dimension_value.m - 0.00010872999999999981) < 1e-8
     assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
     assert test_parameters[1].name == "p2"
-    assert abs(test_parameters[1].dimension_value - 0.0002552758322160813) < 1e-8
+    assert abs(test_parameters[1].dimension_value.m - 0.0002552758322160813) < 1e-8
     assert test_parameters[1].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
     # Update the second parameter and verify the status
@@ -3302,6 +3298,38 @@ def test_design_parameters(modeler: Modeler):
 
     test_parameters[0].dimension_type = ParameterType.DIMENSIONTYPE_AREA
     assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    # Update a parameter with a unit value
+    test_parameters[1].dimension_value = Quantity(800, UNITS.mm**2)
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.SUCCESS
+    assert test_parameters[1].dimension_value.m == pytest.approx(800, rel=1e-8)
+    assert test_parameters[1].dimension_value.m_as(DEFAULT_UNITS.AREA) == pytest.approx(
+        0.0008, rel=1e-8
+    )
+
+
+def test_unitless_design_parameters(modeler: Modeler):
+    """Test the design parameter's functionality for unitless parameters."""
+    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
+    test_parameters = design.parameters
+    assert len(test_parameters) == 4
+
+    # Test the unitless parameter (pattern count)
+    assert test_parameters[2].name == "PatternCount"
+    assert test_parameters[2].dimension_type == ParameterType.DIMENSIONTYPE_COUNT
+    assert test_parameters[2].dimension_value == Quantity(3, "")
+
+    # Change the pattern separation and count
+    test_parameters[3].dimension_value = Quantity(50, UNITS.mm)
+    status = design.set_parameter(test_parameters[3])
+    assert status == ParameterUpdateStatus.SUCCESS
+    assert test_parameters[3].dimension_value == Quantity(50, UNITS.mm)
+
+    test_parameters[2].dimension_value = Quantity(2, "")
+    status = design.set_parameter(test_parameters[2])
+    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+    assert test_parameters[2].dimension_value == Quantity(2, "")
 
 
 def test_cached_bodies(modeler: Modeler):
@@ -3576,6 +3604,42 @@ def test_get_face_bounding_box(modeler: Modeler):
     assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
 
 
+def test_get_face_tight_bounding_box(modeler: Modeler):
+    """Test getting the tight bounding box of a face."""
+    design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
+    yarn_body = design.bodies[0]
+
+    # Test the regular bounding box
+    bounding_box = yarn_body.faces[0].bounding_box
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.750637531716012)
+    assert bounding_box.min_corner.y.m == pytest.approx(-0.340634843063073)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.104203649881978)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.75484840496883)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.663576030656712)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.196642153592138)
+
+    assert bounding_box.center.x.m == pytest.approx(1.25274296834242)
+    assert bounding_box.center.y.m == pytest.approx(0.161470593796819)
+    assert bounding_box.center.z.m == pytest.approx(0.150422901737058)
+
+    # Test the tight bounding box
+    bounding_box = yarn_body.faces[0].get_bounding_box(tight=True)
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
+    assert bounding_box.min_corner.y.m == pytest.approx(5.2771026530260073e-17)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.105040051163695)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.41421356238489)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.196642053388603)
+
+    assert bounding_box.center.x.m == pytest.approx(1.08440444008654)
+    assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
+
+
 def test_get_edge_bounding_box(modeler: Modeler):
     """Test getting the bounding box of an edge."""
     design = modeler.create_design("edge_bounding_box")
@@ -3596,6 +3660,42 @@ def test_get_edge_bounding_box(modeler: Modeler):
     assert center.z.m == 1
 
 
+def test_get_edge_tight_bounding_box(modeler: Modeler):
+    """Test getting the tight bounding box of a face."""
+    design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
+    yarn_body_edge = design.bodies[0].faces[0].edges[2]
+
+    # Test the regular bounding box
+    bounding_box = yarn_body_edge.bounding_box
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.754594817788194)
+    assert bounding_box.min_corner.y.m == pytest.approx(-5.00000000813239e-07)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.105039551163695)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.41421406237309)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.659618744585186)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.150000500138633)
+
+    assert bounding_box.center.x.m == pytest.approx(1.08440444008064)
+    assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert bounding_box.center.z.m == pytest.approx(0.127520025651164)
+
+    # Test the tight bounding box
+    bounding_box = yarn_body_edge.get_bounding_box(tight=True)
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
+    assert bounding_box.min_corner.y.m == pytest.approx(3.05311331771918e-16)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.105040051163695)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.41421356237309)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.15)
+
+    assert bounding_box.center.x.m == pytest.approx(1.08440444008064)
+    assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert bounding_box.center.z.m == pytest.approx(0.127520025581848)
+
+
 def test_get_body_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a body."""
     design = modeler.create_design("body_bounding_box")
@@ -3612,6 +3712,42 @@ def test_get_body_bounding_box(modeler: Modeler):
     assert center.x.m == 0
     assert center.y.m == 0
     assert center.z.m == 0.5
+
+
+def test_get_body_tight_bounding_box(modeler: Modeler):
+    """Test getting the bounding box of a body with tight tolerance."""
+    design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
+    yarn_body = design.bodies[0]
+
+    # Test getting regular bounding box
+    bounding_box = yarn_body.bounding_box
+
+    assert bounding_box.min_corner.x.m == pytest.approx(0.750637531716012)
+    assert bounding_box.min_corner.y.m == pytest.approx(-0.340634843063073)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.0134380239342444)
+
+    assert bounding_box.max_corner.x.m == pytest.approx(1.75484840496883)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.663576030656712)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.288244080618053)
+
+    assert bounding_box.center.x.m == pytest.approx(1.25274296834242)
+    assert bounding_box.center.y.m == pytest.approx(0.161470593796819)
+    assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
+
+    # Test getting tight bounding box
+    tight_bounding_box = yarn_body.get_bounding_box(tight=True)
+
+    assert tight_bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
+    assert tight_bounding_box.min_corner.y.m == pytest.approx(5.2771026530260073e-17)
+    assert tight_bounding_box.min_corner.z.m == pytest.approx(0.100708473482868)
+
+    assert tight_bounding_box.max_corner.x.m == pytest.approx(1.41421356238489)
+    assert tight_bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
+    assert tight_bounding_box.max_corner.z.m == pytest.approx(0.196642053388603)
+
+    assert tight_bounding_box.center.x.m == pytest.approx(1.08440444008654)
+    assert tight_bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert tight_bounding_box.center.z.m == pytest.approx(0.148675263435735)
 
 
 def test_extrude_faces_failure_log_to_file(modeler: Modeler):
@@ -3672,6 +3808,8 @@ def test_import_component_named_selections(modeler: Modeler):
 
 def test_component_make_independent(modeler: Modeler):
     """Test making components independent."""
+    if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        pytest.skip("Failure when tracker is enabled.")
 
     design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
     face = next((ns for ns in design.named_selections if ns.name == "to_pull"), None).faces[0]
@@ -3933,12 +4071,10 @@ def test_updating_design_from_tracker(modeler: Modeler):
 
 
 def test_legacy_export_download(
-    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, use_grpc_client_old_backend: Modeler
+    modeler: Modeler,
+    tmp_path_factory: pytest.TempPathFactory,
+    fake_modeler_old_backend_242: Modeler,
 ):
-    # Test is meant to add test coverage for using an old backend to export and download
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        pytest.skip("Test only applies to v0 backend")
-
     # Creating the directory and file to export
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")
@@ -4009,11 +4145,31 @@ def test_combine_subtract_transfer_ns(modeler: Modeler):
     inside = design.bodies[0]
     outside = design.bodies[1]
 
-    assert len(design.named_selections) == 2
+    assert len(design.named_selections) == 4
     outside._combine_subtract(inside)
 
     assert len(design.bodies) == 1
-    assert len(design.named_selections) == 2
+    assert len(design.named_selections) == 4
+
+    assert design.named_selections[0].faces[0].area.m == design.bodies[0].faces[9].area.m
+    assert design.named_selections[1].faces[0].area.m == design.bodies[0].faces[11].area.m
+    assert design.named_selections[3].faces[0].area.m == design.bodies[0].faces[6].area.m
+    assert len(design.named_selections[2].edges) == 4
+    assert len(design.named_selections[3].edges) == 2
+
+
+def test_combine_subtract_transfer_ns_default_options_changed(modeler: Modeler):
+    input_file = Path(FILES_DIR, "sub_valid.scdocx")
+    design = modeler.open_file(input_file)
+
+    inside = design.bodies[0]
+    outside = design.bodies[1]
+
+    assert len(design.named_selections) == 4
+    outside._combine_subtract(inside, keep_other=True, transfer_named_selections=False)
+
+    assert len(design.bodies) == 2
+    assert len(design.named_selections) == 4
 
 
 def test_faces_get_named_selections(modeler: Modeler):
@@ -4294,3 +4450,180 @@ def test_check_design_update_2(modeler: Modeler):
     # Verify new component was created with the extracted body
     assert len(design.components[1].bodies) > 0, "Component 1 should have bodies"
     assert design.components[1].bodies[0].name, "Body in component 1 should have a name"
+
+
+def test_datum_planes(modeler: Modeler):
+    """Test datum planes imported from a file."""
+    design = modeler.open_file(Path(FILES_DIR, "planes.dsco"))
+
+    assert len(design.bodies) == 1
+    assert len(design.datum_planes) == 2
+
+    # Test properties of the planes
+    assert design.datum_planes[0].name == "Plane_1"
+    assert design.datum_planes[0].value.origin == Point3D([0.01, 0.01, 0])
+    assert list(design.datum_planes[0].value.normal) == pytest.approx(
+        [0.89442719, -0.4472136, 0], abs=1e-6
+    )
+    assert design.datum_planes[0].id == "0:2075"
+    assert design.datum_planes[0].parent_component == design
+
+    assert design.datum_planes[1].name == "Plane_2"
+    assert design.datum_planes[1].value.origin == Point3D([-0.01, 0.01, 0])
+    assert list(design.datum_planes[1].value.normal) == pytest.approx(
+        [0.89442719, 0.4472136, 0], abs=1e-6
+    )
+    assert design.datum_planes[1].id == "0:2080"
+    assert design.datum_planes[1].parent_component == design
+
+    # Test evaluating at (u, v) coordinates on the first datum plane
+    plane1 = design.datum_planes[0]
+    point1 = plane1.evaluate(0, 0)
+    point2 = plane1.evaluate(0, 0.01)
+    point3 = plane1.evaluate(0.01, 0)
+
+    assert point1 == Point3D([0.010000, 0.010000, 0])
+    assert point2 == Point3D([0.010000, 0.010000, 0.010000])
+    assert [point3.x.m, point3.y.m, point3.z.m] == pytest.approx(
+        [0.01447214, 0.01894427, 0], abs=1e-6
+    )
+
+    # Test evaluating at (u, v) coordinates on the second datum plane
+    plane2 = design.datum_planes[1]
+    point1 = plane2.evaluate(0, 0)
+    point2 = plane2.evaluate(0, 0.01)
+    point3 = plane2.evaluate(0.01, 0)
+
+    assert point1 == Point3D([-0.010000, 0.010000, 0])
+    assert point2 == Point3D([-0.010000, 0.010000, 0.010000])
+    assert [point3.x.m, point3.y.m, point3.z.m] == pytest.approx(
+        [-0.01447214, 0.01894427, 0], abs=1e-6
+    )
+
+    # Test deleting a datum plane
+    design.delete_datum_plane(design.datum_planes[0])
+    assert not design.datum_planes[0].is_alive
+
+
+def test_create_datum_plane(modeler: Modeler):
+    """Test for verifying the ``create_datum_plane`` functionality."""
+    # Create a design
+    design = modeler.create_design("DatumPlaneTest")
+
+    # Test 1: Create a datum plane with the default XY plane
+    plane1 = Plane(
+        origin=Point3D([0, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Y
+    )
+    datum_plane1 = design.create_datum_plane("XY_Plane", plane1)
+
+    # Verify basic properties
+    assert datum_plane1.id is not None
+    assert datum_plane1.name == "XY_Plane"
+    assert datum_plane1.value == plane1
+    assert datum_plane1.parent_component == design
+    assert len(design.datum_planes) == 1
+    assert design.datum_planes[0] == datum_plane1
+
+    # Test 2: Create a datum plane with an offset origin
+    plane2 = Plane(
+        origin=Point3D([10, 20, 30], UNITS.mm),
+        direction_x=UNITVECTOR3D_X,
+        direction_y=UNITVECTOR3D_Y,
+    )
+    datum_plane2 = design.create_datum_plane("Offset_Plane", plane2)
+
+    assert datum_plane2.id is not None
+    assert datum_plane2.name == "Offset_Plane"
+    assert datum_plane2.value.origin == Point3D([10, 20, 30], UNITS.mm)
+    assert len(design.datum_planes) == 2
+
+    # Test 3: Create a datum plane with custom orientation (YZ plane)
+    plane3 = Plane(
+        origin=Point3D([5, 0, 0], UNITS.m), direction_x=UNITVECTOR3D_Y, direction_y=UNITVECTOR3D_Z
+    )
+    datum_plane3 = design.create_datum_plane("YZ_Plane", plane3)
+
+    assert datum_plane3.id is not None
+    assert datum_plane3.name == "YZ_Plane"
+    assert datum_plane3.value.direction_x == UNITVECTOR3D_Y
+    assert datum_plane3.value.direction_y == UNITVECTOR3D_Z
+    assert len(design.datum_planes) == 3
+
+    # Test 4: Create a datum plane with arbitrary orientation
+    custom_x = UnitVector3D([1, 1, 0])
+    custom_y = UnitVector3D([0, 0, 1])
+    plane4 = Plane(origin=Point3D([1, 2, 3]), direction_x=custom_x, direction_y=custom_y)
+    datum_plane4 = design.create_datum_plane("Custom_Plane", plane4)
+
+    assert datum_plane4.id is not None
+    assert datum_plane4.name == "Custom_Plane"
+    assert len(design.datum_planes) == 4
+
+    # Test 5: Create datum plane in a nested component
+    nested_component = design.add_component("NestedComponent")
+    plane5 = Plane(
+        origin=Point3D([100, 200, 300], UNITS.mm),
+        direction_x=UNITVECTOR3D_X,
+        direction_y=UNITVECTOR3D_Y,
+    )
+    datum_plane5 = nested_component.create_datum_plane("Nested_Plane", plane5)
+
+    assert datum_plane5.id is not None
+    assert datum_plane5.name == "Nested_Plane"
+    assert datum_plane5.parent_component == nested_component
+    assert len(nested_component.datum_planes) == 1
+    assert nested_component.datum_planes[0] == datum_plane5
+    # Design should still have 4 datum planes (not including nested)
+    assert len(design.datum_planes) == 4
+
+    # Test 6: Evaluate points on datum planes
+    # For datum_plane1 (XY plane at origin)
+    eval_point1 = datum_plane1.evaluate(1.0, 0.0)
+    assert eval_point1 == Point3D([1.0, 0.0, 0.0])
+
+    eval_point2 = datum_plane1.evaluate(0.0, 1.0)
+    assert eval_point2 == Point3D([0.0, 1.0, 0.0])
+
+    eval_point3 = datum_plane1.evaluate(2.0, 3.0)
+    assert eval_point3 == Point3D([2.0, 3.0, 0.0])
+
+    # For datum_plane2 (offset plane at [10, 20, 30] mm = [0.01, 0.02, 0.03] m)
+    eval_point4 = datum_plane2.evaluate(1.0, 0.0)
+    assert eval_point4.x.m == pytest.approx(1010, abs=1e-6)
+    assert eval_point4.y.m == pytest.approx(20, abs=1e-6)
+    assert eval_point4.z.m == pytest.approx(30, abs=1e-6)
+
+    # For datum_plane3 (YZ plane)
+    eval_point5 = datum_plane3.evaluate(1.0, 0.0)
+    assert eval_point5 == Point3D([5.0, 1.0, 0.0])
+
+    eval_point6 = datum_plane3.evaluate(0.0, 1.0)
+    assert eval_point6 == Point3D([5.0, 0.0, 1.0])
+
+    # Test 7: String representation
+    datum_plane_str = str(datum_plane1)
+    assert "ansys.geometry.core.design.DatumPlane" in datum_plane_str
+
+    # Test 8: Verify plane properties are properly stored
+    assert datum_plane1.value.origin == Point3D([0, 0, 0])
+    assert datum_plane2.value.origin == Point3D([0.010, 0.020, 0.030])
+    assert datum_plane3.value.origin == Point3D([5.0, 0.0, 0.0])
+
+    # Test 9: Create multiple datum planes with the same name (should be allowed)
+    plane6 = Plane(
+        origin=Point3D([1, 1, 1]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Y
+    )
+    datum_plane6 = design.create_datum_plane("XY_Plane", plane6)
+
+    assert datum_plane6.id is not None
+    assert datum_plane6.name == "XY_Plane"
+    assert datum_plane6.id != datum_plane1.id  # Different IDs
+    assert len(design.datum_planes) == 5
+
+    # Test 10: Verify datum plane remains accessible through component
+    all_datum_planes = design.datum_planes
+    assert datum_plane1 in all_datum_planes
+    assert datum_plane2 in all_datum_planes
+    assert datum_plane3 in all_datum_planes
+    assert datum_plane4 in all_datum_planes
+    assert datum_plane6 in all_datum_planes

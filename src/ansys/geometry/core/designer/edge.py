@@ -233,6 +233,20 @@ class Edge:
             response.get("min_corner"), response.get("max_corner"), response.get("center")
         )
 
+    @min_backend_version(27, 1, 0)
+    def get_bounding_box(self, tight: bool = False) -> BoundingBox:
+        """Get the tight bounding box for the face.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Getting tight bounding box for {self.id}.")
+        response = self._grpc_client.services.edges.get_bounding_box(id=self.id, tight=tight)
+        return BoundingBox(
+            response.get("min_corner"), response.get("max_corner"), response.get("center")
+        )
+
     def get_named_selections(self) -> list["NamedSelection"]:
         """Get named selections associated with the edge.
 

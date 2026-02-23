@@ -401,6 +401,25 @@ def from_plane_to_grpc_plane(plane: "Plane") -> GRPCPlane:
     )
 
 
+def from_grpc_plane_to_plane(plane: GRPCPlane) -> "Plane":
+    """Convert a plane gRPC message to a ``Plane`` class.
+
+    Parameters
+    ----------
+    plane : GRPCPlane
+        Source plane data.
+
+    Returns
+    -------
+    Plane
+        Converted plane.
+    """
+    from ansys.geometry.core.math.plane import Plane
+
+    frame = from_grpc_frame_to_frame(plane.frame)
+    return Plane(frame.origin, frame.direction_x, frame.direction_y)
+
+
 @graphics_required
 def from_grpc_tess_to_pd(tess: GRPCTessellation) -> "pv.PolyData":
     """Convert a ``Tessellation`` to ``pyvista.PolyData``."""
@@ -457,11 +476,13 @@ def from_tess_options_to_grpc_tess_options(
     GRPCTessellationOptions
         Geometry service gRPC tessellation options message.
     """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
     return GRPCTessellationOptions(
-        surface_deviation=options.surface_deviation,
-        angle_deviation=options.angle_deviation,
+        surface_deviation=options.surface_deviation.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        angle_deviation=options.angle_deviation.value.m_as(DEFAULT_UNITS.SERVER_ANGLE),
         maximum_aspect_ratio=options.max_aspect_ratio,
-        maximum_edge_length=options.max_edge_length,
+        maximum_edge_length=options.max_edge_length.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         watertight=options.watertight,
     )
 
@@ -889,6 +910,50 @@ def from_nurbs_surface_to_grpc_nurbs_surface(surface: "NURBSSurface") -> GRPCNur
     )
 
 
+def from_grpc_nurbs_surface_to_nurbs_surface(surface: GRPCNurbsSurface) -> "NURBSSurface":
+    """Convert a v0 NURBS surface gRPC message to a ``NURBSSurface``.
+
+    Parameters
+    ----------
+    surface : GRPCNurbsSurface
+        Geometry service gRPC NURBS surface message.
+
+    Returns
+    -------
+    NURBSSurface
+        Resulting converted NURBS surface.
+    """
+    from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
+
+    # Extract control points
+    control_points = [from_grpc_point_to_point3d(cp.position) for cp in surface.control_points]
+
+    # Extract weights
+    weights = [cp.weight for cp in surface.control_points]
+
+    # Extract degree
+    degree_u = surface.nurbs_data_u.degree
+    degree_v = surface.nurbs_data_v.degree
+
+    # Convert gRPC knots to full knot vector
+    knots_u = []
+    for grpc_knot in surface.nurbs_data_u.knots:
+        knots_u.extend([grpc_knot.parameter] * grpc_knot.multiplicity)
+    knots_v = []
+    for grpc_knot in surface.nurbs_data_v.knots:
+        knots_v.extend([grpc_knot.parameter] * grpc_knot.multiplicity)
+
+    # Create and return the NURBS surface
+    return NURBSSurface.from_control_points(
+        control_points=control_points,
+        degree_u=degree_u,
+        degree_v=degree_v,
+        knots_u=knots_u,
+        knots_v=knots_v,
+        weights=weights,
+    )
+
+
 def from_grpc_nurbs_curve_to_nurbs_curve(curve: GRPCNurbsCurve) -> "NURBSCurve":
     """Convert a NURBS curve gRPC message to a ``NURBSCurve``.
 
@@ -1142,6 +1207,8 @@ def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceTyp
         result = Torus(origin, surface.major_radius, surface.minor_radius, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_PLANE:
         result = PlaneSurface(origin, reference, axis)
+    elif surface_type == SurfaceType.SURFACETYPE_NURBS:
+        result = from_grpc_nurbs_surface_to_nurbs_surface(surface.nurbs_surface)
     else:
         result = None
     return result
@@ -1227,11 +1294,17 @@ def from_driving_dimension_to_grpc_driving_dimension(
     GRPCDrivingDimension
         Converted driving dimension.
     """
+    from ansys.geometry.core.parameters.parameter import Parameter
+
+    value = Parameter.convert_quantity_to_server_units(
+        driving_dimension.dimension_value, driving_dimension.dimension_type
+    )
+
     return GRPCDrivingDimension(
         id=driving_dimension.id,
         name=driving_dimension.name,
         dimension_type=driving_dimension.dimension_type.value,
-        dimension_value=driving_dimension.dimension_value,
+        dimension_value=value,
     )
 
 

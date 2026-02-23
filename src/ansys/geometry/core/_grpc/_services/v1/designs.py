@@ -32,6 +32,7 @@ from .conversions import (
     from_grpc_frame_to_frame,
     from_grpc_material_to_material,
     from_grpc_matrix_to_matrix,
+    from_grpc_plane_to_plane,
     from_grpc_point_to_point3d,
 )
 
@@ -163,7 +164,10 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
 
     @protect_grpc
     def put_active(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.put_active' is not "
+            "implemented in this protofile version."
+        )
 
     @protect_grpc
     def save_as(self, **kwargs) -> dict:  # noqa: D102
@@ -224,11 +228,17 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
 
     @protect_grpc
     def upload_file(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.upload_file' is not "
+            "implemented in this protofile version."
+        )
 
     @protect_grpc
     def upload_file_stream(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.upload_file_stream' is not "
+            "implemented in this protofile version."
+        )
 
     @protect_grpc
     def stream_design_tessellation(self, **kwargs) -> dict:  # noqa: D102
@@ -274,7 +284,16 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
 
     @protect_grpc
     def download_file(self, **kwargs) -> dict:  # noqa: D102
-        return self.save_as(**kwargs)
+        # This method is only accessed by __export_and_download_legacy,
+        # which is only used for older versions of the server. Since this class
+        # is only used for v1 of the protofiles, this method will not be implemented
+        # here. If this method is called, it means there is a mismatch between the server
+        # version and the protofiles version being used, and an error should be raised to
+        # alert the user of this mismatch.
+        raise NotImplementedError(  # pragma: no cover
+            f"Method '{self.__class__.__name__}.download_file' is not "
+            "implemented in this protofile version."
+        )
 
     def _serialize_assembly_response(self, response):
         def serialize_body(body):
@@ -431,6 +450,14 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
                 "parent_id": design_point.parent_id.id,
             }
 
+        def serialize_datum_plane(datum_plane):
+            return {
+                "id": datum_plane.id.id,
+                "name": datum_plane.name,
+                "plane": from_grpc_plane_to_plane(datum_plane.plane),
+                "parent_id": datum_plane.parent_id.id,
+            }
+
         parts = getattr(response, "parts", [])
         transformed_parts = getattr(response, "transformed_parts", [])
         bodies = getattr(response, "bodies", [])
@@ -441,6 +468,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         component_shared_topologies = getattr(response, "component_shared_topologies", [])
         beams = getattr(response, "beams", [])
         design_points = getattr(response, "design_points", [])
+        datum_planes = getattr(response, "datum_planes", [])
         return {
             "parts": [serialize_part(part) for part in parts] if len(parts) > 0 else [],
             "transformed_parts": [serialize_transformed_part(tp) for tp in transformed_parts],
@@ -456,4 +484,5 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             ),
             "beams": [serialize_beam(beam) for beam in beams],
             "design_points": [serialize_design_point(dp) for dp in design_points],
+            "datum_planes": [serialize_datum_plane(dp) for dp in datum_planes],
         }
