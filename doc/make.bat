@@ -50,7 +50,7 @@ goto end
 %SPHINXBUILD% -M latex %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 cd "%BUILDDIR%\latex"
 for %%f in (*.tex) do (
-pdflatex "%%f" --interaction=nonstopmode)
+lualatex --interaction=nonstopmode "%%f")
 if NOT EXIST ansys-geometry-core.pdf (
 	Echo "no pdf generated!"
 	exit /b 1)
