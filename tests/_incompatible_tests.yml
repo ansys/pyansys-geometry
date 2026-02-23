@@ -87,6 +87,7 @@ backends:
       - tests/integration/test_design.py::test_vertices
       - tests/integration/test_design.py::test_components_get_named_selections
       - tests/integration/test_design.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_add_member_to_imported_named_selection
       # Bounding box center is only available from 25R2 onwards
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
