@@ -82,7 +82,9 @@ def test_unite_interval():
     interval1 = Interval(0, 5)
     interval2 = Interval(1, 3)
 
-    assert interval1.__eq__(4) == NotImplemented
+    with pytest.raises(TypeError, match="Cannot compare Interval with int"):
+        interval1.__eq__(4)
+
     assert not interval1.__eq__(interval2)
     assert interval2.__eq__(interval2)
 
