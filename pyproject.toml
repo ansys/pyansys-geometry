@@ -103,14 +103,14 @@ general-all = [
   "pint==0.25.2",
   "protobuf==6.33.5",
   "pygltflib==1.16.5",
-  "pyvista[jupyter]==0.46.5",
+  "pyvista[jupyter]==0.47.1",
   "requests==2.32.5",
   "scipy==1.15.3; python_version<'3.11'",
   "scipy==1.16.3; python_version>='3.11'",
   "semver==3.0.4",
   "six==1.17.0",
   "trame-vtk==2.10.2",
-  "vtk==9.5.2",
+  "vtk==9.6.0",
 ]
 tests = [
   { include-group = "general-all" },
