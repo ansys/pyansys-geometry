@@ -71,7 +71,8 @@ backends:
       - tests/integration/test_design.py::test_get_face_tight_bounding_box
       - tests/integration/test_design.py::test_get_edge_tight_bounding_box
       - tests/integration/test_design.py::test_get_body_tight_bounding_box
-      - tests/integration/test_design.py::test_datum_planes - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
+      - tests/integration/test_design.py::test_datum_planes
+      - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -206,7 +207,8 @@ backends:
       - tests/integration/test_design.py::test_get_face_tight_bounding_box
       - tests/integration/test_design.py::test_get_edge_tight_bounding_box
       - tests/integration/test_design.py::test_get_body_tight_bounding_box
-      - tests/integration/test_design.py::test_datum_planes - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
+      - tests/integration/test_design.py::test_datum_planes
+      - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
