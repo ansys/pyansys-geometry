@@ -268,8 +268,7 @@ def fake_modeler_old_backend_251(modeler: Modeler):
 @pytest.fixture(scope="function")
 def fake_modeler_old_backend_252(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
-    currentservices = modeler._grpc_client._services\
-
+    currentservices = modeler._grpc_client._services
     # Check if server supports v0 protocol
     if not GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
         pytest.skip("Server does not support v0 protocol needed for this test")
