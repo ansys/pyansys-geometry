@@ -4211,7 +4211,8 @@ def test_combine_subtract_transfer_ns(modeler: Modeler):
 
 
 def test_combine_subtract_transfer_ns_default_options_changed(modeler: Modeler):
-    """Testing the transfer of named selection during an intersect with default options overridden"""
+    """Testing the transfer of named selection during an
+    intersect with default options overridden"""
     input_file = Path(FILES_DIR, "sub_valid.scdocx")
     design = modeler.open_file(input_file)
     # Confirm the number of named selection then subtract
