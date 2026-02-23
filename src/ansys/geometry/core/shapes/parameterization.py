@@ -171,7 +171,7 @@ class Interval:
         """Compare two intervals."""
         if not isinstance(other, Interval):
             # don't attempt to compare against unrelated types
-            return NotImplemented
+            raise TypeError(f"Cannot compare Interval with {type(other).__name__}")
         return Accuracy.equal_doubles(self.start, other.start) and Accuracy.equal_doubles(
             self.end, other.end
         )

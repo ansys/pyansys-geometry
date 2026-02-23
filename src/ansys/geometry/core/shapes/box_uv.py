@@ -65,14 +65,14 @@ class BoxUV:
         """Check whether two BoxUV instances are equal."""
         if not isinstance(other, BoxUV):
             # don't attempt to compare against unrelated types
-            return NotImplemented
+            raise TypeError(f"Cannot compare BoxUV with {type(other).__name__}")
         return self.interval_u.__eq__(other.interval_u) and self.interval_v.__eq__(other.interval_v)
 
     def __ne__(self, other: object) -> bool:
         """Check whether two BoxUV instances are not equal."""
         if not isinstance(other, BoxUV):
             # don't attempt to compare against unrelated types
-            return NotImplemented
+            raise TypeError(f"Cannot compare BoxUV with {type(other).__name__}")
         return not self.interval_u.__eq__(other.interval_u) or not self.interval_v.__eq__(
             other.interval_v
         )
