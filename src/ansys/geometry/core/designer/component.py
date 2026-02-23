@@ -225,6 +225,8 @@ class Component:
                 self._instance_name = response.get("instance_name")
                 self._template = response.get("template")
                 self._component = response.get("component")
+                self._component_master_id = response.get("component_master_id")
+                self._component_part_master_id = response.get("component_part_master_id")
             else:
                 self._name = name
                 self._id = None
@@ -249,7 +251,7 @@ class Component:
             if not master_component:
                 # Create new MasterComponent, but use template's Part
                 master = MasterComponent(
-                    uuid.uuid4(),
+                    self._component_master_id,
                     f"master_{name}",
                     template._master_component.part,
                     template._master_component.transform,
@@ -261,9 +263,14 @@ class Component:
 
         elif not read_existing_comp:
             # This is an independent Component - Create new Part and MasterComponent
-            p = Part(uuid.uuid4() if not self._template else self._template, f"p_{name}", [], [])
+            p = Part(
+                uuid.uuid4() if not self._component else self._component_part_master_id,
+                f"p_{name}",
+                [],
+                [],
+            )
             master = MasterComponent(
-                uuid.uuid4() if not self._template else self._component.master_id,
+                uuid.uuid4() if not self._component else self._component_master_id,
                 f"master_{name}",
                 p,
             )
@@ -2153,6 +2160,9 @@ class Component:
         """
         ids = [self.id, *[o.id for o in others or []]]
         self._grpc_client._services.components.make_independent(ids=ids)
+
+        design = get_design_from_component(self)
+        design._update_design_inplace()
 
     def get_named_selections(self) -> list["NamedSelection"]:
         """Get the named selections of the component.
