@@ -2303,6 +2303,11 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     copy3_sub = body3.copy(comp3, "Copy3_subtract")
     copy1_sub.subtract([copy2_sub, copy3_sub])
 
+    # Refresh stale variables - necessary in non-tracker mode
+    comp1 = design.components[0]
+    comp2 = design.components[1]
+    comp3 = design.components[2]
+
     assert not copy2_sub.is_alive
     assert not copy3_sub.is_alive
     assert body2.is_alive
@@ -2321,6 +2326,11 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     copy3_uni = body3.copy(comp3, "Copy3_unite")
     copy1_uni.unite([copy2_uni, copy3_uni])
 
+    # Refresh stale variables
+    comp1 = design.components[0]
+    comp2 = design.components[1]
+    comp3 = design.components[2]
+
     assert not copy2_uni.is_alive
     assert not copy3_uni.is_alive
     assert body2.is_alive
@@ -2338,6 +2348,11 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     copy2_int = body2.copy(comp2, "Copy2_intersect")
     copy3_int = body3.copy(comp3, "Copy3_intersect")  # Body 3 does not intersect them
     copy1_int.intersect([copy2_int])
+
+    # Refresh stale variables
+    comp1 = design.components[0]
+    comp2 = design.components[1]
+    comp3 = design.components[2]
 
     assert not copy2_int.is_alive
     assert copy3_int.is_alive
@@ -2372,18 +2387,18 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
 
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 1
-    assert len(comp2.bodies) == 1
-    assert len(comp3.bodies) == 1
+    assert len(design.components[0].bodies) == 1
+    assert len(design.components[1].bodies) == 1
+    assert len(design.components[2].bodies) == 1
 
     # ---- Verify unite operation ----
     body1.unite([body2, body3], keep_other=True)
 
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 2
-    assert len(comp2.bodies) == 1
-    assert len(comp3.bodies) == 1
+    assert len(design.components[0].bodies) == 2
+    assert len(design.components[1].bodies) == 1
+    assert len(design.components[2].bodies) == 1
 
     # ---- Verify intersect operation ----
     body1.intersect(body2, keep_other=True)
@@ -2391,9 +2406,9 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
     assert body1.is_alive
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 2
-    assert len(comp2.bodies) == 1
-    assert len(comp3.bodies) == 1
+    assert len(design.components[0].bodies) == 2
+    assert len(design.components[1].bodies) == 1
+    assert len(design.components[2].bodies) == 1
 
 
 def test_child_component_instances(modeler: Modeler):
