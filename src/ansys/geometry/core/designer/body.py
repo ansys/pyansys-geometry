@@ -1762,6 +1762,7 @@ class Body(IBody):
         self._grpc_client = template._grpc_client
 
     def __eq__(self, other) -> bool:
+        """Define equality based on unique ID."""
         return self._id == other._id if isinstance(other, Body) else False
 
     def reset_tessellation_cache(func):  # noqa: N805
@@ -2434,7 +2435,7 @@ class Body(IBody):
             parent_design._update_design_inplace()
         else:
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
-            # and update the parent design with the serialized response.            
+            # and update the parent design with the serialized response.
             parent_design._update_from_tracker(response["tracker_response"])
 
     def __repr__(self) -> str:
