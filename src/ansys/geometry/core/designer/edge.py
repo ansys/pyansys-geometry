@@ -90,7 +90,7 @@ class Edge:
         self._shape = None
 
     def __eq__(self, other) -> bool:
-        return self._id == other._id if isinstance(other, Edge) else False        
+        return self._id == other._id if isinstance(other, Edge) else False
 
     @property
     def id(self) -> str:
