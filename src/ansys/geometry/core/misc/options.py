@@ -24,7 +24,9 @@
 from dataclasses import asdict, dataclass
 
 from beartype import beartype as check_input_types
+from pint import Quantity
 
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.typing import Real
 
 
@@ -88,13 +90,15 @@ class TessellationOptions:
 
     Parameters
     ----------
-    surface_deviation : Real
+    surface_deviation : Distance | Quantity | Real
         The maximum deviation from the true surface position.
-    angle_deviation : Real
-        The maximum deviation from the true surface normal, in radians.
+        If a Real is provided, it is assumed to be in the default length unit.
+    angle_deviation : Angle | Quantity | Real
+        The maximum deviation from the true surface normal.
+        If a Real is provided, it is assumed to be in radians.
     max_aspect_ratio : Real, default=0.0
         The maximum aspect ratio of facets.
-    max_edge_length : Real, default=0.0
+    max_edge_length : Distance | Quantity | Real, default=0.0
         The maximum facet edge length.
     watertight : bool, default=False
         Whether triangles on opposite sides of an edge should match.
@@ -103,21 +107,30 @@ class TessellationOptions:
     @check_input_types
     def __init__(
         self,
-        surface_deviation: Real,
-        angle_deviation: Real,
+        surface_deviation: Distance | Quantity | Real,
+        angle_deviation: Angle | Quantity | Real,
         max_aspect_ratio: Real = 0.0,
-        max_edge_length: Real = 0.0,
+        max_edge_length: Distance | Quantity | Real = 0.0,
         watertight: bool = False,
     ):
         """Initialize ``TessellationOptions`` class."""
-        self._surface_deviation = surface_deviation
-        self._angle_deviation = angle_deviation
+        # Convert inputs to Distance and Angle objects
+        self._surface_deviation = (
+            surface_deviation
+            if isinstance(surface_deviation, Distance)
+            else Distance(surface_deviation)
+        )
+        self._angle_deviation = (
+            angle_deviation if isinstance(angle_deviation, Angle) else Angle(angle_deviation)
+        )
         self._max_aspect_ratio = max_aspect_ratio
-        self._max_edge_length = max_edge_length
+        self._max_edge_length = (
+            max_edge_length if isinstance(max_edge_length, Distance) else Distance(max_edge_length)
+        )
         self._watertight = watertight
 
     @property
-    def surface_deviation(self) -> Real:
+    def surface_deviation(self) -> Distance:
         """Surface Deviation.
 
         The maximum deviation from the true surface position.
@@ -125,10 +138,10 @@ class TessellationOptions:
         return self._surface_deviation
 
     @property
-    def angle_deviation(self) -> Real:
+    def angle_deviation(self) -> Angle:
         """Angle deviation.
 
-        The maximum deviation from the true surface normal, in radians.
+        The maximum deviation from the true surface normal.
         """
         return self._angle_deviation
 
@@ -141,7 +154,7 @@ class TessellationOptions:
         return self._max_aspect_ratio
 
     @property
-    def max_edge_length(self) -> Real:
+    def max_edge_length(self) -> Distance:
         """Maximum edge length.
 
         The maximum facet edge length.

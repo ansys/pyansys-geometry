@@ -68,3 +68,8 @@ class GRPCModelToolsService(ABC):  # pragma: no cover
     def create_sketch_line(self, **kwargs) -> dict:
         """Create a sketch line in the design."""
         pass
+
+    @abstractmethod
+    def detach_faces(self, **kwargs) -> dict:
+        """Detach faces from several bodies selection."""
+        pass

@@ -48,6 +48,7 @@ from ansys.geometry.core.misc.auxiliary import (
     DEFAULT_COLOR,
     convert_color_to_hex,
     convert_opacity_to_hex,
+    get_bodies_from_ids,
     get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
@@ -2316,6 +2317,39 @@ class Body(IBody):
     def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
         self._template.combine_merge(other)
 
+    @min_backend_version(27, 1, 0)
+    def detach_faces(self) -> list["Body"]:
+        """Detach all the faces from the body.
+
+        This method will result in the original body
+        becoming a surface body and a list of new surface bodies being created for every
+        detached face.
+
+        Returns
+        -------
+        list[Body]
+            Bodies created by the detach if any.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        response = self._grpc_client.services.model_tools.detach_faces(selections=[[self.id]])
+
+        parent_design = get_design_from_body(self)
+
+        if response.get("success"):
+            if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                parent_design._update_design_inplace()
+            else:
+                parent_design._update_from_tracker(response.get("tracked_response"))
+
+            result_bodies = response.get("created_bodies")
+            return get_bodies_from_ids(parent_design, result_bodies)
+        else:
+            self._grpc_client.log.info("Failed to detach faces.")
+            return []
+
     @min_backend_version(26, 1, 0)
     def _combine_subtract(  # noqa: D102
         self,
@@ -2390,13 +2424,14 @@ class Body(IBody):
             keep_other=keep_other,
         )
 
+        parent_design = get_design_from_body(self)
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             for b in grpc_other:
                 b.parent_component.delete_body(b)
+            parent_design._update_design_inplace()
         else:
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
-            parent_design = get_design_from_body(self)
             parent_design._update_from_tracker(response["tracker_response"])
 
     def __repr__(self) -> str:

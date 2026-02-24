@@ -47,7 +47,7 @@ def get_wheelhouse_assets_dictionary():
     """Auxiliary method to build the wheelhouse assets dictionary."""
     assets_context_os = ["Linux", "Windows", "MacOS"]
     assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
-    assets_context_python_versions = ["3.10", "3.11", "3.12", "3.13"]
+    assets_context_python_versions = ["3.10", "3.11", "3.12", "3.13", "3.14"]
     if get_version_match(__version__) == "dev":
         # Try to retrieve the content three times before failing
         content = None
@@ -208,7 +208,7 @@ extensions = [
 
 # Intersphinx mapping
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3.13", None),
+    "python": ("https://docs.python.org/3.14", None),
     "numpy": ("https://numpy.org/doc/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy", None),
     "pyvista": ("https://docs.pyvista.org", None),
@@ -318,6 +318,7 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/surface_bodies": "_static/thumbnails/quarter_sphere.png",
     "examples/03_modeling/design_parameters": "_static/thumbnails/block_with_parameters.png",
     "examples/03_modeling/chamfer": "_static/thumbnails/chamfer.png",
+    "examples/03_modeling/detach_faces": "_static/thumbnails/detach_faces.png",
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
     "examples/04_applied/03_ahmed_body_fluent": "_static/thumbnails/ahmed_body.png",
@@ -381,6 +382,12 @@ if switcher_version != "dev":
     linkcheck_ignore.append(
         f"https://github.com/ansys/pyansys-geometry/releases/tag/v{__version__}"
     )  # noqa: E501
+
+if get_version_match(__version__) == "dev":
+    # Python 3.14 WHEELHOUSES are not available yet
+    # When the next minor release comes - remove the following linkchecks
+    # Ignore wheelhouse download links for all platforms and Python versions
+    linkcheck_ignore.append(r"https://github.com/ansys/pyansys-geometry/releases/download/.*")
 
 # User agent
 user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.2420.81"  # noqa: E501
