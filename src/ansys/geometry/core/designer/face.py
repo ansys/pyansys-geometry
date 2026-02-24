@@ -184,6 +184,9 @@ class Face:
         self._shape = None
         self._color = None
 
+    def __eq__(self, other) -> bool:
+        return self._id == other._id if isinstance(other, Face) else False        
+
     @property
     def id(self) -> str:
         """Face ID."""

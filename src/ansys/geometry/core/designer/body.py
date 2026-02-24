@@ -1761,6 +1761,9 @@ class Body(IBody):
         self._template = template
         self._grpc_client = template._grpc_client
 
+    def __eq__(self, other) -> bool:
+        return self._id == other._id if isinstance(other, Body) else False
+
     def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``Body`` methods that require a tessellation cache update.
 
@@ -2428,7 +2431,7 @@ class Body(IBody):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             for b in grpc_other:
                 b.parent_component.delete_body(b)
-            parent_design._update_design_inplace()
+            #parent_design._update_design_inplace()
         else:
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
