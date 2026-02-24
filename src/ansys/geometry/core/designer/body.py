@@ -2434,8 +2434,7 @@ class Body(IBody):
             parent_design._update_design_inplace()
         else:
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
-            # and update the parent design with the serialized response.
-            
+            # and update the parent design with the serialized response.            
             parent_design._update_from_tracker(response["tracker_response"])
 
     def __repr__(self) -> str:
