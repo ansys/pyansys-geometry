@@ -32,6 +32,7 @@ import pytest
 
 import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
@@ -718,6 +719,11 @@ def test_remove_member_from_named_selection(modeler: Modeler):
 
 def test_old_backend_version(modeler: Modeler, fake_modeler_old_backend_242: Modeler):
     # Try to verify name selection using earlier backend version
+
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(fake_modeler_old_backend_242._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
+
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
     hello = design.named_selections
     assert hello[0].faces == []
@@ -4090,6 +4096,11 @@ def test_legacy_export_download(
     tmp_path_factory: pytest.TempPathFactory,
     fake_modeler_old_backend_242: Modeler,
 ):
+
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(fake_modeler_old_backend_242._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
+
     # Creating the directory and file to export
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")

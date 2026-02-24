@@ -25,6 +25,7 @@ import numpy as np
 import pytest
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.designer.component import SweepWithGuideData
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math import (
@@ -170,6 +171,11 @@ def test_create_body_from_loft_profile_with_guides(modeler: Modeler):
 
 def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler):
     """Test doing NURBS operations using an old backend."""
+
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(fake_modeler_old_backend_252._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
+
     design = fake_modeler_old_backend_252.create_design("ExtrudeNURBSSketchOldBackend")
 
     # Create the NURBS sketch, path, and surface needed for testing
@@ -275,6 +281,11 @@ def test_nurbs_operations_with_old_backend(fake_modeler_old_backend_252: Modeler
 
 def test_imprint_project_nurbs_old_backend(fake_modeler_old_backend_252: Modeler):
     """Test imprinting and projecting NURBS curves using an old backend."""
+
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(fake_modeler_old_backend_252._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
+
     design = fake_modeler_old_backend_252.create_design("ImprintNURBSCurvesOldBackend")
 
     # Create a body to imprint onto
@@ -378,6 +389,10 @@ def test_nurbs_surface_body_creation(modeler: Modeler):
 
 def test_nurbs_surface_body_creation_using_old_backend(fake_modeler_old_backend_251: Modeler):
     """Test not implemented surface body creation from NURBS surfaces using an old backend"""
+
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(fake_modeler_old_backend_251._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
     design = fake_modeler_old_backend_251.create_design("Design1")
 
     points = [
