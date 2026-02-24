@@ -677,6 +677,42 @@ def test_add_member_to_named_selection(modeler: Modeler):
     assert len(ns.faces) == 1
 
 
+def test_add_member_to_imported_named_selection(modeler: Modeler):
+    """Test for adding members to an imported ``NamedSelection``."""
+    input_file = Path(FILES_DIR, "sub_valid.scdocx")
+    design = modeler.open_file(input_file)
+    # Creating the new geometry entities to be added
+    ns = design.named_selections[1]
+    dp1 = design.add_design_point("dp1", Point3D([1, 0, 0]))
+    dp2 = design.add_design_point("dp2", Point3D([1, 0, 1]))
+    dp3 = design.add_design_point("dp3", Point3D([1, 0, 2]))
+    comp = design.add_component("comp1'")
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    be = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+    # Adding the new items to the named selection
+    ns.add_members(
+        bodies=[design.bodies[1]],
+        faces=[design.bodies[1].faces[4]],
+        design_points=[dp1, dp2, dp3],
+        edges=design.bodies[0].edges[2:5],
+        vertices=design.bodies[0].vertices[0:2],
+        components=[comp],
+        beams=[be],
+    )
+    # Confirming the new named selection
+    assert len(ns.bodies) == 1
+    assert len(ns.faces) == 2
+    assert len(ns.design_points) == 3
+    assert len(ns.edges) == 3
+    assert len(ns.vertices) == 2
+    assert len(ns.components) == 1
+    assert len(ns.beams) == 1
+
+
 def test_remove_member_from_named_selection(modeler: Modeler):
     """Test for removing members from a ``NamedSelection``."""
     # Creatae the design
@@ -716,8 +752,23 @@ def test_remove_member_from_named_selection(modeler: Modeler):
         ns.remove_members(members=[ns.bodies[0]])
 
 
+def test_remove_member_from_imported_named_selection(modeler: Modeler):
+    """Test for removing members from an imported ``NamedSelection``."""
+    input_file = Path(FILES_DIR, "NamedSelectionImport.scdocx")
+    design = modeler.open_file(input_file)
+    # Removing faces
+    design.named_selections[2].remove_members(design.named_selections[2].faces)
+    assert len(design.named_selections[2].faces) == 0
+    # Removing beams
+    design.named_selections[3].remove_members(design.named_selections[3].beams)
+    assert len(design.named_selections[3].beams) == 0
+    # Removing edges
+    design.named_selections[4].remove_members(design.named_selections[4].edges[0:2])
+    assert len(design.named_selections[4].edges) == 6
+
+
 def test_old_backend_version(modeler: Modeler, fake_modeler_old_backend_242: Modeler):
-    # Try to vefify name selection using earlier backend version
+    # Try to verify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
     hello = design.named_selections
     assert hello[0].faces == []
@@ -2303,6 +2354,11 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     copy3_sub = body3.copy(comp3, "Copy3_subtract")
     copy1_sub.subtract([copy2_sub, copy3_sub])
 
+    # Refresh stale variables - necessary in non-tracker mode
+    comp1 = design.components[0]
+    comp2 = design.components[1]
+    comp3 = design.components[2]
+
     assert not copy2_sub.is_alive
     assert not copy3_sub.is_alive
     assert body2.is_alive
@@ -2321,17 +2377,22 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     copy3_uni = body3.copy(comp3, "Copy3_unite")
     copy1_uni.unite([copy2_uni, copy3_uni])
 
+    # Refresh stale variables
+    comp1 = design.components[0]
+    comp2 = design.components[1]
+    comp3 = design.components[2]
+
     assert not copy2_uni.is_alive
     assert not copy3_uni.is_alive
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 2
+    assert len(comp1.bodies) == 3
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 1
 
     # Cleanup previous subtest
     comp1.delete_body(copy1_uni)
-    assert len(comp1.bodies) == 1
+    assert len(comp1.bodies) == 2
 
     ################# Check intersect operation #################
     copy1_int = body1.copy(comp1, "Copy1_intersect")
@@ -2339,18 +2400,23 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     copy3_int = body3.copy(comp3, "Copy3_intersect")  # Body 3 does not intersect them
     copy1_int.intersect([copy2_int])
 
+    # Refresh stale variables
+    comp1 = design.components[0]
+    comp2 = design.components[1]
+    comp3 = design.components[2]
+
     assert not copy2_int.is_alive
     assert copy3_int.is_alive
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 2
+    assert len(comp1.bodies) == 3
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 2
 
     # Cleanup previous subtest
     comp1.delete_body(copy1_int)
     comp3.delete_body(copy3_int)
-    assert len(comp1.bodies) == 1
+    assert len(comp1.bodies) == 2
     assert len(comp3.bodies) == 1
 
 
@@ -2372,18 +2438,18 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
 
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 1
-    assert len(comp2.bodies) == 1
-    assert len(comp3.bodies) == 1
+    assert len(design.components[0].bodies) == 1
+    assert len(design.components[1].bodies) == 1
+    assert len(design.components[2].bodies) == 1
 
     # ---- Verify unite operation ----
     body1.unite([body2, body3], keep_other=True)
 
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 1
-    assert len(comp2.bodies) == 1
-    assert len(comp3.bodies) == 1
+    assert len(design.components[0].bodies) == 2
+    assert len(design.components[1].bodies) == 1
+    assert len(design.components[2].bodies) == 1
 
     # ---- Verify intersect operation ----
     body1.intersect(body2, keep_other=True)
@@ -2391,9 +2457,9 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
     assert body1.is_alive
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 1
-    assert len(comp2.bodies) == 1
-    assert len(comp3.bodies) == 1
+    assert len(design.components[0].bodies) == 2
+    assert len(design.components[1].bodies) == 1
+    assert len(design.components[2].bodies) == 1
 
 
 def test_child_component_instances(modeler: Modeler):
@@ -4139,17 +4205,40 @@ def test_combine_merge(modeler: Modeler):
 
 
 def test_combine_subtract_transfer_ns(modeler: Modeler):
+    """Testing the transfer of named selection during an intersect"""
     input_file = Path(FILES_DIR, "sub_valid.scdocx")
     design = modeler.open_file(input_file)
 
     inside = design.bodies[0]
     outside = design.bodies[1]
-
-    assert len(design.named_selections) == 2
+    # Confirm the number of named selection then subtract
+    assert len(design.named_selections) == 4
     outside._combine_subtract(inside)
-
+    # Confirm the subtraction worked
     assert len(design.bodies) == 1
-    assert len(design.named_selections) == 2
+    assert len(design.named_selections) == 4
+    # Then confirm the named selections
+    assert design.named_selections[0].faces[0].area.m == design.bodies[0].faces[9].area.m
+    assert design.named_selections[1].faces[0].area.m == design.bodies[0].faces[11].area.m
+    assert design.named_selections[3].faces[0].area.m == design.bodies[0].faces[6].area.m
+    assert len(design.named_selections[2].edges) == 4
+    assert len(design.named_selections[3].edges) == 2
+
+
+def test_combine_subtract_transfer_ns_default_options_changed(modeler: Modeler):
+    """Testing the transfer of named selection during an
+    intersect with default options overridden"""
+    input_file = Path(FILES_DIR, "sub_valid.scdocx")
+    design = modeler.open_file(input_file)
+    # Confirm the number of named selection then subtract
+    inside = design.bodies[0]
+    outside = design.bodies[1]
+
+    assert len(design.named_selections) == 4
+    outside._combine_subtract(inside, keep_other=True, transfer_named_selections=False)
+    # Then confirm the named selections
+    assert len(design.bodies) == 2
+    assert len(design.named_selections) == 4
 
 
 def test_faces_get_named_selections(modeler: Modeler):
@@ -4430,3 +4519,180 @@ def test_check_design_update_2(modeler: Modeler):
     # Verify new component was created with the extracted body
     assert len(design.components[1].bodies) > 0, "Component 1 should have bodies"
     assert design.components[1].bodies[0].name, "Body in component 1 should have a name"
+
+
+def test_datum_planes(modeler: Modeler):
+    """Test datum planes imported from a file."""
+    design = modeler.open_file(Path(FILES_DIR, "planes.dsco"))
+
+    assert len(design.bodies) == 1
+    assert len(design.datum_planes) == 2
+
+    # Test properties of the planes
+    assert design.datum_planes[0].name == "Plane_1"
+    assert design.datum_planes[0].value.origin == Point3D([0.01, 0.01, 0])
+    assert list(design.datum_planes[0].value.normal) == pytest.approx(
+        [0.89442719, -0.4472136, 0], abs=1e-6
+    )
+    assert design.datum_planes[0].id == "0:2075"
+    assert design.datum_planes[0].parent_component == design
+
+    assert design.datum_planes[1].name == "Plane_2"
+    assert design.datum_planes[1].value.origin == Point3D([-0.01, 0.01, 0])
+    assert list(design.datum_planes[1].value.normal) == pytest.approx(
+        [0.89442719, 0.4472136, 0], abs=1e-6
+    )
+    assert design.datum_planes[1].id == "0:2080"
+    assert design.datum_planes[1].parent_component == design
+
+    # Test evaluating at (u, v) coordinates on the first datum plane
+    plane1 = design.datum_planes[0]
+    point1 = plane1.evaluate(0, 0)
+    point2 = plane1.evaluate(0, 0.01)
+    point3 = plane1.evaluate(0.01, 0)
+
+    assert point1 == Point3D([0.010000, 0.010000, 0])
+    assert point2 == Point3D([0.010000, 0.010000, 0.010000])
+    assert [point3.x.m, point3.y.m, point3.z.m] == pytest.approx(
+        [0.01447214, 0.01894427, 0], abs=1e-6
+    )
+
+    # Test evaluating at (u, v) coordinates on the second datum plane
+    plane2 = design.datum_planes[1]
+    point1 = plane2.evaluate(0, 0)
+    point2 = plane2.evaluate(0, 0.01)
+    point3 = plane2.evaluate(0.01, 0)
+
+    assert point1 == Point3D([-0.010000, 0.010000, 0])
+    assert point2 == Point3D([-0.010000, 0.010000, 0.010000])
+    assert [point3.x.m, point3.y.m, point3.z.m] == pytest.approx(
+        [-0.01447214, 0.01894427, 0], abs=1e-6
+    )
+
+    # Test deleting a datum plane
+    design.delete_datum_plane(design.datum_planes[0])
+    assert not design.datum_planes[0].is_alive
+
+
+def test_create_datum_plane(modeler: Modeler):
+    """Test for verifying the ``create_datum_plane`` functionality."""
+    # Create a design
+    design = modeler.create_design("DatumPlaneTest")
+
+    # Test 1: Create a datum plane with the default XY plane
+    plane1 = Plane(
+        origin=Point3D([0, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Y
+    )
+    datum_plane1 = design.create_datum_plane("XY_Plane", plane1)
+
+    # Verify basic properties
+    assert datum_plane1.id is not None
+    assert datum_plane1.name == "XY_Plane"
+    assert datum_plane1.value == plane1
+    assert datum_plane1.parent_component == design
+    assert len(design.datum_planes) == 1
+    assert design.datum_planes[0] == datum_plane1
+
+    # Test 2: Create a datum plane with an offset origin
+    plane2 = Plane(
+        origin=Point3D([10, 20, 30], UNITS.mm),
+        direction_x=UNITVECTOR3D_X,
+        direction_y=UNITVECTOR3D_Y,
+    )
+    datum_plane2 = design.create_datum_plane("Offset_Plane", plane2)
+
+    assert datum_plane2.id is not None
+    assert datum_plane2.name == "Offset_Plane"
+    assert datum_plane2.value.origin == Point3D([10, 20, 30], UNITS.mm)
+    assert len(design.datum_planes) == 2
+
+    # Test 3: Create a datum plane with custom orientation (YZ plane)
+    plane3 = Plane(
+        origin=Point3D([5, 0, 0], UNITS.m), direction_x=UNITVECTOR3D_Y, direction_y=UNITVECTOR3D_Z
+    )
+    datum_plane3 = design.create_datum_plane("YZ_Plane", plane3)
+
+    assert datum_plane3.id is not None
+    assert datum_plane3.name == "YZ_Plane"
+    assert datum_plane3.value.direction_x == UNITVECTOR3D_Y
+    assert datum_plane3.value.direction_y == UNITVECTOR3D_Z
+    assert len(design.datum_planes) == 3
+
+    # Test 4: Create a datum plane with arbitrary orientation
+    custom_x = UnitVector3D([1, 1, 0])
+    custom_y = UnitVector3D([0, 0, 1])
+    plane4 = Plane(origin=Point3D([1, 2, 3]), direction_x=custom_x, direction_y=custom_y)
+    datum_plane4 = design.create_datum_plane("Custom_Plane", plane4)
+
+    assert datum_plane4.id is not None
+    assert datum_plane4.name == "Custom_Plane"
+    assert len(design.datum_planes) == 4
+
+    # Test 5: Create datum plane in a nested component
+    nested_component = design.add_component("NestedComponent")
+    plane5 = Plane(
+        origin=Point3D([100, 200, 300], UNITS.mm),
+        direction_x=UNITVECTOR3D_X,
+        direction_y=UNITVECTOR3D_Y,
+    )
+    datum_plane5 = nested_component.create_datum_plane("Nested_Plane", plane5)
+
+    assert datum_plane5.id is not None
+    assert datum_plane5.name == "Nested_Plane"
+    assert datum_plane5.parent_component == nested_component
+    assert len(nested_component.datum_planes) == 1
+    assert nested_component.datum_planes[0] == datum_plane5
+    # Design should still have 4 datum planes (not including nested)
+    assert len(design.datum_planes) == 4
+
+    # Test 6: Evaluate points on datum planes
+    # For datum_plane1 (XY plane at origin)
+    eval_point1 = datum_plane1.evaluate(1.0, 0.0)
+    assert eval_point1 == Point3D([1.0, 0.0, 0.0])
+
+    eval_point2 = datum_plane1.evaluate(0.0, 1.0)
+    assert eval_point2 == Point3D([0.0, 1.0, 0.0])
+
+    eval_point3 = datum_plane1.evaluate(2.0, 3.0)
+    assert eval_point3 == Point3D([2.0, 3.0, 0.0])
+
+    # For datum_plane2 (offset plane at [10, 20, 30] mm = [0.01, 0.02, 0.03] m)
+    eval_point4 = datum_plane2.evaluate(1.0, 0.0)
+    assert eval_point4.x.m == pytest.approx(1010, abs=1e-6)
+    assert eval_point4.y.m == pytest.approx(20, abs=1e-6)
+    assert eval_point4.z.m == pytest.approx(30, abs=1e-6)
+
+    # For datum_plane3 (YZ plane)
+    eval_point5 = datum_plane3.evaluate(1.0, 0.0)
+    assert eval_point5 == Point3D([5.0, 1.0, 0.0])
+
+    eval_point6 = datum_plane3.evaluate(0.0, 1.0)
+    assert eval_point6 == Point3D([5.0, 0.0, 1.0])
+
+    # Test 7: String representation
+    datum_plane_str = str(datum_plane1)
+    assert "ansys.geometry.core.design.DatumPlane" in datum_plane_str
+
+    # Test 8: Verify plane properties are properly stored
+    assert datum_plane1.value.origin == Point3D([0, 0, 0])
+    assert datum_plane2.value.origin == Point3D([0.010, 0.020, 0.030])
+    assert datum_plane3.value.origin == Point3D([5.0, 0.0, 0.0])
+
+    # Test 9: Create multiple datum planes with the same name (should be allowed)
+    plane6 = Plane(
+        origin=Point3D([1, 1, 1]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Y
+    )
+    datum_plane6 = design.create_datum_plane("XY_Plane", plane6)
+
+    assert datum_plane6.id is not None
+    assert datum_plane6.name == "XY_Plane"
+    assert datum_plane6.id != datum_plane1.id  # Different IDs
+    assert len(design.datum_planes) == 5
+
+    # Test 10: Verify datum plane remains accessible through component
+    all_datum_planes = design.datum_planes
+    assert datum_plane1 in all_datum_planes
+    assert datum_plane2 in all_datum_planes
+    assert datum_plane3 in all_datum_planes
+    assert datum_plane4 in all_datum_planes
+    assert datum_plane6 in all_datum_planes

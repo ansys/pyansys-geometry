@@ -170,4 +170,7 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
 
     @protect_grpc
     def detach_faces(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.detach_faces' is not "
+            "implemented in this protofile version."
+        )
