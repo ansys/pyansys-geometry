@@ -2431,7 +2431,7 @@ class Body(IBody):
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             for b in grpc_other:
                 b.parent_component.delete_body(b)
-            #parent_design._update_design_inplace()
+            parent_design._update_design_inplace()
         else:
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
