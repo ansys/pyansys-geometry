@@ -677,6 +677,42 @@ def test_add_member_to_named_selection(modeler: Modeler):
     assert len(ns.faces) == 1
 
 
+def test_add_member_to_imported_named_selection(modeler: Modeler):
+    """Test for adding members to an imported ``NamedSelection``."""
+    input_file = Path(FILES_DIR, "sub_valid.scdocx")
+    design = modeler.open_file(input_file)
+    # Creating the new geometry entities to be added
+    ns = design.named_selections[1]
+    dp1 = design.add_design_point("dp1", Point3D([1, 0, 0]))
+    dp2 = design.add_design_point("dp2", Point3D([1, 0, 1]))
+    dp3 = design.add_design_point("dp3", Point3D([1, 0, 2]))
+    comp = design.add_component("comp1'")
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    be = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+    # Adding the new items to the named selection
+    ns.add_members(
+        bodies=[design.bodies[1]],
+        faces=[design.bodies[1].faces[4]],
+        design_points=[dp1, dp2, dp3],
+        edges=design.bodies[0].edges[2:5],
+        vertices=design.bodies[0].vertices[0:2],
+        components=[comp],
+        beams=[be],
+    )
+    # Confirming the new named selection
+    assert len(ns.bodies) == 1
+    assert len(ns.faces) == 2
+    assert len(ns.design_points) == 3
+    assert len(ns.edges) == 3
+    assert len(ns.vertices) == 2
+    assert len(ns.components) == 1
+    assert len(ns.beams) == 1
+
+
 def test_remove_member_from_named_selection(modeler: Modeler):
     """Test for removing members from a ``NamedSelection``."""
     # Creatae the design
@@ -714,6 +750,21 @@ def test_remove_member_from_named_selection(modeler: Modeler):
         match="NamedSelection cannot be empty after removal.",
     ):
         ns.remove_members(members=[ns.bodies[0]])
+
+
+def test_remove_member_from_imported_named_selection(modeler: Modeler):
+    """Test for removing members from an imported ``NamedSelection``."""
+    input_file = Path(FILES_DIR, "NamedSelectionImport.scdocx")
+    design = modeler.open_file(input_file)
+    # Removing faces
+    design.named_selections[2].remove_members(design.named_selections[2].faces)
+    assert len(design.named_selections[2].faces) == 0
+    # Removing beams
+    design.named_selections[3].remove_members(design.named_selections[3].beams)
+    assert len(design.named_selections[3].beams) == 0
+    # Removing edges
+    design.named_selections[4].remove_members(design.named_selections[4].edges[0:2])
+    assert len(design.named_selections[4].edges) == 6
 
 
 def test_old_backend_version(modeler: Modeler, fake_modeler_old_backend_242: Modeler):
@@ -4154,18 +4205,19 @@ def test_combine_merge(modeler: Modeler):
 
 
 def test_combine_subtract_transfer_ns(modeler: Modeler):
+    """Testing the transfer of named selection during an intersect"""
     input_file = Path(FILES_DIR, "sub_valid.scdocx")
     design = modeler.open_file(input_file)
 
     inside = design.bodies[0]
     outside = design.bodies[1]
-
+    # Confirm the number of named selection then subtract
     assert len(design.named_selections) == 4
     outside._combine_subtract(inside)
-
+    # Confirm the subtraction worked
     assert len(design.bodies) == 1
     assert len(design.named_selections) == 4
-
+    # Then confirm the named selections
     assert design.named_selections[0].faces[0].area.m == design.bodies[0].faces[9].area.m
     assert design.named_selections[1].faces[0].area.m == design.bodies[0].faces[11].area.m
     assert design.named_selections[3].faces[0].area.m == design.bodies[0].faces[6].area.m
@@ -4174,15 +4226,17 @@ def test_combine_subtract_transfer_ns(modeler: Modeler):
 
 
 def test_combine_subtract_transfer_ns_default_options_changed(modeler: Modeler):
+    """Testing the transfer of named selection during an
+    intersect with default options overridden"""
     input_file = Path(FILES_DIR, "sub_valid.scdocx")
     design = modeler.open_file(input_file)
-
+    # Confirm the number of named selection then subtract
     inside = design.bodies[0]
     outside = design.bodies[1]
 
     assert len(design.named_selections) == 4
     outside._combine_subtract(inside, keep_other=True, transfer_named_selections=False)
-
+    # Then confirm the named selections
     assert len(design.bodies) == 2
     assert len(design.named_selections) == 4
 
