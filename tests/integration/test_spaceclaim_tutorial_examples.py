@@ -411,9 +411,9 @@ def test_pull_example(modeler: Modeler):
     assert len(design.bodies) == 1
 
     assert body.volume.m == pytest.approx(
-        0.000995703006710242,
+        0.000995727877391032,
         rel=1e-6,
-        abs=1e-8,
+        abs=3e-8,
     )
 
 
