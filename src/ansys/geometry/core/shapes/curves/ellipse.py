@@ -22,6 +22,7 @@
 """Provides for creating and managing an ellipse."""
 
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
 import numpy as np
@@ -34,6 +35,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.misc.measurements import Distance
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import (
@@ -43,6 +45,9 @@ from ansys.geometry.core.shapes.parameterization import (
     ParamType,
 )
 from ansys.geometry.core.typing import Real, RealSequence
+
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
 
 
 class Ellipse(Curve):
@@ -300,6 +305,35 @@ class Ellipse(Curve):
 
     def contains_point(self, point: Point3D) -> bool:  # noqa: D102
         raise NotImplementedError("contains_point() is not implemented.")
+
+    @property
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
+        """VTK polydata representation for PyVista visualization.
+
+        Returns
+        -------
+        pyvista.PolyData
+            VTK pyvista.PolyData configuration.
+        """
+        import pyvista as pv
+
+        # Create an ellipse using pyvista
+        theta = np.linspace(0, 2 * np.pi, 100)
+        points = np.column_stack([
+            (self.origin[0] + self.major_radius.m * np.cos(theta) * self.dir_x[0] + self.minor_radius.m * np.sin(theta) * self.dir_y[0]),
+            (self.origin[1] + self.major_radius.m * np.cos(theta) * self.dir_x[1] + self.minor_radius.m * np.sin(theta) * self.dir_y[1]),
+            (self.origin[2] + self.major_radius.m * np.cos(theta) * self.dir_x[2] + self.minor_radius.m * np.sin(theta) * self.dir_y[2])
+        ])
+        
+        # Close the ellipse by connecting last point to first
+        lines = np.column_stack([
+            np.full(len(theta), 2),
+            np.arange(len(theta)),
+            np.roll(np.arange(len(theta)), -1)
+        ]).ravel()
+        
+        return pv.PolyData(points, lines=lines)
 
 
 class EllipseEvaluation(CurveEvaluation):

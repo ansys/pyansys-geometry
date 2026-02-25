@@ -22,6 +22,7 @@
 """Provides for creating and managing a circle."""
 
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
 import numpy as np
@@ -33,6 +34,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import Accuracy
 from ansys.geometry.core.misc.measurements import Distance
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import (
@@ -42,6 +44,9 @@ from ansys.geometry.core.shapes.parameterization import (
     ParamType,
 )
 from ansys.geometry.core.typing import Real, RealSequence
+
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
 
 
 class Circle(Curve):
@@ -242,6 +247,48 @@ class Circle(Curve):
 
     def contains_point(self, point: Point3D) -> bool:  # noqa: D102
         raise NotImplementedError("contains_point() is not implemented.")
+
+    @property
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
+        """VTK polydata representation for PyVista visualization.
+
+        Returns
+        -------
+        pyvista.PolyData
+            VTK pyvista.PolyData configuration.
+        """
+        import pyvista as pv
+
+        # Create parametric points for the circle
+        theta = np.linspace(0, 2 * np.pi, 100, endpoint=False)
+        x = self.radius.m * np.cos(theta)
+        y = self.radius.m * np.sin(theta)
+        z = np.zeros_like(theta)
+        
+        # Create points in circle's local coordinate system
+        points = np.column_stack([x, y, z])
+        
+        # Transform points to world coordinates
+        transformed_points = []
+        for pt in points:
+            world_pt = (
+                self.origin 
+                + pt[0] * self.dir_x 
+                + pt[1] * self.dir_y 
+                + pt[2] * self.dir_z
+            )
+            transformed_points.append([world_pt[0], world_pt[1], world_pt[2]])
+        
+        transformed_points = np.array(transformed_points)
+        
+        # Create line segments forming a closed loop
+        n_points = len(transformed_points)
+        lines = []
+        for i in range(n_points):
+            lines.extend([2, i, (i + 1) % n_points])
+        
+        return pv.PolyData(transformed_points, lines=lines)
 
 
 class CircleEvaluation(CurveEvaluation):
