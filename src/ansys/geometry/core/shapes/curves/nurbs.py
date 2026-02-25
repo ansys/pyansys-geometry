@@ -42,9 +42,8 @@ from ansys.geometry.core.shapes.parameterization import (
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
-    import pyvista as pv
-
     import geomdl.NURBS as geomdl_nurbs  # noqa: N811
+    import pyvista as pv
 
 
 class NURBSCurve(Curve):
@@ -314,16 +313,14 @@ class NURBSCurve(Curve):
         num_points = 100
         domain = self._nurbs_curve.domain
         params = np.linspace(domain[0], domain[1], num_points)
-        
+
         points = np.array([self._nurbs_curve.evaluate_single(u) for u in params])
-        
+
         # Create lines connecting the points
-        lines = np.column_stack([
-            np.full(num_points - 1, 2),
-            np.arange(num_points - 1),
-            np.arange(1, num_points)
-        ]).ravel()
-        
+        lines = np.column_stack(
+            [np.full(num_points - 1, 2), np.arange(num_points - 1), np.arange(1, num_points)]
+        ).ravel()
+
         return pv.PolyData(points, lines=lines)
 
     def project_point(

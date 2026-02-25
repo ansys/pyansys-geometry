@@ -215,7 +215,7 @@ class Line(Curve):
         # Create a line segment for visualization (from t=-10 to t=+10)
         start_point = (self.origin + (-10 * self.direction)).flat
         end_point = (self.origin + (10 * self.direction)).flat
-        
+
         return pv.Line(start_point, end_point)
 
 

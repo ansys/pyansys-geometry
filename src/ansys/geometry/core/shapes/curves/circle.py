@@ -33,8 +33,8 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import Accuracy
-from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import (
@@ -265,29 +265,24 @@ class Circle(Curve):
         x = self.radius.m * np.cos(theta)
         y = self.radius.m * np.sin(theta)
         z = np.zeros_like(theta)
-        
+
         # Create points in circle's local coordinate system
         points = np.column_stack([x, y, z])
-        
+
         # Transform points to world coordinates
         transformed_points = []
         for pt in points:
-            world_pt = (
-                self.origin 
-                + pt[0] * self.dir_x 
-                + pt[1] * self.dir_y 
-                + pt[2] * self.dir_z
-            )
+            world_pt = self.origin + pt[0] * self.dir_x + pt[1] * self.dir_y + pt[2] * self.dir_z
             transformed_points.append([world_pt[0], world_pt[1], world_pt[2]])
-        
+
         transformed_points = np.array(transformed_points)
-        
+
         # Create line segments forming a closed loop
         n_points = len(transformed_points)
         lines = []
         for i in range(n_points):
             lines.extend([2, i, (i + 1) % n_points])
-        
+
         return pv.PolyData(transformed_points, lines=lines)
 
 

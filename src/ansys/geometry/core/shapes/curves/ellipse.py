@@ -34,8 +34,8 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import Accuracy
-from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import (
@@ -320,19 +320,31 @@ class Ellipse(Curve):
 
         # Create an ellipse using pyvista
         theta = np.linspace(0, 2 * np.pi, 100)
-        points = np.column_stack([
-            (self.origin[0] + self.major_radius.m * np.cos(theta) * self.dir_x[0] + self.minor_radius.m * np.sin(theta) * self.dir_y[0]),
-            (self.origin[1] + self.major_radius.m * np.cos(theta) * self.dir_x[1] + self.minor_radius.m * np.sin(theta) * self.dir_y[1]),
-            (self.origin[2] + self.major_radius.m * np.cos(theta) * self.dir_x[2] + self.minor_radius.m * np.sin(theta) * self.dir_y[2])
-        ])
-        
+        points = np.column_stack(
+            [
+                (
+                    self.origin[0]
+                    + self.major_radius.m * np.cos(theta) * self.dir_x[0]
+                    + self.minor_radius.m * np.sin(theta) * self.dir_y[0]
+                ),
+                (
+                    self.origin[1]
+                    + self.major_radius.m * np.cos(theta) * self.dir_x[1]
+                    + self.minor_radius.m * np.sin(theta) * self.dir_y[1]
+                ),
+                (
+                    self.origin[2]
+                    + self.major_radius.m * np.cos(theta) * self.dir_x[2]
+                    + self.minor_radius.m * np.sin(theta) * self.dir_y[2]
+                ),
+            ]
+        )
+
         # Close the ellipse by connecting last point to first
-        lines = np.column_stack([
-            np.full(len(theta), 2),
-            np.arange(len(theta)),
-            np.roll(np.arange(len(theta)), -1)
-        ]).ravel()
-        
+        lines = np.column_stack(
+            [np.full(len(theta), 2), np.arange(len(theta)), np.roll(np.arange(len(theta)), -1)]
+        ).ravel()
+
         return pv.PolyData(points, lines=lines)
 
 
