@@ -16,6 +16,7 @@ with PyAnsys Geometry.
     examples/01_getting_started/03_sketching.mystnb
     examples/01_getting_started/04_modeling.mystnb
     examples/01_getting_started/05_plotter_picker.mystnb
+    examples/01_getting_started/06_curve_surface_plotting.mystnb
 
 Sketching examples
 ------------------
