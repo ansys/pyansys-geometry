@@ -729,3 +729,22 @@ def test_file_insert_import_named_selections_post_import(modeler: Modeler):
     assert set(actual_named_selections) == set(expected_named_selections), (
         f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."
     )
+
+
+def test_import_unsupported_filetype(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test that opening a file with an unsupported filetype raises an appropriate error."""
+    # Create a temporary file with an unsupported extension
+    temp_dir = tmp_path_factory.mktemp("test_unsupported")
+    unsupported_file = temp_dir / "test_file.unsupported"
+    
+    # Write some dummy content to the file
+    with unsupported_file.open(mode="w") as f:
+        f.write("This is a test file with an unsupported extension.")
+    
+    # Verify the file exists
+    assert unsupported_file.exists()
+    
+    # Attempt to open the file and expect an error
+    # The backend should raise an error for unsupported file types
+    with pytest.raises(match="File extension '.unsupported' is not supported. File: 'test_file.unsupported'"):
+        modeler.open_file(unsupported_file)
