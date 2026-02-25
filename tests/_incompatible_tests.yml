@@ -67,9 +67,12 @@ backends:
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_combine_subtract_transfer_ns_default_options_changed
       - tests/integration/test_design.py::test_get_face_tight_bounding_box
       - tests/integration/test_design.py::test_get_edge_tight_bounding_box
       - tests/integration/test_design.py::test_get_body_tight_bounding_box
+      - tests/integration/test_design.py::test_datum_planes
+      - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -84,6 +87,7 @@ backends:
       - tests/integration/test_design.py::test_vertices
       - tests/integration/test_design.py::test_components_get_named_selections
       - tests/integration/test_design.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_add_member_to_imported_named_selection
       # Bounding box center is only available from 25R2 onwards
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
@@ -203,9 +207,12 @@ backends:
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_combine_subtract_transfer_ns_default_options_changed
       - tests/integration/test_design.py::test_get_face_tight_bounding_box
       - tests/integration/test_design.py::test_get_edge_tight_bounding_box
       - tests/integration/test_design.py::test_get_body_tight_bounding_box
+      - tests/integration/test_design.py::test_datum_planes
+      - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -223,6 +230,7 @@ backends:
       - tests/integration/test_design.py::test_vertices
       - tests/integration/test_design.py::test_components_get_named_selections
       - tests/integration/test_design.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_add_member_to_imported_named_selection
       # Bounding box center is only available from 25R2 onwards
       - tests/integration/test_design.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
@@ -286,9 +294,12 @@ backends:
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_combine_subtract_transfer_ns_default_options_changed
       - tests/integration/test_design.py::test_get_face_tight_bounding_box
       - tests/integration/test_design.py::test_get_edge_tight_bounding_box
       - tests/integration/test_design.py::test_get_body_tight_bounding_box
+      - tests/integration/test_design.py::test_datum_planes
+      - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -306,6 +317,7 @@ backends:
       - tests/integration/test_design.py::test_vertices
       - tests/integration/test_design.py::test_components_get_named_selections
       - tests/integration/test_design.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_add_member_to_imported_named_selection
       # Potential problem in model/reading design for importing parameters
       - tests/integration/test_design.py::test_design_parameters
       - tests/integration/test_design.py::test_unitless_design_parameters
@@ -385,6 +397,7 @@ backends:
       - tests/integration/test_design.py::test_vertices
       - tests/integration/test_design.py::test_components_get_named_selections
       - tests/integration/test_design.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_add_member_to_imported_named_selection
       # Insert/Import file operations caused problems prior to 26.1
       - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
       - tests/integration/test_design_export.py::test_import_export_reimport_design_x_t

@@ -401,6 +401,25 @@ def from_plane_to_grpc_plane(plane: "Plane") -> GRPCPlane:
     )
 
 
+def from_grpc_plane_to_plane(plane: GRPCPlane) -> "Plane":
+    """Convert a plane gRPC message to a ``Plane`` class.
+
+    Parameters
+    ----------
+    plane : GRPCPlane
+        Source plane data.
+
+    Returns
+    -------
+    Plane
+        Converted plane.
+    """
+    from ansys.geometry.core.math.plane import Plane
+
+    frame = from_grpc_frame_to_frame(plane.frame)
+    return Plane(frame.origin, frame.direction_x, frame.direction_y)
+
+
 @graphics_required
 def from_grpc_tess_to_pd(tess: GRPCTessellation) -> "pv.PolyData":
     """Convert a ``Tessellation`` to ``pyvista.PolyData``."""
@@ -457,11 +476,13 @@ def from_tess_options_to_grpc_tess_options(
     GRPCTessellationOptions
         Geometry service gRPC tessellation options message.
     """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
     return GRPCTessellationOptions(
-        surface_deviation=options.surface_deviation,
-        angle_deviation=options.angle_deviation,
+        surface_deviation=options.surface_deviation.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        angle_deviation=options.angle_deviation.value.m_as(DEFAULT_UNITS.SERVER_ANGLE),
         maximum_aspect_ratio=options.max_aspect_ratio,
-        maximum_edge_length=options.max_edge_length,
+        maximum_edge_length=options.max_edge_length.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         watertight=options.watertight,
     )
 

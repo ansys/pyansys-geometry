@@ -13,15 +13,17 @@ repos:
         args:
           - "-formatter"
           - "max_line_length=120,retain_line_breaks=true,retain_line_breaks_single=true"
+          - "-exclude"
+          - ".codacy.yml"
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: v2.16.0
+    rev: v2.16.2
     hooks:
       - id: pyproject-fmt
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.1
+    rev: v0.15.2
     hooks:
       - id: ruff-check
       - id: ruff-format
