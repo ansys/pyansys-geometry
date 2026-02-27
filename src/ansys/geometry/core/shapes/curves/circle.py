@@ -260,7 +260,8 @@ class Circle(Curve):
 
         Warnings
         --------
-        This method uses a discretized circle constructed of line segments for visualization purposes.
+        This method uses a discretized circle constructed of line segments for visualization
+        purposes.
         """
         import pyvista as pv
 
