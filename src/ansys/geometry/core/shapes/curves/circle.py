@@ -257,6 +257,10 @@ class Circle(Curve):
         -------
         pyvista.PolyData
             VTK pyvista.PolyData configuration.
+
+        Warnings
+        --------
+        This method uses a discretized circle constructed of line segments for visualization purposes.
         """
         import pyvista as pv
 
