@@ -30,7 +30,12 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.sketch import Sketch
 
-from .conftest import DSCOSCRIPTS_FILES_DIR, skip_if_core_service, skip_if_no_geometry_service
+from .conftest import (
+    DSCOSCRIPTS_FILES_DIR,
+    skip_if_core_service,
+    skip_if_desktop_or_dms_geometry_service,
+    skip_if_no_geometry_service,
+)
 
 
 # Python (.py)
@@ -83,8 +88,8 @@ def test_python_integrated_script(modeler: Modeler):
 
     # Waiting for some more well thought system to tag tests against a backend, we skip this one
     # when the backend is Discovery
-    skip_if_no_geometry_service(
-        modeler, test_python_integrated_script.__name__, "design"
+    skip_if_desktop_or_dms_geometry_service(
+        modeler, test_python_integrated_script.__name__, "GetActiveDocument()"
     )  # Skip test on Discovery and SpaceClaim
 
     design = modeler.create_design("Integrated_Example")
