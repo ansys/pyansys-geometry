@@ -34,7 +34,6 @@ from .conftest import DSCOSCRIPTS_FILES_DIR, skip_if_core_service, skip_if_no_ge
 
 
 # Python (.py)
-# @pytest.mark.skip(reason="New failure to be investigated.")
 def test_python_simple_script(modeler: Modeler):
     result, _ = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.py")
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
