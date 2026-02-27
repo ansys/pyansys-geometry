@@ -36,7 +36,11 @@ from ansys.geometry.core.misc import UNITS, Distance, ImportOptions
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import ExportIdData, PersistentIdType
 
-from .conftest import FILES_DIR, IMPORT_FILES_DIR
+from .conftest import (
+    FILES_DIR,
+    IMPORT_FILES_DIR,
+    skip_if_no_geometry_service,
+)
 
 
 def _create_flat_design(modeler: Modeler) -> Design:
@@ -331,6 +335,9 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
 def test_design_insert(modeler: Modeler):
     """Test inserting a file into the design."""
+    skip_if_no_geometry_service(
+        modeler, test_design_insert.__name__, "different_hierarchy_in_tree_on_insert"
+    )  # Skip test on Discovery and SpaceClaim
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
     sketch = Sketch()
@@ -352,6 +359,9 @@ def test_design_insert_with_import(modeler: Modeler):
     """Test inserting a file into the design through the external format import
     process.
     """
+    skip_if_no_geometry_service(
+        modeler, test_design_insert_with_import.__name__, "different_hierarchy_in_tree_on_insert"
+    )  # Skip test on Discovery and SpaceClaim
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
     sketch = Sketch()
@@ -413,6 +423,9 @@ def test_design_import_with_named_selections(modeler: Modeler):
 
 def test_design_import_acad_2024(modeler: Modeler):
     """Test importing a 2024 AutoCAD file."""
+    skip_if_no_geometry_service(
+        modeler, test_design_import_acad_2024.__name__, "different_hierarchy_in_tree_on_insert"
+    )  # Skip test on Discovery and SpaceClaim
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "ACAD/CylinderBox_2024.dwg"))
     assert len(design.components) == 3
@@ -429,6 +442,9 @@ def test_design_import_cat5_2024(modeler: Modeler):
 
 def test_design_import_cat6_2023(modeler: Modeler):
     """Test importing a CATIA V6 file."""
+    skip_if_no_geometry_service(
+        modeler, test_design_import_cat6_2023.__name__, "different_hierarchy_in_tree_on_insert"
+    )  # Skip test on Discovery and SpaceClaim
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "CAT6/Skateboard A.1_2023x.3dxml"))
     assert len(design.components) == 4
@@ -552,6 +568,9 @@ def test_design_import_stride_with_named_selections(modeler: Modeler):
 
 def test_design_insert_id_bug(modeler: Modeler):
     """Test inserting a file into the design with ID bug fix."""
+    skip_if_no_geometry_service(
+        modeler, test_design_insert_id_bug.__name__, "different_hierarchy_in_tree_on_insert"
+    )  # Skip test on Discovery and SpaceClaim
     # This fix is available in version 261 and later
     design1 = modeler.create_design("Test")
 
@@ -572,6 +591,11 @@ def test_design_insert_id_bug(modeler: Modeler):
 @pytest.mark.skip(reason="Object reference not set to an instance of an object.")
 def test_import_scdocx_with_external_docs(modeler: Modeler):
     """Test importing an SCDOCX file with external documents and verify it is internalized."""
+    skip_if_no_geometry_service(
+        modeler,
+        test_import_scdocx_with_external_docs.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
     # Create a new design
     design = modeler.create_design("Insert External Document")
 
@@ -600,6 +624,11 @@ def test_import_scdocx_with_external_docs(modeler: Modeler):
 
 def test_named_selections_after_file_insert(modeler: Modeler):
     """Test to verify named selections are imported during inserting a file."""
+    skip_if_no_geometry_service(
+        modeler,
+        test_named_selections_after_file_insert.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
     # Create a new design
     design = modeler.create_design("BugFix_1277429")
 
@@ -680,6 +709,12 @@ def test_named_selections_after_file_open(modeler: Modeler):
 def test_file_insert_import_named_selections_post_import(modeler: Modeler):
     """Test to verify named selections can be imported after inserting a file."""
     # Create a new design
+    skip_if_no_geometry_service(
+        modeler,
+        test_file_insert_import_named_selections_post_import.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
+
     design = modeler.create_design("BugFix_1277429")
 
     # Verify initial named selections count

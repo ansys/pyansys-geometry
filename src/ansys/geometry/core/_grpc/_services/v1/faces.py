@@ -39,6 +39,7 @@ from .conversions import (
     from_grpc_surface_to_surface,
     from_length_to_grpc_quantity,
     from_line_to_grpc_line,
+    from_parameter_to_grpc_quantity,
     from_point3d_to_grpc_point,
     from_unit_vector_to_grpc_direction,
     serialize_tracked_command_response,
@@ -308,7 +309,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
                 CreateIsoParamCurvesRequestData(
                     id=build_grpc_id(kwargs["id"]),
                     u_dir_curve=kwargs["use_u_param"],
-                    proportion=kwargs["parameter"],
+                    proportion=from_parameter_to_grpc_quantity(kwargs["parameter"]),
                 )
             ]
         )
@@ -324,7 +325,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
                     "start": from_grpc_point_to_point3d(curve.start),
                     "end": from_grpc_point_to_point3d(curve.end),
                     "interval": Interval(curve.interval_start, curve.interval_end),
-                    "length": to_distance(curve.length).value,
+                    "length": to_distance(curve.length.value_in_geometry_units).value,
                 }
                 for curve in response.curves
             ]
