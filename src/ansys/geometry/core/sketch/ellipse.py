@@ -26,14 +26,12 @@ from typing import TYPE_CHECKING
 from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
-from scipy.spatial.transform import Rotation as SpatialRotation
 
-from ansys.geometry.core.math.matrix import Matrix33, Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import Vector3D
 from ansys.geometry.core.misc.checks import graphics_required
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.shapes.curves.ellipse import Ellipse
 from ansys.geometry.core.sketch.face import SketchFace
@@ -170,40 +168,34 @@ class SketchEllipse(SketchFace, Ellipse):
         """
         import pyvista as pv
 
-        rotation = Matrix33(
-            SpatialRotation.from_euler(
-                "xyz", [0, 0, self._angle_offset.value.m_as(UNITS.radian)], degrees=False
-            ).as_matrix()
-        )
-
-        transformation_matrix = Matrix44(
+        # Create an ellipse using pyvista
+        theta = np.linspace(0, 2 * np.pi, 100)
+        points = np.column_stack(
             [
-                [
-                    rotation[0, 0],
-                    rotation[0, 1],
-                    rotation[0, 2],
-                    self.center.x.m_as(DEFAULT_UNITS.LENGTH),
-                ],
-                [
-                    rotation[1, 0],
-                    rotation[1, 1],
-                    rotation[1, 2],
-                    self.center.y.m_as(DEFAULT_UNITS.LENGTH),
-                ],
-                [
-                    rotation[2, 0],
-                    rotation[2, 1],
-                    rotation[2, 2],
-                    0,
-                ],
-                [0, 0, 0, 1],
+                (
+                    self.origin[0]
+                    + self.major_radius.m * np.cos(theta) * self.dir_x[0]
+                    + self.minor_radius.m * np.sin(theta) * self.dir_y[0]
+                ),
+                (
+                    self.origin[1]
+                    + self.major_radius.m * np.cos(theta) * self.dir_x[1]
+                    + self.minor_radius.m * np.sin(theta) * self.dir_y[1]
+                ),
+                (
+                    self.origin[2]
+                    + self.major_radius.m * np.cos(theta) * self.dir_x[2]
+                    + self.minor_radius.m * np.sin(theta) * self.dir_y[2]
+                ),
             ]
         )
 
-        return pv.Ellipse(
-            semi_major_axis=self.major_radius.m_as(DEFAULT_UNITS.LENGTH),
-            semi_minor_axis=self.minor_radius.m_as(DEFAULT_UNITS.LENGTH),
-        ).transform(transformation_matrix, inplace=True)
+        # Close the ellipse by connecting last point to first
+        lines = np.column_stack(
+            [np.full(len(theta), 2), np.arange(len(theta)), np.roll(np.arange(len(theta)), -1)]
+        ).ravel()
+
+        return pv.PolyData(points, lines=lines)
 
     def plane_change(self, plane: Plane) -> None:
         """Redefine the plane containing ``SketchEllipse`` objects.
