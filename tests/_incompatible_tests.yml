@@ -143,6 +143,8 @@ backends:
       - tests/integration/test_design.py::test_design_update_with_booleans
       - tests/integration/test_design.py::test_check_design_update
       - tests/integration/test_design.py::test_check_design_update_2
+      # Tessellation options provide different results prior to 27.1
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_options
 
   - version: "24.2"
     incompatible_tests:
@@ -280,6 +282,8 @@ backends:
       - tests/integration/test_design.py::test_design_update_with_booleans
       - tests/integration/test_design.py::test_check_design_update
       - tests/integration/test_design.py::test_check_design_update_2
+      # Tessellation options provide different results prior to 27.1
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_options
 
   - version: "25.1"
     incompatible_tests:
@@ -386,6 +390,9 @@ backends:
       - tests/integration/test_design.py::test_design_update_with_booleans
       - tests/integration/test_design.py::test_check_design_update
       - tests/integration/test_design.py::test_check_design_update_2
+      # Tessellation options provide different results prior to 27.1
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_options
+
   - version: "25.2"
     incompatible_tests:
       # Model used is too new for this version
@@ -435,6 +442,8 @@ backends:
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
       # Fix for pattern introduced in 27.1
       - tests/integration/test_design.py::test_unitless_design_parameters
+      # Tessellation options provide different results prior to 27.1
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_options
 
   - version: "26.1"
     incompatible_tests:
@@ -445,3 +454,5 @@ backends:
       # Export to STEP/IGES is only available from 27R1 onwards
       - tests/integration/test_design_export.py::test_export_to_step
       - tests/integration/test_design_export.py::test_export_to_iges
+      # Tessellation options provide different results prior to 27.1
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_options
