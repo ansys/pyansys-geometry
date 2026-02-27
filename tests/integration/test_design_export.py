@@ -37,6 +37,7 @@ from .conftest import (
     FILES_DIR,
     skip_if_core_service,
     skip_if_discovery,
+    skip_if_no_geometry_service,
     skip_if_spaceclaim,
     skip_if_windows,
 )
@@ -396,9 +397,11 @@ def test_import_export_reimport_design_scdocx(
     modeler: Modeler, tmp_path_factory: pytest.TempPathFactory
 ):
     """Test importing, exporting, and re-importing a design file."""
-    skip_if_discovery(
-        modeler, test_import_export_reimport_design_scdocx.__name__, "SCDOCX format"
-    )  # Skip test on Discovery
+    skip_if_no_geometry_service(
+        modeler,
+        test_import_export_reimport_design_scdocx.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
     # Define the working directory and file paths
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")
@@ -425,6 +428,11 @@ def test_import_export_reimport_design_x_t(
     modeler: Modeler, tmp_path_factory: pytest.TempPathFactory
 ):
     """Test importing, exporting, and re-importing a design file in Parasolid text format."""
+    skip_if_no_geometry_service(
+        modeler,
+        test_import_export_reimport_design_x_t.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
     # Define the working directory and file paths
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "rci_std.x_t")
@@ -496,9 +504,11 @@ def test_import_export_open_file_design(
     expected_bodies,
 ):
     """Test importing, exporting, and opening a file in a new design."""
-    skip_if_discovery(
-        modeler, test_import_export_open_file_design.__name__, "design"
-    )  # Skip test on Discovery
+    skip_if_no_geometry_service(
+        modeler,
+        test_import_export_open_file_design.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
     # Define the working directory and file paths
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file_path = Path(FILES_DIR, original_file)
