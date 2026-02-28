@@ -89,6 +89,10 @@ class Edge:
         self._is_reversed = is_reversed
         self._shape = None
 
+    def __eq__(self, other) -> bool:
+        """Define equality based on unique ID."""
+        return self._id == other._id if isinstance(other, Edge) else False
+
     @property
     def id(self) -> str:
         """ID of the edge."""
