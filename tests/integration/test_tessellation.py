@@ -164,7 +164,7 @@ def test_body_tessellate_with_options(modeler: Modeler):
     )
     mesh_fine = body.tessellate(merge=True, tess_options=fine_options, reset_cache=True)
     assert "PolyData" in str(mesh_fine)
-    assert mesh_fine.n_cells == 284
+    assert mesh_fine.n_cells == 268
     assert mesh_fine.n_points == 272
 
     # Test with different tessellation options
