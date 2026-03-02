@@ -41,9 +41,6 @@ from .conftest import (
 
 def test_python_simple_script(modeler: Modeler):
     # Python (.py)
-    if GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
-        pytest.skip("Server does not support v0 protocol needed for this test")
-
     result, _ = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.py")
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
     pattern_doc = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.Document", re.IGNORECASE)
@@ -60,9 +57,6 @@ def test_python_simple_script_ignore_api_version(
         test_python_simple_script_ignore_api_version.__name__,
         "will_always_run_on_discovery_and_spaceclaim",
     )  # Skip test on Discovery and SpaceClaim
-    if GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
-        pytest.skip("Server does not support v0 protocol needed for this test")
-
     result, _ = modeler.run_discovery_script_file(
         DSCOSCRIPTS_FILES_DIR / "simple_script.py",
         api_version=ApiVersions.LATEST,
@@ -97,9 +91,6 @@ def test_python_integrated_script(modeler: Modeler):
     skip_if_desktop_or_dms_geometry_service(
         modeler, test_python_integrated_script.__name__, "GetActiveDocument()"
     )  # Skip test on Discovery and SpaceClaim
-    if GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
-        pytest.skip("Server does not support v0 protocol needed for this test")
-
     design = modeler.create_design("Integrated_Example")
     design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     values, design = modeler.run_discovery_script_file(
