@@ -905,9 +905,9 @@ def test_visualization_polydata():
 
     # Test for ellipse visualization polydata
     ellipse = SketchEllipse(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(1, UNITS.m))
-    assert ellipse.visualization_polydata.center == pytest.approx([0.0002517288084074587, 0.0, 0.0])
+    assert ellipse.visualization_polydata.center == pytest.approx([0.0, 0.0, 0.0])
     assert ellipse.visualization_polydata.bounds == pytest.approx(
-        [-0.9994965423831851, 1.0, -0.9998741276738751, 0.9998741276738751, 0.0, 0.0]
+        [-1.0, 1.0, -1.0, 1.0, 0.0, 0.0]
     )
     assert ellipse.visualization_polydata.n_cells == 100
     assert ellipse.visualization_polydata.n_points == 100
