@@ -1,4 +1,6 @@
-doc = GetActiveDocument()
+import math
+
+doc = GetActiveWindow().Document
 radius = MM(int(argsDict["radius"]))
 
 sphere = Sphere.Create(Frame.World, radius)
