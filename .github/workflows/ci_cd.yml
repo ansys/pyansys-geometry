@@ -358,6 +358,13 @@ jobs:
           docker pull ${ANSRV_GEO_IMAGE_DOCS_TAG}
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_DOCS_TAG} ${TRANSPORT_MODE_SELECTION}
 
+      - name: Update tex packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-fonts-recommended texlive-fonts-extra lmodern
+          sudo tlmgr update --self --all
+          sudo tlmgr install lm lm-math
+
       - name: Run Ansys documentation building action
         uses: ansys/actions/doc-build@3931ac9351b13ae11b1203c2ef6b51e5c75502ea # v10.2.5
         with:
