@@ -29,6 +29,7 @@ from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 
 from .conftest import (
     DSCOSCRIPTS_FILES_DIR,
@@ -41,7 +42,7 @@ from .conftest import (
 def test_python_simple_script(modeler: Modeler):
     # Python (.py)
     if GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
-        pytest.skip("Server does not support v0 protocol needed for this test")
+        pytest.skip("Requires v1 since API version 271 or above is required (v0 does not support +271)")
 
     result, _ = modeler.run_discovery_script_file(DSCOSCRIPTS_FILES_DIR / "simple_script.py")
     pattern_db = re.compile(r"SpaceClaim\.Api\.[A-Za-z0-9]+\.DesignBody", re.IGNORECASE)
@@ -60,7 +61,7 @@ def test_python_simple_script_ignore_api_version(
         "will_always_run_on_discovery_and_spaceclaim",
     )  # Skip test on Discovery and SpaceClaim
     if GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
-        pytest.skip("Server does not support v0 protocol needed for this test")
+        pytest.skip("Requires v1 since API version 271 or above is required (v0 does not support +271)")
 
     result, _ = modeler.run_discovery_script_file(
         DSCOSCRIPTS_FILES_DIR / "simple_script.py",
@@ -97,7 +98,7 @@ def test_python_integrated_script(modeler: Modeler):
         modeler, test_python_integrated_script.__name__, "GetActiveDocument()"
     )  # Skip test on Discovery and SpaceClaim
     if GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
-        pytest.skip("Server does not support v0 protocol needed for this test")
+        pytest.skip("Requires v1 since API version 271 or above is required (v0 does not support +271)")
 
     design = modeler.create_design("Integrated_Example")
     design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
