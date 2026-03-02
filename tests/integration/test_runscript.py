@@ -41,7 +41,7 @@ from .conftest import (
 
 def test_python_simple_script(modeler: Modeler):
     # Python (.py)
-    if GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
+    if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip(
             "Requires v1 since API version 271 or above is required (v0 does not support +271)"
         )
@@ -62,7 +62,7 @@ def test_python_simple_script_ignore_api_version(
         test_python_simple_script_ignore_api_version.__name__,
         "will_always_run_on_discovery_and_spaceclaim",
     )  # Skip test on Discovery and SpaceClaim
-    if GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
+    if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip(
             "Requires v1 since API version 271 or above is required (v0 does not support +271)"
         )
@@ -101,7 +101,7 @@ def test_python_integrated_script(modeler: Modeler):
     skip_if_desktop_or_dms_geometry_service(
         modeler, test_python_integrated_script.__name__, "GetActiveDocument()"
     )  # Skip test on Discovery and SpaceClaim
-    if GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
+    if modeler.client.services.version == GeometryApiProtos.V0:
         pytest.skip(
             "Requires v1 since API version 271 or above is required (v0 does not support +271)"
         )
