@@ -71,7 +71,8 @@ dev = [
   { include-group = "tests" },
 ]
 doc = [
-  "ansys-sphinx-theme[autoapi]==1.7.0",
+  # use ansys-sphinx-theme main branch to get the latest bug fixes and features, see
+  "ansys-sphinx-theme[autoapi] @ git+https://github.com/ansys/ansys-sphinx-theme.git@main",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
   "jupytext==1.19.1",
