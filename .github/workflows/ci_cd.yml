@@ -363,7 +363,7 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
-          needs-quarto: true
+          needs-quarto: false
           dependencies: 'pandoc'
           sphinxopts: '-j 1 -W --color'
           group-dependencies-name: "doc"
