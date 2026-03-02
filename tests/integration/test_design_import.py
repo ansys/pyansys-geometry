@@ -263,8 +263,12 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         assert base_body.faces[1].id in [b.id for b in faces2]
         assert base_body.edges[1].id in [b.id for b in edges2]
 
-    file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
-    design.download(str(file))
+    if modeler.client.backend_type in (BackendType.SPACECLAIM, BackendType.WINDOWS_SERVICE):
+        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
+        design.download(str(file), DesignFileFormat.SCDOCX)
+    else:
+        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.dsco"
+        design.download(str(file), DesignFileFormat.DISCO)
 
     # Pre-download the STEP file for comparison... once the design is closed, the
     # file is no longer available for download from the original design
@@ -305,8 +309,9 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         assert len(design2.components[0].bodies) == 1
 
         # Stride
-        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "sample_box.project"))
-        assert len(design2.bodies) == 1
+        if modeler.client.backend_type != BackendType.DISCOVERY:
+            design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "sample_box.project"))
+            assert len(design2.bodies) == 1
 
         # SolidWorks
         design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "partColor.SLDPRT"))
