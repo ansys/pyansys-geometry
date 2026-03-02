@@ -364,7 +364,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
           needs-quarto: false
-          dependencies: 'pandoc'
+          dependencies: 'pandoc texlive-fonts-recommended texlive-fonts-extra lmodern'
           sphinxopts: '-j 1 -W --color'
           group-dependencies-name: "doc"
 
