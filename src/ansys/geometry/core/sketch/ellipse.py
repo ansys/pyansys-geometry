@@ -166,36 +166,16 @@ class SketchEllipse(SketchFace, Ellipse):
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
         """
-        import pyvista as pv
+        from ansys.geometry.core.plotting.utils import create_elliptical_polydata
 
-        # Create an ellipse using pyvista
-        theta = np.linspace(0, 2 * np.pi, 100)
-        points = np.column_stack(
-            [
-                (
-                    self.origin[0]
-                    + self.major_radius.m * np.cos(theta) * self.dir_x[0]
-                    + self.minor_radius.m * np.sin(theta) * self.dir_y[0]
-                ),
-                (
-                    self.origin[1]
-                    + self.major_radius.m * np.cos(theta) * self.dir_x[1]
-                    + self.minor_radius.m * np.sin(theta) * self.dir_y[1]
-                ),
-                (
-                    self.origin[2]
-                    + self.major_radius.m * np.cos(theta) * self.dir_x[2]
-                    + self.minor_radius.m * np.sin(theta) * self.dir_y[2]
-                ),
-            ]
+        return create_elliptical_polydata(
+            origin=self.origin,
+            dir_x=self.dir_x,
+            dir_y=self.dir_y,
+            dir_z=self.dir_z,
+            major_radius=self.major_radius.m,
+            minor_radius=self.minor_radius.m,
         )
-
-        # Close the ellipse by connecting last point to first
-        lines = np.column_stack(
-            [np.full(len(theta), 2), np.arange(len(theta)), np.roll(np.arange(len(theta)), -1)]
-        ).ravel()
-
-        return pv.PolyData(points, lines=lines)
 
     def plane_change(self, plane: Plane) -> None:
         """Redefine the plane containing ``SketchEllipse`` objects.
