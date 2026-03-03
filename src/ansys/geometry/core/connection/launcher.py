@@ -526,6 +526,7 @@ def launch_modeler_with_geometry_service(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
+    proto_version: str = None,
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using the ``ProductInstance`` class.
@@ -593,6 +594,9 @@ def launch_modeler_with_geometry_service(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    proto_version : str, default: None
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -653,6 +657,7 @@ def launch_modeler_with_geometry_service(
         uds_dir=uds_dir,
         uds_id=uds_id,
         certs_dir=certs_dir,
+        proto_version=proto_version,
     )
 
 
@@ -673,6 +678,7 @@ def launch_modeler_with_discovery(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
+    proto_version: str = None,
     **kwargs: dict | None,
 ):
     """Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -742,6 +748,9 @@ def launch_modeler_with_discovery(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    proto_version : str, default: None
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -797,6 +806,7 @@ def launch_modeler_with_discovery(
         uds_dir=uds_dir,
         uds_id=uds_id,
         certs_dir=certs_dir,
+        proto_version=proto_version,
     )
 
 
@@ -817,6 +827,7 @@ def launch_modeler_with_spaceclaim(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
+    proto_version: str = None,
     **kwargs: dict | None,
 ):
     """Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -886,6 +897,9 @@ def launch_modeler_with_spaceclaim(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    proto_version : str, default: None
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -941,6 +955,7 @@ def launch_modeler_with_spaceclaim(
         uds_dir=uds_dir,
         uds_id=uds_id,
         certs_dir=certs_dir,
+        proto_version=proto_version,
     )
 
 
@@ -960,6 +975,7 @@ def launch_modeler_with_core_service(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
+    proto_version: str = None,
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry Core service locally using the ``ProductInstance`` class.
@@ -1028,6 +1044,9 @@ def launch_modeler_with_core_service(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    proto_version : str, default: None
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -1089,6 +1108,7 @@ def launch_modeler_with_core_service(
         uds_id=uds_id,
         certs_dir=certs_dir,
         specific_minimum_version=252,
+        proto_version=proto_version,
     )
 
 

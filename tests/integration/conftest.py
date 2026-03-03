@@ -50,6 +50,7 @@ import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core._grpc._services._service import _GRPCServices
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import GeometryContainers, LocalDockerInstance
@@ -95,6 +96,34 @@ def skip_if_discovery(modeler: Modeler, test_name: str, element_not_available: s
     ):
         pytest.skip(
             reason=f"Skipping '{test_name}'. '{element_not_available}' not on Discovery."
+        )  # skip!
+
+
+def skip_if_no_geometry_service(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on SpaceClaim or Discovery."""
+    if (
+        modeler.client.backend_type == BackendType.DISCOVERY
+        or modeler.client.backend_type == BackendType.DISCOVERY_HEADLESS
+        or modeler.client.backend_type == BackendType.SPACECLAIM
+    ):
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Disco or SC."
+        )  # skip!
+
+
+def skip_if_desktop_or_dms_geometry_service(
+    modeler: Modeler, test_name: str, element_not_available: str
+):
+    """Skip test if running on Desktop or DMS Geometry Service."""
+    if (
+        modeler.client.backend_type == BackendType.WINDOWS_SERVICE
+        or modeler.client.backend_type == BackendType.LINUX_SERVICE
+        or modeler.client.backend_type == BackendType.DISCOVERY
+        or modeler.client.backend_type == BackendType.DISCOVERY_HEADLESS
+        or modeler.client.backend_type == BackendType.SPACECLAIM
+    ):
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Disco, SC or DMS."
         )  # skip!
 
 
@@ -227,6 +256,10 @@ def fake_modeler_old_backend_242(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
     currentservices = modeler._grpc_client._services
 
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
+
     modeler._grpc_client._backend_version = (24, 2, 0)
     modeler._grpc_client._services = _GRPCServices(
         channel=modeler._grpc_client.channel, version="v0"
@@ -244,6 +277,10 @@ def fake_modeler_old_backend_251(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
     currentservices = modeler._grpc_client._services
 
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
+
     modeler._grpc_client._backend_version = (25, 1, 0)
     modeler._grpc_client._services = _GRPCServices(
         channel=modeler._grpc_client.channel, version="v0"
@@ -260,6 +297,9 @@ def fake_modeler_old_backend_251(modeler: Modeler):
 def fake_modeler_old_backend_252(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
     currentservices = modeler._grpc_client._services
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
 
     modeler._grpc_client._backend_version = (25, 2, 0)
     modeler._grpc_client._services = _GRPCServices(

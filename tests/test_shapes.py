@@ -49,9 +49,12 @@ def test_box_uv():
     box_uv2 = BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi / 2))
     param_uv1 = ParamUV(0, 0.03)
     assert BoxUV.__eq__(box_uv1, box_uv2)
-    assert BoxUV.__eq__(box_uv1, param_uv1)
+    with pytest.raises(TypeError, match="Cannot compare BoxUV with ParamUV"):
+        BoxUV.__eq__(box_uv1, param_uv1)
     assert not BoxUV.__ne__(box_uv1, box_uv2)
-    assert BoxUV.__ne__(box_uv1, param_uv1)
+
+    with pytest.raises(TypeError, match="Cannot compare BoxUV with ParamUV"):
+        BoxUV.__ne__(box_uv1, param_uv1)
     assert BoxUV.is_negative(box_uv1, 0, 0)
     assert BoxUV.is_negative(BoxUV(Interval(-1, -0.5), Interval(-2, -1)), 0, 0)
     assert BoxUV.contains(box_uv2, param_uv1)
@@ -79,7 +82,9 @@ def test_unite_interval():
     interval1 = Interval(0, 5)
     interval2 = Interval(1, 3)
 
-    assert interval1.__eq__(4) == NotImplemented
+    with pytest.raises(TypeError, match="Cannot compare Interval with int"):
+        interval1.__eq__(4)
+
     assert not interval1.__eq__(interval2)
     assert interval2.__eq__(interval2)
 
@@ -202,53 +207,53 @@ def test_surface_evaluation():
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the parameter definition."
     ):
-        plane0.parameter()
+        plane0.parameter
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the position definition."
     ):
-        plane0.position()
+        plane0.position
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the position definition."
     ):
-        plane0.normal()
+        plane0.normal
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the u-derivative definition."
     ):
-        plane0.u_derivative()
+        plane0.u_derivative
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the v-derivative definition."
     ):
-        plane0.v_derivative()
+        plane0.v_derivative
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the uu-derivative definition."
     ):
-        plane0.uu_derivative()
+        plane0.uu_derivative
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the uv-derivative definition."
     ):
-        plane0.uv_derivative()
+        plane0.uv_derivative
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the vv-derivative definition."
     ):
-        plane0.vv_derivative()
+        plane0.vv_derivative
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the minimum curvature definition."
     ):
-        plane0.min_curvature()
+        plane0.min_curvature
     with pytest.raises(
         NotImplementedError,
         match="Each evaluation must provide the minimum curvature direction definition.",
     ):
-        plane0.min_curvature_direction()
+        plane0.min_curvature_direction
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the maximum curvature definition."
     ):
-        plane0.max_curvature()
+        plane0.max_curvature
     with pytest.raises(
         NotImplementedError,
         match="Each evaluation must provide the maximum curvature direction definition.",
     ):
-        plane0.max_curvature_direction()
+        plane0.max_curvature_direction
 
 
 def test_curve_evaluation():
@@ -258,20 +263,20 @@ def test_curve_evaluation():
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the parameter definition."
     ):
-        curve0.parameter()
+        curve0.parameter
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the position definition."
     ):
-        curve0.position()
+        curve0.position
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the first_derivative definition."
     ):
-        curve0.first_derivative()
+        curve0.first_derivative
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the second_derivative definition."
     ):
-        curve0.second_derivative()
+        curve0.second_derivative
     with pytest.raises(
         NotImplementedError, match="Each evaluation must provide the curvature definition."
     ):
-        curve0.curvature()
+        curve0.curvature

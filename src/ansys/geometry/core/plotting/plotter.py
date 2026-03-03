@@ -48,6 +48,7 @@ from pyvista.plotting.tools import create_axes_marker
 import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.design import Design
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
@@ -57,6 +58,7 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
+from ansys.geometry.core.shapes.curves import Curve
 from ansys.geometry.core.shapes.surfaces import Surface
 from ansys.geometry.core.sketch.sketch import Sketch
 
@@ -222,6 +224,19 @@ class GeometryPlotter(PlotterInterface):
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         self.plot(surface.visualization_polydata, **plotting_options)
+
+    def add_curve(self, curve: Curve, **plotting_options) -> None:
+        """Add a curve to the scene.
+
+        Parameters
+        ----------
+        curve : Curve
+            Curve to add.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+        """
+        self.plot(curve.visualization_polydata, **plotting_options)
 
     def add_body_edges(self, body_plot: MeshObjectPlot, **plotting_options: dict | None) -> None:
         """Add the outer edges of a body to the plot.
@@ -492,10 +507,14 @@ class GeometryPlotter(PlotterInterface):
         # Add the custom object to the plotter
         if isinstance(plottable_object, DesignPoint):
             self.add_design_point(plottable_object, **plotting_options)
+        elif isinstance(plottable_object, DatumPlane):
+            self.add_plane(plottable_object.value, **plotting_options)
         elif isinstance(plottable_object, Sketch):
             self.add_sketch(plottable_object, **plotting_options)
         elif isinstance(plottable_object, Surface):
             self.add_surface(plottable_object, **plotting_options)
+        elif isinstance(plottable_object, Curve):
+            self.add_curve(plottable_object, **plotting_options)
         elif isinstance(plottable_object, (Body, MasterBody)):
             self.add_body(plottable_object, merge_bodies, **plotting_options)
         elif isinstance(plottable_object, Face):
