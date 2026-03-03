@@ -50,6 +50,10 @@ from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.plotting import GeometryPlotter
+from ansys.geometry.core.shapes.curves.circle import Circle
+from ansys.geometry.core.shapes.curves.ellipse import Ellipse
+from ansys.geometry.core.shapes.curves.line import Line
+from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 from ansys.geometry.core.shapes.surfaces.cone import Cone
 from ansys.geometry.core.shapes.surfaces.cylinder import Cylinder
 from ansys.geometry.core.shapes.surfaces.nurbs import NURBSSurface
@@ -746,6 +750,68 @@ def test_plot_nurbs_surface(verify_image_cache):
     pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_nurbs_surface.png"))
 
 
+@skip_no_xserver
+def test_plot_circle_curve(verify_image_cache):
+    """Test plotting of a Circle curve."""
+    # Create a circle curve
+    circle = Circle(origin=Point3D([0, 0, 0]), radius=2.0)
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the circle curve in the scene.
+    pl.plot(circle, color="blue")
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_circle_curve.png"))
+
+
+@skip_no_xserver
+def test_plot_ellipse_curve(verify_image_cache):
+    """Test plotting of an Ellipse curve."""
+    # Create an ellipse curve
+    ellipse = Ellipse(origin=Point3D([5, 0, 0]), major_radius=3.0, minor_radius=1.5)
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the ellipse curve in the scene.
+    pl.plot(ellipse, color="green")
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_ellipse_curve.png"))
+
+
+@skip_no_xserver
+def test_plot_line_curve(verify_image_cache):
+    """Test plotting of a Line curve."""
+    # Create a line curve
+    line = Line(origin=Point3D([0, 5, 0]), direction=UnitVector3D([1, 1, 0]))
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the line curve in the scene.
+    pl.plot(line, color="red")
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_line_curve.png"))
+
+
+@skip_no_xserver
+def test_plot_nurbs_curve(verify_image_cache):
+    """Test plotting of a NURBS curve."""
+    # Create a NURBS curve with control points
+    points = [
+        Point3D([0, 0, 5]),
+        Point3D([1, 2, 5]),
+        Point3D([3, 2, 5]),
+        Point3D([4, 0, 5]),
+    ]
+    nurbs_curve = NURBSCurve.fit_curve_from_points(points=points, degree=3)
+
+    # Initialize the ``Plotter`` class
+    pl = GeometryPlotter()
+
+    # Plotting the NURBS curve in the scene.
+    pl.plot(nurbs_curve, color="yellow")
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "plot_nurbs_curve.png"))
+
+
 def test_visualization_polydata():
     """Test the VTK polydata representation for PyVista visualization."""
     # Test for polygon visualization polydata
@@ -833,17 +899,17 @@ def test_visualization_polydata():
     )
     assert circle.visualization_polydata.center == pytest.approx([10.0, -10.0, 0.0])
     assert circle.visualization_polydata.bounds == pytest.approx([9.0, 11.0, -11.0, -9.0, 0.0, 0.0])
-    assert circle.visualization_polydata.n_cells == 1
+    assert circle.visualization_polydata.n_cells == 100
     assert circle.visualization_polydata.n_points == 100
-    assert circle.visualization_polydata.n_open_edges == 100
+    assert circle.visualization_polydata.n_open_edges == 0
 
     # Test for ellipse visualization polydata
     ellipse = SketchEllipse(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(1, UNITS.m))
     assert ellipse.visualization_polydata.center == pytest.approx([0.0, 0.0, 0.0])
     assert ellipse.visualization_polydata.bounds == pytest.approx([-1.0, 1.0, -1.0, 1.0, 0.0, 0.0])
-    assert ellipse.visualization_polydata.n_cells == 1
+    assert ellipse.visualization_polydata.n_cells == 100
     assert ellipse.visualization_polydata.n_points == 100
-    assert ellipse.visualization_polydata.n_open_edges == 100
+    assert ellipse.visualization_polydata.n_open_edges == 0
 
     # Test for box visualization polydata
     box = Box(
