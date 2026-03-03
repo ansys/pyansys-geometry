@@ -31,6 +31,8 @@ from ansys.geometry.core.shapes.parameterization import Interval, Parameterizati
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
+
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
 
@@ -76,6 +78,11 @@ class Curve(ABC):
 
         This method returns the evaluation at the closest point.
         """
+        return
+
+    @abstractmethod
+    def visualization_polydata(self) -> "pv.PolyData":
+        """Get the visualization polydata for the curve."""
         return
 
     def trim(self, interval: Interval) -> "TrimmedCurve":
