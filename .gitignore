@@ -171,3 +171,6 @@ scripts
 certs
 
 # End of https://www.toptal.com/developers/gitignore/api/python
+
+# Agent instructions (auto-generated)
+.agent/
