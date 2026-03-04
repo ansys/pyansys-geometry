@@ -167,12 +167,12 @@ body_copy.translate(direction=UNITVECTOR3D_X, distance=Distance(10, unit=UNITS.m
 design.plot()
 ```
 
-Let's note the heirarchy of the design now:
+Let's note the hierarchy of the design now:
 - Design
-    - Design_Body 
+    - Design_Body
     - Component
         - Design_Component_Body
-     
+
 Now we will do an operation that changes the design.
 
 ```{code-cell} ipython3
