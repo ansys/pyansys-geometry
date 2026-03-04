@@ -77,7 +77,7 @@ the instructions provided in :ref:`ref_build_windows_docker_image_from_ansys_ins
 resulting image is a Windows-based Docker image that contains the Ansys Geometry
 service.
 
-How should I access design objects in the design tree?
+How to access design objects in the design tree?
 ------------------------------------------------------
 
 Design objects should not be stored in variables. Instead, they should be accessed through the 
