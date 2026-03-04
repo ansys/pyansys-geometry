@@ -110,7 +110,7 @@ class LocalDockerInstance:
         The Geometry service Docker image to deploy. This can be either:
 
         * A ``GeometryContainers`` enum value for predefined images
-        * A string containing a custom Docker image name (e.g., \"myregistry.com/my-geometry:tag\")
+        * A string containing a custom Docker image name (e.g., myregistry.com/my-geometry:tag)
 
         The default is ``None``, in which case the ``LocalDockerInstance`` class identifies
         the OS of your Docker engine and deploys the latest version of the Geometry service
@@ -324,12 +324,10 @@ class LocalDockerInstance:
 
         # Determine the final image to use
         final_image_name = None
-        is_custom_image = False
 
         if isinstance(image, str):
             # Custom image name provided as string - use it directly
             final_image_name = image
-            is_custom_image = True
             LOG.info(f"Using custom Docker image: {final_image_name}")
         elif image is None:
             # If no image is provided, default to whatever Docker engine OS

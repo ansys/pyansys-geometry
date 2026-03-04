@@ -330,7 +330,7 @@ def launch_docker_modeler(
         The Geometry service Docker image to deploy. This can be either:
 
         * A ``GeometryContainers`` enum value for predefined images
-        * A string containing a custom Docker image name (e.g., "myregistry.com/my-geometry:tag")
+        * A string containing a custom Docker image name (e.g., myregistry.com/my-geometry:tag)
 
         The default is ``None``, in which case the ``LocalDockerInstance`` class identifies
         the OS of your Docker engine and deploys the latest version of the Geometry service
