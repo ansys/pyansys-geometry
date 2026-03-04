@@ -37,6 +37,16 @@ It then creates the model on the server.
     design_name = "ExtrudeProfile"
     design = modeler.create_design(design_name)
 
+A warning on design objects
+---------------------------
+To ensure design objects are up to date, it is recommended to access design
+information (e.g. bodies, components, etc.) via the design instance properties
+and methods, rather than storing this information separately. For example, to get
+the bodies in a design, it is recommended to use ``design.bodies`` rather than
+storing the bodies in a separate variable (e.g. ``bodies = design.bodies``) and
+using that variable for future reference. This is because the design may be
+updated after the initial retrieval of the bodies, which would make the separate
+variable out of date.
 
 Add materials to model
 -----------------------
