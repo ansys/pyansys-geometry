@@ -80,8 +80,8 @@ service.
 How to access design objects in the design tree?
 ------------------------------------------------------
 
-Design objects should not be stored in variables. Instead, they should be accessed through the 
-design tree. For example, if you have a design component called ``Design_Component``, you can 
+Design objects should not be stored in variables. Instead, they should be accessed through the
+design tree. For example, if you have a design component called ``Design_Component``, you can
 access it through the design tree as follows:
 
 .. code-block:: python
@@ -94,7 +94,7 @@ This is strongly advised over storing the design component in a variable, such a
 
    comp = design.components[0]
 
-Storing design objects in variables can lead to issues when the design tree is modified, such as 
+Storing design objects in variables can lead to issues when the design tree is modified, such as
 when new components are added or existing components are deleted. Accessing design objects through
 the design tree ensures that you are always working with the most up-to-date version of the design.
 
