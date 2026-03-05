@@ -297,7 +297,7 @@ def launch_docker_modeler(
     connect_to_existing_service: bool = True,
     restart_if_existing_service: bool = False,
     name: str | None = None,
-    image: GeometryContainers | None = None,
+    image: GeometryContainers | str | None = None,
     client_log_level: int = logging.INFO,
     client_log_file: str | None = None,
     transport_mode: str | None = None,
@@ -326,11 +326,15 @@ def launch_docker_modeler(
     name : str, default: None
         Name of the Docker container to deploy. The default is ``None``,
         in which case Docker assigns it a random name.
-    image : GeometryContainers, default: None
-        The Geometry service Docker image to deploy. The default is ``None``,
-        in which case the ``LocalDockerInstance`` class identifies the OS of your
-        Docker engine and deploys the latest version of the Geometry service for
-        that OS.
+    image : GeometryContainers | str, default: None
+        The Geometry service Docker image to deploy. This can be either:
+
+        * A ``GeometryContainers`` enum value for predefined images
+        * A string containing a custom Docker image name (e.g., myregistry.com/my-geometry:tag)
+
+        The default is ``None``, in which case the ``LocalDockerInstance`` class identifies
+        the OS of your Docker engine and deploys the latest version of the Geometry service
+        for that OS.
     client_log_level : int, default: logging.INFO
         Log level for the client. The default is ``logging.INFO``.
     client_log_file : str, default: None
