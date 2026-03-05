@@ -295,7 +295,7 @@ jobs:
 
       - name: Upload integration test logs
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: integration-test-logs-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
           path: tests/integration/logs/integration_tests_logs.txt
@@ -303,7 +303,7 @@ jobs:
 
       - name: Upload PyVista generated images (cache and results)
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: pytest-pyvista-images-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
           path: tests/integration/image_cache
@@ -311,7 +311,7 @@ jobs:
 
       - name: Upload Coverage Results
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           include-hidden-files: true
           name: coverage-html-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
@@ -492,7 +492,7 @@ jobs:
 
       - name: Upload integration test logs
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: integration-test-logs-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
           path: tests/integration/logs/integration_tests_logs.txt
@@ -500,7 +500,7 @@ jobs:
 
       - name: Upload PyVista generated images (cache and results)
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: pytest-pyvista-images-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
           path: tests/integration/image_cache
@@ -695,14 +695,14 @@ jobs:
           cp ./$env:PREVIOUS_VERSION/linux-core-binaries.zip linux-core-binaries.zip
 
       - name: Upload Linux Core service binaries as workflow artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: linux-core-binaries.zip
           path: linux-core-binaries.zip
           retention-days: 1
 
       - name: Upload Windows Core service binaries as workflow artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: windows-core-binaries.zip
           path: windows-core-binaries.zip
@@ -812,7 +812,7 @@ jobs:
           dest: ${{ matrix.docker-file }}
 
       - name: Upload Windows Dockerfile
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: ${{ matrix.docker-file }}
           path: ${{ matrix.docker-file }}
@@ -911,7 +911,7 @@ jobs:
           dest: linux-core-dockerfile.zip
 
       - name: Upload Linux Dockerfile
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: linux-core-dockerfile.zip
           path: linux-core-dockerfile.zip
