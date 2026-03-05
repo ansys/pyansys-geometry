@@ -38,6 +38,10 @@ BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
 BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "true") == "true" else False
 BUILD_CHEATSHEET = True if os.environ.get("BUILD_CHEATSHEET", "true") == "true" else False
 
+# Make sure it gets defined.. to skip warnings in docs build
+if BUILD_EXAMPLES:
+    os.environ["PYANSYS_GEOMETRY_BUILD_EXAMPLES"] = "true"
+
 ############################################################################
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
