@@ -296,11 +296,12 @@ class UnsupportedCommands:
         --------
         This method is only available starting on Ansys release 26R1.
         """
-        # Disable automatic tracking
-        self._grpc_client.services.admin.set_automatic_tracking_state(enabled=False)
-        
-        # Start tracking for the document
         design = self.__modeler.get_active_design()
+
+        # Disable automatic tracking and start tracking for the document
+        self._grpc_client.services.admin.set_automatic_tracking_state(
+            enabled=False, design_id=design.id
+        )
         self._grpc_client.services.admin.get_tracker(design_id=design.id)
 
 
@@ -317,6 +318,8 @@ class UnsupportedCommands:
         changes = self._grpc_client.services.admin.get_tracker_changes(design_id=design.id)
 
         # Re-enable automatic tracking
-        self._grpc_client.services.admin.set_automatic_tracking_state(enabled=True)
+        self._grpc_client.services.admin.set_automatic_tracking_state(
+            enabled=True, design_id=design.id
+        )
 
         return changes

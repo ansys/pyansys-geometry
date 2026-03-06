@@ -171,6 +171,7 @@ class GRPCAdminServiceV1(GRPCAdminService):
                 if kwargs["enabled"]
                 else AutomaticTrackingState.AUTOMATICTRACKINGSTATE_OFF
             ),
+            design_id=build_grpc_id(kwargs["design_id"])
         )
 
         # Call the gRPC service
