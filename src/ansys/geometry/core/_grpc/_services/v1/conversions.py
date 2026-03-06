@@ -2024,13 +2024,12 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
     # Extract command response success status
     success = getattr(response.command_response, "success", False)
 
-    # Extract tracked changes
+    # Extract tracked changes and serialize
     tracked_changes = response.tracked_changes
-
-    return {
-        "success": success,
-        "tracked_changes": serialize_tracked_changes(tracked_changes)
-    }
+    serialized = serialize_tracked_changes(tracked_changes)
+    
+    serialized["success"] = success
+    return serialized
 
 
 def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:
