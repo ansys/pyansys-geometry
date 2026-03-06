@@ -124,6 +124,17 @@ class Design(Component):
         Whether an existing design on the service should be read. This parameter is
         only valid when connecting to an existing service session. Otherwise, avoid
         using this optional parameter.
+
+    Warnings
+    --------
+    To ensure design objects are up to date, it is recommended to access design
+    information (e.g. bodies, components, etc.) via the design instance properties
+    and methods, rather than storing this information separately. For example, to get
+    the bodies in a design, it is recommended to use ``design.bodies`` rather than
+    storing the bodies in a separate variable (e.g. ``bodies = design.bodies``) and
+    using that variable for future reference. This is because the design may be
+    updated after the initial retrieval of the bodies, which would make the separate
+    variable out of date.
     """
 
     # Types of the class instance private attributes

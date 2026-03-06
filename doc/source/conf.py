@@ -38,6 +38,10 @@ BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
 BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "true") == "true" else False
 BUILD_CHEATSHEET = True if os.environ.get("BUILD_CHEATSHEET", "true") == "true" else False
 
+# Make sure it gets defined.. to skip warnings in docs build
+if BUILD_EXAMPLES:
+    os.environ["PYANSYS_GEOMETRY_BUILD_EXAMPLES"] = "true"
+
 ############################################################################
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
@@ -300,6 +304,7 @@ nbsphinx_thumbnails = {
     "examples/01_getting_started/03_sketching": "_static/thumbnails/101_getting_started.png",
     "examples/01_getting_started/04_modeling": "_static/thumbnails/101_getting_started.png",
     "examples/01_getting_started/05_plotter_picker": "_static/thumbnails/101_getting_started.png",  # noqa: E501
+    "examples/01_getting_started/06_curve_surface_plotting": "_static/thumbnails/101_getting_started.png",  # noqa: E501
     "examples/02_sketching/basic_usage": "_static/thumbnails/basic_usage.png",
     "examples/02_sketching/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
     "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
