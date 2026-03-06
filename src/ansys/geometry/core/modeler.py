@@ -380,7 +380,7 @@ class Modeler:
         """Open a file.
 
         This method imports a design into the service. On Windows and Linux, ``.scdocx``, ``.dsco``,
-        ``.pmdb`` (beginning in 27.1), and reader formats are supported. Please see notes for 
+        ``.pmdb`` (beginning in 27.1), and reader formats are supported. Please see notes for
         supported reader formats.
 
         If the file is a shattered assembly with external references, the whole containing folder
