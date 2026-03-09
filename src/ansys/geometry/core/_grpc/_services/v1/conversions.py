@@ -2027,7 +2027,7 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
     # Extract tracked changes and serialize
     tracked_changes = response.tracked_changes
     serialized = serialize_tracked_changes(tracked_changes)
-    
+
     serialized["success"] = success
     return serialized
 

@@ -132,7 +132,7 @@ class GRPCAdminServiceV0(GRPCAdminService):
 
         # Convert the response to a dictionary
         return {"healthy": True if response.message == "I am healthy!" else False}
-    
+
     @protect_grpc
     def get_tracker(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import GetTrackerRequest
@@ -144,10 +144,8 @@ class GRPCAdminServiceV0(GRPCAdminService):
         response = self.commands_stub.GetTracker(request=request)
 
         # Convert the response to a dictionary
-        return {
-            "design_id": response.tracker.design_id.id
-        }
-    
+        return {"design_id": response.tracker.design_id.id}
+
     @protect_grpc
     def get_tracker_changes(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import GetTrackerChangesRequest
@@ -160,7 +158,7 @@ class GRPCAdminServiceV0(GRPCAdminService):
 
         # Convert the response to a dictionary
         return serialize_tracker_command_response(response.changes)
-    
+
     @protect_grpc
     def set_automatic_tracking_state(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import SetAutomaticTrackingStateRequest

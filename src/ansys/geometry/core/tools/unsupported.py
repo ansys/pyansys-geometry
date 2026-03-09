@@ -304,7 +304,6 @@ class UnsupportedCommands:
         )
         self._grpc_client.services.admin.get_tracker(design_id=design.id)
 
-
     @min_backend_version(26, 1, 0)
     def stop_tracking(self) -> dict:
         """Stop the current tracking segment for the current design and return the tracked changes.
