@@ -183,7 +183,11 @@ class Arc(SketchEdge):
                 self.start.y.m_as(DEFAULT_UNITS.LENGTH),
                 0,
             ],
-            pointb=[self.end.x.m_as(DEFAULT_UNITS.LENGTH), self.end.y.m_as(DEFAULT_UNITS.LENGTH), 0],
+            pointb=[
+                self.end.x.m_as(DEFAULT_UNITS.LENGTH),
+                self.end.y.m_as(DEFAULT_UNITS.LENGTH),
+                0,
+            ],
             center=[
                 self.center.x.m_as(DEFAULT_UNITS.LENGTH),
                 self.center.y.m_as(DEFAULT_UNITS.LENGTH),
