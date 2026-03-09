@@ -142,10 +142,8 @@ class GRPCAdminServiceV1(GRPCAdminService):
         response = self.stub.GetTracker(request=request)
 
         # Convert the response to a dictionary
-        return {
-            "design_id": response.tracker.design_id.id
-        }
-    
+        return {"design_id": response.tracker.design_id.id}
+
     @protect_grpc
     def get_tracker_changes(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commands.application_pb2 import GetTrackerChangesRequest
@@ -158,7 +156,7 @@ class GRPCAdminServiceV1(GRPCAdminService):
 
         # Convert the response to a dictionary
         return serialize_tracked_changes(response.tracked_changes)
-    
+
     @protect_grpc
     def set_automatic_tracking_state(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commands.application_pb2 import SetAutomaticTrackingStateRequest
@@ -171,7 +169,7 @@ class GRPCAdminServiceV1(GRPCAdminService):
                 if kwargs["enabled"]
                 else AutomaticTrackingState.AUTOMATICTRACKINGSTATE_OFF
             ),
-            design_id=build_grpc_id(kwargs["design_id"])
+            design_id=build_grpc_id(kwargs["design_id"]),
         )
 
         # Call the gRPC service
