@@ -380,7 +380,8 @@ class Modeler:
         """Open a file.
 
         This method imports a design into the service. On Windows and Linux, ``.scdocx``, ``.dsco``,
-        and reader formats are supported. Please see notes for supported reader formats.
+        ``.pmdb`` (beginning in 27.1), and reader formats are supported. Please see notes for
+        supported reader formats.
 
         If the file is a shattered assembly with external references, the whole containing folder
         will need to be uploaded. Ensure proper folder structure in order to prevent the uploading
@@ -423,6 +424,16 @@ class Modeler:
         # Close the existing design if it is active
         if self._design is not None and self._design.is_active:
             self._design.close()
+
+        # Check for PMDB file and make sure backend supports it
+        if file_path.endswith(".pmdb") and (
+            self.client.backend_version < (27, 1, 0)
+            or self.client.services.version == GeometryApiProtos.V0
+        ):
+            raise GeometryRuntimeError(
+                "PMDB import requires a minimum Ansys release version of 27.1 "
+                "and is not implemented in this protofile version."
+            )
 
         # Format-specific logic - upload the whole containing folder for assemblies. If backend's
         # version is > 26.1.0 we're going to upload the file no matter what, as streaming is
