@@ -145,6 +145,8 @@ backends:
       - tests/integration/test_design.py::test_check_design_update_2
       # Tessellation options provide different results prior to 27.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_options
+      # Import error message added in 27.1
+      - tests/integration/test_design_import.py::test_import_unsupported_filetype
 
   - version: "24.2"
     incompatible_tests:
@@ -284,6 +286,8 @@ backends:
       - tests/integration/test_design.py::test_check_design_update_2
       # Tessellation options provide different results prior to 27.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_options
+      # Import error message added in 27.1
+      - tests/integration/test_design_import.py::test_import_unsupported_filetype
 
   - version: "25.1"
     incompatible_tests:
@@ -392,6 +396,8 @@ backends:
       - tests/integration/test_design.py::test_check_design_update_2
       # Tessellation options provide different results prior to 27.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_options
+      # Import error message added in 27.1
+      - tests/integration/test_design_import.py::test_import_unsupported_filetype
 
   - version: "25.2"
     incompatible_tests:
@@ -444,6 +450,8 @@ backends:
       - tests/integration/test_design.py::test_unitless_design_parameters
       # Tessellation options provide different results prior to 27.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_options
+      # Import error message added in 27.1
+      - tests/integration/test_design_import.py::test_import_unsupported_filetype
 
   - version: "26.1"
     incompatible_tests:
@@ -456,3 +464,5 @@ backends:
       - tests/integration/test_design_export.py::test_export_to_iges
       # Tessellation options provide different results prior to 27.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_options
+      # Import error message added in 27.1
+      - tests/integration/test_design_import.py::test_import_unsupported_filetype
