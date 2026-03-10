@@ -28,10 +28,48 @@ It should not be instantiated directly by the user.
 Perform the required imports.
 
 ```{code-cell} ipython3
+from pathlib import Path
+import requests
+
 from ansys.geometry.core import launch_modeler
-from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
-from ansys.geometry.core.misc import UNITS
-from ansys.geometry.core.sketch import Sketch
+```
+
+## Download example files
+
+Download example geometry files that contain known problem areas from the
+PyAnsys Geometry repository. These files are used to demonstrate how the
+``RepairTools`` methods detect and fix real geometry issues.
+
+```{code-cell} ipython3
+BASE_URL = (
+    "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/tests/integration/files/"
+)
+
+FILES = {
+    "split_edges": "SplitEdgeDesignTest.scdocx",
+    "extra_edges": "ExtraEdgesDesignBefore.scdocx",
+    "inexact_edges": "InExactEdgesBefore.scdocx",
+    "short_edges": "ShortEdgesBefore.scdocx",
+    "duplicate_faces": "DuplicateFacesDesignBefore.scdocx",
+    "missing_faces": "MissingFacesDesignBefore.scdocx",
+    "small_faces": "SmallFacesBefore.scdocx",
+    "stitch_faces": "stitch_before.scdocx",
+    "inspect_repair": "InspectAndRepair01.scdocx",
+}
+
+
+def download_file(filename):
+    """Download a file from the PyAnsys Geometry repository."""
+    url = BASE_URL + filename
+    local_path = Path.cwd() / filename
+    response = requests.get(url)
+    response.raise_for_status()
+    local_path.write_bytes(response.content)
+    print(f"Downloaded: {filename}")
+    return local_path
+
+
+file_paths = {key: download_file(name) for key, name in FILES.items()}
 ```
 
 ## Initialize the modeler
@@ -41,150 +79,200 @@ modeler = launch_modeler()
 print(modeler)
 ```
 
-## Create a design with bodies to inspect
-
-Create a design with a simple solid body that can be examined for geometry issues.
-
-```{code-cell} ipython3
-design = modeler.create_design("RepairToolsDemo")
-
-# Create a simple box body via sketch extrusion
-sketch = Sketch()
-sketch.box(Point2D([0, 0]), 4, 2)
-box_body = design.extrude_sketch("BoxBody", sketch, 3)
-
-design.plot()
-```
-
-## Access the repair tools
-
-The ``RepairTools`` object is accessed through the modeler. It provides all
-the methods needed to locate and fix geometry issues.
-
-```{code-cell} ipython3
-repair_tools = modeler.repair_tools
-print(repair_tools)
-```
-
 ## Find split edges
 
 Split edges are edges that are unnecessarily divided into multiple segments.
-Use :func:`find_split_edges() <ansys.geometry.core.tools.repair_tools.RepairTools.find_split_edges>`
-to detect them. Optional ``angle`` and ``length`` parameters control the detection thresholds.
+``find_split_edges()`` detects them. Optional ``angle`` and ``length`` parameters
+control the detection thresholds.
 
 ```{code-cell} ipython3
-split_edge_problems = repair_tools.find_split_edges([box_body])
+design = modeler.open_file(file_paths["split_edges"])
+split_edge_problems = modeler.repair_tools.find_split_edges(design.bodies)
 print(f"Number of split edge problem areas found: {len(split_edge_problems)}")
+```
+
+## Fix split edge problem areas
+
+Each problem area object returned by the ``find_*`` methods exposes a ``fix()``
+method that resolves that specific issue.
+
+```{code-cell} ipython3
+for problem in split_edge_problems:
+    result = problem.fix()
+    print(f"Split edge fix successful: {result.success}")
+
+# Verify the problem areas are resolved
+split_edge_problems_after = modeler.repair_tools.find_split_edges(design.bodies)
+print(f"Split edge problem areas remaining: {len(split_edge_problems_after)}")
 ```
 
 ## Find extra edges
 
 Extra edges are edges that exist inside a face but do not contribute to
 defining the face boundary.
-Use :func:`find_extra_edges() <ansys.geometry.core.tools.repair_tools.RepairTools.find_extra_edges>`
-to detect them.
+``find_extra_edges()`` detects them.
 
 ```{code-cell} ipython3
-extra_edge_problems = repair_tools.find_extra_edges([box_body])
+design = modeler.open_file(file_paths["extra_edges"])
+extra_edge_problems = modeler.repair_tools.find_extra_edges(design.bodies)
 print(f"Number of extra edge problem areas found: {len(extra_edge_problems)}")
+```
+
+## Fix extra edge problem areas
+
+```{code-cell} ipython3
+for problem in extra_edge_problems:
+    result = problem.fix()
+    print(f"Extra edge fix successful: {result.success}")
+
+extra_edge_problems_after = modeler.repair_tools.find_extra_edges(design.bodies)
+print(f"Extra edge problem areas remaining: {len(extra_edge_problems_after)}")
 ```
 
 ## Find inexact edges
 
 Inexact edges are edges whose geometry does not precisely match the underlying
 surface geometry.
-Use :func:`find_inexact_edges() <ansys.geometry.core.tools.repair_tools.RepairTools.find_inexact_edges>`
-to detect them.
+``find_inexact_edges()`` detects them.
 
 ```{code-cell} ipython3
-inexact_edge_problems = repair_tools.find_inexact_edges([box_body])
+design = modeler.open_file(file_paths["inexact_edges"])
+inexact_edge_problems = modeler.repair_tools.find_inexact_edges(design.bodies)
 print(f"Number of inexact edge problem areas found: {len(inexact_edge_problems)}")
+```
+
+## Fix inexact edge problem areas
+
+```{code-cell} ipython3
+for problem in inexact_edge_problems:
+    result = problem.fix()
+    print(f"Inexact edge fix successful: {result.success}")
+
+inexact_edge_problems_after = modeler.repair_tools.find_inexact_edges(design.bodies)
+print(f"Inexact edge problem areas remaining: {len(inexact_edge_problems_after)}")
 ```
 
 ## Find short edges
 
 Short edges are edges that are shorter than a given threshold length.
-Use :func:`find_short_edges() <ansys.geometry.core.tools.repair_tools.RepairTools.find_short_edges>`
-to detect them.
+``find_short_edges()`` detects them. Provide a length threshold to control
+which edges are flagged.
 
 ```{code-cell} ipython3
-from pint import Quantity
-
-short_edge_problems = repair_tools.find_short_edges([box_body], length=Quantity(0.001, UNITS.m))
+design = modeler.open_file(file_paths["short_edges"])
+short_edge_problems = modeler.repair_tools.find_short_edges(design.bodies, 10)
 print(f"Number of short edge problem areas found: {len(short_edge_problems)}")
+```
+
+## Fix short edge problem areas
+
+```{code-cell} ipython3
+for problem in short_edge_problems:
+    result = problem.fix()
+    print(f"Short edge fix successful: {result.success}")
+
+short_edge_problems_after = modeler.repair_tools.find_short_edges(design.bodies, 10)
+print(f"Short edge problem areas remaining: {len(short_edge_problems_after)}")
 ```
 
 ## Find duplicate faces
 
 Duplicate faces are faces that occupy the same region of space.
-Use :func:`find_duplicate_faces() <ansys.geometry.core.tools.repair_tools.RepairTools.find_duplicate_faces>`
-to detect them.
+``find_duplicate_faces()`` detects them.
 
 ```{code-cell} ipython3
-duplicate_face_problems = repair_tools.find_duplicate_faces([box_body])
+design = modeler.open_file(file_paths["duplicate_faces"])
+duplicate_face_problems = modeler.repair_tools.find_duplicate_faces(design.bodies)
 print(f"Number of duplicate face problem areas found: {len(duplicate_face_problems)}")
+```
+
+## Fix duplicate face problem areas
+
+```{code-cell} ipython3
+for problem in duplicate_face_problems:
+    result = problem.fix()
+    print(f"Duplicate face fix successful: {result.success}")
+
+duplicate_face_problems_after = modeler.repair_tools.find_duplicate_faces(design.bodies)
+print(f"Duplicate face problem areas remaining: {len(duplicate_face_problems_after)}")
 ```
 
 ## Find missing faces
 
 Missing faces represent openings in an otherwise closed solid body.
-Use :func:`find_missing_faces() <ansys.geometry.core.tools.repair_tools.RepairTools.find_missing_faces>`
-to detect them.
+``find_missing_faces()`` detects them.
 
 ```{code-cell} ipython3
-missing_face_problems = repair_tools.find_missing_faces([box_body])
+design = modeler.open_file(file_paths["missing_faces"])
+missing_face_problems = modeler.repair_tools.find_missing_faces(design.bodies)
 print(f"Number of missing face problem areas found: {len(missing_face_problems)}")
+```
+
+## Fix missing face problem areas
+
+```{code-cell} ipython3
+for problem in missing_face_problems:
+    result = problem.fix()
+    print(f"Missing face fix successful: {result.success}")
+
+missing_face_problems_after = modeler.repair_tools.find_missing_faces(design.bodies)
+print(f"Missing face problem areas remaining: {len(missing_face_problems_after)}")
 ```
 
 ## Find small faces
 
 Small faces are faces that fall below a given area or width threshold.
-Use :func:`find_small_faces() <ansys.geometry.core.tools.repair_tools.RepairTools.find_small_faces>`
-to detect them.
+``find_small_faces()`` detects them.
 
 ```{code-cell} ipython3
-small_face_problems = repair_tools.find_small_faces([box_body])
+design = modeler.open_file(file_paths["small_faces"])
+small_face_problems = modeler.repair_tools.find_small_faces(design.bodies)
 print(f"Number of small face problem areas found: {len(small_face_problems)}")
+```
+
+## Fix small face problem areas
+
+```{code-cell} ipython3
+for problem in small_face_problems:
+    result = problem.fix()
+    print(f"Small face fix successful: {result.success}")
+
+small_face_problems_after = modeler.repair_tools.find_small_faces(design.bodies)
+print(f"Small face problem areas remaining: {len(small_face_problems_after)}")
 ```
 
 ## Find stitchable faces
 
 Stitchable faces are faces that can be joined together at a shared boundary.
-Use :func:`find_stitch_faces() <ansys.geometry.core.tools.repair_tools.RepairTools.find_stitch_faces>`
-to detect them.
+``find_stitch_faces()`` detects them. An optional ``max_distance`` parameter
+sets the tolerance for coincident boundaries.
 
 ```{code-cell} ipython3
-stitch_face_problems = repair_tools.find_stitch_faces([box_body])
+design = modeler.open_file(file_paths["stitch_faces"])
+stitch_face_problems = modeler.repair_tools.find_stitch_faces(design.bodies)
 print(f"Number of stitch face problem areas found: {len(stitch_face_problems)}")
 ```
 
-## Fix individual problem areas
-
-Each problem area object returned by the ``find_*`` methods exposes a
-:func:`fix() <ansys.geometry.core.tools.problem_areas.ProblemArea.fix>` method
-that resolves that specific issue.
+## Fix stitch face problem areas
 
 ```{code-cell} ipython3
-# Fix each split edge problem area individually
-for problem in split_edge_problems:
+for problem in stitch_face_problems:
     result = problem.fix()
-    print(f"Split edge fix successful: {result.success}")
+    print(f"Stitch face fix successful: {result.success}")
+    print(f"  Bodies modified: {len(result.modified_bodies)}")
 
-# Fix each extra edge problem area individually
-for problem in extra_edge_problems:
-    result = problem.fix()
-    print(f"Extra edge fix successful: {result.success}")
+stitch_face_problems_after = modeler.repair_tools.find_stitch_faces(design.bodies)
+print(f"Stitch face problem areas remaining: {len(stitch_face_problems_after)}")
 ```
 
 ## Find and fix short edges in one step
 
 The ``find_and_fix_*`` convenience methods combine detection and repair into
-a single call and return a
-:class:`RepairToolMessage <ansys.geometry.core.tools.repair_tool_message.RepairToolMessage>`
-summarizing the outcome.
+a single call and return a ``RepairToolMessage`` summarizing the outcome.
 
 ```{code-cell} ipython3
-result = repair_tools.find_and_fix_short_edges([box_body], length=Quantity(0.001, UNITS.m))
+design = modeler.open_file(file_paths["short_edges"])
+result = modeler.repair_tools.find_and_fix_short_edges(design.bodies, 10)
 print(f"Find-and-fix short edges successful: {result.success}")
 print(f"  Problem areas found:    {result.found}")
 print(f"  Problem areas repaired: {result.repaired}")
@@ -193,7 +281,8 @@ print(f"  Problem areas repaired: {result.repaired}")
 ## Find and fix extra edges in one step
 
 ```{code-cell} ipython3
-result = repair_tools.find_and_fix_extra_edges([box_body])
+design = modeler.open_file(file_paths["extra_edges"])
+result = modeler.repair_tools.find_and_fix_extra_edges(design.bodies)
 print(f"Find-and-fix extra edges successful: {result.success}")
 print(f"  Problem areas found:    {result.found}")
 print(f"  Problem areas repaired: {result.repaired}")
@@ -202,43 +291,27 @@ print(f"  Problem areas repaired: {result.repaired}")
 ## Find and fix split edges in one step
 
 ```{code-cell} ipython3
-result = repair_tools.find_and_fix_split_edges([box_body])
+design = modeler.open_file(file_paths["split_edges"])
+result = modeler.repair_tools.find_and_fix_split_edges(design.bodies)
 print(f"Find-and-fix split edges successful: {result.success}")
-print(f"  Problem areas found:    {result.found}")
-print(f"  Problem areas repaired: {result.repaired}")
-```
-
-## Find and simplify geometry in one step
-
-```{code-cell} ipython3
-result = repair_tools.find_and_fix_simplify([box_body])
-print(f"Find-and-fix simplify successful: {result.success}")
-print(f"  Problem areas found:    {result.found}")
-print(f"  Problem areas repaired: {result.repaired}")
-```
-
-## Find and stitch faces in one step
-
-```{code-cell} ipython3
-result = repair_tools.find_and_fix_stitch_faces([box_body])
-print(f"Find-and-fix stitch faces successful: {result.success}")
 print(f"  Problem areas found:    {result.found}")
 print(f"  Problem areas repaired: {result.repaired}")
 ```
 
 ## Inspect and repair all geometry issues
 
-The :func:`inspect_geometry() <ansys.geometry.core.tools.repair_tools.RepairTools.inspect_geometry>`
-method returns a detailed list of all detected issues grouped by body. Each entry in the list
-exposes a :func:`repair() <ansys.geometry.core.tools.check_geometry.InspectResult.repair>`
+The ``inspect_geometry()`` method returns a detailed list of all detected
+issues grouped by body. Each entry in the list exposes a ``repair()``
 method for fixing that specific issue.
 
-The :func:`repair_geometry() <ansys.geometry.core.tools.repair_tools.RepairTools.repair_geometry>`
-method attempts to fix all detected issues automatically with a single call.
+The ``repair_geometry()`` method attempts to fix all detected issues
+automatically with a single call.
 
 ```{code-cell} ipython3
+design = modeler.open_file(file_paths["inspect_repair"])
+
 # Inspect all geometry issues in the design
-inspect_results = repair_tools.inspect_geometry([box_body])
+inspect_results = modeler.repair_tools.inspect_geometry(design.bodies)
 print(f"Number of bodies with issues: {len(inspect_results)}")
 
 for result in inspect_results:
@@ -249,8 +322,12 @@ for result in inspect_results:
 
 ```{code-cell} ipython3
 # Repair all geometry issues automatically
-repair_result = repair_tools.repair_geometry([box_body])
+repair_result = modeler.repair_tools.repair_geometry(design.bodies)
 print(f"Repair geometry successful: {repair_result.success}")
+
+# Verify all issues have been resolved
+inspect_results_after = modeler.repair_tools.inspect_geometry(design.bodies)
+print(f"Bodies with issues remaining: {len(inspect_results_after)}")
 ```
 
 ## Close the modeler
@@ -260,3 +337,4 @@ Close the modeler to free up resources and release the connection.
 ```{code-cell} ipython3
 modeler.close()
 ```
+
