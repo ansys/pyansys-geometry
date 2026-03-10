@@ -87,6 +87,7 @@ control the detection thresholds.
 
 ```{code-cell} ipython3
 design = modeler.open_file(file_paths["split_edges"])
+design.plot()
 split_edge_problems = modeler.repair_tools.find_split_edges(design.bodies)
 print(f"Number of split edge problem areas found: {len(split_edge_problems)}")
 ```
@@ -104,6 +105,7 @@ for problem in split_edge_problems:
 # Verify the problem areas are resolved
 split_edge_problems_after = modeler.repair_tools.find_split_edges(design.bodies)
 print(f"Split edge problem areas remaining: {len(split_edge_problems_after)}")
+design.plot()
 ```
 
 ## Find extra edges
@@ -114,6 +116,7 @@ defining the face boundary.
 
 ```{code-cell} ipython3
 design = modeler.open_file(file_paths["extra_edges"])
+design.plot()
 extra_edge_problems = modeler.repair_tools.find_extra_edges(design.bodies)
 print(f"Number of extra edge problem areas found: {len(extra_edge_problems)}")
 ```
@@ -127,6 +130,7 @@ for problem in extra_edge_problems:
 
 extra_edge_problems_after = modeler.repair_tools.find_extra_edges(design.bodies)
 print(f"Extra edge problem areas remaining: {len(extra_edge_problems_after)}")
+design.plot()
 ```
 
 ## Find inexact edges
@@ -137,6 +141,7 @@ surface geometry.
 
 ```{code-cell} ipython3
 design = modeler.open_file(file_paths["inexact_edges"])
+design.plot()
 inexact_edge_problems = modeler.repair_tools.find_inexact_edges(design.bodies)
 print(f"Number of inexact edge problem areas found: {len(inexact_edge_problems)}")
 ```
@@ -150,6 +155,7 @@ for problem in inexact_edge_problems:
 
 inexact_edge_problems_after = modeler.repair_tools.find_inexact_edges(design.bodies)
 print(f"Inexact edge problem areas remaining: {len(inexact_edge_problems_after)}")
+design.plot()
 ```
 
 ## Find short edges
@@ -160,6 +166,7 @@ which edges are flagged.
 
 ```{code-cell} ipython3
 design = modeler.open_file(file_paths["short_edges"])
+design.plot()
 short_edge_problems = modeler.repair_tools.find_short_edges(design.bodies, 10)
 print(f"Number of short edge problem areas found: {len(short_edge_problems)}")
 ```
@@ -173,6 +180,7 @@ for problem in short_edge_problems:
 
 short_edge_problems_after = modeler.repair_tools.find_short_edges(design.bodies, 10)
 print(f"Short edge problem areas remaining: {len(short_edge_problems_after)}")
+design.plot()
 ```
 
 ## Find duplicate faces
@@ -182,6 +190,7 @@ Duplicate faces are faces that occupy the same region of space.
 
 ```{code-cell} ipython3
 design = modeler.open_file(file_paths["duplicate_faces"])
+design.plot()
 duplicate_face_problems = modeler.repair_tools.find_duplicate_faces(design.bodies)
 print(f"Number of duplicate face problem areas found: {len(duplicate_face_problems)}")
 ```
@@ -195,6 +204,7 @@ for problem in duplicate_face_problems:
 
 duplicate_face_problems_after = modeler.repair_tools.find_duplicate_faces(design.bodies)
 print(f"Duplicate face problem areas remaining: {len(duplicate_face_problems_after)}")
+design.plot()
 ```
 
 ## Find missing faces
@@ -204,6 +214,7 @@ Missing faces represent openings in an otherwise closed solid body.
 
 ```{code-cell} ipython3
 design = modeler.open_file(file_paths["missing_faces"])
+design.plot()
 missing_face_problems = modeler.repair_tools.find_missing_faces(design.bodies)
 print(f"Number of missing face problem areas found: {len(missing_face_problems)}")
 ```
@@ -217,6 +228,7 @@ for problem in missing_face_problems:
 
 missing_face_problems_after = modeler.repair_tools.find_missing_faces(design.bodies)
 print(f"Missing face problem areas remaining: {len(missing_face_problems_after)}")
+design.plot()
 ```
 
 ## Find small faces
@@ -226,6 +238,7 @@ Small faces are faces that fall below a given area or width threshold.
 
 ```{code-cell} ipython3
 design = modeler.open_file(file_paths["small_faces"])
+design.plot()
 small_face_problems = modeler.repair_tools.find_small_faces(design.bodies)
 print(f"Number of small face problem areas found: {len(small_face_problems)}")
 ```
@@ -239,6 +252,7 @@ for problem in small_face_problems:
 
 small_face_problems_after = modeler.repair_tools.find_small_faces(design.bodies)
 print(f"Small face problem areas remaining: {len(small_face_problems_after)}")
+design.plot()
 ```
 
 ## Find stitchable faces
@@ -249,6 +263,7 @@ sets the tolerance for coincident boundaries.
 
 ```{code-cell} ipython3
 design = modeler.open_file(file_paths["stitch_faces"])
+design.plot()
 stitch_face_problems = modeler.repair_tools.find_stitch_faces(design.bodies)
 print(f"Number of stitch face problem areas found: {len(stitch_face_problems)}")
 ```
@@ -263,6 +278,7 @@ for problem in stitch_face_problems:
 
 stitch_face_problems_after = modeler.repair_tools.find_stitch_faces(design.bodies)
 print(f"Stitch face problem areas remaining: {len(stitch_face_problems_after)}")
+design.plot()
 ```
 
 ## Find and fix short edges in one step
@@ -309,6 +325,7 @@ automatically with a single call.
 
 ```{code-cell} ipython3
 design = modeler.open_file(file_paths["inspect_repair"])
+design.plot()
 
 # Inspect all geometry issues in the design
 inspect_results = modeler.repair_tools.inspect_geometry(design.bodies)
@@ -328,6 +345,7 @@ print(f"Repair geometry successful: {repair_result.success}")
 # Verify all issues have been resolved
 inspect_results_after = modeler.repair_tools.inspect_geometry(design.bodies)
 print(f"Bodies with issues remaining: {len(inspect_results_after)}")
+design.plot()
 ```
 
 ## Close the modeler
