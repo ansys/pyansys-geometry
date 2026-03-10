@@ -67,6 +67,17 @@ applications.
     examples/04_applied/02_naca_fluent.mystnb
     examples/04_applied/03_ahmed_body_fluent.mystnb
 
+Tools examples
+--------------
+
+These examples demonstrate how to use the tools available in PyAnsys Geometry,
+such as the ``RepairTools`` class for detecting and fixing geometry issues.
+
+.. nbgallery::
+    :caption: Tools examples
+
+    examples/05_tools/repair_tools.mystnb
+
 Miscellaneous examples
 ----------------------
 
