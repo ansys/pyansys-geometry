@@ -288,7 +288,7 @@ class UnsupportedCommands:
             if self.__is_occurrence(moniker, edge.id)
         ]
 
-    @min_backend_version(26, 1, 0)
+    @min_backend_version(27, 1, 0)
     def start_tracking(self) -> None:
         """Start a tracking segment for the current design.
 
@@ -304,7 +304,7 @@ class UnsupportedCommands:
         )
         self._grpc_client.services.admin.get_tracker(design_id=design.id)
 
-    @min_backend_version(26, 1, 0)
+    @min_backend_version(27, 1, 0)
     def stop_tracking(self) -> dict:
         """Stop the current tracking segment for the current design and return the tracked changes.
 
