@@ -71,12 +71,14 @@ Tools examples
 --------------
 
 These examples demonstrate how to use the tools available in PyAnsys Geometry,
-such as the ``RepairTools`` class for detecting and fixing geometry issues.
+such as the ``RepairTools`` class for detecting and fixing geometry issues and
+the ``PrepareTools`` class for preparing geometry for simulation.
 
 .. nbgallery::
     :caption: Tools examples
 
     examples/05_tools/repair_tools.mystnb
+    examples/05_tools/prepare_tools.mystnb
 
 Miscellaneous examples
 ----------------------
