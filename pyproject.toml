@@ -178,10 +178,11 @@ title_format = "`{version} <https://github.com/ansys/pyansys-geometry/releases/t
 issue_format = "`#{issue} <https://github.com/ansys/pyansys-geometry/pull/{issue}>`_"
 type = [
   { directory = "added", name = "Added", showcontent = true },
-  { directory = "dependencies", name = "Dependencies", showcontent = true },
-  { directory = "documentation", name = "Documentation", showcontent = true },
+  { directory = "breaking", name = "Breaking", showcontent = true },
   { directory = "fixed", name = "Fixed", showcontent = true },
+  { directory = "documentation", name = "Documentation", showcontent = true },
+  { directory = "test", name = "Test", showcontent = true },
+  { directory = "dependencies", name = "Dependencies", showcontent = true },
   { directory = "maintenance", name = "Maintenance", showcontent = true },
   { directory = "miscellaneous", name = "Miscellaneous", showcontent = true },
-  { directory = "test", name = "Test", showcontent = true },
 ]
