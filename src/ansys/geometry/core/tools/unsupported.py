@@ -287,3 +287,42 @@ class UnsupportedCommands:
             for edge in body.edges
             if self.__is_occurrence(moniker, edge.id)
         ]
+
+    @min_backend_version(27, 1, 0)
+    def start_tracking(self) -> None:
+        """Start a tracking segment for the current design.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        design = self.__modeler.get_active_design()
+
+        # Disable automatic tracking and start tracking for the document
+        self._grpc_client.services.admin.set_automatic_tracking_state(
+            enabled=False, design_id=design.id
+        )
+        self._grpc_client.services.admin.get_tracker(design_id=design.id)
+
+    @min_backend_version(27, 1, 0)
+    def stop_tracking(self) -> dict:
+        """Stop the current tracking segment for the current design and return the tracked changes.
+
+        Returns
+        -------
+        dict
+            Dictionary containing the tracked changes.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        design = self.__modeler.get_active_design()
+        changes = self._grpc_client.services.admin.get_tracker_changes(design_id=design.id)
+
+        # Re-enable automatic tracking
+        self._grpc_client.services.admin.set_automatic_tracking_state(
+            enabled=True, design_id=design.id
+        )
+
+        return changes
