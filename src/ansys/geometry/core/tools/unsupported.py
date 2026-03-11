@@ -294,7 +294,7 @@ class UnsupportedCommands:
 
         Warnings
         --------
-        This method is only available starting on Ansys release 26R1.
+        This method is only available starting on Ansys release 27R1.
         """
         design = self.__modeler.get_active_design()
 
@@ -312,6 +312,10 @@ class UnsupportedCommands:
         -------
         dict
             Dictionary containing the tracked changes.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
         """
         design = self.__modeler.get_active_design()
         changes = self._grpc_client.services.admin.get_tracker_changes(design_id=design.id)
