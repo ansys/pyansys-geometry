@@ -52,7 +52,7 @@ FILES = {
     "short_edges": "ShortEdgesBefore.scdocx",
     "duplicate_faces": "DuplicateFacesDesignBefore.scdocx",
     "missing_faces": "MissingFacesDesignBefore.scdocx",
-    "small_faces": "SmallFacesBefore.scdocx",
+    "small_faces": "SmallFaces.scdocx",
     "stitch_faces": "stitch_before.scdocx",
     "inspect_repair": "InspectAndRepair01.scdocx",
 }
@@ -244,6 +244,13 @@ for problem in small_face_problems:
     result = problem.fix()
     print(f"Small face fix successful: {result.success}")
 
+small_face_problems_after = modeler.repair_tools.find_small_faces(design.bodies)
+print(f"Small face problem areas remaining: {len(small_face_problems_after)}")
+```
+
+```{code-cell} ipython3
+# Fix the remaining issue
+small_face_problems_after[0].fix()
 small_face_problems_after = modeler.repair_tools.find_small_faces(design.bodies)
 print(f"Small face problem areas remaining: {len(small_face_problems_after)}")
 design.plot()
