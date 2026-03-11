@@ -61,6 +61,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     Surface as GRPCSurface,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
+    TrackedChanges as GRPCTrackedChanges,
     TrackedCommandResponse as GRPCTrackedCommandResponse,
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
@@ -1914,25 +1915,19 @@ def serialize_entity_identifier(entity: EntityIdentifier) -> dict:
     }
 
 
-def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> dict:
-    """Serialize a TrackedCommandResponse object into a dictionary.
+def serialize_tracked_changes(tracked_changes: GRPCTrackedChanges) -> dict:
+    """Serialize a TrackedChanges object into a dictionary.
 
     Parameters
     ----------
-    response : GRPCTrackedCommandResponse
-        The gRPC TrackedCommandResponse object to serialize.
+    response : GRPCTrackedChanges
+        The gRPC TrackedChanges object to serialize.
 
     Returns
     -------
     dict
-        A dictionary representation of the TrackedCommandResponse object.
+        A dictionary representation of the TrackedChanges object.
     """
-    # Extract command response success status
-    success = getattr(response.command_response, "success", False)
-
-    # Extract tracked changes
-    tracked_changes = response.tracked_changes
-
     # Extract and serialize parts
     created_parts = [serialize_part(part) for part in getattr(tracked_changes, "created_parts", [])]
     modified_parts = [
@@ -1995,7 +1990,6 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
     ]
 
     return {
-        "success": success,
         "created_parts": created_parts,
         "modified_parts": modified_parts,
         "deleted_parts": deleted_parts,
@@ -2012,6 +2006,30 @@ def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> 
         "modified_edges": modified_edges,
         "deleted_edges": deleted_edges,
     }
+
+
+def serialize_tracked_command_response(response: GRPCTrackedCommandResponse) -> dict:
+    """Serialize a TrackedCommandResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCTrackedCommandResponse
+        The gRPC TrackedCommandResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the TrackedCommandResponse object.
+    """
+    # Extract command response success status
+    success = getattr(response.command_response, "success", False)
+
+    # Extract tracked changes and serialize
+    tracked_changes = response.tracked_changes
+    serialized = serialize_tracked_changes(tracked_changes)
+
+    serialized["success"] = success
+    return serialized
 
 
 def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:

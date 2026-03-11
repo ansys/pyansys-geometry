@@ -53,3 +53,18 @@ class GRPCAdminService(ABC):  # pragma: no cover
     def get_service_status(self, **kwargs) -> dict:
         """Get server status (i.e. healthy or not)."""
         pass
+
+    @abstractmethod
+    def get_tracker(self, **kwargs) -> dict:
+        """Get tracker information."""
+        pass
+
+    @abstractmethod
+    def get_tracker_changes(self, **kwargs) -> dict:
+        """Get tracker changes."""
+        pass
+
+    @abstractmethod
+    def set_automatic_tracking_state(self, **kwargs) -> dict:
+        """Set automatic tracking state."""
+        pass
