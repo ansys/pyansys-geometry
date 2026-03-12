@@ -27,8 +27,9 @@ A ``Design`` object represents the root of a geometry assembly. It is responsibl
 - Containing all :ref:`components <ref_component>` and :ref:`bodies <ref_body>` that make up
   a geometry model.
 - Managing **materials** that can be assigned to bodies.
-- Managing **named selections** — named groups of geometry entities (bodies, faces, edges,
-  and vertices) that make it easier to reference specific portions of the model.
+- Managing **named selections** — named groups of geometry entities (components, bodies, faces, 
+  edges, design points, and vertices) that make it easier to reference specific portions of the 
+  model.
 - Managing **beam profiles** used for structural beam elements.
 - Managing **parameters** for parametric modeling.
 - Providing **import and export** capabilities to exchange geometry with other tools.
