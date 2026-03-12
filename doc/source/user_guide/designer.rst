@@ -59,7 +59,7 @@ The following example demonstrates the typical workflow for creating a geometry 
 PyAnsys Geometry.
 
 First, connect to the Geometry service using the
-:class:`Modeler <ansys.geometry.core.modeler.Modeler>` class:
+:class:`Modeler <ansys.geometry.core.modeler.modeler>` class:
 
 .. code:: python
 

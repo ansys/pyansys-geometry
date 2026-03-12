@@ -3,15 +3,15 @@
 Body
 ****
 
-The :class:`Body <ansys.geometry.core.designer.Body>` class represents a 3D solid or
+The :class:`Body <ansys.geometry.core.designer.body>` class represents a 3D solid or
 surface body within a component. Bodies are the leaf-level geometry objects in the
 assembly hierarchy and are the primary objects used for analysis, visualization, and
 export.
 
 Bodies are created through component methods such as
-:meth:`extrude_sketch() <ansys.geometry.core.designer.Component.extrude_sketch>`,
-:meth:`sweep_sketch() <ansys.geometry.core.designer.Component.sweep_sketch>`, and
-:meth:`revolve_sketch() <ansys.geometry.core.designer.Component.revolve_sketch>`.
+:meth:`extrude_sketch() <ansys.geometry.core.designer.component.extrude_sketch>`,
+:meth:`sweep_sketch() <ansys.geometry.core.designer.component.sweep_sketch>`, and
+:meth:`revolve_sketch() <ansys.geometry.core.designer.component.revolve_sketch>`.
 For more information, see :ref:`Component <ref_component>`.
 
 Purpose and responsibilities
@@ -57,13 +57,13 @@ The following are the most commonly used properties on a ``Body`` object.
     The unique identifier of the body within the Geometry service.
 
 ``faces``
-    A list of :class:`Face <ansys.geometry.core.designer.Face>` objects bounding the body.
+    A list of :class:`Face <ansys.geometry.core.designer.face>` objects bounding the body.
 
 ``edges``
-    A list of :class:`Edge <ansys.geometry.core.designer.Edge>` objects on the body.
+    A list of :class:`Edge <ansys.geometry.core.designer.edge>` objects on the body.
 
 ``vertices``
-    A list of :class:`Vertex <ansys.geometry.core.designer.Vertex>` objects on the body.
+    A list of :class:`Vertex <ansys.geometry.core.designer.vertex>` objects on the body.
 
 ``volume``
     The computed volume of the body (only applicable for solid bodies).
@@ -79,7 +79,7 @@ The following are the most commonly used properties on a ``Body`` object.
     ``True`` if the body is currently suppressed (hidden) in the design.
 
 ``material``
-    The :class:`Material <ansys.geometry.core.materials.Material>` assigned to this body,
+    The :class:`Material <ansys.geometry.core.materials.material>` assigned to this body,
     or ``None`` if no material has been assigned.
 
 Renaming and styling
@@ -265,4 +265,4 @@ is useful for visualization and downstream analysis.
     raw_tess = body.get_raw_tessellation()
 
 For the full API reference, see
-:class:`Body <ansys.geometry.core.designer.Body>`.
+:class:`Body <ansys.geometry.core.designer.body>`.

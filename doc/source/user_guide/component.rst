@@ -3,7 +3,7 @@
 Component
 *********
 
-The :class:`Component <ansys.geometry.core.designer.Component>` class represents a
+The :class:`Component <ansys.geometry.core.designer.component>` class represents a
 sub-assembly within a design. Components can be nested to any depth to create complex
 assembly structures. Each component can contain bodies, beams, nested components,
 coordinate systems, datum planes, and design points.
@@ -231,4 +231,4 @@ To retrieve all bodies at every level of the component hierarchy:
     all_bodies = frame_component.get_all_bodies()
 
 For the full API reference, see
-:class:`Component <ansys.geometry.core.designer.Component>`.
+:class:`Component <ansys.geometry.core.designer.component>`.
