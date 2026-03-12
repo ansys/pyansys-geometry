@@ -391,12 +391,6 @@ if switcher_version != "dev":
         f"https://github.com/ansys/pyansys-geometry/releases/tag/v{__version__}"
     )  # noqa: E501
 
-if get_version_match(__version__) == "dev":
-    # Python 3.14 WHEELHOUSES are not available yet
-    # When the next minor release comes - remove the following linkchecks
-    # Ignore wheelhouse download links for all platforms and Python versions
-    linkcheck_ignore.append(r"https://github.com/ansys/pyansys-geometry/releases/download/.*")
-
 # User agent
 user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.2420.81"  # noqa: E501
 
