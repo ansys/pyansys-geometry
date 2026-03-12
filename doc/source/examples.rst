@@ -71,12 +71,14 @@ Tools examples
 --------------
 
 These examples demonstrate how to use the tools available in PyAnsys Geometry,
-such as the ``RepairTools`` class for detecting and fixing geometry issues.
+such as the ``RepairTools`` class for detecting and fixing geometry issues and
+the ``MeasurementTools`` class for measuring distances between geometric objects.
 
 .. nbgallery::
     :caption: Tools examples
 
     examples/05_tools/repair_tools.mystnb
+    examples/05_tools/measurement_tools.mystnb
 
 Miscellaneous examples
 ----------------------
