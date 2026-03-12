@@ -170,10 +170,10 @@ Shared topology
 Shared topology controls how the geometry within a component interacts with adjacent
 geometry during meshing. The available modes are:
 
-- ``SHARETYPE_NONE`` – No sharing (default).
-- ``SHARETYPE_SHARE`` – Bodies share topology (conformal mesh at interfaces).
-- ``SHARETYPE_MERGE`` – Bodies are merged into a single entity.
-- ``SHARETYPE_GROUPS`` – Bodies are grouped for shared topology.
+- ``SHARETYPE_NONE``: No sharing (default).
+- ``SHARETYPE_SHARE``: Bodies share topology (conformal mesh at interfaces).
+- ``SHARETYPE_MERGE``: Bodies are merged into a single entity.
+- ``SHARETYPE_GROUPS``: Bodies are grouped for shared topology.
 
 .. code:: python
 

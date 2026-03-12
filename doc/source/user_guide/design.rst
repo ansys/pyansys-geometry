@@ -27,7 +27,7 @@ A ``Design`` object represents the root of a geometry assembly. It is responsibl
 - Containing all :ref:`components <ref_component>` and :ref:`bodies <ref_body>` that make up
   a geometry model.
 - Managing **materials** that can be assigned to bodies.
-- Managing **named selections** — named groups of geometry entities (components, bodies, faces,
+- Managing **named selections**: named groups of geometry entities (components, bodies, faces,
   edges, design points, and vertices) that make it easier to reference specific portions of the
   model.
 - Managing **beam profiles** used for structural beam elements.
@@ -42,7 +42,7 @@ The following are the most commonly used properties on a ``Design`` object.
 ``bodies``
     A list of all top-level :class:`Body <ansys.geometry.core.designer.body>` objects in
     the design. Use :meth:`get_all_bodies()
-    <ansys.geometry.core.designer.Component.get_all_bodies>` to retrieve bodies at all
+    <ansys.geometry.core.designer.component.get_all_bodies>` to retrieve bodies at all
     levels of the hierarchy.
 
 ``components``
