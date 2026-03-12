@@ -305,15 +305,13 @@ Export files in SCDOCX and FMD formats.
 import os
 from pathlib import Path
 
-from ansys.geometry.core.designer import DesignFileFormat
-
-# Path to downloads directory
-file_dir = Path(os.getcwd(), "downloads")
+# Path to exports directory
+file_dir = Path(os.getcwd(), "exports")
 file_dir.mkdir(parents=True, exist_ok=True)
 
-# Download the model in different formats
-design.download(file_location=Path(file_dir, "ModelingDemo.scdocx"), format=DesignFileFormat.SCDOCX)
-design.download(file_location=Path(file_dir, "ModelingDemo.fmd"), format=DesignFileFormat.FMD)
+# Export the model in different formats
+design.export_to_scdocx(file_dir)
+design.export_to_fmd(file_dir)
 ```
 
 ## Close session

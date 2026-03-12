@@ -93,7 +93,7 @@ Download and save the resulting design:
 
 .. code:: python
 
-    design.download("path/to/my_design.scdocx")
+    path = design.export_to_scdocx("path/to")
 
 .. warning::
 

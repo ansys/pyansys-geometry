@@ -129,30 +129,55 @@ to several industry-standard formats.
     # Import a STEP file into the design
     design.insert_file("path/to/geometry.step")
 
-**Exporting (downloading) geometry**
+**Exporting geometry**
 
-The :meth:`download() <ansys.geometry.core.designer.design.download>` method saves the
-design to a local file. The format is determined by the file extension:
+PyAnsys Geometry provides dedicated ``export_to_*`` methods for each supported file format.
+Each method accepts an optional ``location`` argument. If omitted, the file is saved in the
+current working directory using the design name as the filename.
 
 .. code:: python
 
-    # Download as Ansys native format
-    design.download("path/to/design.scdocx")
+    # Export as Ansys native format (returns Path to the saved file)
+    path = design.export_to_scdocx()
 
-    # Download as STEP
-    design.download("path/to/design.step")
+    # Export as STEP
+    path = design.export_to_step()
 
-    # Download as IGES
-    design.download("path/to/design.igs")
+    # Export as IGES
+    path = design.export_to_iges()
 
-    # Download as Parasolid (text)
-    design.download("path/to/design.x_t")
+    # Export as Parasolid (text)
+    path = design.export_to_parasolid_text()
 
-    # Download as Parasolid (binary)
-    design.download("path/to/design.x_b")
+    # Export as Parasolid (binary)
+    path = design.export_to_parasolid_bin()
+
+    # Export as FMD
+    path = design.export_to_fmd()
+
+    # Export as PMDB
+    path = design.export_to_pmdb()
+
+    # Export as DISCO
+    path = design.export_to_disco()
+
+    # Export as STRIDE
+    path = design.export_to_stride()
+
+You can also pass a directory path or a full file path to ``location``:
+
+.. code:: python
+
+    import pathlib
+
+    # Save to a specific directory; filename is "<design.name>.stp"
+    path = design.export_to_step("path/to/directory")
+
+    # Save to a specific file path
+    path = design.export_to_step(pathlib.Path("path/to/directory/my_design.stp"))
 
 The supported file formats are defined in
-:class:`DesignFileFormat <ansys.geometry.core.designer.designFileFormat>`.
+:class:`DesignFileFormat <ansys.geometry.core.designer.DesignFileFormat>`.
 
 Working with parameters
 -----------------------

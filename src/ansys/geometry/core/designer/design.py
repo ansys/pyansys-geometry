@@ -58,6 +58,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import (
+    deprecated_method,
     ensure_design_is_active,
     min_backend_version,
 )
@@ -285,6 +286,12 @@ class Design(Component):
         )
         self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
+    @deprecated_method(
+        info="Use the ``export_to_*`` methods (``export_to_scdocx``, ``export_to_step``, "
+        "``export_to_iges``, ``export_to_pmdb``, ``export_to_fmd``, ``export_to_parasolid_text``, "
+        "``export_to_parasolid_bin``, ``export_to_disco``, ``export_to_stride``) instead.",
+        version="0.15",
+    )
     @check_input_types
     @ensure_design_is_active
     def download(
@@ -294,6 +301,12 @@ class Design(Component):
         write_body_facets: bool = False,
     ) -> None:
         """Export and download the design from the server.
+
+        .. deprecated:: 0.15
+           Use the ``export_to_*`` methods instead:
+           :meth:`export_to_scdocx`, :meth:`export_to_step`, :meth:`export_to_iges`,
+           :meth:`export_to_pmdb`, :meth:`export_to_fmd`, :meth:`export_to_parasolid_text`,
+           :meth:`export_to_parasolid_bin`, :meth:`export_to_disco`, :meth:`export_to_stride`.
 
         Parameters
         ----------
