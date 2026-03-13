@@ -1,0 +1,92 @@
+
+
+
+
+
+
+The ``widgets`` package
+===========================
+
+.. py:module:: ansys.geometry.core.plotting.widgets
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: widgets
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.show_design_point`
+            - Provides the ruler widget for the PyAnsys Geometry plotter.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> show_design_point</api/ansys/geometry/core/plotting/widgets/show_design_point/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+Submodule providing widgets for the PyAnsys Geometry plotter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

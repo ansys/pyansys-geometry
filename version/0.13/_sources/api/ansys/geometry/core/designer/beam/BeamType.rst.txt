@@ -1,0 +1,117 @@
+
+
+
+
+
+
+:class:`BeamType`
+=================
+
+
+.. py:class:: ansys.geometry.core.designer.beam.BeamType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the beam types supported.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: BeamType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~BEAM`
+            - 
+          * - :py:attr:`~SPRING`
+            - 
+          * - :py:attr:`~LINK_TRUSS`
+            - 
+          * - :py:attr:`~CABLE`
+            - 
+          * - :py:attr:`~PIPE`
+            - 
+          * - :py:attr:`~THERMALFLUID`
+            - 
+          * - :py:attr:`~UNKNOWN`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.beam import BeamType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: BEAM
+   :value: 0
+
+
+.. py:attribute:: SPRING
+   :value: 1
+
+
+.. py:attribute:: LINK_TRUSS
+   :value: 2
+
+
+.. py:attribute:: CABLE
+   :value: 3
+
+
+.. py:attribute:: PIPE
+   :value: 4
+
+
+.. py:attribute:: THERMALFLUID
+   :value: 5
+
+
+.. py:attribute:: UNKNOWN
+   :value: 6
+
+
+
+
+
+

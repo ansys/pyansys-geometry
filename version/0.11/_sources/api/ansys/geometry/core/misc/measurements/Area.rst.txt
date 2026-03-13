@@ -1,0 +1,56 @@
+
+
+
+
+
+
+:class:`Area`
+=============
+
+
+.. py:class:: ansys.geometry.core.misc.measurements.Area(value: ansys.geometry.core.typing.Real | pint.Quantity, unit: pint.Unit | None = None)
+
+   Bases: :py:obj:`Measurement`
+
+
+   
+   Provides the ``Measurement`` subclass for holding an area.
+
+
+   :Parameters:
+
+       **value** : :obj:`Real` | :obj:`~pint.Quantity`
+           Value of the area.
+
+       **unit** : :obj:`~pint.Unit`, default: :obj:`DEFAULT_UNITS.AREA`
+           Units for the area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.measurements import Area
+
+
+
+
+

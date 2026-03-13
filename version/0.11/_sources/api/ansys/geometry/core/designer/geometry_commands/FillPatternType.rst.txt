@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`FillPatternType`
+========================
+
+
+.. py:class:: ansys.geometry.core.designer.geometry_commands.FillPatternType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for types of fill patterns.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: FillPatternType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~GRID`
+            - 
+          * - :py:attr:`~OFFSET`
+            - 
+          * - :py:attr:`~SKEWED`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.geometry_commands import FillPatternType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: GRID
+   :value: 0
+
+
+.. py:attribute:: OFFSET
+   :value: 1
+
+
+.. py:attribute:: SKEWED
+   :value: 2
+
+
+
+
+
+

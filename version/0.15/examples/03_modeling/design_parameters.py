@@ -1,0 +1,144 @@
+# ---
+# jupyter:
+#   jupytext:
+#     default_lexer: ipython3
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.19.1
+#   kernelspec:
+#     display_name: Python 3 (ipykernel)
+#     language: python
+#     name: python3
+# ---
+
+# %% [markdown]
+# # Modeling: Using design parameters
+#
+# You can read and update parameters that are part of the design.
+# The simple design in this example has two associated parameters.
+
+# %% [markdown]
+# ## Perform required imports
+
+# %%
+from pathlib import Path
+import requests
+
+from ansys.geometry.core import launch_modeler
+
+
+# %% [markdown]
+# The file for this example is in the integration tests folder and can be downloaded.
+
+# %% [markdown]
+# ## Download the example file
+
+# %% [markdown]
+# Download the file for this example from the integration tests folder in the PyAnsys Geometry repository.
+
+# %%
+def download_file(url, filename):
+    """Download a file from a URL and save it to a local file."""
+    response = requests.get(url)
+    response.raise_for_status()  # Check if the request was successful
+    with open(filename, 'wb') as file:
+        file.write(response.content)
+
+# URL of the file to download
+url = "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/tests/integration/files/blockswithparameters.dsco"
+
+# Local path to save the file to
+file_path = Path.cwd() / "blockswithparameters.dsco"
+
+# Download the file
+download_file(url, file_path)
+print(f"File is downloaded to {file_path}")
+
+# %% [markdown]
+# ## Import a design with parameters
+
+# %% [markdown]
+# Import the model using the ``open_file()`` method of the modeler.
+
+# %%
+# Create a modeler object
+modeler = launch_modeler()
+design = modeler.open_file(file_path)
+design.plot()
+
+# %% [markdown]
+# ## Read existing parameters of the design
+#
+# You can get all the parameters of the design as a list of parameters. Because this
+# example has two parameters, you see two items in the list.
+
+# %%
+my_parameters = design.parameters
+print(len(my_parameters))
+
+# %% [markdown]
+# A parameter object has a name, value, and unit.
+
+# %%
+print(my_parameters[0].name)
+print(my_parameters[0].dimension_value)
+print(my_parameters[0].dimension_type)
+
+print(my_parameters[1].name)
+print(my_parameters[1].dimension_value)
+print(my_parameters[1].dimension_type)
+
+# %% [markdown]
+# Parameter values are returned in the default unit for each dimension type. Since default length
+# unit is meter and default area unit is meter square, the value is returned in square meters.
+
+# %% [markdown]
+# ## Edit a parameter value
+#
+# You can edit the parameter's name or value by simply setting these fields.
+# Set the second parameter (p2 value to 350 mm).
+
+# %%
+parameter1 = my_parameters[1]
+parameter1.dimension_value = 0.000440
+response = design.set_parameter(parameter1)
+print(response)
+print(my_parameters[0].dimension_value)
+print(my_parameters[1].dimension_value)
+
+# %% [markdown]
+# After a successful parameter update, the design is updated. If we request the design
+# plot again, we see the updated design.
+
+# %%
+design.plot()
+
+# %% [markdown]
+# The ``set_parameter()`` method returns a ``Success`` status message if the parameter is updated or
+# a "FAILURE" status message if the update fails. If the ``p2`` parameter depends on the ``p1``
+# parameter, updating the ``p1`` parameter might also change the ``p2`` parameter. In such cases,
+# the method returns ``CONSTRAINED_PARAMETERS``, which indicates other parameters were also updated.
+
+# %%
+parameter1 = my_parameters[0]
+parameter1.dimension_value = 0.000250
+response = design.set_parameter(parameter1)
+print(response)
+
+# %% [markdown]
+# To get the updated list, query the parameters once again.
+
+# %%
+my_parameters = design.parameters
+print(my_parameters[0].dimension_value)
+print(my_parameters[1].dimension_value)
+
+# %% [markdown]
+# ## Close the modeler
+#
+# Close the modeler to free up resources and release the connection.
+
+# %%
+modeler.close()

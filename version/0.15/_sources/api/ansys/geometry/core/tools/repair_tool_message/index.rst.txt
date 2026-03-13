@@ -1,0 +1,126 @@
+
+
+
+
+
+
+The ``repair_tool_message.py`` module
+=====================================
+
+.. py:module:: ansys.geometry.core.tools.repair_tool_message
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.tools.repair_tool_message
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.repair_tool_message.RepairToolMessage`
+            - Provides return message for the repair tool methods.
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~create_repair_message_from_response`
+            - Create a RepairToolMessage from a serialized response.
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> RepairToolMessage</api/ansys/geometry/core/tools/repair_tool_message/RepairToolMessage>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for repair tool message.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: create_repair_message_from_response(response) -> RepairToolMessage
+
+   
+   Create a RepairToolMessage from a serialized response.
+
+
+   :Parameters:
+
+       **response** : :obj:`serialized` :obj:`response`
+           The serialized response object containing repair tool information.
+
+
+
+   :Returns:
+
+       :obj:`RepairToolMessage`
+           An instance of RepairToolMessage populated with data from the response.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

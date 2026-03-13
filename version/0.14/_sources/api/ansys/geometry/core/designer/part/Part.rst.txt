@@ -1,0 +1,233 @@
+
+
+
+
+
+
+:class:`Part`
+=============
+
+
+.. py:class:: ansys.geometry.core.designer.part.Part(id: str, name: str, components: list[MasterComponent], bodies: list[ansys.geometry.core.designer.body.MasterBody])
+
+   
+   Represents a part master.
+
+   This class should not be accessed by users. The ``Part`` class holds fundamental
+   data of an assembly.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Unique identifier for the part.
+
+       **name** : :class:`python:str`
+           Name of the part.
+
+       **components** : :class:`python:list`\[:obj:`MasterComponent`]
+           list of ``MasterComponent`` children that the part contains.
+
+       **bodies** : :class:`python:list`\[:obj:`MasterBody`]
+           list of ``MasterBody`` children that the part contains. These are master bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: Part
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the part.
+          * - :py:attr:`~name`
+            - Name of the part.
+          * - :py:attr:`~components`
+            - ``MasterComponent`` children that the part contains.
+          * - :py:attr:`~bodies`
+            - ``MasterBody`` children that the part contains.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the part as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.part import Part
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   ID of the part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Name of the part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: components
+   :type: list[MasterComponent]
+
+
+   
+   ``MasterComponent`` children that the part contains.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: bodies
+   :type: list[ansys.geometry.core.designer.body.MasterBody]
+
+
+   
+   ``MasterBody`` children that the part contains.
+
+   These are master bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the part as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

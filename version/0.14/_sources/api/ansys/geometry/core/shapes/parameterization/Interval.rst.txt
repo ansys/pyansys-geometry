@@ -1,0 +1,643 @@
+
+
+
+
+
+
+:class:`Interval`
+=================
+
+
+.. py:class:: ansys.geometry.core.shapes.parameterization.Interval(start: ansys.geometry.core.typing.Real, end: ansys.geometry.core.typing.Real)
+
+   
+   Interval class that defines a range of values.
+
+
+   :Parameters:
+
+       **start** : :obj:`Real`
+           Start value of the interval.
+
+       **end** : :obj:`Real`
+           End value of the interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+.. py:currentmodule:: Interval
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~is_open`
+            - If the interval is open (-inf, inf).
+          * - :py:attr:`~is_closed`
+            - If the interval is closed. Neither value is inf or -inf.
+          * - :py:attr:`~is_empty`
+            - Check if the current interval is empty.
+          * - :py:attr:`~get_span`
+            - Get the quantity contained by the interval.
+          * - :py:attr:`~get_relative_val`
+            - Get an evaluation property of the interval, used in BoxUV.
+          * - :py:attr:`~is_negative`
+            - Indicate whether the current interval is negative.
+          * - :py:attr:`~self_unite`
+            - Get the union of two intervals and update the current interval.
+          * - :py:attr:`~self_intersect`
+            - Get the intersection of two intervals and update the current one.
+          * - :py:attr:`~contains_value`
+            - Check if the current interval contains the value ``t``.
+          * - :py:attr:`~contains`
+            - Check if interval contains value ``t`` using default accuracy.
+          * - :py:attr:`~inflate`
+            - Enlarge the current interval by the given delta value.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~start`
+            - Start value of the interval.
+          * - :py:attr:`~end`
+            - End value of the interval.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~not_empty`
+            - 
+
+
+   .. tab-item:: Static methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~unite`
+            - Get the union of two intervals.
+          * - :py:attr:`~intersect`
+            - Get the intersection of two intervals.
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Compare two intervals.
+          * - :py:attr:`~__repr__`
+            - Represent the interval as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.parameterization import Interval
+
+Property detail
+---------------
+
+.. py:property:: start
+   :type: ansys.geometry.core.typing.Real
+
+
+   
+   Start value of the interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end
+   :type: ansys.geometry.core.typing.Real
+
+
+   
+   End value of the interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: not_empty
+   :value: True
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __eq__(other: object)
+
+   
+   Compare two intervals.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_open() -> bool
+
+   
+   If the interval is open (-inf, inf).
+
+
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           True if both ends of the interval are negative and positive infinity respectively.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_closed() -> bool
+
+   
+   If the interval is closed. Neither value is inf or -inf.
+
+
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           True if neither bound of the interval is infinite.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_empty() -> bool
+
+   
+   Check if the current interval is empty.
+
+
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when the interval is empty, ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_span() -> ansys.geometry.core.typing.Real
+
+   
+   Get the quantity contained by the interval.
+
+   The interval must be closed.
+
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           The difference between the end and start of the interval.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_relative_val(t: ansys.geometry.core.typing.Real) -> ansys.geometry.core.typing.Real
+
+   
+   Get an evaluation property of the interval, used in BoxUV.
+
+
+   :Parameters:
+
+       **t** : :obj:`Real`
+           Offset to evaluate the interval at.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Actual value according to the offset.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_negative(tolerance: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Indicate whether the current interval is negative.
+
+
+   :Parameters:
+
+       **tolerance** : :obj:`Real`
+           Accepted range because the data type of the interval could be in doubles.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the interval is negative, ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: unite(first: Interval, second: Interval) -> Interval
+   :staticmethod:
+
+
+   
+   Get the union of two intervals.
+
+
+   :Parameters:
+
+       **first** : :obj:`Interval`
+           First interval.
+
+       **second** : :obj:`Interval`
+           Second interval.
+
+
+
+   :Returns:
+
+       :obj:`Interval`
+           Union of the two intervals.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: self_unite(other: Interval) -> None
+
+   
+   Get the union of two intervals and update the current interval.
+
+
+   :Parameters:
+
+       **other** : :obj:`Interval`
+           Interval to unite with.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: intersect(first: Interval, second: Interval, tolerance: ansys.geometry.core.typing.Real) -> Interval
+   :staticmethod:
+
+
+   
+   Get the intersection of two intervals.
+
+
+   :Parameters:
+
+       **first** : :obj:`Interval`
+           First interval.
+
+       **second** : :obj:`Interval`
+           Second interval.
+
+
+
+   :Returns:
+
+       :obj:`Interval`
+           Intersection of the two intervals.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: self_intersect(other: Interval, tolerance: ansys.geometry.core.typing.Real) -> None
+
+   
+   Get the intersection of two intervals and update the current one.
+
+
+   :Parameters:
+
+       **other** : :obj:`Interval`
+           Interval to intersect with.
+
+       **tolerance** : :obj:`Real`
+           Accepted range of error given that the interval could be in float values.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_value(t: ansys.geometry.core.typing.Real, accuracy: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Check if the current interval contains the value ``t``.
+
+
+   :Parameters:
+
+       **t** : :obj:`Real`
+           Value of interest.
+
+       **accuracy** : :obj:`Real`
+           Accepted range of error given that the interval could be in float values.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the interval contains the value, ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains(t: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Check if interval contains value ``t`` using default accuracy.
+
+
+   :Parameters:
+
+       **t** : :obj:`Real`
+           Value of interest.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the interval contains the value, ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: inflate(delta: ansys.geometry.core.typing.Real) -> Interval
+
+   
+   Enlarge the current interval by the given delta value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the interval as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

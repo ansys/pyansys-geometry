@@ -1,0 +1,107 @@
+
+
+
+
+
+
+:class:`GRPCPointsService`
+==========================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.points.GRPCPointsService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Points service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: GRPCPointsService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_design_points`
+            - Create design points.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.points import GRPCPointsService
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_design_points(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create design points.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

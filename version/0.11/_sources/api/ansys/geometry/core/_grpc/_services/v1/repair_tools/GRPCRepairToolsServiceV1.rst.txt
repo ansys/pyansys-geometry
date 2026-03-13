@@ -1,0 +1,570 @@
+
+
+
+
+
+
+:class:`GRPCRepairToolsServiceV1`
+=================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.repair_tools.GRPCRepairToolsServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.repair_tools.GRPCRepairToolsService`
+
+
+   
+   Repair tools service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCRepairToolsServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~find_split_edges`
+            - Identify split edges in the geometry.
+          * - :py:attr:`~find_extra_edges`
+            - Identify extra edges in the geometry.
+          * - :py:attr:`~find_inexact_edges`
+            - Identify inexact edges in the geometry.
+          * - :py:attr:`~find_short_edges`
+            - Identify short edges in the geometry.
+          * - :py:attr:`~find_duplicate_faces`
+            - Identify duplicate faces in the geometry.
+          * - :py:attr:`~find_missing_faces`
+            - Identify missing faces in the geometry.
+          * - :py:attr:`~find_small_faces`
+            - Identify small faces in the geometry.
+          * - :py:attr:`~find_stitch_faces`
+            - Identify faces that can be stitched together in the geometry.
+          * - :py:attr:`~find_simplify`
+            - Identify areas in the geometry that can be simplified.
+          * - :py:attr:`~find_interferences`
+            - Identify interferences in the geometry.
+          * - :py:attr:`~find_and_fix_short_edges`
+            - Identify and fix short edges in the geometry.
+          * - :py:attr:`~find_and_fix_extra_edges`
+            - Identify and fix extra edges in the geometry.
+          * - :py:attr:`~find_and_fix_split_edges`
+            - Identify and fix split edges in the geometry.
+          * - :py:attr:`~find_and_fix_simplify`
+            - Identify and simplify areas in the geometry.
+          * - :py:attr:`~find_and_fix_stitch_faces`
+            - Identify and stitch faces in the geometry.
+          * - :py:attr:`~inspect_geometry`
+            - Inspect the geometry for issues.
+          * - :py:attr:`~repair_geometry`
+            - Repair the geometry by addressing identified issues.
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.repair_tools import GRPCRepairToolsServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: find_split_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify split edges in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_extra_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify extra edges in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_inexact_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify inexact edges in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_short_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify short edges in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_duplicate_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify duplicate faces in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_missing_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify missing faces in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_small_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify small faces in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_stitch_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify faces that can be stitched together in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_simplify(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify areas in the geometry that can be simplified.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_interferences(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify interferences in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_fix_short_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify and fix short edges in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_fix_extra_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify and fix extra edges in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_fix_split_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify and fix split edges in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_fix_simplify(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify and simplify areas in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_fix_stitch_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Identify and stitch faces in the geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: inspect_geometry(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Inspect the geometry for issues.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: repair_geometry(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Repair the geometry by addressing identified issues.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``assembly_condition.py`` module
+====================================
+
+.. py:module:: ansys.geometry.core._grpc._services.v1.assembly_condition
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core._grpc._services.v1.assembly_condition
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v1.assembly_condition.GRPCAssemblyConditionServiceV1`
+            - Assembly condition service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCAssemblyConditionServiceV1</api/ansys/geometry/core/_grpc/_services/v1/assembly_condition/GRPCAssemblyConditionServiceV1>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the assembly condition service implementation for v1.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,170 @@
+
+
+:class:`PlotterWidget`
+======================
+
+.. py:class:: ansys.geometry.core.plotting.widgets.widget.PlotterWidget(plotter: pyvista.Plotter)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Provides an abstract class for plotter widgets.
+
+
+   :Parameters:
+
+       **plotter** : :obj:`~pyvista.Plotter`
+           Plotter instance to add the widget to.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   These widgets are intended to be used with PyVista plotter objects.
+   More specifically, the way in which this abstraction has been built
+   ensures that these widgets are easily integrable with PyAnsys Geometry's
+   own ``Plotter`` class.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+.. py:currentmodule:: PlotterWidget
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~callback`
+            - General callback function for ``PlotterWidget`` objects.
+          * - :py:attr:`~update`
+            - General update function for ``PlotterWidget`` objects.
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~plotter`
+            - Plotter object the widget is assigned to.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
+
+Property detail
+---------------
+.. py:property:: plotter
+   :type: pyvista.Plotter
+
+   
+   Plotter object the widget is assigned to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+    
+
+Method detail
+-------------
+.. py:method:: callback(state) -> None
+   :abstractmethod:
+
+
+   
+   General callback function for ``PlotterWidget`` objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: update() -> None
+   :abstractmethod:
+
+
+   
+   General update function for ``PlotterWidget`` objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

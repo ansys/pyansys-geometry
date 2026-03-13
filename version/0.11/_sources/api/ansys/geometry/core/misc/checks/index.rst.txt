@@ -1,0 +1,672 @@
+
+
+
+
+
+
+The ``checks.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.misc.checks
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: checks
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ensure_design_is_active`
+            - Make sure that the design is active before executing a method.
+
+
+          * - :py:obj:`~check_is_float_int`
+            - Check if a parameter has a float or integer value.
+
+
+          * - :py:obj:`~check_ndarray_is_float_int`
+            - Check if a :class:`numpy.ndarray <numpy.ndarray>` has float/integer types.
+
+
+          * - :py:obj:`~check_ndarray_is_not_none`
+            - Check if a :class:`numpy.ndarray <numpy.ndarray>` is all ``None``.
+
+
+          * - :py:obj:`~check_ndarray_is_all_nan`
+            - Check if a :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
+
+
+          * - :py:obj:`~check_ndarray_is_non_zero`
+            - Check if a :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
+
+
+          * - :py:obj:`~check_pint_unit_compatibility`
+            - Check if input :class:`pint.Unit` is compatible with the expected input.
+
+
+          * - :py:obj:`~check_type_equivalence`
+            - Check if an input object is of the same class as an expected object.
+
+
+          * - :py:obj:`~check_type`
+            - Check if an input object is of the same type as expected types.
+
+
+          * - :py:obj:`~check_type_all_elements_in_iterable`
+            - Check if all elements in an iterable are of the same type as expected.
+
+
+          * - :py:obj:`~min_backend_version`
+            - Compare a minimum required version to the current backend version.
+
+
+          * - :py:obj:`~deprecated_method`
+            - Decorate a method as deprecated.
+
+
+          * - :py:obj:`~deprecated_argument`
+            - Decorate a method argument as deprecated.
+
+
+          * - :py:obj:`~run_if_graphics_required`
+            - Check if graphics are available.
+
+
+          * - :py:obj:`~graphics_required`
+            - Decorate a method as requiring graphics.
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ERROR_GRAPHICS_REQUIRED`
+            - Message to display when graphics are required for a method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides functions for performing common checks.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: ensure_design_is_active(method)
+
+   
+   Make sure that the design is active before executing a method.
+
+   This function is necessary to be called whenever we do any operation
+   on the design. If we are just accessing information of the class, it
+   is not necessary to call this.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: check_is_float_int(param: object, param_name: str | None = None) -> None
+
+   
+   Check if a parameter has a float or integer value.
+
+
+   :Parameters:
+
+       **param** : :obj:`object`
+           Object instance to check.
+
+       **param_name** : :class:`python:str`, default: :data:`python:None`
+           Parameter name (if any).
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`TypeError`
+           If the parameter does not have a float or integer value.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: check_ndarray_is_float_int(param: numpy.ndarray, param_name: str | None = None) -> None
+
+   
+   Check if a :class:`numpy.ndarray <numpy.ndarray>` has float/integer types.
+
+
+   :Parameters:
+
+       **param** : :obj:`~numpy.ndarray`
+           :class:`numpy.ndarray <numpy.ndarray>` instance to check.
+
+       **param_name** : :class:`python:str`, default: :data:`python:None`
+           :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`TypeError`
+           If the :class:`numpy.ndarray <numpy.ndarray>` instance does not
+           have float or integer values.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: check_ndarray_is_not_none(param: numpy.ndarray, param_name: str | None = None) -> None
+
+   
+   Check if a :class:`numpy.ndarray <numpy.ndarray>` is all ``None``.
+
+
+   :Parameters:
+
+       **param** : :obj:`~numpy.ndarray`
+           :class:`numpy.ndarray <numpy.ndarray>` instance to check.
+
+       **param_name** : :class:`python:str`, default: :data:`python:None`
+           :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           If the :class:`numpy.ndarray <numpy.ndarray>` instance has a value
+           of ``None`` for all parameters.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: check_ndarray_is_all_nan(param: numpy.ndarray, param_name: str | None = None) -> None
+
+   
+   Check if a :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
+
+
+   :Parameters:
+
+       **param** : :obj:`~numpy.ndarray`
+           :class:`numpy.ndarray <numpy.ndarray>` instance to check.
+
+       **param_name** : :class:`python:str` or :data:`python:None`, default: :data:`python:None`
+           :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           If the :class:`numpy.ndarray <numpy.ndarray>` instance is all nan-valued.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: check_ndarray_is_non_zero(param: numpy.ndarray, param_name: str | None = None) -> None
+
+   
+   Check if a :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
+
+
+   :Parameters:
+
+       **param** : :obj:`~numpy.ndarray`
+           :class:`numpy.ndarray <numpy.ndarray>` instance to check.
+
+       **param_name** : :class:`python:str`, default: :data:`python:None`
+           :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           If the :class:`numpy.ndarray <numpy.ndarray>` instance is zero-valued.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: check_pint_unit_compatibility(input: pint.Unit, expected: pint.Unit) -> None
+
+   
+   Check if input :class:`pint.Unit` is compatible with the expected input.
+
+
+   :Parameters:
+
+       **input** : :obj:`~pint.Unit`
+           :class:`pint.Unit` input.
+
+       **expected** : :obj:`~pint.Unit`
+           :class:`pint.Unit` expected dimensionality.
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`TypeError`
+           If the input is not compatible with the :class:`pint.Unit` class.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: check_type_equivalence(input: object, expected: object) -> None
+
+   
+   Check if an input object is of the same class as an expected object.
+
+
+   :Parameters:
+
+       **input** : :obj:`object`
+           Input object.
+
+       **expected** : :obj:`object`
+           Expected object.
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`TypeError`
+           If the objects are not of the same class.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: check_type(input: object, expected_type: type | tuple[type, Ellipsis]) -> None
+
+   
+   Check if an input object is of the same type as expected types.
+
+
+   :Parameters:
+
+       **input** : :obj:`object`
+           Input object.
+
+       **expected_type** : :obj:`type` | :class:`python:tuple`\[:obj:`type`, ...]
+           One or more types to compare the input object against.
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`TypeError`
+           If the object does not match the one or more expected types.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: check_type_all_elements_in_iterable(input: collections.abc.Iterable, expected_type: type | tuple[type, Ellipsis]) -> None
+
+   
+   Check if all elements in an iterable are of the same type as expected.
+
+
+   :Parameters:
+
+       **input** : :obj:`Iterable`
+           Input iterable.
+
+       **expected_type** : :obj:`type` | :class:`python:tuple`\[:obj:`type`, ...]
+           One or more types to compare the input object against.
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`TypeError`
+           If one of the elements in the iterable does not match the one or more expected types.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: min_backend_version(major: int, minor: int, service_pack: int)
+
+   
+   Compare a minimum required version to the current backend version.
+
+
+   :Parameters:
+
+       **major** : :class:`python:int`
+           Minimum major version required by the method.
+
+       **minor** : :class:`python:int`
+           Minimum minor version required by the method.
+
+       **service_pack** : :class:`python:int`
+           Minimum service pack version required by the method.
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`GeometryRuntimeError`
+           If the method version is higher than the backend version.
+
+       :obj:`GeometryRuntimeError`
+           If the client is not available.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: deprecated_method(alternative: str | None = None, info: str | None = None, version: str | None = None, remove: str | None = None)
+
+   
+   Decorate a method as deprecated.
+
+
+   :Parameters:
+
+       **alternative** : :class:`python:str`, default: :data:`python:None`
+           Alternative method to use. If provided, the warning message will
+           include the alternative method.
+
+       **info** : :class:`python:str`, default: :data:`python:None`
+           Additional information to include in the warning message.
+
+       **version** : :class:`python:str`, default: :data:`python:None`
+           Version where the method was deprecated.
+
+       **remove** : :class:`python:str`, default: :data:`python:None`
+           Version where the method will be removed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: deprecated_argument(arg: str, alternative: str | None = None, info: str | None = None, version: str | None = None, remove: str | None = None)
+
+   
+   Decorate a method argument as deprecated.
+
+
+   :Parameters:
+
+       **arg** : :class:`python:str`
+           Argument to mark as deprecated.
+
+       **alternative** : :class:`python:str`, default: :data:`python:None`
+           Alternative argument to use. If provided, the warning message will
+           include the alternative argument.
+
+       **info** : :class:`python:str`, default: :data:`python:None`
+           Additional information to include in the warning message.
+
+       **version** : :class:`python:str`, default: :data:`python:None`
+           Version where the method was deprecated.
+
+       **remove** : :class:`python:str`, default: :data:`python:None`
+           Version where the method will be removed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: run_if_graphics_required()
+
+   
+   Check if graphics are available.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: graphics_required(method)
+
+   
+   Decorate a method as requiring graphics.
+
+
+   :Parameters:
+
+       **method** : :func:`python:callable`
+           Method to decorate.
+
+
+
+   :Returns:
+
+       :func:`python:callable`
+           Decorated method.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: ERROR_GRAPHICS_REQUIRED
+   :value: 'Graphics are required for this method. Please install the ``graphics`` target  to use this...
+
+
+   
+   Message to display when graphics are required for a method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

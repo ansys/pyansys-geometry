@@ -1,0 +1,187 @@
+:py:mod:`ansys.geometry.core.sketch.edge`
+=========================================
+
+.. py:module:: ansys.geometry.core.sketch.edge
+
+.. autoapi-nested-parse::
+
+   Provides the ``SketchEdge`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.sketch.edge.SketchEdge
+
+
+
+
+.. py:class:: SketchEdge
+
+
+   
+   Provides for modeling edges forming sketched shapes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: start
+      :type: ansys.geometry.core.math.Point2D
+      :abstractmethod:
+
+      
+      Point that is the start point of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: end
+      :type: ansys.geometry.core.math.Point2D
+      :abstractmethod:
+
+      
+      Point that is the end point of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: length
+      :type: pint.Quantity
+      :abstractmethod:
+
+      
+      Length of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: visualization_polydata
+      :type: pyvista.PolyData
+      :abstractmethod:
+
+      
+      VTK polydata representation for PyVista visualization.
+
+      The representation lies in the X/Y plane within
+      the standard global Cartesian coordinate system.
+
+
+      :Returns:
+
+          :obj:`pyvista.PolyData`
+              VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: plane_change(plane: ansys.geometry.core.math.Plane) -> None
+
+      
+      Redefine the plane containing SketchEdge objects.
+
+
+      :Parameters:
+
+          **plane** : :obj:`Plane`
+              Desired new plane which will contain the sketched edge.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      This implies that their 3D definition may suffer changes. By default, it does
+      nothing. It is required to be implemented in child SketchEdge classes.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

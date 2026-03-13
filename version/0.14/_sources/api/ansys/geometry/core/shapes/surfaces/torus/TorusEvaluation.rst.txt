@@ -1,0 +1,523 @@
+
+
+
+
+
+
+:class:`TorusEvaluation`
+========================
+
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.torus.TorusEvaluation(torus: Torus, parameter: ansys.geometry.core.shapes.parameterization.ParamUV)
+
+   Bases: :py:obj:`ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation`
+
+
+   
+   Evaluate the torus`` at given parameters.
+
+
+   :Parameters:
+
+       **Torus: ~ansys.geometry.core.shapes.surfaces.torus.Torus**
+           Torust to evaluate.
+
+       **parameter: ParamUV**
+           Parameters (u, v) to evaluate the torus at.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: TorusEvaluation
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~torus`
+            - Torus being evaluated.
+          * - :py:attr:`~parameter`
+            - Parameter that the evaluation is based upon.
+          * - :py:attr:`~position`
+            - Position of the evaluation.
+          * - :py:attr:`~normal`
+            - Normal to the surface.
+          * - :py:attr:`~u_derivative`
+            - First derivative with respect to the U parameter.
+          * - :py:attr:`~v_derivative`
+            - First derivative with respect to the V parameter.
+          * - :py:attr:`~uu_derivative`
+            - Second derivative with respect to the U parameter.
+          * - :py:attr:`~uv_derivative`
+            - Second derivative with respect to the U and V parameters.
+          * - :py:attr:`~vv_derivative`
+            - Second derivative with respect to the V parameter.
+          * - :py:attr:`~curvature`
+            - Curvature of the torus.
+          * - :py:attr:`~min_curvature`
+            - Minimum curvature of the torus.
+          * - :py:attr:`~min_curvature_direction`
+            - Minimum curvature direction.
+          * - :py:attr:`~max_curvature`
+            - Maximum curvature of the torus.
+          * - :py:attr:`~max_curvature_direction`
+            - Maximum curvature direction.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~cache`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.torus import TorusEvaluation
+
+Property detail
+---------------
+
+.. py:property:: torus
+   :type: Torus
+
+
+   
+   Torus being evaluated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parameter
+   :type: ansys.geometry.core.shapes.parameterization.ParamUV
+
+
+   
+   Parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: position
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Position of the evaluation.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Point3D`
+           Point that lies on the torus at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: normal
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Normal to the surface.
+
+
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Normal unit vector to the torus at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: u_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+
+   
+   First derivative with respect to the U parameter.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           First derivative with respect to the U parameter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: v_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+
+   
+   First derivative with respect to the V parameter.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           First derivative with respect to the V parameter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: uu_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+
+   
+   Second derivative with respect to the U parameter.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           Second derivative with respect to the U parameter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: uv_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+
+   
+   Second derivative with respect to the U and V parameters.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           Second derivative with respect to the U and V parameters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: vv_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+
+   
+   Second derivative with respect to the V parameter.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           Second derivative with respect to the V parameter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: curvature
+   :type: tuple[ansys.geometry.core.typing.Real, ansys.geometry.core.math.vector.Vector3D, ansys.geometry.core.typing.Real, ansys.geometry.core.math.vector.Vector3D]
+
+
+   
+   Curvature of the torus.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:tuple`\[:obj:`Real`, :obj:`Vector3D`, :obj:`Real`, :obj:`Vector3D`]
+           Minimum and maximum curvature value and direction, respectively.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: min_curvature
+   :type: ansys.geometry.core.typing.Real
+
+
+   
+   Minimum curvature of the torus.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Minimum curvature of the torus.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: min_curvature_direction
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Minimum curvature direction.
+
+
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Minimum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: max_curvature
+   :type: ansys.geometry.core.typing.Real
+
+
+   
+   Maximum curvature of the torus.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Maximum curvature of the torus.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: max_curvature_direction
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Maximum curvature direction.
+
+
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Maximum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: cache
+
+
+
+
+
