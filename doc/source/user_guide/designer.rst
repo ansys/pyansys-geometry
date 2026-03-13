@@ -3,7 +3,7 @@
 Designer
 ********
 
-The PyAnsys Geometry :mod:`designer <ansys.geometry.core.designer>` subpackage organizes geometry
+The PyAnsys Geometry :class:`designer <ansys.geometry.core.designer>` subpackage organizes geometry
 assemblies and synchronizes to a supporting Geometry service instance.
 
 .. _ref_designer_architecture:
@@ -14,15 +14,15 @@ Architecture overview
 PyAnsys Geometry uses a hierarchical object model to represent 3D geometry. Understanding
 this hierarchy is essential to effectively using the API.
 
-The core classes in the ``designer`` subpackage are:
+The core classes in the :class:`designer <ansys.geometry.core.designer>` subpackage are:
 
-- :ref:`Design <ref_design>`: The top-level container for a geometry model. Each design
+- :class:`Design <ansys.geometry.core.designer.design>`: The top-level container for a geometry model. Each design
   corresponds to a single session in the Geometry service and can contain components, bodies,
   materials, named selections, and more.
-- :ref:`Component <ref_component>`: A sub-assembly within a design. Components can be nested
+- :class:`Component <ansys.geometry.core.designer.component>`: A sub-assembly within a design. Components can be nested
   to create complex assemblies and can contain other components, bodies, beams, coordinate
   systems, datum planes, and design points.
-- :ref:`Body <ref_body>`: A 3D solid or surface body within a component. Bodies can be
+- :class:`Body <ansys.geometry.core.designer.body>`: A 3D solid or surface body within a component. Bodies can be
   created by extruding, sweeping, or revolving sketches, or by applying boolean operations
   to existing bodies.
 
@@ -48,9 +48,9 @@ The following diagram illustrates the assembly hierarchy::
 
    For a detailed description of each class and its capabilities, see:
 
-   - :ref:`Design <ref_design>`
-   - :ref:`Component <ref_component>`
-   - :ref:`Body <ref_body>`
+   - :class:`Design <ansys.geometry.core.designer.design>`
+   - :class:`Component <ansys.geometry.core.designer.component>`
+   - :class:`Body <ansys.geometry.core.designer.body>`
 
 Quick start
 -----------

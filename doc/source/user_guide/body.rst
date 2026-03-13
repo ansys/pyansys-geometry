@@ -12,12 +12,12 @@ Bodies are created through component methods such as
 :meth:`extrude_sketch() <ansys.geometry.core.designer.component.extrude_sketch>`,
 :meth:`sweep_sketch() <ansys.geometry.core.designer.component.sweep_sketch>`, and
 :meth:`revolve_sketch() <ansys.geometry.core.designer.component.revolve_sketch>`.
-For more information, see :ref:`Component <ref_component>`.
+For more information, see :class:`Component <ansys.geometry.core.designer.component>`.
 
 Purpose and responsibilities
 -----------------------------
 
-A ``Body`` object is responsible for:
+A :class:`Body <ansys.geometry.core.designer.body>` object is responsible for:
 
 - Representing a **solid or surface** geometry entity with faces, edges, and vertices.
 - Supporting **geometric transformations** (translate, rotate, scale, mirror).

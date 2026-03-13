@@ -8,13 +8,13 @@ sub-assembly within a design. Components can be nested to any depth to create co
 assembly structures. Each component can contain bodies, beams, nested components,
 coordinate systems, datum planes, and design points.
 
-Because :ref:`Design <ref_design>` extends ``Component``, all geometry creation methods
-described on this page are also available directly on a ``Design`` object.
+Because :class:`Design <ansys.geometry.core.designer.design>` extends :class:`Component <ansys.geometry.core.designer.component>`, all geometry creation methods
+described on this page are also available directly on a :class:`Design <ansys.geometry.core.designer.design>` object.
 
 Purpose and responsibilities
 -----------------------------
 
-A ``Component`` object is responsible for:
+A :class:`Component <ansys.geometry.core.designer.component>` object is responsible for:
 
 - Organizing bodies and other geometry into a **named sub-assembly** within the design.
 - Providing methods to **create geometry** (extrusions, sweeps, revolutions, primitives).
@@ -48,7 +48,7 @@ Component instances and master components
 
 PyAnsys Geometry supports **instancing** of components. When you create a component from
 a template, both the original and the new instance share the same underlying
-``MasterComponent``. Modifying the master geometry updates all instances.
+:class:`MasterComponent <ansys.geometry.core.designer.part.MasterComponent>`. Modifying the master geometry updates all instances.
 
 This is useful when the same part appears multiple times in an assembly (for example,
 identical bolts or brackets):
