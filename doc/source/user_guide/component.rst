@@ -48,7 +48,7 @@ Component instances and master components
 
 PyAnsys Geometry supports **instancing** of components. When you create a component from
 a template, both the original and the new instance share the same underlying
-:class:`~ansys.geometry.core.designer.part.MasterComponent`. Modifying the master geometry updates all instances.
+``MasterComponent``. Modifying the master geometry updates all instances.
 
 This is useful when the same part appears multiple times in an assembly (for example,
 identical bolts or brackets):
