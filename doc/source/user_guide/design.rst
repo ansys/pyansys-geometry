@@ -10,7 +10,7 @@ component-level operations (creating bodies, sub-components, datum planes, and s
 also available directly on the design object.
 
 A ``Design`` object is always created through the
-:class:`Modeler <ansys.geometry.core.modeler.modeler>` instance:
+:class:`Modeler <ansys.geometry.core.modeler>` instance:
 
 .. code:: python
 
@@ -54,7 +54,7 @@ The following are the most commonly used properties on a ``Design`` object.
     been added to the design.
 
 ``named_selections``
-    A list of :class:`NamedSelection <ansys.geometry.core.designer.namedSelection>` objects
+    A list of :class:`NamedSelection <ansys.geometry.core.designer.selection>` objects
     available in the design.
 
 ``is_active``
@@ -177,7 +177,7 @@ You can also pass a directory path or a full file path to ``location``:
     path = design.export_to_step(pathlib.Path("path/to/directory/my_design.stp"))
 
 The supported file formats are defined in
-:class:`DesignFileFormat <ansys.geometry.core.designer.DesignFileFormat>`.
+:class:`DesignFileFormat <ansys.geometry.core.designer.design>`.
 
 Working with parameters
 -----------------------

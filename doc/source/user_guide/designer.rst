@@ -3,7 +3,7 @@
 Designer
 ********
 
-The PyAnsys Geometry :class:`designer <ansys.geometry.core.designer>` subpackage organizes geometry
+The PyAnsys Geometry :mod:`designer <ansys.geometry.core.designer>` subpackage organizes geometry
 assemblies and synchronizes to a supporting Geometry service instance.
 
 .. _ref_designer_architecture:
@@ -59,7 +59,7 @@ The following example demonstrates the typical workflow for creating a geometry 
 PyAnsys Geometry.
 
 First, connect to the Geometry service using the
-:class:`Modeler <ansys.geometry.core.modeler.modeler>` class:
+:class:`Modeler <ansys.geometry.core.modeler>` class:
 
 .. code:: python
 
