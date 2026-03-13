@@ -24,7 +24,7 @@ Purpose and responsibilities
 
 A ``Design`` object represents the root of a geometry assembly. It is responsible for:
 
-- Containing all :class:`Component <ansys.geometry.core.designer.component>` and 
+- Containing all :class:`Component <ansys.geometry.core.designer.component>` and
   :class:`Body <ansys.geometry.core.designer.body>` that make up a geometry model.
 - Managing **materials** that can be assigned to bodies.
 - Managing **named selections**: named groups of geometry entities (components, bodies, faces,
