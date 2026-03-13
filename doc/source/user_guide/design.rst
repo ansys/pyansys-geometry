@@ -164,7 +164,7 @@ current working directory using the design name as the filename.
     # Export as STRIDE
     path = design.export_to_stride()
 
-You can also pass a directory path or a full file path to ``location``:
+You can also pass a directory path or a full path to ``location``:
 
 .. code:: python
 

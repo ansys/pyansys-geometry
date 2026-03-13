@@ -3,7 +3,7 @@
 Designer
 ********
 
-The PyAnsys Geometry :class:`designer <ansys.geometry.core.designer>` subpackage organizes geometry
+The PyAnsys Geometry :ref:`designer <ref_designer>` subpackage organizes geometry
 assemblies and synchronizes to a supporting Geometry service instance.
 
 .. _ref_designer_architecture:
