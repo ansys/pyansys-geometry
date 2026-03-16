@@ -117,7 +117,7 @@ bodies, faces, edges, or vertices.
     design.delete_named_selection(ns)
 
 Importing and exporting geometry
----------------------------------
+--------------------------------
 
 PyAnsys Geometry supports importing geometry files into a design and exporting designs
 to several industry-standard formats.
