@@ -173,9 +173,6 @@ You can also pass a directory path or a full path to ``location``:
     # Save to a specific directory; filename is "<design.name>.stp"
     path = design.export_to_step("path/to/directory")
 
-    # Save to a specific file path
-    path = design.export_to_step(pathlib.Path("path/to/directory/my_design.stp"))
-
 The supported file formats are defined in
 :class:`DesignFileFormat <ansys.geometry.core.designer.design>`.
 
