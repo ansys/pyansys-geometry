@@ -83,7 +83,7 @@ The following are the most commonly used properties on a ``Body`` object.
     or ``None`` if no material has been assigned.
 
 Renaming and styling
----------------------
+--------------------
 
 .. code:: python
 
