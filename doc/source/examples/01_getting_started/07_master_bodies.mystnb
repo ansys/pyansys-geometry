@@ -157,7 +157,7 @@ top_comp.extrude_sketch("TopBody", roof_sketch, 5)
 
 # Refresh the local design object to pick up server-side changes before plotting.
 # This is only needed in notebook examples - not in normal .py scripts.
-design._update_design_inplace() 
+design._update_design_inplace()
 
 # Both cars now have a roof
 design.plot()
