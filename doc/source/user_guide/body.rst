@@ -27,7 +27,7 @@ A :class:`Body <ansys.geometry.core.designer.body>` object is responsible for:
 - Exposing **physical properties** such as volume and bounding box.
 
 Solid bodies versus surface bodies
------------------------------------
+----------------------------------
 
 A body can be either a **solid body** (a closed, watertight 3D volume) or a
 **surface body** (an open, 2D surface embedded in 3D space). You can check the type
@@ -214,7 +214,7 @@ Copying a body
     body_copy = body.copy(parent_component, "CopiedBody")
 
 Curve imprinting and projection
----------------------------------
+-------------------------------
 
 You can imprint 2D sketch curves onto the faces of a body to create new edges:
 
@@ -232,7 +232,7 @@ You can imprint 2D sketch curves onto the faces of a body to create new edges:
     body.imprint_curves([body.faces[0]], imprint_sketch)
 
 Checking collision
--------------------
+------------------
 
 .. code:: python
 
@@ -248,7 +248,7 @@ Checking collision
         print("No collision detected.")
 
 Tessellation and visualization
--------------------------------
+------------------------------
 
 Tessellating a body generates a mesh representation (triangulation) of its surface, which
 is useful for visualization and downstream analysis.
@@ -263,6 +263,9 @@ is useful for visualization and downstream analysis.
 
     # Get raw tessellation data
     raw_tess = body.get_raw_tessellation()
+
+    # Get VTK tessellation data
+    vtk_tess = body.get_vtk_tessellation()
 
 For the full API reference, see
 :class:`Body <ansys.geometry.core.designer.body>`.

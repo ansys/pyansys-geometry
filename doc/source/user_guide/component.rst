@@ -12,7 +12,7 @@ Because :class:`Design <ansys.geometry.core.designer.design>` extends :class:`Co
 described on this page are also available directly on a :class:`Design <ansys.geometry.core.designer.design>` object.
 
 Purpose and responsibilities
------------------------------
+----------------------------
 
 A :class:`Component <ansys.geometry.core.designer.component>` object is responsible for:
 
@@ -44,7 +44,7 @@ Components are always created as children of an existing component or design:
     joint_component = frame_component.add_component("Joint")
 
 Component instances and master components
-------------------------------------------
+-----------------------------------------
 
 PyAnsys Geometry supports **instancing** of components. When you create a component from
 a template, both the original and the new instance share the same underlying
@@ -70,10 +70,10 @@ identical bolts or brackets):
 
     # Create a second bolt instance that shares the master geometry
     bolt_instance = design.add_component("Bolt_2", template=bolt)
+    bolt_instance.modify_placement(Vector3D([10, 0, 0]))
 
 Creating geometry in a component
-----------------------------------
-
+--------------------------------
 A component provides several methods to create 3D geometry from 2D sketches and other
 inputs.
 
@@ -138,7 +138,7 @@ Revolving a sketch around an axis creates axisymmetric geometry:
     )
 
 Managing component placement
-------------------------------
+----------------------------
 
 Every component has a placement (position and orientation) relative to its parent
 component. You can move a component by modifying its placement:
