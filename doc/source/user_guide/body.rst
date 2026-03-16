@@ -27,7 +27,7 @@ A :class:`Body <ansys.geometry.core.designer.body>` object is responsible for:
 - Exposing **physical properties** such as volume and bounding box.
 
 Solid bodies versus surface bodies
-------------------------------------
+-----------------------------------
 
 A body can be either a **solid body** (a closed, watertight 3D volume) or a
 **surface body** (an open, 2D surface embedded in 3D space). You can check the type
