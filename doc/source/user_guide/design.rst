@@ -20,7 +20,7 @@ A ``Design`` object is always created through the
     design = modeler.create_design("MyDesign")
 
 Purpose and responsibilities
------------------------------
+----------------------------
 
 A ``Design`` object represents the root of a geometry assembly. It is responsible for:
 
