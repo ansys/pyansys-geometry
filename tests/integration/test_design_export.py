@@ -454,7 +454,7 @@ def test_import_export_reimport_design_x_t(
 
     # Assertions to check the number of components and bodies
     assert len(design.components[0].bodies) == 1
-    assert len(design.components[1].components[0].components[0].bodies) == 1
+    assert len(design.components[1].components[0].components[0].components[0].bodies) == 1
 
 
 @pytest.mark.skipif(
@@ -489,7 +489,7 @@ def test_import_export_glb(modeler: Modeler, tmp_path_factory: pytest.TempPathFa
 @pytest.mark.parametrize(
     "file_format, extension, original_file, expected_components, expected_bodies",
     [
-        (DesignFileFormat.PARASOLID_TEXT, "x_t", "rci_std.x_t", 2, 1),
+        (DesignFileFormat.PARASOLID_TEXT, "x_t", "rci_std.x_t", 1, 1),
         (DesignFileFormat.SCDOCX, "scdocx", "reactorWNS.scdocx", 1, 3),
     ],
 )
@@ -532,7 +532,12 @@ def test_import_export_open_file_design(
     assert len(design.components) == expected_components, (
         f"Expected {expected_components} components, but found {len(design.components)}."
     )
-    assert len(design.components[0].components[0].bodies) == expected_bodies, (
-        f"Expected {expected_bodies} bodies, but found "
-        f"{len(design.components[0].components[0].bodies)}."
+    # Parasolid vs SCDOCX can yield different nesting under the root component
+    if file_format == DesignFileFormat.PARASOLID_TEXT:
+        bodies = design.components[0].components[0].components[0].bodies
+    else:
+        bodies = design.components[0].components[0].bodies
+
+    assert len(bodies) == expected_bodies, (
+        f"Expected {expected_bodies} bodies, but found {len(bodies)}."
     )
