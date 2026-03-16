@@ -105,7 +105,7 @@ Renaming and styling
     body.set_suppressed(False)
 
 Assigning materials
---------------------
+-------------------
 
 .. code:: python
 
