@@ -4,7 +4,7 @@ jupytext:
     extension: .mystnb
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.19.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -154,6 +154,10 @@ component of **Car1** will automatically appear on **Car2** as well.
 ```{code-cell} ipython3
 roof_sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
 top_comp.extrude_sketch("TopBody", roof_sketch, 5)
+
+# Refresh the local design object to pick up server-side changes before plotting.
+# This is only needed in notebook examples - not in normal .py scripts.
+design._update_design_inplace() 
 
 # Both cars now have a roof
 design.plot()
