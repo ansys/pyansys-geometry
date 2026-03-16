@@ -119,7 +119,7 @@ Assigning materials
     body.remove_assigned_material()
 
 Geometric transformations
---------------------------
+-------------------------
 
 Bodies can be moved, rotated, scaled, and mirrored within their parent component.
 
