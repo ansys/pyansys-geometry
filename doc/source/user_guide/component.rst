@@ -218,7 +218,7 @@ the assembly.
     design_point = frame_component.add_design_point("Anchor", Point3D([0, 0, 0]))
 
 Accessing bodies recursively
-------------------------------
+----------------------------
 
 To retrieve all bodies at every level of the component hierarchy:
 
