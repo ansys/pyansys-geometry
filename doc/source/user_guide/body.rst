@@ -15,7 +15,7 @@ Bodies are created through component methods such as
 For more information, see :class:`Component <ansys.geometry.core.designer.component>`.
 
 Purpose and responsibilities
------------------------------
+----------------------------
 
 A :class:`Body <ansys.geometry.core.designer.body>` object is responsible for:
 
