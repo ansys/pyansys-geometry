@@ -99,7 +99,7 @@ To remove a material from the design:
     design.remove_material(steel)
 
 Working with named selections
-------------------------------
+-----------------------------
 
 Named selections allow you to group and later reference specific geometry entities, such as
 bodies, faces, edges, or vertices.
