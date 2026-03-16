@@ -166,7 +166,7 @@ Bodies can be moved, rotated, scaled, and mirrored within their parent component
     body.mirror(mirror_plane)
 
 Boolean operations
--------------------
+------------------
 
 Boolean operations combine or subtract volumes to produce new geometry. After a boolean
 operation, the tool body is consumed (``is_alive`` becomes ``False``), while the target
