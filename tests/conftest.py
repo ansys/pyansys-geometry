@@ -277,3 +277,17 @@ def are_graphics_available() -> bool:
         return system_supports_plotting()
     except ImportError:
         return False
+
+@pytest.hookimpl(trylast=True)
+def pytest_sessionfinish(session, exitstatus):
+    """Force-exit after the session to prevent gRPC background threads from hanging.
+
+    gRPC's Python binding spawns internal C-core polling/keepalive threads that
+    are not stopped when the channel is closed, which prevents the Python interpreter
+    from exiting cleanly after the test session ends. Coverage data is already
+    written by the time this hook runs (pytest-cov uses a lower trylast priority),
+    so os._exit() is safe to call here.
+    """
+    import os
+
+    os._exit(int(exitstatus))
