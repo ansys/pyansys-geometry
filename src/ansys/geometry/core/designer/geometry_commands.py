@@ -107,6 +107,23 @@ class DraftSide(Enum):
     BACK = 3
 
 
+@unique
+class SplitEdgeType(Enum):
+    """Provides values for types of edge splits."""
+
+    BY_PROPORTION = 0
+    BY_POINT = 1
+    BY_LENGTH = 2
+
+
+@unique
+class SplitEdgeReference(Enum):
+    """Provides values for references when splitting edges."""
+
+    START = 0
+    END = 1
+
+
 class GeometryCommands:
     """Provides geometry commands for PyAnsys Geometry.
 
@@ -1983,3 +2000,84 @@ class GeometryCommands:
         else:
             self._grpc_client.log.info("Failed to detach faces.")
             return []
+
+    @min_backend_version(25, 1, 0)
+    def split_edges(
+        self,
+        edges: Union["Edge", list["Edge"]],
+        split_type: SplitEdgeType,
+        proportions: Union[float, list[float]] | None = None,
+        points: Union[Point3D, list[Point3D]] | None = None,
+        lengths: Union[Distance, Quantity, Real, list[Distance | Quantity | Real], None] = None,
+        reference: SplitEdgeReference = SplitEdgeReference.START,
+    ) -> bool:
+        """Split edges by proportions, points, or lengths.
+
+        Parameters
+        ----------
+        edges : Edge | list[Edge]
+            Edge(s) to split.
+        split_type : SplitEdgeType
+            Type of split to perform.
+        proportions : float | list[float], default: None
+            List of proportions to split the edge by. Values should be between 0 and 1 and will be
+            applied in order along the edge. Required if ``split_type`` is
+            ``SplitEdgeType.PROPORTIONS``.
+        points : Point3D | list[Point3D], default: None
+            List of points to split the edge by. Required if ``split_type`` is
+            ``SplitEdgeType.POINTS``.
+        lengths : Distance | Quantity | Real | list[Distance | Quantity | Real], default: None
+            List of lengths to split the edge by. Required if ``split_type`` is
+            ``SplitEdgeType.LENGTHS``.
+        reference : SplitEdgeReference, default: SplitEdgeReference.START
+            Reference point for splitting by lengths. Ignored for other split types.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.edge import Edge
+
+        edges: list[Edge] = edges if isinstance(edges, list) else [edges]
+        check_type_all_elements_in_iterable(edges, Edge)
+
+        if not isinstance(proportions, list) and proportions is not None:
+            proportions = [proportions]
+        if not isinstance(points, list) and points is not None:
+            points = [points]
+        if not isinstance(lengths, list) and lengths is not None:
+            lengths = [lengths]
+
+        design = get_design_from_edge(edges[0])
+
+        if split_type == SplitEdgeType.BY_PROPORTION:
+            if proportions is None:
+                raise ValueError("Proportions must be provided when splitting by proportions.")
+            if not all(0 < proportion < 1 for proportion in proportions):
+                raise ValueError("Proportions should be between 0 and 1.")
+        elif split_type == SplitEdgeType.BY_POINT:
+            if points is None:
+                raise ValueError("Points must be provided when splitting by points.")
+        elif split_type == SplitEdgeType.BY_LENGTH:
+            if lengths is None:
+                raise ValueError("Lengths must be provided when splitting by lengths.")
+            lengths = [
+                length if isinstance(length, Distance) else Distance(length) for length in lengths
+            ]
+
+        result = self._grpc_client._services.edges.split_edges(
+            edge_ids=[edge.id for edge in edges],
+            split_type=split_type,
+            proportions=proportions,
+            points=points,
+            lengths=lengths,
+            reference=reference,
+        )
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+        return result.get("success")

@@ -1448,3 +1448,25 @@ class GRPCBodyServiceV1(GRPCBodyService):
             "master_id": body.master_id.id,
             "is_surface": body.is_surface,
         }
+
+    def create_block_body(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import CreateBlockBodyRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateBlockBodyRequest(
+            start_point=from_point3d_to_grpc_point(kwargs["start"]),
+            end_point=from_point3d_to_grpc_point(kwargs["end"]),
+            name=kwargs["name"],
+            parent_id=build_grpc_id(kwargs["parent_id"]),
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateBlockBody(request=request).body
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id.id,
+            "name": resp.name,
+            "master_id": resp.master_id.id,
+            "is_surface": resp.is_surface,
+        }

@@ -98,3 +98,8 @@ class GRPCEdgesService(ABC):  # pragma: no cover
     def offset_edges(self, **kwargs) -> dict:
         """Offset edges."""
         pass
+
+    @abstractmethod
+    def split_edges(self, **kwargs) -> dict:
+        """Split edges."""
+        pass

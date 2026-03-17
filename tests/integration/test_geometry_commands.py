@@ -31,6 +31,8 @@ from ansys.geometry.core.designer.geometry_commands import (
     FillPatternType,
     GeometryCommands,
     OffsetMode,
+    SplitEdgeReference,
+    SplitEdgeType,
 )
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Y, UNITVECTOR3D_Z
@@ -1602,3 +1604,108 @@ def test_intersect_curve_and_surface(modeler: Modeler):
     )
     assert len(points) == 1
     assert np.allclose(points[0], Point3D([0.04, 0.07, 0.00029651]))
+
+
+def test_split_edges_by_proportion(modeler: Modeler):
+    """Test splitting edges by proportion, including error cases."""
+    design = modeler.create_design("split_edges_proportion")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    edge = body.edges[0]
+
+    # Error: proportions not provided
+    with pytest.raises(
+        ValueError, match="Proportions must be provided when splitting by proportions."
+    ):
+        modeler.geometry_commands.split_edges(edge, SplitEdgeType.BY_PROPORTION)
+
+    # Error: proportion value out of range (boundary values are excluded)
+    with pytest.raises(ValueError, match="Proportions should be between 0 and 1."):
+        modeler.geometry_commands.split_edges(
+            edge, SplitEdgeType.BY_PROPORTION, proportions=0.0
+        )
+    with pytest.raises(ValueError, match="Proportions should be between 0 and 1."):
+        modeler.geometry_commands.split_edges(
+            edge, SplitEdgeType.BY_PROPORTION, proportions=1.0
+        )
+
+    # Split a single edge at its midpoint
+    assert len(body.edges) == 12
+    success = modeler.geometry_commands.split_edges(
+        edge, SplitEdgeType.BY_PROPORTION, proportions=0.5
+    )
+    assert success
+    assert body.edges[11].length.m == body.edges[12].length.m == 0.5
+    assert len(body.edges) == 13
+
+    # Split a single edge 25/75
+    success = modeler.geometry_commands.split_edges(
+        body.edges[1], SplitEdgeType.BY_PROPORTION, proportions=0.25
+    )
+    assert success
+    assert body.edges[12].length.m == 0.75
+    assert body.edges[13].length.m == 0.25
+    assert len(body.edges) == 14
+
+
+def test_split_edges_by_point(modeler: Modeler):
+    """Test splitting edges by point, including error cases."""
+    design = modeler.create_design("split_edges_point")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    edge = body.edges[0]
+
+    # Error: points not provided
+    with pytest.raises(ValueError, match="Points must be provided when splitting by points."):
+        modeler.geometry_commands.split_edges(edge, SplitEdgeType.BY_POINT)
+
+    # Compute the geometric midpoint of the edge from its start and end vertices
+    midpoint = Point3D([
+        (edge.start.x.m + edge.end.x.m) / 2,
+        (edge.start.y.m + edge.end.y.m) / 2,
+        (edge.start.z.m + edge.end.z.m) / 2,
+    ])
+
+    assert len(body.edges) == 12
+    success = modeler.geometry_commands.split_edges(
+        edge, SplitEdgeType.BY_POINT, points=midpoint
+    )
+    assert success
+    assert body.edges[11].length.m == body.edges[12].length.m == 0.5
+    assert len(body.edges) == 13
+
+
+def test_split_edges_by_length(modeler: Modeler):
+    """Test splitting edges by length, including error cases and reference direction."""
+    design = modeler.create_design("split_edges_length")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    edge = body.edges[0]
+
+    # Error: lengths not provided
+    with pytest.raises(ValueError, match="Lengths must be provided when splitting by lengths."):
+        modeler.geometry_commands.split_edges(edge, SplitEdgeType.BY_LENGTH)
+
+    # Split at 0.25 m measured from the start of the edge
+    assert len(body.edges) == 12
+    success = modeler.geometry_commands.split_edges(
+        edge,
+        SplitEdgeType.BY_LENGTH,
+        lengths=Distance(0.25),
+        reference=SplitEdgeReference.START,
+    )
+    assert success
+    assert body.edges[11].length.m == 0.75
+    assert body.edges[12].length.m == 0.25
+    assert len(body.edges) == 13
+
+    # Split at 0.25 m measured from the end of the edge (equivalent to 0.75 m from start)
+    design2 = modeler.create_design("split_edges_length_end")
+    body2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    success = modeler.geometry_commands.split_edges(
+        body2.edges[0],
+        SplitEdgeType.BY_LENGTH,
+        lengths=Distance(0.25),
+        reference=SplitEdgeReference.END,
+    )
+    assert success
+    assert body2.edges[11].length.m == 0.25
+    assert body2.edges[12].length.m == 0.75
+    assert len(body2.edges) == 13

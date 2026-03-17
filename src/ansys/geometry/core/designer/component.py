@@ -892,6 +892,37 @@ class Component:
             name=name, parent=self.id, center=center, radius=radius
         )
         return self.__build_body_from_response(response)
+    
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(25, 1, 0)
+    def create_block(self, name: str, start: Point3D, end: Point3D) -> Body:
+        """Create a block body defined by the start and end points.
+
+        Parameters
+        ----------
+        name : str
+            Body name.
+        start : Point3D
+            Start point of the block (one corner).
+        end : Point3D
+            End point of the block (opposite corner).
+
+        Returns
+        -------
+        Body
+            Block body object.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R1.
+        The name will be ignored prior to Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Creating a block body on {self.id}.")
+        response = self._grpc_client.services.bodies.create_block_body(
+            name=name, parent_id=self.id, start=start, end=end
+        )
+        return self.__build_body_from_response(response)
 
     @check_input_types
     @ensure_design_is_active

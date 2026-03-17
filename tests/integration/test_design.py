@@ -2812,6 +2812,16 @@ def test_sphere_creation(modeler: Modeler):
     assert round(spherebody.volume._magnitude, 3) == round(4.1887902, 3)
 
 
+def test_create_block_body(modeler: Modeler):
+    """Test the creation of a block body given two opposite corner points."""
+    design = modeler.create_design("BlockTest")
+    block = design.create_block("testblockbody", Point3D([0, 0, 0]), Point3D([1, 2, 3]))
+
+    assert block.name == "testblockbody"
+    assert len(block.faces) == 6
+    assert block.volume.m == 6.0
+
+
 def test_body_mirror(modeler: Modeler):
     """Test the mirroring of a body."""
     design = modeler.create_design("Design1")

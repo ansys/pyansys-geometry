@@ -1170,3 +1170,24 @@ class GRPCBodyServiceV0(GRPCBodyService):
             f"Method '{self.__class__.__name__}.copy_faces' is not "
             "implemented in this protofile version."
         )
+
+    @protect_grpc
+    def create_block_body(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.bodies_pb2 import CreateBlockBodyRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateBlockBodyRequest(
+            start_point=from_point3d_to_grpc_point(kwargs["start"]),
+            end_point=from_point3d_to_grpc_point(kwargs["end"]),
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateBlockBody(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }
