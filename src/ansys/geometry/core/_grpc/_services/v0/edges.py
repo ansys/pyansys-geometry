@@ -296,9 +296,7 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
                 else None
             ),
             lengths=(
-                [from_measurement_to_server_length(kwargs["length"])]
-                if kwargs["length"]
-                else None
+                [from_measurement_to_server_length(kwargs["length"])] if kwargs["length"] else None
             ),
             reference=kwargs["reference"].value,
         )

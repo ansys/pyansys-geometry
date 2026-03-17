@@ -1622,13 +1622,9 @@ def test_split_edge_by_proportion(modeler: Modeler):
 
     # Error: proportion value out of range (boundary values are excluded)
     with pytest.raises(ValueError, match="Proportion should be between 0 and 1."):
-        modeler.geometry_commands.split_edge(
-            edge, SplitEdgeType.BY_PROPORTION, proportion=0.0
-        )
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_PROPORTION, proportion=0.0)
     with pytest.raises(ValueError, match="Proportion should be between 0 and 1."):
-        modeler.geometry_commands.split_edge(
-            edge, SplitEdgeType.BY_PROPORTION, proportion=1.0
-        )
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_PROPORTION, proportion=1.0)
 
     # Split a single edge at its midpoint
     assert len(body.edges) == 12
@@ -1660,16 +1656,16 @@ def test_split_edge_by_point(modeler: Modeler):
         modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_POINT)
 
     # Compute the geometric midpoint of the edge from its start and end vertices
-    midpoint = Point3D([
-        (edge.start.x.m + edge.end.x.m) / 2,
-        (edge.start.y.m + edge.end.y.m) / 2,
-        (edge.start.z.m + edge.end.z.m) / 2,
-    ])
+    midpoint = Point3D(
+        [
+            (edge.start.x.m + edge.end.x.m) / 2,
+            (edge.start.y.m + edge.end.y.m) / 2,
+            (edge.start.z.m + edge.end.z.m) / 2,
+        ]
+    )
 
     assert len(body.edges) == 12
-    success = modeler.geometry_commands.split_edge(
-        edge, SplitEdgeType.BY_POINT, point=midpoint
-    )
+    success = modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_POINT, point=midpoint)
     assert success
     assert body.edges[11].length.m == body.edges[12].length.m == 0.5
     assert len(body.edges) == 13
@@ -1712,6 +1708,7 @@ def test_split_edge_by_length(modeler: Modeler):
     assert body2.edges[12].length.m == 0.75
     assert len(body2.edges) == 13
 
+
 def test_split_face_errors(modeler: Modeler):
     """Test that split_face raises ValueError for missing required arguments."""
     design = modeler.create_design("split_face_errors")
@@ -1751,15 +1748,11 @@ def test_split_face_errors(modeler: Modeler):
         )
 
     # BY_CURVES requires split_curves
-    with pytest.raises(
-        ValueError, match="Split curves must be provided when splitting by curve."
-    ):
+    with pytest.raises(ValueError, match="Split curves must be provided when splitting by curve."):
         modeler.geometry_commands.split_face(face, SplitFaceType.BY_CURVES)
 
     # BY_CUTTER requires face_cutter
-    with pytest.raises(
-        ValueError, match="Face cutter must be provided when splitting by cutter."
-    ):
+    with pytest.raises(ValueError, match="Face cutter must be provided when splitting by cutter."):
         modeler.geometry_commands.split_face(face, SplitFaceType.BY_CUTTER)
 
 
@@ -1826,9 +1819,7 @@ def test_split_face_by_cutter(modeler: Modeler):
 
     # Cutter: a very thin wall (0.001 x 2) extruded 3 m in Z, centred at x=0
     # Its large YZ-plane faces (area ≈ 2*3 = 6 m²) will cross the top face at x ≈ 0
-    cutter_body = design.extrude_sketch(
-        "wall", Sketch().box(Point2D([0, 0]), 0.001, 2), 3
-    )
+    cutter_body = design.extrude_sketch("wall", Sketch().box(Point2D([0, 0]), 0.001, 2), 3)
     # Pick the large face (normal ≈ ±X, area ≫ thin-edge faces)
     cutter_face = next(f for f in cutter_body.faces if f.area.m > 4.0)
 

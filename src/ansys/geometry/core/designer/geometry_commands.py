@@ -2061,10 +2061,10 @@ class GeometryCommands:
             if not 0 < proportion < 1:
                 raise ValueError("Proportion should be between 0 and 1.")
         elif split_type == SplitEdgeType.BY_POINT and point is None:
-                raise ValueError("Point must be provided when splitting by points.")
+            raise ValueError("Point must be provided when splitting by points.")
         elif split_type == SplitEdgeType.BY_LENGTH and length is None:
             raise ValueError("Length must be provided when splitting by lengths.")
-        
+
         result = self._grpc_client._services.edges.split_edges(
             edge_id=edge.id,
             split_type=split_type,
@@ -2080,7 +2080,7 @@ class GeometryCommands:
             else:
                 design._update_design_inplace()
         return result.get("success")
-    
+
     @min_backend_version(25, 1, 0)
     def split_face(
         self,
@@ -2132,7 +2132,7 @@ class GeometryCommands:
             raise ValueError("Split curves must be provided when splitting by curve.")
         elif split_type == SplitFaceType.BY_CUTTER and face_cutter is None:
             raise ValueError("Face cutter must be provided when splitting by cutter.")
-        
+
         result = self._grpc_client._services.faces.split_faces(
             face_id=face.id,
             split_type=split_type,
@@ -2150,12 +2150,12 @@ class GeometryCommands:
             else:
                 design._update_design_inplace()
         return result.get("success")
-    
+
     @min_backend_version(25, 1, 0)
     def project_to_solid(
         self,
         selection: Union["Face", list["Face"], "Edge", list["Edge"]],
-        target_faces: Union["Face", list["Face"]]
+        target_faces: Union["Face", list["Face"]],
     ) -> bool:
         """Project faces onto a target body to create new faces on the body.
 
@@ -2174,9 +2174,7 @@ class GeometryCommands:
         from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
 
-        selection: list[Face, Edge] = (
-            selection if isinstance(selection, list) else [selection]
-        )
+        selection: list[Face, Edge] = selection if isinstance(selection, list) else [selection]
         check_type_all_elements_in_iterable(selection, (Face, Edge))
 
         target_faces: list[Face] = (

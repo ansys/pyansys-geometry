@@ -892,7 +892,7 @@ class Component:
             name=name, parent=self.id, center=center, radius=radius
         )
         return self.__build_body_from_response(response)
-    
+
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(25, 1, 0)
