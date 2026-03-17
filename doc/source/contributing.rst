@@ -126,6 +126,15 @@ You can clean the documentation build by running this command::
   # On Windows
   ./make.bat clean
 
+If you are only interested in building the documentation without product-related
+requirements, you can run the ``basic-docs`` target instead of the ``html`` target::
+
+  # On Linux or macOS
+  make basic-docs
+
+  # On Windows
+  ./make.bat basic-docs
+
 Adding examples
 ---------------
 
