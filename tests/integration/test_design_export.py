@@ -535,7 +535,7 @@ def test_import_export_open_file_design(
 
     # Parasolid vs SCDOCX can yield different nesting under the root component
     if file_format == DesignFileFormat.PARASOLID_TEXT:
-        if modeler.client.backend_version < (27, 1, 0)
+        if modeler.client.backend_version < (27, 1, 0):
             bodies = design.components[0].components[0].components[0].bodies
         else:
             # non-27.1: one less nesting level
