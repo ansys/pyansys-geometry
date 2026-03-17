@@ -454,7 +454,13 @@ def test_import_export_reimport_design_x_t(
 
     # Assertions to check the number of components and bodies
     assert len(design.components[0].bodies) == 1
-    assert len(design.components[1].components[0].components[0].components[0].bodies) == 1
+    # Version-specific hierarchy difference:
+    # 27.1 -> extra nesting level under components[1].components[0].components[0]
+    v = modeler.client.backend_version  # semver.version.Version
+    if (v.major, v.minor) == (27, 1):
+        assert len(design.components[1].components[0].components[0].components[0].bodies) == 1
+    else:
+        assert len(design.components[1].components[0].components[0].bodies) == 1
 
 
 @pytest.mark.skipif(
@@ -530,7 +536,12 @@ def test_import_export_open_file_design(
 
     # Parasolid vs SCDOCX can yield different nesting under the root component
     if file_format == DesignFileFormat.PARASOLID_TEXT:
-        bodies = design.components[0].components[0].components[0].bodies
+        v = modeler.client.backend_version  # semver.version.Version
+        if (v.major, v.minor) == (27, 1):
+            bodies = design.components[0].components[0].components[0].bodies
+        else:
+            # non-27.1: one less nesting level
+            bodies = design.components[0].components[0].bodies
     else:
         bodies = design.components[0].components[0].bodies
 
