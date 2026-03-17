@@ -158,3 +158,8 @@ class GRPCFacesService(ABC):  # pragma: no cover
     def setup_offset_relationship(self, **kwargs) -> dict:
         """Set up an offset relationship between two faces."""
         pass
+
+    @abstractmethod
+    def split_faces(self, **kwargs) -> dict:
+        """Split faces by specified criteria."""
+        pass

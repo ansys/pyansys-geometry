@@ -33,6 +33,8 @@ from ansys.geometry.core.designer.geometry_commands import (
     OffsetMode,
     SplitEdgeReference,
     SplitEdgeType,
+    SplitFaceParameterType,
+    SplitFaceType,
 )
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Y, UNITVECTOR3D_Z
@@ -1709,3 +1711,133 @@ def test_split_edge_by_length(modeler: Modeler):
     assert body2.edges[11].length.m == 0.25
     assert body2.edges[12].length.m == 0.75
     assert len(body2.edges) == 13
+
+def test_split_face_errors(modeler: Modeler):
+    """Test that split_face raises ValueError for missing required arguments."""
+    design = modeler.create_design("split_face_errors")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    face = body.faces[0]
+
+    # BY_PARAMETER requires both split_parameter and parameter_type
+    with pytest.raises(
+        ValueError,
+        match="Split parameter must be provided when splitting by parameter.",
+    ):
+        modeler.geometry_commands.split_face(face, SplitFaceType.BY_PARAMETER)
+
+    with pytest.raises(
+        ValueError,
+        match="Split parameter must be provided when splitting by parameter.",
+    ):
+        modeler.geometry_commands.split_face(
+            face,
+            SplitFaceType.BY_PARAMETER,
+            parameter_type=SplitFaceParameterType.UV,
+        )
+
+    # BY_TWO_POINTS requires both split_start and split_end
+    with pytest.raises(
+        ValueError, match="Split start and end must be provided when splitting by point."
+    ):
+        modeler.geometry_commands.split_face(
+            face, SplitFaceType.BY_TWO_POINTS, split_start=Point3D([-0.5, 0, 1])
+        )
+
+    with pytest.raises(
+        ValueError, match="Split start and end must be provided when splitting by point."
+    ):
+        modeler.geometry_commands.split_face(
+            face, SplitFaceType.BY_TWO_POINTS, split_end=Point3D([0.5, 0, 1])
+        )
+
+    # BY_CURVES requires split_curves
+    with pytest.raises(
+        ValueError, match="Split curves must be provided when splitting by curve."
+    ):
+        modeler.geometry_commands.split_face(face, SplitFaceType.BY_CURVES)
+
+    # BY_CUTTER requires face_cutter
+    with pytest.raises(
+        ValueError, match="Face cutter must be provided when splitting by cutter."
+    ):
+        modeler.geometry_commands.split_face(face, SplitFaceType.BY_CUTTER)
+
+
+def test_split_face_by_two_points(modeler: Modeler):
+    """Test splitting a face into two halves using two points."""
+    design = modeler.create_design("split_face_two_points")
+
+    # Box from (-0.5, -0.5, 0) to (0.5, 0.5, 1)
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+
+    # Find the top face: normal points in +Z
+    top_face = next(f for f in body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Split from the midpoint of the left edge to the midpoint of the right edge
+    success = modeler.geometry_commands.split_face(
+        top_face,
+        SplitFaceType.BY_TWO_POINTS,
+        split_start=Point3D([-0.5, 0, 1]),
+        split_end=Point3D([0.5, 0, 1]),
+    )
+    assert success
+    assert body.faces[5].area.m == body.faces[6].area.m == 0.5
+    assert len(body.faces) == 7
+
+
+def test_split_face_by_parameter(modeler: Modeler):
+    """Test splitting a face at its UV midpoint using BY_PARAMETER."""
+    design = modeler.create_design("split_face_parameter")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+
+    # Find the top face: normal points in +Z
+    top_face = next(f for f in body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Split at the centre of the top face along the U direction
+    success = modeler.geometry_commands.split_face(
+        top_face,
+        SplitFaceType.BY_PARAMETER,
+        split_parameter=Point3D([0, 0, 1]),
+        parameter_type=SplitFaceParameterType.UV,
+    )
+    assert success
+    assert (
+        body.faces[5].area.m
+        == body.faces[6].area.m
+        == body.faces[7].area.m
+        == body.faces[8].area.m
+        == 0.25
+    )
+    assert len(body.faces) == 9
+
+
+def test_split_face_by_cutter(modeler: Modeler):
+    """Test splitting a face using another face as a cutter."""
+    design = modeler.create_design("split_face_cutter")
+
+    # Main body: 2x2x1 box from (-1,-1,0) to (1,1,1)
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1)
+    assert len(body.faces) == 6
+
+    # Find the top face: normal points in +Z
+    top_face = next(f for f in body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Cutter: a very thin wall (0.001 x 2) extruded 3 m in Z, centred at x=0
+    # Its large YZ-plane faces (area ≈ 2*3 = 6 m²) will cross the top face at x ≈ 0
+    cutter_body = design.extrude_sketch(
+        "wall", Sketch().box(Point2D([0, 0]), 0.001, 2), 3
+    )
+    # Pick the large face (normal ≈ ±X, area ≫ thin-edge faces)
+    cutter_face = next(f for f in cutter_body.faces if f.area.m > 4.0)
+
+    success = modeler.geometry_commands.split_face(
+        top_face,
+        SplitFaceType.BY_CUTTER,
+        face_cutter=cutter_face,
+    )
+    assert success
+    assert body.faces[5].area.m == 1.999
+    assert body.faces[6].area.m == 2.001
+    assert len(body.faces) == 7

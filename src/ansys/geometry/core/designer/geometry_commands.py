@@ -64,6 +64,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
 
 @unique
@@ -122,6 +123,24 @@ class SplitEdgeReference(Enum):
 
     START = 0
     END = 1
+
+
+@unique
+class SplitFaceType(Enum):
+    """Provides values for types of face splits."""
+
+    BY_PARAMETER = 0
+    BY_TWO_POINTS = 1
+    BY_CURVES = 2
+    BY_CUTTER = 3
+
+
+@unique
+class SplitFaceParameterType(Enum):
+    """Provides values for parameters when splitting faces."""
+
+    UV = 0
+    PERPENDICULAR = 1
 
 
 class GeometryCommands:
@@ -2062,11 +2081,72 @@ class GeometryCommands:
                 design._update_design_inplace()
         return result.get("success")
     
-    # @min_backend_version(25, 1, 0)
-    # def split_faces(
-    #     self,
-    #     faces: Union["Face", list["Face"]],
-    #     split_type: SplitFaceType,
-    #     point: Point3D | None = None,
-    # ):
-    #     pass
+    @min_backend_version(25, 1, 0)
+    def split_face(
+        self,
+        face: "Face",
+        split_type: SplitFaceType,
+        split_parameter: Union[Point3D, None] = None,
+        split_start: Union[Point3D, None] = None,
+        split_end: Union[Point3D, None] = None,
+        face_cutter: Union["Face", None] = None,
+        split_curves: Union[list["TrimmedCurve"], None] = None,
+        parameter_type: SplitFaceParameterType = SplitFaceParameterType.UV,
+    ) -> bool:
+        """Split faces by points, curves, or other faces.
+
+        Parameters
+        ----------
+        face : Face
+            Face to split.
+        split_type : SplitFaceType
+            Type of split to perform.
+        split_parameter : Point3D, default: None
+            Parameter to split the face by. Required if ``split_type`` is ``SplitFaceType.POINT``.
+        split_start : Point3D, default: None
+            Start point to split the face by. Required if ``split_type`` is ``SplitFaceType.CURVE``.
+        split_end : Point3D, default: None
+            End point to split the face by. Required if ``split_type`` is ``SplitFaceType.CURVE``.
+        face_cutter : Face, default: None
+            Face to split the original face with. Required if ``split_type`` is
+            ``SplitFaceType.FACE``.
+        split_curves : list[TrimmedCurve], default: None
+            Curves to split the face by. Required if ``split_type`` is ``SplitFaceType.CURVE``.
+        parameter_type : SplitFaceParameterType, default: SplitFaceParameterType.UV
+            Type of the split parameter. Required if ``split_type`` is ``SplitFaceType.PARAMETER``.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        design = get_design_from_face(face)
+
+        if split_type == SplitFaceType.BY_PARAMETER and split_parameter is None:
+            raise ValueError("Split parameter must be provided when splitting by parameter.")
+        elif split_type == SplitFaceType.BY_TWO_POINTS and (
+            split_start is None or split_end is None
+        ):
+            raise ValueError("Split start and end must be provided when splitting by point.")
+        elif split_type == SplitFaceType.BY_CURVES and split_curves is None:
+            raise ValueError("Split curves must be provided when splitting by curve.")
+        elif split_type == SplitFaceType.BY_CUTTER and face_cutter is None:
+            raise ValueError("Face cutter must be provided when splitting by cutter.")
+        
+        result = self._grpc_client._services.faces.split_faces(
+            face_id=face.id,
+            split_type=split_type,
+            split_parameter=split_parameter,
+            split_start=split_start,
+            split_end=split_end,
+            face_cutter_id=face_cutter.id if face_cutter else None,
+            split_curves=split_curves,
+            parameter_type=parameter_type,
+        )
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+        return result.get("success")
