@@ -405,14 +405,14 @@ class Modeler:
         Notes
         -----
         Format and latest supported version
-            * AutoCAD 2024
-            * CATIA V5 2024
+            * AutoCAD 2025
+            * CATIA V5 2025
             * CATIA V6 2024
-            * Creo Parametric 11
+            * Creo Parametric 12.4
             * IGES 5.3
-            * Inventor 2025
+            * Inventor 2026
             * JT 10.10
-            * NX 2412
+            * NX 2406
             * Rhino 8
             * Solid Edge 2025
             * SOLIDWORKS 2025
