@@ -278,6 +278,7 @@ def are_graphics_available() -> bool:
     except ImportError:
         return False
 
+
 @pytest.hookimpl(trylast=True)
 def pytest_sessionfinish(session, exitstatus):
     """Force-exit after the session to prevent gRPC background threads from hanging.
