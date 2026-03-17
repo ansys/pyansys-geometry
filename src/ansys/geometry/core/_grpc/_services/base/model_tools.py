@@ -73,3 +73,8 @@ class GRPCModelToolsService(ABC):  # pragma: no cover
     def detach_faces(self, **kwargs) -> dict:
         """Detach faces from several bodies selection."""
         pass
+
+    @abstractmethod
+    def project_to_solid(self, **kwargs) -> dict:
+        """Project a sketch onto a solid body."""
+        pass

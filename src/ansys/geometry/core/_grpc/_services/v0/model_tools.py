@@ -174,3 +174,21 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
             f"Method '{self.__class__.__name__}.detach_faces' is not "
             "implemented in this protofile version."
         )
+
+    @protect_grpc
+    def project_to_solid(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import ProjectToSolidRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ProjectToSolidRequest(
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+            target_faces=[build_grpc_id(id) for id in kwargs["target_ids"]],
+        )
+
+        # Call the gRPC service
+        response = self._stub.ProjectToSolid(request)
+
+        # Return the response as a dictionary
+        return {
+            "success": response.success,
+        }

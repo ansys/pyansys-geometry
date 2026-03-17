@@ -232,3 +232,30 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
             "modified_faces": [face.get("id") for face in tracked_response.get("modified_faces")],
             "tracked_response": tracked_response,
         }
+
+    @protect_grpc
+    def project_to_solid(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            ProjectToSolidRequest,
+            ProjectToSolidRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ProjectToSolidRequest(
+            request_data=[
+                ProjectToSolidRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    target_face_ids=[build_grpc_id(id) for id in kwargs["target_ids"]],
+                )
+            ]
+        )
+
+        # Call the gRPC service and serialize the response
+        response = self.stub.ProjectToSolid(request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response as a dictionary
+        return {
+            "success": tracked_response.get("success"),
+            "tracked_response": tracked_response,
+        }

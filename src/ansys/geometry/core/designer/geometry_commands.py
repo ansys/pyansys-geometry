@@ -2150,3 +2150,49 @@ class GeometryCommands:
             else:
                 design._update_design_inplace()
         return result.get("success")
+    
+    @min_backend_version(25, 1, 0)
+    def project_to_solid(
+        self,
+        selection: Union["Face", list["Face"], "Edge", list["Edge"]],
+        target_faces: Union["Face", list["Face"]]
+    ) -> bool:
+        """Project faces onto a target body to create new faces on the body.
+
+        Parameters
+        ----------
+        selection : Face | list[Face] | Edge | list[Edge]
+            Face(s) or edge(s) to project onto the target faces.
+        target_faces : Face | list[Face]
+            Face(s) to project the selection onto.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face, Edge] = (
+            selection if isinstance(selection, list) else [selection]
+        )
+        check_type_all_elements_in_iterable(selection, (Face, Edge))
+
+        target_faces: list[Face] = (
+            target_faces if isinstance(target_faces, list) else [target_faces]
+        )
+        check_type_all_elements_in_iterable(target_faces, Face)
+
+        result = self._grpc_client._services.model_tools.project_to_solid(
+            selection_ids=[item.id for item in selection],
+            target_ids=[face.id for face in target_faces],
+        )
+
+        if result.get("success"):
+            design = get_design_from_face(target_faces[0])
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+        return result.get("success")

@@ -1841,3 +1841,95 @@ def test_split_face_by_cutter(modeler: Modeler):
     assert body.faces[5].area.m == 1.999
     assert body.faces[6].area.m == 2.001
     assert len(body.faces) == 7
+
+
+def test_project_to_solid_face_onto_face(modeler: Modeler):
+    """Test projecting a surface face onto a target face imprints new edges."""
+    design = modeler.create_design("project_to_solid_face")
+
+    # Target: 2x2x1 box
+    target = design.extrude_sketch("target", Sketch().box(Point2D([0, 0]), 2, 2), 1)
+    assert len(target.faces) == 6
+
+    # Source: small 1x1 surface 5 m above the target
+    source = design.create_surface(
+        "source",
+        Sketch(Plane(Point3D([0, 0, 5]))).box(Point2D([0, 0]), 1, 1),
+    )
+    assert source.is_surface
+
+    top_target = next(f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    success = modeler.geometry_commands.project_to_solid(source.faces[0], top_target)
+    assert success
+    # The 1x1 imprint splits the 2x2 top face into two pieces: 5 sides + 2 top = 7
+    assert len(target.faces) == 7
+    top_faces = sorted(
+        [f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z)],
+        key=lambda f: f.area.m,
+    )
+    assert len(top_faces) == 2
+    assert top_faces[0].area.m == pytest.approx(1.0, rel=1e-6)  # 1x1 imprint
+    assert top_faces[1].area.m == pytest.approx(3.0, rel=1e-6)  # 2x2 - 1x1 remainder
+
+
+def test_project_to_solid_edge_onto_face(modeler: Modeler):
+    """Test projecting an edge spanning the full width of a target face splits it."""
+    design = modeler.create_design("project_to_solid_edge")
+
+    # Target: 2x2x0.01 slab
+    target = design.extrude_sketch("target", Sketch().box(Point2D([0, 0]), 2, 2), 0.01)
+    assert len(target.faces) == 6
+    top_target = next(f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Source: 2x0.1 box suspended above – its 2 m-long bottom edge spans the full
+    # width of the target top face, so the projection cleanly splits it in two.
+    source = design.extrude_sketch("source", Sketch().box(Point2D([0, 0]), 2, 0.1), 5)
+    bottom_face = next(f for f in source.faces if np.allclose(f.normal(0, 0), -UNITVECTOR3D_Z))
+    spanning_edge = next(e for e in bottom_face.edges if abs(e.length.m - 2.0) < 0.01)
+
+    success = modeler.geometry_commands.project_to_solid(spanning_edge, top_target)
+    assert success
+    # The 2 m edge splits the 2x2 top face: 5 sides + 2 top pieces = 7
+    assert len(target.faces) == 7
+    top_faces = sorted(
+        [f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z)],
+        key=lambda f: f.area.m,
+    )
+    assert len(top_faces) == 2
+    assert top_faces[0].area.m == pytest.approx(1.9, rel=1e-6)  # 2x0.95 (edge at y=+0.05)
+    assert top_faces[1].area.m == pytest.approx(2.1, rel=1e-6)  # 2x1.05
+
+
+def test_project_to_solid_multiple_sources(modeler: Modeler):
+    """Test projecting a list of faces onto a list of target faces."""
+    design = modeler.create_design("project_to_solid_multi")
+
+    # Target: 4x4x0.01 slab
+    target = design.extrude_sketch("target", Sketch().box(Point2D([0, 0]), 4, 4), 0.01)
+    top_target = next(f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Two small surface bodies at different positions above the slab
+    src_a = design.create_surface(
+        "src_a",
+        Sketch(Plane(Point3D([-1, 0, 1]))).box(Point2D([0, 0]), 0.5, 0.5),
+    )
+    src_b = design.create_surface(
+        "src_b",
+        Sketch(Plane(Point3D([1, 0, 1]))).box(Point2D([0, 0]), 0.5, 0.5),
+    )
+
+    success = modeler.geometry_commands.project_to_solid(
+        [src_a.faces[0], src_b.faces[0]], top_target
+    )
+    assert success
+    # Two 0.5x0.5 imprints split the 4x4 top face into 3 pieces: 5 sides + 3 top = 8
+    assert len(target.faces) == 8
+    top_faces = sorted(
+        [f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z)],
+        key=lambda f: f.area.m,
+    )
+    assert len(top_faces) == 3
+    assert top_faces[0].area.m == pytest.approx(0.25, rel=1e-6)  # first 0.5x0.5 imprint
+    assert top_faces[1].area.m == pytest.approx(0.25, rel=1e-6)  # second 0.5x0.5 imprint
+    assert top_faces[2].area.m == pytest.approx(15.5, rel=1e-6)  # 4x4 - 2*(0.5x0.5) remainder
