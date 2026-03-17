@@ -331,32 +331,27 @@ class GRPCEdgesServiceV1(GRPCEdgesService):
             SplitEdgesRequestData,
         )
 
-        # Parse optional arguments for different types
-        proportions = (
-            [from_float_to_grpc_quantity(prop) for prop in kwargs["proportions"]]
-            if kwargs["proportions"] 
-            else []
-        )
-        points = (
-            [from_point3d_to_grpc_point(point) for point in kwargs["points"]]
-            if kwargs["points"]
-            else []
-        )
-        lengths = (
-            [from_length_to_grpc_quantity(length) for length in kwargs["lengths"]]
-            if kwargs["lengths"]
-            else []
-        )
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = SplitEdgesRequest(
             request_data=[
                 SplitEdgesRequestData(
-                    selection_ids=[build_grpc_id(edge_id) for edge_id in kwargs["edge_ids"]],
+                    selection_ids=[build_grpc_id(kwargs["edge_id"])],
                     split_type=kwargs["split_type"].value,
-                    proportions=proportions,
-                    points=points,
-                    lengths=lengths,
+                    proportions=(
+                        [from_float_to_grpc_quantity(kwargs["proportion"])]
+                        if kwargs["proportion"]
+                        else None
+                    ),
+                    points=(
+                        [from_point3d_to_grpc_point(kwargs["point"])]
+                        if kwargs["point"] is not None
+                        else None
+                    ),
+                    lengths=(
+                        [from_length_to_grpc_quantity(kwargs["length"])]
+                        if kwargs["length"]
+                        else None
+                    ),
                     reference=kwargs["reference"].value,
                 )
             ]

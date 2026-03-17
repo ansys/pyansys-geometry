@@ -1606,40 +1606,40 @@ def test_intersect_curve_and_surface(modeler: Modeler):
     assert np.allclose(points[0], Point3D([0.04, 0.07, 0.00029651]))
 
 
-def test_split_edges_by_proportion(modeler: Modeler):
+def test_split_edge_by_proportion(modeler: Modeler):
     """Test splitting edges by proportion, including error cases."""
-    design = modeler.create_design("split_edges_proportion")
+    design = modeler.create_design("split_edge_proportion")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     edge = body.edges[0]
 
     # Error: proportions not provided
     with pytest.raises(
-        ValueError, match="Proportions must be provided when splitting by proportions."
+        ValueError, match="Proportion must be provided when splitting by proportions."
     ):
-        modeler.geometry_commands.split_edges(edge, SplitEdgeType.BY_PROPORTION)
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_PROPORTION)
 
     # Error: proportion value out of range (boundary values are excluded)
-    with pytest.raises(ValueError, match="Proportions should be between 0 and 1."):
-        modeler.geometry_commands.split_edges(
-            edge, SplitEdgeType.BY_PROPORTION, proportions=0.0
+    with pytest.raises(ValueError, match="Proportion should be between 0 and 1."):
+        modeler.geometry_commands.split_edge(
+            edge, SplitEdgeType.BY_PROPORTION, proportion=0.0
         )
-    with pytest.raises(ValueError, match="Proportions should be between 0 and 1."):
-        modeler.geometry_commands.split_edges(
-            edge, SplitEdgeType.BY_PROPORTION, proportions=1.0
+    with pytest.raises(ValueError, match="Proportion should be between 0 and 1."):
+        modeler.geometry_commands.split_edge(
+            edge, SplitEdgeType.BY_PROPORTION, proportion=1.0
         )
 
     # Split a single edge at its midpoint
     assert len(body.edges) == 12
-    success = modeler.geometry_commands.split_edges(
-        edge, SplitEdgeType.BY_PROPORTION, proportions=0.5
+    success = modeler.geometry_commands.split_edge(
+        edge, SplitEdgeType.BY_PROPORTION, proportion=0.5
     )
     assert success
     assert body.edges[11].length.m == body.edges[12].length.m == 0.5
     assert len(body.edges) == 13
 
     # Split a single edge 25/75
-    success = modeler.geometry_commands.split_edges(
-        body.edges[1], SplitEdgeType.BY_PROPORTION, proportions=0.25
+    success = modeler.geometry_commands.split_edge(
+        body.edges[1], SplitEdgeType.BY_PROPORTION, proportion=0.25
     )
     assert success
     assert body.edges[12].length.m == 0.75
@@ -1647,15 +1647,15 @@ def test_split_edges_by_proportion(modeler: Modeler):
     assert len(body.edges) == 14
 
 
-def test_split_edges_by_point(modeler: Modeler):
+def test_split_edge_by_point(modeler: Modeler):
     """Test splitting edges by point, including error cases."""
-    design = modeler.create_design("split_edges_point")
+    design = modeler.create_design("split_edge_point")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     edge = body.edges[0]
 
     # Error: points not provided
-    with pytest.raises(ValueError, match="Points must be provided when splitting by points."):
-        modeler.geometry_commands.split_edges(edge, SplitEdgeType.BY_POINT)
+    with pytest.raises(ValueError, match="Point must be provided when splitting by points."):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_POINT)
 
     # Compute the geometric midpoint of the edge from its start and end vertices
     midpoint = Point3D([
@@ -1665,30 +1665,30 @@ def test_split_edges_by_point(modeler: Modeler):
     ])
 
     assert len(body.edges) == 12
-    success = modeler.geometry_commands.split_edges(
-        edge, SplitEdgeType.BY_POINT, points=midpoint
+    success = modeler.geometry_commands.split_edge(
+        edge, SplitEdgeType.BY_POINT, point=midpoint
     )
     assert success
     assert body.edges[11].length.m == body.edges[12].length.m == 0.5
     assert len(body.edges) == 13
 
 
-def test_split_edges_by_length(modeler: Modeler):
+def test_split_edge_by_length(modeler: Modeler):
     """Test splitting edges by length, including error cases and reference direction."""
-    design = modeler.create_design("split_edges_length")
+    design = modeler.create_design("split_edge_length")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     edge = body.edges[0]
 
     # Error: lengths not provided
-    with pytest.raises(ValueError, match="Lengths must be provided when splitting by lengths."):
-        modeler.geometry_commands.split_edges(edge, SplitEdgeType.BY_LENGTH)
+    with pytest.raises(ValueError, match="Length must be provided when splitting by lengths."):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_LENGTH)
 
     # Split at 0.25 m measured from the start of the edge
     assert len(body.edges) == 12
-    success = modeler.geometry_commands.split_edges(
+    success = modeler.geometry_commands.split_edge(
         edge,
         SplitEdgeType.BY_LENGTH,
-        lengths=Distance(0.25),
+        length=Distance(0.25),
         reference=SplitEdgeReference.START,
     )
     assert success
@@ -1697,12 +1697,12 @@ def test_split_edges_by_length(modeler: Modeler):
     assert len(body.edges) == 13
 
     # Split at 0.25 m measured from the end of the edge (equivalent to 0.75 m from start)
-    design2 = modeler.create_design("split_edges_length_end")
+    design2 = modeler.create_design("split_edge_length_end")
     body2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    success = modeler.geometry_commands.split_edges(
+    success = modeler.geometry_commands.split_edge(
         body2.edges[0],
         SplitEdgeType.BY_LENGTH,
-        lengths=Distance(0.25),
+        length=Distance(0.25),
         reference=SplitEdgeReference.END,
     )
     assert success

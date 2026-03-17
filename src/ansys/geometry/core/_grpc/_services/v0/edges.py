@@ -285,25 +285,21 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
     def split_edges(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import SplitEdgeRequest
 
-        # Parse optional arguments for different types
-        points = (
-            [from_point3d_to_grpc_point(point) for point in kwargs["points"]]
-            if kwargs["points"]
-            else []
-        )
-        lengths = (
-            [from_measurement_to_server_length(length) for length in kwargs["lengths"]]
-            if kwargs["lengths"]
-            else []
-        )
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = SplitEdgeRequest(
-            selection=[build_grpc_id(edge_id) for edge_id in kwargs["edge_ids"]],
+            selection=[build_grpc_id(kwargs["edge_id"])],
             split_type=kwargs["split_type"].value,
-            proportions=kwargs["proportions"] if kwargs["proportions"] else [],
-            points=points,
-            lengths=lengths,
+            proportions=[kwargs["proportion"]] if kwargs["proportion"] else None,
+            points=(
+                [from_point3d_to_grpc_point(kwargs["point"])]
+                if kwargs["point"] is not None
+                else None
+            ),
+            lengths=(
+                [from_measurement_to_server_length(kwargs["length"])]
+                if kwargs["length"]
+                else None
+            ),
             reference=kwargs["reference"].value,
         )
 
