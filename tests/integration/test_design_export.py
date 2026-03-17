@@ -456,7 +456,7 @@ def test_import_export_reimport_design_x_t(
     assert len(design.components[0].bodies) == 1
     # Version-specific hierarchy difference:
     # 27.1 -> extra nesting level under components[1].components[0].components[0]
-    if modeler.client.backend_version < (27, 1, 0):
+    if modeler.client.backend_version >= (27, 1, 0):
         assert len(design.components[1].components[0].components[0].components[0].bodies) == 1
     else:
         assert len(design.components[1].components[0].components[0].bodies) == 1
@@ -535,7 +535,7 @@ def test_import_export_open_file_design(
 
     # Parasolid vs SCDOCX can yield different nesting under the root component
     if file_format == DesignFileFormat.PARASOLID_TEXT:
-        if modeler.client.backend_version < (27, 1, 0):
+        if modeler.client.backend_version >= (27, 1, 0):
             bodies = design.components[0].components[0].components[0].bodies
         else:
             # non-27.1: one less nesting level
