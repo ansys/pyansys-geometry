@@ -9,6 +9,111 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.15.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.15.1>`_ - March 19, 2026
+===========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - User-initiated change tracking
+          - `#2632 <https://github.com/ansys/pyansys-geometry/pull/2632>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump ansys-api-discovery from 1.0.30 to 1.0.32
+          - `#2633 <https://github.com/ansys/pyansys-geometry/pull/2633>`_
+
+        * - Increase grpcio minimal version
+          - `#2645 <https://github.com/ansys/pyansys-geometry/pull/2645>`_
+
+        * - Bump notebook from 7.5.4 to 7.5.5 in the docs-deps group
+          - `#2650 <https://github.com/ansys/pyansys-geometry/pull/2650>`_
+
+        * - Bump ansys-tools-common from 0.4.5 to 0.5.0
+          - `#2656 <https://github.com/ansys/pyansys-geometry/pull/2656>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update repair_tools example with real geometry files and visualization
+          - `#2635 <https://github.com/ansys/pyansys-geometry/pull/2635>`_
+
+        * - Add MeasurementTools example notebook
+          - `#2639 <https://github.com/ansys/pyansys-geometry/pull/2639>`_
+
+        * - Add PrepareTools example notebook
+          - `#2641 <https://github.com/ansys/pyansys-geometry/pull/2641>`_
+
+        * - Improve documentation for main classes
+          - `#2642 <https://github.com/ansys/pyansys-geometry/pull/2642>`_
+
+        * - Add getting started example for MasterBodies and component occurrences
+          - `#2648 <https://github.com/ansys/pyansys-geometry/pull/2648>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Handle properly Path objects passed in for UDS/MTLS
+          - `#2660 <https://github.com/ansys/pyansys-geometry/pull/2660>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.15.0
+          - `#2630 <https://github.com/ansys/pyansys-geometry/pull/2630>`_
+
+        * - Pre-commit automatic update
+          - `#2634 <https://github.com/ansys/pyansys-geometry/pull/2634>`_, `#2651 <https://github.com/ansys/pyansys-geometry/pull/2651>`_
+
+        * - Bump docker/login-action from 3.7.0 to 4.0.0 in the actions group
+          - `#2637 <https://github.com/ansys/pyansys-geometry/pull/2637>`_
+
+        * - Bump to 0.16.dev0
+          - `#2644 <https://github.com/ansys/pyansys-geometry/pull/2644>`_
+
+        * - Bump github/codeql-action from 4.32.4 to 4.32.6 in the actions group
+          - `#2646 <https://github.com/ansys/pyansys-geometry/pull/2646>`_
+
+        * - Bump pyvista/setup-headless-display-action from 4.2 to 4.3 in the actions group
+          - `#2657 <https://github.com/ansys/pyansys-geometry/pull/2657>`_
+
+        * - Bump actions/download-artifact from 8.0.0 to 8.0.1 in the actions group
+          - `#2661 <https://github.com/ansys/pyansys-geometry/pull/2661>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Updating test and CAD version support doc
+          - `#2655 <https://github.com/ansys/pyansys-geometry/pull/2655>`_
+
+
 `0.15.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.15.0>`_ - March 09, 2026
 ===========================================================================================
 
