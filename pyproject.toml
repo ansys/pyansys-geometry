@@ -4,7 +4,7 @@ requires = [ "flit-core>=3.2,<4" ]
 
 [project]
 name = "ansys-geometry-core"
-version = "0.15.0"  # When 0.15.0 is released - make sure to update the conf.py file and remove the linkcheck ignore for Python 3.14.
+version = "0.16.dev0"
 description = "A python wrapper for Ansys Geometry service"
 readme = "README.rst"
 license = "MIT"
@@ -25,12 +25,12 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-  "ansys-api-discovery==1.0.30",
+  "ansys-api-discovery==1.0.32",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
-  "grpcio>=1.35.0,<2",
-  "grpcio-health-checking>=1.45.0,<2",
+  "grpcio>=1.71.2,<2",
+  "grpcio-health-checking>=1.71.2,<2",
   "matplotlib>=3,<4",
   "numpy>=1.20.3,<3",
   "pint>=0.18,<1",
@@ -78,7 +78,7 @@ doc = [
   "myst-parser==5.0.0",
   "nbconvert==7.17.0",
   "nbsphinx==0.9.8",
-  "notebook==7.5.4",
+  "notebook==7.5.5",
   "numpydoc==1.10.0",
   "pdf2image==1.17.0",
   "quarto-cli==1.8.27",
@@ -90,7 +90,7 @@ doc = [
 ]
 general-all = [
   "ansys-platform-instancemanagement==1.1.2",
-  "ansys-tools-common==0.4.5",
+  "ansys-tools-common==0.5.0",
   "ansys-tools-visualization-interface==0.12.1",
   "beartype==0.22.9",
   "docker==7.1.0",

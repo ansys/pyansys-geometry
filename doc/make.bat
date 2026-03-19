@@ -21,6 +21,7 @@ if "%1" == "pdf" goto pdf
 if "%1" == "html" goto html
 if "%1" == "linkcheck" goto linkcheck
 if "%1" == "single-example" goto single-example
+if "%1" == "basic-docs" goto basic-docs
 
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (
@@ -70,9 +71,17 @@ if "%2" == "" (
 )
 echo Building single example: %2
 set BUILD_API=false
-set SKIP_BUILD_CHEAT_SHEET=true
+set BUILD_CHEATSHEET=false
 set SPHINXOPTS=-j auto
 %SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O% -D "include_patterns=index.rst,examples.rst,%2"
+goto end
+
+:basic-docs
+echo Building basic documentation (skipping examples and cheatsheet)...
+set BUILD_API=true
+set BUILD_EXAMPLES=false
+set BUILD_CHEATSHEET=false
+%SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
 
 :help

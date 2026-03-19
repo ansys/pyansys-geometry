@@ -29,7 +29,11 @@ import semver
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.admin import GRPCAdminService
-from .conversions import from_grpc_backend_type_to_backend_type
+from .conversions import (
+    build_grpc_id,
+    from_grpc_backend_type_to_backend_type,
+    serialize_tracked_changes,
+)
 
 
 class GRPCAdminServiceV1(GRPCAdminService):
@@ -50,7 +54,7 @@ class GRPCAdminServiceV1(GRPCAdminService):
         from ansys.api.discovery.v1.commands.application_pb2_grpc import ApplicationStub
         from ansys.api.discovery.v1.commands.communication_pb2_grpc import CommunicationStub
 
-        self.admin_stub = ApplicationStub(channel)
+        self.stub = ApplicationStub(channel)
         self.communication_stub = CommunicationStub(channel)
 
     @protect_grpc
@@ -67,7 +71,7 @@ class GRPCAdminServiceV1(GRPCAdminService):
         request = GetBackendRequest()
 
         # Call the gRPC service
-        response = self.admin_stub.GetBackend(request=request)
+        response = self.stub.GetBackend(request=request)
 
         ver = response.version
         backend_version = semver.Version(ver.major_release, ver.minor_release, ver.service_pack)
@@ -126,3 +130,50 @@ class GRPCAdminServiceV1(GRPCAdminService):
 
         # Convert the response to a dictionary
         return {"healthy": True if response.message == "I am healthy!" else False}
+
+    @protect_grpc
+    def get_tracker(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commands.application_pb2 import GetTrackerRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetTrackerRequest(design_id=build_grpc_id(kwargs["design_id"]))
+
+        # Call the gRPC service
+        response = self.stub.GetTracker(request=request)
+
+        # Convert the response to a dictionary
+        return {"design_id": response.tracker.design_id.id}
+
+    @protect_grpc
+    def get_tracker_changes(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commands.application_pb2 import GetTrackerChangesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetTrackerChangesRequest(design_id=build_grpc_id(kwargs["design_id"]))
+
+        # Call the gRPC service
+        response = self.stub.GetTrackerChanges(request=request)
+
+        # Convert the response to a dictionary
+        return serialize_tracked_changes(response.tracked_changes)
+
+    @protect_grpc
+    def set_automatic_tracking_state(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commands.application_pb2 import SetAutomaticTrackingStateRequest
+        from ansys.api.discovery.v1.commonenums_pb2 import AutomaticTrackingState
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetAutomaticTrackingStateRequest(
+            state=(
+                AutomaticTrackingState.AUTOMATICTRACKINGSTATE_ON
+                if kwargs["enabled"]
+                else AutomaticTrackingState.AUTOMATICTRACKINGSTATE_OFF
+            ),
+            design_id=build_grpc_id(kwargs["design_id"]),
+        )
+
+        # Call the gRPC service
+        response = self.stub.SetAutomaticTrackingState(request=request)
+
+        # Convert the response to a dictionary
+        return {"success": response.set_response.success}

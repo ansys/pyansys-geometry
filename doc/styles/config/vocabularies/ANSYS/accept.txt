@@ -1,5 +1,7 @@
 (?i)ansys
 (?i)api
+[Aa]xisymmetric
+[Bb]oolean
 (?i)check
 [Cc]onda
 (?i)dependabot

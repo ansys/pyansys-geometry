@@ -305,6 +305,7 @@ nbsphinx_thumbnails = {
     "examples/01_getting_started/04_modeling": "_static/thumbnails/101_getting_started.png",
     "examples/01_getting_started/05_plotter_picker": "_static/thumbnails/101_getting_started.png",  # noqa: E501
     "examples/01_getting_started/06_curve_surface_plotting": "_static/thumbnails/101_getting_started.png",  # noqa: E501
+    "examples/01_getting_started/07_master_bodies": "_static/thumbnails/101_getting_started.png",
     "examples/02_sketching/basic_usage": "_static/thumbnails/basic_usage.png",
     "examples/02_sketching/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
     "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
@@ -327,6 +328,9 @@ nbsphinx_thumbnails = {
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
     "examples/04_applied/03_ahmed_body_fluent": "_static/thumbnails/ahmed_body.png",
+    "examples/05_tools/repair_tools": "_static/thumbnails/repair_tools.png",
+    "examples/05_tools/prepare_tools": "_static/thumbnails/prepare_tools.png",
+    "examples/05_tools/measurement_tools": "_static/thumbnails/measurement_tools.png",
     "examples/99_misc/template": "_static/thumbnails/101_getting_started.png",
 }
 nbsphinx_epilog = """
@@ -387,12 +391,6 @@ if switcher_version != "dev":
     linkcheck_ignore.append(
         f"https://github.com/ansys/pyansys-geometry/releases/tag/v{__version__}"
     )  # noqa: E501
-
-if get_version_match(__version__) == "dev":
-    # Python 3.14 WHEELHOUSES are not available yet
-    # When the next minor release comes - remove the following linkchecks
-    # Ignore wheelhouse download links for all platforms and Python versions
-    linkcheck_ignore.append(r"https://github.com/ansys/pyansys-geometry/releases/download/.*")
 
 # User agent
 user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.2420.81"  # noqa: E501

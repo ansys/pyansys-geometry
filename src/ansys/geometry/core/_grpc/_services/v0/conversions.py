@@ -53,6 +53,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     SurfaceType as GRPCSurfaceType,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
+    TrackerCommandResponse as GRPCTrackerCommandResponse,
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
@@ -1474,7 +1475,7 @@ def _check_write_body_facets_input(backend_version: "semver.Version", write_body
         )
 
 
-def serialize_tracker_command_response(**kwargs) -> dict:
+def serialize_tracker_command_response(response: GRPCTrackerCommandResponse) -> dict:
     """Serialize a TrackerCommandResponse object into a dictionary.
 
     Parameters
@@ -1510,7 +1511,6 @@ def serialize_tracker_command_response(**kwargs) -> dict:
             "id": entity.id,
         }
 
-    response = kwargs["response"]
     return {
         "success": response.success,
         "created_bodies": [
