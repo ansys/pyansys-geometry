@@ -296,7 +296,7 @@ class IBody(ABC):
         This method is only available starting on Ansys release 25R2.
         """
         return
-    
+
     @abstractmethod
     def centroid(self) -> Point3D:
         """Get the centroid of the body.
@@ -1207,7 +1207,7 @@ class MasterBody(IBody):
             max_corner=response.get("max"),
             center=response.get("center"),
         )
-    
+
     @property
     @min_backend_version(27, 1, 0)
     def centroid(self) -> Point3D:  # noqa: D102
@@ -1953,7 +1953,7 @@ class Body(IBody):
             max_corner=response.get("max"),
             center=response.get("center"),
         )
-        
+
     @property
     @min_backend_version(27, 1, 0)
     def centroid(self) -> Point3D:  # noqa: D102

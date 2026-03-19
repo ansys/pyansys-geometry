@@ -232,7 +232,7 @@ class Edge:
         return BoundingBox(
             response.get("min_corner"), response.get("max_corner"), response.get("center")
         )
-    
+
     @property
     @min_backend_version(27, 1, 0)
     def centroid(self) -> Point3D:

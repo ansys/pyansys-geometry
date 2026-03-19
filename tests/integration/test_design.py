@@ -4771,7 +4771,7 @@ def test_get_centroid(modeler: Modeler):
     assert edge_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
     assert edge_centroid.z.m == pytest.approx(15e-3, rel=1e-6, abs=1e-8)
 
-    
+
 def test_tracking_changes_dict(modeler: Modeler):
     """Test the return-type and dict keys of start_tracking / stop_tracking.
 
