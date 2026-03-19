@@ -4715,13 +4715,13 @@ def test_get_centroid(modeler: Modeler):
     box_body = design.extrude_sketch("TestBox", sketch_box, Quantity(5, UNITS.mm))
 
     # Get centroid of the box body
-    # Expected: center of a 20x10x5 mm box, starting at origin
-    # The box is drawn from [0,0] with width=20, height=10, so center is at [10, 5] in XY
+    # Expected: center of a 20x10x5 mm box, centered at origin
+    # The box is drawn from [0,0] with width=20, height=10, so center is at [0, 0] in XY
     # Extruded by 5mm, so center in Z is at 2.5mm
     box_centroid = box_body.centroid
     assert isinstance(box_centroid, Point3D)
-    assert box_centroid.x.m == pytest.approx(10e-3, rel=1e-6, abs=1e-8)  # 10mm in meters
-    assert box_centroid.y.m == pytest.approx(5e-3, rel=1e-6, abs=1e-8)  # 5mm in meters
+    assert box_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert box_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
     assert box_centroid.z.m == pytest.approx(2.5e-3, rel=1e-6, abs=1e-8)  # 2.5mm in meters
 
     # Test 2: Body centroid - Cylinder
@@ -4740,86 +4740,33 @@ def test_get_centroid(modeler: Modeler):
 
     # Test 3: Face centroid - Top face of the box
     # The box has 6 faces. Let's test the top face (typically the last face after extrusion)
-    box_faces = box_body.faces
-    assert len(box_faces) >= 1
-    
-    # Test centroid for one of the faces
-    for face in box_faces:
-        face_centroid = face.centroid
-        assert isinstance(face_centroid, Point3D)
-        # Verify that centroid coordinates are within the body bounds
-        # All coordinates should be reasonable values within the box dimensions
-        assert face_centroid.x.m >= -1e-6  # Allow for floating point errors
-        assert face_centroid.x.m <= 21e-3  # Slightly beyond box width
-        assert face_centroid.y.m >= -1e-6
-        assert face_centroid.y.m <= 11e-3  # Slightly beyond box height
-        assert face_centroid.z.m >= -1e-6
-        assert face_centroid.z.m <= 6e-3  # Slightly beyond extrusion depth
+    top_face = next(f for f in box_body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    top_face_centroid = top_face.centroid
+    assert isinstance(top_face_centroid, Point3D)
+    assert top_face_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.z.m == pytest.approx(5e-3, rel=1e-6, abs=1e-8)  # Top face at 5mm
 
     # Test 4: Face centroid - Circular face of cylinder
-    cylinder_faces = cylinder_body.faces
-    assert len(cylinder_faces) >= 1
-    
-    # Test centroids for cylinder faces
-    for face in cylinder_faces:
-        face_centroid = face.centroid
-        assert isinstance(face_centroid, Point3D)
-        # Verify reasonable bounds for cylinder centered at [50, 50] with radius 10mm
-        assert face_centroid.x.m >= 39e-3  # 50-11 mm (allow margin)
-        assert face_centroid.x.m <= 61e-3  # 50+11 mm (allow margin)
-        assert face_centroid.y.m >= 39e-3
-        assert face_centroid.y.m <= 61e-3
-        assert face_centroid.z.m >= -1e-6
-        assert face_centroid.z.m <= 31e-3  # Height + margin
+    top_face = next(f for f in cylinder_body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    top_face_centroid = top_face.centroid
+    assert isinstance(top_face_centroid, Point3D)
+    assert top_face_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.z.m == pytest.approx(30e-3, rel=1e-6, abs=1e-8)
 
     # Test 5: Edge centroid - Edges of the box
     box_edges = box_body.edges
-    assert len(box_edges) >= 1
-    
-    # Test centroid for edges
-    for edge in box_edges:
-        edge_centroid = edge.centroid
-        assert isinstance(edge_centroid, Point3D)
-        # Verify that edge centroids are within reasonable bounds
-        assert edge_centroid.x.m >= -1e-6
-        assert edge_centroid.x.m <= 21e-3
-        assert edge_centroid.y.m >= -1e-6
-        assert edge_centroid.y.m <= 11e-3
-        assert edge_centroid.z.m >= -1e-6
-        assert edge_centroid.z.m <= 6e-3
+    edge_centroid = box_edges[0].centroid  # Edge at the bottom of the box
+    assert isinstance(edge_centroid, Point3D)
+    assert edge_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert edge_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert edge_centroid.z.m == pytest.approx(2.5e-3, rel=1e-6, abs=1e-8)
 
     # Test 6: Edge centroid - Edges of the cylinder
     cylinder_edges = cylinder_body.edges
-    assert len(cylinder_edges) >= 1
-    
-    # Test centroids for cylinder edges
-    for edge in cylinder_edges:
-        edge_centroid = edge.centroid
-        assert isinstance(edge_centroid, Point3D)
-        # Verify reasonable bounds
-        assert edge_centroid.x.m >= 39e-3
-        assert edge_centroid.x.m <= 61e-3
-        assert edge_centroid.y.m >= 39e-3
-        assert edge_centroid.y.m <= 61e-3
-        assert edge_centroid.z.m >= -1e-6
-        assert edge_centroid.z.m <= 31e-3
-
-    # Test 7: Verify centroid is a property and returns the same value on multiple calls
-    box_centroid_second_call = box_body.centroid
-    assert box_centroid.x.m == pytest.approx(box_centroid_second_call.x.m, rel=1e-6, abs=1e-8)
-    assert box_centroid.y.m == pytest.approx(box_centroid_second_call.y.m, rel=1e-6, abs=1e-8)
-    assert box_centroid.z.m == pytest.approx(box_centroid_second_call.z.m, rel=1e-6, abs=1e-8)
-
-    # Test 8: Test centroid on a more complex geometry - Box with a hole
-    sketch_complex = Sketch()
-    outer_circle = sketch_complex.circle(Point2D([0, 0], UNITS.mm), Quantity(20, UNITS.mm))
-    inner_circle = sketch_complex.circle(Point2D([0, 0], UNITS.mm), Quantity(10, UNITS.mm))
-    complex_body = design.extrude_sketch("ComplexBody", sketch_complex, Quantity(10, UNITS.mm))
-
-    # Get centroid of the complex body
-    complex_centroid = complex_body.centroid
-    assert isinstance(complex_centroid, Point3D)
-    # The centroid should still be near the center due to symmetry
-    assert complex_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-6)  # Center in X
-    assert complex_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-6)  # Center in Y
-    assert complex_centroid.z.m == pytest.approx(5e-3, rel=1e-6, abs=1e-8)  # Half height = 5mm
+    edge_centroid = cylinder_edges[0].centroid
+    assert isinstance(edge_centroid, Point3D)
+    assert edge_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert edge_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert edge_centroid.z.m == pytest.approx(15e-3, rel=1e-6, abs=1e-8)

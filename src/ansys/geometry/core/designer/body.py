@@ -1211,9 +1211,12 @@ class MasterBody(IBody):
     @property
     @min_backend_version(27, 1, 0)
     def centroid(self) -> Point3D:  # noqa: D102
-        self._grpc_client.log.debug(f"Retrieving centroid for body {self.id} from server.")
-        response = self._grpc_client.services.bodies.get_centroid(id=self.id)
-        return response.get("centroid")
+        raise NotImplementedError(
+            """
+            Centroid is not implemented at the MasterBody level.
+            Instead, call this method on a body.
+            """
+        )
 
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
@@ -1951,11 +1954,12 @@ class Body(IBody):
             center=response.get("center"),
         )
         
-
     @property
     @min_backend_version(27, 1, 0)
     def centroid(self) -> Point3D:  # noqa: D102
-        return self._template.centroid()
+        self._grpc_client.log.debug(f"Retrieving centroid for body {self.id} from server.")
+        response = self._template._grpc_client.services.bodies.get_centroid(id=self.id)
+        return Point3D(response.get("centroid"))
 
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
