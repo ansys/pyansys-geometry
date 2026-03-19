@@ -8,8 +8,10 @@ description: This skill is used for writing tests to aid developers in ensuring 
 ## Instructions
 
 ### Step 1: Activate virtual environment
-Activate the virtual environment available to the workspace.
-Ex: Call "./.venv/Scripts/activate" in the directory containing the virtual environment
+Look for a `.venv` directory in the current workspace folder (e.g. `pyansys-geometry/.venv`). If one exists, activate it.
+If no `.venv` exists in the current directory, check the parent directory for a `.venv`. If one exists there, activate it instead.
+If no virtual environment is found in either location, follow the instructions under `.github/copilot-instructions.md` for "Install (developer)" to create and install one.
+Ex: Call `./.venv/Scripts/Activate.ps1` (Windows) or `source ./.venv/bin/activate` (Linux/macOS) from the directory containing the virtual environment.
 
 ### Step 2: Write the test(s)
 Read any code that the user references.
