@@ -106,11 +106,15 @@ class LocalDockerInstance:
     name : str or None, default: None
         Name of the Docker container to deploy. The default is ``None``,
         in which case Docker assigns it a random name.
-    image : GeometryContainers or None, default: None
-        The Geometry service Docker image to deploy. The default is ``None``,
-        in which case the ``LocalDockerInstance`` class identifies the OS of your
-        Docker engine and deploys the latest version of the Geometry service for that
-        OS.
+    image : GeometryContainers | str | None, default: None
+        The Geometry service Docker image to deploy. This can be either:
+
+        * A ``GeometryContainers`` enum value for predefined images
+        * A string containing a custom Docker image name (e.g., myregistry.com/my-geometry:tag)
+
+        The default is ``None``, in which case the ``LocalDockerInstance`` class identifies
+        the OS of your Docker engine and deploys the latest version of the Geometry service
+        for that OS.
     transport_mode : str | None
         Transport mode selected, by default `None` and thus it will be selected
         for you based on the connection criteria. Options are: "insecure", "mtls"
@@ -176,7 +180,7 @@ class LocalDockerInstance:
         connect_to_existing_service: bool = True,
         restart_if_existing_service: bool = False,
         name: str | None = None,
-        image: GeometryContainers | None = None,
+        image: GeometryContainers | str | None = None,
         transport_mode: str | None = None,
         certs_dir: Path | str | None = None,
     ) -> None:
@@ -282,7 +286,7 @@ class LocalDockerInstance:
         self,
         port: int,
         name: str | None,
-        image: GeometryContainers | None,
+        image: GeometryContainers | str | None,
         transport_mode: str | None,
         certs_dir: Path | str | None,
     ) -> None:
@@ -295,9 +299,12 @@ class LocalDockerInstance:
         name : str or None, optional
             Name given to the deployed container. If ``None``, Docker will provide
             an arbitrary name.
-        image : GeometryContainers or None
-            Geometry service Docker container image to be used. If ``None``, the
-            latest container version matching
+        image : GeometryContainers | str | None
+            Geometry service Docker container image to be used. This can be either:
+
+            * A ``GeometryContainers`` enum value for predefined images
+            * A string containing a custom Docker image name
+            * ``None`` - the latest container version matching the Docker engine OS is used
         transport_mode : str | None
             Transport mode selected, by default `None` and thus it will be selected
             for you based on the connection criteria. Options are: "insecure", "mtls"
@@ -315,21 +322,34 @@ class LocalDockerInstance:
         # First get the Docker Engine OS
         docker_os = self.docker_client().info()["OSType"]
 
-        # If no image is provided, default to the whatever Docker engine OS
-        # your system is running on... Latest images are used because they are the
-        # ones defined first in the GeometryContainers enum class.
-        if image is None:
+        # Determine the final image to use
+        final_image_name = None
+
+        if isinstance(image, str):
+            # Custom image name provided as string - use it directly
+            final_image_name = image
+            LOG.info(f"Using custom Docker image: {final_image_name}")
+        elif image is None:
+            # If no image is provided, default to whatever Docker engine OS
+            # your system is running on... Latest images are used because they are the
+            # ones defined first in the GeometryContainers enum class.
             for geom_service in GeometryContainers:
                 if geom_service.value[1] == docker_os:
                     image = geom_service
                     break
 
-        # If image is still None, this means it cannot be deployed on your OS
-        #
-        # Also, if you requested an image incompatible with the existing OS, it
-        # is not possible either.
-        if image is None or image.value[1] != docker_os:  # pragma: no cover
-            raise RuntimeError(f"Geometry service cannot be launched on {docker_os}")
+            # If image is still None, this means it cannot be deployed on your OS
+            if image is None:  # pragma: no cover
+                raise RuntimeError(f"Geometry service cannot be launched on {docker_os}")
+
+            final_image_name = f"{pygeom_defaults.GEOMETRY_SERVICE_DOCKER_IMAGE}:{image.value[2]}"
+        else:
+            # GeometryContainers enum provided
+            # Check if the requested image is compatible with the existing OS
+            if image.value[1] != docker_os:  # pragma: no cover
+                raise RuntimeError(f"Geometry service cannot be launched on {docker_os}")
+
+            final_image_name = f"{pygeom_defaults.GEOMETRY_SERVICE_DOCKER_IMAGE}:{image.value[2]}"
 
         # At this point, you are can deploy the Geometry service.
         #
@@ -364,17 +384,27 @@ class LocalDockerInstance:
                     "Transport mode 'mtls' was selected, but the expected"
                     f" certificates directory does not exist: {certs_dir}"
                 )
+
+            # Determine the container-side path based on the image OS
+            # For custom images, we need to infer from docker engine OS
+            container_os = image.value[1] if isinstance(image, GeometryContainers) else docker_os
+            container_cert_path = "/certs" if container_os == "linux" else "C:/certs"
+
             volumes = {
                 str(Path(certs_dir).resolve()): {
-                    "bind": "/certs" if image.value[1] == "linux" else "C:/certs",
+                    "bind": container_cert_path,
                     "mode": "ro",
                 }
             }
 
         # Try to deploy it
         try:
+            # Determine the container-side cert path for environment variables
+            container_os = image.value[1] if isinstance(image, GeometryContainers) else docker_os
+            container_cert_path = "/certs" if container_os == "linux" else "C:/certs"
+
             container: Container = self.docker_client().containers.run(
-                image=f"{pygeom_defaults.GEOMETRY_SERVICE_DOCKER_IMAGE}:{image.value[2]}",
+                image=final_image_name,
                 detach=True,
                 auto_remove=True,
                 network_mode="bridge" if docker_os == "linux" else "nat",
@@ -387,15 +417,13 @@ class LocalDockerInstance:
                     "ENABLE_TRACE": os.getenv("ANSRV_GEO_ENABLE_TRACE", 0),
                     "USE_DEBUG_MODE": os.getenv("ANSRV_GEO_USE_DEBUG_MODE", 0),
                     "SERVER_ENDPOINT": "50051@0.0.0.0",
-                    "ANSYS_GRPC_CERTIFICATES": "/certs"
-                    if image.value[1] == "linux"
-                    else "C:/certs",
+                    "ANSYS_GRPC_CERTIFICATES": container_cert_path,
                 },
                 command=f"--transport-mode={transport_mode}",
             )
         except ImageNotFound:  # pragma: no cover
             raise RuntimeError(
-                f"Geometry service Docker image {image.value[1]} not found. Download it first to your machine."  # noqa: E501
+                f"Geometry service Docker image '{final_image_name}' not found. Download it first to your machine."  # noqa: E501
             )
         except (ContainerError, APIError) as err:
             raise RuntimeError(

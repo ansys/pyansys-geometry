@@ -4770,3 +4770,114 @@ def test_get_centroid(modeler: Modeler):
     assert edge_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
     assert edge_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
     assert edge_centroid.z.m == pytest.approx(15e-3, rel=1e-6, abs=1e-8)
+
+    
+def test_tracking_changes_dict(modeler: Modeler):
+    """Test the return-type and dict keys of start_tracking / stop_tracking.
+
+    - ``start_tracking`` must return ``None``.
+    - ``stop_tracking`` must return a ``dict``.
+    """
+    design = modeler.create_design("tracking_dict_keys")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # start_tracking must return None
+    result = modeler.unsupported.start_tracking()
+    assert result is None
+
+    modeler.geometry_commands.extrude_faces(box.faces[0], 0.1)
+    changes = modeler.unsupported.stop_tracking()
+
+    # stop_tracking must return a dict
+    assert isinstance(changes, dict)
+
+    # Keys guaranteed by both v0 and v1 protocols
+    for key in ("created_bodies", "modified_bodies", "deleted_bodies"):
+        assert key in changes
+        assert isinstance(changes[key], list)
+
+    # Additional keys provided by the v1 protocol only
+    if modeler._grpc_client._services.version == "v1":
+        v1_keys = (
+            "created_parts",
+            "modified_parts",
+            "deleted_parts",
+            "created_components",
+            "modified_components",
+            "deleted_components",
+            "created_faces",
+            "modified_faces",
+            "deleted_faces",
+            "created_edges",
+            "modified_edges",
+            "deleted_edges",
+        )
+        for key in v1_keys:
+            assert key in changes
+            assert isinstance(changes[key], list)
+
+    # No geometry operations between start and stop
+    modeler.unsupported.start_tracking()
+    changes = modeler.unsupported.stop_tracking()
+
+    assert isinstance(changes, dict)
+    assert "created_bodies" in changes
+    assert "modified_bodies" in changes
+    assert "deleted_bodies" in changes
+
+    # No operations were performed so every change list should be empty
+    assert changes["created_bodies"] == []
+    assert changes["modified_bodies"] == []
+    assert changes["deleted_bodies"] == []
+
+
+def test_tracking_captures_face_extrude_changes(modeler: Modeler):
+    """Test that face extrusion operations performed between start_tracking and
+    stop_tracking are reflected in the returned changes summary.
+    """
+    design = modeler.create_design("tracking_extrude_faces")
+    box1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    box2 = design.extrude_sketch("box2", Sketch().box(Point2D([5, 5]), 1, 1), 1)
+
+    modeler.unsupported.start_tracking()
+
+    # Extrude one face on each box — the tracker must capture these modifications
+    modeler.geometry_commands.extrude_faces(box1.faces[0], 0.1)
+    modeler.geometry_commands.extrude_faces(box2.faces[0], 0.1)
+
+    changes = modeler.unsupported.stop_tracking()
+
+    assert len(changes["modified_bodies"]) == 2
+
+
+def test_tracking_captures_boolean_operations(modeler: Modeler):
+    """Test that boolean subtract and unite operations are each captured by the tracker."""
+    # --- subtract ---
+    design = modeler.create_design("tracking_subtract")
+
+    # Overlapping boxes so the subtract succeeds
+    body1 = design.extrude_sketch("body1", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    body2 = design.extrude_sketch("body2", Sketch().box(Point2D([0.5, 0.5]), 1, 1), 1)
+    assert len(design.bodies) == 2
+
+    modeler.unsupported.start_tracking()
+    body1.subtract(body2)  # body1 modified, body2 deleted
+    subtract_changes = modeler.unsupported.stop_tracking()
+
+    assert len(subtract_changes["modified_bodies"]) == 1
+    assert len(subtract_changes["deleted_bodies"]) == 1
+
+    design.close()
+
+    # --- unite ---
+    design = modeler.create_design("tracking_unite")
+    # Overlapping boxes so the unite has visible geometry change
+    body3 = design.extrude_sketch("body3", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body4 = design.extrude_sketch("body4", Sketch().box(Point2D([0.5, 0]), 1, 1), 1)
+
+    modeler.unsupported.start_tracking()
+    body3.unite(body4)  # body3 modified, body4 deleted
+    unite_changes = modeler.unsupported.stop_tracking()
+
+    assert len(unite_changes["modified_bodies"]) == 1
+    assert len(unite_changes["deleted_bodies"]) == 1
