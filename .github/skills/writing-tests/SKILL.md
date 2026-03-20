@@ -16,7 +16,11 @@ Ex: Call `./.venv/Scripts/Activate.ps1` (Windows) or `source ./.venv/bin/activat
 ### Step 2: Write the test(s)
 Read any code that the user references.
 If the user does not specify a specific file to write the tests in, go in the tests folder, and find the most relevant test file.
+If no other test file is relevant, consider creating a new file.
+Tests that require a modeler session need to be added to the "integration" folder.
+Leverage the pytest fixtures available for handling modeler sessions.
 Write test code to test code in a detailed way. For example, if the code alters a face, test the before and after area of the face.
+Document briefly what the test is doing through a docstring.
 If the code to be tested has paths that raise errors, test those scenarios.
 
 ### Step 3: Run the test and verify results
