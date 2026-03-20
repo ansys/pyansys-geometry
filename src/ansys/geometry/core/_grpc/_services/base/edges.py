@@ -98,3 +98,8 @@ class GRPCEdgesService(ABC):  # pragma: no cover
     def offset_edges(self, **kwargs) -> dict:
         """Offset edges."""
         pass
+
+    @abstractmethod
+    def get_centroid(self, **kwargs) -> dict:
+        """Get the centroid of an edge."""
+        pass

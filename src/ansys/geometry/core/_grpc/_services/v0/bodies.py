@@ -1170,3 +1170,10 @@ class GRPCBodyServiceV0(GRPCBodyService):
             f"Method '{self.__class__.__name__}.copy_faces' is not "
             "implemented in this protofile version."
         )
+
+    @protect_grpc
+    def get_centroid(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.get_centroid' is not "
+            "implemented in this protofile version."
+        )
