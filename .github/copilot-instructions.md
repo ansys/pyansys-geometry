@@ -23,7 +23,7 @@
 
 ## Examples & References
 - See `doc/source/contributing.rst` for detailed contribution guidelines.
-- Notebooks: `examples/01_getting_started/`
+- Notebooks: `doc/source/examples/`
 - API reference: https://geometry.docs.pyansys.com/version/stable/api/index.html
 
 ## Skills
