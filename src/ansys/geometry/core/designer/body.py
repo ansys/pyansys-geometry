@@ -1959,7 +1959,7 @@ class Body(IBody):
     def centroid(self) -> Point3D:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving centroid for body {self.id} from server.")
         response = self._template._grpc_client.services.bodies.get_centroid(id=self.id)
-        return Point3D(response.get("centroid"))
+        return response.get("centroid")
 
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
