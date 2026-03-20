@@ -895,7 +895,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
-    @min_backend_version(25, 1, 0)
+    @min_backend_version(27, 1, 0)
     def create_block(self, name: str, start: Point3D, end: Point3D) -> Body:
         """Create a block body defined by the start and end points.
 
