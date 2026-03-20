@@ -16,7 +16,7 @@
   - `pip install -e . --group dev`
 
 ## Project Conventions
-- **Style:** Follows [PyAnsys Developer's Guide](https://dev.docs.pyansys.com/coding-style/index.html#coding-style); enforced by `black`, `isort`, `flake8`
+- **Style:** Follows [PyAnsys Developer's Guide](https://dev.docs.pyansys.com/coding-style/index.html#coding-style); use pre-commit (configuration available on repository), to validate the style
 - **Tests:** Use `pytest` style; integration tests in `tests/integration/`
 - **Docs:** Sphinx, sources in `doc/source/`
 - **Editable install:** Always use `pip install -e .`
