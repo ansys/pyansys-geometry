@@ -298,6 +298,21 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def centroid(self) -> Point3D:
+        """Get the centroid of the body.
+
+        Returns
+        -------
+        Point3D
+            Centroid of the body.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
+        return
+
+    @abstractmethod
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:
         """Get the bounding box of the body.
 
@@ -1193,6 +1208,16 @@ class MasterBody(IBody):
             center=response.get("center"),
         )
 
+    @property
+    @min_backend_version(27, 1, 0)
+    def centroid(self) -> Point3D:  # noqa: D102
+        raise NotImplementedError(
+            """
+            Centroid is not implemented at the MasterBody level.
+            Instead, call this method on a body.
+            """
+        )
+
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
@@ -1928,6 +1953,13 @@ class Body(IBody):
             max_corner=response.get("max"),
             center=response.get("center"),
         )
+
+    @property
+    @min_backend_version(27, 1, 0)
+    def centroid(self) -> Point3D:  # noqa: D102
+        self._grpc_client.log.debug(f"Retrieving centroid for body {self.id} from server.")
+        response = self._template._grpc_client.services.bodies.get_centroid(id=self.id)
+        return response.get("centroid")
 
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
