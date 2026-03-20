@@ -12,7 +12,8 @@
   - `pip install ansys-geometry-core`
 - **Install (developer)**:
   - `python -m venv .venv && .venv\Scripts\Activate.ps1`
-  - `pip install -e .`
+  - `python -m pip install -U pip`
+  - `pip install -e . --group dev`
 
 ## Project Conventions
 - **Style:** Follows [PyAnsys Developer's Guide](https://dev.docs.pyansys.com/coding-style/index.html#coding-style); enforced by `black`, `isort`, `flake8`
