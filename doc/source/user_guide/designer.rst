@@ -1,26 +1,73 @@
+.. _ref_designer:
+
 Designer
 ********
 
-The PyAnsys Geometry :class:`designer <ansys.geometry.core.designer>` subpackage organizes geometry assemblies
-and synchronizes to a supporting Geometry service instance.
+The PyAnsys Geometry :ref:`designer <ref_designer>` subpackage organizes geometry
+assemblies and synchronizes to a supporting Geometry service instance.
 
-Create the model
-----------------
-This code create the :class:`Modeler() <ansys.geometry.core.modeler>` object which owns the whole designs
-tools and data.
+.. _ref_designer_architecture:
+
+Architecture overview
+---------------------
+
+PyAnsys Geometry uses a hierarchical object model to represent 3D geometry. Understanding
+this hierarchy is essential to effectively using the API.
+
+The core classes in the :class:`designer <ansys.geometry.core.designer>` subpackage are:
+
+- :class:`Design <ansys.geometry.core.designer.design>`: The top-level container for a geometry model. Each design
+  corresponds to a single session in the Geometry service and can contain components, bodies,
+  materials, named selections, and more.
+- :class:`Component <ansys.geometry.core.designer.component>`: A sub-assembly within a design. Components can be nested
+  to create complex assemblies and can contain other components, bodies, beams, coordinate
+  systems, datum planes, and design points.
+- :class:`Body <ansys.geometry.core.designer.body>`: A 3D solid or surface body within a component. Bodies can be
+  created by extruding, sweeping, or revolving sketches, or by applying boolean operations
+  to existing bodies.
+
+The following diagram illustrates the assembly hierarchy::
+
+    Design
+    ├── Component
+    │   ├── Body
+    │   ├── Component (nested)
+    │   │   └── Body
+    │   ├── CoordinateSystem
+    │   ├── DatumPlane
+    │   └── DesignPoint
+    ├── Body
+    ├── Material
+    └── NamedSelection
+
+.. note::
+
+   ``Design`` extends ``Component``, so everything that you can do with a ``Component``
+   can also be done directly on a ``Design`` object. At the top level, a design acts as
+   the root component of the assembly.
+
+   For a detailed description of each class and its capabilities, see:
+
+   - :class:`Design <ansys.geometry.core.designer.design>`
+   - :class:`Component <ansys.geometry.core.designer.component>`
+   - :class:`Body <ansys.geometry.core.designer.body>`
+
+Quick start
+-----------
+
+The following example demonstrates the typical workflow for creating a geometry model with
+PyAnsys Geometry.
+
+First, connect to the Geometry service using the
+:class:`Modeler <ansys.geometry.core.modeler>` class:
 
 .. code:: python
 
     from ansys.geometry.core import Modeler
 
-    # Create the modeler object itself
     modeler = Modeler()
 
-
-Define the model
-----------------
-The following code define the model by creating a sketch with a circle on the client.
-It then creates the model on the server.
+Then, create a design, which is the root container for all geometry:
 
 .. code:: python
 
@@ -29,83 +76,39 @@ It then creates the model on the server.
     from ansys.geometry.core.misc import UNITS
     from pint import Quantity
 
-    # Create a sketch and draw a circle on the client
+    # Create a sketch and draw a circle
     sketch = Sketch()
     sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
 
-    # Create your design on the server
-    design_name = "ExtrudeProfile"
-    design = modeler.create_design(design_name)
+    # Create a design on the service
+    design = modeler.create_design("MyDesign")
 
-A warning on design objects
----------------------------
-To ensure design objects are up to date, it is recommended to access design
-information (bodies, components, etc.) via the design instance properties
-and methods, rather than storing this information separately. For example, to get
-the bodies in a design, it is recommended to use ``design.bodies`` rather than
-storing the bodies in a separate variable (``bodies = design.bodies``) and
-using that variable for future reference. This is because the design may be
-updated after the initial retrieval of the bodies, which would make the separate
-variable out of date.
-
-Add materials to model
------------------------
-This code adds the data structure and properties for individual materials:
+Extrude the sketch to create a solid body:
 
 .. code:: python
 
-    from ansys.geometry.core.materials.material import Material
-    from ansys.geometry.core.materials.property import (
-        MaterialProperty,
-        MaterialPropertyType,
-    )
+    body = design.extrude_sketch("Cylinder", sketch, Quantity(10, UNITS.mm))
 
-    density = Quantity(125, 1000 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
-    poisson_ratio = Quantity(0.33, UNITS.dimensionless)
-    tensile_strength = Quantity(45)
-    material = Material(
-        "steel",
-        density,
-        [MaterialProperty(MaterialPropertyType.POISSON_RATIO, "myPoisson", poisson_ratio)],
-    )
-    material.add_property(MaterialPropertyType.TENSILE_STRENGTH, "myTensile", Quantity(45))
-    design.add_material(material)
-
-Create bodies by extruding the sketch
--------------------------------------
-Extruding a sketch projects all of the specified geometries onto the body. To create a solid body,
-this code extrudes the sketch profile by a given distance.
+Download and save the resulting design:
 
 .. code:: python
 
-    body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
+    path = design.export_to_scdocx("path/to")
 
-Create bodies by extruding the face
------------------------------------
-The following code shows how you can also extrude a face profile by a given distance to create a solid body.
-There are no modifications against the body containing the source face.
+.. warning::
 
-.. code:: python
+   To ensure design objects are up to date, access design information (bodies,
+   components, and so on) via the design instance properties and methods rather
+   than storing that information separately. For example, use ``design.bodies``
+   rather than storing the result in a separate variable (``bodies =
+   design.bodies``) and accessing it later. The separate variable can become
+   stale if the design is updated after the initial retrieval.
 
-    longer_body = design.extrude_face(
-        "LongerCircleFace", body.faces[0], Quantity(20, UNITS.mm)
-    )
+For detailed usage information on each class, see the following pages:
 
-You can also translate and tessellate design bodies and project curves onto them. For
-more information, see these classes:
+.. toctree::
+   :maxdepth: 1
 
-* :class:`Body() <ansys.geometry.core.designer.body>`
-* :class:`Component() <ansys.geometry.core.designer.component>`
-
-Download and save design
-------------------------
-
-You can save your design to disk or download the design of the active Geometry server instance.
-The following code shows how to download and save the design.
-
-.. code:: python
-
-    file = "path/to/download.scdocx"
-    design.download(file)
-
-For more information, see the :class:`Design <ansys.geometry.core.designer.design>` submodule.
+   design
+   component
+   body

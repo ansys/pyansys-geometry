@@ -1449,6 +1449,21 @@ class GRPCBodyServiceV1(GRPCBodyService):
             "is_surface": body.is_surface,
         }
 
+    @protect_grpc
+    def get_centroid(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
+        # Call the gRPC service
+        response = self.stub.GetCentroid(request=request).response_data[0]
+
+        # Return the response - formatted as a dictionary
+        return {
+            "centroid": from_grpc_point_to_point3d(response.centroid),
+        }
+
     def create_block_body(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.geometry.body_pb2 import CreateBlockBodyRequest
 

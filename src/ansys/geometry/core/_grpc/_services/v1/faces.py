@@ -696,6 +696,21 @@ class GRPCFacesServiceV1(GRPCFacesService):
         }
 
     @protect_grpc
+    def get_centroid(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
+        # Call the gRPC service
+        response = self.stub.GetCentroid(request=request).response_data[0]
+
+        # Return the response - formatted as a dictionary
+        return {
+            "centroid": from_grpc_point_to_point3d(response.centroid),
+        }
+
+    @protect_grpc
     def split_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.edit_pb2 import (
             SplitFaceRequest,

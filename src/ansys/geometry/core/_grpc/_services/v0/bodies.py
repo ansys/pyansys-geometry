@@ -1172,6 +1172,13 @@ class GRPCBodyServiceV0(GRPCBodyService):
         )
 
     @protect_grpc
+    def get_centroid(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.get_centroid' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
     def create_block_body(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.bodies_pb2 import CreateBlockBodyRequest
 

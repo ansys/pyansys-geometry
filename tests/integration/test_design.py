@@ -4708,6 +4708,80 @@ def test_create_datum_plane(modeler: Modeler):
     assert datum_plane6 in all_datum_planes
 
 
+def test_get_centroid(modeler: Modeler):
+    """Test get_centroid() method on body, face, and edge objects.
+
+    This test validates that the centroid calculation works correctly for:
+    - Body: Tests a simple box and a cylinder
+    - Face: Tests face centroids from various geometries
+    - Edge: Tests edge centroids from various geometries
+    """
+    # Create a design
+    design = modeler.create_design("CentroidTest")
+
+    # Test 1: Body centroid - Box centered at origin
+    sketch_box = Sketch()
+    sketch_box.box(Point2D([0, 0], UNITS.mm), Quantity(20, UNITS.mm), Quantity(10, UNITS.mm))
+    box_body = design.extrude_sketch("TestBox", sketch_box, Quantity(5, UNITS.mm))
+
+    # Get centroid of the box body
+    # Expected: center of a 20x10x5 mm box, centered at origin
+    # The box is drawn from [0,0] with width=20, height=10, so center is at [0, 0] in XY
+    # Extruded by 5mm, so center in Z is at 2.5mm
+    box_centroid = box_body.centroid
+    assert isinstance(box_centroid, Point3D)
+    assert box_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert box_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert box_centroid.z.m == pytest.approx(2.5e-3, rel=1e-6, abs=1e-8)  # 2.5mm in meters
+
+    # Test 2: Body centroid - Cylinder
+    sketch_circle = Sketch()
+    sketch_circle.circle(Point2D([50, 50], UNITS.mm), Quantity(10, UNITS.mm))
+    cylinder_body = design.extrude_sketch("TestCylinder", sketch_circle, Quantity(30, UNITS.mm))
+
+    # Get centroid of the cylinder body
+    # Expected: center of cylinder with base at [50, 50, 0] and height 30mm
+    # So centroid should be at [50, 50, 15] mm
+    cylinder_centroid = cylinder_body.centroid
+    assert isinstance(cylinder_centroid, Point3D)
+    assert cylinder_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)  # 50mm in meters
+    assert cylinder_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)  # 50mm in meters
+    assert cylinder_centroid.z.m == pytest.approx(15e-3, rel=1e-6, abs=1e-8)  # 15mm in meters
+
+    # Test 3: Face centroid - Top face of the box
+    # The box has 6 faces. Let's test the top face (typically the last face after extrusion)
+    top_face = next(f for f in box_body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    top_face_centroid = top_face.centroid
+    assert isinstance(top_face_centroid, Point3D)
+    assert top_face_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.z.m == pytest.approx(5e-3, rel=1e-6, abs=1e-8)  # Top face at 5mm
+
+    # Test 4: Face centroid - Circular face of cylinder
+    top_face = next(f for f in cylinder_body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    top_face_centroid = top_face.centroid
+    assert isinstance(top_face_centroid, Point3D)
+    assert top_face_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.z.m == pytest.approx(30e-3, rel=1e-6, abs=1e-8)
+
+    # Test 5: Edge centroid - Edges of the box
+    box_edges = box_body.edges
+    edge_centroid = box_edges[0].centroid  # Edge at the bottom of the box
+    assert isinstance(edge_centroid, Point3D)
+    assert edge_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert edge_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert edge_centroid.z.m == pytest.approx(2.5e-3, rel=1e-6, abs=1e-8)
+
+    # Test 6: Edge centroid - Edges of the cylinder
+    cylinder_edges = cylinder_body.edges
+    edge_centroid = cylinder_edges[0].centroid
+    assert isinstance(edge_centroid, Point3D)
+    assert edge_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert edge_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert edge_centroid.z.m == pytest.approx(15e-3, rel=1e-6, abs=1e-8)
+
+
 def test_tracking_changes_dict(modeler: Modeler):
     """Test the return-type and dict keys of start_tracking / stop_tracking.
 

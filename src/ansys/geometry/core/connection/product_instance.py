@@ -536,7 +536,7 @@ def prepare_and_start_backend(
     #
     # Assign environment variables as needed
     if transport_values["certs_dir"]:
-        env_copy["ANSYS_GRPC_CERTIFICATES"] = certs_dir
+        env_copy["ANSYS_GRPC_CERTIFICATES"] = transport_values["certs_dir"]
 
     # On SpaceClaim and Discovery, we need to change the "--" to "/"
     if backend_type in (BackendType.DISCOVERY, BackendType.SPACECLAIM):
@@ -797,7 +797,7 @@ def _handle_transport_mode(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
-) -> tuple[list[str], dict[str, str], str]:
+) -> tuple[list[str], dict[str, str | None]]:
     """Handle transport mode conditions.
 
     Parameters
@@ -822,14 +822,14 @@ def _handle_transport_mode(
 
     Returns
     -------
-    tuple[str, dict[str, str]]
+    tuple[list[str], dict[str, str | None]]
 
     """
     # Localhost addresses
     loopback_localhosts = ("localhost", "127.0.0.1")
 
     # Command line arguments to be passed to the backend
-    exe_args = []
+    exe_args: list[str] = []
 
     # If the transport mode is selected, simply use it... with caution.
     if transport_mode is not None:
@@ -854,20 +854,23 @@ def _handle_transport_mode(
         if certs_dir is None:
             certs_dir_env = os.getenv("ANSYS_GRPC_CERTIFICATES", None)
             if certs_dir_env is not None:
-                certs_dir = certs_dir_env
+                certs_dir = Path(certs_dir_env)
             else:
                 certs_dir = Path.cwd() / "certs"
+        else:
+            # Make sure it's a Path object
+            certs_dir = Path(certs_dir)
 
-        if not Path(certs_dir).is_dir():  # pragma: no cover
+        if not certs_dir.is_dir():  # pragma: no cover
             raise RuntimeError(
                 "Transport mode 'mtls' was selected, but the expected"
                 f" certificates directory does not exist: {certs_dir}"
             )
-        LOG.info(f"Using certificates directory: {Path(certs_dir).resolve().as_posix()}")
+        LOG.info(f"Using certificates directory: {certs_dir.resolve().as_posix()}")
 
         # Determine args to be passed to the backend
         exe_args.append(f"--transport-mode={transport_mode}")
-        exe_args.append(f"--certs-dir={Path(certs_dir).resolve().as_posix()}")
+        exe_args.append(f"--certs-dir={certs_dir.resolve().as_posix()}")
     elif transport_mode == "uds":
         # UDS is only available for localhost connections
         if host not in loopback_localhosts:
@@ -875,6 +878,9 @@ def _handle_transport_mode(
         # Share the uds_dir if needed
         if uds_dir is None:
             uds_dir = Path.home() / ".conn"
+        else:
+            # Make sure it's a Path object
+            uds_dir = Path(uds_dir)
 
         # If the folder does not exist, create it
         uds_dir.mkdir(parents=True, exist_ok=True)
@@ -885,7 +891,7 @@ def _handle_transport_mode(
 
         # Determine args to be passed to the backend
         exe_args.append(f"--transport-mode={transport_mode}")
-        exe_args.append(f"--uds-dir={Path(uds_dir).resolve().as_posix()}")
+        exe_args.append(f"--uds-dir={uds_dir.resolve().as_posix()}")
         if uds_id is not None:
             exe_args.append(f"--uds-id={uds_id}")
 
@@ -909,9 +915,9 @@ def _handle_transport_mode(
     # Store the final transport values
     transport_values = {
         "transport_mode": transport_mode,
-        "uds_dir": uds_dir,
+        "uds_dir": str(uds_dir) if transport_mode == "uds" else None,
         "uds_id": uds_id,
-        "certs_dir": certs_dir,
+        "certs_dir": str(certs_dir) if transport_mode == "mtls" else None,
     }
 
     # Return the args to be passed to the backend, and the transport values

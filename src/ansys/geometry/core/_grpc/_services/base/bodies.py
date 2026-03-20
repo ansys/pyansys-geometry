@@ -284,6 +284,11 @@ class GRPCBodyService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def get_centroid(self, **kwargs) -> dict:
+        """Get the centroid of a body."""
+        pass
+
+    @abstractmethod
     def create_block_body(self, **kwargs) -> dict:
         """Create a block body."""
         pass
