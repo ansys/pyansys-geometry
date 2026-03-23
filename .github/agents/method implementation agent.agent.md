@@ -1,6 +1,6 @@
 ---
 description: 'Implements a new method end-to-end in PyAnsys Geometry: from the gRPC service layer through to the public API, then hands off to the writing-tests agent. Use when a user asks to implement a new method or expose a new gRPC endpoint.'
-tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'githubRepo', 'problems', 'runCommands', 'runTasks', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'usages']
+tools: ['vscode/extensions', 'execute/testFailure', 'execute/getTerminalOutput', 'execute/runTask', 'execute/createAndRunTask', 'execute/runInTerminal', 'read/problems', 'read/readFile', 'read/terminalSelection', 'read/terminalLastCommand', 'read/getTaskOutput', 'edit/editFiles', 'search', 'web', 'agent']
 ---
 
 # Method Implementation Agent

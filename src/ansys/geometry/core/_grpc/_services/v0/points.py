@@ -25,7 +25,9 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import from_measurement_to_server_angle
 from ..base.points import GRPCPointsService
+from .conversions import build_grpc_id, from_line_to_grpc_line
 
 
 class GRPCPointsServiceV0(GRPCPointsService):
@@ -64,3 +66,23 @@ class GRPCPointsServiceV0(GRPCPointsService):
 
         # Return the response - formatted as a dictionary
         return {"point_ids": [p for p in response.ids]}
+
+    @protect_grpc
+    def revolve_point(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import RevolvePointsRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RevolvePointsRequest(
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+            axis=from_line_to_grpc_line(kwargs["axis"]),
+            angle=from_measurement_to_server_angle(kwargs["angle"]),
+        )
+
+        # Call the gRPC service
+        response = self.stub.RevolvePoints(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.result.success,
+            "created_curve_ids": [curve.id for curve in response.created_curves],
+        }
