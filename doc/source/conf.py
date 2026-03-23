@@ -179,6 +179,9 @@ html_theme_options = {
     ],
     "ansys_sphinx_theme_autoapi": {
         "project": project,
+        "examples_dirs": [
+            "examples/",
+        ],
     },
     "cheatsheet": {
         "file": "cheatsheet/cheat_sheet.qmd",
