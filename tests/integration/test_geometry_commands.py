@@ -1795,6 +1795,7 @@ def test_split_face_by_parameter(modeler: Modeler):
         split_parameter=Point3D([0, 0, 1]),
         parameter_type=SplitFaceParameterType.UV,
     )
+
     assert success
     assert (
         body.faces[5].area.m
