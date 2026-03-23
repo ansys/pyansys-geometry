@@ -45,6 +45,6 @@ class GRPCPointsService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
-    def revolve_point(self, **kwargs) -> dict:
+    def revolve_points(self, **kwargs) -> dict:
         """Revolve design points around an axis to create curves."""
         pass

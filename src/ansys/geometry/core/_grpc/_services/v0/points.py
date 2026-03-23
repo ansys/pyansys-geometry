@@ -68,7 +68,7 @@ class GRPCPointsServiceV0(GRPCPointsService):
         return {"point_ids": [p for p in response.ids]}
 
     @protect_grpc
-    def revolve_point(self, **kwargs) -> dict:  # noqa: D102
+    def revolve_points(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import RevolvePointsRequest
 
         # Create the request - assumes all inputs are valid and of the proper type

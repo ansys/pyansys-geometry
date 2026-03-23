@@ -72,8 +72,8 @@ class GRPCPointsServiceV1(GRPCPointsService):
         return {"point_ids": [p.id for p in response.ids]}
 
     @protect_grpc
-    def revolve_point(self, **kwargs) -> dict:  # noqa: D102
+    def revolve_points(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError(
-            f"Method '{self.__class__.__name__}.revolve_point' is not "
+            f"Method '{self.__class__.__name__}.revolve_points' is not "
             "implemented in this protofile version."
         )

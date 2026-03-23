@@ -1990,7 +1990,7 @@ class GeometryCommands:
     def revolve_point(
         self,
         selection: Union["DesignPoint", list["DesignPoint"]],
-        axis: Line,
+        axis: Union["Edge", Line],
         angle: Angle | Quantity | Real,
     ) -> list["Edge"]:
         """Revolve design points around an axis to create curves.
@@ -1999,7 +1999,7 @@ class GeometryCommands:
         ----------
         selection : DesignPoint | list[DesignPoint]
             Design point(s) to revolve.
-        axis : Line
+        axis : Edge | Line
             Axis of revolution.
         angle : Angle | Quantity | Real
             Angular distance to revolve.
@@ -2014,7 +2014,7 @@ class GeometryCommands:
         This method is only available starting on Ansys release 25R2.
         """
         from ansys.geometry.core.designer.designpoint import DesignPoint
-        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.edge import CurveType, Edge
 
         selection: list[DesignPoint] = (
             selection if isinstance(selection, list) else [selection]
@@ -2023,7 +2023,12 @@ class GeometryCommands:
 
         angle = angle if isinstance(angle, Angle) else Angle(angle)
 
-        result = self._grpc_client._services.points.revolve_point(
+        if isinstance(axis, Edge):
+            if axis.curve_type != CurveType.CURVETYPE_LINE:
+                raise ValueError("Only edges that are lines can be used as the revolve axis.")
+            axis = Line(axis.start, UnitVector3D.from_points(axis.start, axis.end))
+
+        result = self._grpc_client._services.points.revolve_points(
             selection_ids=[dp.id for dp in selection],
             axis=axis,
             angle=angle,
