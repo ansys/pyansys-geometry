@@ -45,7 +45,7 @@ from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.shapes.surfaces.sphere import Sphere
 from ansys.geometry.core.sketch.sketch import Sketch
 
-from .conftest import FILES_DIR
+from .conftest import FILES_DIR, skip_if_linux
 
 
 def test_chamfer(modeler: Modeler):
@@ -1781,6 +1781,12 @@ def test_split_face_by_two_points(modeler: Modeler):
 
 def test_split_face_by_parameter(modeler: Modeler):
     """Test splitting a face at its UV midpoint using BY_PARAMETER."""
+    skip_if_linux(
+        modeler,
+        test_split_face_by_parameter.__name__,
+        "Causes service to crash on Linux",
+    )
+
     design = modeler.create_design("split_face_parameter")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     assert len(body.faces) == 6
