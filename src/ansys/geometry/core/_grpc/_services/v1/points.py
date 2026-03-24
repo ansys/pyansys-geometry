@@ -105,6 +105,8 @@ class GRPCPointsServiceV1(GRPCPointsService):
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
-            "created_curves": [from_grpc_curve_to_curve(curve) for curve in response.created_curves],
+            "created_curves": [
+                from_grpc_curve_to_curve(curve) for curve in response.created_curves
+            ],
             "tracked_response": serialized_response,
         }
