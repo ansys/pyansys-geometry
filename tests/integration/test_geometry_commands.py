@@ -1602,3 +1602,142 @@ def test_intersect_curve_and_surface(modeler: Modeler):
     )
     assert len(points) == 1
     assert np.allclose(points[0], Point3D([0.04, 0.07, 0.00029651]))
+
+
+def test_revolve_point_single_with_line_axis(modeler: Modeler):
+    """Test revolving a single design point around a line axis."""
+    design = modeler.create_design("revolve_point_single")
+
+    # Create a design point offset from the Z axis
+    dp = design.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
+
+    # Revolve around the Z axis
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+    edges = modeler.geometry_commands.revolve_point(dp, axis, Angle(np.pi / 2, UNITS.rad))
+
+    # The result should be a quarter arc
+    assert len(edges) == 1
+    # Arc length = r * theta = 1 * pi/2 ≈ 1.5708
+    assert edges[0].length.m == pytest.approx(np.pi / 2, rel=1e-5, abs=1e-8)
+
+
+def test_revolve_point_full_circle(modeler: Modeler):
+    """Test revolving a design point through 360 degrees creates a full circle."""
+    design = modeler.create_design("revolve_point_full")
+
+    # Create a design point at radius 2 from Z axis
+    dp = design.add_design_point("point1", Point3D([2, 0, 0], UNITS.m))
+
+    # Revolve 360 degrees around Z axis
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+    edges = modeler.geometry_commands.revolve_point(dp, axis, 2 * np.pi)
+
+    # Full circle circumference = 2 * pi * r = 2 * pi * 2 ≈ 12.566
+    assert len(edges) == 1
+    assert edges[0].length.m == pytest.approx(2 * np.pi * 2, rel=1e-5, abs=1e-8)
+
+
+def test_revolve_point_multiple_points(modeler: Modeler):
+    """Test revolving multiple design points at once."""
+    design = modeler.create_design("revolve_point_multiple")
+
+    # Create multiple design points at different positions
+    dp1 = design.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
+    dp2 = design.add_design_point("point2", Point3D([2, 0, 0], UNITS.m))
+    dp3 = design.add_design_point("point3", Point3D([1, 0, 1], UNITS.m))
+
+    # Revolve all points around Z axis
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+    edges = modeler.geometry_commands.revolve_point([dp1, dp2, dp3], axis, Angle(np.pi, UNITS.rad))
+
+    # Should create 3 semicircular arcs
+    assert len(edges) == 3
+
+
+def test_revolve_point_with_edge_axis(modeler: Modeler):
+    """Test revolving a design point using an edge as axis."""
+    design = modeler.create_design("revolve_point_edge_axis")
+
+    # Create a box to get a straight edge for the axis
+    box = design.extrude_sketch("box", Sketch().box(Point2D([3, 3]), 1, 1), 1)
+
+    # Create a design point away from the box
+    dp = design.add_design_point("point1", Point3D([0, 0, 0.5], UNITS.m))
+
+    # Get a vertical edge from the box to use as axis (edges along Z direction)
+    # Filter to find a vertical edge
+    vertical_edge = None
+    for edge in box.edges:
+        start = np.array(edge.start)
+        end = np.array(edge.end)
+        direction = end - start
+        if np.allclose(direction[:2], [0, 0]) and abs(direction[2]) > 0.5:
+            vertical_edge = edge
+            break
+
+    assert vertical_edge is not None, "Could not find a vertical edge"
+
+    # Revolve around the box edge
+    edges = modeler.geometry_commands.revolve_point(dp, vertical_edge, np.pi / 4)
+
+    assert len(edges) == 1
+
+
+def test_revolve_point_with_quantity_angle(modeler: Modeler):
+    """Test revolving a design point using a Quantity for the angle."""
+    design = modeler.create_design("revolve_point_quantity")
+
+    # Create a design point
+    dp = design.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
+
+    # Revolve using a Quantity angle (90 degrees)
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+    edges = modeler.geometry_commands.revolve_point(dp, axis, Quantity(90, UNITS.deg))
+
+    # Arc length = r * theta = 1 * pi/2
+    assert len(edges) == 1
+    assert edges[0].length.m == pytest.approx(np.pi / 2, rel=1e-5, abs=1e-8)
+
+
+def test_revolve_point_with_different_axis_origin(modeler: Modeler):
+    """Test revolving a design point around an axis not at origin."""
+    design = modeler.create_design("revolve_point_offset_axis")
+
+    # Create a design point
+    dp = design.add_design_point("point1", Point3D([2, 0, 0], UNITS.m))
+
+    # Revolve around a Z axis centered at (1, 0, 0) - so radius is 1
+    axis = Line(Point3D([1, 0, 0]), UNITVECTOR3D_Z)
+    edges = modeler.geometry_commands.revolve_point(dp, axis, Angle(np.pi, UNITS.rad))
+
+    # Semicircle arc length = pi * r = pi * 1
+    assert len(edges) == 1
+    assert edges[0].length.m == pytest.approx(np.pi, rel=1e-5, abs=1e-8)
+
+
+def test_revolve_point_invalid_edge_axis(modeler: Modeler):
+    """Test that using a non-line edge as axis raises ValueError."""
+    design = modeler.create_design("revolve_point_invalid_axis")
+
+    # Create a cylinder to get a curved edge
+    sketch = Sketch()
+    sketch.circle(Point2D([0, 0]), 1)
+    cylinder = design.extrude_sketch("cylinder", sketch, 1)
+
+    # Create a design point
+    dp = design.add_design_point("point1", Point3D([3, 0, 0.5], UNITS.m))
+
+    # Find a circular edge (should be one of the top or bottom circles)
+    circular_edge = None
+    from ansys.geometry.core.designer.edge import CurveType
+
+    for edge in cylinder.edges:
+        if edge.curve_type != CurveType.CURVETYPE_LINE:
+            circular_edge = edge
+            break
+
+    assert circular_edge is not None, "Could not find a circular edge"
+
+    # Attempting to revolve around a curved edge should raise ValueError
+    with pytest.raises(ValueError, match="Only edges that are lines"):
+        modeler.geometry_commands.revolve_point(dp, circular_edge, np.pi / 2)

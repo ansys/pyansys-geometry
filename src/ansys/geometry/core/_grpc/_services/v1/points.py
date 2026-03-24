@@ -26,7 +26,12 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.points import GRPCPointsService
-from .conversions import build_grpc_id, from_point3d_to_grpc_design_point
+from .conversions import (
+    build_grpc_id,
+    from_angle_to_grpc_quantity,
+    from_line_to_grpc_line,
+    from_point3d_to_grpc_design_point,
+)
 
 
 class GRPCPointsServiceV1(GRPCPointsService):
@@ -45,8 +50,10 @@ class GRPCPointsServiceV1(GRPCPointsService):
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.discovery.v1.design.constructs.datumpoint_pb2_grpc import DatumPointStub
+        from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
 
         self.stub = DatumPointStub(channel)
+        self.edit_stub = EditStub(channel)
 
     @protect_grpc
     def create_design_points(self, **kwargs) -> dict:  # noqa: D102
@@ -73,7 +80,28 @@ class GRPCPointsServiceV1(GRPCPointsService):
 
     @protect_grpc
     def revolve_points(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError(
-            f"Method '{self.__class__.__name__}.revolve_points' is not "
-            "implemented in this protofile version."
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            RevolveDatumPointRequest,
+            RevolveDatumPointRequestData,
         )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RevolveDatumPointRequest(
+            request_data=[
+                RevolveDatumPointRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    axis=from_line_to_grpc_line(kwargs["axis"]),
+                    angle=from_angle_to_grpc_quantity(kwargs["angle"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.edit_stub.RevolveDatumPoint(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "created_curve_ids": [curve.id.id for curve in response.response_data[0].created_curves],
+            "tracked_response": response.tracked_command_response,
+        }
