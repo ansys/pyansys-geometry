@@ -457,7 +457,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
                 "plane": from_grpc_plane_to_plane(datum_plane.plane),
                 "parent_id": datum_plane.parent_id.id,
             }
-        
+
         def serialize_design_curve(design_curve):
             return {
                 "id": design_curve.id.id,
