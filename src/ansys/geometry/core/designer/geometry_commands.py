@@ -2016,9 +2016,7 @@ class GeometryCommands:
         from ansys.geometry.core.designer.designpoint import DesignPoint
         from ansys.geometry.core.designer.edge import CurveType, Edge
 
-        selection: list[DesignPoint] = (
-            selection if isinstance(selection, list) else [selection]
-        )
+        selection: list[DesignPoint] = selection if isinstance(selection, list) else [selection]
         check_type_all_elements_in_iterable(selection, DesignPoint)
 
         angle = angle if isinstance(angle, Angle) else Angle(angle)
