@@ -2041,7 +2041,7 @@ class GeometryCommands:
                 design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
-            return get_edges_from_ids(design, result.get("created_curve_ids"))
+            return get_edges_from_ids(design, result.get("created_curves"))
         else:
             self._grpc_client.log.info("Failed to revolve design points.")
             return []

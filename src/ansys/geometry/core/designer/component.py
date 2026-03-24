@@ -40,6 +40,7 @@ from ansys.geometry.core.designer.beam import (
 )
 from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.curves import DesignCurve
 from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
@@ -182,6 +183,7 @@ class Component:
     _coordinate_systems: list[CoordinateSystem]
     _design_points: list[DesignPoint]
     _datum_planes: list[DatumPlane]
+    _design_curves: list[DesignCurve]
 
     @check_input_types
     def __init__(
@@ -240,6 +242,7 @@ class Component:
         self._coordinate_systems = []
         self._design_points = []
         self._datum_planes = []
+        self._design_curves = []
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
@@ -356,6 +359,11 @@ class Component:
     def datum_planes(self) -> list[DatumPlane]:
         """List of ``DatumPlane`` objects inside of the component."""
         return self._datum_planes
+
+    @property
+    def design_curves(self) -> list[DesignCurve]:
+        """List of ``DesignCurve`` objects inside of the component."""
+        return self._design_curves
 
     @property
     def coordinate_systems(self) -> list[CoordinateSystem]:
