@@ -45,6 +45,17 @@ If no `.venv` exists, check the parent directory. If still not found, follow `.g
   - Error paths that raise exceptions
   - Before/after state verification (e.g., if code alters a face, test the area before and after)
 - Follow PyAnsys coding style guidelines
+- **Code style — line length:** The project enforces a maximum line length of **100 characters** (configured in `pyproject.toml`). Every line of test code you write must stay within this limit. When a call expression would exceed 100 characters, break it across multiple lines using Python's implicit line continuation inside parentheses:
+  ```python
+  # Too long (> 100 chars) — do not write this:
+  curves = modeler.geometry_commands.revolve_points([dp1, dp2, dp3], axis, Angle(np.pi, UNITS.rad))
+
+  # Correct — wrap the arguments:
+  curves = modeler.geometry_commands.revolve_points(
+      [dp1, dp2, dp3], axis, Angle(np.pi, UNITS.rad)
+  )
+  ```
+- **Consolidate related cases:** Tests that exercise the same feature with only minor variations (e.g. different angle input types: `Angle`, `Quantity`, raw `float`) should be combined into a single test function rather than written as separate tests. Each variation can be a clearly commented sub-section of the same test.
 
 ### Step 5: Run and Verify Tests
 Change into the `pyansys-geometry` directory and run:
