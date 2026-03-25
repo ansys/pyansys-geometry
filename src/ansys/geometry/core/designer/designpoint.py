@@ -21,7 +21,7 @@
 # SOFTWARE.
 """Module for creating and managing design points."""
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.auxiliary import get_design_from_component

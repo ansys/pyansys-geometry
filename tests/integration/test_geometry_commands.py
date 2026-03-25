@@ -1657,7 +1657,9 @@ def test_revolve_point_multiple_points(modeler: Modeler):
 
     # Revolve all points around Z axis
     axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
-    curves = modeler.geometry_commands.revolve_points([dp1, dp2, dp3], axis, Angle(np.pi, UNITS.rad))
+    curves = modeler.geometry_commands.revolve_points(
+        [dp1, dp2, dp3], axis, Angle(np.pi, UNITS.rad)
+    )
 
     # Should create 3 semicircular arcs
     assert len(curves) == 3
