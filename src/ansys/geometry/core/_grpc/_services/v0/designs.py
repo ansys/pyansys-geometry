@@ -456,12 +456,8 @@ class GRPCDesignsServiceV0(GRPCDesignsService):
         component_coordinate_systems = getattr(response, "component_coord_systems", [])
         component_shared_topologies = getattr(response, "component_shared_topologies", [])
         beams = getattr(response, "beams", [])
-        design_points = [
-            dp for dp in getattr(response, "design_points", []) if dp.length == 0
-        ]
-        design_curves = [
-            dc for dc in getattr(response, "design_points", []) if dc.length != 0
-        ]
+        design_points = [dp for dp in getattr(response, "design_points", []) if dp.length == 0]
+        design_curves = [dc for dc in getattr(response, "design_points", []) if dc.length != 0]
         return {
             "parts": [serialize_part(part) for part in parts] if len(parts) > 0 else [],
             "transformed_parts": [serialize_transformed_part(tp) for tp in transformed_parts],
