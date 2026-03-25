@@ -112,7 +112,9 @@ class GRPCPointsServiceV1(GRPCPointsService):
                     "name": curve.owner_name,
                     "length": from_grpc_quantity_to_distance(curve.length),
                     "start_point": from_grpc_point_to_point3d(curve.points[0]),
-                    "end_point": from_grpc_point_to_point3d(curve.points[1]),
+                    "end_point": from_grpc_point_to_point3d(curve.points[1])
+                    if len(curve.points) > 1
+                    else None,
                     "parent_id": curve.parent_id.id,
                 }
                 for curve in response.response_data[0].created_curves

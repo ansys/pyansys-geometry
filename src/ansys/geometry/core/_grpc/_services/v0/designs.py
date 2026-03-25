@@ -443,7 +443,9 @@ class GRPCDesignsServiceV0(GRPCDesignsService):
                 "name": design_curve.owner_name,
                 "length": design_curve.length,
                 "start": from_grpc_point_to_point3d(design_curve.points[0]),
-                "end": from_grpc_point_to_point3d(design_curve.points[1]),
+                "end": from_grpc_point_to_point3d(design_curve.points[1])
+                if len(design_curve.points) > 1
+                else None,
                 "parent_id": design_curve.parent_id.id,
             }
 
