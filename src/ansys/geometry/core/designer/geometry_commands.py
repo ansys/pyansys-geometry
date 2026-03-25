@@ -1988,7 +1988,7 @@ class GeometryCommands:
             return []
 
     @min_backend_version(25, 2, 0)
-    def revolve_point(
+    def revolve_points(
         self,
         selection: Union["DesignPoint", list["DesignPoint"]],
         axis: Union["Edge", Line],
