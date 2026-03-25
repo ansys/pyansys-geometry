@@ -695,7 +695,6 @@ def test_revolve_faces_by_helix(modeler: Modeler):
     )
 
 
-
 def test_revolve_faces_by_helix_with_options(modeler: Modeler):
     # Parameters
     pitch = 0.7
@@ -1575,6 +1574,7 @@ def test_revolve_edges(modeler: Modeler):
     assert design.bodies[1].faces[0].area.m == pytest.approx(
         Quantity(8.88576587632, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
+
 
 @pytest.mark.skip(reason="Test is hitting an exception.")
 def test_intersect_curve_and_surface(modeler: Modeler):
