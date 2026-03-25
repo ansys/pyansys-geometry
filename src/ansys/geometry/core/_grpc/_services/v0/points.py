@@ -27,7 +27,7 @@ from ansys.geometry.core.errors import protect_grpc
 
 from ..base.conversions import from_measurement_to_server_angle
 from ..base.points import GRPCPointsService
-from .conversions import build_grpc_id, from_line_to_grpc_line
+from .conversions import build_grpc_id, from_grpc_point_to_point3d, from_line_to_grpc_line
 
 
 class GRPCPointsServiceV0(GRPCPointsService):
@@ -84,5 +84,15 @@ class GRPCPointsServiceV0(GRPCPointsService):
         # Return the response - formatted as a dictionary
         return {
             "success": response.result.success,
-            "created_curve_ids": [curve.id for curve in response.created_curves],
+            "created_curves": [
+                {
+                    "id": curve.id,
+                    "name": curve.owner_name,
+                    "length": curve.length,
+                    "start_point": from_grpc_point_to_point3d(curve.points[0]),
+                    "end_point": from_grpc_point_to_point3d(curve.points[1]),
+                    "parent_id": curve.parent_id.id,
+                }
+                for curve in response.created_curves
+            ],
         }

@@ -50,7 +50,7 @@ class DesignPoint:
         Parent component to place the new design point under within the design assembly.
     """
 
-    def __init__(self, id: str, name: str, point: Point3D, parent_component: Union["Component"]):
+    def __init__(self, id: str, name: str, point: Point3D, parent_component: "Component"):
         """Initialize the ``DesignPoints`` class."""
         self._id = id
         self._name = name

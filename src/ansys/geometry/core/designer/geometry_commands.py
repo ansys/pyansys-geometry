@@ -42,11 +42,11 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
+    get_design_curves_from_ids,
     get_design_from_body,
     get_design_from_component,
     get_design_from_edge,
     get_design_from_face,
-    get_edges_from_ids,
     get_faces_from_ids,
 )
 from ansys.geometry.core.misc.checks import (
@@ -63,6 +63,7 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.designcurve import DesignCurve
     from ansys.geometry.core.designer.designpoint import DesignPoint
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
@@ -1992,7 +1993,7 @@ class GeometryCommands:
         selection: Union["DesignPoint", list["DesignPoint"]],
         axis: Union["Edge", Line],
         angle: Angle | Quantity | Real,
-    ) -> list["Edge"]:
+    ) -> list["DesignCurve"]:
         """Revolve design points around an axis to create curves.
 
         Parameters
@@ -2006,8 +2007,8 @@ class GeometryCommands:
 
         Returns
         -------
-        list[Edge]
-            Edges created by the revolve operation.
+        list[DesignCurve]
+            Curves created by the revolve operation.
 
         Warnings
         --------
@@ -2039,7 +2040,8 @@ class GeometryCommands:
                 design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
-            return get_edges_from_ids(design, result.get("created_curves"))
+            curve_ids = [c.get("id") for c in result.get("created_curves", [])]
+            return get_design_curves_from_ids(design, curve_ids)
         else:
             self._grpc_client.log.info("Failed to revolve design points.")
             return []

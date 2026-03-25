@@ -29,7 +29,8 @@ from ..base.points import GRPCPointsService
 from .conversions import (
     build_grpc_id,
     from_angle_to_grpc_quantity,
-    from_grpc_curve_to_curve,
+    from_grpc_point_to_point3d,
+    from_grpc_quantity_to_distance,
     from_line_to_grpc_line,
     from_point3d_to_grpc_design_point,
     serialize_tracked_command_response,
@@ -105,8 +106,16 @@ class GRPCPointsServiceV1(GRPCPointsService):
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
-            "created_curves": [
-                from_grpc_curve_to_curve(curve) for curve in response.created_curves
+            "created_curves": [ 
+                {
+                    "id": curve.id.id,
+                    "name": curve.owner_name,
+                    "length": from_grpc_quantity_to_distance(curve.length),
+                    "start_point": from_grpc_point_to_point3d(curve.points[0]),
+                    "end_point": from_grpc_point_to_point3d(curve.points[1]),
+                    "parent_id": curve.parent_id.id,
+                }
+                for curve in response.response_data[0].created_curves
             ],
             "tracked_response": serialized_response,
         }

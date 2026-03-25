@@ -34,6 +34,7 @@ from .conversions import (
     from_grpc_matrix_to_matrix,
     from_grpc_plane_to_plane,
     from_grpc_point_to_point3d,
+    from_grpc_quantity_to_distance,
 )
 
 
@@ -462,7 +463,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             return {
                 "id": design_curve.id.id,
                 "name": design_curve.owner_name,
-                "length": design_curve.length,
+                "length": from_grpc_quantity_to_distance(design_curve.length),
                 "start": from_grpc_point_to_point3d(design_curve.points[0]),
                 "end": from_grpc_point_to_point3d(design_curve.points[1]),
                 "parent_id": design_curve.parent_id.id,
