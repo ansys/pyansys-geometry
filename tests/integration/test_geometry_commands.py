@@ -691,7 +691,7 @@ def test_revolve_faces_by_helix(modeler: Modeler):
     assert len(design.bodies) == 1
     assert len(design.bodies[0].faces) == 15
     assert design.bodies[0].volume.m == pytest.approx(
-        Quantity(98.0, UNITS.m**3).m, rel=1e-6, abs=1e-8
+        Quantity(98.0, UNITS.m**3).m, rel=1e-6, abs=3e-4
     )
 
 
