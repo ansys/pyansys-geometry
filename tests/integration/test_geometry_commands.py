@@ -677,7 +677,7 @@ def test_revolve_faces_by_helix(modeler: Modeler):
     """Test revolve faces by helix."""
     design = modeler.create_design("revolve_faces_by_helix")
     base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    bodies = modeler.geometry_commands.revolve_faces_by_helix(
+    modeler.geometry_commands.revolve_faces_by_helix(
         base.faces[2],
         Line([0.0, 0.0, 0], [1, 0, 0]),
         UnitVector3D([1, 0, 0]),
