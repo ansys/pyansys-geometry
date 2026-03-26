@@ -806,7 +806,7 @@ jobs:
           pytest -v --use-existing-service=yes
 
       - name: "Compressing Windows Dockerfile"
-        uses: vimtor/action-zip@1379ea20d4c5705669ba81fd626dd01b1c738f26 # v1.2
+        uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3
         with:
           files: docker/windows/${{ matrix.mode }}/Dockerfile
           dest: ${{ matrix.docker-file }}
@@ -905,7 +905,7 @@ jobs:
           group-dependencies-name: "tests"
 
       - name: "Compressing Linux Dockerfile"
-        uses: vimtor/action-zip@1379ea20d4c5705669ba81fd626dd01b1c738f26 # v1.2
+        uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3
         with:
           files: docker/linux/coreservice/Dockerfile
           dest: linux-core-dockerfile.zip
