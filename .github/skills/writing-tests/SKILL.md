@@ -30,6 +30,23 @@ Assume the calling developer has a server running.
 If the test fails, figure out why and iterate the source code or test code to fix it.
 If the test fails and needs server-side changes, raise that to the user.
 
+### Reducing line count
+- **Inline sketch creation** using method chaining: `Sketch()` methods like `.box()`, `.circle()`, `.slot()` etc. all return `self`, so pass them directly: `design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)` instead of assigning to an intermediate variable.
+- **Eliminate single-use variables** when the value is only referenced once. If a value is used more than once, store it in a variable to avoid repeated property access.
+- **Inline `len()` checks** rather than assigning the list to a variable just to call `len()` on it.
+
+### Linting and line length
+- The project enforces a **100-character maximum line length**. Every line must stay within this limit.
+- When a line would exceed 100 characters, break it using Python's implicit line continuation inside parentheses:
+  ```python
+  # Too long:
+  assert sum(mappable for _, mappable in results) == 6, "All 6 flat box faces should be mappable"
+  # Fixed — drop the message or wrap:
+  assert sum(mappable for _, mappable in results) == 6
+  ```
+- Drop inline assertion messages when they push the line over the limit; the asserted expression is usually self-documenting.
+- After writing tests, run `pre-commit run --files <test_file>` or check line lengths manually to catch any violations before running pytest.
+
 ### Assertion quality
 - **Never use `> 0` as a test condition.** Always assert exact expected values (e.g. `== 6`, `== 1`, `== 0`). If the exact value is not obvious from the geometry or logic, run the test once to observe the actual return value, then hard-code that exact value as the assertion.
 - Prefer specific assertions over vague ones: `assert count == 6` is better than `assert count > 0`; `assert len(results) == 3` is better than `assert len(results) > 0`.

@@ -346,51 +346,37 @@ def test_detect_sweepable_bodies(modeler: Modeler):
 def test_find_mappable_faces(modeler: Modeler):
     """Test find_mappable_faces returns correct mappability for faces of different geometries.
 
-    A box (extruded rectangle) has flat faces that are mappable.
-    A sphere has a single curved surface that is not mappable.
-    The test also verifies the empty-input edge case.
+    A box (extruded rectangle) has 6 flat faces, all mappable.
+    A cylinder (extruded circle) has 3 faces: 2 flat caps and 1 curved side;
+    the server reports exactly 1 as mappable.
+    The test also verifies mixed input and the empty-input edge case.
     """
     from ansys.geometry.core.designer.face import Face
 
     design = modeler.create_design("FindMappableFacesTest")
-    sketch = Sketch()
-    sketch.box(Point2D([0, 0]), 1, 1)
-    box = design.extrude_sketch("Box", sketch, 1)
-
-    sketch_sphere = Sketch()
-    sketch_sphere.circle(Point2D([5, 0]), 0.5)
-    sphere = design.extrude_sketch("Sphere", sketch_sphere, 1)
+    box = design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    cylinder = design.extrude_sketch("Cylinder", Sketch().circle(Point2D([5, 0]), 0.5), 1)
 
     # ---- Happy path: all box faces ----
-    box_faces = box.faces
-    results = modeler.prepare_tools.find_mappable_faces(box_faces)
-
-    assert len(results) == len(box_faces)
-    assert all(isinstance(face, Face) for face, _ in results)
-    assert all(isinstance(mappable, bool) for _, mappable in results)
-
     # A box extruded from a 1×1 rectangle has 6 faces (4 sides + top + bottom),
     # all of which are flat rectangles and therefore mappable.
+    box_faces = box.faces
+    box_results = modeler.prepare_tools.find_mappable_faces(box_faces)
     assert len(box_faces) == 6
-    mappable_flags = {face.id: mappable for face, mappable in results}
-    mappable_count = sum(mappable_flags.values())
-    assert mappable_count == 6, "All 6 flat box faces should be mappable"
+    assert len(box_results) == 6
+    assert all(isinstance(face, Face) for face, _ in box_results)
+    assert all(isinstance(mappable, bool) for _, mappable in box_results)
+    assert sum(mappable for _, mappable in box_results) == 6
 
-    # ---- Cylinder (extruded circle): curved face not mappable, flat ends mappable ----
-    # A cylinder extruded from a circle has 3 faces:
-    #   1 curved cylindrical side (not mappable) and 2 flat circular caps.
-    # The server reports exactly 1 of the caps as mappable.
-    cylinder_faces = sphere.faces
+    # ---- Cylinder (extruded circle): 2 flat caps + 1 curved side ----
+    # The server reports exactly 1 face as mappable.
+    cylinder_faces = cylinder.faces
     cyl_results = modeler.prepare_tools.find_mappable_faces(cylinder_faces)
-    assert len(cylinder_faces) == 3
     assert len(cyl_results) == 3
-    cyl_mappable_count = sum(mappable for _, mappable in cyl_results)
-    assert cyl_mappable_count == 1, "Cylinder should have exactly 1 mappable face"
+    assert sum(mappable for _, mappable in cyl_results) == 1
 
     # ---- Mixed faces (from both bodies) ----
-    mixed_faces = box_faces + cylinder_faces
-    mixed_results = modeler.prepare_tools.find_mappable_faces(mixed_faces)
-    assert len(mixed_results) == len(mixed_faces)
+    assert len(modeler.prepare_tools.find_mappable_faces(box_faces + cylinder_faces)) == 9
 
     # ---- Empty input ----
     assert modeler.prepare_tools.find_mappable_faces([]) == []
