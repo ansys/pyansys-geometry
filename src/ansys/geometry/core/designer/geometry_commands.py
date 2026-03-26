@@ -2014,6 +2014,7 @@ class GeometryCommands:
         --------
         This method is only available starting on Ansys release 25R2.
         """
+        from ansys.geometry.core.designer.designcurve import DesignCurve
         from ansys.geometry.core.designer.designpoint import DesignPoint
         from ansys.geometry.core.designer.edge import CurveType, Edge
 
@@ -2040,8 +2041,24 @@ class GeometryCommands:
                 design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
-            curve_ids = [c.get("id") for c in result.get("created_curves", [])]
-            return get_design_curves_from_ids(design, curve_ids)
+
+            all_comps = {c.id: c for c in design._get_all_components()}
+            all_comps[design.id] = design
+            created_curves = []
+            for curve_info in result.get("created_curves", []):
+                parent: Component = all_comps.get(curve_info.get("parent_id"), design)
+                dc = DesignCurve(
+                    curve_info.get("id"),
+                    curve_info.get("name"),
+                    curve_info.get("length"),
+                    curve_info.get("start_point"),
+                    curve_info.get("end_point"),
+                    self._grpc_client,
+                    parent,
+                )
+                parent._design_curves.append(dc)
+                created_curves.append(dc)
+            return created_curves
         else:
             self._grpc_client.log.info("Failed to revolve design points.")
             return []
