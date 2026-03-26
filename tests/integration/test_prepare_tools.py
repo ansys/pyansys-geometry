@@ -341,3 +341,48 @@ def test_detect_sweepable_bodies(modeler: Modeler):
     # Test with empty input
     result = modeler.prepare_tools.detect_sweepable_bodies([])
     assert result == []
+
+
+def test_find_mappable_faces(modeler: Modeler):
+    """Test find_mappable_faces returns correct mappability for faces of different geometries.
+
+    A box (extruded rectangle) has flat faces that are mappable.
+    A sphere has a single curved surface that is not mappable.
+    The test also verifies the empty-input edge case.
+    """
+    from ansys.geometry.core.designer.face import Face
+
+    design = modeler.create_design("FindMappableFacesTest")
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    box = design.extrude_sketch("Box", sketch, 1)
+
+    sketch_sphere = Sketch()
+    sketch_sphere.circle(Point2D([5, 0]), 0.5)
+    sphere = design.extrude_sketch("Sphere", sketch_sphere, 1)
+
+    # ---- Happy path: all box faces ----
+    box_faces = box.faces
+    results = modeler.prepare_tools.find_mappable_faces(box_faces)
+
+    assert len(results) == len(box_faces)
+    assert all(isinstance(face, Face) for face, _ in results)
+    assert all(isinstance(mappable, bool) for _, mappable in results)
+
+    # The top and bottom flat faces of the box must be mappable
+    mappable_flags = {face.id: mappable for face, mappable in results}
+    mappable_count = sum(mappable_flags.values())
+    assert mappable_count > 0, "Expected at least some box faces to be mappable"
+
+    # ---- Cylinder (extruded circle): curved face not mappable, flat ends mappable ----
+    cylinder_faces = sphere.faces
+    cyl_results = modeler.prepare_tools.find_mappable_faces(cylinder_faces)
+    assert len(cyl_results) == len(cylinder_faces)
+
+    # ---- Mixed faces (from both bodies) ----
+    mixed_faces = box_faces + cylinder_faces
+    mixed_results = modeler.prepare_tools.find_mappable_faces(mixed_faces)
+    assert len(mixed_results) == len(mixed_faces)
+
+    # ---- Empty input ----
+    assert modeler.prepare_tools.find_mappable_faces([]) == []

@@ -844,3 +844,46 @@ class PrepareTools:
             results.append((result_data.get("sweepable"), faces))
 
         return results
+
+    @min_backend_version(26, 1, 0)
+    def find_mappable_faces(self, faces: list["Face"]) -> list[tuple["Face", bool]]:
+        """Find which faces are mappable.
+
+        Queries the server to determine which of the provided faces are mappable,
+        meaning they can be used as source or target faces for mesh mapping operations.
+
+        Parameters
+        ----------
+        faces : list[Face]
+            List of faces to check.
+
+        Returns
+        -------
+        list[tuple[Face, bool]]
+            List of tuples pairing each face with a boolean indicating whether it
+            is mappable (``True``) or not (``False``).
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        check_type_all_elements_in_iterable(faces, Face)
+
+        if not faces:
+            return []
+
+        parent_design = get_design_from_face(faces[0])
+
+        response = self._grpc_client._services.prepare_tools.find_mappable_faces(
+            face_ids=[face.id for face in faces],
+        )
+
+        results = []
+        for result_data in response.get("results", []):
+            matched = get_faces_from_ids(parent_design, [result_data.get("face_id")])
+            face = matched[0] if matched else None
+            results.append((face, result_data.get("mappable")))
+
+        return results
