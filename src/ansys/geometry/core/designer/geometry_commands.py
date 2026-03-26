@@ -42,7 +42,6 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
-    get_design_curves_from_ids,
     get_design_from_body,
     get_design_from_component,
     get_design_from_edge,
