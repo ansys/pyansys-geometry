@@ -407,7 +407,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
         return {
             "success": tracked_response.get("success"),
             "created_bodies": [
-                body.get("id").id for body in tracked_response.get("created_bodies", [])
+                body.get("id") for body in tracked_response.get("created_bodies", [])
             ],
             "tracked_response": tracked_response,
         }
