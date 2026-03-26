@@ -25,7 +25,7 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.conversions import from_measurement_to_server_angle
+from ..base.conversions import from_measurement_to_server_angle, to_distance
 from ..base.points import GRPCPointsService
 from .conversions import build_grpc_id, from_grpc_point_to_point3d, from_line_to_grpc_line
 
@@ -88,7 +88,7 @@ class GRPCPointsServiceV0(GRPCPointsService):
                 {
                     "id": curve.id,
                     "name": curve.owner_name,
-                    "length": curve.length,
+                    "length": to_distance(curve.length),
                     "start_point": from_grpc_point_to_point3d(curve.points[0]),
                     "end_point": from_grpc_point_to_point3d(curve.points[1])
                     if len(curve.points) > 1

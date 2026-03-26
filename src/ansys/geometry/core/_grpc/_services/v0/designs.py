@@ -24,6 +24,7 @@
 from google.protobuf.empty_pb2 import Empty
 import grpc
 
+from ansys.geometry.core._grpc._services.base.conversions import to_distance
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.designs import GRPCDesignsService
@@ -441,7 +442,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):
             return {
                 "id": design_curve.id,
                 "name": design_curve.owner_name,
-                "length": design_curve.length,
+                "length": to_distance(design_curve.length),
                 "start": from_grpc_point_to_point3d(design_curve.points[0]),
                 "end": from_grpc_point_to_point3d(design_curve.points[1])
                 if len(design_curve.points) > 1

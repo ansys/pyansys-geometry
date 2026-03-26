@@ -1636,11 +1636,11 @@ def test_revolve_points_line_axis(modeler: Modeler):
     assert curves3[0].length.value.m == pytest.approx(4 * np.pi, rel=1e-5, abs=1e-8)
 
 
-def test_revolve_point_multiple_points(modeler: Modeler):
+def test_revolve_points_multiple_points(modeler: Modeler):
     """Test revolving multiple design points at once."""
     from ansys.geometry.core.designer.designcurve import DesignCurve
 
-    design = modeler.create_design("revolve_point_multiple")
+    design = modeler.create_design("revolve_points_multiple")
 
     # Create multiple design points at different positions
     dp1 = design.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
@@ -1658,11 +1658,11 @@ def test_revolve_point_multiple_points(modeler: Modeler):
     assert all(isinstance(c, DesignCurve) for c in curves)
 
 
-def test_revolve_point_with_different_axis_origin(modeler: Modeler):
+def test_revolve_points_with_different_axis_origin(modeler: Modeler):
     """Test revolving a design point around an axis not at origin."""
     from ansys.geometry.core.designer.designcurve import DesignCurve
 
-    design = modeler.create_design("revolve_point_offset_axis")
+    design = modeler.create_design("revolve_points_offset_axis")
 
     # Create a design point
     dp = design.add_design_point("point1", Point3D([2, 0, 0], UNITS.m))
