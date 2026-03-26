@@ -29,3 +29,7 @@ Run the test by calling "pytest --use-existing-service=yes -k TEST_NAME", replac
 Assume the calling developer has a server running.
 If the test fails, figure out why and iterate the source code or test code to fix it.
 If the test fails and needs server-side changes, raise that to the user.
+
+### Assertion quality
+- **Never use `> 0` as a test condition.** Always assert exact expected values (e.g. `== 6`, `== 1`, `== 0`). If the exact value is not obvious from the geometry or logic, run the test once to observe the actual return value, then hard-code that exact value as the assertion.
+- Prefer specific assertions over vague ones: `assert count == 6` is better than `assert count > 0`; `assert len(results) == 3` is better than `assert len(results) > 0`.

@@ -369,15 +369,23 @@ def test_find_mappable_faces(modeler: Modeler):
     assert all(isinstance(face, Face) for face, _ in results)
     assert all(isinstance(mappable, bool) for _, mappable in results)
 
-    # The top and bottom flat faces of the box must be mappable
+    # A box extruded from a 1×1 rectangle has 6 faces (4 sides + top + bottom),
+    # all of which are flat rectangles and therefore mappable.
+    assert len(box_faces) == 6
     mappable_flags = {face.id: mappable for face, mappable in results}
     mappable_count = sum(mappable_flags.values())
-    assert mappable_count > 0, "Expected at least some box faces to be mappable"
+    assert mappable_count == 6, "All 6 flat box faces should be mappable"
 
     # ---- Cylinder (extruded circle): curved face not mappable, flat ends mappable ----
+    # A cylinder extruded from a circle has 3 faces:
+    #   1 curved cylindrical side (not mappable) and 2 flat circular caps.
+    # The server reports exactly 1 of the caps as mappable.
     cylinder_faces = sphere.faces
     cyl_results = modeler.prepare_tools.find_mappable_faces(cylinder_faces)
-    assert len(cyl_results) == len(cylinder_faces)
+    assert len(cylinder_faces) == 3
+    assert len(cyl_results) == 3
+    cyl_mappable_count = sum(mappable for _, mappable in cyl_results)
+    assert cyl_mappable_count == 1, "Cylinder should have exactly 1 mappable face"
 
     # ---- Mixed faces (from both bodies) ----
     mixed_faces = box_faces + cylinder_faces
