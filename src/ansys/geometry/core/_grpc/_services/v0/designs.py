@@ -24,9 +24,9 @@
 from google.protobuf.empty_pb2 import Empty
 import grpc
 
-from ..base.conversions import to_distance
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import to_distance
 from ..base.designs import GRPCDesignsService
 from .conversions import (
     _check_write_body_facets_input,
