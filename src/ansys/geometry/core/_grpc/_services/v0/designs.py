@@ -24,7 +24,7 @@
 from google.protobuf.empty_pb2 import Empty
 import grpc
 
-from ansys.geometry.core._grpc._services.base.conversions import to_distance
+from ..base.conversions import to_distance
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.designs import GRPCDesignsService

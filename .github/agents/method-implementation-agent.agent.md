@@ -9,8 +9,8 @@ tools: ['vscode/extensions', 'execute/testFailure', 'execute/getTerminalOutput',
 Implement a new method end-to-end in PyAnsys Geometry: locate the proto definition, wire it through the gRPC service abstraction layers, and expose it on the public Python API. Once the implementation is complete, hand the task off to the writing-tests agent.
 
 ## Step 1: Read the proto definition
-Search the installed `ansys-api-geometry` (or `ansys-api-discovery`) package for the `.proto` file that declares the RPC being implemented.
-- Look inside the site-packages directory of the active virtual environment, e.g. `.venv/Lib/site-packages/ansys/api/geometry/` or `.venv/Lib/site-packages/ansys/api/discovery/`.
+Search the installed `ansys-api-discovery` (or `ansys-api-geometry`/`ansys-api-dbu`) package for the `.proto` file that declares the RPC being implemented.
+- Look inside the site-packages directory of the active virtual environment, e.g. `.venv/Lib/site-packages/ansys/api/discovery/`, `.venv/Lib/site-packages/ansys/api/geometry/` or `.venv/Lib/site-packages/ansys/api/dbu/`.
 - Locate the relevant `.proto` file and read the `rpc` definition and its request/response message types.
 - Note the exact field names and types — these drive the implementation in every layer below.
 
