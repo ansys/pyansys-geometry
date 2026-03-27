@@ -389,7 +389,7 @@ def test_find_mappable_faces(modeler: Modeler):
     assert [face for face, _ in mixed_results] == mixed_faces
     assert all(isinstance(face, Face) for face, _ in mixed_results)
     assert all(isinstance(mappable, bool) for _, mappable in mixed_results)
-    
+
     # Cylinder mappability must be consistent with the standalone cylinder call.
     mixed_cyl_mappables = [mappable for _, mappable in mixed_results[6:]]
     cyl_only_mappables = [mappable for _, mappable in cyl_results]
