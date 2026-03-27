@@ -107,24 +107,24 @@ class GRPCPointsServiceV0(GRPCPointsService):
     def revolve_points_by_helix(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import RevolvePointsByHelixRequest
 
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = RevolvePointsByHelixRequest(
-            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
-            axis=from_line_to_grpc_line(kwargs["axis"]),
-            height=from_measurement_to_server_length(kwargs["height"]),
-            pitch=from_measurement_to_server_length(kwargs["pitch"]),
-            taper_angle=from_measurement_to_server_angle(kwargs["taper_angle"]),
-            right_handed=kwargs["right_handed"],
-            pull_symmetric=kwargs["pull_symmetric"],
-        )
-
-        # Call the gRPC service
-        response = self.stub.RevolvePointsByHelix(request)
-
-        # Return the response - formatted as a dictionary
-        return {
-            "success": response.result.success,
-            "created_curves": [
+        # The v0 backend only processes one point per call, so iterate over each
+        # selection ID and aggregate results.
+        all_curves = []
+        success = True
+        for selection_id in kwargs["selection_ids"]:
+            request = RevolvePointsByHelixRequest(
+                selection=[build_grpc_id(selection_id)],
+                axis=from_line_to_grpc_line(kwargs["axis"]),
+                height=from_measurement_to_server_length(kwargs["height"]),
+                pitch=from_measurement_to_server_length(kwargs["pitch"]),
+                taper_angle=from_measurement_to_server_angle(kwargs["taper_angle"]),
+                right_handed=kwargs["right_handed"],
+                pull_symmetric=kwargs["pull_symmetric"],
+            )
+            response = self.stub.RevolvePointsByHelix(request)
+            if not response.result.success:
+                success = False
+            all_curves.extend(
                 {
                     "id": curve.id,
                     "name": curve.owner_name,
@@ -136,5 +136,6 @@ class GRPCPointsServiceV0(GRPCPointsService):
                     "parent_id": curve.parent_id.id,
                 }
                 for curve in response.created_curves
-            ],
-        }
+            )
+
+        return {"success": success, "created_curves": all_curves}
