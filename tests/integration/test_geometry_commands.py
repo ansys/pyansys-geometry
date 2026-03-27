@@ -1712,3 +1712,125 @@ def test_revolve_points_edge_axis(modeler: Modeler):
 
     with pytest.raises(ValueError, match="Only edges that are lines"):
         modeler.geometry_commands.revolve_points(dp2, circular_edge, np.pi / 2)
+
+
+def test_revolve_points_by_helix(modeler: Modeler):
+    """Test revolving design points by helix with all supported input types.
+
+    Creates a design point at (1, 0, 0) and revolves it around the Z axis to form
+    a helix.  Covers Distance, Quantity, and raw float for height/pitch, and
+    Angle, Quantity, and raw float (radians) for taper_angle.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+
+    # --- Distance / Angle types ---
+    design1 = modeler.create_design("revolve_points_by_helix_distance_angle")
+    dp1 = design1.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
+    curves1 = modeler.geometry_commands.revolve_points_by_helix(
+        dp1,
+        axis,
+        Distance(1, UNITS.m),
+        Distance(0.1, UNITS.m),
+        Angle(0, UNITS.deg),
+        True,
+        False,
+    )
+    assert len(curves1) == 1
+    assert isinstance(curves1[0], DesignCurve)
+
+    # --- Quantity types ---
+    design2 = modeler.create_design("revolve_points_by_helix_quantity")
+    dp2 = design2.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
+    curves2 = modeler.geometry_commands.revolve_points_by_helix(
+        dp2,
+        axis,
+        Quantity(1, UNITS.m),
+        Quantity(0.1, UNITS.m),
+        Quantity(0, UNITS.deg),
+        True,
+        False,
+    )
+    assert len(curves2) == 1
+    assert isinstance(curves2[0], DesignCurve)
+
+    # --- Raw float (SI units: metres for length, radians for angle) ---
+    design3 = modeler.create_design("revolve_points_by_helix_float")
+    dp3 = design3.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
+    curves3 = modeler.geometry_commands.revolve_points_by_helix(
+        dp3,
+        axis,
+        1.0,
+        0.1,
+        0.0,
+        True,
+        False,
+    )
+    assert len(curves3) == 1
+    assert isinstance(curves3[0], DesignCurve)
+
+
+def test_revolve_points_by_helix_multiple_points(modeler: Modeler):
+    """Test revolving multiple design points by helix produces one curve per point."""
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("revolve_points_by_helix_multiple")
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+
+    dp1 = design.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
+    dp2 = design.add_design_point("point2", Point3D([2, 0, 0], UNITS.m))
+
+    curves = modeler.geometry_commands.revolve_points_by_helix(
+        [dp1, dp2],
+        axis,
+        Distance(1, UNITS.m),
+        Distance(0.1, UNITS.m),
+        Angle(0, UNITS.deg),
+        True,
+        False,
+    )
+    assert len(curves) == 2
+    assert all(isinstance(c, DesignCurve) for c in curves)
+
+
+def test_revolve_points_by_helix_left_handed(modeler: Modeler):
+    """Test that a left-handed helix (right_handed=False) is created successfully."""
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("revolve_points_by_helix_left_handed")
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+    dp = design.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
+
+    curves = modeler.geometry_commands.revolve_points_by_helix(
+        dp,
+        axis,
+        Distance(1, UNITS.m),
+        Distance(0.1, UNITS.m),
+        Angle(0, UNITS.deg),
+        False,
+        False,
+    )
+    assert len(curves) == 1
+    assert isinstance(curves[0], DesignCurve)
+
+
+def test_revolve_points_by_helix_pull_symmetric(modeler: Modeler):
+    """Test that pull_symmetric=True produces a valid helix curve."""
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("revolve_points_by_helix_symmetric")
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+    dp = design.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
+
+    curves = modeler.geometry_commands.revolve_points_by_helix(
+        dp,
+        axis,
+        Distance(1, UNITS.m),
+        Distance(0.1, UNITS.m),
+        Angle(0, UNITS.deg),
+        True,
+        True,
+    )
+    assert len(curves) == 1
+    assert isinstance(curves[0], DesignCurve)
