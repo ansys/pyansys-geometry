@@ -130,11 +130,12 @@ class GRPCPointsServiceV1(GRPCPointsService):
             RevolveDatumPointByHelixRequestData,
         )
 
-        # Create the request - assumes all inputs are valid and of the proper type
+        # Create the request - one request_data item per point so the server
+        # creates one helix curve per point.
         request = RevolveDatumPointByHelixRequest(
             request_data=[
                 RevolveDatumPointByHelixRequestData(
-                    selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    selection_ids=[build_grpc_id(id)],
                     axis=from_line_to_grpc_line(kwargs["axis"]),
                     height=from_length_to_grpc_quantity(kwargs["height"]),
                     pitch=from_length_to_grpc_quantity(kwargs["pitch"]),
@@ -142,6 +143,7 @@ class GRPCPointsServiceV1(GRPCPointsService):
                     right_handed=kwargs["right_handed"],
                     pull_symmetric=kwargs["pull_symmetric"],
                 )
+                for id in kwargs["selection_ids"]
             ]
         )
 
@@ -149,21 +151,24 @@ class GRPCPointsServiceV1(GRPCPointsService):
         response = self.edit_stub.RevolveDatumPointByHelix(request)
         serialized_response = serialize_tracked_command_response(response.tracked_command_response)
 
-        # Return the response - formatted as a dictionary
+        # Collect created curves from all response_data items (one per point).
+        created_curves = [
+            {
+                "id": curve.id.id,
+                "name": curve.owner_name,
+                "length": from_grpc_quantity_to_distance(curve.length),
+                "start_point": from_grpc_point_to_point3d(curve.points[0]),
+                "end_point": from_grpc_point_to_point3d(curve.points[1])
+                if len(curve.points) > 1
+                else None,
+                "parent_id": curve.parent_id.id,
+            }
+            for rd in response.response_data
+            for curve in rd.created_curves
+        ]
+
         return {
             "success": response.tracked_command_response.command_response.success,
-            "created_curves": [
-                {
-                    "id": curve.id.id,
-                    "name": curve.owner_name,
-                    "length": from_grpc_quantity_to_distance(curve.length),
-                    "start_point": from_grpc_point_to_point3d(curve.points[0]),
-                    "end_point": from_grpc_point_to_point3d(curve.points[1])
-                    if len(curve.points) > 1
-                    else None,
-                    "parent_id": curve.parent_id.id,
-                }
-                for curve in response.response_data[0].created_curves
-            ],
+            "created_curves": created_curves,
             "tracked_response": serialized_response,
         }
