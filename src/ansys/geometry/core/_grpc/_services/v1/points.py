@@ -26,7 +26,15 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.points import GRPCPointsService
-from .conversions import build_grpc_id, from_point3d_to_grpc_design_point
+from .conversions import (
+    build_grpc_id,
+    from_angle_to_grpc_quantity,
+    from_grpc_point_to_point3d,
+    from_grpc_quantity_to_distance,
+    from_line_to_grpc_line,
+    from_point3d_to_grpc_design_point,
+    serialize_tracked_command_response,
+)
 
 
 class GRPCPointsServiceV1(GRPCPointsService):
@@ -45,8 +53,10 @@ class GRPCPointsServiceV1(GRPCPointsService):
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.discovery.v1.design.constructs.datumpoint_pb2_grpc import DatumPointStub
+        from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
 
         self.stub = DatumPointStub(channel)
+        self.edit_stub = EditStub(channel)
 
     @protect_grpc
     def create_design_points(self, **kwargs) -> dict:  # noqa: D102
@@ -70,3 +80,44 @@ class GRPCPointsServiceV1(GRPCPointsService):
 
         # Return the response - formatted as a dictionary
         return {"point_ids": [p.id for p in response.ids]}
+
+    @protect_grpc
+    def revolve_points(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            RevolveDatumPointRequest,
+            RevolveDatumPointRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = RevolveDatumPointRequest(
+            request_data=[
+                RevolveDatumPointRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    axis=from_line_to_grpc_line(kwargs["axis"]),
+                    angle=from_angle_to_grpc_quantity(kwargs["angle"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.edit_stub.RevolveDatumPoint(request)
+        serialized_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "created_curves": [
+                {
+                    "id": curve.id.id,
+                    "name": curve.owner_name,
+                    "length": from_grpc_quantity_to_distance(curve.length),
+                    "start_point": from_grpc_point_to_point3d(curve.points[0]),
+                    "end_point": from_grpc_point_to_point3d(curve.points[1])
+                    if len(curve.points) > 1
+                    else None,
+                    "parent_id": curve.parent_id.id,
+                }
+                for curve in response.response_data[0].created_curves
+            ],
+            "tracked_response": serialized_response,
+        }
