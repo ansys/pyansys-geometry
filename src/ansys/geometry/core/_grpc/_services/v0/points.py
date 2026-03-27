@@ -25,7 +25,11 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.conversions import from_measurement_to_server_angle, from_measurement_to_server_length, to_distance
+from ..base.conversions import (
+    from_measurement_to_server_angle,
+    from_measurement_to_server_length,
+    to_distance,
+)
 from ..base.points import GRPCPointsService
 from .conversions import build_grpc_id, from_grpc_point_to_point3d, from_line_to_grpc_line
 
