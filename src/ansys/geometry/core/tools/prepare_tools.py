@@ -874,16 +874,13 @@ class PrepareTools:
         if not faces:
             return []
 
-        parent_design = get_design_from_face(faces[0])
-
         response = self._grpc_client._services.prepare_tools.find_mappable_faces(
             face_ids=[face.id for face in faces],
         )
 
-        results = []
-        for result_data in response.get("results", []):
-            matched = get_faces_from_ids(parent_design, [result_data.get("face_id")])
-            face = matched[0] if matched else None
-            results.append((face, result_data.get("mappable")))
-
-        return results
+        # The server returns exactly one result per requested face, in request order,
+        # each echoing back the original face ID. Zip directly with the input list.
+        return [
+            (face, bool(result_data.get("mappable", False)))
+            for face, result_data in zip(faces, response.get("results", []))
+        ]
