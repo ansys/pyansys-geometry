@@ -34,6 +34,7 @@ from .conversions import (
     from_length_to_grpc_quantity,
     from_line_to_grpc_line,
     from_point3d_to_grpc_design_point,
+    from_trimmed_curve_to_grpc_trimmed_curve,
     serialize_tracked_command_response,
 )
 
@@ -187,6 +188,10 @@ class GRPCPointsServiceV1(GRPCPointsService):
                     selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
                     trajectory_ids=[build_grpc_id(id) for id in kwargs["trajectory_ids"]],
                     distance=from_length_to_grpc_quantity(kwargs["distance"]),
+                    trajectory_curves=[
+                        from_trimmed_curve_to_grpc_trimmed_curve(tc)
+                        for tc in kwargs.get("trajectory_curves", [])
+                    ],
                 )
             ]
         )

@@ -28,6 +28,7 @@ from beartype import beartype as check_input_types
 from pint import Quantity
 
 import ansys.geometry.core as pyansys_geo
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
@@ -66,6 +67,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.designpoint import DesignPoint
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
 
 @unique
@@ -2151,11 +2153,16 @@ class GeometryCommands:
             return []
 
     @min_backend_version(25, 2, 0)
-    @check_input_types
     def sweep_points(
         self,
         selection: Union["DesignPoint", list["DesignPoint"]],
-        trajectories: Union["Edge", "DesignCurve", list[Union["Edge", "DesignCurve"]]],
+        trajectories: Union[
+            "Edge",
+            "DesignCurve",
+            "TrimmedCurve",
+            list[Union["Edge", "DesignCurve"]],
+            list["TrimmedCurve"],
+        ],
         distance: Distance | Quantity | Real,
     ) -> list["DesignCurve"]:
         """Sweep design points along a trajectory to create curves.
@@ -2164,8 +2171,12 @@ class GeometryCommands:
         ----------
         selection : DesignPoint | list[DesignPoint]
             Design point(s) to sweep.
-        trajectories : Edge | DesignCurve | list[Edge | DesignCurve]
-            Trajectory curve(s) to sweep along.
+        trajectories : Edge | DesignCurve | list[Edge | DesignCurve] | TrimmedCurve | \
+list[TrimmedCurve]
+            Trajectory curve(s) to sweep along. Provide either a list of
+            ``Edge`` / ``DesignCurve`` objects (resolved by entity ID) **or** a
+            list of ``TrimmedCurve`` objects (sent as explicit geometry). These
+            two types of trajectory are mutually exclusive and cannot be mixed.
         distance : Distance | Quantity | Real
             Distance to sweep the points.
 
@@ -2174,6 +2185,11 @@ class GeometryCommands:
         list[DesignCurve]
             Curves created by the sweep operation.
 
+        Raises
+        ------
+        ValueError
+            If ``trajectories`` mixes ``TrimmedCurve`` with ``Edge`` or ``DesignCurve``.
+
         Warnings
         --------
         This method is only available starting on Ansys release 25R2.
@@ -2181,18 +2197,35 @@ class GeometryCommands:
         from ansys.geometry.core.designer.designcurve import DesignCurve
         from ansys.geometry.core.designer.designpoint import DesignPoint
         from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
         selection: list[DesignPoint] = selection if isinstance(selection, list) else [selection]
         check_type_all_elements_in_iterable(selection, DesignPoint)
 
         trajectories = trajectories if isinstance(trajectories, list) else [trajectories]
+        check_type_all_elements_in_iterable(trajectories, (Edge, DesignCurve, TrimmedCurve))
+
+        has_trimmed = any(isinstance(t, TrimmedCurve) for t in trajectories)
+        has_entity = any(isinstance(t, (Edge, DesignCurve)) for t in trajectories)
+        if has_trimmed and has_entity:
+            raise ValueError(
+                "trajectories cannot mix TrimmedCurve with Edge or DesignCurve. "
+                "Provide either entity-based trajectories or TrimmedCurve trajectories, not both."
+            )
+
+        if has_trimmed and self._grpc_client.services.version == GeometryApiProtos.V0:
+            raise ValueError(
+                "TrimmedCurve trajectories are not supported when using the v0 protocol. "
+                "Switch to the v1 protocol or use Edge/DesignCurve trajectories instead."
+            )
 
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 
         result = self._grpc_client._services.points.sweep_points(
             selection_ids=[dp.id for dp in selection],
-            trajectory_ids=[traj.id for traj in trajectories],
+            trajectory_ids=[] if has_trimmed else [traj.id for traj in trajectories],
             distance=distance,
+            trajectory_curves=trajectories if has_trimmed else [],
         )
 
         design = get_design_from_component(selection[0].parent_component)

@@ -25,6 +25,7 @@ import numpy as np
 from pint import Quantity
 import pytest
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.designer.geometry_commands import (
     DraftSide,
     ExtrudeType,
@@ -1726,6 +1727,9 @@ def test_revolve_points_by_helix(modeler: Modeler):
     axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
 
     # --- Distance / Angle types ---
+    # r=1m, height=1m, pitch=0.1m → 10 turns; helix arc = 10 * sqrt((2π*1)² + 0.1²)
+    expected_helix_length = 10 * np.sqrt((2 * np.pi) ** 2 + 0.1**2)
+
     design1 = modeler.create_design("revolve_points_by_helix_distance_angle")
     dp1 = design1.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
     curves1 = modeler.geometry_commands.revolve_points_by_helix(
@@ -1739,6 +1743,10 @@ def test_revolve_points_by_helix(modeler: Modeler):
     )
     assert len(curves1) == 1
     assert isinstance(curves1[0], DesignCurve)
+    # Helix starts at the design point and rises one full height along Z
+    assert curves1[0].length.value.m == pytest.approx(expected_helix_length, rel=1e-5)
+    assert np.allclose(curves1[0].start, Point3D([1, 0, 0]))
+    assert np.allclose(curves1[0].end, Point3D([1, 0, 1]), atol=1e-6)
 
     # --- Quantity types ---
     design2 = modeler.create_design("revolve_points_by_helix_quantity")
@@ -1754,6 +1762,9 @@ def test_revolve_points_by_helix(modeler: Modeler):
     )
     assert len(curves2) == 1
     assert isinstance(curves2[0], DesignCurve)
+    assert curves2[0].length.value.m == pytest.approx(expected_helix_length, rel=1e-5)
+    assert np.allclose(curves2[0].start, Point3D([1, 0, 0]))
+    assert np.allclose(curves2[0].end, Point3D([1, 0, 1]), atol=1e-6)
 
     # --- Raw float (SI units: metres for length, radians for angle) ---
     design3 = modeler.create_design("revolve_points_by_helix_float")
@@ -1769,6 +1780,9 @@ def test_revolve_points_by_helix(modeler: Modeler):
     )
     assert len(curves3) == 1
     assert isinstance(curves3[0], DesignCurve)
+    assert curves3[0].length.value.m == pytest.approx(expected_helix_length, rel=1e-5)
+    assert np.allclose(curves3[0].start, Point3D([1, 0, 0]))
+    assert np.allclose(curves3[0].end, Point3D([1, 0, 1]), atol=1e-6)
 
 
 def test_revolve_points_by_helix_multiple_points(modeler: Modeler):
@@ -1834,3 +1848,201 @@ def test_revolve_points_by_helix_pull_symmetric(modeler: Modeler):
     )
     assert len(curves) == 1
     assert isinstance(curves[0], DesignCurve)
+
+
+def test_sweep_points_basic(modeler: Modeler):
+    """Test sweeping a design point along an edge trajectory with all supported distance types.
+
+    Creates a box to obtain a straight edge as the sweep trajectory, places a
+    design point at one end of the edge, then sweeps using Distance, Quantity,
+    and raw float (metres) to verify all input variants are accepted and produce
+    a DesignCurve.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    # box(Point2D([0,0]), 2, 2) → bottom face edge from [-1,-1,0] to [1,-1,0]
+    # sweeping 0.5m along that edge: start=[-1,-1,0], end=[-0.5,-1,0]
+
+    # --- Distance type ---
+    design1 = modeler.create_design("sweep_points_distance")
+    box1 = design1.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge1 = box1.faces[0].edges[0]
+    sx1, sy1, sz1 = edge1.start[0], edge1.start[1], edge1.start[2]
+    dp1 = design1.add_design_point("point1", Point3D([sx1, sy1, sz1], UNITS.m))
+    curves1 = modeler.geometry_commands.sweep_points(dp1, edge1, Distance(0.5, UNITS.m))
+    assert len(curves1) == 1
+    assert isinstance(curves1[0], DesignCurve)
+    assert curves1[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+    assert np.allclose(curves1[0].start, Point3D([sx1, sy1, sz1]))
+    assert np.allclose(curves1[0].end, Point3D([sx1 + 0.5, sy1, sz1]), atol=1e-6)
+
+    # --- Quantity type ---
+    design2 = modeler.create_design("sweep_points_quantity")
+    box2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge2 = box2.faces[0].edges[0]
+    sx2, sy2, sz2 = edge2.start[0], edge2.start[1], edge2.start[2]
+    dp2 = design2.add_design_point("point1", Point3D([sx2, sy2, sz2], UNITS.m))
+    curves2 = modeler.geometry_commands.sweep_points(dp2, edge2, Quantity(0.5, UNITS.m))
+    assert len(curves2) == 1
+    assert isinstance(curves2[0], DesignCurve)
+    assert curves2[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+    assert np.allclose(curves2[0].start, Point3D([sx2, sy2, sz2]))
+    assert np.allclose(curves2[0].end, Point3D([sx2 + 0.5, sy2, sz2]), atol=1e-6)
+
+    # --- Raw float (SI metres) ---
+    design3 = modeler.create_design("sweep_points_float")
+    box3 = design3.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge3 = box3.faces[0].edges[0]
+    sx3, sy3, sz3 = edge3.start[0], edge3.start[1], edge3.start[2]
+    dp3 = design3.add_design_point("point1", Point3D([sx3, sy3, sz3], UNITS.m))
+    curves3 = modeler.geometry_commands.sweep_points(dp3, edge3, 0.5)
+    assert len(curves3) == 1
+    assert isinstance(curves3[0], DesignCurve)
+    assert curves3[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+    assert np.allclose(curves3[0].start, Point3D([sx3, sy3, sz3]))
+    assert np.allclose(curves3[0].end, Point3D([sx3 + 0.5, sy3, sz3]), atol=1e-6)
+
+
+def test_sweep_points_multiple_points(modeler: Modeler):
+    """Test sweeping multiple design points along an edge trajectory.
+
+    Two points placed at the start and end of the same edge, swept 0.5 m along
+    that edge.  The server treats all selection points as a single operation and
+    returns exactly one curve.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("sweep_points_multiple")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge = box.faces[0].edges[0]
+
+    esx, esy, esz = edge.start[0], edge.start[1], edge.start[2]
+    eex, eey, eez = edge.end[0], edge.end[1], edge.end[2]
+    dp1 = design.add_design_point("point1", Point3D([esx, esy, esz], UNITS.m))
+    dp2 = design.add_design_point("point2", Point3D([eex, eey, eez], UNITS.m))
+
+    curves = modeler.geometry_commands.sweep_points(
+        [dp1, dp2], edge, Distance(0.5, UNITS.m)
+    )
+    assert len(curves) == 1
+    assert isinstance(curves[0], DesignCurve)
+
+
+def test_sweep_points_design_curve_trajectory(modeler: Modeler):
+    """Test sweeping a design point along a DesignCurve trajectory.
+
+    Uses revolve_points to first create a circular arc DesignCurve, then
+    uses that curve as the trajectory for sweep_points.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("sweep_points_design_curve_traj")
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+
+    # Create a quarter-arc DesignCurve to act as the trajectory
+    traj_dp = design.add_design_point("traj_point", Point3D([1, 0, 0], UNITS.m))
+    traj_curves = modeler.geometry_commands.revolve_points(
+        traj_dp, axis, Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(traj_curves) == 1, "Expected one trajectory curve from revolve_points"
+    trajectory = traj_curves[0]
+
+    # Now sweep a new design point along the arc trajectory
+    # The point is at (1,0,0); sweeping 0.5m along arc of r=1 moves it by 0.5 rad:
+    # end = (cos(0.5), sin(0.5), 0)
+    sweep_dp = design.add_design_point("sweep_point", Point3D([1, 0, 0], UNITS.m))
+    curves = modeler.geometry_commands.sweep_points(
+        sweep_dp, trajectory, Distance(0.5, UNITS.m)
+    )
+    assert len(curves) == 1
+    assert isinstance(curves[0], DesignCurve)
+    assert curves[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+    assert np.allclose(curves[0].start, Point3D([1, 0, 0]))
+    assert np.allclose(curves[0].end, Point3D([np.cos(0.5), np.sin(0.5), 0]), atol=1e-5)
+
+
+def test_sweep_points_multiple_trajectories(modeler: Modeler):
+    """Test sweeping a design point along multiple trajectory curves.
+
+    Provides two edges as trajectories and verifies the operation succeeds.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("sweep_points_multi_traj")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Use two different edges from the same face as trajectories
+    edge1 = box.faces[0].edges[0]
+    edge2 = box.faces[0].edges[1]
+
+    sx, sy, sz = edge1.start[0], edge1.start[1], edge1.start[2]
+    dp = design.add_design_point("point1", Point3D([sx, sy, sz], UNITS.m))
+    curves = modeler.geometry_commands.sweep_points(
+        dp, [edge1, edge2], Distance(0.5, UNITS.m)
+    )
+    assert len(curves) == 1
+    assert isinstance(curves[0], DesignCurve)
+
+
+def test_sweep_points_trimmed_curve_trajectories(modeler: Modeler):
+    """Test sweeping a design point along TrimmedCurve trajectories.
+
+    Covers three sub-cases:
+      1. Scalar TrimmedCurve passed directly.
+      2. TrimmedCurve wrapped in a list (list code path).
+      3. Mixing TrimmedCurve with an Edge raises ValueError.
+
+    On the v0 protocol TrimmedCurve trajectories are unsupported; sub-cases 1
+    and 2 assert a ValueError with an appropriate message in that case.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+    from ansys.geometry.core.shapes.parameterization import Interval
+
+    is_v0 = modeler._grpc_client.services.version == GeometryApiProtos.V0
+
+    traj_line = Line(Point3D([0, 0, 0]), UnitVector3D([1, 0, 0]))
+    tc = TrimmedCurve(
+        geometry=traj_line,
+        start=Point3D([0, 0, 0]),
+        end=Point3D([1, 0, 0]),
+        interval=Interval(0, 1),
+        length=Quantity(1, UNITS.m),
+    )
+
+    # --- scalar TrimmedCurve ---
+    design1 = modeler.create_design("sweep_points_tc_scalar")
+    dp1 = design1.add_design_point("sweep_pt", Point3D([0, 0, 0], UNITS.m))
+    if is_v0:
+        with pytest.raises(ValueError, match="not supported when using the v0 protocol"):
+            modeler.geometry_commands.sweep_points(dp1, tc, Distance(0.5, UNITS.m))
+    else:
+        curves1 = modeler.geometry_commands.sweep_points(dp1, tc, Distance(0.5, UNITS.m))
+        assert len(curves1) == 1
+        assert isinstance(curves1[0], DesignCurve)
+        assert curves1[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+        assert np.allclose(curves1[0].start, Point3D([0, 0, 0]), atol=1e-6)
+        assert np.allclose(curves1[0].end, Point3D([0.5, 0, 0]), atol=1e-6)
+
+    # --- list[TrimmedCurve] (same geometry, exercises the list input path) ---
+    design2 = modeler.create_design("sweep_points_tc_list")
+    dp2 = design2.add_design_point("sweep_pt", Point3D([0, 0, 0], UNITS.m))
+    if is_v0:
+        with pytest.raises(ValueError, match="not supported when using the v0 protocol"):
+            modeler.geometry_commands.sweep_points(dp2, [tc], Distance(0.5, UNITS.m))
+    else:
+        curves2 = modeler.geometry_commands.sweep_points(dp2, [tc], Distance(0.5, UNITS.m))
+        assert len(curves2) == 1
+        assert isinstance(curves2[0], DesignCurve)
+        assert curves2[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+        assert np.allclose(curves2[0].start, Point3D([0, 0, 0]), atol=1e-6)
+        assert np.allclose(curves2[0].end, Point3D([0.5, 0, 0]), atol=1e-6)
+
+    # --- mixed TrimmedCurve + Edge raises ValueError (on both v0 and v1) ---
+    design3 = modeler.create_design("sweep_points_tc_mixed_error")
+    box = design3.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge = box.faces[0].edges[0]
+    sx, sy, sz = edge.start[0], edge.start[1], edge.start[2]
+    dp3 = design3.add_design_point("sweep_pt", Point3D([sx, sy, sz], UNITS.m))
+    with pytest.raises(ValueError, match="cannot mix TrimmedCurve"):
+        modeler.geometry_commands.sweep_points(dp3, [edge, tc], Distance(0.5, UNITS.m))
