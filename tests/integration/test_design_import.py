@@ -36,7 +36,11 @@ from ansys.geometry.core.misc import UNITS, Distance, ImportOptions
 from ansys.geometry.core.sketch import Sketch
 from ansys.geometry.core.tools.unsupported import ExportIdData, PersistentIdType
 
-from .conftest import FILES_DIR, IMPORT_FILES_DIR
+from .conftest import (
+    FILES_DIR,
+    IMPORT_FILES_DIR,
+    skip_if_no_geometry_service,
+)
 
 
 def _create_flat_design(modeler: Modeler) -> Design:
@@ -331,6 +335,9 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
 def test_design_insert(modeler: Modeler):
     """Test inserting a file into the design."""
+    skip_if_no_geometry_service(
+        modeler, test_design_insert.__name__, "different_hierarchy_in_tree_on_insert"
+    )  # Skip test on Discovery and SpaceClaim
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
     sketch = Sketch()
@@ -352,6 +359,9 @@ def test_design_insert_with_import(modeler: Modeler):
     """Test inserting a file into the design through the external format import
     process.
     """
+    skip_if_no_geometry_service(
+        modeler, test_design_insert_with_import.__name__, "different_hierarchy_in_tree_on_insert"
+    )  # Skip test on Discovery and SpaceClaim
     # Create a design and sketch a circle
     design = modeler.create_design("Insert")
     sketch = Sketch()
@@ -413,6 +423,9 @@ def test_design_import_with_named_selections(modeler: Modeler):
 
 def test_design_import_acad_2024(modeler: Modeler):
     """Test importing a 2024 AutoCAD file."""
+    skip_if_no_geometry_service(
+        modeler, test_design_import_acad_2024.__name__, "different_hierarchy_in_tree_on_insert"
+    )  # Skip test on Discovery and SpaceClaim
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "ACAD/CylinderBox_2024.dwg"))
     assert len(design.components) == 3
@@ -429,6 +442,9 @@ def test_design_import_cat5_2024(modeler: Modeler):
 
 def test_design_import_cat6_2023(modeler: Modeler):
     """Test importing a CATIA V6 file."""
+    skip_if_no_geometry_service(
+        modeler, test_design_import_cat6_2023.__name__, "different_hierarchy_in_tree_on_insert"
+    )  # Skip test on Discovery and SpaceClaim
     # Open the design
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "CAT6/Skateboard A.1_2023x.3dxml"))
     assert len(design.components) == 4
@@ -505,6 +521,17 @@ def test_design_import_inventor2026(modeler: Modeler):
     assert len(design.bodies[0].faces) == 9
 
 
+def test_design_import_pmdb(modeler: Modeler):
+    """Test importing a PMDB file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "PMDB/twoCars.pmdb"))
+
+    assert len(design.components) == 1
+    assert len(design.components[0].components) == 12
+    assert len(design.components[0].components[0].components[0].bodies) == 1
+    assert len(design.components[0].components[0].components[0].bodies[0].faces) == 6
+
+
 def test_design_import_stride_with_named_selections(modeler: Modeler):
     """Test importing a .stride file with named selections."""
     # Open stride file
@@ -541,6 +568,9 @@ def test_design_import_stride_with_named_selections(modeler: Modeler):
 
 def test_design_insert_id_bug(modeler: Modeler):
     """Test inserting a file into the design with ID bug fix."""
+    skip_if_no_geometry_service(
+        modeler, test_design_insert_id_bug.__name__, "different_hierarchy_in_tree_on_insert"
+    )  # Skip test on Discovery and SpaceClaim
     # This fix is available in version 261 and later
     design1 = modeler.create_design("Test")
 
@@ -561,6 +591,11 @@ def test_design_insert_id_bug(modeler: Modeler):
 @pytest.mark.skip(reason="Object reference not set to an instance of an object.")
 def test_import_scdocx_with_external_docs(modeler: Modeler):
     """Test importing an SCDOCX file with external documents and verify it is internalized."""
+    skip_if_no_geometry_service(
+        modeler,
+        test_import_scdocx_with_external_docs.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
     # Create a new design
     design = modeler.create_design("Insert External Document")
 
@@ -589,6 +624,11 @@ def test_import_scdocx_with_external_docs(modeler: Modeler):
 
 def test_named_selections_after_file_insert(modeler: Modeler):
     """Test to verify named selections are imported during inserting a file."""
+    skip_if_no_geometry_service(
+        modeler,
+        test_named_selections_after_file_insert.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
     # Create a new design
     design = modeler.create_design("BugFix_1277429")
 
@@ -669,6 +709,12 @@ def test_named_selections_after_file_open(modeler: Modeler):
 def test_file_insert_import_named_selections_post_import(modeler: Modeler):
     """Test to verify named selections can be imported after inserting a file."""
     # Create a new design
+    skip_if_no_geometry_service(
+        modeler,
+        test_file_insert_import_named_selections_post_import.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
+
     design = modeler.create_design("BugFix_1277429")
 
     # Verify initial named selections count
@@ -718,3 +764,24 @@ def test_file_insert_import_named_selections_post_import(modeler: Modeler):
     assert set(actual_named_selections) == set(expected_named_selections), (
         f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."
     )
+
+
+def test_import_unsupported_filetype(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test that opening a file with an unsupported filetype raises an appropriate error."""
+    # Create a temporary file with an unsupported extension
+    temp_dir = tmp_path_factory.mktemp("test_unsupported")
+    unsupported_file = temp_dir / "test_file.unsupported"
+
+    # Write some dummy content to the file
+    with unsupported_file.open(mode="w") as f:
+        f.write("This is a test file with an unsupported extension.")
+
+    # Verify the file exists
+    assert unsupported_file.exists()
+
+    # Attempt to open the file and expect an error
+    # The backend should raise an error for unsupported file types
+    with pytest.raises(
+        match="File extension '.unsupported' is not supported. File: 'test_file.unsupported'"
+    ):
+        modeler.open_file(unsupported_file)

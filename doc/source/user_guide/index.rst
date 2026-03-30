@@ -9,7 +9,7 @@ explaining key concepts and approaches for connection, primitives,
 sketches (2D basic shape elements), and model designs.
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :hidden:
 
    connection

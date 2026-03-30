@@ -99,6 +99,34 @@ def skip_if_discovery(modeler: Modeler, test_name: str, element_not_available: s
         )  # skip!
 
 
+def skip_if_no_geometry_service(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on SpaceClaim or Discovery."""
+    if (
+        modeler.client.backend_type == BackendType.DISCOVERY
+        or modeler.client.backend_type == BackendType.DISCOVERY_HEADLESS
+        or modeler.client.backend_type == BackendType.SPACECLAIM
+    ):
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Disco or SC."
+        )  # skip!
+
+
+def skip_if_desktop_or_dms_geometry_service(
+    modeler: Modeler, test_name: str, element_not_available: str
+):
+    """Skip test if running on Desktop or DMS Geometry Service."""
+    if (
+        modeler.client.backend_type == BackendType.WINDOWS_SERVICE
+        or modeler.client.backend_type == BackendType.LINUX_SERVICE
+        or modeler.client.backend_type == BackendType.DISCOVERY
+        or modeler.client.backend_type == BackendType.DISCOVERY_HEADLESS
+        or modeler.client.backend_type == BackendType.SPACECLAIM
+    ):
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Disco, SC or DMS."
+        )  # skip!
+
+
 @pytest.fixture(scope="session")
 def docker_instance(use_existing_service, transport_mode):
     # This will only have a value in case that:

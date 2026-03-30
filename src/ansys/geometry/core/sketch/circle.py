@@ -118,17 +118,20 @@ class SketchCircle(SketchFace, Circle):
         -------
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
-        """
-        import pyvista as pv
 
-        circle = pv.Circle(radius=self.radius.m_as(DEFAULT_UNITS.LENGTH))
-        return circle.translate(
-            [
-                self.center.x.m_as(DEFAULT_UNITS.LENGTH),
-                self.center.y.m_as(DEFAULT_UNITS.LENGTH),
-                0,
-            ],
-            inplace=True,
+        Warnings
+        --------
+        This method uses a discretized circle constructed of line segments for visualization
+        purposes.
+        """
+        from ansys.geometry.core.plotting.utils import create_elliptical_polydata
+
+        return create_elliptical_polydata(
+            origin=self.origin,
+            dir_x=self.dir_x,
+            dir_y=self.dir_y,
+            dir_z=self.dir_z,
+            major_radius=self.radius.m_as(DEFAULT_UNITS.LENGTH),
         )
 
     def plane_change(self, plane: Plane) -> None:

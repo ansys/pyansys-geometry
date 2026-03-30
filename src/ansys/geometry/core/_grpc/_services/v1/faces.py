@@ -39,6 +39,7 @@ from .conversions import (
     from_grpc_surface_to_surface,
     from_length_to_grpc_quantity,
     from_line_to_grpc_line,
+    from_parameter_to_grpc_quantity,
     from_point3d_to_grpc_point,
     from_unit_vector_to_grpc_direction,
     serialize_tracked_command_response,
@@ -308,7 +309,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
                 CreateIsoParamCurvesRequestData(
                     id=build_grpc_id(kwargs["id"]),
                     u_dir_curve=kwargs["use_u_param"],
-                    proportion=kwargs["parameter"],
+                    proportion=from_parameter_to_grpc_quantity(kwargs["parameter"]),
                 )
             ]
         )
@@ -324,7 +325,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
                     "start": from_grpc_point_to_point3d(curve.start),
                     "end": from_grpc_point_to_point3d(curve.end),
                     "interval": Interval(curve.interval_start, curve.interval_end),
-                    "length": to_distance(curve.length).value,
+                    "length": to_distance(curve.length.value_in_geometry_units).value,
                 }
                 for curve in response.curves
             ]
@@ -367,7 +368,9 @@ class GRPCFacesServiceV1(GRPCFacesService):
         # Return the response - formatted as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "created_bodies": [
+                body.get("id") for body in tracked_response.get("created_bodies", [])
+            ],
             "tracked_response": tracked_response,
         }
 
@@ -403,7 +406,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
         return {
             "success": tracked_response.get("success"),
             "created_bodies": [
-                body.get("id").id for body in tracked_response.get("created_bodies")
+                body.get("id") for body in tracked_response.get("created_bodies", [])
             ],
             "tracked_response": tracked_response,
         }
@@ -689,4 +692,19 @@ class GRPCFacesServiceV1(GRPCFacesService):
         return {
             "success": response.tracked_command_response.command_response.success,
             "tracked_response": tracked_response,
+        }
+
+    @protect_grpc
+    def get_centroid(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
+        # Call the gRPC service
+        response = self.stub.GetCentroid(request=request).response_data[0]
+
+        # Return the response - formatted as a dictionary
+        return {
+            "centroid": from_grpc_point_to_point3d(response.centroid),
         }
