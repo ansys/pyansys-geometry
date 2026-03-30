@@ -17,11 +17,11 @@ Write unit and integration tests for PyAnsys Geometry code. This agent ensures c
 ## Workflow
 
 ### Step 1: Activate Virtual Environment
-Look for a `.venv` directory in the workspace folder (`pyansys-geometry/.venv`). If one exists, activate it:
-- Windows: `./.venv/Scripts/Activate.ps1`
-- Linux/macOS: `source ./.venv/bin/activate`
+Read the `PYANSYS_VENV` environment variable to obtain the path to the virtual environment, then activate it:
+- Windows: `& "$env:PYANSYS_VENV\Scripts\Activate.ps1"`
+- Linux/macOS: `source "$PYANSYS_VENV/bin/activate"`
 
-If no `.venv` exists, check the parent directory. If still not found, follow `.github/copilot-instructions.md` "Install (developer)" instructions to create one.
+If `PYANSYS_VENV` is not set, follow `.github/copilot-instructions.md` "Install (developer)" instructions to create one.
 
 ### Step 2: Understand the Code to Test
 - Read any code the user references or wants tested
