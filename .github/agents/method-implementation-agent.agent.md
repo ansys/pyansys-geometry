@@ -10,7 +10,7 @@ Implement a new method end-to-end in PyAnsys Geometry: locate the proto definiti
 
 ## Step 1: Read the proto definition
 Search the installed `ansys-api-discovery` (or `ansys-api-geometry`/`ansys-api-dbu`) package for the `.proto` file that declares the RPC being implemented.
-- Look inside the site-packages directory of the active virtual environment, e.g. `.venv/Lib/site-packages/ansys/api/discovery/`, `.venv/Lib/site-packages/ansys/api/geometry/` or `.venv/Lib/site-packages/ansys/api/dbu/`.
+- Resolve the virtual environment path from the `PYANSYS_VENV` environment variable and look inside its `Lib/site-packages/ansys/api/discovery/`, `Lib/site-packages/ansys/api/geometry/` or `Lib/site-packages/ansys/api/dbu/` directories.
 - Locate the relevant `.proto` file and read the `rpc` definition and its request/response message types.
 - Note the exact field names and types — these drive the implementation in every layer below.
 
@@ -72,3 +72,8 @@ When adding the method to the public class:
 Once the implementation is complete, pass the task to the writing-tests agent using the `writing-tests` skill located at `.github/skills/writing-tests/SKILL.md`.
 - Summarize what was implemented (class name, method name, file paths changed).
 - The writing-tests agent will activate the virtual environment, locate or create the appropriate test file, write detailed tests (including error-path coverage), run them, and iterate until they pass.
+
+## Virtual environment
+Do not search for a `.venv` directory. Instead, read the `PYANSYS_VENV` environment variable to obtain the path to the virtual environment, then activate it:
+- Windows: `& "$env:PYANSYS_VENV\Scripts\Activate.ps1"`
+- Linux/macOS: `source "$PYANSYS_VENV/bin/activate"`
