@@ -47,19 +47,54 @@ If `PYANSYS_VENV` is not set, follow `.github/copilot-instructions.md` "Install 
 - Follow all rules in the **Code Style** and **Assert Exact Values** sections below
 - **Consolidate related cases:** Tests that exercise the same feature with only minor variations (e.g. different angle input types: `Angle`, `Quantity`, raw `float`) should be combined into a single test function rather than written as separate tests. Each variation can be a clearly commented sub-section of the same test.
 
-### Step 5: Run and Verify Tests
-Change into the `pyansys-geometry` directory and run:
-```bash
-pytest --use-existing-service=yes -k TEST_NAME
+### Step 5: Start the Geometry Server
+Read the `ANSYS_GEOMETRY_SERVICE_ROOT` environment variable to locate the server executable.
+Kill any existing instance and launch a fresh one:
+
+```powershell
+Stop-Process -Name "Presentation.ApiServerCoreService" -Force -ErrorAction SilentlyContinue
+Start-Sleep -Seconds 1
+Start-Process "$env:ANSYS_GEOMETRY_SERVICE_ROOT\Presentation.ApiServerCoreService.exe"
+Start-Sleep -Seconds 5
 ```
+
+If `ANSYS_GEOMETRY_SERVICE_ROOT` is not set, ask the user for the server location.
+
+### Step 6: Run and Verify Tests (v1)
+Change into the `pyansys-geometry` directory and run against the v1 protocol:
+
+```powershell
+pytest --use-existing-service=yes --proto-version=v1 -k TEST_NAME
+```
+
 Replace `TEST_NAME` with the name of the new test function(s).
+Iterate until all tests pass — if tests fail, analyze the output and fix test or source code.
+If the failure requires server-side changes, report this to the user.
 
-Assume the developer has a geometry server running.
+### Step 7: Restart the Geometry Server for v0
+Kill the running instance and relaunch so the client can connect with the v0 protocol:
 
-### Step 6: Iterate Until Tests Pass
-- If tests fail, analyze the failure output
+```powershell
+Stop-Process -Name "Presentation.ApiServerCoreService" -Force
+Start-Sleep -Seconds 1
+Start-Process "$env:ANSYS_GEOMETRY_SERVICE_ROOT\Presentation.ApiServerCoreService.exe"
+Start-Sleep -Seconds 5
+```
+
+### Step 8: Run and Verify Tests (v0)
+Run the same tests against the v0 protocol:
+
+```powershell
+pytest --use-existing-service=yes --proto-version=v0 -k TEST_NAME
+```
+
+Iterate until all tests pass. Tests that rely on v1-only features should guard with a
+`pytest.raises(ValueError)` assertion on v0 rather than being skipped.
+
+### Step 9: Iterate Until Tests Pass
+- If tests fail on either protocol, analyze the failure output
 - Determine if the issue is in the test code or source code
-- Fix and re-run until tests pass
+- Fix and re-run until tests pass on both protocols
 - If the failure requires server-side changes, report this to the user
 
 ## Boundaries
