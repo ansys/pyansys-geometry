@@ -845,7 +845,7 @@ class PrepareTools:
 
         return results
 
-    @min_backend_version(26, 1, 0)
+    @min_backend_version(27, 1, 0)
     def find_mappable_faces(self, faces: list["Face"]) -> list[tuple["Face", bool]]:
         """Find which faces are mappable.
 
