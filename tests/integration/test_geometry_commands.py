@@ -1916,14 +1916,12 @@ def test_sweep_points_multiple_points(modeler: Modeler):
     box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
     edge = box.faces[0].edges[0]
 
-    esx, esy, esz = edge.start[0], edge.start[1], edge.start[2]
+    esx, easy, esz = edge.start[0], edge.start[1], edge.start[2]
     eex, eey, eez = edge.end[0], edge.end[1], edge.end[2]
-    dp1 = design.add_design_point("point1", Point3D([esx, esy, esz], UNITS.m))
+    dp1 = design.add_design_point("point1", Point3D([esx, easy, esz], UNITS.m))
     dp2 = design.add_design_point("point2", Point3D([eex, eey, eez], UNITS.m))
 
-    curves = modeler.geometry_commands.sweep_points(
-        [dp1, dp2], edge, Distance(0.5, UNITS.m)
-    )
+    curves = modeler.geometry_commands.sweep_points([dp1, dp2], edge, Distance(0.5, UNITS.m))
     assert len(curves) == 1
     assert isinstance(curves[0], DesignCurve)
 
@@ -1951,9 +1949,7 @@ def test_sweep_points_design_curve_trajectory(modeler: Modeler):
     # The point is at (1,0,0); sweeping 0.5m along arc of r=1 moves it by 0.5 rad:
     # end = (cos(0.5), sin(0.5), 0)
     sweep_dp = design.add_design_point("sweep_point", Point3D([1, 0, 0], UNITS.m))
-    curves = modeler.geometry_commands.sweep_points(
-        sweep_dp, trajectory, Distance(0.5, UNITS.m)
-    )
+    curves = modeler.geometry_commands.sweep_points(sweep_dp, trajectory, Distance(0.5, UNITS.m))
     assert len(curves) == 1
     assert isinstance(curves[0], DesignCurve)
     assert curves[0].length.value.m == pytest.approx(0.5, rel=1e-5)
@@ -1977,9 +1973,7 @@ def test_sweep_points_multiple_trajectories(modeler: Modeler):
 
     sx, sy, sz = edge1.start[0], edge1.start[1], edge1.start[2]
     dp = design.add_design_point("point1", Point3D([sx, sy, sz], UNITS.m))
-    curves = modeler.geometry_commands.sweep_points(
-        dp, [edge1, edge2], Distance(0.5, UNITS.m)
-    )
+    curves = modeler.geometry_commands.sweep_points(dp, [edge1, edge2], Distance(0.5, UNITS.m))
     assert len(curves) == 1
     assert isinstance(curves[0], DesignCurve)
 
