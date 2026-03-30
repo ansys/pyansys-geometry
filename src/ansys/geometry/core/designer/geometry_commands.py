@@ -2061,3 +2061,77 @@ class GeometryCommands:
         else:
             self._grpc_client.log.info("Failed to revolve design points.")
             return []
+
+    @min_backend_version(25, 2, 0)
+    @check_input_types
+    def sweep_points(
+        self,
+        selection: Union["DesignPoint", list["DesignPoint"]],
+        trajectories: Union["Edge", "DesignCurve", list[Union["Edge", "DesignCurve"]]],
+        distance: Distance | Quantity | Real,
+    ) -> list["DesignCurve"]:
+        """Sweep design points along a trajectory to create curves.
+
+        Parameters
+        ----------
+        selection : DesignPoint | list[DesignPoint]
+            Design point(s) to sweep.
+        trajectories : Edge | DesignCurve | list[Edge | DesignCurve]
+            Trajectory curve(s) to sweep along.
+        distance : Distance | Quantity | Real
+            Distance to sweep the points.
+
+        Returns
+        -------
+        list[DesignCurve]
+            Curves created by the sweep operation.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
+        from ansys.geometry.core.designer.designcurve import DesignCurve
+        from ansys.geometry.core.designer.designpoint import DesignPoint
+        from ansys.geometry.core.designer.edge import Edge
+
+        selection: list[DesignPoint] = selection if isinstance(selection, list) else [selection]
+        check_type_all_elements_in_iterable(selection, DesignPoint)
+
+        trajectories = trajectories if isinstance(trajectories, list) else [trajectories]
+
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
+        result = self._grpc_client._services.points.sweep_points(
+            selection_ids=[dp.id for dp in selection],
+            trajectory_ids=[traj.id for traj in trajectories],
+            distance=distance,
+        )
+
+        design = get_design_from_component(selection[0].parent_component)
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+
+            all_comps = {c.id: c for c in design._get_all_components()}
+            all_comps[design.id] = design
+            created_curves = []
+            for curve_info in result.get("created_curves", []):
+                parent: Component = all_comps.get(curve_info.get("parent_id"), design)
+                dc = DesignCurve(
+                    curve_info.get("id"),
+                    curve_info.get("name"),
+                    curve_info.get("length"),
+                    curve_info.get("start_point"),
+                    curve_info.get("end_point"),
+                    self._grpc_client,
+                    parent,
+                )
+                parent._design_curves.append(dc)
+                created_curves.append(dc)
+            return created_curves
+        else:
+            self._grpc_client.log.info("Failed to sweep design points.")
+            return []
