@@ -43,6 +43,7 @@ from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffset
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.datumplane import DatumPlane
+from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
@@ -1162,6 +1163,7 @@ class Design(Component):
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Datum Planes       : {len(self.datum_planes)}")
+        lines.append(f"  N Design Curves      : {len(self.design_curves)}")
         return "\n".join(lines)
 
     def __read_existing_design(self) -> None:
@@ -1426,6 +1428,21 @@ class Design(Component):
             # Append the datum plane to the component to which it belongs
             created_dp.parent_component._datum_planes.append(created_dp)
 
+        # Create DesignCurves
+        for dc in response.get("design_curves"):
+            created_dc = DesignCurve(
+                dc.get("id"),
+                dc.get("name"),
+                dc.get("length"),
+                dc.get("start"),
+                dc.get("end"),
+                self._grpc_client,
+                created_components.get(dc.get("parent_id"), self),
+            )
+
+            # Append the design curve to the component to which it belongs
+            created_dc.parent_component._design_curves.append(created_dc)
+
         end = time.time()
 
         # Set SharedTopology
@@ -1449,6 +1466,10 @@ class Design(Component):
         self._grpc_client.log.debug(f"NamedSelections created: {len(self.named_selections)}")
         self._grpc_client.log.debug(f"CoordinateSystems created: {num_created_coord_systems}")
         self._grpc_client.log.debug(f"SharedTopologyTypes set: {num_created_shared_topologies}")
+        self._grpc_client.log.debug(f"Beams created: {len(self.beams)}")
+        self._grpc_client.log.debug(f"Design points created: {len(self.design_points)}")
+        self._grpc_client.log.debug(f"Datum planes created: {len(self.datum_planes)}")
+        self._grpc_client.log.debug(f"Design curves created: {len(self.design_curves)}")
 
         self._grpc_client.log.debug(f"\nSuccessfully read design in: {end - start} s")
 
