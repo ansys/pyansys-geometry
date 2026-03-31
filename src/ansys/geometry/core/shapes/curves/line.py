@@ -23,6 +23,7 @@
 
 from functools import cached_property
 import math
+from typing import TYPE_CHECKING
 
 from beartype import beartype as check_input_types
 import numpy as np
@@ -31,6 +32,7 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.accuracy import LENGTH_ACCURACY
+from ansys.geometry.core.misc.checks import graphics_required
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import (
@@ -40,6 +42,9 @@ from ansys.geometry.core.shapes.parameterization import (
     ParamType,
 )
 from ansys.geometry.core.typing import Real, RealSequence
+
+if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
 
 
 class Line(Curve):
@@ -191,6 +196,27 @@ class Line(Curve):
 
     def contains_point(self, point: Point3D) -> bool:  # noqa: D102
         raise NotImplementedError("contains_point() is not implemented.")
+
+    @property
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
+        """VTK polydata representation for PyVista visualization.
+
+        A line extends infinitely, so we visualize a segment of it.
+        The default visualization shows the line from parameter -10 to +10.
+
+        Returns
+        -------
+        pyvista.PolyData
+            VTK pyvista.PolyData configuration.
+        """
+        import pyvista as pv
+
+        # Create a line segment for visualization (from t=-10 to t=+10)
+        start_point = (self.origin + (-10 * self.direction)).flat
+        end_point = (self.origin + (10 * self.direction)).flat
+
+        return pv.Line(start_point, end_point)
 
 
 class LineEvaluation(CurveEvaluation):

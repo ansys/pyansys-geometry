@@ -526,6 +526,17 @@ def test_design_import_inventor2026(modeler: Modeler):
     assert len(design.bodies[0].faces) == 9
 
 
+def test_design_import_pmdb(modeler: Modeler):
+    """Test importing a PMDB file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "PMDB/twoCars.pmdb"))
+
+    assert len(design.components) == 1
+    assert len(design.components[0].components) == 12
+    assert len(design.components[0].components[0].components[0].bodies) == 1
+    assert len(design.components[0].components[0].components[0].bodies[0].faces) == 6
+
+
 def test_design_import_stride_with_named_selections(modeler: Modeler):
     """Test importing a .stride file with named selections."""
     # Open stride file
@@ -758,3 +769,24 @@ def test_file_insert_import_named_selections_post_import(modeler: Modeler):
     assert set(actual_named_selections) == set(expected_named_selections), (
         f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."
     )
+
+
+def test_import_unsupported_filetype(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test that opening a file with an unsupported filetype raises an appropriate error."""
+    # Create a temporary file with an unsupported extension
+    temp_dir = tmp_path_factory.mktemp("test_unsupported")
+    unsupported_file = temp_dir / "test_file.unsupported"
+
+    # Write some dummy content to the file
+    with unsupported_file.open(mode="w") as f:
+        f.write("This is a test file with an unsupported extension.")
+
+    # Verify the file exists
+    assert unsupported_file.exists()
+
+    # Attempt to open the file and expect an error
+    # The backend should raise an error for unsupported file types
+    with pytest.raises(
+        match="File extension '.unsupported' is not supported. File: 'test_file.unsupported'"
+    ):
+        modeler.open_file(unsupported_file)

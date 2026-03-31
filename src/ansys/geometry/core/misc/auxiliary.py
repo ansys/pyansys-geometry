@@ -29,6 +29,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.design import Design
+    from ansys.geometry.core.designer.designcurve import DesignCurve
     from ansys.geometry.core.designer.designpoint import DesignPoint
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
@@ -147,6 +148,11 @@ def __traverse_all_beams(comp: Union["Design", "Component"]) -> list["Body"]:
 def __traverse_all_design_points(comp: Union["Design", "Component"]) -> list["DesignPoint"]:
     """Traverse all design points in a design/component and all its subcomponents."""
     return __traverse_component_elem("design_points", comp)
+
+
+def __traverse_all_design_curves(comp: Union["Design", "Component"]) -> list["DesignCurve"]:
+    """Traverse all design curves in a design/component and all its subcomponents."""
+    return __traverse_component_elem("design_curves", comp)
 
 
 def get_all_bodies_from_design(design: "Design") -> list["Body"]:
@@ -335,6 +341,31 @@ def get_design_points_from_ids(
     objects.
     """
     return [dp for dp in __traverse_all_design_points(design) if dp.id in design_point_ids]
+
+
+def get_design_curves_from_ids(
+    design: "Design", design_curve_ids: list[str]
+) -> list["DesignCurve"]:
+    """Find the ``DesignCurve`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the design curves.
+    design_curve_ids : list[str]
+        List of design curve ids.
+
+    Returns
+    -------
+    list[DesignCurve]
+        List of DesignCurve objects.
+
+    Notes
+    -----
+    This method takes a design and design curve ids, and gets their corresponding ``DesignCurve``
+    objects.
+    """
+    return [dc for dc in __traverse_all_design_curves(design) if dc.id in design_curve_ids]
 
 
 def convert_color_to_hex(

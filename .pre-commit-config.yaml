@@ -17,19 +17,19 @@ repos:
           - ".codacy.yml"
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: v2.16.2
+    rev: v2.20.0
     hooks:
       - id: pyproject-fmt
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.2
+    rev: v0.15.8
     hooks:
       - id: ruff-check
       - id: ruff-format
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: v2.4.2
     hooks:
       - id: codespell
         args: ["--ignore-words", "doc/styles/config/vocabularies/ANSYS/accept.txt", "-w"]
@@ -43,7 +43,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ansys/pre-commit-hooks
-    rev: v0.5.2
+    rev: v0.6.0
     hooks:
       - id: add-license-headers
         args:
@@ -51,7 +51,7 @@ repos:
 
   # this validates our github workflow files
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.36.2
+    rev: 0.37.1
     hooks:
       - id: check-github-workflows
 

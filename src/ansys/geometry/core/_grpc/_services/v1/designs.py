@@ -36,6 +36,7 @@ from .conversions import (
     from_grpc_matrix_to_matrix,
     from_grpc_plane_to_plane,
     from_grpc_point_to_point3d,
+    from_grpc_quantity_to_distance,
 )
 
 
@@ -461,6 +462,18 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
                 "parent_id": datum_plane.parent_id.id,
             }
 
+        def serialize_design_curve(design_curve):
+            return {
+                "id": design_curve.id.id,
+                "name": design_curve.owner_name,
+                "length": from_grpc_quantity_to_distance(design_curve.length),
+                "start": from_grpc_point_to_point3d(design_curve.points[0]),
+                "end": from_grpc_point_to_point3d(design_curve.points[1])
+                if len(design_curve.points) > 1
+                else None,
+                "parent_id": design_curve.parent_id.id,
+            }
+
         parts = getattr(response, "parts", [])
         transformed_parts = getattr(response, "transformed_parts", [])
         bodies = getattr(response, "bodies", [])
@@ -470,8 +483,17 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         component_coordinate_systems = getattr(response, "component_coord_systems", [])
         component_shared_topologies = getattr(response, "component_shared_topologies", [])
         beams = getattr(response, "beams", [])
-        design_points = getattr(response, "design_points", [])
+        design_points = [
+            dp
+            for dp in getattr(response, "design_points", [])
+            if dp.length.value_in_geometry_units == 0
+        ]
         datum_planes = getattr(response, "datum_planes", [])
+        design_curves = [
+            dc
+            for dc in getattr(response, "design_points", [])
+            if dc.length.value_in_geometry_units != 0
+        ]
         return {
             "parts": [serialize_part(part) for part in parts] if len(parts) > 0 else [],
             "transformed_parts": [serialize_transformed_part(tp) for tp in transformed_parts],
@@ -488,4 +510,5 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             "beams": [serialize_beam(beam) for beam in beams],
             "design_points": [serialize_design_point(dp) for dp in design_points],
             "datum_planes": [serialize_datum_plane(dp) for dp in datum_planes],
+            "design_curves": [serialize_design_curve(dc) for dc in design_curves],
         }

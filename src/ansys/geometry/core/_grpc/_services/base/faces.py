@@ -158,3 +158,8 @@ class GRPCFacesService(ABC):  # pragma: no cover
     def setup_offset_relationship(self, **kwargs) -> dict:
         """Set up an offset relationship between two faces."""
         pass
+
+    @abstractmethod
+    def get_centroid(self, **kwargs) -> dict:
+        """Get the centroid of a face."""
+        pass

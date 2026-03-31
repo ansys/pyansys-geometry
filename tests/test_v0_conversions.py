@@ -610,6 +610,9 @@ def test_from_curve_to_grpc_curve_unsupported_type():
         def transformed_copy(self, transformation):
             return self
 
+        def visualization_polydata(self):
+            return None
+
     unsupported_curve = UnsupportedCurve()
 
     # Assert that calling the function raises a ValueError

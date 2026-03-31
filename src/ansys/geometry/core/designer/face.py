@@ -362,6 +362,19 @@ class Face:
             response.get("min_corner"), response.get("max_corner"), response.get("center")
         )
 
+    @property
+    @min_backend_version(27, 1, 0)
+    def centroid(self) -> Point3D:
+        """Get the centroid for the face.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Getting centroid for {self.id}.")
+        response = self._grpc_client.services.faces.get_centroid(id=self.id)
+        return response.get("centroid")
+
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:
         """Get the tight bounding box for the face.
