@@ -61,7 +61,6 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
-    from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.designcurve import DesignCurve
     from ansys.geometry.core.designer.designpoint import DesignPoint
     from ansys.geometry.core.designer.edge import Edge
@@ -669,8 +668,8 @@ class GeometryCommands:
 
         check_type_all_elements_in_iterable(selection, Face)
 
-        for object in selection:
-            object.body._reset_tessellation_cache()
+        for face in selection:
+            face.body._reset_tessellation_cache()
 
         if two_dimensional and None in (count_y, pitch_y):
             raise ValueError(
@@ -692,7 +691,7 @@ class GeometryCommands:
             pitch_y = Distance(0)
 
         result = self._grpc_client.services.patterns.create_linear_pattern(
-            selection_ids=[object.id for object in selection],
+            selection_ids=[face.id for face in selection],
             linear_direction_id=linear_direction.id,
             count_x=count_x,
             pitch_x=pitch_x,

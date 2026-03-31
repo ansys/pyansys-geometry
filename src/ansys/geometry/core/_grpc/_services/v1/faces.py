@@ -697,8 +697,6 @@ class GRPCFacesServiceV1(GRPCFacesService):
 
     @protect_grpc
     def get_centroid(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
 
