@@ -103,3 +103,8 @@ class GRPCPrepareToolsService(ABC):  # pragma: no cover
     def detect_sweepable_bodies(self, **kwargs) -> dict:
         """Check if body is sweepable."""
         pass
+
+    @abstractmethod
+    def find_mappable_faces(self, **kwargs) -> dict:
+        """Find mappable faces from the given set of faces."""
+        pass

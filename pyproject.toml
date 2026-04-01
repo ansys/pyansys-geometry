@@ -25,7 +25,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-  "ansys-api-discovery==1.0.33",
+  "ansys-api-discovery==1.0.34",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -81,7 +81,7 @@ doc = [
   "notebook==7.5.5",
   "numpydoc==1.10.0",
   "pdf2image==1.17.0",
-  "quarto-cli==1.8.27",
+  "quarto-cli==1.9.36",
   "sphinx==9.1.0",
   "sphinx-autodoc-typehints==3.1.0",
   "sphinx-copybutton==0.5.2",
@@ -110,7 +110,7 @@ general-all = [
   "semver==3.0.4",
   "six==1.17.0",
   "trame-vtk==2.10.2",
-  "vtk==9.6.0",
+  "vtk==9.6.1",
 ]
 tests = [
   { include-group = "general-all" },
@@ -118,7 +118,7 @@ tests = [
 ]
 tests-minimal = [
   "pytest==9.0.2",
-  "pytest-cov==7.0.0",
+  "pytest-cov==7.1.0",
   "pytest-pyvista==0.3.2",
   "pyyaml==6.0.3",
 ]
