@@ -2193,6 +2193,7 @@ list[TrimmedCurve]
         Warnings
         --------
         This method is only available starting on Ansys release 25R2.
+        ``TrimmedCurve`` trajectories are not supported until Ansys release 27R1.
         """
         from ansys.geometry.core.designer.designcurve import DesignCurve
         from ansys.geometry.core.designer.designpoint import DesignPoint
@@ -2213,10 +2214,11 @@ list[TrimmedCurve]
                 "Provide either entity-based trajectories or TrimmedCurve trajectories, not both."
             )
 
-        if has_trimmed and self._grpc_client.services.version == GeometryApiProtos.V0:
+        if has_trimmed and self._grpc_client.backend_version < (27, 1, 0):
             raise ValueError(
-                "TrimmedCurve trajectories are not supported when using the v0 protocol. "
-                "Switch to the v1 protocol or use Edge/DesignCurve trajectories instead."
+                "TrimmedCurve trajectories are not supported when using a backend "
+                "version less than 27R1. Please upgrade the backend or use Edge or "
+                "DesignCurve trajectories instead."
             )
 
         distance = distance if isinstance(distance, Distance) else Distance(distance)

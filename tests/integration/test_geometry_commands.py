@@ -25,7 +25,6 @@ import numpy as np
 from pint import Quantity
 import pytest
 
-from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.designer.geometry_commands import (
     DraftSide,
     ExtrudeType,
@@ -1986,14 +1985,14 @@ def test_sweep_points_trimmed_curve_trajectories(modeler: Modeler):
       2. TrimmedCurve wrapped in a list (list code path).
       3. Mixing TrimmedCurve with an Edge raises ValueError.
 
-    On the v0 protocol TrimmedCurve trajectories are unsupported; sub-cases 1
-    and 2 assert a ValueError with an appropriate message in that case.
+    TrimmedCurve trajectories require backend version 27R1 or later; sub-cases
+    1 and 2 assert a ValueError with an appropriate message on older backends.
     """
     from ansys.geometry.core.designer.designcurve import DesignCurve
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
     from ansys.geometry.core.shapes.parameterization import Interval
 
-    is_v0 = modeler._grpc_client.services.version == GeometryApiProtos.V0
+    is_pre_271 = modeler._grpc_client.backend_version < (27, 1, 0)
 
     traj_line = Line(Point3D([0, 0, 0]), UnitVector3D([1, 0, 0]))
     tc = TrimmedCurve(
@@ -2007,8 +2006,8 @@ def test_sweep_points_trimmed_curve_trajectories(modeler: Modeler):
     # --- scalar TrimmedCurve ---
     design1 = modeler.create_design("sweep_points_tc_scalar")
     dp1 = design1.add_design_point("sweep_pt", Point3D([0, 0, 0], UNITS.m))
-    if is_v0:
-        with pytest.raises(ValueError, match="not supported when using the v0 protocol"):
+    if is_pre_271:
+        with pytest.raises(ValueError, match="not supported when using a backend"):
             modeler.geometry_commands.sweep_points(dp1, tc, Distance(0.5, UNITS.m))
     else:
         curves1 = modeler.geometry_commands.sweep_points(dp1, tc, Distance(0.5, UNITS.m))
@@ -2021,8 +2020,8 @@ def test_sweep_points_trimmed_curve_trajectories(modeler: Modeler):
     # --- list[TrimmedCurve] (same geometry, exercises the list input path) ---
     design2 = modeler.create_design("sweep_points_tc_list")
     dp2 = design2.add_design_point("sweep_pt", Point3D([0, 0, 0], UNITS.m))
-    if is_v0:
-        with pytest.raises(ValueError, match="not supported when using the v0 protocol"):
+    if is_pre_271:
+        with pytest.raises(ValueError, match="not supported when using a backend"):
             modeler.geometry_commands.sweep_points(dp2, [tc], Distance(0.5, UNITS.m))
     else:
         curves2 = modeler.geometry_commands.sweep_points(dp2, [tc], Distance(0.5, UNITS.m))
@@ -2032,7 +2031,7 @@ def test_sweep_points_trimmed_curve_trajectories(modeler: Modeler):
         assert np.allclose(curves2[0].start, Point3D([0, 0, 0]), atol=1e-6)
         assert np.allclose(curves2[0].end, Point3D([0.5, 0, 0]), atol=1e-6)
 
-    # --- mixed TrimmedCurve + Edge raises ValueError (on both v0 and v1) ---
+    # --- mixed TrimmedCurve + Edge raises ValueError (always) ---
     design3 = modeler.create_design("sweep_points_tc_mixed_error")
     box = design3.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
     edge = box.faces[0].edges[0]
