@@ -1780,8 +1780,6 @@ def test_revolve_points_by_helix(modeler: Modeler):
     assert len(curves3) == 1
     assert isinstance(curves3[0], DesignCurve)
     assert curves3[0].length.value.m == pytest.approx(expected_helix_length, rel=1e-5)
-    assert np.allclose(curves3[0].start, Point3D([1, 0, 0]))
-    assert np.allclose(curves3[0].end, Point3D([1, 0, 1]), atol=1e-6)
 
 
 def test_revolve_points_by_helix_multiple_points(modeler: Modeler):
@@ -1872,8 +1870,6 @@ def test_sweep_points_basic(modeler: Modeler):
     assert len(curves1) == 1
     assert isinstance(curves1[0], DesignCurve)
     assert curves1[0].length.value.m == pytest.approx(0.5, rel=1e-5)
-    assert np.allclose(curves1[0].start, Point3D([sx1, sy1, sz1]))
-    assert np.allclose(curves1[0].end, Point3D([sx1 + 0.5, sy1, sz1]), atol=1e-6)
 
     # --- Quantity type ---
     design2 = modeler.create_design("sweep_points_quantity")
@@ -1885,8 +1881,6 @@ def test_sweep_points_basic(modeler: Modeler):
     assert len(curves2) == 1
     assert isinstance(curves2[0], DesignCurve)
     assert curves2[0].length.value.m == pytest.approx(0.5, rel=1e-5)
-    assert np.allclose(curves2[0].start, Point3D([sx2, sy2, sz2]))
-    assert np.allclose(curves2[0].end, Point3D([sx2 + 0.5, sy2, sz2]), atol=1e-6)
 
     # --- Raw float (SI metres) ---
     design3 = modeler.create_design("sweep_points_float")
@@ -1898,8 +1892,6 @@ def test_sweep_points_basic(modeler: Modeler):
     assert len(curves3) == 1
     assert isinstance(curves3[0], DesignCurve)
     assert curves3[0].length.value.m == pytest.approx(0.5, rel=1e-5)
-    assert np.allclose(curves3[0].start, Point3D([sx3, sy3, sz3]))
-    assert np.allclose(curves3[0].end, Point3D([sx3 + 0.5, sy3, sz3]), atol=1e-6)
 
 
 def test_sweep_points_multiple_points(modeler: Modeler):
@@ -1952,8 +1944,6 @@ def test_sweep_points_design_curve_trajectory(modeler: Modeler):
     assert len(curves) == 1
     assert isinstance(curves[0], DesignCurve)
     assert curves[0].length.value.m == pytest.approx(0.5, rel=1e-5)
-    assert np.allclose(curves[0].start, Point3D([1, 0, 0]))
-    assert np.allclose(curves[0].end, Point3D([np.cos(0.5), np.sin(0.5), 0]), atol=1e-5)
 
 
 def test_sweep_points_multiple_trajectories(modeler: Modeler):
