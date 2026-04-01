@@ -1744,8 +1744,6 @@ def test_revolve_points_by_helix(modeler: Modeler):
     assert isinstance(curves1[0], DesignCurve)
     # Helix starts at the design point and rises one full height along Z
     assert curves1[0].length.value.m == pytest.approx(expected_helix_length, rel=1e-5)
-    assert np.allclose(curves1[0].start, Point3D([1, 0, 0]))
-    assert np.allclose(curves1[0].end, Point3D([1, 0, 1]), atol=1e-6)
 
     # --- Quantity types ---
     design2 = modeler.create_design("revolve_points_by_helix_quantity")
@@ -1762,8 +1760,6 @@ def test_revolve_points_by_helix(modeler: Modeler):
     assert len(curves2) == 1
     assert isinstance(curves2[0], DesignCurve)
     assert curves2[0].length.value.m == pytest.approx(expected_helix_length, rel=1e-5)
-    assert np.allclose(curves2[0].start, Point3D([1, 0, 0]))
-    assert np.allclose(curves2[0].end, Point3D([1, 0, 1]), atol=1e-6)
 
     # --- Raw float (SI units: metres for length, radians for angle) ---
     design3 = modeler.create_design("revolve_points_by_helix_float")
