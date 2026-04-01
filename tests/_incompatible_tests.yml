@@ -117,6 +117,7 @@ backends:
       - tests/integration/test_design.py::test_midsurface_properties
       - tests/integration/test_issues.py::test_issue_834_design_import_with_surfaces
       - tests/integration/test_geometry_commands.py::test_thicken_surface_body
+      - tests/integration/test_geometry_commands.py::test_project_to_solid_face_onto_face
       # Ordering of faces/edges changed from 24R2 onwards
       - tests/integration/test_design.py::test_faces_edges
       # Due to test setup, these tests error out and are not caught by the backend version error

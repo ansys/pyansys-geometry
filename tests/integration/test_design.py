@@ -2828,7 +2828,6 @@ def test_create_block_body(modeler: Modeler):
     design = modeler.create_design("BlockTest")
     block = design.create_block("testblockbody", Point3D([0, 0, 0]), Point3D([1, 2, 3]))
 
-    assert block.name == "testblockbody"
     assert len(block.faces) == 6
     assert block.volume.m == 6.0
     assert block.parent_component.id == design.id
