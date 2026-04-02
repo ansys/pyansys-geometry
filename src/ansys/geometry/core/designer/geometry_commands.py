@@ -62,6 +62,8 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+    from ansys.geometry.core.designer.designpoint import DesignPoint
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
 
@@ -1982,4 +1984,168 @@ class GeometryCommands:
             return get_bodies_from_ids(parent_design, result_bodies)
         else:
             self._grpc_client.log.info("Failed to detach faces.")
+            return []
+
+    @min_backend_version(25, 2, 0)
+    def revolve_points(
+        self,
+        selection: Union["DesignPoint", list["DesignPoint"]],
+        axis: Union["Edge", Line],
+        angle: Angle | Quantity | Real,
+    ) -> list["DesignCurve"]:
+        """Revolve design points around an axis to create curves.
+
+        Parameters
+        ----------
+        selection : DesignPoint | list[DesignPoint]
+            Design point(s) to revolve.
+        axis : Edge | Line
+            Axis of revolution.
+        angle : Angle | Quantity | Real
+            Angular distance to revolve.
+
+        Returns
+        -------
+        list[DesignCurve]
+            Curves created by the revolve operation.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
+        from ansys.geometry.core.designer.designcurve import DesignCurve
+        from ansys.geometry.core.designer.designpoint import DesignPoint
+        from ansys.geometry.core.designer.edge import CurveType, Edge
+
+        selection: list[DesignPoint] = selection if isinstance(selection, list) else [selection]
+        check_type_all_elements_in_iterable(selection, DesignPoint)
+
+        angle = angle if isinstance(angle, Angle) else Angle(angle)
+
+        if isinstance(axis, Edge):
+            if axis.curve_type != CurveType.CURVETYPE_LINE:
+                raise ValueError("Only edges that are lines can be used as the revolve axis.")
+            axis = Line(axis.start, UnitVector3D.from_points(axis.start, axis.end))
+
+        result = self._grpc_client._services.points.revolve_points(
+            selection_ids=[dp.id for dp in selection],
+            axis=axis,
+            angle=angle,
+        )
+
+        design = get_design_from_component(selection[0].parent_component)
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+
+            all_comps = {c.id: c for c in design._get_all_components()}
+            all_comps[design.id] = design
+            created_curves = []
+            for curve_info in result.get("created_curves", []):
+                parent: Component = all_comps.get(curve_info.get("parent_id"), design)
+                dc = DesignCurve(
+                    curve_info.get("id"),
+                    curve_info.get("name"),
+                    curve_info.get("length"),
+                    curve_info.get("start_point"),
+                    curve_info.get("end_point"),
+                    self._grpc_client,
+                    parent,
+                )
+                parent._design_curves.append(dc)
+                created_curves.append(dc)
+            return created_curves
+        else:
+            self._grpc_client.log.info("Failed to revolve design points.")
+            return []
+
+    @min_backend_version(25, 2, 0)
+    def revolve_points_by_helix(
+        self,
+        selection: Union["DesignPoint", list["DesignPoint"]],
+        axis: Line,
+        height: Distance | Quantity | Real,
+        pitch: Distance | Quantity | Real,
+        taper_angle: Angle | Quantity | Real,
+        right_handed: bool,
+        pull_symmetric: bool,
+    ) -> list["DesignCurve"]:
+        """Revolve design points around an axis in a helix shape to create curves.
+
+        Parameters
+        ----------
+        selection : DesignPoint | list[DesignPoint]
+            Design point(s) to revolve.
+        axis : Line
+            Axis of the helix.
+        height : Distance | Quantity | Real
+            Height of the helix.
+        pitch : Distance | Quantity | Real
+            Pitch of the helix (distance between turns).
+        taper_angle : Angle | Quantity | Real
+            Taper angle of the helix.
+        right_handed : bool
+            ``True`` for a right-handed helix, ``False`` for left-handed.
+        pull_symmetric : bool
+            ``True`` to pull symmetrically on both sides, ``False`` for one side.
+
+        Returns
+        -------
+        list[DesignCurve]
+            Curves created by the helix revolve operation.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
+        from ansys.geometry.core.designer.designcurve import DesignCurve
+        from ansys.geometry.core.designer.designpoint import DesignPoint
+
+        selection: list[DesignPoint] = selection if isinstance(selection, list) else [selection]
+        check_type_all_elements_in_iterable(selection, DesignPoint)
+
+        height = height if isinstance(height, Distance) else Distance(height)
+        pitch = pitch if isinstance(pitch, Distance) else Distance(pitch)
+        taper_angle = taper_angle if isinstance(taper_angle, Angle) else Angle(taper_angle)
+
+        result = self._grpc_client._services.points.revolve_points_by_helix(
+            selection_ids=[dp.id for dp in selection],
+            axis=axis,
+            height=height,
+            pitch=pitch,
+            taper_angle=taper_angle,
+            right_handed=right_handed,
+            pull_symmetric=pull_symmetric,
+        )
+
+        design = get_design_from_component(selection[0].parent_component)
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+
+            all_comps = {c.id: c for c in design._get_all_components()}
+            all_comps[design.id] = design
+            created_curves = []
+            for curve_info in result.get("created_curves", []):
+                parent: Component = all_comps.get(curve_info.get("parent_id"), design)
+                dc = DesignCurve(
+                    curve_info.get("id"),
+                    curve_info.get("name"),
+                    curve_info.get("length"),
+                    curve_info.get("start_point"),
+                    curve_info.get("end_point"),
+                    self._grpc_client,
+                    parent,
+                )
+                parent._design_curves.append(dc)
+                created_curves.append(dc)
+            return created_curves
+        else:
+            self._grpc_client.log.info("Failed to revolve design points by helix.")
             return []
