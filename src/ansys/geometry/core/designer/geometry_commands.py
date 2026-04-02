@@ -2316,7 +2316,7 @@ class GeometryCommands:
                 design._update_design_inplace()
         return result.get("success")
 
-    @min_backend_version(25, 1, 0)
+    @min_backend_version(27, 1, 0)
     def project_to_solid(
         self,
         selection: Union["Face", list["Face"], "Edge", list["Edge"]],
