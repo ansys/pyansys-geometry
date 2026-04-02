@@ -53,3 +53,8 @@ class GRPCPointsService(ABC):  # pragma: no cover
     def revolve_points_by_helix(self, **kwargs) -> dict:
         """Revolve design points around an axis in a helix shape to create curves."""
         pass
+
+    @abstractmethod
+    def sweep_points(self, **kwargs) -> dict:
+        """Sweep design points along a trajectory to create curves."""
+        pass
