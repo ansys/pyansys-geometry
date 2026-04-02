@@ -313,6 +313,6 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
 
         # Return the response - formatted as a dictionary
         return {
-            "created_edges": [edge.id for edge in resp.created_edges],
+            "modified_bodies": [edge.id for edge in resp.modified_bodies],
             "success": resp.success,
         }

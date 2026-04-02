@@ -2240,7 +2240,12 @@ class GeometryCommands:
             reference=reference,
         )
 
-        success = result.get("success") if GeometryApiProtos.V0 else result.get("success")
+        success = (
+            len(result.get("modified_bodies", [])) > 0
+            if self._grpc_client.services.version == GeometryApiProtos.V0
+            else result.get("success")
+        )
+
         if success:
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
                 design._update_from_tracker(result.get("tracked_response"))
