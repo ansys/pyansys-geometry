@@ -25,6 +25,7 @@ import numpy as np
 from pint import Quantity
 import pytest
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.designer.geometry_commands import (
     DraftSide,
     ExtrudeType,
@@ -1992,7 +1993,7 @@ def test_sweep_points_trimmed_curve_trajectories(modeler: Modeler):
     # --- scalar TrimmedCurve ---
     design1 = modeler.create_design("sweep_points_tc_scalar")
     dp1 = design1.add_design_point("sweep_pt", Point3D([0, 0, 0], UNITS.m))
-    if is_pre_271:
+    if is_pre_271 or modeler._grpc_client.services.version == GeometryApiProtos.V0:
         with pytest.raises(ValueError, match="not supported when using a backend"):
             modeler.geometry_commands.sweep_points(dp1, tc, Distance(0.5, UNITS.m))
     else:
@@ -2006,7 +2007,7 @@ def test_sweep_points_trimmed_curve_trajectories(modeler: Modeler):
     # --- list[TrimmedCurve] (same geometry, exercises the list input path) ---
     design2 = modeler.create_design("sweep_points_tc_list")
     dp2 = design2.add_design_point("sweep_pt", Point3D([0, 0, 0], UNITS.m))
-    if is_pre_271:
+    if is_pre_271 or modeler._grpc_client.services.version == GeometryApiProtos.V0:
         with pytest.raises(ValueError, match="not supported when using a backend"):
             modeler.geometry_commands.sweep_points(dp2, [tc], Distance(0.5, UNITS.m))
     else:

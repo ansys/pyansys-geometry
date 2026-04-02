@@ -28,6 +28,7 @@ from beartype import beartype as check_input_types
 from pint import Quantity
 
 import ansys.geometry.core as pyansys_geo
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
@@ -2213,10 +2214,13 @@ list[TrimmedCurve]
                 "Provide either entity-based trajectories or TrimmedCurve trajectories, not both."
             )
 
-        if has_trimmed and self._grpc_client.backend_version < (27, 1, 0):
+        if has_trimmed and (
+            self._grpc_client.backend_version < (27, 1, 0)
+            or self._grpc_client.services.version == GeometryApiProtos.V0
+        ):
             raise ValueError(
                 "TrimmedCurve trajectories are not supported when using a backend "
-                "version less than 27R1. Please upgrade the backend or use Edge or "
+                "version less than 27R1 or v0 protos. Please upgrade the backend or use Edge or "
                 "DesignCurve trajectories instead."
             )
 
