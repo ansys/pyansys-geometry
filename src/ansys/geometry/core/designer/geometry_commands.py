@@ -2171,8 +2171,7 @@ class GeometryCommands:
         ----------
         selection : DesignPoint | list[DesignPoint]
             Design point(s) to sweep.
-        trajectories : Edge | DesignCurve | list[Edge | DesignCurve] | TrimmedCurve | \
-list[TrimmedCurve]
+        trajectories : Edge | DesignCurve | list[Edge | DesignCurve] | TrimmedCurve | list[TrimmedCurve]
             Trajectory curve(s) to sweep along. Provide either a list of
             ``Edge`` / ``DesignCurve`` objects (resolved by entity ID) **or** a
             list of ``TrimmedCurve`` objects (sent as explicit geometry). These
@@ -2193,8 +2192,9 @@ list[TrimmedCurve]
         Warnings
         --------
         This method is only available starting on Ansys release 25R2.
-        ``TrimmedCurve`` trajectories are not supported until Ansys release 27R1.
-        """
+        ``TrimmedCurve`` trajectories require Ansys release 27R1 and are not
+        supported when using v0 protos.
+        """  # noqa: E501
         from ansys.geometry.core.designer.designcurve import DesignCurve
         from ansys.geometry.core.designer.designpoint import DesignPoint
         from ansys.geometry.core.designer.edge import Edge

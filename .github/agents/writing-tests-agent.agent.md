@@ -75,7 +75,7 @@ If the failure requires server-side changes, report this to the user.
 Kill the running instance and relaunch so the client can connect with the v0 protocol:
 
 ```powershell
-Stop-Process -Name "Presentation.ApiServerCoreService" -Force
+Stop-Process -Name "Presentation.ApiServerCoreService" -Force -ErrorAction SilentlyContinue
 Start-Sleep -Seconds 1
 Start-Process "$env:ANSYS_GEOMETRY_SERVICE_ROOT\Presentation.ApiServerCoreService.exe"
 Start-Sleep -Seconds 5
