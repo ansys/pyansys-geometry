@@ -2187,6 +2187,116 @@ class GeometryCommands:
             return []
 
     @min_backend_version(25, 2, 0)
+    def sweep_points(
+        self,
+        selection: Union["DesignPoint", list["DesignPoint"]],
+        trajectories: Union[
+            "Edge",
+            "DesignCurve",
+            "TrimmedCurve",
+            list[Union["Edge", "DesignCurve"]],
+            list["TrimmedCurve"],
+        ],
+        distance: Distance | Quantity | Real,
+    ) -> list["DesignCurve"]:
+        """Sweep design points along a trajectory to create curves.
+
+        Parameters
+        ----------
+        selection : DesignPoint | list[DesignPoint]
+            Design point(s) to sweep.
+        trajectories : Edge | DesignCurve | list[Edge | DesignCurve] | TrimmedCurve | list[TrimmedCurve]
+            Trajectory curve(s) to sweep along. Provide either a list of
+            ``Edge`` / ``DesignCurve`` objects (resolved by entity ID) **or** a
+            list of ``TrimmedCurve`` objects (sent as explicit geometry). These
+            two types of trajectory are mutually exclusive and cannot be mixed.
+        distance : Distance | Quantity | Real
+            Distance to sweep the points.
+
+        Returns
+        -------
+        list[DesignCurve]
+            Curves created by the sweep operation.
+
+        Raises
+        ------
+        ValueError
+            If ``trajectories`` mixes ``TrimmedCurve`` with ``Edge`` or ``DesignCurve``.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        ``TrimmedCurve`` trajectories require Ansys release 27R1 and are not
+        supported when using v0 protos.
+        """  # noqa: E501
+        from ansys.geometry.core.designer.designcurve import DesignCurve
+        from ansys.geometry.core.designer.designpoint import DesignPoint
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+
+        selection: list[DesignPoint] = selection if isinstance(selection, list) else [selection]
+        check_type_all_elements_in_iterable(selection, DesignPoint)
+
+        trajectories = trajectories if isinstance(trajectories, list) else [trajectories]
+        check_type_all_elements_in_iterable(trajectories, (Edge, DesignCurve, TrimmedCurve))
+
+        has_trimmed = any(isinstance(t, TrimmedCurve) for t in trajectories)
+        has_entity = any(isinstance(t, (Edge, DesignCurve)) for t in trajectories)
+        if has_trimmed and has_entity:
+            raise ValueError(
+                "trajectories cannot mix TrimmedCurve with Edge or DesignCurve. "
+                "Provide either entity-based trajectories or TrimmedCurve trajectories, not both."
+            )
+
+        if has_trimmed and (
+            self._grpc_client.backend_version < (27, 1, 0)
+            or self._grpc_client.services.version == GeometryApiProtos.V0
+        ):
+            raise ValueError(
+                "TrimmedCurve trajectories are not supported when using a backend "
+                "version less than 27R1 or v0 protos. Please upgrade the backend or use Edge or "
+                "DesignCurve trajectories instead."
+            )
+
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
+        result = self._grpc_client._services.points.sweep_points(
+            selection_ids=[dp.id for dp in selection],
+            trajectory_ids=[] if has_trimmed else [traj.id for traj in trajectories],
+            distance=distance,
+            trajectory_curves=trajectories if has_trimmed else [],
+        )
+
+        design = get_design_from_component(selection[0].parent_component)
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+
+            all_comps = {c.id: c for c in design._get_all_components()}
+            all_comps[design.id] = design
+            created_curves = []
+            for curve_info in result.get("created_curves", []):
+                parent: Component = all_comps.get(curve_info.get("parent_id"), design)
+                dc = DesignCurve(
+                    curve_info.get("id"),
+                    curve_info.get("name"),
+                    curve_info.get("length"),
+                    curve_info.get("start_point"),
+                    curve_info.get("end_point"),
+                    self._grpc_client,
+                    parent,
+                )
+                parent._design_curves.append(dc)
+                created_curves.append(dc)
+            return created_curves
+        else:
+            self._grpc_client.log.info("Failed to sweep design points.")
+            return []
+
+    @min_backend_version(25, 2, 0)
     def split_edge(
         self,
         edge: "Edge",
