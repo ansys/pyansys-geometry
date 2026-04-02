@@ -1464,6 +1464,7 @@ class GRPCBodyServiceV1(GRPCBodyService):
             "centroid": from_grpc_point_to_point3d(response.centroid),
         }
 
+    @protect_grpc
     def create_block_body(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.geometry.body_pb2 import CreateBlockBodyRequest
 

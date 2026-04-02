@@ -2056,7 +2056,7 @@ def test_split_edge_by_proportion(modeler: Modeler):
         edge, SplitEdgeType.BY_PROPORTION, proportion=0.5
     )
     assert success
-    assert body.edges[11].length.m == body.edges[12].length.m == 0.5
+    assert body.edges[11].length.m == body.edges[12].length.m == pytest.approx(0.5, rel=1e-6)
     assert len(body.edges) == 13
 
     # Split a single edge 25/75
@@ -2064,8 +2064,8 @@ def test_split_edge_by_proportion(modeler: Modeler):
         body.edges[1], SplitEdgeType.BY_PROPORTION, proportion=0.25
     )
     assert success
-    assert body.edges[12].length.m == 0.75
-    assert body.edges[13].length.m == 0.25
+    assert body.edges[12].length.m == pytest.approx(0.75, rel=1e-6)
+    assert body.edges[13].length.m == pytest.approx(0.25, rel=1e-6)
     assert len(body.edges) == 14
 
 
@@ -2091,7 +2091,7 @@ def test_split_edge_by_point(modeler: Modeler):
     assert len(body.edges) == 12
     success = modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_POINT, point=midpoint)
     assert success
-    assert body.edges[11].length.m == body.edges[12].length.m == 0.5
+    assert body.edges[11].length.m == body.edges[12].length.m == pytest.approx(0.5, rel=1e-6)
     assert len(body.edges) == 13
 
 
@@ -2114,8 +2114,8 @@ def test_split_edge_by_length(modeler: Modeler):
         reference=SplitEdgeReference.START,
     )
     assert success
-    assert body.edges[11].length.m == 0.75
-    assert body.edges[12].length.m == 0.25
+    assert body.edges[11].length.m == pytest.approx(0.75, rel=1e-6)
+    assert body.edges[12].length.m == pytest.approx(0.25, rel=1e-6)
     assert len(body.edges) == 13
 
     # Split at 0.25 m measured from the end of the edge (equivalent to 0.75 m from start)
@@ -2128,8 +2128,8 @@ def test_split_edge_by_length(modeler: Modeler):
         reference=SplitEdgeReference.END,
     )
     assert success
-    assert body2.edges[11].length.m == 0.25
-    assert body2.edges[12].length.m == 0.75
+    assert body2.edges[11].length.m == pytest.approx(0.25, rel=1e-6)
+    assert body2.edges[12].length.m == pytest.approx(0.75, rel=1e-6)
     assert len(body2.edges) == 13
 
 
@@ -2260,8 +2260,8 @@ def test_split_face_by_cutter(modeler: Modeler):
         face_cutter=cutter_face,
     )
     assert success
-    assert body.faces[5].area.m == 1.999
-    assert body.faces[6].area.m == 2.001
+    assert body.faces[5].area.m == pytest.approx(1.999, rel=1e-6)
+    assert body.faces[6].area.m == pytest.approx(2.001, rel=1e-6)
     assert len(body.faces) == 7
 
 

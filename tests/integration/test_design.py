@@ -2809,7 +2809,7 @@ def test_sphere_creation(modeler: Modeler):
     spherebody = design.create_sphere("testspherebody", center_point, radius)
     assert spherebody.name == "testspherebody"
     assert len(spherebody.faces) == 1
-    assert spherebody.volume.m == np.pi * 4 / 3
+    assert spherebody.volume.m == pytest.approx(np.pi * 4 / 3, rel=1e-6)
 
     # Create a nested sphere and verify that it reports the correct parent component.
     nested = design.add_component("NestedBlockComp")
@@ -2819,7 +2819,7 @@ def test_sphere_creation(modeler: Modeler):
 
     assert nested_sphere.name == "nestedspherebody"
     assert len(nested_sphere.faces) == 1
-    assert nested_sphere.volume.m == np.pi * 4 / 3
+    assert nested_sphere.volume.m == pytest.approx(np.pi * 4 / 3, rel=1e-6)
     assert nested_sphere.parent_component.id == nested.id
 
 

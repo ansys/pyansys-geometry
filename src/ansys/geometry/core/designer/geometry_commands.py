@@ -2306,21 +2306,21 @@ class GeometryCommands:
         length: Distance | Quantity | Real | None = None,
         reference: SplitEdgeReference = SplitEdgeReference.START,
     ) -> bool:
-        """Split edges by proportions, points, or lengths.
+        """Split an edge by a proportion, a point, or a length.
 
         Parameters
         ----------
-        edges : Edge
-            Edge(s) to split.
+        edge : Edge
+            Edge to split.
         split_type : SplitEdgeType
             Type of split to perform.
         proportion : float, default: None
             Proportion to split the edge by. Value should be between 0 and 1 and will be
-            applied along the edge. Required if ``split_type`` is ``SplitEdgeType.PROPORTIONS``.
+            applied along the edge. Required if ``split_type`` is ``SplitEdgeType.BY_PROPORTION``.
         point : Point3D, default: None
-            Point to split the edge by. Required if ``split_type`` is ``SplitEdgeType.POINTS``.
+            Point to split the edge by. Required if ``split_type`` is ``SplitEdgeType.BY_POINT``.
         length : Distance | Quantity | Real, default: None
-            Length to split the edge by. Required if ``split_type`` is ``SplitEdgeType.LENGTHS``.
+            Length to split the edge by. Required if ``split_type`` is ``SplitEdgeType.BY_LENGTH``.
         reference : SplitEdgeReference, default: SplitEdgeReference.START
             Reference point for splitting by lengths. Ignored for other split types.
 
@@ -2340,6 +2340,9 @@ class GeometryCommands:
             raise ValueError("Point must be provided when splitting by points.")
         elif split_type == SplitEdgeType.BY_LENGTH and length is None:
             raise ValueError("Length must be provided when splitting by lengths.")
+
+        if length is not None:
+            length = length if isinstance(length, Distance) else Distance(length)
 
         result = self._grpc_client._services.edges.split_edges(
             edge_id=edge.id,
@@ -2384,18 +2387,22 @@ class GeometryCommands:
         split_type : SplitFaceType
             Type of split to perform.
         split_parameter : Point3D, default: None
-            Parameter to split the face by. Required if ``split_type`` is ``SplitFaceType.POINT``.
+            Parameter to split the face by. Required if ``split_type`` is
+            ``SplitFaceType.BY_PARAMETER``.
         split_start : Point3D, default: None
-            Start point to split the face by. Required if ``split_type`` is ``SplitFaceType.CURVE``.
+            Start point to split the face by. Required if ``split_type`` is
+            ``SplitFaceType.BY_TWO_POINTS``.
         split_end : Point3D, default: None
-            End point to split the face by. Required if ``split_type`` is ``SplitFaceType.CURVE``.
+            End point to split the face by. Required if ``split_type`` is
+            ``SplitFaceType.BY_TWO_POINTS``.
         face_cutter : Face, default: None
             Face to split the original face with. Required if ``split_type`` is
-            ``SplitFaceType.FACE``.
+            ``SplitFaceType.BY_CUTTER``.
         split_curves : list[TrimmedCurve], default: None
-            Curves to split the face by. Required if ``split_type`` is ``SplitFaceType.CURVE``.
+            Curves to split the face by. Required if ``split_type`` is ``SplitFaceType.BY_CURVES``.
         parameter_type : SplitFaceParameterType, default: SplitFaceParameterType.UV
-            Type of the split parameter. Required if ``split_type`` is ``SplitFaceType.PARAMETER``.
+            Type of the split parameter. Required if ``split_type`` is
+            ``SplitFaceType.BY_PARAMETER``.
 
         Returns
         -------
@@ -2456,7 +2463,7 @@ class GeometryCommands:
         from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
 
-        selection: list[Face, Edge] = selection if isinstance(selection, list) else [selection]
+        selection: list[Face | Edge] = selection if isinstance(selection, list) else [selection]
         check_type_all_elements_in_iterable(selection, (Face, Edge))
 
         target_faces: list[Face] = (
