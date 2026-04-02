@@ -903,7 +903,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
-    @min_backend_version(25, 1, 0)
+    @min_backend_version(27, 1, 0)
     def create_block(self, name: str, start: Point3D, end: Point3D) -> Body:
         """Create a block body defined by the start and end points.
 
@@ -923,8 +923,7 @@ class Component:
 
         Warnings
         --------
-        This method is only available starting on Ansys release 25R1.
-        The name and parent will be ignored prior to Ansys release 27R1.
+        This method is only available starting on Ansys release 27R1.
         """
         self._grpc_client.log.debug(f"Creating a block body on {self.id}.")
         response = self._grpc_client.services.bodies.create_block_body(
