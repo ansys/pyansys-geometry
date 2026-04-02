@@ -28,6 +28,7 @@ from beartype import beartype as check_input_types
 from pint import Quantity
 
 import ansys.geometry.core as pyansys_geo
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
@@ -2185,7 +2186,7 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to revolve design points by helix.")
             return []
 
-    @min_backend_version(25, 1, 0)
+    @min_backend_version(25, 2, 0)
     def split_edge(
         self,
         edge: "Edge",
@@ -2239,14 +2240,15 @@ class GeometryCommands:
             reference=reference,
         )
 
-        if result.get("success"):
+        success = result.get("success") if GeometryApiProtos.V0 else result.get("success")
+        if success:
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
                 design._update_from_tracker(result.get("tracked_response"))
             else:
                 design._update_design_inplace()
-        return result.get("success")
+        return success
 
-    @min_backend_version(25, 1, 0)
+    @min_backend_version(25, 2, 0)
     def split_face(
         self,
         face: "Face",
