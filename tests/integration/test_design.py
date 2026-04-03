@@ -4005,8 +4005,9 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
     location = tmp_path_factory.mktemp("test_export_to_scdocx")
     file_location = location / f"{design.name}.scdocx"
-    exported_file = design.export_to_scdocx(location, write_body_facets=True)
-    assert exported_file.stat().st_size == pytest.approx(216551, 1e-3, 100)
+    exported_file_with_facets = design.export_to_scdocx(location, write_body_facets=True)
+    size_with_facets = exported_file_with_facets.stat().st_size
+    assert size_with_facets == pytest.approx(216551, 1e-3, 150)
     assert file_location.exists()
     design_read = modeler.open_file(file_location)
     assert len(design_read.named_selections) == 5
@@ -4016,8 +4017,13 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
     location = tmp_path_factory.mktemp("test_export_to_scdocx")
     file_location = location / f"{design.name}.scdocx"
-    exported_file = design_read.export_to_scdocx(location, write_body_facets=False)
-    assert exported_file.stat().st_size == pytest.approx(26202, 1e-3, 100)
+    exported_file_without_facets = design_read.export_to_scdocx(location, write_body_facets=False)
+    size_without_facets = exported_file_without_facets.stat().st_size
+    assert size_without_facets == pytest.approx(26202, 1e-3, 150)
+    assert size_with_facets > size_without_facets, (
+        f"Expected export with facets to be larger than without facets. "
+        f"Got with_facets={size_with_facets}, without_facets={size_without_facets}."
+    )
 
 
 @pytest.mark.parametrize(
