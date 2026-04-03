@@ -4021,8 +4021,8 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     size_without_facets = exported_file_without_facets.stat().st_size
     assert size_without_facets == pytest.approx(26202, 1e-3, 150)
     assert size_with_facets > size_without_facets, (
-    f"Expected export with facets to be larger than without facets. "
-    f"Got with_facets={size_with_facets}, without_facets={size_without_facets}."
+        f"Expected export with facets to be larger than without facets. "
+        f"Got with_facets={size_with_facets}, without_facets={size_without_facets}."
     )
 
 
