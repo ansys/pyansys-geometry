@@ -434,12 +434,15 @@ def convert_opacity_to_hex(opacity: float) -> str:
 
 
 def prepare_file_for_server_upload(file_path: Path) -> Path:
-    """Create a zip file from the given file path.
+    """Create a zip file from the given file path or directory.
+
+    If ``file_path`` is a directory, all files within it are added
+    recursively, preserving their relative paths inside the archive.
 
     Parameters
     ----------
-    file_path : str
-        The path to the file to be zipped.
+    file_path : Path
+        The path to the file or directory to be zipped.
 
     Returns
     -------
@@ -449,21 +452,27 @@ def prepare_file_for_server_upload(file_path: Path) -> Path:
     import tempfile
     from zipfile import ZipFile
 
-    # Create a temporary zip file with the same name as the original file
+    # Create a temporary zip file with the same name as the original file/directory
     temp_dir = Path(tempfile.gettempdir())
-    temp_zip_path = temp_dir / f"{file_path.stem}.zip"
+    temp_zip_path = temp_dir / f"{file_path.name}.zip"
 
     # Create zip archive
     with ZipFile(temp_zip_path, "w") as zipf:
-        # Add the main file
-        zipf.write(file_path, file_path.name)
+        if file_path.is_dir():
+            # Recursively add all files in the directory, preserving relative paths
+            for item in file_path.rglob("*"):
+                if item.is_file():
+                    zipf.write(item, item.relative_to(file_path.parent))
+        else:
+            # Add the main file
+            zipf.write(file_path, file_path.name)
 
-        # If it's an assembly format, add all files from the same directory
-        assembly_extensions = [".CATProduct", ".asm", ".solution", ".sldasm"]
-        if any(ext in str(file_path) for ext in assembly_extensions):
-            dir_path = file_path.parent
-            for file in dir_path.iterdir():
-                if file.is_file() and file != file_path:
-                    zipf.write(file, file.name)
+            # If it's an assembly format, add all files from the same directory
+            assembly_extensions = [".CATProduct", ".asm", ".solution", ".sldasm"]
+            if any(ext in str(file_path) for ext in assembly_extensions):
+                dir_path = file_path.parent
+                for file in dir_path.iterdir():
+                    if file.is_file() and file != file_path:
+                        zipf.write(file, file.name)
 
     return temp_zip_path

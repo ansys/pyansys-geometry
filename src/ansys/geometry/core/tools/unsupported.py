@@ -23,11 +23,15 @@
 
 from dataclasses import dataclass
 from enum import Enum, unique
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import GeometryRuntimeError
-from ansys.geometry.core.misc.auxiliary import get_all_bodies_from_design
+from ansys.geometry.core.misc.auxiliary import (
+    get_all_bodies_from_design,
+    prepare_file_for_server_upload,
+)
 from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
@@ -326,3 +330,71 @@ class UnsupportedCommands:
         )
 
         return changes
+
+    @min_backend_version(27, 1, 0)
+    def run_addin_method(
+        self,
+        addin_name: str,
+        method_name: str,
+        arguments: list | None = None,
+    ) -> None:
+        """Run a method on a previously loaded add-in.
+
+        Parameters
+        ----------
+        addin_name : str
+            Name of the add-in on which to invoke the method. This must match
+            the name used when the add-in was loaded via :meth:`load_addin`.
+        method_name : str
+            Name of the public method to invoke on the add-in instance.
+        arguments : list, optional
+            Arguments to pass to the add-in method.
+
+        Raises
+        ------
+        GeometryRuntimeError
+            If the gRPC call fails (e.g. the add-in is not loaded or the method
+            does not exist).
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.services.unsupported.run_addin_method(
+            addin_name=addin_name,
+            method_name=method_name,
+            arguments=arguments or [],
+        )
+
+    @min_backend_version(27, 1, 0)
+    def load_addin(self, addin_path: Path | str, addin_name: str) -> None:
+        """Load an add-in to the current design.
+
+        Parameters
+        ----------
+        addin_path : str | Path
+            Path to the add-in folder to load. The folder should contain the dll and manifest files
+            for the add-in.
+        addin_name : str
+            Name to identify the add-in instance. This name will be used when invoking methods on the add-in
+            via :meth:`run_addin_method`.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        fp_path = Path(addin_path).resolve()
+
+        try:
+            temp_zip_path = prepare_file_for_server_upload(fp_path)
+
+            # Pass the zip file path to the service
+            self._grpc_client.services.unsupported.load_addin(
+                addin_path=temp_zip_path,
+                addin_name=addin_name,
+            )
+
+        finally:
+            # Clean up the temporary zip file
+            if temp_zip_path.exists():
+                temp_zip_path.unlink()

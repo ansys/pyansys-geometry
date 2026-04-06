@@ -82,6 +82,18 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
         # Return the response - formatted as a dictionary
         return {}
 
+    def load_addin(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.load_addin' is not "
+            "implemented in this protofile version."
+        )
+
+    def run_addin_method(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.run_addin_method' is not "
+            "implemented in this protofile version."
+        )
+
     @protect_grpc
     def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest

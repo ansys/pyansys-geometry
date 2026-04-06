@@ -53,3 +53,13 @@ class GRPCUnsupportedService(ABC):  # pragma: no cover
     def set_single_export_id(self, **kwargs) -> dict:
         """Set a single export ID for an entity."""
         pass
+
+    @abstractmethod
+    def load_addin(self, **kwargs) -> dict:
+        """Load an addin by name."""
+        pass
+
+    @abstractmethod
+    def run_addin_method(self, **kwargs) -> dict:
+        """Run a method on a loaded addin."""
+        pass
