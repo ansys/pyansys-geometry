@@ -2157,31 +2157,20 @@ def to_grpc_any(value) -> "any_pb2.Any":  # noqa: F821
 
     The following conversions are applied automatically:
 
-    - :class:`~ansys.geometry.core.designer.body.Body`,
-      :class:`~ansys.geometry.core.designer.face.Face`, or
-      :class:`~ansys.geometry.core.designer.edge.Edge` — packed as
-      ``EntityIdentifier``.
-    - :class:`~ansys.geometry.core.math.point.Point3D` — packed as ``Point``.
-    - :class:`~ansys.geometry.core.math.vector.UnitVector3D` — packed as
-      ``Direction``.
-    - :class:`~ansys.geometry.core.math.frame.Frame` — packed as ``Frame``.
-    - :class:`~ansys.geometry.core.math.plane.Plane` — packed as ``Plane``.
-    - :class:`~ansys.geometry.core.shapes.curves.line.Line` — packed as
-      ``Line``.
-    - :class:`~ansys.geometry.core.shapes.curves.nurbs.NURBSCurve` — packed
-      as ``NurbsCurve``.
-    - :class:`~ansys.geometry.core.shapes.surfaces.nurbs.NURBSSurface` —
-      packed as ``NurbsSurface``.
-    - :class:`~ansys.geometry.core.shapes.curves.curve.Curve` — packed as
-      ``CurveGeometry``.
-    - :class:`~ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve`
-      — packed as ``TrimmedCurve``.
-    - :class:`~ansys.geometry.core.math.matrix.Matrix44` — packed as
-      ``Matrix``.
-    - :class:`~ansys.geometry.core.misc.measurements.Distance` — packed as
-      ``Quantity``.
-    - ``bool``, ``int``, ``float``, ``str`` — wrapped in the matching protobuf
-      well-known wrapper type.
+    - ``Body``, ``Face``, ``Edge`` — packed as ``EntityIdentifier``.
+    - ``Point3D`` — packed as ``Point``.
+    - ``UnitVector3D`` — packed as ``Direction``.
+    - ``Frame`` — packed as ``Frame``.
+    - ``Plane`` — packed as ``Plane``.
+    - ``Line`` — packed as ``Line``.
+    - ``NURBSCurve`` — packed as ``NurbsCurve``.
+    - ``NURBSSurface`` — packed as ``NurbsSurface``.
+    - ``TrimmedCurve`` — packed as ``TrimmedCurve``.
+    - ``Curve`` — packed as ``CurveGeometry``.
+    - ``Matrix44`` — packed as ``Matrix``.
+    - ``Distance`` — packed as ``Quantity``.
+    - ``bool``, ``int``, ``float``, ``str`` — wrapped in the matching
+      protobuf well-known wrapper type.
     - An already-packed ``google.protobuf.Any`` — returned unchanged.
 
     Parameters
@@ -2200,12 +2189,15 @@ def to_grpc_any(value) -> "any_pb2.Any":  # noqa: F821
         If ``value`` is not a supported type.
     """
     from google.protobuf import any_pb2, wrappers_pb2
-    from google.protobuf.message import Message
 
     if isinstance(value, any_pb2.Any):
         return value
 
-    proto_msg = None
+    def _pack(proto_msg):
+        """Pack *proto_msg* into a new ``Any`` and return it."""
+        packed = any_pb2.Any()
+        packed.Pack(proto_msg)
+        return packed
 
     # Geometry entity types — EntityIdentifier
     from ansys.geometry.core.designer.body import Body
@@ -2213,96 +2205,177 @@ def to_grpc_any(value) -> "any_pb2.Any":  # noqa: F821
     from ansys.geometry.core.designer.face import Face
 
     if isinstance(value, (Body, Face, Edge)):
-        proto_msg = build_grpc_id(value.id)
+        return _pack(build_grpc_id(value.id))
 
     # Math types
-    if proto_msg is None:
-        from ansys.geometry.core.math.point import Point3D
+    from ansys.geometry.core.math.point import Point3D
 
-        if isinstance(value, Point3D):
-            proto_msg = from_point3d_to_grpc_point(value)
+    if isinstance(value, Point3D):
+        return _pack(from_point3d_to_grpc_point(value))
 
-    if proto_msg is None:
-        from ansys.geometry.core.math.vector import UnitVector3D
+    from ansys.geometry.core.math.vector import UnitVector3D
 
-        if isinstance(value, UnitVector3D):
-            proto_msg = from_unit_vector_to_grpc_direction(value)
+    if isinstance(value, UnitVector3D):
+        return _pack(from_unit_vector_to_grpc_direction(value))
 
-    if proto_msg is None:
-        from ansys.geometry.core.math.frame import Frame
+    from ansys.geometry.core.math.frame import Frame
 
-        if isinstance(value, Frame):
-            proto_msg = from_frame_to_grpc_frame(value)
+    if isinstance(value, Frame):
+        return _pack(from_frame_to_grpc_frame(value))
 
-    if proto_msg is None:
-        from ansys.geometry.core.math.plane import Plane
+    from ansys.geometry.core.math.plane import Plane
 
-        if isinstance(value, Plane):
-            proto_msg = from_plane_to_grpc_plane(value)
+    if isinstance(value, Plane):
+        return _pack(from_plane_to_grpc_plane(value))
 
     # Curve / surface types
-    if proto_msg is None:
-        from ansys.geometry.core.shapes.curves.line import Line
+    from ansys.geometry.core.shapes.curves.line import Line
 
-        if isinstance(value, Line):
-            proto_msg = from_line_to_grpc_line(value)
+    if isinstance(value, Line):
+        return _pack(from_line_to_grpc_line(value))
 
-    if proto_msg is None:
-        from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
+    from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
 
-        if isinstance(value, NURBSCurve):
-            proto_msg = from_nurbs_curve_to_grpc_nurbs_curve(value)
+    if isinstance(value, NURBSCurve):
+        return _pack(from_nurbs_curve_to_grpc_nurbs_curve(value))
 
-    if proto_msg is None:
-        if isinstance(value, NURBSSurface):  # already imported at module level
-            proto_msg = from_nurbs_surface_to_grpc_nurbs_surface(value)
+    if isinstance(value, NURBSSurface):  # already imported at module level
+        return _pack(from_nurbs_surface_to_grpc_nurbs_surface(value))
 
-    if proto_msg is None:
-        from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
-        if isinstance(value, TrimmedCurve):
-            proto_msg = from_trimmed_curve_to_grpc_trimmed_curve(value)
+    if isinstance(value, TrimmedCurve):
+        return _pack(from_trimmed_curve_to_grpc_trimmed_curve(value))
 
-    if proto_msg is None:
-        from ansys.geometry.core.shapes.curves.curve import Curve
+    from ansys.geometry.core.shapes.curves.curve import Curve
 
-        if isinstance(value, Curve):
-            proto_msg = from_curve_to_grpc_curve(value)
+    if isinstance(value, Curve):
+        return _pack(from_curve_to_grpc_curve(value))
 
     # Math matrix type
-    if proto_msg is None:
-        from ansys.geometry.core.math.matrix import Matrix44
+    from ansys.geometry.core.math.matrix import Matrix44
 
-        if isinstance(value, Matrix44):
-            proto_msg = from_matrix_to_grpc_matrix(value)
+    if isinstance(value, Matrix44):
+        return _pack(from_matrix_to_grpc_matrix(value))
 
     # Measurement types
-    if proto_msg is None:
-        if isinstance(value, Distance):  # already imported at module level
-            proto_msg = from_length_to_grpc_quantity(value)
+    if isinstance(value, Distance):  # already imported at module level
+        return _pack(from_length_to_grpc_quantity(value))
 
     # Python primitives — well-known wrappers (bool must precede int)
-    if proto_msg is None:
-        if isinstance(value, bool):
-            proto_msg = wrappers_pb2.BoolValue(value=value)
-        elif isinstance(value, int):
-            proto_msg = wrappers_pb2.Int64Value(value=value)
-        elif isinstance(value, float):
-            proto_msg = wrappers_pb2.FloatValue(value=value)
-        elif isinstance(value, str):
-            proto_msg = wrappers_pb2.StringValue(value=value)
+    if isinstance(value, bool):
+        return _pack(wrappers_pb2.BoolValue(value=value))
 
-    if proto_msg is None:
-        supported = (
-            "Body, Face, Edge, Point3D, UnitVector3D, Frame, Plane, Line, "
-            "NURBSCurve, NURBSSurface, Curve, TrimmedCurve, Matrix44, Distance, "
-            "bool, int, float, or str."
-        )
+    if isinstance(value, int):
+        return _pack(wrappers_pb2.Int64Value(value=value))
+
+    if isinstance(value, float):
+        return _pack(wrappers_pb2.FloatValue(value=value))
+
+    if isinstance(value, str):
+        return _pack(wrappers_pb2.StringValue(value=value))
+
+    supported = (
+        "Body, Face, Edge, Point3D, UnitVector3D, Frame, Plane, Line, "
+        "NURBSCurve, NURBSSurface, Curve, TrimmedCurve, Matrix44, Distance, "
+        "bool, int, float, or str."
+    )
+    raise TypeError(
+        f"Unsupported argument type for to_grpc_any: {type(value).__name__}. "
+        f"Supported types are: {supported}"
+    )
+
+
+def from_grpc_any(any_msg: "any_pb2.Any"):
+    """Unpack a ``google.protobuf.Any`` message to a native PyAnsys Geometry type.
+
+    The following conversions are applied automatically based on the packed
+    type URL:
+
+    - ``EntityIdentifier`` — returned as a ``str`` (the entity ID).
+    - ``Point`` — converted via :func:`from_grpc_point_to_point3d`.
+    - ``Direction`` — converted via :func:`from_grpc_direction_to_unit_vector`.
+    - ``Frame`` — converted via :func:`from_grpc_frame_to_frame`.
+    - ``Plane`` — converted via :func:`from_grpc_plane_to_plane`.
+    - ``CurveGeometry`` — converted via :func:`from_grpc_curve_to_curve`.
+    - ``NurbsCurve`` — converted via
+      :func:`from_grpc_nurbs_curve_to_nurbs_curve`.
+    - ``NurbsSurface`` — converted via
+      :func:`from_grpc_nurbs_surface_to_nurbs_surface`.
+    - ``Matrix`` — converted via :func:`from_grpc_matrix_to_matrix`.
+    - ``Quantity`` — converted via :func:`from_grpc_quantity_to_distance`.
+    - ``BoolValue``, ``Int64Value``, ``FloatValue``, ``StringValue`` —
+      unwrapped to the corresponding Python primitive.
+
+    Parameters
+    ----------
+    any_msg : google.protobuf.any_pb2.Any
+        The packed ``Any`` message to convert.
+
+    Returns
+    -------
+    object
+        The resulting native Python / PyAnsys Geometry object.
+
+    Raises
+    ------
+    TypeError
+        If ``any_msg`` is not a ``google.protobuf.Any`` instance or the
+        packed type is not supported.
+    """
+    from google.protobuf import any_pb2, wrappers_pb2
+
+    if not isinstance(any_msg, any_pb2.Any):
         raise TypeError(
-            f"Unsupported argument type for to_grpc_any: {type(value).__name__}. "
-            f"Supported types are: {supported}."
+            f"Expected google.protobuf.Any, got {type(any_msg).__name__}."
         )
 
-    packed = any_pb2.Any()
-    packed.Pack(proto_msg)
-    return packed
+    # Mapping of proto descriptor -> (message class, conversion callable)
+    type_map = [
+        (EntityIdentifier, lambda m: m.id),
+        (GRPCPoint, from_grpc_point_to_point3d),
+        (GRPCDirection, from_grpc_direction_to_unit_vector),
+        (GRPCFrame, from_grpc_frame_to_frame),
+        (GRPCPlane, from_grpc_plane_to_plane),
+        (GRPCCurveGeometry, from_grpc_curve_to_curve),
+        (GRPCNurbsCurve, from_grpc_nurbs_curve_to_nurbs_curve),
+        (GRPCNurbsSurface, from_grpc_nurbs_surface_to_nurbs_surface),
+        (GRPCMatrix, from_grpc_matrix_to_matrix),
+        (GRPCQuantity, from_grpc_quantity_to_distance),
+    ]
+
+    for msg_class, converter in type_map:
+        if any_msg.Is(msg_class.DESCRIPTOR):
+            msg = msg_class()
+            any_msg.Unpack(msg)
+            return converter(msg)
+
+    # Python primitive wrappers
+    wrapper_map = [
+        (wrappers_pb2.BoolValue, lambda m: m.value),
+        (wrappers_pb2.Int32Value, lambda m: m.value),
+        (wrappers_pb2.Int64Value, lambda m: m.value),
+        (wrappers_pb2.DoubleValue, lambda m: m.value),
+        (wrappers_pb2.FloatValue, lambda m: m.value),
+        (wrappers_pb2.StringValue, lambda m: m.value),
+    ]
+
+    for msg_class, converter in wrapper_map:
+        if any_msg.Is(msg_class.DESCRIPTOR):
+            msg = msg_class()
+            any_msg.Unpack(msg)
+            return converter(msg)
+
+    # Empty Any (no type_url) — nothing was packed
+    if not any_msg.type_url:
+        return None
+
+    supported = (
+        "EntityIdentifier, Point, Direction, Frame, Plane, CurveGeometry, "
+        "NurbsCurve, NurbsSurface, Matrix, Quantity, "
+        "BoolValue, Int64Value, FloatValue, or StringValue."
+    )
+    raise TypeError(
+        f"Unsupported type_url in Any message: {any_msg.type_url!r}. "
+        f"Supported types are: {supported}"
+    )

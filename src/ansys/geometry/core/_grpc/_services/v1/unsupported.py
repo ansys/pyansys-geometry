@@ -89,7 +89,7 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):
     def run_addin_method(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commands.file_pb2 import RunAddinMethodRequest
 
-        from .conversions import to_grpc_any
+        from .conversions import from_grpc_any, to_grpc_any
 
         # Create the request - arguments are converted from Python types to Any
         request = RunAddinMethodRequest(
@@ -101,8 +101,14 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):
         # Call the gRPC service
         response = self.file_stub.RunAddinMethod(request)
 
+        # Convert the response from Any back to a Python type
+        return_value = from_grpc_any(response.return_value)
+
         # Return the response - formatted as a dictionary
-        return {"command_response": response.command_response}
+        return {
+            "method returns": return_value,
+            "command_response": response.command_response
+        }
 
     @protect_grpc
     def get_import_id_map(self, **kwargs) -> dict:  # noqa: D102

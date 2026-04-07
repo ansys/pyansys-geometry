@@ -337,7 +337,7 @@ class UnsupportedCommands:
         addin_name: str,
         method_name: str,
         arguments: list | None = None,
-    ) -> None:
+    ) -> dict:
         """Run a method on a previously loaded add-in.
 
         Parameters
@@ -360,7 +360,7 @@ class UnsupportedCommands:
         --------
         This method is only available starting on Ansys release 27R1.
         """
-        self._grpc_client.services.unsupported.run_addin_method(
+        return self._grpc_client.services.unsupported.run_addin_method(
             addin_name=addin_name,
             method_name=method_name,
             arguments=arguments or [],
