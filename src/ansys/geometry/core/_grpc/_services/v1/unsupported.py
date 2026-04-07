@@ -106,7 +106,7 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):
 
         # Return the response - formatted as a dictionary
         return {
-            "method returns": return_value,
+            "return_value": return_value,
             "command_response": response.command_response
         }
 
