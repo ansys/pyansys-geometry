@@ -2077,6 +2077,18 @@ def test_sweep_edges_basic(modeler: Modeler):
     assert len(bodies3) == 1
     assert bodies3[0].is_surface
 
+    # --- No distance (full trajectory length) ---
+    design4 = modeler.create_design("sweep_edges_no_distance")
+    surface4 = design4.create_surface(
+        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
+    )
+    edge4 = surface4.edges[0]
+    trajectory4 = surface4.edges[1]
+
+    bodies4 = modeler.geometry_commands.sweep_edges(edge4, trajectory4)
+    assert len(bodies4) == 1
+    assert bodies4[0].is_surface
+
 
 def test_sweep_edges_multiple_edges(modeler: Modeler):
     """Test sweeping multiple edges along a trajectory.

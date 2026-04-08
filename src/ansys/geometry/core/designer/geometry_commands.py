@@ -1724,7 +1724,7 @@ class GeometryCommands:
         self,
         edges: Union["Edge", list["Edge"]],
         trajectories: Union["Edge", "DesignCurve", list[Union["Edge", "DesignCurve"]]],
-        distance: Distance | Quantity | Real,
+        distance: Distance | Quantity | Real | None = None,
     ) -> list["Body"]:
         """Sweep edges along trajectory curves.
 
@@ -1734,8 +1734,8 @@ class GeometryCommands:
             Edges to sweep.
         trajectories : Edge | DesignCurve | list[Edge | DesignCurve]
             Trajectory curve(s) to sweep along.
-        distance : Distance | Quantity | Real
-            Distance to sweep.
+        distance : Distance | Quantity | Real, default: None
+            Distance to sweep. If not provided, the full trajectory length is used.
 
         Returns
         -------
@@ -1755,7 +1755,9 @@ class GeometryCommands:
         trajectories = trajectories if isinstance(trajectories, list) else [trajectories]
         check_type_all_elements_in_iterable(trajectories, (Edge, DesignCurve))
 
-        distance = distance if isinstance(distance, Distance) else Distance(distance)
+        distance = (
+            distance if distance is None or isinstance(distance, Distance) else Distance(distance)
+        )
 
         for edge in edges:
             edge.body._reset_tessellation_cache()

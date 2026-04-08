@@ -331,12 +331,15 @@ class GRPCEdgesServiceV1(GRPCEdgesService):
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
+        distance = kwargs.get("distance")
         request = SweepEdgesRequest(
             request_data=[
                 SweepEdgesRequestData(
                     selection_ids=[build_grpc_id(id) for id in kwargs["edge_ids"]],
                     trajectory_ids=[build_grpc_id(id) for id in kwargs["trajectory_ids"]],
-                    distance=from_length_to_grpc_quantity(kwargs["distance"]),
+                    optional_distance=(
+                        from_length_to_grpc_quantity(distance) if distance is not None else None
+                    ),
                 )
             ]
         )
