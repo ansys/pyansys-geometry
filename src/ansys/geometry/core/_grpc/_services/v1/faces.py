@@ -41,6 +41,7 @@ from .conversions import (
     from_line_to_grpc_line,
     from_parameter_to_grpc_quantity,
     from_point3d_to_grpc_point,
+    from_trimmed_curve_to_grpc_trimmed_curve,
     from_unit_vector_to_grpc_direction,
     serialize_tracked_command_response,
 )
@@ -696,8 +697,6 @@ class GRPCFacesServiceV1(GRPCFacesService):
 
     @protect_grpc
     def get_centroid(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
 
@@ -707,4 +706,60 @@ class GRPCFacesServiceV1(GRPCFacesService):
         # Return the response - formatted as a dictionary
         return {
             "centroid": from_grpc_point_to_point3d(response.centroid),
+        }
+
+    @protect_grpc
+    def split_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            SplitFaceRequest,
+            SplitFaceRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SplitFaceRequest(
+            request_data=[
+                SplitFaceRequestData(
+                    selection_id=build_grpc_id(kwargs["face_id"]),
+                    split_parameter=(
+                        from_point3d_to_grpc_point(kwargs["split_parameter"])
+                        if kwargs["split_parameter"] is not None
+                        else None
+                    ),
+                    split_start=(
+                        from_point3d_to_grpc_point(kwargs["split_start"])
+                        if kwargs["split_start"] is not None
+                        else None
+                    ),
+                    split_end=(
+                        from_point3d_to_grpc_point(kwargs["split_end"])
+                        if kwargs["split_end"] is not None
+                        else None
+                    ),
+                    face_cutter_id=(
+                        build_grpc_id(kwargs["face_cutter_id"])
+                        if kwargs["face_cutter_id"] is not None
+                        else None
+                    ),
+                    split_curves=(
+                        [
+                            from_trimmed_curve_to_grpc_trimmed_curve(curve)
+                            for curve in kwargs["split_curves"]
+                        ]
+                        if kwargs["split_curves"] is not None
+                        else None
+                    ),
+                    split_type=kwargs["split_type"].value,
+                    parameter_type=kwargs["parameter_type"].value,
+                )
+            ]
+        )
+
+        # Call the gRPC service and serialize the response
+        response = self.edit_stub.SplitFaces(request=request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "tracked_response": tracked_response,
         }

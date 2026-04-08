@@ -103,3 +103,8 @@ class GRPCEdgesService(ABC):  # pragma: no cover
     def get_centroid(self, **kwargs) -> dict:
         """Get the centroid of an edge."""
         pass
+
+    @abstractmethod
+    def split_edges(self, **kwargs) -> dict:
+        """Split edges."""
+        pass
