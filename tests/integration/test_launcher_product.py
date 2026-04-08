@@ -29,7 +29,7 @@ from ansys.geometry.core import (
     launch_modeler_with_geometry_service,
     launch_modeler_with_spaceclaim,
 )
-from ansys.geometry.core.connection import ApiVersions, ProductInstance
+from ansys.geometry.core.connection import ApiVersions
 from ansys.geometry.core.connection.product_instance import get_available_port
 
 
