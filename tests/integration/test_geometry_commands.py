@@ -2026,3 +2026,129 @@ def test_sweep_points_trimmed_curve_trajectories(modeler: Modeler):
     dp3 = design3.add_design_point("sweep_pt", Point3D([sx, sy, sz], UNITS.m))
     with pytest.raises(ValueError, match="cannot mix TrimmedCurve"):
         modeler.geometry_commands.sweep_points(dp3, [edge, tc], Distance(0.5, UNITS.m))
+
+
+def test_sweep_edges_basic(modeler: Modeler):
+    """Test sweeping a single edge along an edge trajectory with all distance types.
+
+    Creates a surface body and a box body, picks one edge from the surface
+    and uses an edge from the box as the trajectory. Exercises Distance,
+    Quantity, and raw float distance inputs in a single test.
+    """
+    # --- Distance type ---
+    design1 = modeler.create_design("sweep_edges_distance")
+    surface1 = design1.create_surface(
+        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
+    )
+    edge1 = surface1.edges[0]
+    trajectory1 = surface1.edges[1]
+
+    bodies1 = modeler.geometry_commands.sweep_edges(
+        edge1, trajectory1, Distance(0.5, UNITS.m)
+    )
+    assert len(bodies1) == 1
+    assert bodies1[0].is_surface
+
+    # --- Quantity type ---
+    design2 = modeler.create_design("sweep_edges_quantity")
+    surface2 = design2.create_surface(
+        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
+    )
+    edge2 = surface2.edges[0]
+    trajectory2 = surface2.edges[1]
+
+    bodies2 = modeler.geometry_commands.sweep_edges(
+        edge2, trajectory2, Quantity(0.5, UNITS.m)
+    )
+    assert len(bodies2) == 1
+    assert bodies2[0].is_surface
+
+    # --- Raw float (SI metres) ---
+    design3 = modeler.create_design("sweep_edges_float")
+    surface3 = design3.create_surface(
+        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
+    )
+    edge3 = surface3.edges[0]
+    trajectory3 = surface3.edges[1]
+
+    bodies3 = modeler.geometry_commands.sweep_edges(
+        edge3, trajectory3, 0.5
+    )
+    assert len(bodies3) == 1
+    assert bodies3[0].is_surface
+
+
+def test_sweep_edges_multiple_edges(modeler: Modeler):
+    """Test sweeping multiple edges along a trajectory.
+
+    Creates a surface body, selects two edges, and sweeps them along
+    a third edge as the trajectory.
+    """
+    design = modeler.create_design("sweep_edges_multi")
+    surface = design.create_surface(
+        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
+    )
+    edges = [surface.edges[0], surface.edges[2]]
+    trajectory = surface.edges[1]
+
+    bodies = modeler.geometry_commands.sweep_edges(
+        edges, trajectory, Distance(0.5, UNITS.m)
+    )
+    assert len(bodies) >= 1
+    for body in bodies:
+        assert body.is_surface
+
+
+def test_sweep_edges_design_curve_trajectory(modeler: Modeler):
+    """Test sweeping an edge along a DesignCurve trajectory.
+
+    Uses revolve_points to create a circular arc DesignCurve, then
+    sweeps a surface edge along that curve.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("sweep_edges_dc_traj")
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+
+    # Create a quarter-arc DesignCurve to act as trajectory
+    traj_dp = design.add_design_point(
+        "traj_point", Point3D([1, 0, 0], UNITS.m)
+    )
+    traj_curves = modeler.geometry_commands.revolve_points(
+        traj_dp, axis, Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(traj_curves) == 1
+    trajectory = traj_curves[0]
+    assert isinstance(trajectory, DesignCurve)
+
+    # Create a surface body for the edge to sweep
+    surface = design.create_surface(
+        "surf", Sketch().box(Point2D([1, 0]), 0.5, 0.5)
+    )
+    edge = surface.edges[3]
+
+    bodies = modeler.geometry_commands.sweep_edges(
+        edge, trajectory, trajectory.length,
+    )
+    assert len(bodies) == 1
+    assert bodies[0].is_surface
+
+
+def test_sweep_edges_multiple_trajectories(modeler: Modeler):
+    """Test sweeping an edge along multiple trajectory edges.
+
+    Provides two edges as trajectories and verifies the operation succeeds.
+    """
+    design = modeler.create_design("sweep_edges_multi_traj")
+    surface = design.create_surface(
+        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
+    )
+    edge = surface.edges[0]
+    trajectories = [surface.edges[1], surface.edges[3]]
+
+    bodies = modeler.geometry_commands.sweep_edges(
+        edge, trajectories, Distance(0.5, UNITS.m)
+    )
+    assert len(bodies) >= 1
+    for body in bodies:
+        assert body.is_surface

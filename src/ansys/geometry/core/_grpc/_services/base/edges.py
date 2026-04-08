@@ -100,6 +100,11 @@ class GRPCEdgesService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def sweep_edges(self, **kwargs) -> dict:
+        """Sweep edges along trajectories."""
+        pass
+
+    @abstractmethod
     def get_centroid(self, **kwargs) -> dict:
         """Get the centroid of an edge."""
         pass

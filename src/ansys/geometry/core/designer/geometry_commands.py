@@ -1719,6 +1719,64 @@ class GeometryCommands:
 
         return response.get("success")
 
+    @min_backend_version(27, 1, 0)
+    def sweep_edges(
+        self,
+        edges: Union["Edge", list["Edge"]],
+        trajectories: Union["Edge", "DesignCurve", list[Union["Edge", "DesignCurve"]]],
+        distance: Distance | Quantity | Real,
+    ) -> list["Body"]:
+        """Sweep edges along trajectory curves.
+
+        Parameters
+        ----------
+        edges : Edge | list[Edge]
+            Edges to sweep.
+        trajectories : Edge | DesignCurve | list[Edge | DesignCurve]
+            Trajectory curve(s) to sweep along.
+        distance : Distance | Quantity | Real
+            Distance to sweep.
+
+        Returns
+        -------
+        list[Body]
+            Bodies created by the sweep operation.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        from ansys.geometry.core.designer.designcurve import DesignCurve
+        from ansys.geometry.core.designer.edge import Edge
+
+        edges: list[Edge] = edges if isinstance(edges, list) else [edges]
+        check_type_all_elements_in_iterable(edges, Edge)
+
+        trajectories = trajectories if isinstance(trajectories, list) else [trajectories]
+        check_type_all_elements_in_iterable(trajectories, (Edge, DesignCurve))
+
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
+        for edge in edges:
+            edge.body._reset_tessellation_cache()
+
+        design = get_design_from_edge(edges[0])
+        result = self._grpc_client.services.edges.sweep_edges(
+            edge_ids=[edge.id for edge in edges],
+            trajectory_ids=[traj.id for traj in trajectories],
+            distance=distance,
+        )
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+            return get_bodies_from_ids(design, result.get("modified_bodies"))
+        else:
+            self._grpc_client.log.info("Failed to sweep edges.")
+            return []
+
     @min_backend_version(26, 1, 0)
     def draft_faces(
         self,

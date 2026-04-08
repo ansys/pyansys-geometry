@@ -282,6 +282,13 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
         }
 
     @protect_grpc
+    def sweep_edges(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.sweep_edges' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
     def get_centroid(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError(
             f"Method '{self.__class__.__name__}.get_centroid' is not "
