@@ -1779,6 +1779,67 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to sweep edges.")
             return []
 
+    @min_backend_version(27, 1, 0)
+    def sweep_faces(
+        self,
+        faces: Union["Face", list["Face"]],
+        trajectories: Union["Edge", "DesignCurve", list[Union["Edge", "DesignCurve"]]],
+        distance: Distance | Quantity | Real | None = None,
+    ) -> list["Body"]:
+        """Sweep faces along trajectory curves.
+
+        Parameters
+        ----------
+        faces : Face | list[Face]
+            Faces to sweep.
+        trajectories : Edge | DesignCurve | list[Edge | DesignCurve]
+            Trajectory curve(s) to sweep along.
+        distance : Distance | Quantity | Real, default: None
+            Distance to sweep. If not provided, the full trajectory length is used.
+
+        Returns
+        -------
+        list[Body]
+            Bodies created by the sweep operation.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        from ansys.geometry.core.designer.designcurve import DesignCurve
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
+        faces: list[Face] = faces if isinstance(faces, list) else [faces]
+        check_type_all_elements_in_iterable(faces, Face)
+
+        trajectories = trajectories if isinstance(trajectories, list) else [trajectories]
+        check_type_all_elements_in_iterable(trajectories, (Edge, DesignCurve))
+
+        distance = (
+            distance if distance is None or isinstance(distance, Distance) else Distance(distance)
+        )
+
+        for face in faces:
+            face.body._reset_tessellation_cache()
+
+        design = get_design_from_face(faces[0])
+        result = self._grpc_client.services.faces.sweep_faces(
+            face_ids=[face.id for face in faces],
+            trajectory_ids=[traj.id for traj in trajectories],
+            distance=distance,
+        )
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+            return get_bodies_from_ids(design, result.get("created_bodies"))
+        else:
+            self._grpc_client.log.info("Failed to sweep faces.")
+            return []
+
     @min_backend_version(26, 1, 0)
     def draft_faces(
         self,

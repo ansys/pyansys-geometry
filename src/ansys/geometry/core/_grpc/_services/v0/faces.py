@@ -558,6 +558,13 @@ class GRPCFacesServiceV0(GRPCFacesService):
         }
 
     @protect_grpc
+    def sweep_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.sweep_faces' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
     def get_centroid(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError(
             f"Method '{self.__class__.__name__}.get_centroid' is not "

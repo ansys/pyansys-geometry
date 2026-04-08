@@ -2164,3 +2164,99 @@ def test_sweep_edges_multiple_trajectories(modeler: Modeler):
     assert len(bodies) >= 1
     for body in bodies:
         assert body.is_surface
+
+
+def test_sweep_faces_basic(modeler: Modeler):
+    """Test sweeping a single face along an edge trajectory with all distance input types.
+
+    Creates a box body for the trajectory and a separate surface body positioned to the
+    left of the box. Sweeps the surface's face along an edge of the box. Exercises
+    Distance, Quantity, raw float, and no-distance inputs in a single test.
+    """
+    # --- Distance type ---
+    design1 = modeler.create_design("sweep_faces_distance")
+    box1 = design1.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf1 = design1.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    face1 = surf1.faces[0]
+    trajectory1 = next(e for e in box1.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+    bodies1 = modeler.geometry_commands.sweep_faces(
+        face1, trajectory1, Distance(0.5, UNITS.m)
+    )
+    assert len(bodies1) == 1
+
+    # --- Quantity type ---
+    design2 = modeler.create_design("sweep_faces_quantity")
+    box2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf2 = design2.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    face2 = surf2.faces[0]
+    trajectory2 = next(e for e in box2.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+    bodies2 = modeler.geometry_commands.sweep_faces(
+        face2, trajectory2, Quantity(0.5, UNITS.m)
+    )
+    assert len(bodies2) == 1
+
+    # --- Raw float (SI metres) ---
+    design3 = modeler.create_design("sweep_faces_float")
+    box3 = design3.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf3 = design3.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    face3 = surf3.faces[0]
+    trajectory3 = next(e for e in box3.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+    bodies3 = modeler.geometry_commands.sweep_faces(face3, trajectory3, 0.5)
+    assert len(bodies3) == 1
+
+    # --- No distance (full trajectory length) ---
+    design4 = modeler.create_design("sweep_faces_no_distance")
+    box4 = design4.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf4 = design4.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    face4 = surf4.faces[0]
+    trajectory4 = next(e for e in box4.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+    bodies4 = modeler.geometry_commands.sweep_faces(face4, trajectory4)
+    assert len(bodies4) == 1
+
+
+def test_sweep_faces_multiple_faces(modeler: Modeler):
+    """Test sweeping multiple faces along a trajectory edge.
+
+    Creates a box body for the trajectory and a separate smaller box to the left as
+    the face source. Sweeps two faces from the face-source box along an edge of the
+    trajectory box.
+    """
+    design = modeler.create_design("sweep_faces_multi")
+    traj_box = design.extrude_sketch("traj_box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    face1 = design.create_surface("face1", Sketch().box(Point2D([-4, 0]), 1, 1)).faces[0]
+    face2 = design.create_surface("face1", Sketch().box(Point2D([-8, 0]), 1, 1)).faces[0]
+    faces = [face1, face2]
+    trajectory = next(e for e in traj_box.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+
+    bodies = modeler.geometry_commands.sweep_faces(
+        faces, trajectory, Distance(0.5, UNITS.m)
+    )
+    assert len(bodies) == 2
+
+
+def test_sweep_faces_design_curve_trajectory(modeler: Modeler):
+    """Test sweeping a face along a DesignCurve trajectory.
+
+    Revolves a design point to create a circular arc DesignCurve, then sweeps a face
+    from a separate surface body (positioned away from the arc) along that curve.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("sweep_faces_dc_traj")
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Y)
+
+    # Create a quarter-arc DesignCurve at radius 3 to act as trajectory
+    traj_dp = design.add_design_point("traj_point", Point3D([3, 0, 0], UNITS.m))
+    traj_curves = modeler.geometry_commands.revolve_points(
+        traj_dp, axis, Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(traj_curves) == 1
+    trajectory = traj_curves[0]
+    assert isinstance(trajectory, DesignCurve)
+
+    # Create a surface body to the left of the arc as the face source
+    surf = design.create_surface("surf", Sketch().box(Point2D([-1, 0]), 0.5, 0.5))
+    face = surf.faces[0]
+
+    bodies = modeler.geometry_commands.sweep_faces(face, trajectory, Distance(0.5, UNITS.m))
+    assert len(bodies) == 1
