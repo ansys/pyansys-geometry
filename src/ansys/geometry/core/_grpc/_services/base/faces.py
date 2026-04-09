@@ -160,6 +160,11 @@ class GRPCFacesService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def sweep_faces(self, **kwargs) -> dict:
+        """Sweep faces along trajectory curves."""
+        pass
+
+    @abstractmethod
     def get_centroid(self, **kwargs) -> dict:
         """Get the centroid of a face."""
         pass

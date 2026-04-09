@@ -2162,5 +2162,5 @@ def from_face_loop_to_grpc_loop(loop: "FaceLoop") -> GRPCLoop:
     """
     return GRPCLoop(
         type=loop.type.value,
-        edges=[edge.id.id for edge in loop.edges],
+        edges=[edge.id for edge in loop.edges],
     )
