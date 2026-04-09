@@ -2366,51 +2366,37 @@ def test_sweep_edges_basic(modeler: Modeler):
     """
     # --- Distance type ---
     design1 = modeler.create_design("sweep_edges_distance")
-    surface1 = design1.create_surface(
-        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
-    )
+    surface1 = design1.create_surface("surf", Sketch().box(Point2D([0, 0]), 2, 2))
     edge1 = surface1.edges[0]
     trajectory1 = surface1.edges[1]
 
-    bodies1 = modeler.geometry_commands.sweep_edges(
-        edge1, trajectory1, Distance(0.5, UNITS.m)
-    )
+    bodies1 = modeler.geometry_commands.sweep_edges(edge1, trajectory1, Distance(0.5, UNITS.m))
     assert len(bodies1) == 1
     assert bodies1[0].is_surface
 
     # --- Quantity type ---
     design2 = modeler.create_design("sweep_edges_quantity")
-    surface2 = design2.create_surface(
-        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
-    )
+    surface2 = design2.create_surface("surf", Sketch().box(Point2D([0, 0]), 2, 2))
     edge2 = surface2.edges[0]
     trajectory2 = surface2.edges[1]
 
-    bodies2 = modeler.geometry_commands.sweep_edges(
-        edge2, trajectory2, Quantity(0.5, UNITS.m)
-    )
+    bodies2 = modeler.geometry_commands.sweep_edges(edge2, trajectory2, Quantity(0.5, UNITS.m))
     assert len(bodies2) == 1
     assert bodies2[0].is_surface
 
     # --- Raw float (SI metres) ---
     design3 = modeler.create_design("sweep_edges_float")
-    surface3 = design3.create_surface(
-        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
-    )
+    surface3 = design3.create_surface("surf", Sketch().box(Point2D([0, 0]), 2, 2))
     edge3 = surface3.edges[0]
     trajectory3 = surface3.edges[1]
 
-    bodies3 = modeler.geometry_commands.sweep_edges(
-        edge3, trajectory3, 0.5
-    )
+    bodies3 = modeler.geometry_commands.sweep_edges(edge3, trajectory3, 0.5)
     assert len(bodies3) == 1
     assert bodies3[0].is_surface
 
     # --- No distance (full trajectory length) ---
     design4 = modeler.create_design("sweep_edges_no_distance")
-    surface4 = design4.create_surface(
-        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
-    )
+    surface4 = design4.create_surface("surf", Sketch().box(Point2D([0, 0]), 2, 2))
     edge4 = surface4.edges[0]
     trajectory4 = surface4.edges[1]
 
@@ -2426,15 +2412,11 @@ def test_sweep_edges_multiple_edges(modeler: Modeler):
     a third edge as the trajectory.
     """
     design = modeler.create_design("sweep_edges_multi")
-    surface = design.create_surface(
-        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
-    )
+    surface = design.create_surface("surf", Sketch().box(Point2D([0, 0]), 2, 2))
     edges = [surface.edges[0], surface.edges[2]]
     trajectory = surface.edges[1]
 
-    bodies = modeler.geometry_commands.sweep_edges(
-        edges, trajectory, Distance(0.5, UNITS.m)
-    )
+    bodies = modeler.geometry_commands.sweep_edges(edges, trajectory, Distance(0.5, UNITS.m))
     assert len(bodies) >= 1
     for body in bodies:
         assert body.is_surface
@@ -2452,9 +2434,7 @@ def test_sweep_edges_design_curve_trajectory(modeler: Modeler):
     axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
 
     # Create a quarter-arc DesignCurve to act as trajectory
-    traj_dp = design.add_design_point(
-        "traj_point", Point3D([1, 0, 0], UNITS.m)
-    )
+    traj_dp = design.add_design_point("traj_point", Point3D([1, 0, 0], UNITS.m))
     traj_curves = modeler.geometry_commands.revolve_points(
         traj_dp, axis, Angle(np.pi / 2, UNITS.rad)
     )
@@ -2463,13 +2443,13 @@ def test_sweep_edges_design_curve_trajectory(modeler: Modeler):
     assert isinstance(trajectory, DesignCurve)
 
     # Create a surface body for the edge to sweep
-    surface = design.create_surface(
-        "surf", Sketch().box(Point2D([1, 0]), 0.5, 0.5)
-    )
+    surface = design.create_surface("surf", Sketch().box(Point2D([1, 0]), 0.5, 0.5))
     edge = surface.edges[3]
 
     bodies = modeler.geometry_commands.sweep_edges(
-        edge, trajectory, trajectory.length,
+        edge,
+        trajectory,
+        trajectory.length,
     )
     assert len(bodies) == 1
     assert bodies[0].is_surface
@@ -2481,15 +2461,11 @@ def test_sweep_edges_multiple_trajectories(modeler: Modeler):
     Provides two edges as trajectories and verifies the operation succeeds.
     """
     design = modeler.create_design("sweep_edges_multi_traj")
-    surface = design.create_surface(
-        "surf", Sketch().box(Point2D([0, 0]), 2, 2)
-    )
+    surface = design.create_surface("surf", Sketch().box(Point2D([0, 0]), 2, 2))
     edge = surface.edges[0]
     trajectories = [surface.edges[1], surface.edges[3]]
 
-    bodies = modeler.geometry_commands.sweep_edges(
-        edge, trajectories, Distance(0.5, UNITS.m)
-    )
+    bodies = modeler.geometry_commands.sweep_edges(edge, trajectories, Distance(0.5, UNITS.m))
     assert len(bodies) >= 1
     for body in bodies:
         assert body.is_surface
@@ -2508,9 +2484,7 @@ def test_sweep_faces_basic(modeler: Modeler):
     surf1 = design1.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
     face1 = surf1.faces[0]
     trajectory1 = next(e for e in box1.edges if e.start.x == e.end.x and e.start.y == e.end.y)
-    bodies1 = modeler.geometry_commands.sweep_faces(
-        face1, trajectory1, Distance(0.5, UNITS.m)
-    )
+    bodies1 = modeler.geometry_commands.sweep_faces(face1, trajectory1, Distance(0.5, UNITS.m))
     assert len(bodies1) == 1
 
     # --- Quantity type ---
@@ -2519,9 +2493,7 @@ def test_sweep_faces_basic(modeler: Modeler):
     surf2 = design2.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
     face2 = surf2.faces[0]
     trajectory2 = next(e for e in box2.edges if e.start.x == e.end.x and e.start.y == e.end.y)
-    bodies2 = modeler.geometry_commands.sweep_faces(
-        face2, trajectory2, Quantity(0.5, UNITS.m)
-    )
+    bodies2 = modeler.geometry_commands.sweep_faces(face2, trajectory2, Quantity(0.5, UNITS.m))
     assert len(bodies2) == 1
 
     # --- Raw float (SI metres) ---
@@ -2557,9 +2529,7 @@ def test_sweep_faces_multiple_faces(modeler: Modeler):
     faces = [face1, face2]
     trajectory = next(e for e in traj_box.edges if e.start.x == e.end.x and e.start.y == e.end.y)
 
-    bodies = modeler.geometry_commands.sweep_faces(
-        faces, trajectory, Distance(0.5, UNITS.m)
-    )
+    bodies = modeler.geometry_commands.sweep_faces(faces, trajectory, Distance(0.5, UNITS.m))
     assert len(bodies) == 2
 
 
