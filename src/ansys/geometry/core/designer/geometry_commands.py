@@ -65,7 +65,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.designcurve import DesignCurve
     from ansys.geometry.core.designer.designpoint import DesignPoint
     from ansys.geometry.core.designer.edge import Edge
-    from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.designer.face import Face, FaceLoop
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
 
@@ -593,6 +593,57 @@ class GeometryCommands:
             return get_bodies_from_ids(design, result.get("created_bodies"))
         else:
             self._grpc_client.log.info("Failed to extrude edges.")
+            return []
+
+    @min_backend_version(27, 1, 0)
+    def fill_edge_loops(
+        self,
+        loops: Union["FaceLoop", list["FaceLoop"]],
+    ) -> list["Body"]:
+        """Fill the surfaces bounded by the given edge loops.
+
+        Parameters
+        ----------
+        loops : FaceLoop | list[FaceLoop]
+            One or more edge loops defining the boundaries of the surfaces to fill.
+            Each ``FaceLoop`` contains the edges that form a closed loop.
+
+        Returns
+        -------
+        list[Body]
+            Bodies created by the fill operation if any.
+
+        Raises
+        ------
+        ValueError
+            If ``loops`` is empty or contains no edges.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        from ansys.geometry.core.designer.face import FaceLoop
+
+        loops: list[FaceLoop] = loops if isinstance(loops, list) else [loops]
+        check_type_all_elements_in_iterable(loops, FaceLoop)
+
+        for loop in loops:
+            for edge in loop.edges:
+                edge.body._reset_tessellation_cache()
+
+        result = self._grpc_client.services.edges.fill_edge_loops(
+            loops=loops,
+        )
+
+        if result.get("success"):
+            design = get_design_from_edge(loops[0].edges[0])
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+            return get_bodies_from_ids(design, result.get("created_bodies"))
+        else:
+            self._grpc_client.log.info("Failed to fill edge loops.")
             return []
 
     @min_backend_version(25, 2, 0)

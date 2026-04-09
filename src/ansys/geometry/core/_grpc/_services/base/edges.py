@@ -108,3 +108,8 @@ class GRPCEdgesService(ABC):  # pragma: no cover
     def split_edges(self, **kwargs) -> dict:
         """Split edges."""
         pass
+
+    @abstractmethod
+    def fill_edge_loops(self, **kwargs) -> dict:
+        """Fill the surfaces bounded by the given edge loops."""
+        pass

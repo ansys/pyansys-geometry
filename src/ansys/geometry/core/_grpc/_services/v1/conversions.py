@@ -52,6 +52,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     EdgeTessellation as GRPCEdgeTessellation,
     Geometries as GRPCGeometries,
     Knot as GRPCKnot,
+    Loop as GRPCLoop,
     MaterialEntity as GRPCMaterial,
     MaterialProperty as GRPCMaterialProperty,
     Matrix as GRPCMatrix,
@@ -91,7 +92,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from ansys.geometry.core.connection.backend import BackendType
     from ansys.geometry.core.designer.design import DesignFileFormat
-    from ansys.geometry.core.designer.face import SurfaceType
+    from ansys.geometry.core.designer.face import FaceLoop, SurfaceType
     from ansys.geometry.core.materials.material import Material
     from ansys.geometry.core.materials.property import MaterialProperty
     from ansys.geometry.core.math.frame import Frame
@@ -2144,3 +2145,22 @@ def response_problem_area_for_edge(response) -> dict:
             for res in response.result
         ]
     }
+
+
+def from_face_loop_to_grpc_loop(loop: "FaceLoop") -> GRPCLoop:
+    """Convert a ``FaceLoop`` to a gRPC ``Loop`` message.
+
+    Parameters
+    ----------
+    loop : FaceLoop
+        The face loop to convert.
+
+    Returns
+    -------
+    GRPCLoop
+        The gRPC Loop message.
+    """
+    return GRPCLoop(
+        type=loop.type.value,
+        edges=[edge.id.id for edge in loop.edges],
+    )
