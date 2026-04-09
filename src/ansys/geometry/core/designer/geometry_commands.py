@@ -62,7 +62,6 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
-    from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.designcurve import DesignCurve
     from ansys.geometry.core.designer.designpoint import DesignPoint
     from ansys.geometry.core.designer.edge import Edge
@@ -109,6 +108,41 @@ class DraftSide(Enum):
     THIS = 1
     OTHER = 2
     BACK = 3
+
+
+@unique
+class SplitEdgeType(Enum):
+    """Provides values for types of edge splits."""
+
+    BY_PROPORTION = 0
+    BY_POINT = 1
+    BY_LENGTH = 2
+
+
+@unique
+class SplitEdgeReference(Enum):
+    """Provides values for references when splitting edges."""
+
+    START = 0
+    END = 1
+
+
+@unique
+class SplitFaceType(Enum):
+    """Provides values for types of face splits."""
+
+    BY_PARAMETER = 0
+    BY_TWO_POINTS = 1
+    BY_CURVES = 2
+    BY_CUTTER = 3
+
+
+@unique
+class SplitFaceParameterType(Enum):
+    """Provides values for parameters when splitting faces."""
+
+    UV = 0
+    PERPENDICULAR = 1
 
 
 class GeometryCommands:
@@ -635,8 +669,8 @@ class GeometryCommands:
 
         check_type_all_elements_in_iterable(selection, Face)
 
-        for object in selection:
-            object.body._reset_tessellation_cache()
+        for face in selection:
+            face.body._reset_tessellation_cache()
 
         if two_dimensional and None in (count_y, pitch_y):
             raise ValueError(
@@ -658,7 +692,7 @@ class GeometryCommands:
             pitch_y = Distance(0)
 
         result = self._grpc_client.services.patterns.create_linear_pattern(
-            selection_ids=[object.id for object in selection],
+            selection_ids=[face.id for face in selection],
             linear_direction_id=linear_direction.id,
             count_x=count_x,
             pitch_x=pitch_x,
@@ -2382,3 +2416,191 @@ class GeometryCommands:
         else:
             self._grpc_client.log.info("Failed to sweep design points.")
             return []
+
+    @min_backend_version(25, 2, 0)
+    def split_edge(
+        self,
+        edge: "Edge",
+        split_type: SplitEdgeType,
+        proportion: float | None = None,
+        point: Point3D | None = None,
+        length: Distance | Quantity | Real | None = None,
+        reference: SplitEdgeReference = SplitEdgeReference.START,
+    ) -> bool:
+        """Split an edge by a proportion, a point, or a length.
+
+        Parameters
+        ----------
+        edge : Edge
+            Edge to split.
+        split_type : SplitEdgeType
+            Type of split to perform.
+        proportion : float, default: None
+            Proportion to split the edge by. Value should be between 0 and 1 and will be
+            applied along the edge. Required if ``split_type`` is ``SplitEdgeType.BY_PROPORTION``.
+        point : Point3D, default: None
+            Point to split the edge by. Required if ``split_type`` is ``SplitEdgeType.BY_POINT``.
+        length : Distance | Quantity | Real, default: None
+            Length to split the edge by. Required if ``split_type`` is ``SplitEdgeType.BY_LENGTH``.
+        reference : SplitEdgeReference, default: SplitEdgeReference.START
+            Reference point for splitting by lengths. Ignored for other split types.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        design = get_design_from_edge(edge)
+
+        if split_type == SplitEdgeType.BY_PROPORTION:
+            if proportion is None:
+                raise ValueError("Proportion must be provided when splitting by proportions.")
+            if not 0 < proportion < 1:
+                raise ValueError("Proportion should be between 0 and 1.")
+        elif split_type == SplitEdgeType.BY_POINT and point is None:
+            raise ValueError("Point must be provided when splitting by points.")
+        elif split_type == SplitEdgeType.BY_LENGTH and length is None:
+            raise ValueError("Length must be provided when splitting by lengths.")
+
+        if length is not None:
+            length = length if isinstance(length, Distance) else Distance(length)
+
+        result = self._grpc_client._services.edges.split_edges(
+            edge_id=edge.id,
+            split_type=split_type,
+            proportion=proportion,
+            point=point,
+            length=length,
+            reference=reference,
+        )
+
+        success = (
+            len(result.get("modified_bodies", [])) > 0
+            if self._grpc_client.services.version == GeometryApiProtos.V0
+            else result.get("success")
+        )
+
+        if success:
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+        return success
+
+    @min_backend_version(25, 2, 0)
+    def split_face(
+        self,
+        face: "Face",
+        split_type: SplitFaceType,
+        split_parameter: Union[Point3D, None] = None,
+        split_start: Union[Point3D, None] = None,
+        split_end: Union[Point3D, None] = None,
+        face_cutter: Union["Face", None] = None,
+        split_curves: Union[list["TrimmedCurve"], None] = None,
+        parameter_type: SplitFaceParameterType = SplitFaceParameterType.UV,
+    ) -> bool:
+        """Split faces by points, curves, or other faces.
+
+        Parameters
+        ----------
+        face : Face
+            Face to split.
+        split_type : SplitFaceType
+            Type of split to perform.
+        split_parameter : Point3D, default: None
+            Parameter to split the face by. Required if ``split_type`` is
+            ``SplitFaceType.BY_PARAMETER``.
+        split_start : Point3D, default: None
+            Start point to split the face by. Required if ``split_type`` is
+            ``SplitFaceType.BY_TWO_POINTS``.
+        split_end : Point3D, default: None
+            End point to split the face by. Required if ``split_type`` is
+            ``SplitFaceType.BY_TWO_POINTS``.
+        face_cutter : Face, default: None
+            Face to split the original face with. Required if ``split_type`` is
+            ``SplitFaceType.BY_CUTTER``.
+        split_curves : list[TrimmedCurve], default: None
+            Curves to split the face by. Required if ``split_type`` is ``SplitFaceType.BY_CURVES``.
+        parameter_type : SplitFaceParameterType, default: SplitFaceParameterType.UV
+            Type of the split parameter. Required if ``split_type`` is
+            ``SplitFaceType.BY_PARAMETER``.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        design = get_design_from_face(face)
+
+        if split_type == SplitFaceType.BY_PARAMETER and split_parameter is None:
+            raise ValueError("Split parameter must be provided when splitting by parameter.")
+        elif split_type == SplitFaceType.BY_TWO_POINTS and (
+            split_start is None or split_end is None
+        ):
+            raise ValueError("Split start and end must be provided when splitting by point.")
+        elif split_type == SplitFaceType.BY_CURVES and split_curves is None:
+            raise ValueError("Split curves must be provided when splitting by curve.")
+        elif split_type == SplitFaceType.BY_CUTTER and face_cutter is None:
+            raise ValueError("Face cutter must be provided when splitting by cutter.")
+
+        result = self._grpc_client._services.faces.split_faces(
+            face_id=face.id,
+            split_type=split_type,
+            split_parameter=split_parameter,
+            split_start=split_start,
+            split_end=split_end,
+            face_cutter_id=face_cutter.id if face_cutter else None,
+            split_curves=split_curves,
+            parameter_type=parameter_type,
+        )
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+        return result.get("success")
+
+    @min_backend_version(27, 1, 0)
+    def project_to_solid(
+        self,
+        selection: Union["Face", list["Face"], "Edge", list["Edge"]],
+        target_faces: Union["Face", list["Face"]],
+    ) -> bool:
+        """Project faces onto a target body to create new faces on the body.
+
+        Parameters
+        ----------
+        selection : Face | list[Face] | Edge | list[Edge]
+            Face(s) or edge(s) to project onto the target faces.
+        target_faces : Face | list[Face]
+            Face(s) to project the selection onto.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face | Edge] = selection if isinstance(selection, list) else [selection]
+        check_type_all_elements_in_iterable(selection, (Face, Edge))
+
+        target_faces: list[Face] = (
+            target_faces if isinstance(target_faces, list) else [target_faces]
+        )
+        check_type_all_elements_in_iterable(target_faces, Face)
+
+        result = self._grpc_client._services.model_tools.project_to_solid(
+            selection_ids=[item.id for item in selection],
+            target_ids=[face.id for face in target_faces],
+        )
+
+        if result.get("success"):
+            design = get_design_from_face(target_faces[0])
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+        return result.get("success")

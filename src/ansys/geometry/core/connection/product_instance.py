@@ -297,6 +297,15 @@ def prepare_and_start_backend(
 
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
+    if version is not None:
+        # Sanitize the version input to ensure it's an integer.
+        try:
+            version = int(version)
+        except ValueError:
+            raise ValueError(
+                "The 'version' argument must be an integer representing the product version."
+            )
+
     if os.getenv(ANSYS_GEOMETRY_SERVICE_ROOT) is not None and backend_type in (
         BackendType.WINDOWS_SERVICE,
         BackendType.LINUX_SERVICE,
@@ -308,14 +317,6 @@ def prepare_and_start_backend(
         pass
     else:
         if version is not None:
-            # Sanitize the version input to ensure it's an integer.
-            try:
-                version = int(version)
-            except ValueError:
-                raise ValueError(
-                    "The 'version' argument must be an integer representing the product version."
-                )
-
             try:
                 _check_version_is_available(version, installations)
             except SystemError as serr:
