@@ -2378,12 +2378,12 @@ def test_sweep_edges_basic(modeler: Modeler):
     trajectory1 = _vert_edge(box1)
 
     bodies1 = modeler.geometry_commands.sweep_edges(edge1, trajectory1, Distance(0.5, UNITS.m))
+    assert len(design1.get_all_bodies()) == 2
     assert len(bodies1) == 1
     assert bodies1[0].is_surface
     assert len(bodies1[0].faces) == 2
     areas1 = sorted(f.area.m for f in bodies1[0].faces)
     assert areas1 == pytest.approx([0.5, 1.0], rel=1e-4)
-    design1.download(r"C:\Users\jkerstet\Downloads\sweep_edges_distance.scdocx")
 
     # --- Quantity type ---
     design2 = modeler.create_design("sweep_edges_quantity")
