@@ -305,9 +305,8 @@ class Design(Component):
         write_body_facets : bool, default: False
             Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
         """
-        
         from ansys.geometry.core.misc.auxiliary import extract_project_from_zip
-        
+
         # Sanity checks on inputs
         if isinstance(file_location, str):
             file_location = Path(file_location)
@@ -332,9 +331,7 @@ class Design(Component):
             received_bytes = self.__export_and_download_legacy(format=format)
         else:
             received_bytes = self.__export_and_download(
-                format=format,
-                write_body_facets=write_body_facets,
-                file_location=file_location
+                format=format, write_body_facets=write_body_facets, file_location=file_location
             )
 
         # Write to file
@@ -409,7 +406,7 @@ class Design(Component):
         self,
         format: DesignFileFormat,
         write_body_facets: bool = False,
-        file_location : Union[Path, str] = None,
+        file_location: Union[Path, str] = None,
     ) -> bytes:
         """Export and download the design from the server.
 
@@ -442,7 +439,7 @@ class Design(Component):
                     format=format,
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
-                    filename= file_location
+                    filename=file_location,
                 )
             except Exception:
                 self._grpc_client.log.warning(
@@ -454,7 +451,7 @@ class Design(Component):
                     format=format,
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
-                    filepath= file_location
+                    filepath=file_location,
                 )
         else:
             self._grpc_client.log.warning(

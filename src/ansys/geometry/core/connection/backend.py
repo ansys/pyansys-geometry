@@ -116,6 +116,7 @@ class BackendType(Enum):
             BackendType.CORE_WINDOWS,
         )
 
+
 class ApiVersions(Enum):
     """Provides an enum for all the compatibles API versions."""
 

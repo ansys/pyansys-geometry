@@ -4053,7 +4053,9 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
         location = tmp_path_factory.mktemp("test_export_to_scdocx")
         file_location = location / f"{design.name}.scdocx"
-        exported_file_without_facets = design_read.export_to_scdocx(location, write_body_facets=False)
+        exported_file_without_facets = design_read.export_to_scdocx(
+            location, write_body_facets=False
+        )
         size_without_facets = exported_file_without_facets.stat().st_size
         assert size_without_facets == pytest.approx(26202, 1e-3, 150)
         assert size_with_facets > size_without_facets, (
