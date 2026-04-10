@@ -97,6 +97,24 @@ class BackendType(Enum):
             BackendType.CORE_LINUX,
         )
 
+    @staticmethod
+    def is_windows_service(backend_type: "BackendType") -> bool:
+        """Determine whether the backend is a Windows service or not.
+
+        Parameters
+        ----------
+        backend_type : BackendType
+            The backend type to check whether or not it's running on Windows.
+
+        Returns
+        -------
+        bool
+            True if the backend is running on Windows, False otherwise.
+        """
+        return backend_type in (
+            BackendType.WINDOWS_SERVICE,
+            BackendType.CORE_WINDOWS,
+        )
 
 class ApiVersions(Enum):
     """Provides an enum for all the compatibles API versions."""

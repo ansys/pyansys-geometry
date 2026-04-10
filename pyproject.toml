@@ -160,8 +160,8 @@ lint.pydocstyle.convention = "numpy"
 [tool.pytest]
 ini_options.minversion = "7.1"
 ini_options.addopts = """\
-  -ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv \
-  --image_cache_dir tests/integration/image_cache --add_missing_images\
+  -ra --use-existing-service=yes --proto-version=v1 -vv --image_cache_dir tests/integration/image_cache \
+  --add_missing_images\
   """
 ini_options.testpaths = [ "tests" ]
 
