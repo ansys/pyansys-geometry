@@ -2813,7 +2813,36 @@ def test_sphere_creation(modeler: Modeler):
     spherebody = design.create_sphere("testspherebody", center_point, radius)
     assert spherebody.name == "testspherebody"
     assert len(spherebody.faces) == 1
-    assert round(spherebody.volume._magnitude, 3) == round(4.1887902, 3)
+    assert spherebody.volume.m == pytest.approx(np.pi * 4 / 3, rel=1e-6)
+
+    # Create a nested sphere and verify that it reports the correct parent component.
+    nested = design.add_component("NestedBlockComp")
+    nested_sphere = nested.create_sphere(
+        "nestedspherebody", Point3D([0, 0, 0]), Distance(1, UNITS.m)
+    )
+
+    assert nested_sphere.name == "nestedspherebody"
+    assert len(nested_sphere.faces) == 1
+    assert nested_sphere.volume.m == pytest.approx(np.pi * 4 / 3, rel=1e-6)
+    assert nested_sphere.parent_component.id == nested.id
+
+
+def test_create_block_body(modeler: Modeler):
+    """Test the creation of a block body given two opposite corner points."""
+    design = modeler.create_design("BlockTest")
+    block = design.create_block("testblockbody", Point3D([0, 0, 0]), Point3D([1, 2, 3]))
+
+    assert len(block.faces) == 6
+    assert block.volume.m == 6.0
+    assert block.parent_component.id == design.id
+
+    # Create a nested block body and verify that it reports the correct parent component.
+    nested = design.add_component("NestedBlockComp")
+    nested_block = nested.create_block("nestedblockbody", Point3D([2, 3, 4]), Point3D([5, 6, 7]))
+
+    assert len(nested_block.faces) == 6
+    assert nested_block.volume.m == 27.0
+    assert nested_block.parent_component.id == nested.id
 
 
 def test_body_mirror(modeler: Modeler):

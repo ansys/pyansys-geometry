@@ -32,6 +32,10 @@ from ansys.geometry.core.designer.geometry_commands import (
     FillPatternType,
     GeometryCommands,
     OffsetMode,
+    SplitEdgeReference,
+    SplitEdgeType,
+    SplitFaceParameterType,
+    SplitFaceType,
 )
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Y, UNITVECTOR3D_Z
@@ -42,7 +46,7 @@ from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.shapes.surfaces.sphere import Sphere
 from ansys.geometry.core.sketch.sketch import Sketch
 
-from .conftest import FILES_DIR
+from .conftest import FILES_DIR, skip_if_linux
 
 
 def test_chamfer(modeler: Modeler):
@@ -2026,3 +2030,328 @@ def test_sweep_points_trimmed_curve_trajectories(modeler: Modeler):
     dp3 = design3.add_design_point("sweep_pt", Point3D([sx, sy, sz], UNITS.m))
     with pytest.raises(ValueError, match="cannot mix TrimmedCurve"):
         modeler.geometry_commands.sweep_points(dp3, [edge, tc], Distance(0.5, UNITS.m))
+
+
+def test_split_edge_by_proportion(modeler: Modeler):
+    """Test splitting edges by proportion, including error cases."""
+    design = modeler.create_design("split_edge_proportion")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    edge = body.edges[0]
+
+    # Error: proportions not provided
+    with pytest.raises(
+        ValueError, match="Proportion must be provided when splitting by proportions."
+    ):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_PROPORTION)
+
+    # Error: proportion value out of range (boundary values are excluded)
+    with pytest.raises(ValueError, match="Proportion should be between 0 and 1."):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_PROPORTION, proportion=0.0)
+    with pytest.raises(ValueError, match="Proportion should be between 0 and 1."):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_PROPORTION, proportion=1.0)
+
+    # Split a single edge at its midpoint
+    assert len(body.edges) == 12
+    success = modeler.geometry_commands.split_edge(
+        edge, SplitEdgeType.BY_PROPORTION, proportion=0.5
+    )
+    assert success
+    assert body.edges[11].length.m == body.edges[12].length.m == pytest.approx(0.5, rel=1e-6)
+    assert len(body.edges) == 13
+
+    # Split a single edge 25/75
+    success = modeler.geometry_commands.split_edge(
+        body.edges[1], SplitEdgeType.BY_PROPORTION, proportion=0.25
+    )
+    assert success
+    assert body.edges[12].length.m == pytest.approx(0.75, rel=1e-6)
+    assert body.edges[13].length.m == pytest.approx(0.25, rel=1e-6)
+    assert len(body.edges) == 14
+
+
+def test_split_edge_by_point(modeler: Modeler):
+    """Test splitting edges by point, including error cases."""
+    design = modeler.create_design("split_edge_point")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    edge = body.edges[0]
+
+    # Error: points not provided
+    with pytest.raises(ValueError, match="Point must be provided when splitting by points."):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_POINT)
+
+    # Compute the geometric midpoint of the edge from its start and end vertices
+    midpoint = Point3D(
+        [
+            (edge.start.x.m + edge.end.x.m) / 2,
+            (edge.start.y.m + edge.end.y.m) / 2,
+            (edge.start.z.m + edge.end.z.m) / 2,
+        ]
+    )
+
+    assert len(body.edges) == 12
+    success = modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_POINT, point=midpoint)
+    assert success
+    assert body.edges[11].length.m == body.edges[12].length.m == pytest.approx(0.5, rel=1e-6)
+    assert len(body.edges) == 13
+
+
+def test_split_edge_by_length(modeler: Modeler):
+    """Test splitting edges by length, including error cases and reference direction."""
+    design = modeler.create_design("split_edge_length")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    edge = body.edges[0]
+
+    # Error: lengths not provided
+    with pytest.raises(ValueError, match="Length must be provided when splitting by lengths."):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_LENGTH)
+
+    # Split at 0.25 m measured from the start of the edge
+    assert len(body.edges) == 12
+    success = modeler.geometry_commands.split_edge(
+        edge,
+        SplitEdgeType.BY_LENGTH,
+        length=Distance(0.25),
+        reference=SplitEdgeReference.START,
+    )
+    assert success
+    assert body.edges[11].length.m == pytest.approx(0.75, rel=1e-6)
+    assert body.edges[12].length.m == pytest.approx(0.25, rel=1e-6)
+    assert len(body.edges) == 13
+
+    # Split at 0.25 m measured from the end of the edge (equivalent to 0.75 m from start)
+    design2 = modeler.create_design("split_edge_length_end")
+    body2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    success = modeler.geometry_commands.split_edge(
+        body2.edges[0],
+        SplitEdgeType.BY_LENGTH,
+        length=Distance(0.25),
+        reference=SplitEdgeReference.END,
+    )
+    assert success
+    assert body2.edges[11].length.m == pytest.approx(0.25, rel=1e-6)
+    assert body2.edges[12].length.m == pytest.approx(0.75, rel=1e-6)
+    assert len(body2.edges) == 13
+
+
+def test_split_face_errors(modeler: Modeler):
+    """Test that split_face raises ValueError for missing required arguments."""
+    design = modeler.create_design("split_face_errors")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    face = body.faces[0]
+
+    # BY_PARAMETER requires both split_parameter and parameter_type
+    with pytest.raises(
+        ValueError,
+        match="Split parameter must be provided when splitting by parameter.",
+    ):
+        modeler.geometry_commands.split_face(face, SplitFaceType.BY_PARAMETER)
+
+    with pytest.raises(
+        ValueError,
+        match="Split parameter must be provided when splitting by parameter.",
+    ):
+        modeler.geometry_commands.split_face(
+            face,
+            SplitFaceType.BY_PARAMETER,
+            parameter_type=SplitFaceParameterType.UV,
+        )
+
+    # BY_TWO_POINTS requires both split_start and split_end
+    with pytest.raises(
+        ValueError, match="Split start and end must be provided when splitting by point."
+    ):
+        modeler.geometry_commands.split_face(
+            face, SplitFaceType.BY_TWO_POINTS, split_start=Point3D([-0.5, 0, 1])
+        )
+
+    with pytest.raises(
+        ValueError, match="Split start and end must be provided when splitting by point."
+    ):
+        modeler.geometry_commands.split_face(
+            face, SplitFaceType.BY_TWO_POINTS, split_end=Point3D([0.5, 0, 1])
+        )
+
+    # BY_CURVES requires split_curves
+    with pytest.raises(ValueError, match="Split curves must be provided when splitting by curve."):
+        modeler.geometry_commands.split_face(face, SplitFaceType.BY_CURVES)
+
+    # BY_CUTTER requires face_cutter
+    with pytest.raises(ValueError, match="Face cutter must be provided when splitting by cutter."):
+        modeler.geometry_commands.split_face(face, SplitFaceType.BY_CUTTER)
+
+
+def test_split_face_by_two_points(modeler: Modeler):
+    """Test splitting a face into two halves using two points."""
+    design = modeler.create_design("split_face_two_points")
+
+    # Box from (-0.5, -0.5, 0) to (0.5, 0.5, 1)
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+
+    # Find the top face: normal points in +Z
+    top_face = next(f for f in body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Split from the midpoint of the left edge to the midpoint of the right edge
+    success = modeler.geometry_commands.split_face(
+        top_face,
+        SplitFaceType.BY_TWO_POINTS,
+        split_start=Point3D([-0.5, 0, 1]),
+        split_end=Point3D([0.5, 0, 1]),
+    )
+    assert success
+    assert body.faces[5].area.m == body.faces[6].area.m == 0.5
+    assert len(body.faces) == 7
+
+
+def test_split_face_by_parameter(modeler: Modeler):
+    """Test splitting a face at its UV midpoint using BY_PARAMETER."""
+    skip_if_linux(
+        modeler,
+        test_split_face_by_parameter.__name__,
+        "Causes service to crash on Linux",
+    )
+
+    design = modeler.create_design("split_face_parameter")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+
+    # Find the top face: normal points in +Z
+    top_face = next(f for f in body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Split at the centre of the top face along the U direction
+    success = modeler.geometry_commands.split_face(
+        top_face,
+        SplitFaceType.BY_PARAMETER,
+        split_parameter=Point3D([0, 0, 1]),
+        parameter_type=SplitFaceParameterType.UV,
+    )
+
+    assert success
+    assert (
+        body.faces[5].area.m
+        == body.faces[6].area.m
+        == body.faces[7].area.m
+        == body.faces[8].area.m
+        == 0.25
+    )
+    assert len(body.faces) == 9
+
+
+def test_split_face_by_cutter(modeler: Modeler):
+    """Test splitting a face using another face as a cutter."""
+    design = modeler.create_design("split_face_cutter")
+
+    # Main body: 2x2x1 box from (-1,-1,0) to (1,1,1)
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1)
+    assert len(body.faces) == 6
+
+    # Find the top face: normal points in +Z
+    top_face = next(f for f in body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Cutter: a very thin wall (0.001 x 2) extruded 3 m in Z, centred at x=0
+    # Its large YZ-plane faces (area ≈ 2*3 = 6 m²) will cross the top face at x ≈ 0
+    cutter_body = design.extrude_sketch("wall", Sketch().box(Point2D([0, 0]), 0.001, 2), 3)
+    # Pick the large face (normal ≈ ±X, area ≫ thin-edge faces)
+    cutter_face = next(f for f in cutter_body.faces if f.area.m > 4.0)
+
+    success = modeler.geometry_commands.split_face(
+        top_face,
+        SplitFaceType.BY_CUTTER,
+        face_cutter=cutter_face,
+    )
+    assert success
+    assert body.faces[5].area.m == pytest.approx(1.999, rel=1e-6)
+    assert body.faces[6].area.m == pytest.approx(2.001, rel=1e-6)
+    assert len(body.faces) == 7
+
+
+def test_project_to_solid_face_onto_face(modeler: Modeler):
+    """Test projecting a surface face onto a target face imprints new edges."""
+    design = modeler.create_design("project_to_solid_face")
+
+    # Target: 2x2x1 box
+    target = design.extrude_sketch("target", Sketch().box(Point2D([0, 0]), 2, 2), 1)
+    assert len(target.faces) == 6
+
+    # Source: small 1x1 surface 5 m above the target
+    source = design.create_surface(
+        "source",
+        Sketch(Plane(Point3D([0, 0, 5]))).box(Point2D([0, 0]), 1, 1),
+    )
+    assert source.is_surface
+
+    top_target = next(f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    success = modeler.geometry_commands.project_to_solid(source.faces[0], top_target)
+    assert success
+    # The 1x1 imprint splits the 2x2 top face into two pieces: 5 sides + 2 top = 7
+    assert len(target.faces) == 7
+    top_faces = sorted(
+        [f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z)],
+        key=lambda f: f.area.m,
+    )
+    assert len(top_faces) == 2
+    assert top_faces[0].area.m == pytest.approx(1.0, rel=1e-6)  # 1x1 imprint
+    assert top_faces[1].area.m == pytest.approx(3.0, rel=1e-6)  # 2x2 - 1x1 remainder
+
+
+def test_project_to_solid_edge_onto_face(modeler: Modeler):
+    """Test projecting an edge spanning the full width of a target face splits it."""
+    design = modeler.create_design("project_to_solid_edge")
+
+    # Target: 2x2x0.01 slab
+    target = design.extrude_sketch("target", Sketch().box(Point2D([0, 0]), 2, 2), 0.01)
+    assert len(target.faces) == 6
+    top_target = next(f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Source: 2x0.1 box suspended above – its 2 m-long bottom edge spans the full
+    # width of the target top face, so the projection cleanly splits it in two.
+    source = design.extrude_sketch("source", Sketch().box(Point2D([0, 0]), 2, 0.1), 5)
+    bottom_face = next(f for f in source.faces if np.allclose(f.normal(0, 0), -UNITVECTOR3D_Z))
+    spanning_edge = next(e for e in bottom_face.edges if abs(e.length.m - 2.0) < 0.01)
+
+    success = modeler.geometry_commands.project_to_solid(spanning_edge, top_target)
+    assert success
+    # The 2 m edge splits the 2x2 top face: 5 sides + 2 top pieces = 7
+    assert len(target.faces) == 7
+    top_faces = sorted(
+        [f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z)],
+        key=lambda f: f.area.m,
+    )
+    assert len(top_faces) == 2
+    assert top_faces[0].area.m == pytest.approx(1.9, rel=1e-6)  # 2x0.95 (edge at y=+0.05)
+    assert top_faces[1].area.m == pytest.approx(2.1, rel=1e-6)  # 2x1.05
+
+
+def test_project_to_solid_multiple_sources(modeler: Modeler):
+    """Test projecting a list of faces onto a list of target faces."""
+    design = modeler.create_design("project_to_solid_multi")
+
+    # Target: 4x4x0.01 slab
+    target = design.extrude_sketch("target", Sketch().box(Point2D([0, 0]), 4, 4), 0.01)
+    top_target = next(f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Two small surface bodies at different positions above the slab
+    src_a = design.create_surface(
+        "src_a",
+        Sketch(Plane(Point3D([-1, 0, 1]))).box(Point2D([0, 0]), 0.5, 0.5),
+    )
+    src_b = design.create_surface(
+        "src_b",
+        Sketch(Plane(Point3D([1, 0, 1]))).box(Point2D([0, 0]), 0.5, 0.5),
+    )
+
+    success = modeler.geometry_commands.project_to_solid(
+        [src_a.faces[0], src_b.faces[0]], top_target
+    )
+    assert success
+    # Two 0.5x0.5 imprints split the 4x4 top face into 3 pieces: 5 sides + 3 top = 8
+    assert len(target.faces) == 8
+    top_faces = sorted(
+        [f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z)],
+        key=lambda f: f.area.m,
+    )
+    assert len(top_faces) == 3
+    assert top_faces[0].area.m == pytest.approx(0.25, rel=1e-6)  # first 0.5x0.5 imprint
+    assert top_faces[1].area.m == pytest.approx(0.25, rel=1e-6)  # second 0.5x0.5 imprint
+    assert top_faces[2].area.m == pytest.approx(15.5, rel=1e-6)  # 4x4 - 2*(0.5x0.5) remainder
