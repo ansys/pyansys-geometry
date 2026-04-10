@@ -335,12 +335,15 @@ class Design(Component):
             )
 
         # Write to file
-        if self._modeler.client.backend_version < (25, 2, 0):
+        if self._grpc_client.services.version == GeometryApiProtos.V0:
             file_location.write_bytes(received_bytes)
-        else:
+        elif self._grpc_client.services.version == GeometryApiProtos.V1:
             zipped_file = file_location.parent.joinpath(file_location.stem + ".zip")
             zipped_file.write_bytes(received_bytes)
             extract_project_from_zip(zipped_file, file_location.parent)
+        else:  # pragma: no cover
+            # This should never happen as the version is set in the constructor
+            raise ValueError(f"Unsupported version: {self.version}")
 
         self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
 
