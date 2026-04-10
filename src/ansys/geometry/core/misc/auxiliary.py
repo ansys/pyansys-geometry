@@ -485,7 +485,6 @@ def extract_project_from_zip(file_path: Path, extract_to: Path) -> Path:
         The path to the directory where the zip file was extracted.
 
     """
-    import tempfile
     from zipfile import ZipFile
 
     # Extract zip archive
@@ -493,5 +492,3 @@ def extract_project_from_zip(file_path: Path, extract_to: Path) -> Path:
         zipf.extractall(extract_to)
 
     return extract_to
-
-
