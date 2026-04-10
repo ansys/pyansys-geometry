@@ -335,9 +335,13 @@ class Design(Component):
             )
 
         # Write to file
-        zipped_file = file_location.parent.joinpath(file_location.stem + ".zip")
-        zipped_file.write_bytes(received_bytes)
-        extract_project_from_zip(zipped_file, file_location.parent)
+        if self._modeler.client.backend_version < (25, 2, 0):
+            file_location.write_bytes(received_bytes)
+        else:
+            zipped_file = file_location.parent.joinpath(file_location.stem + ".zip")
+            zipped_file.write_bytes(received_bytes)
+            extract_project_from_zip(zipped_file, file_location.parent)
+
         self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
 
     @min_backend_version(24, 1, 0)

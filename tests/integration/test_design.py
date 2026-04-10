@@ -4038,7 +4038,7 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
 
     # Test only against CoreService since the file size is different when exported from
     # SpaceClaim or Discovery.
-    if modeler.client.backend_type.is_core_service == True:
+    if modeler.client.backend_type.is_core_service:
         location = tmp_path_factory.mktemp("test_export_to_scdocx")
         file_location = location / f"{design.name}.scdocx"
         exported_file_with_facets = design.export_to_scdocx(location, write_body_facets=True)
