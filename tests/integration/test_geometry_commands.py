@@ -1581,7 +1581,6 @@ def test_revolve_edges(modeler: Modeler):
     )
 
 
-@pytest.mark.skip(reason="Test is hitting an exception.")
 def test_intersect_curve_and_surface(modeler: Modeler):
     """Test intersection of curves and surfaces."""
     curve = Line(Point3D([0, 0, 0]), [1, 0, 0])
