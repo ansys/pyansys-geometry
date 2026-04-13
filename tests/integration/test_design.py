@@ -1393,11 +1393,17 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         assert iges_file.exists()
 
     # Linux backend...
-    elif BackendType.is_linux_service(modeler.client.backend_type):
+    elif (
+        BackendType.is_linux_service(modeler.client.backend_type)
+        and modeler._grpc_client._services.version == "v0"
+    ):
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
     # Windows backend...
-    elif BackendType.is_windows_service(modeler.client.backend_type):
+    elif (
+        BackendType.is_windows_service(modeler.client.backend_type)
+        or modeler._grpc_client._services.version == "v1"
+    ):
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
