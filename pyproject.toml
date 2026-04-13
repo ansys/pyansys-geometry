@@ -25,7 +25,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-  "ansys-api-discovery==1.0.36",
+  "ansys-api-discovery==1.0.37",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -117,7 +117,7 @@ tests = [
   { include-group = "tests-minimal" },
 ]
 tests-minimal = [
-  "pytest==9.0.2",
+  "pytest==9.0.3",
   "pytest-cov==7.1.0",
   "pytest-pyvista==0.3.2",
   "pyyaml==6.0.3",
