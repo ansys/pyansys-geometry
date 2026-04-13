@@ -32,6 +32,7 @@ import pytest
 
 import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
@@ -1395,14 +1396,14 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     # Linux backend...
     elif (
         BackendType.is_linux_service(modeler.client.backend_type)
-        and modeler._grpc_client._services.version == "v0"
+        and modeler._grpc_client._services.version == GeometryApiProtos.V0
     ):
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
     # Windows backend...
     elif (
         BackendType.is_windows_service(modeler.client.backend_type)
-        or modeler._grpc_client._services.version == "v1"
+        or modeler._grpc_client._services.version == GeometryApiProtos.V1
     ):
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
