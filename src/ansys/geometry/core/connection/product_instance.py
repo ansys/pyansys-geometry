@@ -197,6 +197,7 @@ def prepare_and_start_backend(
     specific_minimum_version: int = None,
     server_working_dir: str | Path | None = None,
     proto_version: str = None,
+    bypass_token: str = None,
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
 
@@ -272,6 +273,8 @@ def prepare_and_start_backend(
     proto_version: str, optional
         The version of the gRPC API protocol to use. If None, the latest
         version supported by the server will be used. Options are "v0" and "v1".
+    bypass_token: str, optional
+        The token to bypass the license checkout process. For use with vertical applications.
 
     Returns
     -------
@@ -455,6 +458,10 @@ def prepare_and_start_backend(
             env_copy["LICENSE_SERVER"] = os.getenv("ANSRV_GEO_LICENSE_SERVER")
         else:
             env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE", "1055@localhost")
+
+        # If bypass token is provided, set the environment variable to bypass the license checkout process.
+        if bypass_token is not None:
+            env_copy["ANSYS_GEOMETRY_SERVICE_LICENSE_BYPASS_TOKEN"] = bypass_token
 
         # Adapt the path environment variable to the OS and
         # modify the PATH/LD_LIBRARY_PATH variable to include the path

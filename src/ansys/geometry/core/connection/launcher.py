@@ -980,6 +980,7 @@ def launch_modeler_with_core_service(
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
     proto_version: str = None,
+    bypass_token: str = None,
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry Core service locally using the ``ProductInstance`` class.
@@ -1051,6 +1052,9 @@ def launch_modeler_with_core_service(
     proto_version : str, default: None
         The version of the gRPC API protocol to use. If None, the latest
         version supported by the server will be used. Options are "v0" and "v1".
+    bypass_token : str, default: None
+        Token used to bypass license checks when connecting to the service.
+        If None, no bypass token is used.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -1113,6 +1117,7 @@ def launch_modeler_with_core_service(
         certs_dir=certs_dir,
         specific_minimum_version=252,
         proto_version=proto_version,
+        bypass_token=bypass_token,
     )
 
 
